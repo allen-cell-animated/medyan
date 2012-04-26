@@ -7,8 +7,8 @@
 //
 
 #include "Compartment.h"
-#include "System.h"
-#include "Species.h"
+//#include "System.h"
+//#include "Species.h"
 
 bool CompartmentProto::setSpecies()
 {
