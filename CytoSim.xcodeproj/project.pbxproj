@@ -1,0 +1,209 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F763ED0B1548FFC70069DA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED0A1548FFC70069DA61 /* main.cpp */; };
+		F763ED0D1548FFC70069DA61 /* CytoSim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F763ED0C1548FFC70069DA61 /* CytoSim.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F763ED041548FFC70069DA61 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				F763ED0D1548FFC70069DA61 /* CytoSim.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F763ED061548FFC70069DA61 /* CytoSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoSim; sourceTree = BUILT_PRODUCTS_DIR; };
+		F763ED0A1548FFC70069DA61 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F763ED0C1548FFC70069DA61 /* CytoSim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CytoSim.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F763ED031548FFC70069DA61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F763ECFB1548FFC70069DA61 = {
+			isa = PBXGroup;
+			children = (
+				F763ED091548FFC70069DA61 /* CytoSim */,
+				F763ED071548FFC70069DA61 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F763ED071548FFC70069DA61 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F763ED061548FFC70069DA61 /* CytoSim */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F763ED091548FFC70069DA61 /* CytoSim */ = {
+			isa = PBXGroup;
+			children = (
+				F763ED0A1548FFC70069DA61 /* main.cpp */,
+				F763ED0C1548FFC70069DA61 /* CytoSim.1 */,
+			);
+			path = CytoSim;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F763ED051548FFC70069DA61 /* CytoSim */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F763ED101548FFC70069DA61 /* Build configuration list for PBXNativeTarget "CytoSim" */;
+			buildPhases = (
+				F763ED021548FFC70069DA61 /* Sources */,
+				F763ED031548FFC70069DA61 /* Frameworks */,
+				F763ED041548FFC70069DA61 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CytoSim;
+			productName = CytoSim;
+			productReference = F763ED061548FFC70069DA61 /* CytoSim */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F763ECFD1548FFC70069DA61 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "University of Maryland";
+			};
+			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "CytoSim" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F763ECFB1548FFC70069DA61;
+			productRefGroup = F763ED071548FFC70069DA61 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F763ED051548FFC70069DA61 /* CytoSim */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F763ED021548FFC70069DA61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F763ED0B1548FFC70069DA61 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F763ED0E1548FFC70069DA61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F763ED0F1548FFC70069DA61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F763ED111548FFC70069DA61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F763ED121548FFC70069DA61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "CytoSim" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F763ED0E1548FFC70069DA61 /* Debug */,
+				F763ED0F1548FFC70069DA61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F763ED101548FFC70069DA61 /* Build configuration list for PBXNativeTarget "CytoSim" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F763ED111548FFC70069DA61 /* Debug */,
+				F763ED121548FFC70069DA61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F763ECFD1548FFC70069DA61 /* Project object */;
+}
