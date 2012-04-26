@@ -7,8 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F763ED0B1548FFC70069DA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED0A1548FFC70069DA61 /* main.cpp */; };
-		F763ED0D1548FFC70069DA61 /* CytoSim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F763ED0C1548FFC70069DA61 /* CytoSim.1 */; };
+		F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
+		F763ED241548FFED0069DA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED161548FFED0069DA61 /* main.cpp */; };
+		F763ED251548FFED0069DA61 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = F763ED171548FFED0069DA61 /* Makefile */; };
+		F763ED261548FFED0069DA61 /* ParseSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED191548FFED0069DA61 /* ParseSystem.cpp */; };
+		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
+		F763ED281548FFED0069DA61 /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1D1548FFED0069DA61 /* Space.cpp */; };
+		F763ED291548FFED0069DA61 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
+		F763ED2A1548FFED0069DA61 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,7 +24,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				F763ED0D1548FFC70069DA61 /* CytoSim.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -26,8 +31,22 @@
 
 /* Begin PBXFileReference section */
 		F763ED061548FFC70069DA61 /* CytoSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoSim; sourceTree = BUILT_PRODUCTS_DIR; };
-		F763ED0A1548FFC70069DA61 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		F763ED0C1548FFC70069DA61 /* CytoSim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CytoSim.1; sourceTree = "<group>"; };
+		F763ED131548FFED0069DA61 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		F763ED141548FFED0069DA61 /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compartment.cpp; sourceTree = "<group>"; };
+		F763ED151548FFED0069DA61 /* Compartment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compartment.h; sourceTree = "<group>"; };
+		F763ED161548FFED0069DA61 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F763ED171548FFED0069DA61 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		F763ED181548FFED0069DA61 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
+		F763ED191548FFED0069DA61 /* ParseSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseSystem.cpp; sourceTree = "<group>"; };
+		F763ED1A1548FFED0069DA61 /* ParseSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseSystem.h; sourceTree = "<group>"; };
+		F763ED1B1548FFED0069DA61 /* Reaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reaction.cpp; sourceTree = "<group>"; };
+		F763ED1C1548FFED0069DA61 /* Reaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reaction.h; sourceTree = "<group>"; };
+		F763ED1D1548FFED0069DA61 /* Space.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Space.cpp; sourceTree = "<group>"; };
+		F763ED1E1548FFED0069DA61 /* Space.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Space.h; sourceTree = "<group>"; };
+		F763ED1F1548FFED0069DA61 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
+		F763ED201548FFED0069DA61 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
+		F763ED211548FFED0069DA61 /* System.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = System.cpp; sourceTree = "<group>"; };
+		F763ED221548FFED0069DA61 /* System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = System.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,8 +79,22 @@
 		F763ED091548FFC70069DA61 /* CytoSim */ = {
 			isa = PBXGroup;
 			children = (
-				F763ED0A1548FFC70069DA61 /* main.cpp */,
-				F763ED0C1548FFC70069DA61 /* CytoSim.1 */,
+				F763ED131548FFED0069DA61 /* common.h */,
+				F763ED141548FFED0069DA61 /* Compartment.cpp */,
+				F763ED151548FFED0069DA61 /* Compartment.h */,
+				F763ED161548FFED0069DA61 /* main.cpp */,
+				F763ED171548FFED0069DA61 /* Makefile */,
+				F763ED181548FFED0069DA61 /* notes.txt */,
+				F763ED191548FFED0069DA61 /* ParseSystem.cpp */,
+				F763ED1A1548FFED0069DA61 /* ParseSystem.h */,
+				F763ED1B1548FFED0069DA61 /* Reaction.cpp */,
+				F763ED1C1548FFED0069DA61 /* Reaction.h */,
+				F763ED1D1548FFED0069DA61 /* Space.cpp */,
+				F763ED1E1548FFED0069DA61 /* Space.h */,
+				F763ED1F1548FFED0069DA61 /* Species.cpp */,
+				F763ED201548FFED0069DA61 /* Species.h */,
+				F763ED211548FFED0069DA61 /* System.cpp */,
+				F763ED221548FFED0069DA61 /* System.h */,
 			);
 			path = CytoSim;
 			sourceTree = "<group>";
@@ -117,7 +150,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F763ED0B1548FFC70069DA61 /* main.cpp in Sources */,
+				F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */,
+				F763ED241548FFED0069DA61 /* main.cpp in Sources */,
+				F763ED251548FFED0069DA61 /* Makefile in Sources */,
+				F763ED261548FFED0069DA61 /* ParseSystem.cpp in Sources */,
+				F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */,
+				F763ED281548FFED0069DA61 /* Space.cpp in Sources */,
+				F763ED291548FFED0069DA61 /* Species.cpp in Sources */,
+				F763ED2A1548FFED0069DA61 /* System.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
