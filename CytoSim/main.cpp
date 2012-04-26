@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
         r2p2.doStep(true);
     r2p2.printSelf();
     
-    cout << "main(x.x): sizeof(r1): " << sizeof(r1) << endl;
+    cout << "main(x..): sizeof(r1): " << sizeof(r1) << endl;
     cout << "main(x.x): sizeof(r1p1): " << sizeof(r1p1) << endl;
 //    S.parseSystem();
 //    Space1D* s1d = new Space1D();
