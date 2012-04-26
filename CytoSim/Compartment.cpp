@@ -12,10 +12,10 @@
 
 bool CompartmentProto::setSpecies()
 {
-    std::vector<SpeciesType*> vst=_system->allSpeciesType();
-    for(auto st_ptr : vst){
-        _species_proto.push_back(new Species(*st_ptr));
-    }
-    std::cout << "std::vector<SpeciesType*> vst: " << vst.data() << std::endl;
+//    std::vector<SpeciesType*> vst=_system->allSpeciesType();
+//    for(auto st_ptr : vst){
+//        _species_proto.push_back(new Species(*st_ptr));
+//    }
+//    std::cout << "std::vector<SpeciesType*> vst: " << vst.data() << std::endl;
     return true;
 }

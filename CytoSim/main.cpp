@@ -20,21 +20,22 @@ int main(int argc, const char * argv[])
     S.parseSpeciesTypes();
     S.parseSystem();
 
-    SpeciesType *arp23 = S.getSpeciesType("Arp2/3");
-    SpeciesType *gactin = S.getSpeciesType("G-Actin");
-    SpeciesType *profilin = S.getSpeciesType("Profilin");
-    SpeciesType *motor = S.getSpeciesType("Motor");
+    Species *arp23_proto = S.SpeciesProto("Arp2/3",SType::Diffusing);
+    Species *gactin_proto = S.SpeciesProto("G-Actin",SType::Diffusing);
+    Species *profilin_proto = S.SpeciesProto("Profilin",SType::Diffusing);
+    Species *motor_proto = S.SpeciesProto("Motor",SType::Diffusing);
     
-    Species r1(*arp23); r1.setN(20);
-    Species p1(*gactin); p1.setN(30);
+    Species r1(arp23_proto->getType()); r1.setN(20);
+    Species p1(gactin_proto->getType()); p1.setN(30);
+
     std::array<Species*,2> sp2{{&r1,&p1}};
     Reaction<1,1> r1p1 {12.0, 5.0, sp2};
     for(int i=0;i<6;++i)
         r1p1.doStep(true);
     r1p1.printSelf();
     
-    Species r2(*profilin); r2.setN(40);
-    Species p2(*motor); p2.setN(50);
+    Species r2(profilin_proto->getType()); r2.setN(40);
+    Species p2(motor_proto->getType()); p2.setN(50);
     std::array<Species*,4> sp4 = {{&r1,&r2,&p1,&p2}};
     Reaction<2,2> r2p2{0,0,sp4};
     r2p2.printSelf();
@@ -50,6 +51,8 @@ int main(int argc, const char * argv[])
 //    S.setSpaceOptions(std::make_tuple(100,0,0));
 //    S.initializeCompartments();    
 //    cout << S.getNumCompartments() << " " << sizeof(int) << endl;
+    
+    flyweight<SpeciesType> s("Big Motor",SType::PolyM);
     
     return 0;
 }

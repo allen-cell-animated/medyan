@@ -9,6 +9,7 @@
 #ifndef CytoSim_Experimenting_ParseReactions_h
 #define CytoSim_Experimenting_ParseReactions_h
 
+#include <set>
 #include <map>
 #include <stdexcept>
 #include "Species.h"
@@ -16,31 +17,20 @@
 
 class ParseSpecies {
 private:
-    SpeciesTypeDB _sdb;
-    std::map<std::string,SpeciesType*> _map_str_st;
+    std::set<Species*> _set_species;
 public:
     ParseSpecies() = default;
-    SpeciesType* getSpeciesType(const std::string s){return _map_str_st.at(s);}
-    bool createSpeciesTypes(const std::vector<std::string> &vs)
+    // SpeciesType* getSpeciesType(const std::string s){return _map_str_st.at(s);}
+    Species* SpeciesProto(const std::string &name, SType stype)
     {
-        for(auto &s : vs){
-            if(_map_str_st.count(s)>0){
-                _map_str_st.clear();
-                return false;
-            }
-            _map_str_st.insert(std::make_pair(s,_sdb.getSpeciesType(s)));
+        SpeciesType tmpSpeciesType{name,stype};
+        for (auto sptr : _set_species){
+            if(sptr->getType() == tmpSpeciesType)
+                return &(*sptr);
         }
-        return true;
-    }
-
-    std::vector<SpeciesType*> allSpeciesType()
-    {
-        std::vector<SpeciesType*> ans;
-        for(auto p : _map_str_st){
-            ans.push_back(p.second);
-        }
-        std::cout << "std::vector<SpeciesType*> allSpeciesType(): " << ans.data() << std::endl;
-        return ans;
+        Species *s = new Species(name, stype);
+        _set_species.insert(s);
+        return s;
     }
 };
 
@@ -50,11 +40,9 @@ private:
 public:
     ParseSystem() = default; 
     void parseSpecies(){
-        _parse_species.createSpeciesTypes({"G-Actin","Arp2/3","Profilin","Motor"});
+        _parse_species.SpeciesProto("G-Actin",SType::Diffusing);
     }
-    void createSpeciesTypes(const std::vector<std::string> &vs){_parse_species.createSpeciesTypes(vs);}
-    SpeciesType* getSpeciesType(const std::string &s){return _parse_species.getSpeciesType(s);}
-    std::vector<SpeciesType*> allSpeciesType(){return _parse_species.allSpeciesType();}
+    Species* SpeciesProto(const std::string &name, SType stype){return _parse_species.SpeciesProto(name, stype);}
 };
 
 #endif

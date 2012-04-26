@@ -39,10 +39,9 @@ public:
         _comp_proto.printSpecies();
         return true;
     }
-    //Accessors
+    Species* SpeciesProto(const std::string &name, SType stype){return _parse_system.SpeciesProto(name, stype);}
 
-    SpeciesType* getSpeciesType(const std::string &s){return _parse_system.getSpeciesType(s);}
-    std::vector<SpeciesType*> allSpeciesType(){return _parse_system.allSpeciesType();}
+    //Accessors
     int getNumCompartments() const {return _compartments.size();}
 
 };
