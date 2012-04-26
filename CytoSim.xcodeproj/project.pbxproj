@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
 		F763ED241548FFED0069DA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED161548FFED0069DA61 /* main.cpp */; };
-		F763ED251548FFED0069DA61 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = F763ED171548FFED0069DA61 /* Makefile */; };
 		F763ED261548FFED0069DA61 /* ParseSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED191548FFED0069DA61 /* ParseSystem.cpp */; };
 		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F763ED281548FFED0069DA61 /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1D1548FFED0069DA61 /* Space.cpp */; };
@@ -35,7 +34,6 @@
 		F763ED141548FFED0069DA61 /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compartment.cpp; sourceTree = "<group>"; };
 		F763ED151548FFED0069DA61 /* Compartment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compartment.h; sourceTree = "<group>"; };
 		F763ED161548FFED0069DA61 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		F763ED171548FFED0069DA61 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F763ED181548FFED0069DA61 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		F763ED191548FFED0069DA61 /* ParseSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseSystem.cpp; sourceTree = "<group>"; };
 		F763ED1A1548FFED0069DA61 /* ParseSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseSystem.h; sourceTree = "<group>"; };
@@ -83,7 +81,6 @@
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
 				F763ED161548FFED0069DA61 /* main.cpp */,
-				F763ED171548FFED0069DA61 /* Makefile */,
 				F763ED181548FFED0069DA61 /* notes.txt */,
 				F763ED191548FFED0069DA61 /* ParseSystem.cpp */,
 				F763ED1A1548FFED0069DA61 /* ParseSystem.h */,
@@ -152,7 +149,6 @@
 			files = (
 				F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */,
 				F763ED241548FFED0069DA61 /* main.cpp in Sources */,
-				F763ED251548FFED0069DA61 /* Makefile in Sources */,
 				F763ED261548FFED0069DA61 /* ParseSystem.cpp in Sources */,
 				F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */,
 				F763ED281548FFED0069DA61 /* Space.cpp in Sources */,
@@ -212,6 +208,9 @@
 		F763ED111548FFC70069DA61 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -219,6 +218,9 @@
 		F763ED121548FFC70069DA61 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

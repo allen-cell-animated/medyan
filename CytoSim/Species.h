@@ -62,8 +62,11 @@ public:
     void removeReaction(const ReactionBase *r){
         for(int i=0; i<2;++i){
             auto rxit = std::find(_reactions[i].begin(),_reactions[i].end(),r);
-            if(rxit!=_reactions[i].end())
+            if(rxit!=_reactions[i].end()){
                 _reactions[i].erase(rxit);
+                std::cout << _type.getName() << ", Species::removeReaction, removing [" 
+                << i << "] ptr->" << r << "\n";  
+            }
         }
     }
     // Accessors 

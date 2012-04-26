@@ -60,7 +60,10 @@ public:
             s->addReaction(this, left);
         }
     }
-    ~Reaction<M,N>(){}
+    ~Reaction<M,N>(){
+        for(int i=0; i<M+N;++i)
+            this->_Species.at(i)->removeReaction(this);
+    }
 public:
     void doStepImpl(bool forward){
         species_copy_incr_t delta; 
