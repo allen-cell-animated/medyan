@@ -25,30 +25,53 @@ class SpeciesType;
 
 class ReactionBase;
 
-enum class SType : unsigned char { Unknown=0, Bulk = 1, Diffusing = 2, Poly=3, PolyA=4, PolyM=5, ProxyA=6};
+enum class SType : unsigned char {Bulk = 0, Diffusing = 1, Poly=2, PolyA=3, PolyM=4, ProxyA=5};
 
 class SpeciesType{
 private:
     std::string _name;
     SType _type;
-    static std::vector<std::string> _vec_type_names;
+    static std::vector<std::string> _vec_type_name;
 public:
     //Constructors
-    SpeciesType(const std::string &name, SType type) : _name(name), _type(type) {}
-    SpeciesType(const SpeciesType &st) = default;
-    SpeciesType(SpeciesType &&st) = default;
-    SpeciesType& operator=(const SpeciesType&) = default;
-    bool operator==(const SpeciesType& species_type) const {return species_type.getName()==_name && species_type.getType()==_type;}
+    SpeciesType(const std::string &name, SType type) : _name(name), _type(type) {
+//        std::cout << getName()+"[" + getTypeAsString() << "] created...\n";
+    }
+    SpeciesType(const SpeciesType &st) : _name(st._name), _type(st._type) {
+//        std::cout << getName()+"[" + getTypeAsString() << "] copied...\n";
+    }
+    SpeciesType(SpeciesType &&st) : _name(std::move(st._name)), _type(st._type) {        
+//        std::cout << getName()+"[" + getTypeAsString() << "] moved...\n";
+    }
+    SpeciesType& operator=(SpeciesType&& st){
+        _name=std::move(st._name);
+        _type=st._type;
+//        std::cout << getName()+"[" + getTypeAsString() << "] move assigned...\n";
+        return *this;
+    }
+    SpeciesType& operator=(const SpeciesType& st) {
+        _name=st._name;
+        _type=st._type;
+//        std::cout << getName()+"[" + getTypeAsString() << "] regular assigned...\n";
+        return *this;    
+    }
+    bool operator==(const SpeciesType& species_type) const 
+    {
+//        std::cout << getName()+"[" + getTypeAsString() << "] operator==() called...\n";
+        return species_type.getName()==_name && species_type.getType()==_type;
+    }
     //Accessors
     std::string getName() const {return _name;}
     SType getType() const {return _type;}
-    std::string getTypeAsString () const {return _vec_type_names[static_cast<int>(_type)];}
+    std::string getTypeAsString () const {return _vec_type_name[static_cast<int>(_type)];}
+    bool is_of_type(const std::string &name, SType type) const {return name==_name && type==_type;}
     //Hashing
     friend std::size_t hash_value(SpeciesType const& species_type){
         std::size_t seed = 0;
         int type=static_cast<int>(species_type.getType());
         boost::hash_combine(seed,species_type.getName());
         boost::hash_combine(seed,type);
+//        std::cout << species_type.getName()+"[" + species_type.getTypeAsString() << "] hash_value called...\n";
         return seed;
     }
 };
@@ -66,15 +89,17 @@ public:
     Species& operator=(Species&) = delete;
     // Cloning
     Species* clone() {return new Species(_type);}
-    // Setters
+    // Setters & Mutators
     void incrementN(species_copy_incr_t delta) {_n+=delta;}
     void setN(species_copy_t n) {_n=n;}
+
     void addReaction(ReactionBase *r, bool left){
         if(left)
             _reactions[0].push_back(r);
         else
             _reactions[1].push_back(r);
     }
+    
     void removeReaction(const ReactionBase *r) {
         for(int i=0; i<2;++i){
             auto rxit = std::find(_reactions[i].begin(),_reactions[i].end(),r);
@@ -85,9 +110,13 @@ public:
             }
         }
     }
+    
     // Accessors 
     species_copy_t getN() const {return _n;}
     flyweight<SpeciesType> getType () const {return _type;}
+    bool is_of_species_type(const std::string &name, SType type) const {
+        return _type.get().is_of_type(name,type);
+    }
     void printSelf () const;
 };
 

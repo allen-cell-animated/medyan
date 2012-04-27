@@ -4,8 +4,11 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
+FAST = -O3
 
-CPPFLAGS = -Wall -std=c++11 -c $(DEBUG)
+# $(DEBUG) $(FAST)
+
+CPPFLAGS = -Wall -I/usr/local/include -std=c++11 $(DEBUG)	 -c 
 LFLAGS = -Wall -std=c++11 $(DEBUG)
 
 

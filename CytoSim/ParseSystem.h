@@ -15,9 +15,9 @@
 #include <boost/bind.hpp>
 #include "Species.h"
 
-struct has_species_type {
-     bool operator()(Species *x,  const SpeciesType &y) {return x->getType() == y;}
-}; 
+//struct has_species_type {
+//     bool operator()(Species *x,  const SpeciesType &y) {return x->getType() == y;}
+//}; 
 
 class ParseSpecies {
 private:
@@ -28,11 +28,15 @@ public:
     // return that Species, otherwise create a new one and return
     Species* SpeciesProto(const std::string &name, SType stype)
     {
-        SpeciesType tmpSpeciesType{name,stype};
         for (auto &sptr : _set_species){
-            if(sptr->getType() == tmpSpeciesType)
+            if(sptr->is_of_species_type(name,stype))
                 return &(*sptr);
         }
+        
+        // If such Species does not exist, create a new one
+        Species *s = new Species(name,stype);
+        _set_species.insert(s);
+        return s;
 
 //       ##### The commented out codes below show C++11 and pre-C++11 ways of accomplishing the same as above.
         
@@ -54,13 +58,7 @@ public:
 //        auto sptr = std::find_if(_set_species.begin(),_set_species.end(), cmp_pred);
         
 //        Second alternative approach to do the same        
-
         
-        
-        // If such Species does not exist, create a new one
-        Species *s = new Species(name, stype);
-        _set_species.insert(s);
-        return s;
     }
 };
 

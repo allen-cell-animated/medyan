@@ -30,7 +30,7 @@ public:
     void setSpace(Space* space){_space=space;}
     void setSpaceOptions(const std::tuple<int, int, int> &options){_space->setOptions(options);}
     void initializeCompartments() {_space->initializeCompartments();}
-    bool parseSpeciesTypes(){
+    bool parseSpeciesProtos(){
         _parse_system.parseSpecies();
         return true;
     }

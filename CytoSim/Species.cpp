@@ -10,7 +10,7 @@
 
 #include "Species.h"
 
-std::vector<std::string> SpeciesType::_vec_type_names = {"Unknown", "Bulk", "Diffusing", "Poly", "PolyA", "PolyM", "ProxyA"};
+std::vector<std::string> SpeciesType::_vec_type_name = {"Unknown", "Bulk", "Diffusing", "Poly", "PolyA", "PolyM", "ProxyA"};
 
 void Species::printSelf() const {
     std::cout << "Species: " << _type.get().getName() + "[" + _type.get().getTypeAsString() + "]" << ", copy_num=" << (int)this->_n << ", ptr=" << (void*)this << std::endl;

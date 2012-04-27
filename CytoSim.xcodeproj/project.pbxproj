@@ -210,8 +210,10 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -220,8 +222,10 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -244,6 +248,7 @@
 				F763ED121548FFC70069DA61 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
