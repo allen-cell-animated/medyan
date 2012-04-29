@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "Species.h"
+#include "Reaction.h"
 
 std::vector<std::string> SpeciesType::_vec_type_name = {"Unknown", "Bulk", "Diffusing", "Poly", "PolyA", "PolyM", "ProxyA"};
 
@@ -23,3 +24,14 @@ void Species::printSelf() const {
     std::cout << "\n";
 }
 
+//Species::~Species(){
+//    std::cout << "~Species(): " + _type.get().getName() + "[" + _type.get().getTypeAsString() + "]"
+//    << " is being destroyed\n";
+//    for(int i=0; i<2;++i){
+//        for(auto &r : _reactions[i]){
+//            std::cout << "~Species(): " << typeid(r).name() << std::endl;
+//            delete r;
+//            r=nullptr;
+//        }
+//    }
+//}

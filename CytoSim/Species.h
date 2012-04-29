@@ -14,6 +14,11 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <assert.h>
+
+
+#include <typeinfo>
+
 #include <boost/functional/hash.hpp>
 #include <boost/flyweight.hpp>
 #include "common.h"
@@ -87,6 +92,7 @@ public:
     Species (const std::string &name, SType type) : _type(name,type) {}
     Species (const Species &r) = delete;
     Species& operator=(Species&) = delete;
+    ~Species(){assert(_reactions[0].empty() and _reactions[1].empty());}
     // Cloning
     Species* clone() {return new Species(_type);}
     // Setters & Mutators
@@ -105,8 +111,8 @@ public:
             auto rxit = std::find(_reactions[i].begin(),_reactions[i].end(),r);
             if(rxit!=_reactions[i].end()){
                 _reactions[i].erase(rxit);
-                std::cout << _type.get().getName() + "[" + _type.get().getTypeAsString() + "], Species::removeReaction, removing [" 
-                << i << "] ptr->" << r << "\n";  
+//                std::cout << _type.get().getName() + "[" + _type.get().getTypeAsString() + "], Species::removeReaction, removing [" 
+//                << i << "] ptr->" << r << "\n";  
             }
         }
     }

@@ -36,7 +36,9 @@ public:
     float getBackwardRate(float rate){return _backward_rate;}
     reaction_num_t reactionID() const {return _id;}
     //Destructor
-    virtual ~ReactionBase() {std::cout << "Reaction, ID=" << _id << " is destroyed" << std::endl;};
+    virtual ~ReactionBase() {
+        //std::cout << "Reaction, ID=" << _id << " is destroyed" << std::endl;
+    };
     //Fire Reactions
     void doStep(bool forward) {this->doStepImpl(forward);}
     void printSelf() {this->printSelfImpl();}

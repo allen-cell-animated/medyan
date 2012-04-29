@@ -30,6 +30,7 @@ int main(int argc, const char * argv[])
 
     std::array<Species*,2> sp2{{&r1,&p1}};
     Reaction<1,1> r1p1 {12.0, 5.0, sp2};
+    
     for(int i=0;i<6;++i)
         r1p1.doStep(true);
     r1p1.printSelf();
