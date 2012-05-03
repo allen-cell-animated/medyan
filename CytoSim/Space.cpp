@@ -9,7 +9,3 @@
 #include <iostream>
 #include "Space.h"
 
-void Space1D::initializeCompartments(){
-    std::cout << "Space1D::initializeCompartments() called..." << std::endl;
-}
-

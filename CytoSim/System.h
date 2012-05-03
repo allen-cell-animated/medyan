@@ -16,34 +16,5 @@
 #include "Space.h"
 #include "ParseSystem.h"
 
-class System
-{
-private:
-    std::vector<Compartment*> _compartments;
-    CompartmentProto _comp_proto;
-    Space* _space;
-    ParseSystem _parse_system;
-    //Note: bulk species and their reactions should go here
-public:
-    System() : _comp_proto(this) {
-    }
-    void setSpace(Space* space){_space=space;}
-    void setSpaceOptions(const std::tuple<int, int, int> &options){_space->setOptions(options);}
-    void initializeCompartments() {_space->initializeCompartments();}
-    bool parseSpeciesProtos(){
-        _parse_system.parseSpecies();
-        return true;
-    }
-    bool parseSystem(){
-        _comp_proto.setSpecies();
-        _comp_proto.printSpecies();
-        return true;
-    }
-    Species* SpeciesProto(const std::string &name, SType stype){return _parse_system.SpeciesProto(name, stype);}
-
-    //Accessors
-    int getNumCompartments() const {return _compartments.size();}
-
-};
 
 #endif

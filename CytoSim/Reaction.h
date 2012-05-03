@@ -13,82 +13,158 @@
 #include <algorithm>
 #include <utility>
 #include <array>
+#include <cmath>
+
+#include <boost/flyweight.hpp>
+
 #include "common.h"
 #include "Species.h"
 
+struct OrigReactRates {
+    float orig_frate;
+    float orig_brate;
+    //Constructor
+    OrigReactRates (float ofrate, float obrate) :  orig_frate(ofrate), orig_brate(obrate) {}
+    //Comparison operator is needed by the boost::flyweight
+    bool operator==(const OrigReactRates& orr) const 
+    {
+        return orr.orig_frate==this->orig_frate && orr.orig_brate==this->orig_brate;
+    }
+    //Hashing is needed by the boost::flyweight    
+    friend std::size_t hash_value(OrigReactRates const& orr){
+        std::size_t seed = 0;
+        boost::hash_combine(seed,orr.orig_frate);
+        boost::hash_combine(seed,orr.orig_brate);
+        return seed;
+    }
+};
 
 class ReactionBase {
 protected:
-    float _forward_rate = 0.0;
-    float _backward_rate = 0.0;
-    reaction_num_t _id;
-    static reaction_num_t _max_id;
+    float _frate;
+    float _brate;
+    float _af;
+    float _ab;
+    flyweight<OrigReactRates> _orig_rates;
 public:
     // Constructors
-    ReactionBase (float f_rate, float b_rate) : _forward_rate(f_rate), _backward_rate(b_rate), _id(_max_id++){};
+    ReactionBase (float frate, float brate) : _frate(frate), _brate(brate), _af(0), _ab(0), _orig_rates(frate,brate)  {}
     ReactionBase (const ReactionBase &r) = delete; // no copying (including all derived classes)
     ReactionBase& operator=(ReactionBase &r) = delete;  // no assignment (including all derived classes)
     // Setters 
-    void setForwardRate(float rate){_forward_rate=rate;}
-    void setBackwardRate(float rate){_backward_rate=rate;}
+    void setFRate(float rate){_frate=rate;}
+    void setBRate(float rate){_brate=rate;}
     // Accessors 
-    float getForwardRate(float rate){return _forward_rate;}
-    float getBackwardRate(float rate){return _backward_rate;}
-    reaction_num_t reactionID() const {return _id;}
-    //Destructor
-    virtual ~ReactionBase() {
-        //std::cout << "Reaction, ID=" << _id << " is destroyed" << std::endl;
-    };
+    float getFRate(){return _frate;}
+    float getBRate(){return _brate;}
+    float getOrigFRate(){return _orig_rates.get().orig_frate;}
+    float getOrigBRate(){return _orig_rates.get().orig_brate;}
+    float getFPropensity() {return _af;}
+    float getBPropensity() {return _ab;}
     //Fire Reactions
-    void doStep(bool forward) {this->doStepImpl(forward);}
-    void printSelf() {this->printSelfImpl();}
+    void makeFStep() {this->makeFStepImpl(); }
+    void makeBStep() {this->makeBStepImpl(); }
+    void updateFPropensity() {this->updateFPropensityImpl();}
+    void updateBPropensity() {this->updateBPropensityImpl();}
+    void updatePropensities() {updateFPropensity(); updateBPropensity();}
+    void printSelf() {
+        std::cout << "Reaction, ptr=" << this << "\n";
+        std::cout << "OrigRates: " << getOrigFRate() << ", " << getOrigBRate() << "\n";
+        std::cout << "CurrRates: " << getFRate() << ", " << getBRate() << "\n";
+
+        this->printSelfImpl();
+    }
     // (Implementation: Virtual Functions)
 protected:
-    virtual void doStepImpl(bool forward) = 0;
+    virtual void makeFStepImpl() = 0;
+    virtual void makeBStepImpl() = 0;
+    virtual void updateFPropensityImpl() = 0;
+    virtual void updateBPropensityImpl() = 0;
     virtual void printSelfImpl() = 0;
+    //Destructor
+    virtual ~ReactionBase() {};
 };
 
 
 template <unsigned char M,unsigned char N> 
 class Reaction : public ReactionBase {
 protected:
-    std::array<Species*, M+N> _Species;
+    std::array<Species*, M> _LSpecies;
+    std::array<Species*, N> _RSpecies;
 public:
-    Reaction<M,N>(float f_rate, float b_rate, std::array<Species*, M+N> &species) : 
-    ReactionBase(f_rate, b_rate), _Species(std::move(species)) {
-        for(int i=0; i<M+N;++i){
-            Species *s = this->_Species.at(i);
-            bool left = (i<M) ? true : false;
-            s->addReaction(this, left);
-        }
+    Reaction<M,N>(float f_rate, float b_rate, std::array<Species*, M> &LSpecies, std::array<Species*, N> &RSpecies) : 
+    ReactionBase(f_rate, b_rate), _LSpecies(LSpecies), _RSpecies(RSpecies) {
+        for(auto s : LSpecies)
+            s->addFReaction(this);
+        for(auto s : RSpecies)
+            s->addBReaction(this);
     }
     ~Reaction<M,N>(){
-        for(int i=0; i<M+N;++i)
-            this->_Species.at(i)->removeReaction(this);
+        for(auto s : _LSpecies)
+            s->removeFReaction(this);
+        for(auto s : _RSpecies)
+            s->removeBReaction(this);
     }
-public:
-    void doStepImpl(bool forward){
-        species_copy_incr_t delta; 
-        for(int i=0; i<M+N;++i){
-            delta = (forward && i<M) ? -1 : 1;
-            Species *s = this->_Species.at(i);
-            //std::cout << "i=" << i << ", delta=" << delta << "\n";
-            s->incrementN(delta);
-        }
+    void makeFStepImpl() override {
+        for(auto s : _LSpecies)
+            s->down();
+        for(auto s : _RSpecies)
+            s->up();
+
     }
-    void printSelfImpl() {
-        std::cout << "Reaction, ID=" << _id << "\n";
-        for(auto s: this->_Species){
+    void makeBStepImpl() override {
+        for(auto s : _LSpecies)
+            s->up();
+        for(auto s : _RSpecies)
+            s->down();
+    }
+    void printSelfImpl() override {
+        std::cout << "\nReactants\n";
+        for(auto s : _LSpecies)
             s->printSelf();
-        }
+        std::cout << "Products:\n";
+        for(auto s : _RSpecies)
+            s->printSelf();
     }
 };
 
-
-//struct ReactionNode {
-//    float tau;
-//    reaction_num_t rid;
-//    bool forward;
-//}; 
+template<> class Reaction<1,1> : public ReactionBase {
+protected:
+    Species& _lspecies;
+    Species& _rspecies;
+public:
+    Reaction<1,1>(float f_rate, float b_rate, Species &lspecies, Species &rspecies) : 
+    ReactionBase(f_rate, b_rate), _lspecies(lspecies), _rspecies(rspecies) {
+        _lspecies.addFReaction(this);
+        _rspecies.addFReaction(this);
+    }
+    ~Reaction<1,1>(){
+        _lspecies.removeFReaction(this);
+        _rspecies.removeFReaction(this);
+    }
+    void updateFPropensityImpl() override {
+        _af=_frate*_lspecies.getN();
+    }
+    void updateBPropensityImpl() override {
+        _ab=_brate*_rspecies.getN();
+    }
+    void makeFStepImpl() override { 
+        _lspecies.down();
+        _rspecies.up();
+        updatePropensities();
+    }
+    void makeBStepImpl() override { 
+        _lspecies.up();
+        _rspecies.down();
+        updatePropensities();
+    }
+    void printSelfImpl() override {
+        std::cout << "template<> Reaction<1,1>...\n";
+        std::cout << "\nReactants\n";
+        _lspecies.printSelf();
+        std::cout << "Products:\n";
+        _rspecies.printSelf();
+    }
+};
 
 #endif

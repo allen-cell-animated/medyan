@@ -10,5 +10,4 @@
 
 #include "Reaction.h"
 
-reaction_num_t ReactionBase::_max_id=0;
 

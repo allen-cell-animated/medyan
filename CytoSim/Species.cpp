@@ -15,29 +15,12 @@ std::vector<std::string> SpeciesType::_vec_type_name = {"Unknown", "Bulk", "Diff
 
 void Species::printSelf() const {
     std::cout << "Species: " << getFullName() << ", copy_num=" << (int)this->_n << ", ptr=" << (void*)this << std::endl;
-    std::cout << "This species is involved in the following Reactions: \nAs a reactant:\n";
-    for(auto &r : _reactions[0])
-        std::cout << r << ",";
-    std::cout << "\nAs a product:\n";
-    for(auto &r : _reactions[1])
-        std::cout << r << ",";
-    std::cout << "\n";
-    if(_bead!=nullptr){
-        std::cout << "Species ptr->" << this << " is connected to bead, ptr->" << _bead << std::endl; 
-    }
+//    std::cout << "This species is involved in the following Reactions: \nAs a reactant:\n";
+//    for(auto &r : _freactions)
+//        std::cout << r << ",";
+//    std::cout << "\nAs a product:\n";
+//    for(auto &r : _breactions)
+//        std::cout << r << ",";
+//    std::cout << "\n";
 }
 
-void Bead::printSelf() const {
-    std::cout << "Bead, associated with Species: " << _species->getFullName() + "], with coordinates (" << x() << ", " << y() << ", " << z() << ")" << std::endl; 
-}
-//Species::~Species(){
-//    std::cout << "~Species(): " + _type.get().getName() + "[" + _type.get().getTypeAsString() + "]"
-//    << " is being destroyed\n";
-//    for(int i=0; i<2;++i){
-//        for(auto &r : _reactions[i]){
-//            std::cout << "~Species(): " << typeid(r).name() << std::endl;
-//            delete r;
-//            r=nullptr;
-//        }
-//    }
-//}
