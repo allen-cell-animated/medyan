@@ -7,3 +7,5 @@
 //
 
 #include <iostream>
+#include "ChemNRM.h"
+#include <boost/heap/pairing_heap.hpp>

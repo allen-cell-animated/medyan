@@ -105,20 +105,20 @@ public:
         for(auto s : _RSpecies)
             s->removeBReaction(this);
     }
-    void makeFStepImpl() override {
+    void makeFStepImpl() {
         for(auto s : _LSpecies)
             s->down();
         for(auto s : _RSpecies)
             s->up();
 
     }
-    void makeBStepImpl() override {
+    void makeBStepImpl() {
         for(auto s : _LSpecies)
             s->up();
         for(auto s : _RSpecies)
             s->down();
     }
-    void printSelfImpl() override {
+    void printSelfImpl()  {
         std::cout << "\nReactants\n";
         for(auto s : _LSpecies)
             s->printSelf();
@@ -142,23 +142,23 @@ public:
         _lspecies.removeFReaction(this);
         _rspecies.removeFReaction(this);
     }
-    void updateFPropensityImpl() override {
+    void updateFPropensityImpl() {
         _af=_frate*_lspecies.getN();
     }
-    void updateBPropensityImpl() override {
+    void updateBPropensityImpl() {
         _ab=_brate*_rspecies.getN();
     }
-    void makeFStepImpl() override { 
+    void makeFStepImpl() { 
         _lspecies.down();
         _rspecies.up();
         updatePropensities();
     }
-    void makeBStepImpl() override { 
+    void makeBStepImpl() { 
         _lspecies.up();
         _rspecies.down();
         updatePropensities();
     }
-    void printSelfImpl() override {
+    void printSelfImpl() {
         std::cout << "template<> Reaction<1,1>...\n";
         std::cout << "\nReactants\n";
         _lspecies.printSelf();

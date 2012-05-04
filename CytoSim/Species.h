@@ -72,10 +72,10 @@ public:
 
 class Species {
 private:
-    std::vector<ReactionBase *> _freactions = {};
-    std::vector<ReactionBase *> _breactions = {};
+    std::vector<ReactionBase *> _freactions;
+    std::vector<ReactionBase *> _breactions;
     flyweight<SpeciesType> _type;
-    species_copy_t _n=0;
+    species_copy_t _n;
 public:
     Species (const SpeciesType &type, species_copy_t n=0) : _type(type), _n(n) {}
     Species (const std::string &name, SType type, species_copy_t n=0) : _type(name,type), _n(n) {}
