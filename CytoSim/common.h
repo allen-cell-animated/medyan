@@ -11,10 +11,6 @@
 
 #include <cstdint>
 
-typedef int reaction_num_t;
-typedef int species_num_t;
-typedef int compartment_num_t;
-typedef int species_copy_t;//unsigned char
-typedef int species_copy_incr_t;//signed char
+typedef unsigned char species_copy_t;
 
 #endif

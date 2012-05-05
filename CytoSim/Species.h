@@ -25,6 +25,8 @@ class SpeciesType;
 
 class ReactionBase;
 
+typedef std::vector<ReactionBase*>::iterator VRB_ITERATOR;
+
 enum class SType : unsigned char {Bulk = 0, Diffusing = 1, Poly=2, PolyA=3, PolyM=4, ProxyA=5};
 
 class SpeciesType{
@@ -88,7 +90,7 @@ public:
     Species* clone() {return new Species(_type,0);}
     // Setters & Mutators
     void setN(species_copy_t n) {_n=n;}
-    void incrementN(species_copy_incr_t delta) {_n+=delta;}
+    void incrementN(species_copy_t delta) {_n+=delta;}
     void up() {_n+=1;}
     void down() {_n-=1;}
 
@@ -113,6 +115,11 @@ public:
     
     // Accessors 
     species_copy_t getN() const {return _n;}
+    std::vector<ReactionBase *> getFReactions(){return _freactions;}
+    VRB_ITERATOR beginFReactions() {return _freactions.begin();}
+    VRB_ITERATOR beginBReactions() {return _breactions.begin();}
+    VRB_ITERATOR endFReactions() {return _freactions.end();}
+    VRB_ITERATOR endBReactions() {return _breactions.end();}
     flyweight<SpeciesType> getType () const {return _type;}
     bool is_of_species_type(const std::string &name, SType type) const {
         return _type.get().is_of_type(name,type);
