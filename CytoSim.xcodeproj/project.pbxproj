@@ -14,6 +14,7 @@
 		F763ED281548FFED0069DA61 /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1D1548FFED0069DA61 /* Space.cpp */; };
 		F763ED291548FFED0069DA61 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F763ED2A1548FFED0069DA61 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
+		F7BDDE86155231EC0053817E /* ChemNRM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7BDDE85155231EC0053817E /* ChemNRM.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +46,9 @@
 		F763ED201548FFED0069DA61 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
 		F763ED211548FFED0069DA61 /* System.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = System.cpp; sourceTree = "<group>"; };
 		F763ED221548FFED0069DA61 /* System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = System.h; sourceTree = "<group>"; };
+		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
+		F7BDDE83155231CE0053817E /* ChemNRM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRM.h; sourceTree = "<group>"; };
+		F7BDDE85155231EC0053817E /* ChemNRM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRM.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,11 +85,14 @@
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
 				F763ED161548FFED0069DA61 /* main.cpp */,
+				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
 				F763ED181548FFED0069DA61 /* notes.txt */,
 				F763ED191548FFED0069DA61 /* ParseSystem.cpp */,
 				F763ED1A1548FFED0069DA61 /* ParseSystem.h */,
 				F763ED1B1548FFED0069DA61 /* Reaction.cpp */,
 				F763ED1C1548FFED0069DA61 /* Reaction.h */,
+				F7BDDE83155231CE0053817E /* ChemNRM.h */,
+				F7BDDE85155231EC0053817E /* ChemNRM.cpp */,
 				F763ED1D1548FFED0069DA61 /* Space.cpp */,
 				F763ED1E1548FFED0069DA61 /* Space.h */,
 				F763ED1F1548FFED0069DA61 /* Species.cpp */,
@@ -154,6 +161,7 @@
 				F763ED281548FFED0069DA61 /* Space.cpp in Sources */,
 				F763ED291548FFED0069DA61 /* Species.cpp in Sources */,
 				F763ED2A1548FFED0069DA61 /* System.cpp in Sources */,
+				F7BDDE86155231EC0053817E /* ChemNRM.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,6 +218,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -222,6 +231,7 @@
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				PRODUCT_NAME = "$(TARGET_NAME)";

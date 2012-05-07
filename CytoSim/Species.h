@@ -12,22 +12,26 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <unordered_map>
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
 
 #include <boost/flyweight.hpp>
 #include "common.h"
+#include "utility.h"
+
 
 using namespace boost::flyweights;
 
 class SpeciesType;
 
 
-class ReactionBase;
+class Reaction;
 
-typedef std::vector<ReactionBase*>::iterator VRB_ITERATOR;
+typedef std::vector<Reaction*>::iterator VR_ITER;
 
-enum class SType : unsigned char {Bulk = 0, Diffusing = 1, Poly=2, PolyA=3, PolyM=4, ProxyA=5};
+enum class SType : unsigned char {Unknown=0, Bulk = 1, Diffusing = 2, Poly=3, PolyA=4, PolyM=5, ProxyA=6};
 
 class SpeciesType{
 private:
@@ -74,8 +78,8 @@ public:
 
 class Species {
 private:
-    std::vector<ReactionBase *> _freactions;
-    std::vector<ReactionBase *> _breactions;
+    std::vector<Reaction *> _as_reactants;
+    std::vector<Reaction *> _as_products;
     flyweight<SpeciesType> _type;
     species_copy_t _n;
 public:
@@ -84,7 +88,7 @@ public:
     Species (const Species &r) = delete;
     Species& operator=(Species&) = delete;
     ~Species(){
-        assert((_freactions.empty() and _breactions.empty()) && "Major bug: Species should not contain Reactions when being destroyed.");
+        assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: Species should not contain Reactions when being destroyed.");
     }
     // Cloning
     Species* clone() {return new Species(_type,0);}
@@ -94,43 +98,62 @@ public:
     void up() {_n+=1;}
     void down() {_n-=1;}
 
-    void addFReaction(ReactionBase *r){_freactions.push_back(r);}
-    void addBReaction(ReactionBase *r){_breactions.push_back(r);}
+    void addAsReactant(Reaction *r){_as_reactants.push_back(r);}
+    void addAsProduct(Reaction *r){_as_products.push_back(r);}
     
-    void removeFReaction(const ReactionBase *r) {
-            auto rxit = std::find(_freactions.begin(),_freactions.end(),r);
-            if(rxit!=_breactions.end()){
-                _freactions.erase(rxit);
+    void removeAsReactant(const Reaction *r) {
+            auto rxit = std::find(_as_reactants.begin(),_as_reactants.end(),r);
+            if(rxit!=_as_products.end()){
+                _as_reactants.erase(rxit);
             }
 
     }
-    void removeBReaction(const ReactionBase *r) {
-        auto rxit = std::find(_breactions.begin(),_breactions.end(),r);
-        if(rxit!=_breactions.end()){
-            _breactions.erase(rxit);
+    void removeAsProduct(const Reaction *r) {
+        auto rxit = std::find(_as_products.begin(),_as_products.end(),r);
+        if(rxit!=_as_products.end()){
+            _as_products.erase(rxit);
         }
         
-    }
-
-    
+    }    
     // Accessors 
     species_copy_t getN() const {return _n;}
-    std::vector<ReactionBase *> getFReactions(){return _freactions;}
-    VRB_ITERATOR beginFReactions() {return _freactions.begin();}
-    VRB_ITERATOR beginBReactions() {return _breactions.begin();}
-    VRB_ITERATOR endFReactions() {return _freactions.end();}
-    VRB_ITERATOR endBReactions() {return _breactions.end();}
     flyweight<SpeciesType> getType () const {return _type;}
+    std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
+    std::vector<Reaction *> ReactantReactions(){return _as_reactants;}
+    std::vector<Reaction *> ProductReactions(){return _as_products;}
+    VR_ITER beginReactantReactions() {return _as_reactants.begin();}
+    VR_ITER beginProductReactions() {return _as_products.begin();}
+    VR_ITER endReactantReactions() {return _as_reactants.end();}
+    VR_ITER endProductReactions() {return _as_products.end();}
     bool is_of_species_type(const std::string &name, SType type) const {
         return _type.get().is_of_type(name,type);
     }
-    std::string getFullName() const {return _type.get().getName() + "[" + _type.get().getTypeAsString() + "]";}
+    //Utility
     void printSelf () const;
 };
 
-class SpeciesFactory {
+typedef std::unordered_map<std::string,std::unique_ptr<Species>> map_str_species;
     
-    
+class SpeciesContainer {
+public:
+    SpeciesContainer() = default;
+    SpeciesContainer(const SpeciesContainer&) = delete;
+    SpeciesContainer& operator=(SpeciesContainer&) = delete;
+    void addSpecies(const std::string &unq_key, const std::string &name, SType type, species_copy_t N){
+        auto it = _map_species.find(unq_key);
+        if(it!=_map_species.end())
+            throw std::invalid_argument("SpeciesContainer::getSpecies(...) this key already exists - a bug...");
+        _map_species.insert( map_str_species::value_type( unq_key, make_unique<Species>(name, type, N)));
+        //    map_species.emplace("A6",make_unique<Species>("A6", SType::Diffusing, 30)); // works with gcc 4.7
+    }
+    Species* getSpecies(const std::string &unq_key){
+        auto it = _map_species.find(unq_key);
+        if(it==_map_species.end())
+            throw std::out_of_range("SpeciesContainer::getSpecies(...) key error...");
+        return it->second.get();
+    }
+private:
+    map_str_species _map_species;
 };
 
     

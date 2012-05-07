@@ -7,60 +7,72 @@
 //
 
 #include <iostream>
+#include <boost/heap/pairing_heap.hpp>
+
 #include "System.h"
 #include "ChemNRM.h"
-#include <boost/heap/pairing_heap.hpp>
 
 using namespace std;
 
-
 int main(int argc, const char * argv[])
 {
-    Species A1("A1", SType::Diffusing, 25);
-    Species A2("A2", SType::Diffusing, 26);
-    Species A3("A3", SType::Diffusing, 27);
-    Species A4("A4", SType::Diffusing, 28);
-    Species A5("A5", SType::Diffusing, 29);
-
-    Species B1("B1", SType::Diffusing, 30);
-    Species B2("B2", SType::Diffusing, 31);
-    Species B3("B3", SType::Diffusing, 32);
-    Species B4("B4", SType::Diffusing, 33);
-    Species B5("B5", SType::Diffusing, 34);
+    SpeciesContainer sc;
+    sc.addSpecies("A1", "A1", SType::Diffusing, 25);
+    sc.addSpecies("A2", "A2", SType::Diffusing, 25);
+    sc.addSpecies("A3", "A3", SType::Diffusing, 25);
+    sc.addSpecies("A4", "A4", SType::Bulk, 25);
+    sc.addSpecies("A5", "A5", SType::Bulk, 25);
+    sc.addSpecies("A6", "A6", SType::Bulk, 25);
     
-    Species C1("C1", SType::Diffusing, 35);
-    Species C2("C2", SType::Diffusing, 36);
-    Species C3("C3", SType::Diffusing, 37);
-    Species C4("C4", SType::Diffusing, 38);
-    Species C5("C5", SType::Diffusing, 39);
-    
-    Reaction<2,1> r1 = { {&A1,&B1,&C1}, 3.0 };
-    Reaction<2,1> r2 = { {&A1,&B2,&C2}, 3.0 };
-    Reaction<2,1> r3 = { {&A1,&B3,&C3}, 3.0 };
-    Reaction<2,1> r4 = { {&A1,&B4,&C4}, 3.0 };
-    Reaction<2,1> r5 = { {&A1,&B5,&C5}, 3.0 };
+    Species* A1 = sc.getSpecies("A1");
+    Species* A2 = sc.getSpecies("A2");
+    Species* A3 = sc.getSpecies("A3");
+    Species* A4 = sc.getSpecies("A4");
+    Species* A5 = sc.getSpecies("A5");
+    Species* A6 = sc.getSpecies("A6");
+            
+    Reaction r1 = { {A1,A3,A5}, 2, 1, 3.2 };
+    Reaction r2 = { {A2,A4,A6}, 2, 1, 3.5 };
 
-    Reaction<2,1> r6 = { {&B2,&C2,&A1}, 3.0 };
-
-    
-    r1.printSelf();
-    cout << endl;
+    // Testing destructors
+    {
+        Reaction r3 = { {A1,A5,A6}, 2, 1, 3.7 };
+        Reaction r4 = { {A3,A4,A5}, 2, 1, 3.9 };
+        Reaction r5 = { {A1,A2,A4}, 2, 1, 4.1 };
+        cout << "\nTesting r2.getAffectedReactions():\n";
+        auto ar = r2.getAffectedReactions();
+        cout << "The following reaction," << endl;
+        r2.printSelf();
+        cout << "Affects these reactions:" << endl;
+        for(auto r: ar)
+            r->printSelf();
+    }
     
     for(int i=0; i<10; ++i)
         r1.makeStep();
-//    r1.makeStep();
-    r1.printSelf();
-    cout << "Currtent a=" << r1.computePropensity() << endl;
-    cout << "Pointer sizes, Species vs Reaction<1,1>" << sizeof A1 << " " << sizeof r1 << "\n\n" << endl;
+    for(int i=0; i<10; ++i)
+        r2.makeStep();
+
     
-    for(auto r = A1.beginBReactions(); r!=A1.endBReactions(); ++r)
-        (*r)->printSelf();
-    
-    cout << "\nTesting r1.getAffectedReactions():\n";
-    auto ar = r6.getAffectedReactions();
+    cout << "\nTesting r2.getAffectedReactions():\n";
+    auto ar = r2.getAffectedReactions();
+    cout << "The following reaction," << endl;
+    r2.printSelf();
+    cout << "Affects these reactions:" << endl;
     for(auto r: ar)
         r->printSelf();
     
+    cout << "\n\nTesting computePropensity() " << endl;
+    r2.printSelf();
+    cout << "Current a=" << r2.computePropensity() << endl;
+    cout << "Pointer sizes, Species vs Reaction, " << sizeof (*A1) << " " << sizeof r1 << "\n\n" << endl;
+    
+    for(auto r = A2->beginReactantReactions(); r!=A2->endReactantReactions(); ++r)
+        (*r)->printSelf();
+    
+
+    
+//    
 //    ReactionNode rn = {r1,true};
 //    rn.setTau(23.4);
 //    vector<ReactionNode> vrn = {rn};
