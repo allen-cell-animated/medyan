@@ -25,11 +25,11 @@
 using namespace boost::flyweights;
 
 class SpeciesType;
-
-
+class Species;
 class Reaction;
 
-typedef std::vector<Reaction*>::iterator VR_ITER;
+typedef std::vector<Reaction*>::iterator vr_iterator;
+typedef std::vector<Species*>::iterator vsp_iterator;
 
 enum class SType : unsigned char {Unknown=0, Bulk = 1, Diffusing = 2, Poly=3, PolyA=4, PolyM=5, ProxyA=6};
 
@@ -121,10 +121,10 @@ public:
     std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
     std::vector<Reaction *> ReactantReactions(){return _as_reactants;}
     std::vector<Reaction *> ProductReactions(){return _as_products;}
-    VR_ITER beginReactantReactions() {return _as_reactants.begin();}
-    VR_ITER beginProductReactions() {return _as_products.begin();}
-    VR_ITER endReactantReactions() {return _as_reactants.end();}
-    VR_ITER endProductReactions() {return _as_products.end();}
+    vr_iterator beginReactantReactions() {return _as_reactants.begin();}
+    vr_iterator beginProductReactions() {return _as_products.begin();}
+    vr_iterator endReactantReactions() {return _as_reactants.end();}
+    vr_iterator endProductReactions() {return _as_products.end();}
     bool is_of_species_type(const std::string &name, SType type) const {
         return _type.get().is_of_type(name,type);
     }

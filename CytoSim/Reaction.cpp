@@ -11,7 +11,7 @@
 
 using namespace std;
 
-std::vector<Reaction*> Reaction::_getAffectedReactions() {
+std::vector<Reaction*> Reaction::getAffectedReactions() {
     std::unordered_set<Reaction*> rxns;
     for(auto s : _species){
         rxns.insert(s->beginReactantReactions(),s->endReactantReactions());
@@ -36,7 +36,7 @@ void Reaction::_unregisterDependent(Reaction *r){
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : _species(species), _m(M), _rate(rate) {
     _species.shrink_to_fit();
     assert(_species.size()==(M+N) && "Reaction Ctor Bug");
-    _dependents=_getAffectedReactions();
+    _dependents=getAffectedReactions();
     for(auto s=_species.begin(); s<(_species.begin()+_m);++s)
     {
         for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
@@ -50,6 +50,7 @@ Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, un
     }
     std::for_each(_species.begin(), _species.begin()+_m, [this](Species* s){s->addAsReactant(this);} );
     std::for_each(_species.begin()+_m, _species.end(),   [this](Species* s){s->addAsProduct(this);} );
+    _rnode=nullptr;
 }   
 
 Reaction::~Reaction() {

@@ -10,7 +10,7 @@
 #include <boost/heap/pairing_heap.hpp>
 
 #include "System.h"
-#include "ChemNRM.h"
+#include "ChemNRMImpl.h"
 
 using namespace std;
 
@@ -33,26 +33,16 @@ int main(int argc, const char * argv[])
             
     Reaction r1 = { {A1,A3,A5}, 2, 1, 3.2 };
     Reaction r2 = { {A2,A4,A6}, 2, 1, 3.5 };
-
-    // Testing destructors
-    {
-        Reaction r3 = { {A1,A5,A6}, 2, 1, 3.7 };
-        Reaction r4 = { {A3,A4,A5}, 2, 1, 3.9 };
-        Reaction r5 = { {A1,A2,A4}, 2, 1, 4.1 };
-        cout << "\nTesting r2.getAffectedReactions():\n";
-        auto ar = r2.getAffectedReactions();
-        cout << "The following reaction," << endl;
-        r2.printSelf();
-        cout << "Affects these reactions:" << endl;
-        for(auto r: ar)
-            r->printSelf();
-    }
+    Reaction r3 = { {A1,A5,A6}, 2, 1, 3.7 };
+    Reaction r4 = { {A3,A4,A5}, 2, 1, 3.9 };
+    Reaction r5 = { {A1,A2,A4}, 2, 1, 4.1 };
     
     for(int i=0; i<10; ++i)
         r1.makeStep();
     for(int i=0; i<10; ++i)
         r2.makeStep();
-
+    for(int i=0; i<10; ++i)
+        r3.makeStep();
     
     cout << "\nTesting r2.getAffectedReactions():\n";
     auto ar = r2.getAffectedReactions();
@@ -71,6 +61,29 @@ int main(int argc, const char * argv[])
         (*r)->printSelf();
     
 
+    boost_heap heap;
+    RNode rn1(r1,heap);
+    RNode rn2(r2,heap);
+    RNode rn3(r3,heap);
+    // Testing destructors
+    {
+        RNode rn4(r4,heap);
+        RNode rn5(r5,heap);
+        rn5.printSelf();
+        rn5.printDependents();
+    }
+    
+
+    PQNode xx = heap.top();
+    RNode *yy = xx.rnode;
+
+    cout << "Pointer sizes, ReactionNodeNRM: " << sizeof (*yy)  << ", PQNode: " << sizeof xx << ", heap size, " << heap.size() << endl;
+    
+    yy->printSelf();
+    yy->makeStep(0.0);
+    yy->updateHeap();
+    yy->printSelf();
+    yy->printDependents();
     
 //    
 //    ReactionNode rn = {r1,true};
