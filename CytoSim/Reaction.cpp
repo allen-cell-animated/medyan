@@ -22,51 +22,17 @@ std::vector<Reaction*> Reaction::getAffectedReactions() {
     return std::vector<Reaction*>(rxns.begin(),rxns.end());
 }
 
-void Reaction::_registerNewDependent(Reaction *r){
-    if(std::find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
-        _dependents.push_back(r);
-}
-
-void Reaction::_unregisterDependent(Reaction *r){
-    auto it=std::find(_dependents.begin(),_dependents.end(),r);
-    if(it!=_dependents.end())
-        _dependents.erase(it);
-}
-
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : _species(species), _m(M), _rate(rate) {
     _species.shrink_to_fit();
     assert(_species.size()==(M+N) && "Reaction Ctor Bug");
-    _dependents=getAffectedReactions();
-    for(auto s=_species.begin(); s<(_species.begin()+_m);++s)
-    {
-        for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
-            if(this!=(*r))
-                (*r)->_registerNewDependent(this);
-        }
-        for(auto r = (*s)->beginProductReactions(); r!=(*s)->endProductReactions(); ++r){
-            if(this!=(*r))
-                (*r)->_registerNewDependent(this);
-        }
-    }
-    std::for_each(_species.begin(), _species.begin()+_m, [this](Species* s){s->addAsReactant(this);} );
-    std::for_each(_species.begin()+_m, _species.end(),   [this](Species* s){s->addAsProduct(this);} );
+    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->addAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->addAsProduct(this);} );
     _rnode=nullptr;
 }   
 
 Reaction::~Reaction() {
-    std::for_each(_species.begin(), _species.begin()+_m, [this](Species* s){s->removeAsReactant(this);} );
-    std::for_each(_species.begin()+_m, _species.end(),   [this](Species* s){s->removeAsProduct(this);} );
-    for(auto s=_species.begin(); s<(_species.begin()+_m);++s)
-    {
-        for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
-            (*r)->_unregisterDependent(this);
-//            cout << "Reaction::~Reaction(), unregistered dependent reaction, " << this << ", from, " << (*r) << endl; 
-        }
-        for(auto r = (*s)->beginProductReactions(); r!=(*s)->endProductReactions(); ++r){
-            (*r)->_unregisterDependent(this);
-//            cout << "Reaction::~Reaction(), unregistered dependent reaction, " << this << ", from, " << (*r) << endl; 
-        }
-    }
+    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->removeAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->removeAsProduct(this);} );
 };
 
 void Reaction::printSelf() {

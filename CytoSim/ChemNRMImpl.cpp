@@ -15,7 +15,7 @@ using namespace std;
 
 
 ReactionNodeNRM::ReactionNodeNRM(Reaction &r,  boost_heap &bh) : _dependents(0), _heap(bh), _react (r) {
-    std::cout << "ReactionNodeNRM ctor, ptr=" << this << ", self handle, " << std::endl;
+//    std::cout << "ReactionNodeNRM ctor, ptr=" << this << ", self handle, " << std::endl;
     _react.setRnode(this);
     auto rdeps=_react.getAffectedReactions();
     for(auto r : rdeps){
@@ -23,7 +23,7 @@ ReactionNodeNRM::ReactionNodeNRM(Reaction &r,  boost_heap &bh) : _dependents(0),
         if(rn!=nullptr)
             _dependents.push_back(rn);
     }
-    std::cout << "Deps: " << _dependents.size() << std::endl; 
+//    std::cout << "Deps: " << _dependents.size() << std::endl; 
     for(auto s = _react.beginReactants(); s!=_react.endReactants(); ++s){
         for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
             auto rn = (*r)->getRnode();
@@ -37,7 +37,8 @@ ReactionNodeNRM::ReactionNodeNRM(Reaction &r,  boost_heap &bh) : _dependents(0),
         }
     }
     PQNode pqn = {this};
-    pqn.tau=std::numeric_limits<float>::quiet_NaN();
+    pqn.tau = std::numeric_limits<float>::quiet_NaN();
+    pqn.a = r.computePropensity();
     _handle = _heap.push(pqn);
 }
 
@@ -67,7 +68,7 @@ void ReactionNodeNRM::makeStep(float t) {
     // auto a=_react.computePropensity();
     //randDrawTau();
     //updateNode();
-    for(auto rit=_react.beginAffected();rit!=_react.endAffected();++rit){
+    // for(auto rit=_react.beginAffected();rit!=_react.endAffected();++rit){
         // get a_prev, tau_prev from the loop RNode
         // ...
 //        float a_prev=1.0; //fake
@@ -76,7 +77,7 @@ void ReactionNodeNRM::makeStep(float t) {
 //        float tau_new = (a_prev/a_new)*(tau_prev-t)+t;
         // set tau_new ,a_new to the loop RNode
         // updateNode() the loop RNode
-    }
+    // }
 }
 
 void ReactionNodeNRM::updateHeap(){_heap.update(_handle);}

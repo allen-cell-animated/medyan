@@ -26,7 +26,6 @@ typedef ReactionNodeNRM RNode;
 class Reaction {
 private:
     std::vector<Species*> _species;
-    std::vector<Reaction*> _dependents;
     RNode* _rnode;
     const unsigned char _m;
     float _rate;
@@ -44,8 +43,6 @@ public:
     float getRate() const {return _rate;}
     RNode* getRnode() const {return _rnode;} 
     //Iterators
-    vr_iterator beginAffected() {return _dependents.begin();}
-    vr_iterator endAffected() {return _dependents.begin();}
     vsp_iterator beginReactants() {return _species.begin();}
     vsp_iterator endReactants() {return _species.begin()+_m;}
     vsp_iterator beginProducts() {return _species.begin()+_m;}
@@ -53,17 +50,18 @@ public:
 
 //    //Fire Reactions
     void makeStep() {
-        std::for_each(_species.begin(), _species.begin()+_m, [](Species* s){s->incrementN(-1);} );
-        std::for_each(_species.begin()+_m, _species.end(),   [](Species* s){s->incrementN(+1);} );
+        for(auto sit = beginReactants(); sit!=endReactants(); ++sit) (*sit)->incrementN(-1);
+        for(auto sit = beginProducts(); sit!=endProducts(); ++sit) (*sit)->incrementN(+1);
     }
-    float computePropensity (){
-        return std::accumulate(_species.begin(), _species.begin()+_m, _rate, [](float prod, Species *s){ return prod*=s->getN();} );
+    float computePropensity () {
+        return std::accumulate(beginReactants(), endReactants(), 
+                               _rate, 
+                               [](float prod, Species *s){ 
+                                   return prod*=s->getN();
+                               } );
     }
     void printSelf(); 
     std::vector<Reaction*> getAffectedReactions();
-private:
-    void _registerNewDependent(Reaction *r);
-    void _unregisterDependent(Reaction *r);    
 };
 
 
