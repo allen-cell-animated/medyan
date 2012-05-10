@@ -60,30 +60,31 @@ int main(int argc, const char * argv[])
     for(auto r = A2->beginReactantReactions(); r!=A2->endReactantReactions(); ++r)
         (*r)->printSelf();
     
+    cout << "\n\n\n";
 
     boost_heap heap;
-    RNode rn1(r1,heap);
-    RNode rn2(r2,heap);
-    RNode rn3(r3,heap);
-    // Testing destructors
-    {
-        RNode rn4(r4,heap);
-        RNode rn5(r5,heap);
-        rn5.printSelf();
-        rn5.printDependents();
-    }
+ 
+    r1.printSelf();
+    r1.printDependents();
+    RNodeNRM rn1(&r1,heap);
+    RNodeNRM rn2(&r2,heap);
+    RNodeNRM rn3(&r3,heap);
+    RNodeNRM rn4(&r4,heap);
+    RNodeNRM rn5(&r5,heap);
+    rn1.setTau(3.3);
+    rn1.printSelf();
+    rn1.printDependents();
     
-
-    PQNode xx = heap.top();
-    RNode *yy = xx.rnode;
-
-    cout << "Pointer sizes, ReactionNodeNRM: " << sizeof (*yy)  << ", PQNode: " << sizeof xx << ", heap size, " << heap.size() << endl;
-    
-    yy->printSelf();
-    yy->makeStep(0.0);
-    yy->updateHeap();
-    yy->printSelf();
-    yy->printDependents();
+//    PQNode xx = heap.top();
+//    ReactionNodeNRM *yy = xx.ReactionNodeNRM;
+//
+//    cout << "Pointer sizes, ReactionNodeNRM: " << sizeof (*yy)  << ", PQNode: " << sizeof xx << ", heap size, " << heap.size() << endl;
+//    
+//    yy->printSelf();
+//    yy->makeStep(0.0);
+//    yy->updateHeap();
+//    yy->printSelf();
+//    yy->printDependents();
     
 //    
 //    ReactionNode rn = {r1,true};

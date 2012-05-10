@@ -20,15 +20,17 @@
 #include "common.h"
 #include "Species.h"
 
-class ReactionNodeNRM;
-typedef ReactionNodeNRM RNode;
+class RNode;
 
 class Reaction {
 private:
     std::vector<Species*> _species;
+    std::vector<Reaction*> _dependents;
     RNode* _rnode;
     const unsigned char _m;
     float _rate;
+    void _registerNewDependent(Reaction *r);
+    void _unregisterDependent(Reaction *r);
 public:
     // Constructor    
     Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);    
@@ -43,6 +45,8 @@ public:
     float getRate() const {return _rate;}
     RNode* getRnode() const {return _rnode;} 
     //Iterators
+    vr_iterator beginAffected() {return _dependents.begin();}
+    vr_iterator endAffected() {return _dependents.end();}
     vsp_iterator beginReactants() {return _species.begin();}
     vsp_iterator endReactants() {return _species.begin()+_m;}
     vsp_iterator beginProducts() {return _species.begin()+_m;}
@@ -60,7 +64,8 @@ public:
                                    return prod*=s->getN();
                                } );
     }
-    void printSelf(); 
+    void printSelf () ; 
+    void printDependents() ;
     std::vector<Reaction*> getAffectedReactions();
 };
 

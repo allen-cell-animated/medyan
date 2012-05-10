@@ -12,44 +12,49 @@
 #include <boost/heap/binomial_heap.hpp>
 
 #include "Reaction.h"
+#include "ChemNRM.h"
 
-class ReactionNodeNRM;
 class PQNode;
+class RNodeNRM;
+
 typedef boost::heap::binomial_heap<PQNode> boost_heap;
 typedef boost::heap::binomial_heap<PQNode>::handle_type handle_t;
 
-class ReactionNodeNRM {
+class PQNode {
+public: 
+    RNodeNRM *_rn;
+    double _tau;
+    friend class RNodeNRM;
+    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (std::numeric_limits<float>::quiet_NaN()) {}
+    bool operator<(PQNode const &rhs) const{
+        return _tau < rhs._tau;
+    }
+};
+
+class RNode{
+};
+
+class RNodeNRM : public RNode {
 private:
-    std::vector<ReactionNodeNRM*> _dependents;
-    boost_heap& _heap;
-    Reaction &_react;
     handle_t _handle;
+    Reaction *_react;
+    float _a;
 public:
-    ReactionNodeNRM(Reaction &r, boost_heap &bh);
-    ~ReactionNodeNRM();
-    ReactionNodeNRM(const ReactionNodeNRM& rhs) = delete;
-    ReactionNodeNRM& operator=(ReactionNodeNRM &rhs) = delete;
-    Reaction& getReaction() {return _react;};
+    RNodeNRM(Reaction *r, boost_heap &heap);
+    RNodeNRM(const RNodeNRM& rhs) = delete;
+    RNodeNRM& operator=(RNodeNRM &rhs) = delete;
+    Reaction* getReaction() const {return _react;};
     void updateHeap();
-    float getTau() const;
-    handle_t& getHandle();
-    void setTau(float tau);
-    void registerNewDependent(ReactionNodeNRM *rn); 
-    void unregisterDependent(ReactionNodeNRM *rn);
+//    float getTau() const;
+//    void setTau(float tau);
+    float getTau() const {return (*_handle)._tau;}
+    void setTau(float tau) {(*_handle)._tau=tau;}
+    handle_t& getHandle() {return _handle;}
     void makeStep(float t);
     void printSelf() const;
     void printDependents() const;
     //    void randDrawTau();
-}; 
-
-
-struct PQNode {
-    ReactionNodeNRM *rnode;
-    float tau;
-    float a;
-    bool operator<(PQNode const &rhs) const{
-        return tau < rhs.tau;
-    }
 };
+
 
 #endif
