@@ -12,9 +12,10 @@ using namespace std;
 
 #include "ChemNRMImpl.h"
 
-RNodeNRM::RNodeNRM(Reaction *r, boost_heap &heap) : _react(r), _a (0) {
+RNodeNRM::RNodeNRM(Reaction *r, boost_heap &heap) : _react(r) {
     _react->setRnode(this);
     _handle = heap.emplace(this);
+    _a = _react->computePropensity ();
 }
 
 

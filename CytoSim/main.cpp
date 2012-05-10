@@ -67,13 +67,21 @@ int main(int argc, const char * argv[])
     r1.printSelf();
     r1.printDependents();
     RNodeNRM rn1(&r1,heap);
+    rn1.setTau(1.1);
     RNodeNRM rn2(&r2,heap);
+    rn2.setTau(2.2);
     RNodeNRM rn3(&r3,heap);
+    rn3.setTau(3.3);
     RNodeNRM rn4(&r4,heap);
+    rn4.setTau(4.4);
     RNodeNRM rn5(&r5,heap);
-    rn1.setTau(3.3);
+    rn5.setTau(5.5);
+
     rn1.printSelf();
     rn1.printDependents();
+    
+    cout << "Pointer sizes, RNodeNRM: " << sizeof rn1  << ", PQNode: " << sizeof (*rn1.getHandle()) << ", heap size, " << heap.size() << endl;
+
     
 //    PQNode xx = heap.top();
 //    ReactionNodeNRM *yy = xx.ReactionNodeNRM;

@@ -45,8 +45,6 @@ public:
     RNodeNRM& operator=(RNodeNRM &rhs) = delete;
     Reaction* getReaction() const {return _react;};
     void updateHeap();
-//    float getTau() const;
-//    void setTau(float tau);
     float getTau() const {return (*_handle)._tau;}
     void setTau(float tau) {(*_handle)._tau=tau;}
     handle_t& getHandle() {return _handle;}
