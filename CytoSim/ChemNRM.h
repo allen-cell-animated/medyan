@@ -9,7 +9,25 @@
 #ifndef CytoSim_ChemNRM_h
 #define CytoSim_ChemNRM_h
 
+#include <memory>
+#include "Reaction.h"
 
+class ChemNRMImpl;
 
+class ChemNRM {
+public:
+    ChemNRM();
+    ChemNRM(const ChemNRM &rhs) = delete;
+    ChemNRM& operator=(ChemNRM &rhs) = delete;
+    void initialize();
+    void addReaction(Reaction *r);
+    void removeReaction(Reaction *r);
+    void run(int steps);
+    size_t getSize() const;
+    float getTime() const;
+    void printReactions() const;
+private:
+    std::unique_ptr<ChemNRMImpl> _pimpl;
+};
 
 #endif

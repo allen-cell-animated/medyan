@@ -23,14 +23,6 @@
 class RNode;
 
 class Reaction {
-private:
-    std::vector<Species*> _species;
-    std::vector<Reaction*> _dependents;
-    RNode* _rnode;
-    const unsigned char _m;
-    float _rate;
-    void _registerNewDependent(Reaction *r);
-    void _unregisterDependent(Reaction *r);
 public:
     // Constructor    
     Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);    
@@ -67,6 +59,15 @@ public:
     void printSelf () ; 
     void printDependents() ;
     std::vector<Reaction*> getAffectedReactions();
+private:
+    std::vector<Species*> _species;
+    std::vector<Reaction*> _dependents;
+    RNode* _rnode;
+    const unsigned char _m;
+    float _rate;
+    void _registerNewDependent(Reaction *r);
+    void _unregisterDependent(Reaction *r);
+
 };
 
 

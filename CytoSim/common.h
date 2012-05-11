@@ -11,6 +11,6 @@
 
 #include <cstdint>
 
-typedef unsigned char species_copy_t;
+typedef unsigned short species_copy_t;
 
 #endif
