@@ -16,7 +16,7 @@
 
 #include "utility.h"
 #include "Reaction.h"
-#include "ChemNRM.h"
+#include "ChemSim.h"
 
 class PQNode;
 class RNodeNRM;
@@ -73,10 +73,10 @@ private:
     double _a;
 };
 
-class ChemNRMImpl {
+class ChemNRMImpl : public ChemSimImpl {
 public:
     ChemNRMImpl() : 
-    _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _t(0.0), _n_reacts(0) {}
+    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _t(0.0), _n_reacts(0) {}
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     ChemNRMImpl& operator=(ChemNRMImpl &rhs) = delete;
     ~ChemNRMImpl();

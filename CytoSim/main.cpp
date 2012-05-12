@@ -11,7 +11,7 @@
 
 #include "System.h"
 #include "ChemNRMImpl.h"
-#include "ChemNRM.h"
+#include "ChemSim.h"
 
 using namespace std;
 
@@ -66,7 +66,8 @@ int main(int argc, const char * argv[])
     
     cout << "\n\n\n";
 
-    ChemNRM chem;
+    ChemNRMImpl chem_nrm_impl;
+    ChemSim chem(&chem_nrm_impl);
     chem.addReaction(&r1);
     chem.addReaction(&r2);
     chem.addReaction(&r3);
@@ -74,7 +75,7 @@ int main(int argc, const char * argv[])
     chem.addReaction(&r5);
     chem.addReaction(&r6);
     
-    cout << "Num of Reactions is: " << chem.getSize() << ", current time is " << chem.getTime() << endl;
+    // cout << "Num of Reactions is: " << chem.getSize() << ", current time is " << chem.getTime() << endl;
     
     chem.initialize();
 
