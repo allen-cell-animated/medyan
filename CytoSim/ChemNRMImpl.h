@@ -27,7 +27,8 @@ typedef boost::heap::pairing_heap<PQNode>::handle_type handle_t;
 
 class PQNode {
 public:
-    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (std::numeric_limits<float>::quiet_NaN()) {}
+    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (std::numeric_limits<double>::infinity()) {}
+    ~PQNode(){_rn=nullptr;}
     bool operator<(PQNode const &rhs) const{
         return _tau > rhs._tau;
     }
@@ -39,27 +40,37 @@ private:
 };
 
 class RNode{
+public:
+    virtual ~RNode() {}
+    virtual void activateReaction() = 0;
+    virtual void passivateReaction() = 0;    
 };
 
 class RNodeNRM : public RNode {
 public:
-    RNodeNRM(Reaction *r, boost_heap &heap);
+    RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm);
     RNodeNRM(const RNodeNRM& rhs) = delete;
     RNodeNRM& operator=(RNodeNRM &rhs) = delete;
+    ~RNodeNRM(); 
+    void generateNewRandTau();
     Reaction* getReaction() const {return _react;};
-    void updateHeap(boost_heap &heap);
-    float getTau() const {return (*_handle)._tau;}
-    void setTau(float tau) {(*_handle)._tau=tau;}
+    void updateHeap();
+    double getTau() const {return (*_handle)._tau;}
+    void setTau(double tau) {(*_handle)._tau=tau;}
     handle_t& getHandle() {return _handle;}
-    float getPropensity() const {return _a;}
+    double getPropensity() const {return _a;}
+    int getReactantsProduct() {return _react->getReactantsProduct();};
     void reComputePropensity() {_a=_react->computePropensity ();}
     void makeStep() {_react->makeStep();}
+    void activateReaction();
+    void passivateReaction();   
     void printSelf() const;
     void printDependents() const;
 private:
+    ChemNRMImpl &_chem_nrm;
     handle_t _handle;
     Reaction *_react;
-    float _a;
+    double _a;
 };
 
 class ChemNRMImpl {
@@ -68,30 +79,30 @@ public:
     _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _t(0.0), _n_reacts(0) {}
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     ChemNRMImpl& operator=(ChemNRMImpl &rhs) = delete;
+    ~ChemNRMImpl();
     size_t getSize() const {return _n_reacts;}
-    float getTime() const {return _t;}
-    void addReaction(Reaction *r) {_map_rnodes.emplace(r,make_unique<RNodeNRM>(r,_heap)); ++_n_reacts;}
-    void removeReaction(Reaction *r) {
-        _map_rnodes.erase(r);
-        --_n_reacts;
-        //if we are here, then a request was for a reaction which was not found - a bug
-        //throw std::runtime_error("Major bug: Trying to remove a reaction which is not registered.");
-    }
+    double getTime() const {return _t;}
+    boost_heap* getHeap() {return &_heap;} 
+    void addReaction(Reaction *r);
+    void removeReaction(Reaction *r);
+    double generateTau(double a);
     void initialize();
     void run(int steps) {
-        for(int i=0; i<steps; ++i)
-            _makeStep();
+        for(int i=0; i<steps; ++i){
+            makeStep();
+            if(i%1000000==0)
+                std::cout << "ChemNRMImpl::run(): i=" << i << std::endl;
+        }
     }
     void printReactions() const;
 private:
-    void _makeStep();
-    void _generateNewRandTau(RNodeNRM *rn);
+    void makeStep();
 private:
     std::unordered_map<Reaction*, std::unique_ptr<RNodeNRM>> _map_rnodes;
     boost_heap _heap;
     std::mt19937 _eng;
-    std::exponential_distribution<float> _exp_distr;
-    float _t;
+    std::exponential_distribution<double> _exp_distr;
+    double _t;
     size_t _n_reacts;
 };
 #endif

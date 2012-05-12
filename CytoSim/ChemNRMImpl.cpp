@@ -15,10 +15,21 @@ using namespace std;
 
 #include "ChemNRMImpl.h"
 
-RNodeNRM::RNodeNRM(Reaction *r, boost_heap &heap) : _react(r) {
+RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
+ _chem_nrm (chem_nrm), _react(r) {
     _react->setRnode(this);
-    _handle = heap.emplace(this);
+     boost_heap *heap = _chem_nrm.getHeap();
+    _handle = heap->emplace(this);
     _a = _react->computePropensity ();
+}
+
+RNodeNRM::~RNodeNRM () 
+{
+//    cout << "RNodeNRM::~RNodeNRM (): ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
+    _react->printSelf();
+    boost_heap *heap = _chem_nrm.getHeap();
+    heap->erase(_handle);
+    _react->setRnode(nullptr);
 }
 
 
@@ -37,52 +48,97 @@ void RNodeNRM::printDependents() const {
     cout << endl;
 }
 
-void RNodeNRM::updateHeap(boost_heap &heap) {
-    heap.update(_handle);
+void RNodeNRM::updateHeap() {
+    boost_heap *heap = _chem_nrm.getHeap();
+    heap->update(_handle);
+}
+
+void RNodeNRM::generateNewRandTau() {
+    reComputePropensity();//calculated new _a
+    double tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+    setTau(tau);
+    //    cout << "RNodeNRM::generateNewRandTau(): RNodeNRM ptr=" << this << ", was called. Prev tau=" << prev_tau 
+    //         << ", New tau=" << tau << endl;
+}
+
+void RNodeNRM::activateReaction() {
+    generateNewRandTau();
+    updateHeap();
+//    cout << "RNodeNRM::activateReaction(): ptr=" << _react << ", has been activated." << endl; 
+//    _react->printSelf();
+//    cout << "EndOfRNodeNRM::activateReaction..." << endl;
+
+}
+
+void RNodeNRM::passivateReaction() {
+    _a=0;
+    double tau = numeric_limits<double>::infinity();
+    setTau(tau);
+    updateHeap();
+//    cout << "RNodeNRM::passivateReaction(): ptr=" << _react << ", has been passivated, and tau set to inf." << endl; 
+//    _react->printSelf();
+//    cout << "EndOfRNodeNRM::passivateReaction..." << endl;
 }
 
 void ChemNRMImpl::initialize() {
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
-        _generateNewRandTau(rn);
-        rn->updateHeap(_heap);
+        rn->generateNewRandTau();
+        rn->updateHeap();
     }
 }
 
-void ChemNRMImpl::_generateNewRandTau(RNodeNRM *rn) {
-    rn->reComputePropensity();
-    float a = rn->getPropensity();
-    exponential_distribution<float>::param_type pm(a);
-    _exp_distr.param(pm);
-    float tau = _exp_distr(_eng) + _t;
-    float prev_tau = rn->getTau();
-    rn->setTau(tau);
-//    cout << "ChemNRMImpl::generateNewRandTau(): RNodeNRM ptr=" << rn << ", was called. Prev tau=" << prev_tau 
-//         << ", New tau=" << tau << endl;
+
+ChemNRMImpl::~ChemNRMImpl() {
+    _map_rnodes.clear();
 }
 
+double ChemNRMImpl::generateTau(double a){
+    exponential_distribution<double>::param_type pm(a);
+    _exp_distr.param(pm);
+    return _exp_distr(_eng);
+}
 
-void ChemNRMImpl::_makeStep() 
+void ChemNRMImpl::makeStep() 
 {
+//    cout << "[ChemNRMImpl::_makeStep(): Starting..." << endl;
     RNodeNRM *rn = _heap.top()._rn;
-    _t=rn->getTau();
+    double tau_top = rn->getTau();
+    if(tau_top==numeric_limits<double>::infinity()){
+        cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
+        return;
+    }
+    _t=tau_top;
     rn->makeStep();
-    _generateNewRandTau(rn);
-    rn->updateHeap(_heap);
-//    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. " << endl;
+    if(rn->getReactantsProduct()!=0){ // otherwise, RNodeNRM::passivateReaction() should have already been called, and tau reset to NAN
+        rn->generateNewRandTau();
+        rn->updateHeap();
+    }
+//    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. t=" << _t << "\n" << endl;
 //    rn->printSelf();
-    // Now updating dependencies
+    // Updating dependencies
     Reaction *r = rn->getReaction();
     for(auto rit = r->beginAffected(); rit!=r->endAffected(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
-        float a_old = rn_other->getPropensity();
+        double a_old = rn_other->getPropensity();
         rn_other->reComputePropensity();
-        float tau_old = rn_other->getTau();
-        float a_new = rn_other->getPropensity();
-        float tau_new = (a_old/a_new)*(tau_old-_t)+_t; 
+        double tau_old = rn_other->getTau();
+        double a_new = rn_other->getPropensity();
+        double tau_new = (a_old/a_new)*(tau_old-_t)+_t; 
         rn_other->setTau(tau_new);
-        rn_other->updateHeap(_heap);
+        rn_other->updateHeap();
     }
+//    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
+}
+
+void ChemNRMImpl::addReaction(Reaction *r) {
+    _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
+    ++_n_reacts;
+}
+
+void ChemNRMImpl::removeReaction(Reaction *r) {
+    _map_rnodes.erase(r);
+    --_n_reacts;
 }
 
 void ChemNRMImpl::printReactions() const {

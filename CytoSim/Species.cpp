@@ -13,6 +13,16 @@
 
 std::vector<std::string> SpeciesType::_vec_type_name = {"Unknown", "Bulk", "Diffusing", "Poly", "PolyA", "PolyM", "ProxyA"};
 
+void Species::_activateAssocReactions() {
+    for (auto &r : _as_reactants)
+        r->activateReaction();
+}
+
+void Species::_passivateAssocReacts() {
+    for (auto &r : _as_reactants)
+        r->passivateReaction();
+}
+
 void Species::printSelf() const {
     std::cout << "Species: " << getFullName() << ", copy_num=" << (int)this->_n << ", ptr=" << (void*)this << std::endl;
 //    std::cout << "This species is involved in the following Reactions: \nAs a reactant:\n";

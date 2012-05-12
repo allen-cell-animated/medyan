@@ -6,3 +6,7 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
+
+#include "Species.h"
+#include "Reaction.h"
+

@@ -24,6 +24,7 @@ int main(int argc, const char * argv[])
     sc.addSpecies("A4", "A4", SType::Bulk, 25);
     sc.addSpecies("A5", "A5", SType::Bulk, 25);
     sc.addSpecies("A6", "A6", SType::Bulk, 25);
+    sc.addSpecies("B1", "B1", SType::Bulk, 25);
     
     Species* A1 = sc.getSpecies("A1");
     Species* A2 = sc.getSpecies("A2");
@@ -31,12 +32,14 @@ int main(int argc, const char * argv[])
     Species* A4 = sc.getSpecies("A4");
     Species* A5 = sc.getSpecies("A5");
     Species* A6 = sc.getSpecies("A6");
+    Species* B1 = sc.getSpecies("B1");
             
     Reaction r1 = { {A1,A3,A5}, 2, 1, 100.0 };
     Reaction r2 = { {A2,A4,A6}, 2, 1, 50.0 };
     Reaction r3 = { {A1,A5,A6}, 2, 1, 25.0 };
     Reaction r4 = { {A3,A4,A5}, 2, 1, 10.0 };
     Reaction r5 = { {A1,A2,A4}, 2, 1, 5.0 };
+    Reaction r6 = { {B1,B1,A1}, 1, 2, 0.05 };
     
     for(int i=0; i<10; ++i)
         r1.makeStep();
@@ -63,34 +66,13 @@ int main(int argc, const char * argv[])
     
     cout << "\n\n\n";
 
-    boost_heap heap;
- 
-//    r1.printSelf();
-//    r1.printDependents();
-//    RNodeNRM rn1(&r1,heap);
-//    rn1.setTau(1.1);
-//    RNodeNRM rn2(&r2,heap);
-//    rn2.setTau(2.2);
-//    RNodeNRM rn3(&r3,heap);
-//    rn3.setTau(3.3);
-//    RNodeNRM rn4(&r4,heap);
-//    rn4.setTau(4.4);
-//    RNodeNRM rn5(&r5,heap);
-//    rn5.setTau(5.5);
-//
-//    rn1.printSelf();
-//    rn1.printDependents();
-    
-//    cout << "Pointer sizes, RNodeNRM: " << sizeof rn1  << ", PQNode: " << sizeof (*rn1.getHandle()) << ", heap size, " << heap.size() << endl;
-
-    cout << "\n\n\n";
-    
     ChemNRM chem;
     chem.addReaction(&r1);
     chem.addReaction(&r2);
     chem.addReaction(&r3);
     chem.addReaction(&r4);
     chem.addReaction(&r5);
+    chem.addReaction(&r6);
     
     cout << "Num of Reactions is: " << chem.getSize() << ", current time is " << chem.getTime() << endl;
     
@@ -98,7 +80,7 @@ int main(int argc, const char * argv[])
 
     cout << "Before starting the NRM runs" << endl;
     chem.printReactions();
-    chem.run(20);    
+    chem.run(10000000);    
     cout << "Final result:" << endl;
     chem.printReactions();
     
@@ -129,6 +111,8 @@ int main(int argc, const char * argv[])
 //    vrn2[0].makeStep();
 //    r1.printSelf();
 //    cout << "Propensities: " << r1.getFPropensity() << ", " << r1.getBPropensity() << endl;
+    
+    cout << "\n\n\n" << endl;
     return 0;
 }
 

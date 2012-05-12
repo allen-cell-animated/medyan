@@ -82,6 +82,9 @@ private:
     std::vector<Reaction *> _as_products;
     flyweight<SpeciesType> _type;
     species_copy_t _n;
+private:
+    void _activateAssocReactions();
+    void _passivateAssocReacts();
 public:
     Species (const SpeciesType &type, species_copy_t n=0) : _type(type), _n(n) {}
     Species (const std::string &name, SType type, species_copy_t n=0) : _type(name,type), _n(n) {}
@@ -94,9 +97,17 @@ public:
     Species* clone() {return new Species(_type,0);}
     // Setters & Mutators
     void setN(species_copy_t n) {_n=n;}
-    void incrementN(species_copy_t delta) {_n+=delta;}
-    void up() {_n+=1;}
-    void down() {_n-=1;}
+//    void incrementN(species_copy_t delta) {_n+=delta;}
+    void up() {
+        _n+=1;
+        if(_n==1)
+            _activateAssocReactions();
+    }
+    void down() {
+        _n-=1;
+        if(_n == 0)
+            _passivateAssocReacts();
+    }
 
     void addAsReactant(Reaction *r){_as_reactants.push_back(r);}
     void addAsProduct(Reaction *r){_as_products.push_back(r);}
