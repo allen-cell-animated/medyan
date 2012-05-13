@@ -23,6 +23,13 @@
 class RNode;
 
 class Reaction {
+private:
+    std::vector<Species*> _species;
+    std::vector<Reaction*> _dependents;
+    RNode* _rnode;
+    float _rate;
+    const unsigned char _m;
+    bool _signals_reaction_step; ///< If true, indicates a signal may be sent when a single step of this Reaction occurs
 public:
     // Constructor    
     Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);    
@@ -69,12 +76,6 @@ public:
     std::vector<Reaction*> getAffectedReactions();
     void registerNewDependent(Reaction *r);
     void unregisterDependent(Reaction *r);
-private:
-    std::vector<Species*> _species;
-    std::vector<Reaction*> _dependents;
-    RNode* _rnode;
-    const unsigned char _m;
-    float _rate;
 };
 
 

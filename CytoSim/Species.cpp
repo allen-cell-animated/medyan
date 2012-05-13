@@ -11,14 +11,14 @@
 #include "Species.h"
 #include "Reaction.h"
 
-std::vector<std::string> SpeciesType::_vec_type_name = {"Unknown", "Bulk", "Diffusing", "Poly", "PolyA", "PolyM", "ProxyA"};
+std::vector<std::string> SpeciesType::_vec_type_name = {"Bulk", "Diffusing", "Membrane", "Filament", "Walking", "Motors" };
 
-void Species::_activateAssocReactions() {
+void Species::activateAssocReactions() {
     for (auto &r : _as_reactants)
         r->activateReaction();
 }
 
-void Species::_passivateAssocReacts() {
+void Species::passivateAssocReacts() {
     for (auto &r : _as_reactants)
         r->passivateReaction();
 }
