@@ -24,7 +24,8 @@ std::vector<Reaction*> Reaction::getAffectedReactions() {
 }
 
 
-Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : _species(species), _m(M), _rate(rate) {
+Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate, bool is_signaling) : 
+_species(species), _rate(rate), _m(M), _is_signaling (is_signaling) {
     _species.shrink_to_fit();
     assert(_species.size()==(M+N) && "Reaction Ctor Bug");
     _dependents=getAffectedReactions();
@@ -46,7 +47,7 @@ void Reaction::registerNewDependent(Reaction *r){
 }
 
 void Reaction::activateReaction(){
-    if(getReactantsProduct()==0) // One of the reactants is still at zero copy n, no need to activate yet...
+    if(getProductOfReactants()==0) // One of the reactants is still at zero copy n, no need to activate yet...
         return;
     for(auto s=beginReactants(); s<endReactants();++s)
     {
@@ -84,6 +85,15 @@ void Reaction::passivateReaction() {
 }
 
 
+void Reaction::makeSignaling (SignalingManager &sm) {
+    sm.addSignalingReaction(this);
+    _is_signaling=true;
+}
+
+void Reaction::stopSignaling (SignalingManager &sm) {
+    sm.disconnect_semiprivate(this);
+    _is_signaling=false;
+}
 
 void Reaction::printSelf() {
     unsigned char i=0;

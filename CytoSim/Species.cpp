@@ -10,6 +10,7 @@
 
 #include "Species.h"
 #include "Reaction.h"
+#include "Signaling.h"
 
 std::vector<std::string> SpeciesType::_vec_type_name = {"Bulk", "Diffusing", "Membrane", "Filament", "Walking", "Motors" };
 
@@ -21,6 +22,16 @@ void Species::activateAssocReactions() {
 void Species::passivateAssocReacts() {
     for (auto &r : _as_reactants)
         r->passivateReaction();
+}
+
+void Species::makeSignaling (SignalingManager &sm) {
+    sm.addSignalingSpecies(this);
+    _is_signaling=true;
+}
+
+void Species::stopSignaling (SignalingManager &sm) {
+    sm.disconnect_semiprivate(this);
+    _is_signaling=false;
 }
 
 void Species::printSelf() const {

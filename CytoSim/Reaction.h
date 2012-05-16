@@ -29,10 +29,10 @@ private:
     RNode* _rnode;
     float _rate;
     const unsigned char _m;
-    bool _signals_reaction_step; ///< If true, indicates a signal may be sent when a single step of this Reaction occurs
+    bool _is_signaling; ///< If true, indicates a signal may be sent when a single step of this Reaction occurs
 public:
     // Constructor    
-    Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);    
+    Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate, bool is_signaling = false);    
     Reaction (const Reaction &r) = delete; // no copying (including all derived classes)
     Reaction& operator=(Reaction &r) = delete;  // no assignment (including all derived classes)
     // Destructor
@@ -43,12 +43,26 @@ public:
 //    // Accessors 
     float getRate() const {return _rate;}
     RNode* getRnode() const {return _rnode;} 
-    int getReactantsProduct()  {
+    int getProductOfReactants ()  {
         int prod = 1;
         for(auto sit = beginReactants(); sit!=endReactants(); ++sit) 
             prod*=(*sit)->getN();
         return prod;
     }
+    
+    /// Return true if this Species emits signals on copy number change
+    bool isSignaling () const {return _is_signaling;}
+    
+    /// Set the signaling behavior of this Reaction
+    /// @param is the SignalingManager which will call the associated Signal (typically initiated by the 
+    /// Gillespie-like simulation algorithm)
+    void makeSignaling (SignalingManager &sm);
+    
+    /// Destroy the signal associated with this Reaction
+    /// @param is the SignalingManager which manages signals
+    /// @note To start signaling again, makeSignaling(...) needs to be called
+    void stopSignaling (SignalingManager &sm);
+
     //Iterators
     vr_iterator beginAffected() {return _dependents.begin();}
     vr_iterator endAffected() {return _dependents.end();}

@@ -28,6 +28,7 @@
 #include "common.h"
 #include "utility.h"
 
+
 /// @addtogroup Chemistry
 /// @{
 
@@ -38,6 +39,7 @@ using namespace boost::flyweights;
 class SpeciesType;
 class Species;
 class Reaction;
+class SignalingManager;
 
 typedef std::vector<Reaction*>::iterator vr_iterator;
 typedef std::vector<Species*>::iterator vsp_iterator;
@@ -132,13 +134,14 @@ class Species {
     /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call
     friend class Reaction; 
 
-private:
+private: //Variables
     std::vector<Reaction *> _as_reactants; ///< a vector of [Reactions](@ref Reaction) where this Species is a Reactant
     std::vector<Reaction *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this Species is a Product
     flyweight<SpeciesType> _type; ///< This Species' type
     species_copy_t _n; ///< Current copy number of this Species
-    bool _signals_copy_change; ///< If true, indicates a signal may be sent when a copy number of this Reaction changes
-private:    
+    bool _is_signaling; ///< If true, indicates a signal may be sent when a copy number of this Reaction changes
+    
+private:  // Methods
     /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method 
     /// to activated previously passivated [Reactions](@ref Reaction), where this Species is a Reactant.
     void up() {
@@ -195,11 +198,13 @@ public:
     /// Constructors 
     /// @param type - is SpeciesType associated for this Species. 
     /// @param n - copy number
-    Species (const SpeciesType &type, species_copy_t n=0) : _type(type), _n(n) {}
+    Species (const SpeciesType &type, species_copy_t n=0, bool is_signaling = false) : 
+    _type(type), _n(n), _is_signaling(is_signaling) {}
 
     /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    Species (const std::string &name, SType type, species_copy_t n=0) : _type(name,type), _n(n) {}
+    Species (const std::string &name, SType type, species_copy_t n=0, bool is_signaling = false) : 
+    _type(name,type), _n(n), _is_signaling(is_signaling) {}
 
     /// deleted copy constructor and assignment operators - each Species is unique
     Species (const Species &r) = delete;
@@ -228,6 +233,19 @@ public:
     /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
     std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
     
+    /// Return true if this Species emits signals on copy number change
+    bool isSignaling () const {return _is_signaling;}
+    
+    /// Set the signaling behavior of this Species
+    /// @param is the SignalingManager which will call the associated Signal (typically initiated by the 
+    /// Gillespie-like simulation algorithm)
+    void makeSignaling (SignalingManager &sm);
+    
+    /// Destroy the signal associated with this Species
+    /// @param is the SignalingManager which manages signals
+    /// @note To start signaling again, makeSignaling(...) needs to be called
+    void stopSignaling (SignalingManager &sm);
+
     /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this Species 
     /// is involved as a Reactant
     std::vector<Reaction *> ReactantReactions(){return _as_reactants;}

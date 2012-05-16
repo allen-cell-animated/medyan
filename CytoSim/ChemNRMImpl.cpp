@@ -110,10 +110,11 @@ void ChemNRMImpl::makeStep()
     }
     _t=tau_top;
     rn->makeStep();
-    if(rn->getReactantsProduct()!=0){ // otherwise, RNodeNRM::passivateReaction() should have already been called, and tau reset to NAN
+    if(rn->getProductOfReactants()!=0){ // otherwise, RNodeNRM::passivateReaction() should have already been called, and tau reset to INF
         rn->generateNewRandTau();
         rn->updateHeap();
     }
+    
 //    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. t=" << _t << "\n" << endl;
 //    rn->printSelf();
     // Updating dependencies
@@ -127,6 +128,18 @@ void ChemNRMImpl::makeStep()
         double tau_new = (a_old/a_new)*(tau_old-_t)+_t; 
         rn_other->setTau(tau_new);
         rn_other->updateHeap();
+    }
+    
+    // Send signals
+    if(r->isSignaling())
+        _sm.emitReactionSignal(r);
+    for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
+        if((*sit)->isSignaling())
+            _sm.emitSpeciesSignal((*sit),-1);
+    }
+    for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
+        if((*sit)->isSignaling())
+            _sm.emitSpeciesSignal((*sit),1);
     }
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
 }

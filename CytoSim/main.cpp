@@ -37,8 +37,22 @@
 #include "System.h"
 #include "ChemNRMImpl.h"
 #include "ChemSim.h"
+#include "Signaling.h"
 
 using namespace std;
+
+void print_species (Species *s, int i){
+    cout << "print_species callback: " << s->getFullName() << ", copy_n=" << s->getN() << endl;
+}
+
+struct PrintSpecies {
+    void operator() (Species *s, int i){
+        cout << "PrintSpecies callback: i=" << _count << "\n";
+        s->printSelf();
+        ++_count;
+    }
+    int _count;
+};
 
 int main(int argc, const char * argv[])
 {
@@ -91,7 +105,23 @@ int main(int argc, const char * argv[])
     
     cout << "\n\n\n";
 
-    ChemNRMImpl chem_nrm_impl;
+    
+    SignalingManager sm;
+    A1->makeSignaling(sm);
+    PrintSpecies ps;
+    std::function<void (Species *, int)> psf(ps);
+    //    sm.connect(A1, print_species);
+    //    sm.connect(A1, PrintSpecies());
+    //    boost::signals2::shared_connection_block conn_a1(sm.connect(A1,psf), false);
+    boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](Species *s, int i){s->printSelf();}), false);
+
+    A2->makeSignaling(sm);
+    std::function<void (Species *, int)> psff = [](Species *s, int i){s->printSelf();};
+    sm.connect(A2,psff);
+    
+
+
+    ChemNRMImpl chem_nrm_impl(sm);
     ChemSim chem(&chem_nrm_impl);
     chem.addReaction(&r1);
     chem.addReaction(&r2);
@@ -106,7 +136,13 @@ int main(int argc, const char * argv[])
 
     cout << "Before starting the NRM runs" << endl;
     chem.printReactions();
-    chem.run(10000000);    
+    chem.run(100);   
+
+    A2->stopSignaling(sm);
+    conn_a1.block();
+//    sm.disconnect(A1,psf);
+    chem.run(100);   
+    
     cout << "Final result:" << endl;
     chem.printReactions();
     
