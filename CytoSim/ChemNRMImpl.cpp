@@ -26,7 +26,7 @@ RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
 RNodeNRM::~RNodeNRM () 
 {
 //    cout << "RNodeNRM::~RNodeNRM (): ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
-    _react->printSelf();
+//    _react->printSelf();
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
     _react->setRnode(nullptr);

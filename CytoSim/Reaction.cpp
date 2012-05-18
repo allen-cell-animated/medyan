@@ -100,7 +100,7 @@ void Reaction::printSelf() {
     for(auto s: _species){
         if(i==_m)
             cout << " ---> ";
-        cout << s->getFullName() << "[" << (int)s->getN() << "]";
+        cout << s->getFullName() << "{" << (int)s->getN() << "}";
         if(i<_m-1 || (i>=_m && i<_species.size()-1))
             cout << " + ";
         ++i;

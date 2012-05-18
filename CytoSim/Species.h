@@ -24,9 +24,9 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <boost/flyweight.hpp>
 #include "common.h"
 #include "utility.h"
+#include "SpeciesType.h"
 
 
 /// @addtogroup Chemistry
@@ -36,92 +36,12 @@
 /// which could be repeated thousands of times in many compartments. May help with cache access performance.
 using namespace boost::flyweights;
 
-class SpeciesType;
 class Species;
 class Reaction;
 class SignalingManager;
 
 typedef std::vector<Reaction*>::iterator vr_iterator;
 typedef std::vector<Species*>::iterator vsp_iterator;
-
-enum class SType : unsigned char {
-    Bulk = 0, ///< Species that have no spatial association (i.e. are "well-mixed") 
-    Diffusing = 1, ///< Species that diffuse between cytosolic compartments 
-    Membrane = 2, ///< Species that diffuse within a membrane 
-    Filament=3, ///< Species that comprise filaments (such as F-Actin)
-    Walking=4, ///< Species that can walk ("convectively") on filaments (like Myosin X)
-    Motors=5 ///< Species that bind to filaments and generate forces (like Myosin II)
-};
-
-    
-/// SpeciesType class represents the type of chemical Species (for example, a Species with name "Arp2/3" and SType Diffusing)
-
-/*! This class describes the type of Species. The description is based on a name (std::string) and SType (Bulk, Diffusing, etc.). 
- *  @note In the future may implement the Logging and Persistence interfaces. 
- *  @note SpeciesType is used by Species with the flyweight pattern, since in a large system millions of unique Species may exist,
- *        but only a handful of SpeciesType objects. For example: one ("F-Actin",Filament) may correspond to millions of individual 
- *        Species.
- */
-class SpeciesType {
-private:
-    std::string _name; ///< the descriptive name associated with this Species 
-    SType _type; ///< the type of species, such as Bulk, Diffusing, etc.
-    static std::vector<std::string> _vec_type_name; ///< this variable is used to help translate strings to enum values for the SType
-
-public:
-    ///Given a species name as a string and its SType, constructs the SpeciesType
-    SpeciesType(const std::string &name, SType type) : _name(name), _type(type) {}
-
-    ///Given a species name as a string and its type as a string, constructs the SpeciesType
-    SpeciesType(const SpeciesType &st) : _name(st._name), _type(st._type) {}
-    
-    ///The move constructor. May be needed for boost::flyweight?
-    SpeciesType(SpeciesType &&st) : _name(std::move(st._name)), _type(st._type) {}
-    SpeciesType& operator=(const SpeciesType& st) {
-        if(&st==this)
-            return *this;
-        _name=st._name;
-        _type=st._type;
-        return *this;    
-    }
-    
-    ///Assignment operators copies all fields. May be needed for boost::flyweight?
-    SpeciesType& operator=(SpeciesType&& st){
-        _name=std::move(st._name);
-        _type=st._type;
-        return *this;
-    }
-    
-    ///Equality operator use both species name and type to compare to SpeciesType objects
-    bool operator==(const SpeciesType& species_type) const 
-    {
-        return species_type.getName()==_name && species_type.getType()==_type;
-    }
-    
-    ///Returns the name associated with this SpeciesType as a string
-    std::string getName() const {return _name;}
-
-    
-    ///Returns the SType associated with this SpeciesType 
-    SType getType() const {return _type;}
-    
-    ///Returns a string representing this SpeciesType by concatanating its name and type 
-    std::string getTypeAsString () const {return _vec_type_name[static_cast<int>(_type)];}
-    
-    ///Return if true if this SpeciesType has name and SType given as parameters to this function 
-    bool is_of_type(const std::string &name, SType type) const {return name==_name && type==_type;}
-
-    ///boost::flyweight needs a hashing function, defined here.
-    friend std::size_t hash_value(SpeciesType const& species_type){
-        std::size_t seed = 0;
-        int type=static_cast<int>(species_type.getType());
-        boost::hash_combine(seed,species_type.getName());
-        boost::hash_combine(seed,type);
-//        std::cout << species_type.getName()+"[" + species_type.getTypeAsString() << "] hash_value called...\n";
-        return seed;
-    }
-};
-
 
     
 /// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
@@ -231,7 +151,7 @@ public:
     flyweight<SpeciesType> getType () const {return _type;}
 
     /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
+    std::string getFullName() const {return _type.get().getName() + "[" + _type.get().getTypeAsString() + "]";}
     
     /// Return true if this Species emits signals on copy number change
     bool isSignaling () const {return _is_signaling;}
@@ -279,6 +199,12 @@ public:
     /// Prints some helpful information about this Species. Should be used mainly for debugging 
     /// and development purposes.
     void printSelf () const;
+    
+    /// Print self into an iostream
+    friend std::ostream& operator<<(std::ostream& os, const Species& s){
+        os << s.getType() << "{" << s.getN() << "}";
+        return os;
+    }
 };
 
     

@@ -13,8 +13,6 @@
 #include "Reaction.h"
 #include "Species.h"
 #include "Compartment.h"
-#include "Space.h"
-#include "ParseSystem.h"
 
 
 #endif

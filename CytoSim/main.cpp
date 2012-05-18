@@ -174,6 +174,8 @@ int main(int argc, const char * argv[])
 //    r1.printSelf();
 //    cout << "Propensities: " << r1.getFPropensity() << ", " << r1.getBPropensity() << endl;
     
+    
+    cout << *A1 << endl;
     cout << "\n\n\n" << endl;
     return 0;
 }

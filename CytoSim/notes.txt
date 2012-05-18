@@ -1,9 +1,63 @@
+######################### 5/17/2012 ##########################
+Incorporating googletest framework
+
+http://code.google.com/p/googletest/wiki/XcodeGuide
+
+That link above is little outdated, but most information still applies. I used the svn 
+checkout and then had to manually change a number of build settings so it compiles 
+under XCode 4.3 and gcc 4.7. A framework was created, and examples worked fine.
+
+To create subfolders in XCode 4.3, first created them in Finder and then added them 
+to the XCode (using the Groups option instead of references folders - the latter did 
+not seem to work).
+
+There are several ways to link against gtest. At the end I linked against 
+libgtest_main. For the target TestSuite, the linker search directory need to be 
+specified, so libgtest_main can be found (despite gtest framework being added to 
+the dependencies). Now there is no need to have a main function - we can have 
+as many test files as we want, and gtest will run all of them one by one.  
+
+##############################################################
+
+
+######################### 5/17/2012 ##########################
+
+--> These are aparently not needed
+
+///The assignment operator, based on copy and swap idiom,
+///see [Copy&Swap](@ref http://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom]
+SpeciesType& operator=(SpeciesType other) 
+{
+    swap(*this, other);
+    return *this;
+} 
+
+///Swap non-member function is needed for the assignment operator
+friend void swap(SpeciesType& first, SpeciesType& second) // nothrow
+{
+    // enable ADL (not necessary in our case, but good practice)
+    using std::swap; 
+    swap(first._name, second._name); 
+    swap(first._type, second._type);
+}
+
+///Assignment operators copies all fields. May be needed for boost::flyweight?
+SpeciesType& operator=(SpeciesType&& st){
+    _name=std::move(st._name);
+    _type=st._type;
+    return *this;
+}
+##############################################################
+
+
+
+
 ######################### 4/22/2012 ##########################
 
-    Reaction (ARR_REAC_SPECIES &S, ARR_REAC_COEFF &c) : _id(_max_id++)
-    {   _S.swap(S);
-        _c.swap(c);      
-        std::cout << "Constructed" << std::endl;}
+Reaction (ARR_REAC_SPECIES &S, ARR_REAC_COEFF &c) : _id(_max_id++)
+{   _S.swap(S);
+    _c.swap(c);      
+    std::cout << "Constructed" << std::endl;}
 
 
 Species with an _id field (as shown, the class is packed into 64 bytes):
