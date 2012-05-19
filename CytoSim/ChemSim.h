@@ -12,6 +12,8 @@
 #include <memory>
 #include "Reaction.h"
 
+namespace chem {
+
 class ChemSimImpl {
 public:
     virtual ~ChemSimImpl() {};
@@ -37,4 +39,5 @@ private:
     ChemSimImpl* _pimpl;
 };
 
+} // end of namespace
 #endif

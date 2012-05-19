@@ -29,8 +29,7 @@
 #include "SpeciesType.h"
 
 
-/// @addtogroup Chemistry
-/// @{
+namespace chem {
 
 /// We use boost::flyweights to optimize access to highly redundant data, such as SpeciesType below, 
 /// which could be repeated thousands of times in many compartments. May help with cache access performance.
@@ -38,7 +37,7 @@ using namespace boost::flyweights;
 
 class Species;
 class Reaction;
-class SignalingManager;
+class ChemSignal;
 
 typedef std::vector<Reaction*>::iterator vr_iterator;
 typedef std::vector<Species*>::iterator vsp_iterator;
@@ -157,14 +156,14 @@ public:
     bool isSignaling () const {return _is_signaling;}
     
     /// Set the signaling behavior of this Species
-    /// @param is the SignalingManager which will call the associated Signal (typically initiated by the 
+    /// @param is the ChemSignal which will call the associated Signal (typically initiated by the 
     /// Gillespie-like simulation algorithm)
-    void makeSignaling (SignalingManager &sm);
+    void makeSignaling (ChemSignal &sm);
     
     /// Destroy the signal associated with this Species
-    /// @param is the SignalingManager which manages signals
+    /// @param is the ChemSignal which manages signals
     /// @note To start signaling again, makeSignaling(...) needs to be called
-    void stopSignaling (SignalingManager &sm);
+    void stopSignaling (ChemSignal &sm);
 
     /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this Species 
     /// is involved as a Reactant
@@ -195,10 +194,6 @@ public:
     bool is_of_species_type(const std::string &name, SType type) const {
         return _type.get().is_of_type(name,type);
     }
-    
-    /// Prints some helpful information about this Species. Should be used mainly for debugging 
-    /// and development purposes.
-    void printSelf () const;
     
     /// Print self into an iostream
     friend std::ostream& operator<<(std::ostream& os, const Species& s){
@@ -234,5 +229,6 @@ private:
     map_str_species _map_species;
 };
 
+} // end of namespace 
     
 #endif

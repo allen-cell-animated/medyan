@@ -32,6 +32,8 @@
  */
 
 #include <iostream>
+#include <fstream>
+
 #include <boost/heap/pairing_heap.hpp>
 
 #include "System.h"
@@ -39,7 +41,11 @@
 #include "ChemSim.h"
 #include "Signaling.h"
 
+
 using namespace std;
+using namespace chem;
+
+
 
 void print_species (Species *s, int i){
     cout << "print_species callback: " << s->getFullName() << ", copy_n=" << s->getN() << endl;
@@ -48,7 +54,7 @@ void print_species (Species *s, int i){
 struct PrintSpecies {
     void operator() (Species *s, int i){
         cout << "PrintSpecies callback: i=" << _count << "\n";
-        s->printSelf();
+        cout << *s;
         ++_count;
     }
     int _count;
@@ -56,6 +62,7 @@ struct PrintSpecies {
 
 int main(int argc, const char * argv[])
 {
+    
     SpeciesContainer sc;
     sc.addSpecies("A1", "A1", SType::Diffusing, 25);
     sc.addSpecies("A2", "A2", SType::Diffusing, 25);
@@ -106,17 +113,17 @@ int main(int argc, const char * argv[])
     cout << "\n\n\n";
 
     
-    SignalingManager sm;
+    ChemSignal sm;
     A1->makeSignaling(sm);
     PrintSpecies ps;
     std::function<void (Species *, int)> psf(ps);
     //    sm.connect(A1, print_species);
     //    sm.connect(A1, PrintSpecies());
     //    boost::signals2::shared_connection_block conn_a1(sm.connect(A1,psf), false);
-    boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](Species *s, int i){s->printSelf();}), false);
+    boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](Species *s, int i){cout << *s << endl;}), false);
 
     A2->makeSignaling(sm);
-    std::function<void (Species *, int)> psff = [](Species *s, int i){s->printSelf();};
+    std::function<void (Species *, int)> psff = [](Species *s, int i){cout << *s << endl;};
     sm.connect(A2,psff);
     
 
@@ -175,8 +182,7 @@ int main(int argc, const char * argv[])
 //    cout << "Propensities: " << r1.getFPropensity() << ", " << r1.getBPropensity() << endl;
     
     
-    cout << *A1 << endl;
-    cout << "\n\n\n" << endl;
+    cout << "\n" << endl;
     return 0;
 }
 

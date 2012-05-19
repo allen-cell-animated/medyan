@@ -20,6 +20,8 @@
 #include "common.h"
 #include "Species.h"
 
+namespace chem {
+
 class RNode;
 
 class Reaction {
@@ -54,14 +56,14 @@ public:
     bool isSignaling () const {return _is_signaling;}
     
     /// Set the signaling behavior of this Reaction
-    /// @param is the SignalingManager which will call the associated Signal (typically initiated by the 
+    /// @param is the ChemSignal which will call the associated Signal (typically initiated by the 
     /// Gillespie-like simulation algorithm)
-    void makeSignaling (SignalingManager &sm);
+    void makeSignaling (ChemSignal &sm);
     
     /// Destroy the signal associated with this Reaction
-    /// @param is the SignalingManager which manages signals
+    /// @param is the ChemSignal which manages signals
     /// @note To start signaling again, makeSignaling(...) needs to be called
-    void stopSignaling (SignalingManager &sm);
+    void stopSignaling (ChemSignal &sm);
 
     //Iterators
     vr_iterator beginAffected() {return _dependents.begin();}
@@ -92,5 +94,5 @@ public:
     void unregisterDependent(Reaction *r);
 };
 
-
+} // end of namespace 
 #endif

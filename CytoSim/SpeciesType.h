@@ -9,7 +9,21 @@
 #ifndef CytoSim_SpeciesType_h
 #define CytoSim_SpeciesType_h
 
+#include <boost/serialization/access.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
+
 #include <boost/flyweight.hpp>
+
+//class SpeciesType;
+//
+//namespace boost { namespace serialization {
+//template<class Archive>
+//    inline void save_construct_data(Archive & ar, const SpeciesType * t, const unsigned int file_version);
+//}}
+
+namespace chem {
 
 enum class SType : unsigned char {
     Bulk = 0, ///< Species that have no spatial association (i.e. are "well-mixed") 
@@ -33,7 +47,16 @@ enum class SType : unsigned char {
     private:
         std::string _name; ///< the descriptive name associated with this Species 
         SType _type; ///< the type of species, such as Bulk, Diffusing, etc.
-        static std::vector<std::string> _vec_type_name; ///< this variable is used to help translate strings to enum values for the SType
+    private:
+        /// This class can be serialized via Boost::Serialization 
+        /// empty f-n - because SpeciesType does not have default ctor, we have to use 
+        /// instead save_construct_data and load_construct_data
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version)
+        {
+        }  
+        /// Needed by Boost::Serialization machinery 
+        friend class boost::serialization::access;
     public:
         ///Given a species name as a string and its SType, constructs the SpeciesType
         SpeciesType(const std::string &name, SType type) : _name(name), _type(type) {}
@@ -41,13 +64,12 @@ enum class SType : unsigned char {
         ///Given a species name as a string and its type as a string, constructs the SpeciesType
         SpeciesType(const SpeciesType &st) : _name(st._name), _type(st._type) {}
         
-        ///The move constructor. May be needed for boost::flyweight?
+        ///The move constructor.
         SpeciesType(SpeciesType &&st) : _name(std::move(st._name)), _type(st._type) {}
 
-        ///Swap non-member function is needed for the implicit assignment operator
+        ///Specialize swap
         void swap(SpeciesType &other)
         {   
-            std::cout << "SpeciesType::swap(...) was called" << std::endl; 
             _name.swap(other._name);
             std::swap(_type,other._type);
         }
@@ -60,9 +82,9 @@ enum class SType : unsigned char {
             return *this;
         } 
         
-        ///Move assignment operator. 
+        ///Move assignment operator (i.e. rvalue asignment)
         SpeciesType& operator=(SpeciesType&& st){
-            _name=std::move(st._name);
+            _name=std::move(st._name); // steal resources
             _type=st._type;
             return *this;
         }
@@ -87,7 +109,7 @@ enum class SType : unsigned char {
         SType getType() const {return _type;}
         
         ///Returns a string representing this SpeciesType by concatanating its name and type 
-        std::string getTypeAsString () const {return _vec_type_name[static_cast<int>(_type)];}
+        std::string getTypeAsString () const;
         
         ///Return if true if this SpeciesType has name and SType given as parameters to this function 
         bool is_of_type(const std::string &name, SType type) const {return name==_name && type==_type;}
@@ -102,17 +124,39 @@ enum class SType : unsigned char {
             return seed;
         }
         
+        /// Prints the SpeciesType to ostream with a format name[SType], such as "Arp2/3[Diffusing]"
         friend std::ostream& operator<<(std::ostream& os, const SpeciesType& st){
             os << st.getName() << "[" << st.getTypeAsString() << "]";
             return os;
         }
-        
-//        friend istream& operator>>(istream& is, SpeciesType& st) 
-//        { 
-//            string temp; 
-//            is >> temp; 
-//            st.set(temp); 
-//            return is; 
-//        }
     };
+
+} // end of namespace
+    
+namespace boost { namespace serialization {
+    template<class Archive>
+    inline void save_construct_data(Archive & ar, const chem::SpeciesType * t, const BOOST_PFTO unsigned int /* file_version */)
+    {
+        // save data required to construct instance
+//        std::cout << "save_construct_data" << std::endl;
+        std::string name = t->getName();
+        chem::SType type = t->getType();
+        ar << name;
+        ar << type;
+    }
+    
+    template<class Archive>
+    inline void load_construct_data(Archive & ar, chem::SpeciesType * t, const unsigned int file_version){
+//        std::cout << "load_construct_data" << std::endl;
+        // retrieve data from archive required to construct new instance
+        std::string name;
+        ar >> name;
+        chem::SType type;
+        ar >> type;
+        // invoke inplace constructor to initialize instance of my_class
+        ::new(t)chem::SpeciesType(name,type);
+    }
+}} // boost namespace
+
+
 #endif

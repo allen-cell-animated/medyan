@@ -10,6 +10,8 @@
 #include "ChemSim.h"
 #include "utility.h"
 
+namespace chem {
+
 ChemSim::ChemSim(ChemSimImpl *csi)
 {
     _pimpl=csi;
@@ -34,3 +36,5 @@ void ChemSim::initialize() {
 void ChemSim::printReactions() const {
     return _pimpl->printReactions();
 }
+
+} // end of namespace

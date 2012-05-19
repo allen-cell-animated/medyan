@@ -7,7 +7,12 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <vector>
+
+// include headers that implement a archive in simple text format
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include "gtest/gtest.h"
 
@@ -15,6 +20,8 @@
 
 using namespace std;
 using namespace boost::flyweights;
+using namespace chem;
+
 
 TEST(SpeciesTypeTest, CTors) {
     // Testing the main ctor
@@ -94,6 +101,7 @@ TEST(SpeciesTypeTest, Iostream) {
 TEST(SpeciesTypeTest, BoostFlywieght) {
     SpeciesType A = {"Arp2/3",SType::Diffusing};
     flyweight<SpeciesType> fA(A);
+
     flyweight<SpeciesType> fB (SpeciesType("Arp2/3",SType::Diffusing));
     EXPECT_EQ(fA.get(), fB.get());
     
@@ -102,10 +110,71 @@ TEST(SpeciesTypeTest, BoostFlywieght) {
     
     ostringstream out1;
     out1 << B;
-    
     ostringstream out2;
     out2 << fB;
-    
     EXPECT_EQ(out1.str(), out2.str());
-
+    
+    // check hashing
+    auto a = hash_value(A);
+    auto b = hash_value(B);
+    EXPECT_EQ(a,b);
+    SpeciesType C = {"Arp2/3",SType::Bulk};
+    auto c = hash_value(C);
+    EXPECT_NE(a,c);
+    
+    vector<flyweight<SpeciesType>> vfst;
+    for(int i=0; i<100; ++i){
+        vfst.emplace_back("X",SType::Bulk);
+    }
+    const SpeciesType &m = vfst[10].get();
+    const SpeciesType &n = vfst[90].get();
+    EXPECT_EQ(&m,&n);
 }
+
+TEST(SpeciesTypeTest, BoostSerializationSerial) {
+    
+    SpeciesType *AA1 = new SpeciesType{"Arp2/3",SType::Bulk};
+    SpeciesType *AA2 = nullptr;
+
+    // create and open a character archive for output
+    {
+        ofstream ofs{"filename_x1y1z1.txt",ios::out};
+        boost::archive::text_oarchive oa(ofs); 
+        oa << AA1;
+    }
+    
+    // read back the object
+    {
+        ifstream ifs{"filename_x1y1z1.txt",ios::in};
+        boost::archive::text_iarchive ia(ifs);
+        ia >> AA2;
+//        cout << "BoostSerialization: {" << *AA2 << "}" << endl;
+    }
+    EXPECT_EQ(*AA1,*AA2);
+}
+
+TEST(SpeciesTypeTest, BoostSerializationVector) {
+    std::vector<SpeciesType> vst;    
+    for(int i=0; i<100; ++i){
+        vst.emplace_back("X",SType::Bulk);
+    }
+    // create and open a character archive for output
+    {
+        ofstream ofs{"filename_x2y2z2.txt",ios::out};
+        boost::archive::text_oarchive oa(ofs); 
+        oa & vst;
+    }
+    
+    // read back the object
+    std::vector<SpeciesType> vst2;    
+    {
+        ifstream ifs{"filename_x2y2z2.txt",ios::in};
+        boost::archive::text_iarchive ia(ifs);
+        ia >> vst2;
+        //        cout << "BoostSerialization: {" << *AA2 << "}" << endl;
+    }
+    
+    EXPECT_EQ(vst[0],vst2[0]);    
+    EXPECT_EQ(vst.back(),vst2.back());    
+}
+

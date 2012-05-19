@@ -19,20 +19,22 @@
 #include <boost/signals2/shared_connection_block.hpp>
 #include "utility.h"
 
+namespace chem {
+
 class Species;
 class Reaction;
 
-/// This is a Species signal object that will be called by SignalingManager, usually when requested by the 
+/// This is a Species signal object that will be called by ChemSignal, usually when requested by the 
 /// reaction simulation algorithm
 typedef boost::signals2::signal<void (Species *, int)> SpeciesCopyNChangedSignal;
 
-/// This is a Reaction signal object that will be called by SignalingManager, usually when requested by the 
+/// This is a Reaction signal object that will be called by ChemSignal, usually when requested by the 
 /// reaction simulation algorithm
 typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
 
-/// SignalingManager manages callbacks for Species and Reactions objects. 
+/// ChemSignal manages callbacks for Species and Reactions objects. 
 
-/*!  One SignalingManager should be instantiated per chemical network. Species and Reactions that need to be monitored 
+/*!  One ChemSignal should be instantiated per chemical network. Species and Reactions that need to be monitored 
  *   can be made to signal, based on the boost:signal2 library. Multiple receiving slots can be connected to signals. 
  *
  *   Slots can be temporarily blocked or completely disconnected. Signals can be destroyed.
@@ -41,7 +43,7 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
  ...
  Species* A1 = sc.getSpecies("A1");
  ...
- SignalingManager sm;
+ ChemSignal sm;
  A1->makeSignaling(sm);
  PrintSpecies ps;
  std::function<void (Species *, int)> psf(ps);
@@ -60,14 +62,14 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
 ...
  @endcode
  */
-class SignalingManager {
+class ChemSignal {
 private:
     /// Search the map for a signal corresponding to parameter, Reaction *r. Throw std::out_of_range exception if not found.
     std::unordered_map<Reaction *, std::unique_ptr<ReactionEventSignal>>::const_iterator 
     findSignal(Reaction *r) const {
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it==_map_reaction_signal.end())
-            throw std::out_of_range("SignalingManager::broadcastReactionSignal(...) key error...");
+            throw std::out_of_range("ChemSignal::broadcastReactionSignal(...) key error...");
         return sig_it;
     }
     
@@ -76,7 +78,7 @@ private:
     findSignal(Species *s) const {
         auto sig_it = _map_species_signal.find(s);
         if(sig_it==_map_species_signal.end())
-            throw std::out_of_range("SignalingManager::broadcastSpeciesSignal(...) key error...");
+            throw std::out_of_range("ChemSignal::broadcastSpeciesSignal(...) key error...");
         return sig_it;
     }
     
@@ -84,14 +86,14 @@ private:
     void assertSignalDoesNotExist (Reaction *r){
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it!=_map_reaction_signal.end())
-            throw std::runtime_error("SignalingManager::addSignalingReaction(...) Reaction already present in the map...");
+            throw std::runtime_error("ChemSignal::addSignalingReaction(...) Reaction already present in the map...");
     }
     
     /// Assert that a signal corresponding to Species *s does not exist or throw std::runtime_error.
     void assertSignalDoesNotExist (Species *s){
         auto sig_it = _map_species_signal.find(s);
         if(sig_it!=_map_species_signal.end())
-            throw std::runtime_error("SignalingManager::addSignalingSpecies(...) Species already present in the map...");
+            throw std::runtime_error("ChemSignal::addSignalingSpecies(...) Species already present in the map...");
     }
 
 public:
@@ -110,7 +112,7 @@ public:
     }
     
     /// Inserts a signal corresponding to Species *s into the map. Should only be called by the Species class.
-    /// @note other classes should instead call void Species::makeSignaling(SignalingManager &sm);
+    /// @note other classes should instead call void Species::makeSignaling(ChemSignal &sm);
     void addSignalingSpecies(Species *s){
         assertSignalDoesNotExist(s);
         _map_species_signal.emplace(s,make_unique<SpeciesCopyNChangedSignal>());
@@ -118,7 +120,7 @@ public:
 
     
     /// Inserts a signal corresponding to Reaction *r into the map. Should only be called by the Reaction class.
-    /// @note other classes should instead call void Reaction::makeSignaling(SignalingManager &sm);
+    /// @note other classes should instead call void Reaction::makeSignaling(ChemSignal &sm);
     void addSignalingReaction (Reaction *r){
         assertSignalDoesNotExist(r);
         _map_reaction_signal.emplace(r,make_unique<ReactionEventSignal>());
@@ -146,14 +148,14 @@ public:
     }
     
     /// Destroy signal corresponding to Reaction r. Should only be used by the Reaction class.
-    /// @note   Other classes should instead call void Reaction::stopSignaling (SignalingManager &sm);
+    /// @note   Other classes should instead call void Reaction::stopSignaling (ChemSignal &sm);
     void disconnect_semiprivate(Reaction *r){
         auto sig_it = findSignal(r);
         _map_reaction_signal.erase(sig_it);
     }
 
     /// Destroy signal corresponding to Reaction r. Should only be used by the Species class.
-    /// @note   Other classes should instead call void Species::stopSignaling (SignalingManager &sm);
+    /// @note   Other classes should instead call void Species::stopSignaling (ChemSignal &sm);
     void disconnect_semiprivate(Species *s){
         auto sig_it = findSignal(s);
         _map_species_signal.erase(sig_it);
@@ -163,5 +165,5 @@ private:
     std::unordered_map<Reaction *, std::unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
 };
 
-
+} //end of namespace 
 #endif

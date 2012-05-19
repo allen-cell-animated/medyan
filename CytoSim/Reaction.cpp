@@ -10,6 +10,7 @@
 #include "Reaction.h"
 #include "ChemNRMImpl.h"
 
+namespace chem {
 using namespace std;
 
 std::vector<Reaction*> Reaction::getAffectedReactions() {
@@ -85,12 +86,12 @@ void Reaction::passivateReaction() {
 }
 
 
-void Reaction::makeSignaling (SignalingManager &sm) {
+void Reaction::makeSignaling (ChemSignal &sm) {
     sm.addSignalingReaction(this);
     _is_signaling=true;
 }
 
-void Reaction::stopSignaling (SignalingManager &sm) {
+void Reaction::stopSignaling (ChemSignal &sm) {
     sm.disconnect_semiprivate(this);
     _is_signaling=false;
 }
@@ -113,4 +114,4 @@ void Reaction::printDependents()  {
     for(auto r : _dependents)
         r->printSelf();
 }
-
+}

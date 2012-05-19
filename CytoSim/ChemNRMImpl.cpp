@@ -15,6 +15,8 @@ using namespace std;
 
 #include "ChemNRMImpl.h"
 
+namespace chem {
+
 RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
  _chem_nrm (chem_nrm), _react(r) {
     _react->setRnode(this);
@@ -161,3 +163,4 @@ void ChemNRMImpl::printReactions() const {
     }
 }
 
+} // end of namespace

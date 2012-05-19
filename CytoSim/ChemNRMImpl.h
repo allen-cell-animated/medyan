@@ -19,6 +19,8 @@
 #include "ChemSim.h"
 #include "Signaling.h"
 
+namespace chem {
+
 class PQNode;
 class RNodeNRM;
 class ChemNRMImpl;
@@ -76,7 +78,7 @@ private:
 
 class ChemNRMImpl : public ChemSimImpl {
 public:
-    ChemNRMImpl(const SignalingManager& sm) : 
+    ChemNRMImpl(const ChemSignal& sm) : 
     ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _sm (sm), _t(0.0), _n_reacts(0) {}
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     ChemNRMImpl& operator=(ChemNRMImpl &rhs) = delete;
@@ -103,8 +105,10 @@ private:
     boost_heap _heap;
     std::mt19937 _eng;
     std::exponential_distribution<double> _exp_distr;
-    const SignalingManager& _sm;
+    const ChemSignal& _sm;
     double _t;
     size_t _n_reacts;
 };
+    
+} // end of namespace
 #endif
