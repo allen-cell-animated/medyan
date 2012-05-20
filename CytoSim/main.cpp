@@ -40,6 +40,7 @@
 #include "ChemNRMImpl.h"
 #include "ChemSim.h"
 #include "Signaling.h"
+#include "SpeciesDB.h"
 
 
 using namespace std;
@@ -63,23 +64,15 @@ struct PrintSpecies {
 int main(int argc, const char * argv[])
 {
     
-    SpeciesContainer sc;
-    sc.addSpecies("A1", "A1", SType::Diffusing, 25);
-    sc.addSpecies("A2", "A2", SType::Diffusing, 25);
-    sc.addSpecies("A3", "A3", SType::Diffusing, 25);
-    sc.addSpecies("A4", "A4", SType::Bulk, 25);
-    sc.addSpecies("A5", "A5", SType::Bulk, 25);
-    sc.addSpecies("A6", "A6", SType::Bulk, 25);
-    sc.addSpecies("B1", "B1", SType::Bulk, 25);
+    SpeciesDB sdb;
+    Species* A1 = sdb.create("A1", "A1", SType::Diffusing, 25);
+    Species* A2 = sdb.create("A2", "A2", SType::Diffusing, 25);
+    Species* A3 = sdb.create("A3", "A3", SType::Diffusing, 25);
+    Species* A4 = sdb.create("A4", "A4", SType::Bulk, 25);
+    Species* A5 = sdb.create("A5", "A5", SType::Bulk, 25);
+    Species* A6 = sdb.create("A6", "A6", SType::Bulk, 25);
+    Species* B1 = sdb.create("B1", "B1", SType::Bulk, 25);
     
-    Species* A1 = sc.getSpecies("A1");
-    Species* A2 = sc.getSpecies("A2");
-    Species* A3 = sc.getSpecies("A3");
-    Species* A4 = sc.getSpecies("A4");
-    Species* A5 = sc.getSpecies("A5");
-    Species* A6 = sc.getSpecies("A6");
-    Species* B1 = sc.getSpecies("B1");
-            
     Reaction r1 = { {A1,A3,A5}, 2, 1, 100.0 };
     Reaction r2 = { {A2,A4,A6}, 2, 1, 50.0 };
     Reaction r3 = { {A1,A5,A6}, 2, 1, 25.0 };

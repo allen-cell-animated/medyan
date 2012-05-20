@@ -94,7 +94,7 @@ TEST(SpeciesTypeTest, Iostream) {
     
     outStream << B;
     string res = outStream.str();
-    string b_fullname = B.getName() + "[" + B.getTypeAsString() + "]";
+    string b_fullname = B.getName() + "{" + B.getTypeAsString() + "}";
     EXPECT_EQ(b_fullname,res);
 }
 

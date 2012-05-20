@@ -17,7 +17,6 @@
 #define CytoSim_Experimenting_Species_h
 
 #include <vector>
-#include <array>
 #include <string>
 #include <unordered_map>
 #include <algorithm>
@@ -39,15 +38,20 @@ class Species;
 class Reaction;
 class ChemSignal;
 
-typedef std::vector<Reaction*>::iterator vr_iterator;
-typedef std::vector<Species*>::iterator vsp_iterator;
+typedef std::vector<Reaction*>::iterator vr_iterator; /// vr stands for vector of Reactions
+typedef std::vector<Species*>::iterator vsp_iterator; /// vsp stands for vector of Species
 
     
 /// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
     
-/*! This class represents chemical species, such as G-Actin. Tracks the copy number of molecules and the [Reactions](@ref Reaction) in which it is involed (@see Reaction). 
-    @note In the future may implement the Logging and Persistence interfaces. 
- *  @note Each intantiation of Species is unique, and hence, cannot be copied. 
+/*! This class represents chemical species, such as G-Actin. Tracks the copy number of molecules and the [Reactions](@ref Reaction)
+ *   in which it is involed (@see Reaction). 
+ *   @note In the future may implement the Logging and Persistence interfaces. 
+ *   @note Each intantiation of Species is unique, and hence, cannot be neither copied nor moved (C++11). 
+ *   This has significant implications - e.g., Species cannot be used in std::vector<Species>. Instead, 
+ *   one should use either std::vector<Species*> if not owning the Species pointers, or 
+ *   std::vector<std::unique_ptr<Species>> if owning the Species pointers. A special allocator can 
+ *   be written such that dynamically allocated Species (through new), are arranged contigiously in memory.
  */
 class Species {
     /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call
@@ -117,30 +121,33 @@ public:
     /// Constructors 
     /// @param type - is SpeciesType associated for this Species. 
     /// @param n - copy number
-    Species (const SpeciesType &type, species_copy_t n=0, bool is_signaling = false) : 
-    _type(type), _n(n), _is_signaling(is_signaling) {}
+    Species (const SpeciesType &type, species_copy_t n=0) : 
+    _type(type), _n(n), _is_signaling(false) {}
 
     /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
+    /// @param type_enum - SType enum, such as SType::Diffusing
     /// @param n - copy number
-    Species (const std::string &name, SType type, species_copy_t n=0, bool is_signaling = false) : 
-    _type(name,type), _n(n), _is_signaling(is_signaling) {}
+    Species (const std::string &name, SType type_enum, species_copy_t n=0) : 
+    _type(name,type_enum), _n(n), _is_signaling(false) {}
 
-    /// deleted copy constructor and assignment operators - each Species is unique
+    /// deleted copy constructor - each Species is unique
     Species (const Species &r) = delete;
+
+    /// deleted assignment operator - each Species is unique
     Species& operator=(Species&) = delete;
 
     /// It is required that all [Reactions](@ref Reaction) associated with this Species are destructed before this Species is destructed. 
     /// Most of the time, this will occur naturally. If not, a an assertion will ungracefully terminate the program.
     ~Species(){
-        assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: Species should not contain Reactions when being destroyed.");
+        assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: Species should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
     }
     
-    /// Cloning constructs completely new Species enveloped in a unique_ptr. 
-    std::unique_ptr<Species> clone() {return make_unique<Species>(_type,0);}
+    /// Cloning constructs completely new Species enveloped in a unique_ptr. The copy number is set to 0.
+    std::unique_ptr<Species> clone() const {return make_unique<Species>(_type,0);}
 
-    /// Setters & Mutators
     /// Sets the copy number for this Species. 
-    /// @param should be a non-negative number, but no checking is done in run time
+    /// @param n should be a non-negative number, but no checking is done in run time
+    /// @note The operation does not emit any signals about the copy number change.
     void setN(species_copy_t n) {_n=n;}
 
     /// Return the current copy number of this Species
@@ -150,18 +157,18 @@ public:
     flyweight<SpeciesType> getType () const {return _type;}
 
     /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    std::string getFullName() const {return _type.get().getName() + "[" + _type.get().getTypeAsString() + "]";}
+    std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
     
     /// Return true if this Species emits signals on copy number change
     bool isSignaling () const {return _is_signaling;}
     
     /// Set the signaling behavior of this Species
-    /// @param is the ChemSignal which will call the associated Signal (typically initiated by the 
+    /// @param sm is the ChemSignal which will call the associated Signal (typically initiated by the 
     /// Gillespie-like simulation algorithm)
     void makeSignaling (ChemSignal &sm);
     
     /// Destroy the signal associated with this Species
-    /// @param is the ChemSignal which manages signals
+    /// @param sm is the ChemSignal which manages signals
     /// @note To start signaling again, makeSignaling(...) needs to be called
     void stopSignaling (ChemSignal &sm);
 
@@ -197,38 +204,11 @@ public:
     
     /// Print self into an iostream
     friend std::ostream& operator<<(std::ostream& os, const Species& s){
-        os << s.getType() << "{" << s.getN() << "}";
+        os << s.getType() << "[" << s.getN() << "]";
         return os;
     }
 };
 
-    
-    
-    
-typedef std::unordered_map<std::string,std::unique_ptr<Species>> map_str_species;
-    
-class SpeciesContainer {
-public:
-    SpeciesContainer() = default;
-    SpeciesContainer(const SpeciesContainer&) = delete;
-    SpeciesContainer& operator=(SpeciesContainer&) = delete;
-    void addSpecies(const std::string &unq_key, const std::string &name, SType type, species_copy_t N){
-        auto it = _map_species.find(unq_key);
-        if(it!=_map_species.end())
-            throw std::invalid_argument("SpeciesContainer::getSpecies(...) this key already exists - a bug...");
-        _map_species.insert( map_str_species::value_type( unq_key, make_unique<Species>(name, type, N)));
-        //    map_species.emplace("A6",make_unique<Species>("A6", SType::Diffusing, 30)); // works with gcc 4.7
-    }
-    Species* getSpecies(const std::string &unq_key){
-        auto it = _map_species.find(unq_key);
-        if(it==_map_species.end())
-            throw std::out_of_range("SpeciesContainer::getSpecies(...) key error...");
-        return it->second.get();
-    }
-private:
-    map_str_species _map_species;
-};
-
-} // end of namespace 
+} // end of chem namespace 
     
 #endif

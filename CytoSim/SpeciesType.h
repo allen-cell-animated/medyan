@@ -16,12 +16,7 @@
 
 #include <boost/flyweight.hpp>
 
-//class SpeciesType;
-//
-//namespace boost { namespace serialization {
-//template<class Archive>
-//    inline void save_construct_data(Archive & ar, const SpeciesType * t, const unsigned int file_version);
-//}}
+
 
 namespace chem {
 
@@ -31,7 +26,7 @@ enum class SType : unsigned char {
     Membrane = 2, ///< Species that diffuse within a membrane 
     Filament=3, ///< Species that comprise filaments (such as F-Actin)
     Walking=4, ///< Species that can walk ("convectively") on filaments (like Myosin X)
-    Motors=5 ///< Species that bind to filaments and generate forces (like Myosin II)
+    Motors=5 ///< Species that are bound to filaments and generate forces (like Myosin II)
     };
     
     
@@ -126,15 +121,17 @@ enum class SType : unsigned char {
         
         /// Prints the SpeciesType to ostream with a format name[SType], such as "Arp2/3[Diffusing]"
         friend std::ostream& operator<<(std::ostream& os, const SpeciesType& st){
-            os << st.getName() << "[" << st.getTypeAsString() << "]";
+            os << st.getName() << "{" << st.getTypeAsString() << "}";
             return os;
         }
     };
 
 } // end of namespace
     
+    
 namespace boost { namespace serialization {
     template<class Archive>
+    /// This is a private function for SpeciesType serialization, and should not be called
     inline void save_construct_data(Archive & ar, const chem::SpeciesType * t, const BOOST_PFTO unsigned int /* file_version */)
     {
         // save data required to construct instance
@@ -145,6 +142,7 @@ namespace boost { namespace serialization {
         ar << type;
     }
     
+    /// This is a private function for SpeciesType serialization, and should not be called
     template<class Archive>
     inline void load_construct_data(Archive & ar, chem::SpeciesType * t, const unsigned int file_version){
 //        std::cout << "load_construct_data" << std::endl;

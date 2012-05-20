@@ -14,5 +14,17 @@
 #include "Species.h"
 #include "Compartment.h"
 
+//namespace chem{
+//    
+//class SpeciesDB {
+//private:
+//    std::vector<Species> _vec_species;
+//public:
+//    size_t createSpecies(const std::string &name, SType type, species_copy_t N){
+//        _vec_species.emplace_back(name,type,N);
+//        return _vec_species.size();
+//    }
+//};
 
+//}// end of chem namespace
 #endif
