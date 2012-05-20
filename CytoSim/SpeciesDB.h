@@ -17,11 +17,26 @@ namespace chem {
 /// based on the existing uniq string identifier of that Species (e.g. "F:20:FA:310" - filament 20, F-actin, position 310), 
 /// or a new Species can be created based on a unique identified. Cloning of existing Species is supported through this 
 /// approach. 
+///
 /// @note It is recommended the client code uses SpeciesDB exclusively for managing Species lifetimes, or 
 /// it should not be used at all, so no uncertainty arises about the Species lifetime management strategy.
 /// In a large scale code, SpeciesDB should be the preferred approach.
 /// @note Two SpeciesDB could be created - one for managing Species prototypes (e.g. read from the input files), and 
 /// the second one the Species which will be run in a simulation.
+///
+/// Example:
+/// @code
+///    SpeciesDB sdb;
+///    Species* A1 = sdb.create("A1", "A1", SType::Diffusing, 25);
+///    Species* A2 = sdb.create("A2", "A2", SType::Diffusing, 25);
+///    Species* A3 = sdb.create("A3", "A3", SType::Diffusing, 25);
+///
+///    Species *a3 = sdb1.get("A3"); // now A3 and a3 both point to the same Species
+///
+///    Species *c1 = sdb1.clone("C1", *A1); // A1 was cloned; @see Species::clone()
+///    c1->getFullName(); // should produce "A1{Diffusing}"
+///    c1->getN(); // should produce 0, because A1 was cloned.
+/// @endcode
 class SpeciesDB {
 private:
     typedef std::unordered_map<std::string,std::unique_ptr<Species>> map_str_species;

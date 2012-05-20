@@ -38,8 +38,11 @@ class Species;
 class Reaction;
 class ChemSignal;
 
-typedef std::vector<Reaction*>::iterator vr_iterator; /// vr stands for vector of Reactions
-typedef std::vector<Species*>::iterator vsp_iterator; /// vsp stands for vector of Species
+/// vr stands for vector of Reactions
+typedef std::vector<Reaction*>::iterator vr_iterator; 
+
+/// vsp stands for vector of Species
+typedef std::vector<Species*>::iterator vsp_iterator; 
 
     
 /// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
