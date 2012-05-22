@@ -12,6 +12,22 @@
 
 namespace chem {
 using namespace std;
+    
+Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
+_species(species), _rnode(nullptr), _rate(rate), _m(M), _is_signaling (false) {
+    _species.shrink_to_fit();
+    assert(_species.size()==(M+N) && "Reaction Ctor Bug");
+    _dependents=getAffectedReactions();
+    //activateReaction();
+    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->addAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->addAsProduct(this);} );
+}   
+
+Reaction::~Reaction() {
+    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->removeAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->removeAsProduct(this);} );
+    passivateReaction();
+};
 
 std::vector<Reaction*> Reaction::getAffectedReactions() {
     std::unordered_set<Reaction*> rxns;
@@ -23,25 +39,7 @@ std::vector<Reaction*> Reaction::getAffectedReactions() {
     rxns.erase(this);
     return std::vector<Reaction*>(rxns.begin(),rxns.end());
 }
-
-
-Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate, bool is_signaling) : 
-_species(species), _rate(rate), _m(M), _is_signaling (is_signaling) {
-    _species.shrink_to_fit();
-    assert(_species.size()==(M+N) && "Reaction Ctor Bug");
-    _dependents=getAffectedReactions();
-    //activateReaction();
-    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->addAsReactant(this);} );
-    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->addAsProduct(this);} );
-    _rnode=nullptr;
-}   
-
-Reaction::~Reaction() {
-    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->removeAsReactant(this);} );
-    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->removeAsProduct(this);} );
-    passivateReaction();
-};
-
+    
 void Reaction::registerNewDependent(Reaction *r){
     if(std::find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
         _dependents.push_back(r);
@@ -92,26 +90,33 @@ void Reaction::makeSignaling (ChemSignal &sm) {
 }
 
 void Reaction::stopSignaling (ChemSignal &sm) {
-    sm.disconnect_semiprivate(this);
+    sm.disconnect(this);
     _is_signaling=false;
 }
 
-void Reaction::printSelf() {
+std::ostream& operator<<(std::ostream& os, const Reaction& rr){
     unsigned char i=0;
-    for(auto s: _species){
-        if(i==_m)
-            cout << " ---> ";
-        cout << s->getFullName() << "{" << (int)s->getN() << "}";
-        if(i<_m-1 || (i>=_m && i<_species.size()-1))
-            cout << " + ";
+    for (auto sit = rr.cbeginReactants(); sit!=rr.cendReactants(); ++sit){
+        os << (*sit)->getFullName() << "{" << (*sit)->getN() << "}";
+        if(i<rr.getM()-1)
+            os << " + ";
         ++i;
     }
-    std::cout << ", " << "curr_rate = " << _rate << ", a=" << computePropensity() << ", Reaction ptr=" << this << "\n";
-}
+    os << " ---> ";
+    i=0;
+    for (auto sit = rr.cbeginProducts(); sit!=rr.cendProducts(); ++sit){
+        os << (*sit)->getFullName() << "{" << (*sit)->getN() << "}";
+        if(i<((rr.getN()-rr.getM())-1))
+            os << " + ";
+        ++i;
+    }
+    os << ", " << "curr_rate = " << rr.getRate() << ", a=" <<rr.computePropensity() << ", Reaction ptr=" << &rr << "\n";
+    return os;
+}    
 
 void Reaction::printDependents()  {
     cout << "Reaction: ptr=" << this << ", the following Reaction objects are dependents:\n";
     for(auto r : _dependents)
-        r->printSelf();
+        cout << r << endl;
 }
 }

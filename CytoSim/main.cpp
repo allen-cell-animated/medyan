@@ -90,18 +90,18 @@ int main(int argc, const char * argv[])
     cout << "\nTesting r2.getAffectedReactions():\n";
     auto ar = r2.getAffectedReactions();
     cout << "The following reaction," << endl;
-    r2.printSelf();
+    cout << r2 << endl;
     cout << "Affects these reactions:" << endl;
     for(auto r: ar)
-        r->printSelf();
+        cout << r << endl;
     
     cout << "\n\nTesting computePropensity() " << endl;
-    r2.printSelf();
+    cout << r2 << endl;
     cout << "Current a=" << r2.computePropensity() << endl;
     cout << "Pointer sizes, Species vs Reaction, " << sizeof (*A1) << " " << sizeof r1 << "\n\n" << endl;
     
     for(auto r = A2->beginReactantReactions(); r!=A2->endReactantReactions(); ++r)
-        (*r)->printSelf();
+        cout << (*r) << endl;
     
     cout << "\n\n\n";
 

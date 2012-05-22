@@ -149,14 +149,14 @@ public:
     
     /// Destroy signal corresponding to Reaction r. Should only be used by the Reaction class.
     /// @note   Other classes should instead call void Reaction::stopSignaling (ChemSignal &sm);
-    void disconnect_semiprivate(Reaction *r){
+    void disconnect(Reaction *r){
         auto sig_it = findSignal(r);
         _map_reaction_signal.erase(sig_it);
     }
 
     /// Destroy signal corresponding to Reaction r. Should only be used by the Species class.
     /// @note   Other classes should instead call void Species::stopSignaling (ChemSignal &sm);
-    void disconnect_semiprivate(Species *s){
+    void disconnect(Species *s){
         auto sig_it = findSignal(s);
         _map_species_signal.erase(sig_it);
     }

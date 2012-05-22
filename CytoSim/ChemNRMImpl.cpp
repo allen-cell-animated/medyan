@@ -37,7 +37,7 @@ RNodeNRM::~RNodeNRM ()
 
 void RNodeNRM::printSelf() const {
     cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
-    _react->printSelf();
+    cout << (*_react);
 }
 
 void RNodeNRM::printDependents() const {

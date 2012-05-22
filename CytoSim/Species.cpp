@@ -30,7 +30,7 @@ void Species::makeSignaling (ChemSignal &sm) {
 }
 
 void Species::stopSignaling (ChemSignal &sm) {
-    sm.disconnect_semiprivate(this);
+    sm.disconnect(this);
     _is_signaling=false;
 }
 
