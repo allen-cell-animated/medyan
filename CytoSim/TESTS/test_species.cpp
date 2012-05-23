@@ -50,14 +50,15 @@ TEST(SpeciesTest, SpeciesType) {
     EXPECT_TRUE(B->is_of_species_type("Arp2/3",SType::Bulk));
 }
 
-//TEST(SpeciesTest, Clone) {
-//    System S;
-//    Species *B = S.addSpecies("Arp2/3",SType::Bulk,25);
-//
-//    Species* C = B->clone();
-//    EXPECT_EQ(B->getN(),C->getN()) << "cloning should initialize copy number to 0";
-//    EXPECT_EQ(B->getType(),C->getType());
-//}
+TEST(SpeciesTest, Clone) {
+    System S;
+    SpeciesBulk *B = S.addSpecies("Arp2/3",SType::Bulk,25);
+
+    System S2;
+    Species* C = B->clone(S2);
+    EXPECT_EQ(B->getN(),C->getN()) << "cloning should initialize copy number to 0";
+    EXPECT_EQ(B->getType(),C->getType());
+}
 
 TEST(SpeciesTest, Iostream) {    
     System S;

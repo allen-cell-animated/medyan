@@ -18,7 +18,7 @@ class System {
 public:
     void setName (const std::string &name) {_name=name;}
     std::string getName () const {return _name;}
-    chem::SpeciesBulk* addSpecies (const std::string name, chem::SType stype, species_copy_t n=0){
+    chem::SpeciesBulk* addSpecies (const std::string name, chem::SType stype = chem::SType::Bulk, species_copy_t n=0){
         switch(stype)
         {
             case chem::SType::Bulk:
