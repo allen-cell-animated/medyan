@@ -38,7 +38,8 @@ namespace chem {
     
     /// RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in [Reactions](@ref Reaction).
     
-    /*! This class represents reactive RSpecies, such as G-Actin. Tracks the copy number of molecules and the [Reactions](@ref Reaction)
+    /*!  This class represents the reactivity of chemical species. The name RSpecies stems from reacting species.
+     *   RSpecies tracks the copy number of molecules and the [Reactions](@ref Reaction)
      *   in which it is involed (@see Reaction). 
      *   @note Each intantiation of RSpecies is unique, and hence, cannot be neither copied nor moved (C++11). 
      *   This has significant implications - e.g., RSpecies cannot be used in std::vector<RSpecies>. Instead, 
@@ -58,7 +59,24 @@ namespace chem {
         species_copy_t _n; ///< Current copy number of this RSpecies
         bool _is_signaling; ///< If true, indicates a signal may be sent when a copy number of this Reaction changes
         
-    private:  // Methods
+    private:
+        /// Constructors 
+        /// @param parent - the Species object to which this RSpecies belongs
+        /// @param n - copy number
+        RSpecies (Species &parent, species_copy_t n=0) : 
+        _species(parent), _n(n), _is_signaling(false) {}
+        
+        /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
+        RSpecies (const RSpecies &r) = delete;
+        
+        /// deleted assignment operator - each RSpecies is uniquely created by the parent Species
+        RSpecies& operator=(RSpecies&) = delete;
+               
+        /// Sets the copy number for this RSpecies. 
+        /// @param n should be a non-negative number, but no checking is done in run time
+        /// @note The operation does not emit any signals about the copy number change.
+        void setN(species_copy_t n) {_n=n;}
+        
         /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method 
         /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
         void up() {
@@ -111,30 +129,21 @@ namespace chem {
         /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the reactants. 
         void passivateAssocReacts();
         
+        /// Destroy the signal associated with this RSpecies
+        /// @param sm is the ChemSignal which manages signals
+        /// @note To start signaling again, makeSignaling(...) needs to be called
+        void stopSignaling (ChemSignal &sm);
+        
+        /// Set the signaling behavior of this RSpecies
+        /// @param sm is the ChemSignal which will call the associated Signal (typically initiated by the 
+        /// Gillespie-like simulation algorithm)
+        void makeSignaling (ChemSignal &sm);
     public:
-        /// Constructors 
-        /// @param parent - the Species object to which this RSpecies belongs
-        /// @param n - copy number
-        RSpecies (Species &parent, species_copy_t n=0) : 
-        _species(parent), _n(n), _is_signaling(false) {}
-        
-        /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
-        RSpecies (const RSpecies &r) = delete;
-        
-        /// deleted assignment operator - each RSpecies is uniquely created by the parent Species
-        RSpecies& operator=(RSpecies&) = delete;
-        
-        /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
+         /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
         /// Most of the time, this will occur naturally. If not, a an assertion will ungracefully terminate the program.
         ~RSpecies(){
             assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
         }
-        
-        
-        /// Sets the copy number for this RSpecies. 
-        /// @param n should be a non-negative number, but no checking is done in run time
-        /// @note The operation does not emit any signals about the copy number change.
-        void setN(species_copy_t n) {_n=n;}
         
         /// Return the current copy number of this RSpecies
         species_copy_t getN() const {return _n;}
@@ -150,17 +159,7 @@ namespace chem {
                         
         /// Return true if this RSpecies emits signals on copy number change
         bool isSignaling () const {return _is_signaling;}
-        
-        /// Set the signaling behavior of this RSpecies
-        /// @param sm is the ChemSignal which will call the associated Signal (typically initiated by the 
-        /// Gillespie-like simulation algorithm)
-        void makeSignaling (ChemSignal &sm);
-        
-        /// Destroy the signal associated with this RSpecies
-        /// @param sm is the ChemSignal which manages signals
-        /// @note To start signaling again, makeSignaling(...) needs to be called
-        void stopSignaling (ChemSignal &sm);
-        
+                
         /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant
         std::vector<Reaction *> ReactantReactions(){return _as_reactants;}

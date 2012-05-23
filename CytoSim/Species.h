@@ -56,7 +56,7 @@ public:
     /// @param n - copy number
     Species (const SpeciesType &type, species_copy_t n = 0) : 
     _type(type) {
-        _rspecies = make_unique<RSpecies>(*this, n);
+        _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
     }
 
     /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
@@ -64,7 +64,7 @@ public:
     /// @param n - copy number
     Species (const std::string &name, SType type_enum, species_copy_t n=0) : 
     _type(name,type_enum) {
-        _rspecies = make_unique<RSpecies>(*this, n);
+        _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
     }
 
     /// deleted copy constructor - each Species is unique
