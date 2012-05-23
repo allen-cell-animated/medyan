@@ -10,28 +10,33 @@
 #include "Reaction.h"
 #include "ChemNRMImpl.h"
 
-namespace chem {
 using namespace std;
+
+namespace chem {
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
-_species(species), _rnode(nullptr), _rate(rate), _m(M), _is_signaling (false) {
-    _species.shrink_to_fit();
-    assert(_species.size()==(M+N) && "Reaction Ctor Bug");
+_rnode(nullptr), _rate(rate), _m(M), _is_signaling (false) {
+    for( auto &s : species){
+        _rspecies.push_back(&s->getRSpecies());
+    }
+    _rspecies.shrink_to_fit();
+    assert(_rspecies.size()==(M+N) && "Reaction Ctor Bug");
     _dependents=getAffectedReactions();
     //activateReaction();
-    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->addAsReactant(this);} );
-    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->addAsProduct(this);} );
+    std::for_each(beginReactants(), endReactants(), 
+                  [this](RSpecies* s){s->addAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->addAsProduct(this);} );
 }   
 
 Reaction::~Reaction() {
-    std::for_each(beginReactants(), endReactants(), [this](Species* s){s->removeAsReactant(this);} );
-    std::for_each(beginProducts(), endProducts(),   [this](Species* s){s->removeAsProduct(this);} );
+    std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->removeAsProduct(this);} );
     passivateReaction();
 };
 
 std::vector<Reaction*> Reaction::getAffectedReactions() {
     std::unordered_set<Reaction*> rxns;
-    for(auto s : _species){
+    for(auto s : _rspecies){
         rxns.insert(s->beginReactantReactions(),s->endReactantReactions());
     }
     //        std::sort(rxns.begin(),rxns.end());

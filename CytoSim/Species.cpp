@@ -14,24 +14,4 @@
 
 namespace chem {
     
-void Species::activateAssocReactions() {
-    for (auto &r : _as_reactants)
-        r->activateReaction();
-}
-
-void Species::passivateAssocReacts() {
-    for (auto &r : _as_reactants)
-        r->passivateReaction();
-}
-
-void Species::makeSignaling (ChemSignal &sm) {
-    sm.addSignalingSpecies(this);
-    _is_signaling=true;
-}
-
-void Species::stopSignaling (ChemSignal &sm) {
-    sm.disconnect(this);
-    _is_signaling=false;
-}
-
 }

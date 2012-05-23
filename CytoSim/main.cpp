@@ -48,14 +48,14 @@ using namespace chem;
 
 
 
-void print_species (Species *s, int i){
+void print_species (RSpecies *s, int i){
     cout << "print_species callback: " << s->getFullName() << ", copy_n=" << s->getN() << endl;
 }
 
 struct PrintSpecies {
-    void operator() (Species *s, int i){
+    void operator() (RSpecies *s, int i){
         cout << "PrintSpecies callback: i=" << _count << "\n";
-        cout << *s;
+        cout << (*s);
         ++_count;
     }
     int _count;
@@ -100,23 +100,19 @@ int main(int argc, const char * argv[])
     cout << "Current a=" << r2.computePropensity() << endl;
     cout << "Pointer sizes, Species vs Reaction, " << sizeof (*A1) << " " << sizeof r1 << "\n\n" << endl;
     
-    for(auto r = A2->beginReactantReactions(); r!=A2->endReactantReactions(); ++r)
-        cout << (*r) << endl;
-    
-    cout << "\n\n\n";
 
     
     ChemSignal sm;
     A1->makeSignaling(sm);
     PrintSpecies ps;
-    std::function<void (Species *, int)> psf(ps);
+    std::function<void (RSpecies *, int)> psf(ps);
     //    sm.connect(A1, print_species);
     //    sm.connect(A1, PrintSpecies());
     //    boost::signals2::shared_connection_block conn_a1(sm.connect(A1,psf), false);
-    boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](Species *s, int i){cout << *s << endl;}), false);
+    boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](RSpecies *s, int i){cout << *s << endl;}), false);
 
     A2->makeSignaling(sm);
-    std::function<void (Species *, int)> psff = [](Species *s, int i){cout << *s << endl;};
+    std::function<void (RSpecies *, int)> psff = [](RSpecies *s, int i){cout << *s << endl;};
     sm.connect(A2,psff);
     
 

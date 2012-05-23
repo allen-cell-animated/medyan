@@ -52,7 +52,7 @@ TEST(SpeciesTest, SpeciesType) {
 TEST(SpeciesTest, Clone) {
     Species B{"Arp2/3",SType::Diffusing,25};
     unique_ptr<Species> C = B.clone();
-    EXPECT_EQ(0,C->getN()) << "cloning should initialize copy number to 0";
+    EXPECT_EQ(B.getN(),C->getN()) << "cloning should initialize copy number to 0";
     EXPECT_EQ(B.getType(),C->getType());
 }
 

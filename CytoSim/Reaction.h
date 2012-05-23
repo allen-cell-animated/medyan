@@ -27,7 +27,7 @@ class RNode;
 
 /// Reaction class represents simple chemical reactions of the form A + B -> C.  
 
-/*! Reaction is defined in terms of reactant and product Species. In the current implementation, 
+/*! Reaction is defined in terms of reactant and product RSpecies. In the current implementation, 
  *  the stoichiometric coefficents can only be one: i.e. A + B -> C + D is allowed, but A + 2B -> C + D is not allowed. 
  *  Almost all chemical reactions are either unimolecular or bimolecular, so this restriction should not be too
  *  burdensom. Also, the Reaction indicates a forward process only. For processes in both directions, e.g. A <-> B, 
@@ -39,7 +39,7 @@ class RNode;
  */
 class Reaction {
 private:
-    std::vector<Species*> _species; ///< Reactants and products constituting this Reaction
+    std::vector<RSpecies*> _rspecies; ///< Reactants and products constituting this Reaction
     std::vector<Reaction*> _dependents; ///< Pointers to Reaction objects that depend on this Reaction being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     float _rate; ///< the rate for this Reaction
@@ -47,15 +47,17 @@ private:
     bool _is_signaling; ///< If true, indicates a signal may be sent when a single step of this Reaction occurs
     
 public:
-    /// Default Constructor produces a Reaction with no reactants or products, zero rate, etc.
-    Reaction () :  _rnode(nullptr), _rate(0.0), _m(0), _is_signaling (false) {}  
-    
+//    /// Default Constructor produces a Reaction with no reactants or products, zero rate, etc.
+//    Reaction () :  _rnode(nullptr), _rate(0.0), _m(0), _is_signaling (false) {}  
+//    
+
     /// The main constructor:
-    /// @param species is a reactant and product Species put together into a single list (starting from reactants)
+    /// @param Species that are reactants and products are put together into a single list (starting from reactants)
     /// @param M - number of reactants
     /// @param N - number of products
     /// @param rate - the rate constant for this reaction
-    Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate); 
+    Reaction (std::initializer_list<Species*> Species, unsigned char M, unsigned char N, float rate); 
+    
     
     Reaction (const Reaction &r) = delete; // no copying (including all derived classes)
     Reaction& operator=(Reaction &r) = delete;  // no assignment (including all derived classes)
@@ -76,13 +78,13 @@ public:
     /// Returns a pointer to the RNode associated with this Reaction
     RNode* getRnode() const {return _rnode;} 
     
-    /// Returns the number of reactant Species
+    /// Returns the number of reactant RSpecies
     unsigned char getM() const {return _m;}
     
-    /// Returns the number of product Species
-    unsigned char getN() const {return static_cast<unsigned char>(_species.size());}
+    /// Returns the number of product RSpecies
+    unsigned char getN() const {return static_cast<unsigned char>(_rspecies.size());}
     
-    /// Computes the product of the copy number of all reactant Species. Can be used to quickly 
+    /// Computes the product of the copy number of all reactant RSpecies. Can be used to quickly 
     /// determined whether this Reaction is active - i.e. if one of the reactants has a 0 copy number, 
     /// then the propensity for this Reaction is 0.
     int getProductOfReactants () const {
@@ -92,7 +94,7 @@ public:
         return prod;
     }
     
-    /// Return true if this Species emits signals on copy number change
+    /// Return true if this RSpecies emits signals on copy number change
     bool isSignaling () const {return _is_signaling;}
     
     /// Set the signaling behavior of this Reaction
@@ -118,32 +120,32 @@ public:
     vr_const_iterator   cendAffected() const {return _dependents.cend();}
 
     //Return an iterator to the beginning of the sequence of reactants
-    vsp_iterator        beginReactants() {return _species.begin();}
+    vrsp_iterator        beginReactants() {return _rspecies.begin();}
 
     //Return a const iterator to the beginning of the sequence of reactants
-    vsp_const_iterator  cbeginReactants() const {return _species.cbegin();}
+    vrsp_const_iterator  cbeginReactants() const {return _rspecies.cbegin();}
 
     //Return an iterator to the end of the sequence of reactants
-    vsp_iterator        endReactants() {return _species.begin()+_m;}
+    vrsp_iterator        endReactants() {return _rspecies.begin()+_m;}
 
     //Return a const iterator to the end of the sequence of reactants
-    vsp_const_iterator  cendReactants() const {return _species.cbegin()+_m;}
+    vrsp_const_iterator  cendReactants() const {return _rspecies.cbegin()+_m;}
 
     //Return an iterator to the beginning of the sequence of products
-    vsp_iterator        beginProducts() {return _species.begin()+_m;}
+    vrsp_iterator        beginProducts() {return _rspecies.begin()+_m;}
 
     //Return a const iterator to the beginning of the sequence of products
 
-    vsp_const_iterator  cbeginProducts() const {return _species.cbegin()+_m;}
+    vrsp_const_iterator  cbeginProducts() const {return _rspecies.cbegin()+_m;}
 
     //Return an iterator to the end of the sequence of products
-    vsp_iterator        endProducts() {return _species.end();}
+    vrsp_iterator        endProducts() {return _rspecies.end();}
 
     //Return a const iterator to the end of the sequence of products
-    vsp_const_iterator  cendProducts() const {return _species.cend();}
+    vrsp_const_iterator  cendProducts() const {return _rspecies.cend();}
 
-    /// Fire the Reaction - make a single step, where reactant Species copy numbers are
-    /// decreased by one, and the product Species copy numbers are increased by one.
+    /// Fire the Reaction - make a single step, where reactant RSpecies copy numbers are
+    /// decreased by one, and the product RSpecies copy numbers are increased by one.
     /// @note This method does not send a reaction event Signal. The latter is usually done
     /// from within a Gillespie-like algorithm. 
     void makeStep() {
@@ -156,7 +158,7 @@ public:
     float computePropensity () const {
         return std::accumulate(cbeginReactants(), cendReactants(), 
                                _rate, 
-                               [](float prod, Species *s){ 
+                               [](float prod, RSpecies *s){ 
                                    return prod*=s->getN();
                                } );
     }

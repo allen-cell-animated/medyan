@@ -55,5 +55,5 @@ TEST_F(SpeciesDBTest, Clone) {
     Species *a1 = sdb1.get("A1");
     Species *c1 = sdb1.clone("C1", *a1);
     EXPECT_EQ("A1{Diffusing}", c1->getFullName());
-    EXPECT_EQ(0, c1->getN()) << "cloned Species should be initialized to 0 copy number";
+    EXPECT_EQ(a1->getN(), c1->getN()) << "cloned Species should be initialized to 0 copy number";
 }
