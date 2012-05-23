@@ -9,4 +9,12 @@
 
 #include "Species.h"
 #include "Reaction.h"
+#include "System.h"
 
+namespace chem{
+    
+Species* SpeciesBulk::clone (System &other) const {
+    return other.addSpecies(getName(),SType::Bulk,getN());
+}
+
+} // end of namespace chem

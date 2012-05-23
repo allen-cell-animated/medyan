@@ -28,9 +28,10 @@
 #include "SpeciesType.h"
 #include "RSpecies.h"
 
+class System;
 
 namespace chem {
-
+    
 /// We use boost::flyweights to optimize access to highly redundant data, such as SpeciesType below, 
 /// which could be repeated thousands of times in many compartments. May help with cache access performance.
 using namespace boost::flyweights;
@@ -48,17 +49,10 @@ using namespace boost::flyweights;
  */
 class Species {
 private: //Variables
-    flyweight<SpeciesType> _type; ///< This Species' type
-    std::unique_ptr<RSpecies> _rspecies; 
-public:
-    /// Constructors 
-    /// @param type - is SpeciesType associated for this Species. 
-    /// @param n - copy number
-    Species (const SpeciesType &type, species_copy_t n = 0) : 
-    _type(type) {
-        _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
-    }
-
+    flyweight<SpeciesType> _type; ///< this Species' type
+    std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
+protected:
+    /// The constructor for this base class of Species cannot be called directly - only by the concrete subclasses
     /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
     /// @param type_enum - SType enum, such as SType::Diffusing
     /// @param n - copy number
@@ -66,15 +60,13 @@ public:
     _type(name,type_enum) {
         _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
     }
-
+    
+public:
     /// deleted copy constructor - each Species is unique
     Species (const Species &r) = delete;
 
     /// deleted assignment operator - each Species is unique
     Species& operator=(Species&) = delete;
-
-    /// Virtual destructor needed for subclassing
-    virtual ~Species (){}
     
     /// Return a reference to RSpecies. Notice that value copying won't be allowed 
     /// because RSpecies is not copyable.
@@ -83,9 +75,6 @@ public:
     /// Return a constant reference to RSpecies. 
     const RSpecies& getRSpecies () const {return (*_rspecies.get());}
     
-    /// Cloning constructs completely new Species enveloped in a unique_ptr. The copy number is copied.
-    std::unique_ptr<Species> clone () const {return make_unique<Species>(_type,_rspecies->getN());}
-
     /// Sets the copy number for this Species. 
     /// @param n should be a non-negative number, but no checking is done in run time
     /// @note The operation does not emit any signals about the copy number change.
@@ -96,9 +85,9 @@ public:
     
     /// Return SpeciesType associated with this Species
     flyweight<SpeciesType> getType () const {return _type;}
-
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
+    
+    /// Return this Species' name
+    const std::string& getName() const {return _type.get().getName();}
     
     /// Return true if this Species emits signals on copy number change
     bool isSignaling () const {return _rspecies->isSignaling();}
@@ -124,8 +113,36 @@ public:
         os << s.getType() << "[" << s.getN() << "]";
         return os;
     }
-};
 
+public: // virtual methods
+    /// Virtual destructor needed for subclassing
+    virtual ~Species (){}
+    
+    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
+    virtual std::string getFullName() const {return _type.get().getName() + "{" + _type.get().getTypeAsString() + "}";}
+    
+};
+    
+class SpeciesBulk : public Species {
+private:
+    System& _system; ///< a reference to the System to which directly or indirectly this Species belongs
+public:
+    /// The constructor for this base class of Species cannot be called directly - only by the concrete subclasses
+    /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
+    /// @param syst - a System object to which this SpeciesBulk belongs to
+    /// @param n - copy number
+    SpeciesBulk (const std::string &name, System& syst, species_copy_t n=0) : 
+    Species(name, SType::Bulk, n), _system(syst) {
+    };
+    
+    /// Clone this SpeciesBulk into another System
+    /// Throws an exception if parameter other turns out to be the same System to which this SpeciesBulk belongs
+    Species* clone (System &other) const;
+    
+    /// Return a reference to the System to which this SpeciesBulk belongs
+    System& getSystem() {return _system;}
+};
+    
 } // end of chem namespace 
     
 #endif

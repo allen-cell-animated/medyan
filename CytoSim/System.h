@@ -14,6 +14,24 @@
 #include "Species.h"
 #include "Compartment.h"
 
+class System {
+public:
+    void setName (const std::string &name) {_name=name;}
+    std::string getName () const {return _name;}
+    chem::SpeciesBulk* addSpecies (const std::string name, chem::SType stype, species_copy_t n=0){
+        switch(stype)
+        {
+            case chem::SType::Bulk:
+                _species_bulk.emplace_back(new chem::SpeciesBulk(name,*this,n));
+                return _species_bulk.back().get();
+        }
+        throw std::out_of_range("System::addSpecies: type error");
+    }
+private:
+    std::vector<std::unique_ptr<chem::SpeciesBulk>> _species_bulk;
+    std::string _name; ///< System's name
+};
+
 //namespace chem{
 //    
 //class SpeciesDB {

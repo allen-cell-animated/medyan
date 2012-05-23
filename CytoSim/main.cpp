@@ -40,7 +40,6 @@
 #include "ChemNRMImpl.h"
 #include "ChemSim.h"
 #include "Signaling.h"
-#include "SpeciesDB.h"
 
 
 using namespace std;
@@ -64,15 +63,16 @@ struct PrintSpecies {
 int main(int argc, const char * argv[])
 {
     
-    SpeciesDB sdb;
-    Species* A1 = sdb.create("A1", "A1", SType::Diffusing, 25);
-    Species* A2 = sdb.create("A2", "A2", SType::Diffusing, 25);
-    Species* A3 = sdb.create("A3", "A3", SType::Diffusing, 25);
-    Species* A4 = sdb.create("A4", "A4", SType::Bulk, 25);
-    Species* A5 = sdb.create("A5", "A5", SType::Bulk, 25);
-    Species* A6 = sdb.create("A6", "A6", SType::Bulk, 25);
-    Species* B1 = sdb.create("B1", "B1", SType::Bulk, 25);
+    System S;
     
+    Species* A1 = S.addSpecies("A1", SType::Bulk, 25);
+    Species* A2 = S.addSpecies("A2", SType::Bulk, 25);
+    Species* A3 = S.addSpecies("A3", SType::Bulk, 25);
+    Species* A4 = S.addSpecies("A4", SType::Bulk, 25);
+    Species* A5 = S.addSpecies("A5", SType::Bulk, 25);
+    Species* A6 = S.addSpecies("A6", SType::Bulk, 25);
+    Species* B1 = S.addSpecies("B1", SType::Bulk, 25);
+        
     Reaction r1 = { {A1,A3,A5}, 2, 1, 100.0 };
     Reaction r2 = { {A2,A4,A6}, 2, 1, 50.0 };
     Reaction r3 = { {A1,A5,A6}, 2, 1, 25.0 };

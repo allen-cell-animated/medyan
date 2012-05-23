@@ -12,56 +12,61 @@
 #include <iostream>
 #include "gtest/gtest.h"
 #include "Species.h"
+#include "System.h"
 
 using namespace std;
 using namespace chem;
 
 TEST(SpeciesTest, CTors) {
-    //1st CTor
-    SpeciesType AType{"Arp2/3",SType::Diffusing};
-    Species A{AType, 25};
-    EXPECT_EQ(AType,A.getType());
-    EXPECT_EQ(25,A.getN());
+    System S;
+    Species *A = S.addSpecies("Arp2/3",SType::Bulk,25);
     
-    //2nd CTor
-    Species B{"Arp2/3",SType::Diffusing,25};
-    EXPECT_EQ(AType,B.getType());
-    EXPECT_EQ(25,B.getN());
+    //1st CTor
+    SpeciesType AType{"Arp2/3",SType::Bulk};
+    EXPECT_EQ(AType,A->getType());
+    EXPECT_EQ(25,A->getN());
 }
 
 //TEST(SpeciesTest, DeletedFunctions) {
-//    Species B{"Arp2/3",SType::Diffusing,25};
-//    Species C{"G-Actin",SType::Diffusing,25};
+//    Species B{"Arp2/3",SType::Bulk,25};
+//    Species C{"G-Actin",SType::Bulk,25};
 //    C=B; // this should not compile
 //    Species D(B); // this should not compile
 //}
 
 TEST(SpeciesTest, CopyNumber) {
-    Species B{"Arp2/3",SType::Diffusing,25};
-    B.setN(32);
-    EXPECT_EQ(32,B.getN());
+    System S;
+    Species *B = S.addSpecies("Arp2/3",SType::Bulk,25);
+    B->setN(32);
+    EXPECT_EQ(32,B->getN());
 }
 
 TEST(SpeciesTest, SpeciesType) {
-    Species B{"Arp2/3",SType::Diffusing,25};
-    SpeciesType BType{"Arp2/3",SType::Diffusing};
-    EXPECT_EQ(BType,B.getType());
-    EXPECT_TRUE(B.is_of_species_type("Arp2/3",SType::Diffusing));
+    System S;
+    Species *B = S.addSpecies("Arp2/3",SType::Bulk,25);
+
+    SpeciesType BType{"Arp2/3",SType::Bulk};
+    EXPECT_EQ(BType,B->getType());
+    EXPECT_TRUE(B->is_of_species_type("Arp2/3",SType::Bulk));
 }
 
-TEST(SpeciesTest, Clone) {
-    Species B{"Arp2/3",SType::Diffusing,25};
-    unique_ptr<Species> C = B.clone();
-    EXPECT_EQ(B.getN(),C->getN()) << "cloning should initialize copy number to 0";
-    EXPECT_EQ(B.getType(),C->getType());
-}
+//TEST(SpeciesTest, Clone) {
+//    System S;
+//    Species *B = S.addSpecies("Arp2/3",SType::Bulk,25);
+//
+//    Species* C = B->clone();
+//    EXPECT_EQ(B->getN(),C->getN()) << "cloning should initialize copy number to 0";
+//    EXPECT_EQ(B->getType(),C->getType());
+//}
 
-TEST(SpeciesTest, Iostream) {
-    Species B{"Arp2/3",SType::Diffusing,25};
+TEST(SpeciesTest, Iostream) {    
+    System S;
+    Species *B = S.addSpecies("Arp2/3",SType::Bulk,25);
+
     ostringstream outStream;
     
-    outStream << B;
+    outStream << *B;
     string res = outStream.str();
-    string b_fullname = B.getFullName() + "[" + std::to_string(B.getN()) + "]";
+    string b_fullname = B->getFullName() + "[" + std::to_string(B->getN()) + "]";
     EXPECT_EQ(b_fullname,res);
 }

@@ -97,7 +97,7 @@ enum class SType : unsigned char {
         }
         
         ///Returns the name associated with this SpeciesType as a string
-        std::string getName() const {return _name;}
+        const std::string& getName() const {return _name;}
         
         
         ///Returns the SType associated with this SpeciesType 
