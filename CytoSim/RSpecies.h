@@ -69,6 +69,9 @@ namespace chem {
         /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
         RSpecies (const RSpecies &r) = delete;
         
+        /// deleted move constructor - each RSpecies is uniquely created by the parent Species
+        RSpecies (RSpecies &&r) = delete;
+        
         /// deleted assignment operator - each RSpecies is uniquely created by the parent Species
         RSpecies& operator=(RSpecies&) = delete;
                
@@ -143,6 +146,7 @@ namespace chem {
         /// Most of the time, this will occur naturally. If not, a an assertion will ungracefully terminate the program.
         ~RSpecies(){
             assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
+//            std::cout << "Destructor ~RSpecies() called on ptr=" << this << std::endl;
         }
         
         /// Return the current copy number of this RSpecies

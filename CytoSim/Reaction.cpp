@@ -25,7 +25,8 @@ _rnode(nullptr), _rate(rate), _m(M), _is_signaling (false) {
     //activateReaction();
     std::for_each(beginReactants(), endReactants(), 
                   [this](RSpecies* s){s->addAsReactant(this);} );
-    std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->addAsProduct(this);} );
+    std::for_each(beginProducts(), endProducts(),   
+                  [this](RSpecies* s){s->addAsProduct(this);} );
 }   
 
 Reaction::~Reaction() {

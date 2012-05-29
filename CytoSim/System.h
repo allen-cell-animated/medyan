@@ -18,14 +18,9 @@ class System {
 public:
     void setName (const std::string &name) {_name=name;}
     std::string getName () const {return _name;}
-    chem::SpeciesBulk* addSpecies (const std::string name, chem::SType stype = chem::SType::Bulk, species_copy_t n=0){
-        switch(stype)
-        {
-            case chem::SType::Bulk:
-                _species_bulk.emplace_back(new chem::SpeciesBulk(name,*this,n));
-                return _species_bulk.back().get();
-        }
-        throw std::out_of_range("System::addSpecies: type error");
+    chem::SpeciesBulk* addSpeciesBulk (const std::string name, species_copy_t n=0){
+            _species_bulk.emplace_back(new chem::SpeciesBulk(name,n));
+            return _species_bulk.back().get();
     }
 private:
     std::vector<std::unique_ptr<chem::SpeciesBulk>> _species_bulk;
