@@ -5,11 +5,12 @@ OBJECTS = $(SOURCES:.cpp=.o)
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
 FAST = -O3
+LDLIBS = -L/usr/local/lib/ -lboost_serialization 
 
 # $(DEBUG) $(FAST)
 
-CPPFLAGS = -Wall -I/usr/local/include -std=c++11 $(DEBUG)	 -c 
-LFLAGS = -Wall -std=c++11 $(DEBUG)
+CPPFLAGS = -Wall -I/usr/local/include -std=c++11 $(FAST)	 -c 
+LFLAGS = -Wall -std=c++11 $(FAST)
 
 
 
