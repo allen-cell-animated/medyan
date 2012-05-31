@@ -41,6 +41,7 @@
 #include "ChemSim.h"
 #include "Signaling.h"
 
+#include "Composite.h"
 
 using namespace std;
 using namespace chem;
@@ -48,6 +49,23 @@ using namespace chem;
 
 int main(int argc, const char * argv[])
 {
+    auto C = make_unique<Composite>();
+    cout << C->getFullName() << endl;
+    C->addSpeciesUniq(make_unique<SpeciesBulk>("G-Actin",42));
+    C->addSpecies<SpeciesBulk>("Profilin",31);
+    
+    auto a1 = C->species(0);
+    auto a2 = C->species(1);
+    
+    cout << *a1 << "\n" << *a2 << endl;
+    
+    for(auto &s: C->species()){
+        cout << s->getFullName() << s->getN() << endl; 
+        cout << &s << endl;
+    }
+    
+//    Composite D
+
     cout << "Main exited..." << endl;
     return 0;
 }
