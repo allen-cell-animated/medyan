@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <typeinfo>
 
 #include "Component.h"
 #include "Species.h"
@@ -72,6 +73,15 @@ public:
     }
 
 };
+       
+
+// not needed now - use isSame<...> from utility.h
+//struct isComposite {
+//    bool operator () (const Composite &c) {
+//        return typeid(c)==typeid(Composite&) ? true : false; 
+//        
+//    }
+//};
 
 } // end of chem
 #endif

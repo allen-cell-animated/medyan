@@ -80,6 +80,10 @@ int main(int argc, const char * argv[])
     
     cout << "F has " << F->countSpecies() << " species" << endl;
     
+    cout << "F is of class Component? " << boolalpha << isSame<Component>()(*F) << endl; 
+    cout << "F is of class Composite? " << boolalpha << isSame<Composite>()(*F) << endl; 
+    cout << "F is of class Composite? " << boolalpha << isSame<Species>()(*F) << endl; 
+    
     cout << "Main exited..." << endl;
     return 0;
 }

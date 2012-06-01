@@ -17,5 +17,18 @@ std::unique_ptr<T> make_unique( Args&& ...args )
     return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
 }
 
+template<typename T1>
+struct isSame {
+    template<typename T2>
+    bool operator() (const T2& t2, typename std::enable_if<std::is_same<T1, T2>::value>::type* p = nullptr){
+        return true;
+    }
+    
+    template<typename T2>
+    bool operator() (const T2& t2, typename std::enable_if<!std::is_same<T1, T2>::value>::type* p = nullptr) 
+    { 
+        return false;
+    }                                                            
+};
 
 #endif
