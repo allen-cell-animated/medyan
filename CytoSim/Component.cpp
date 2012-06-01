@@ -7,3 +7,17 @@
 //
 
 #include <iostream>
+
+#include "Component.h"
+#include "Composite.h"
+
+namespace chem {
+    
+    Composite* Component::getRoot() {
+        if(isRoot())
+            return static_cast<Composite*>(this);
+        else
+            return getParent()->getRoot();
+    }
+    
+}// end of chem

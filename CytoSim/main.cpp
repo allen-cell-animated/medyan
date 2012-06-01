@@ -64,8 +64,22 @@ int main(int argc, const char * argv[])
         cout << &s << endl;
     }
     
-//    Composite D
+    cout << "\n\n\n";
+    
+    auto D = make_unique<Composite>();
+    C->addChild(std::move(D));
+    
+    Composite *F = C->getRoot();
+    F->addSpecies<SpeciesBulk>("Arp2/3",22);
 
+    
+    for(auto &s: F->species()){
+        cout << s->getFullName() << s->getN() << endl; 
+        cout << &s << endl;
+    }
+    
+    cout << "F has " << F->countSpecies() << " species" << endl;
+    
     cout << "Main exited..." << endl;
     return 0;
 }

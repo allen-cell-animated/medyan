@@ -30,6 +30,7 @@
 
 #include "common.h"
 #include "utility.h"
+#include "Component.h"
 #include "RSpecies.h"
 
 class System;
@@ -75,14 +76,14 @@ enum class SType : unsigned char {
      *
      *  @note The Species class allows callbacks (see makeSignaling and related methods). 
     */
-    class Species {
+    class Species : public Component {
     private: //Variables
         flyweight<std::string> _name; ///< this Species' type
         std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
         
     public:
         /// Default Constructor; Should not be used by the end users - only internally (although it is marked private)
-        Species()  : _name("") {
+        Species()  : Component(), _name("") {
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, 0));
 //            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
         }
@@ -91,7 +92,7 @@ enum class SType : unsigned char {
         /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
         /// @param type_enum - SType enum, such as SType::Diffusing
         /// @param n - copy number
-        Species (const std::string &name, species_copy_t n=0)  : _name(name)
+        Species (const std::string &name, species_copy_t n=0)  : Component(), _name(name)
         {
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
 //            std::cout << "Species (const std::string &name, species_copy_t n=0): Main ctor called, creating ptr=" << this << std::endl;
@@ -102,7 +103,7 @@ enum class SType : unsigned char {
         /// @note The associated RSpecies subpart is not copied, but a new one is created. This means that 
         /// the copied destination Species won't be included in any Reaction interactions of the original 
         /// source Species. The species copy numbered is copied to the target.
-        Species (const Species &rhs)  : _name(rhs._name) {
+        Species (const Species &rhs)  : Component(), _name(rhs._name) {
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN()));
 //            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
@@ -116,7 +117,7 @@ enum class SType : unsigned char {
         /// the Species around, without copying. Moving transfers the RSpecies pointer from source to target, 
         /// stealing resources from the source, leaving it for destruction.
         Species (Species &&rhs) noexcept
-        : _name(std::move(rhs._name)), _rspecies(std::move(rhs._rspecies)) {
+        : Component(), _name(std::move(rhs._name)), _rspecies(std::move(rhs._rspecies)) {
 //            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
         
@@ -210,6 +211,8 @@ enum class SType : unsigned char {
         virtual bool is_equal(const Species& b) const {
             return true;
         }
+        
+        virtual size_t countSpecies() const {return 1;}
     };
     
     class SpeciesBulk : public Species {

@@ -9,7 +9,4 @@
 #include <iostream>
 #include "Composite.h"
 
-namespace chem {
-
     
-}// end of chem
