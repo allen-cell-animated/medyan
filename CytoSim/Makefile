@@ -9,7 +9,7 @@ LDLIBS = -L/usr/local/lib/ -lboost_serialization
 
 # $(DEBUG) $(FAST)
 
-CPPFLAGS = -Wall -I/usr/local/include -std=c++11 $(FAST)	 -c 
+CPPFLAGS = -Wall -I/usr/local/include -std=c++11 $(FAST)
 LFLAGS = -Wall -std=c++11 $(FAST)
 
 
@@ -21,6 +21,9 @@ CytoSim: $(OBJECTS)
 
 %.o: %.cpp 
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $<
+
+lib: ChemNRMImpl.o  Compartment.o Composite.o  Reaction.o  System.o ChemSim.o      Component.o    RSpecies.o   Species.o
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -dynamiclib -undefined suppress -flat_namespace ChemNRMImpl.o  Compartment.o Composite.o  Reaction.o  System.o ChemSim.o      Component.o    RSpecies.o   Species.o -o libcyto.dylib
 
 clean:
 	\rm -f *.o
