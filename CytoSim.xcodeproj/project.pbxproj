@@ -26,7 +26,6 @@
 		F771ADC415655DBA0010B123 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
-		F7722F7B156571F300F2BA31 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7722F7A156571F300F2BA31 /* gtest.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
@@ -89,7 +88,6 @@
 		F763ED221548FFED0069DA61 /* System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = System.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F771ADD9156561680010B123 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7722F7A156571F300F2BA31 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = "../../../Library/Developer/Xcode/DerivedData/gtest-aszaxipnmbuojcawxpzzqyhnkyww/Build/Products/Debug/gtest.framework"; sourceTree = "<group>"; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */,
-				F7722F7B156571F300F2BA31 /* gtest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,7 +142,6 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
-				F7722F7A156571F300F2BA31 /* gtest.framework */,
 				F763ED091548FFC70069DA61 /* CytoSim */,
 				F763ED071548FFC70069DA61 /* Products */,
 			);
@@ -500,20 +496,18 @@
 		F771ADD7156561680010B123 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/gtest-aszaxipnmbuojcawxpzzqyhnkyww/Build/Products/Debug\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					../,
+					"/usr/local/gcc47/gtest-1.6.0/include",
 				);
-				LIBRARY_SEARCH_PATHS = "/Users/papoian/Library/Developer/Xcode/DerivedData/gtest-aszaxipnmbuojcawxpzzqyhnkyww/Build/Products/Debug";
+				LIBRARY_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs";
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
+					"-lgtest",
 					"-lgtest_main",
 					"-lboost_serialization",
 				);
@@ -525,20 +519,18 @@
 		F771ADD8156561680010B123 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/gtest-aszaxipnmbuojcawxpzzqyhnkyww/Build/Products/Debug\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_VERSION = com.apple.compilers.llvm.gcc46;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					../,
+					"/usr/local/gcc47/gtest-1.6.0/include",
 				);
-				LIBRARY_SEARCH_PATHS = "/Users/papoian/Library/Developer/Xcode/DerivedData/gtest-aszaxipnmbuojcawxpzzqyhnkyww/Build/Products/Debug";
+				LIBRARY_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs";
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
+					"-lgtest",
 					"-lgtest_main",
 					"-lboost_serialization",
 				);
