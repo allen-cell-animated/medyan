@@ -414,34 +414,28 @@
 		F7123D7F15752161008F64D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = example_misc;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Debug;
 		};
 		F7123D8015752161008F64D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = example_misc;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Release;
 		};
@@ -460,7 +454,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -480,7 +474,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -493,7 +487,7 @@
 		F763ED111548FFC70069DA61 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
@@ -507,7 +501,7 @@
 		F763ED121548FFC70069DA61 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
@@ -522,7 +516,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
@@ -534,7 +528,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
@@ -546,7 +540,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -561,7 +555,7 @@
 					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
-				USER_HEADER_SEARCH_PATHS = /Users/papoian/Dropbox/Codes/CytoSim/CytoSim/;
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Debug;
 		};
@@ -569,7 +563,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -584,41 +578,35 @@
 					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
-				USER_HEADER_SEARCH_PATHS = /Users/papoian/Dropbox/Codes/CytoSim/CytoSim/;
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Release;
 		};
 		F7E3DB601579A03C002EAF2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = example_kostya;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Debug;
 		};
 		F7E3DB611579A03C002EAF2C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = example_kostya;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
 			name = Release;
 		};
