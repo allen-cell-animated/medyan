@@ -29,6 +29,8 @@
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7E3DB641579A0F9002EAF2C /* example_kostya.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7E3DB5715799F85002EAF2C /* example_kostya.cpp */; };
 		F7F3681E1575C743006727F7 /* Composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7F3681D1575C743006727F7 /* Composite.cpp */; };
 		F7F3681F1575C743006727F7 /* Composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7F3681D1575C743006727F7 /* Composite.cpp */; };
 /* End PBXBuildFile section */
@@ -53,6 +55,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		F771ADD5156561680010B123 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F7E3DB5E1579A03C002EAF2C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -93,6 +104,8 @@
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
 		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		F7BDDE83155231CE0053817E /* ChemSim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSim.h; sourceTree = "<group>"; };
+		F7E3DB5715799F85002EAF2C /* example_kostya.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_kostya.cpp; sourceTree = "<group>"; };
+		F7E3DB621579A03C002EAF2C /* example_kostya */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_kostya; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7F3681D1575C743006727F7 /* Composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composite.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +140,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F7E3DB5C1579A03C002EAF2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -154,6 +175,7 @@
 				F771ADBB15655CD70010B123 /* libcyto.dylib */,
 				F771ADD9156561680010B123 /* TestSuite */,
 				F7123D8115752161008F64D1 /* example_misc */,
+				F7E3DB621579A03C002EAF2C /* example_kostya */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -194,6 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				F7123D701575211E008F64D1 /* example_misc.cpp */,
+				F7E3DB5715799F85002EAF2C /* example_kostya.cpp */,
 			);
 			path = EXAMPLES;
 			sourceTree = "<group>";
@@ -279,6 +302,23 @@
 			productReference = F771ADD9156561680010B123 /* TestSuite */;
 			productType = "com.apple.product-type.tool";
 		};
+		F7E3DB591579A03C002EAF2C /* example_kostya */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7E3DB5F1579A03C002EAF2C /* Build configuration list for PBXNativeTarget "example_kostya" */;
+			buildPhases = (
+				F7E3DB5A1579A03C002EAF2C /* Sources */,
+				F7E3DB5C1579A03C002EAF2C /* Frameworks */,
+				F7E3DB5E1579A03C002EAF2C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = example_kostya;
+			productName = CytoSim;
+			productReference = F7E3DB621579A03C002EAF2C /* example_kostya */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -304,6 +344,7 @@
 				F771ADBA15655CD70010B123 /* cyto */,
 				F771ADC8156561680010B123 /* TestSuite */,
 				F7123D7215752161008F64D1 /* example_misc */,
+				F7E3DB591579A03C002EAF2C /* example_kostya */,
 			);
 		};
 /* End PBXProject section */
@@ -356,6 +397,14 @@
 			files = (
 				F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */,
 				F71E97431565B02C002BDF16 /* test_reactions.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7E3DB5A1579A03C002EAF2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7E3DB641579A0F9002EAF2C /* example_kostya.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,6 +588,40 @@
 			};
 			name = Release;
 		};
+		F7E3DB601579A03C002EAF2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
+				);
+				OTHER_CFLAGS = "-std=c++11";
+				OTHER_LDFLAGS = "-lboost_serialization";
+				PRODUCT_NAME = example_kostya;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Debug;
+		};
+		F7E3DB611579A03C002EAF2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc46;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/papoian/Dropbox/Codes/CytoSim/CytoSim,
+				);
+				OTHER_CFLAGS = "-std=c++11";
+				OTHER_LDFLAGS = "-lboost_serialization";
+				PRODUCT_NAME = example_kostya;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -583,6 +666,15 @@
 			buildConfigurations = (
 				F771ADD7156561680010B123 /* Debug */,
 				F771ADD8156561680010B123 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7E3DB5F1579A03C002EAF2C /* Build configuration list for PBXNativeTarget "example_kostya" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7E3DB601579A03C002EAF2C /* Debug */,
+				F7E3DB611579A03C002EAF2C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
