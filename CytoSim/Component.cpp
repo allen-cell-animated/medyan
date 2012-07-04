@@ -20,4 +20,12 @@ namespace chem {
             return getParent()->getRoot();
     }
     
+    bool Component::apply (Visitor &v) {
+        return v.visit(this);
+    }
+    
+    bool Component::apply_if (ConditionalVisitor &v) {
+        return v.visit_if(this);
+    }
+
 }// end of chem

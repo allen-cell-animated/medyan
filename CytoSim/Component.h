@@ -12,6 +12,8 @@
 namespace chem {
     
     class Composite;
+    class Visitor;
+    class ConditionalVisitor;
     
     class Component {
     private:
@@ -22,9 +24,12 @@ namespace chem {
         void setParent (Composite *other) {_parent=other;}
         bool isRoot() const {return _parent==nullptr? true : false;}
         Composite* getRoot();
+        virtual bool hasChildren() {return false;}
         virtual ~Component() noexcept {}
         virtual std::string getFullName() const = 0;
         virtual size_t countSpecies() const = 0;
+        virtual bool apply (Visitor &v);
+        virtual bool apply_if (ConditionalVisitor &v);
     };
 
 }// end of chem

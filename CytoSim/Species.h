@@ -255,6 +255,46 @@ enum class SType : unsigned char {
         ~SpeciesBulk () noexcept {};
     };
     
+    class SpeciesDiffusing : public Species {
+    public:
+        /// Default constructor
+        SpeciesDiffusing()  : Species() {}
+        
+        /// The main constructor 
+        /// @param name - Example, "G-Actin" or "Arp2/3"
+        /// @param n - copy number
+        SpeciesDiffusing (const std::string &name, species_copy_t n=0)  :  Species(name, n) {};
+        
+        /// Copy constructor
+        SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}
+        
+        /// Move constructor
+        SpeciesDiffusing (SpeciesDiffusing &&rhs) noexcept : Species(std::move(rhs)) {
+        }
+        
+        /// Regular Assignment
+        SpeciesDiffusing& operator=(const SpeciesDiffusing& rhs)  {
+            Species::operator=(rhs);
+            return *this;
+        }
+        
+        /// Move assignment
+        SpeciesDiffusing& operator=(SpeciesDiffusing&& rhs) 
+        {
+            Species::operator=(std::move(rhs));
+            return *this;
+        }
+        
+        /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Diffusing}"
+        virtual std::string getFullName() const {return getName() + "{Diffusing}";}
+        
+        /// Return SpeciesType associated with this Species
+        virtual SType getType () const {return SType::Diffusing;}
+        
+        /// Default destructor
+        ~SpeciesDiffusing () noexcept {};
+    };
+    
 } // end of chem namespace 
 
 /// Print self into an iostream

@@ -1,3 +1,32 @@
+######################### 6/3/2012 ##########################
+
+This code uses SFINAE to determine at compile time whether two types are the same.
+However, it does not do polymorhic check, but instead literally two classes as 
+they are without polymorphic conversion. Us
+
+template<typename T1>
+struct isSame {
+    template<typename T2>
+    bool operator() (const T2& t2, typename std::enable_if<std::is_same<T1, T2>::value>::type* p = nullptr){
+        return true;
+    }
+    
+    template<typename T2>
+    bool operator() (const T2& t2, typename std::enable_if<!std::is_same<T1, T2>::value>::type* p = nullptr) 
+    { 
+        return false;
+    }                                                            
+};
+
+and also can do the following,
+---
+struct isComposite {
+    bool operator () (const Composite &c) {
+        return typeid(c)==typeid(Composite&) ? true : false; 
+        
+    }
+};
+
 ######################### 5/17/2012 ##########################
 To run specific tests only in google test:
 --gtest_filter=SpeciesDBTest.*

@@ -1,0 +1,20 @@
+Goals for June 2012
+--------
+Composite:
+1. Introduce the basics of protofilament and filament classes
+2. Introduce the basics of a compartment class
+3. Introduce the basics of a system class
+4. Implement an iterator for composites
+5. Document all composite objects
+6. Write tests for composites
+
+Reactions:
+1. Implement the direct Gillespie method
+2. Write tests for direct and NRM algorithms, including cross-validation tests
+3. Document Reactions and related classes 
+
+Filopodia:
+1. Implement a simple simulation of filopodial growth
+2. Implement walking motors
+3. Write tests and documentation for filopodial simulations
+--------

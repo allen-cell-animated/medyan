@@ -15,6 +15,7 @@
 
 #include "Component.h"
 #include "Species.h"
+#include "Visitor.h"
 
 namespace chem {
     
@@ -24,7 +25,7 @@ private:
     std::vector<std::unique_ptr<Composite>> _children;
     
 public: //should be turned into protected
-    void addSpeciesUniq(std::unique_ptr<Species> &&child_species) {
+    void addSpeciesUnique(std::unique_ptr<Species> &&child_species) {
         _species.push_back(std::move(child_species));
         _species.back()->setParent(this);
     }
@@ -40,9 +41,35 @@ public: //should be turned into protected
 public:
     Composite() :  Component() {}
     
-    virtual std::string getFullName() const {return "Composite";}; 
+    virtual bool apply (Visitor &v) {
+        bool res_self = v.visit(this); //pre-order
+        if(!res_self) 
+            return false;
+        for (auto &c : children()) {
+            bool res_child = c->apply(v);
+            if(!res_child) 
+                return false;
+        }
+        return true;
+    }
     
+    virtual bool apply_if (ConditionalVisitor &v) {
+        bool res_self = v.visit_if(this); //pre-order
+        if(!res_self) 
+            return false;
+        for (auto &c : children()) {
+            bool res_child = c->apply_if(v);
+            if(!res_child) 
+                return false;
+        }
+        return true;
+    }
+
     virtual ~Composite() noexcept {}
+    
+    virtual bool hasChildren() {return children().size()>0 ? true : false;}
+
+    virtual std::string getFullName() const {return "Composite";}; 
     
     virtual void addChild (std::unique_ptr<Composite> &&child) {
         _children.push_back(std::move(child));
@@ -74,14 +101,5 @@ public:
 
 };
        
-
-// not needed now - use isSame<...> from utility.h
-//struct isComposite {
-//    bool operator () (const Composite &c) {
-//        return typeid(c)==typeid(Composite&) ? true : false; 
-//        
-//    }
-//};
-
 } // end of chem
 #endif
