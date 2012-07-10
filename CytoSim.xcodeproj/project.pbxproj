@@ -27,6 +27,8 @@
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
+		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
@@ -55,6 +57,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		F771ADD5156561680010B123 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F7A77DA815ACAC5700076046 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -101,8 +112,13 @@
 		F771ADD9156561680010B123 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
+		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
+		F7A1DC0F157AF3AD004C738D /* VisitorConcrete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisitorConcrete.h; sourceTree = "<group>"; };
+		F7A77DAC15ACAC5700076046 /* example_composite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_composite; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7A77DAE15ACACA300076046 /* example_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example_composite.cpp; sourceTree = "<group>"; };
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
 		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
+		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
 		F7BDDE83155231CE0053817E /* ChemSim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSim.h; sourceTree = "<group>"; };
 		F7E3DB5715799F85002EAF2C /* example_kostya.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_kostya.cpp; sourceTree = "<group>"; };
 		F7E3DB621579A03C002EAF2C /* example_kostya */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_kostya; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +153,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7A77DA615ACAC5700076046 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +200,7 @@
 				F771ADD9156561680010B123 /* TestSuite */,
 				F7123D8115752161008F64D1 /* example_misc */,
 				F7E3DB621579A03C002EAF2C /* example_kostya */,
+				F7A77DAC15ACAC5700076046 /* example_composite */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -184,16 +209,16 @@
 			isa = PBXGroup;
 			children = (
 				F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */,
-				F702A4581575237F00FF21FC /* Composite.h */,
-				F7346A871578202600326E09 /* Component.h */,
-				F7346A891578206500326E09 /* Component.cpp */,
-				F7F3681D1575C743006727F7 /* Composite.cpp */,
 				F775C6B715576A66008A9C87 /* ChemNRMImpl.h */,
 				F7A924DA155BECD000AB05FA /* ChemSim.cpp */,
 				F7BDDE83155231CE0053817E /* ChemSim.h */,
 				F763ED131548FFED0069DA61 /* common.h */,
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
+				F7346A891578206500326E09 /* Component.cpp */,
+				F7346A871578202600326E09 /* Component.h */,
+				F7F3681D1575C743006727F7 /* Composite.cpp */,
+				F702A4581575237F00FF21FC /* Composite.h */,
 				F7A20C8F1566023100113920 /* EXAMPLES */,
 				F763ED161548FFED0069DA61 /* main.cpp */,
 				F763ED181548FFED0069DA61 /* notes.txt */,
@@ -207,7 +232,10 @@
 				F763ED211548FFED0069DA61 /* System.cpp */,
 				F763ED221548FFED0069DA61 /* System.h */,
 				F71E973C1565A783002BDF16 /* TESTS */,
+				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
+				F7A1DC0D157AD36A004C738D /* Visitor.h */,
+				F7A1DC0F157AF3AD004C738D /* VisitorConcrete.h */,
 			);
 			path = CytoSim;
 			sourceTree = "<group>";
@@ -217,6 +245,7 @@
 			children = (
 				F7123D701575211E008F64D1 /* example_misc.cpp */,
 				F7E3DB5715799F85002EAF2C /* example_kostya.cpp */,
+				F7A77DAE15ACACA300076046 /* example_composite.cpp */,
 			);
 			path = EXAMPLES;
 			sourceTree = "<group>";
@@ -302,6 +331,23 @@
 			productReference = F771ADD9156561680010B123 /* TestSuite */;
 			productType = "com.apple.product-type.tool";
 		};
+		F7A77DA315ACAC5700076046 /* example_composite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7A77DA915ACAC5700076046 /* Build configuration list for PBXNativeTarget "example_composite" */;
+			buildPhases = (
+				F7A77DA415ACAC5700076046 /* Sources */,
+				F7A77DA615ACAC5700076046 /* Frameworks */,
+				F7A77DA815ACAC5700076046 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = example_composite;
+			productName = CytoSim;
+			productReference = F7A77DAC15ACAC5700076046 /* example_composite */;
+			productType = "com.apple.product-type.tool";
+		};
 		F7E3DB591579A03C002EAF2C /* example_kostya */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7E3DB5F1579A03C002EAF2C /* Build configuration list for PBXNativeTarget "example_kostya" */;
@@ -345,6 +391,7 @@
 				F771ADC8156561680010B123 /* TestSuite */,
 				F7123D7215752161008F64D1 /* example_misc */,
 				F7E3DB591579A03C002EAF2C /* example_kostya */,
+				F7A77DA315ACAC5700076046 /* example_composite */,
 			);
 		};
 /* End PBXProject section */
@@ -397,6 +444,14 @@
 			files = (
 				F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */,
 				F71E97431565B02C002BDF16 /* test_reactions.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7A77DA415ACAC5700076046 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,7 +509,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -474,7 +529,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -491,6 +546,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -505,6 +561,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = "-lboost_serialization";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -582,6 +639,36 @@
 			};
 			name = Release;
 		};
+		F7A77DAA15ACAC5700076046 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_CFLAGS = "-std=c++11";
+				OTHER_LDFLAGS = "-lboost_serialization";
+				PRODUCT_NAME = example_composite;
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
+			};
+			name = Debug;
+		};
+		F7A77DAB15ACAC5700076046 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_CFLAGS = "-std=c++11";
+				OTHER_LDFLAGS = "-lboost_serialization";
+				PRODUCT_NAME = example_composite;
+				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
+			};
+			name = Release;
+		};
 		F7E3DB601579A03C002EAF2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -654,6 +741,15 @@
 			buildConfigurations = (
 				F771ADD7156561680010B123 /* Debug */,
 				F771ADD8156561680010B123 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7A77DA915ACAC5700076046 /* Build configuration list for PBXNativeTarget "example_composite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7A77DAA15ACAC5700076046 /* Debug */,
+				F7A77DAB15ACAC5700076046 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
