@@ -14,6 +14,16 @@
 
 namespace chem {
 
+    SpeciesNamesDB* SpeciesNamesDB::_instance = 0;
+
+    SpeciesNamesDB* SpeciesNamesDB::Instance() {
+        if(_instance==0)
+            _instance = new SpeciesNamesDB;
+        return _instance;
+    }
+
+    
+    
 //enum class SType : unsigned char {
 //    None = 0, ///< Undefined Species; should only be used privately during construction; 
 //    Bulk, ///< Species that have no spatial association (i.e. are "well-mixed") 
@@ -24,11 +34,11 @@ namespace chem {
 //    Membrane ///< Species that diffuse within a membrane 
 //    };
         
-std::vector<std::string> vec_type_name = {"None", "Bulk", "Diffusing", "Filament", "Walking", "Motors", "Membrane"};
+//std::vector<std::string> vec_type_name = {"None", "Bulk", "Diffusing", "Filament", "Walking", "Motors", "Membrane"};
 
-std::string getTypeAsString (SType T) {
-    return vec_type_name[static_cast<int>(T)];
-}
+//std::string getTypeAsString (SType T) {
+//    return vec_type_name[static_cast<int>(T)];
+//}
     
 } // end of namespace chem
 

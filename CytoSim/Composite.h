@@ -22,36 +22,8 @@ namespace chem {
     
 class Composite : public Component {
 private:
-    std::deque<std::unique_ptr<Species>> _species;
     std::vector<std::unique_ptr<Composite>> _children;
-    
-public: //should be turned into protected
-    void pushBackSpeciesUnique(std::unique_ptr<Species> &&child_species) {
-        _species.push_back(std::move(child_species));
-        _species.back()->setParent(this);
-    }
-    
-    template<typename T, typename ...Args>
-    void pushBackSpecies( Args&& ...args )
-    {
-        _species.push_back(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
-        _species.back()->setParent(this);
-        //        _species.emplace_back(make_unique(Args...));
-    }
-    
-    void pushFrontSpeciesUnique(std::unique_ptr<Species> &&child_species) {
-        _species.push_front(std::move(child_species));
-        _species.front()->setParent(this);
-    }
-    
-    template<typename T, typename ...Args>
-    void pushFrontSpecies( Args&& ...args )
-    {
-        _species.push_front(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
-        _species.front()->setParent(this);
-        //        _species.emplace_front(make_unique(Args...));
-    }
-    
+
 public:
     Composite() :  Component() {}
     
@@ -96,23 +68,6 @@ public:
 
     virtual Composite* children (size_t i) {return _children[i].get();}
     
-    virtual Species* species(size_t i) {return _species[i].get();}
-        
-    virtual std::deque<std::unique_ptr<Species>>& species() {
-        return _species;
-    }
-    
-    virtual const std::deque<std::unique_ptr<Species>> & species() const {
-        return _species;
-    }
-    
-    virtual size_t countSpecies() const {
-        size_t res = species().size();
-        for(auto &c : _children)
-            res+=c->countSpecies();
-        return res;
-    }
-
 };
        
 } // end of chem

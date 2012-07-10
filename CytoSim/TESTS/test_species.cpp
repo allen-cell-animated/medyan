@@ -21,13 +21,11 @@ TEST(SpeciesTest, CTors) {
     //Default CTor
     SpeciesBulk X;
     EXPECT_EQ(0,X.getN());
-    EXPECT_EQ(SType::Bulk,X.getType());
     EXPECT_EQ("",X.getName());
 //    cout << X << endl;
 
     //CTor 1
     SpeciesBulk A{"Arp2/3",25};
-    EXPECT_EQ(SType::Bulk,A.getType());
     EXPECT_EQ(25,A.getN());
     EXPECT_EQ("Arp2/3",A.getName());
 //    cout << A << endl;
@@ -45,7 +43,6 @@ TEST(SpeciesTest, CTors) {
 //    cout << D << endl;
     EXPECT_EQ(39,D.getN());
     EXPECT_EQ("G-Actin",D.getName());
-    EXPECT_EQ(SType::Bulk,D.getType());
     
     //Assignment operator
     SpeciesBulk F{"Myosin-X",112};
@@ -79,7 +76,6 @@ TEST(SpeciesTest, Vector) {
     vsb.push_back({"G-Actin",133});
 //    cout << vsb.back() << endl;
     EXPECT_EQ(133,vsb.back().getN());
-    EXPECT_EQ(SType::Bulk,vsb.back().getType());
     EXPECT_EQ("G-Actin",vsb.back().getName());
     
     vsb.emplace_back("Arp2/3",244);

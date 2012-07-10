@@ -603,8 +603,12 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"/usr/local/gcc47/gtest-1.6.0/include",
+					"~/Dropbox/Codes/CytoSim/CytoSim",
 				);
-				LIBRARY_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/gcc47/gtest-1.6.0/lib/.libs",
+					/usr/local/lib,
+				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
 					"-lgtest",
@@ -612,7 +616,7 @@
 					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
-				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";
 			};
 			name = Debug;
 		};
@@ -626,8 +630,12 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"/usr/local/gcc47/gtest-1.6.0/include",
+					"~/Dropbox/Codes/CytoSim/CytoSim",
 				);
-				LIBRARY_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/gcc47/gtest-1.6.0/lib/.libs",
+					/usr/local/lib,
+				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
 					"-lgtest",
@@ -635,7 +643,7 @@
 					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
-				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";
 			};
 			name = Release;
 		};

@@ -25,9 +25,6 @@
 
 #include <type_traits>
 
-
-#include <boost/flyweight.hpp>
-
 #include "common.h"
 #include "utility.h"
 #include "Component.h"
@@ -37,23 +34,55 @@ class System;
 
 namespace chem {
     
-enum class SType : unsigned char {
-    None = 0, ///< Undefined Species; should only be used privately during construction; 
-    Bulk, ///< Species that have no spatial association (i.e. are "well-mixed") 
-    Diffusing, ///< Species that diffuse between cytosolic compartments 
-    Filament, ///< Species that comprise filaments (such as F-Actin)
-    Walking, ///< Species that can walk ("convectively") on filaments (like Myosin X)
-    Motors, ///< Species that are bound to filaments and generate forces (like Myosin II)
-    Membrane ///< Species that diffuse within a membrane 
+    
+    /// SpeciesNamesDB class is used to associate unique integers with character based names of Species
+    /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, for example
+     *  in cytosol vs bound to a filament. The corresponding specific Species will be distinct, however,
+     *  they will share the same name, as returned by Species::getName(). This, in turn, helps to match 
+     *  "Arp2/3" bound to filaments with diffusing "Arp2/3". SpeciesNamesDB associates a unique integer 
+     *  with Species of the same type (e.g. "Arp2/3", regardless whether it is bound or not), and provides 
+     *  conversion functions fron integer to 
+     *  std::string (SpeciesNamesDB::intToString(int i)) and vice versa (SpeciesNamesDB::stringToInt (std::string name)). 
+     *  class SpeciesNamesDB is a singleton, and should be used by first calling SpeciesNamesDB::Instance() method.
+     *
+     *  @code
+     *  int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3"); // let's say y=2
+     *  std::string x = SpeciesNamesDB::Instance()->intToString(2); // then x should be "Arp2/3"
+     *  @endcode
+     *
+     */  
+    class SpeciesNamesDB {
+    private: 
+        static SpeciesNamesDB* _instance; ///< the singleton instance
+        SpeciesNamesDB() {}
+    private: 
+        std::unordered_map<std::string,int> _map_string_int;
+        std::vector<std::string> _vec_int_string;
+    public:
+        /// returns the unique instance of the singleton, which can be used to access the names DB
+        static SpeciesNamesDB* Instance();
+        
+        /// Given an integer "i", returns the std::string associated with that integer. Throws an out of range exception.  
+        std::string intToString(int i) const {
+            if (i>=_vec_int_string.size())
+                throw std::out_of_range("SpeciesNamesDB::intToString(int i) index error:[" + std::to_string(i) +"], while the vector size is " + std::to_string(_vec_int_string.size()));
+            return _vec_int_string[i];
+        }
+        
+        /// Given a std::string "name", returns the unique integer associated with that string. If the 
+        /// string does not exist yet, it is created.
+        int stringToInt (std::string name) {
+            auto mit = _map_string_int.find(name);
+            if(mit == _map_string_int.end()){
+                _vec_int_string.push_back(name);
+                _map_string_int[name]=_vec_int_string.size()-1;
+                return _vec_int_string.size()-1;
+            }
+            else
+                return mit->second;
+        }
     };
-    
-    
-    /// We use boost::flyweights to optimize access to highly redundant data, such as the name of the Species 
-    /// which could be repeated thousands of times in many compartments. May help with cache access performance.
-    using namespace boost::flyweights;
-    
-    std::string getTypeAsString (SType T);
-    
+        
     /// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
     /*! This class represents chemical species, such as G-Actin. As a class, it provides Species' name, the current
      *  copy number of molecules, Species type (e.g. SType::Bulk), and a few other characteristics of a Species. 
@@ -78,12 +107,12 @@ enum class SType : unsigned char {
     */
     class Species : public Component {
     private: //Variables
-        flyweight<std::string> _name; ///< this Species' type
+        int _molecule; ///< unique id identifying the molecule (e.g. the integer id corresponding to "Arp2/3") 
         std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
-        
     public:
         /// Default Constructor; Should not be used by the end users - only internally (although it is marked private)
-        Species()  : Component(), _name("") {
+        Species()  : Component() {
+            _molecule=SpeciesNamesDB::Instance()->stringToInt("");
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, 0));
 //            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
         }
@@ -92,8 +121,9 @@ enum class SType : unsigned char {
         /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
         /// @param type_enum - SType enum, such as SType::Diffusing
         /// @param n - copy number
-        Species (const std::string &name, species_copy_t n=0)  : Component(), _name(name)
+        Species (const std::string &name, species_copy_t n=0)  : Component()
         {
+            _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
 //            std::cout << "Species (const std::string &name, species_copy_t n=0): Main ctor called, creating ptr=" << this << std::endl;
             
@@ -103,7 +133,7 @@ enum class SType : unsigned char {
         /// @note The associated RSpecies subpart is not copied, but a new one is created. This means that 
         /// the copied destination Species won't be included in any Reaction interactions of the original 
         /// source Species. The species copy numbered is copied to the target.
-        Species (const Species &rhs)  : Component(), _name(rhs._name) {
+        Species (const Species &rhs)  : Component(), _molecule(rhs._molecule) {
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN()));
 //            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
@@ -117,7 +147,7 @@ enum class SType : unsigned char {
         /// the Species around, without copying. Moving transfers the RSpecies pointer from source to target, 
         /// stealing resources from the source, leaving it for destruction.
         Species (Species &&rhs) noexcept
-        : Component(), _name(std::move(rhs._name)), _rspecies(std::move(rhs._rspecies)) {
+        : Component(), _molecule(rhs._molecule), _rspecies(std::move(rhs._rspecies)) {
 //            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
         
@@ -127,7 +157,7 @@ enum class SType : unsigned char {
         /// The copy number of B is copied to A.
         Species& operator=(const Species& rhs)  {
 //            std::cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << std::endl; 
-            _name = rhs.getName();
+            _molecule = rhs._molecule;
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN()));
             return *this;
         }
@@ -136,7 +166,7 @@ enum class SType : unsigned char {
         /// @see Species (Species &&rhs)
         Species& operator=(Species&& rhs)  {
 //            std::cout << "Species& operator=(Species&& rhs):" << this << ", " << &rhs << std::endl; 
-            _name = std::move(rhs._name);
+            _molecule = rhs._molecule;
             _rspecies = std::move(rhs._rspecies);
             return *this;
         }
@@ -157,7 +187,7 @@ enum class SType : unsigned char {
         species_copy_t getN () const {return _rspecies->getN();}
         
         /// Return this Species' name
-        const std::string& getName() const {return _name;}
+        std::string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
         
         /// Return true if this Species emits signals on copy number change
         bool isSignaling () const {return _rspecies->isSignaling();}
@@ -180,8 +210,7 @@ enum class SType : unsigned char {
         /// by re-implementing: @see virtual bool is_equal(const Species& b) const 
         friend bool operator ==(const Species& a, const Species& b)
         {
-            // RTTI-like check, but through SType enums - much faster
-            if (a.getType() != b.getType() or a.getN() != b.getN() or a.getName() != b.getName())
+            if (a.getN() != b.getN() or a.getName() != b.getName() or typeid(a) != typeid(b))
                 return false;
             return a.is_equal(b); // Invoke virtual is_equal via derived subclass of a (which should be the same as b)
         }
@@ -199,11 +228,7 @@ enum class SType : unsigned char {
         /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug 
         /// (as of gcc 4.703), and will presumbaly be fixed in the future.
         virtual ~Species () noexcept {};
-        
-        /// Return SType enum associated with this Species; base class returns SType::None - it is not a valid
-        /// Species by itself. 
-        virtual SType getType () const {return SType::None;}
-        
+                
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         virtual std::string getFullName() const {return getName() + "{None}";}
         
@@ -248,9 +273,6 @@ enum class SType : unsigned char {
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         virtual std::string getFullName() const {return getName() + "{Bulk}";}
         
-        /// Return SpeciesType associated with this Species
-        virtual SType getType () const {return SType::Bulk;}
-        
         /// Default destructor
         ~SpeciesBulk () noexcept {};
     };
@@ -287,9 +309,6 @@ enum class SType : unsigned char {
         
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Diffusing}"
         virtual std::string getFullName() const {return getName() + "{Diffusing}";}
-        
-        /// Return SpeciesType associated with this Species
-        virtual SType getType () const {return SType::Diffusing;}
         
         /// Default destructor
         ~SpeciesDiffusing () noexcept {};
