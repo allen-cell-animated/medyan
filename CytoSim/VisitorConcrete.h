@@ -11,7 +11,6 @@
 
 #include "Visitor.h"
 #include "Composite.h"
-#include "Protofilament.h"
 #include "utility.h"
 
 namespace chem {
@@ -58,18 +57,18 @@ public:
 
 };
     
-class ProtoFilamentVisitor : public ConditionalVisitor {
-public:
-    virtual bool visit(Component *c) {
-        std::cout << "Visiting, " << c->getFullName() << ", which has " 
-        << c->countSpecies() << ", Species overall. " << std::boolalpha << isSame<ProtoFilament>(*c) << std::endl;
-        return true;
-    }
-    virtual bool pred(Component *c) {
-        return typeid(*c) == typeid(ProtoFilament);
-    }
-    
-};
+//class ProtoFilamentVisitor : public ConditionalVisitor {
+//public:
+//    virtual bool visit(Component *c) {
+//        std::cout << "Visiting, " << c->getFullName() << ", which has " 
+//        << c->countSpecies() << ", Species overall. " << std::boolalpha << isSame<ProtoFilament>(*c) << std::endl;
+//        return true;
+//    }
+//    virtual bool pred(Component *c) {
+//        return typeid(*c) == typeid(ProtoFilament);
+//    }
+//    
+//};
 
 } // end of chem
 

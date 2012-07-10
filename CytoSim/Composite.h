@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 #include <typeinfo>
 
 #include "Component.h"
@@ -21,21 +22,34 @@ namespace chem {
     
 class Composite : public Component {
 private:
-    std::vector<std::unique_ptr<Species>> _species;
+    std::deque<std::unique_ptr<Species>> _species;
     std::vector<std::unique_ptr<Composite>> _children;
     
 public: //should be turned into protected
-    void addSpeciesUnique(std::unique_ptr<Species> &&child_species) {
+    void pushBackSpeciesUnique(std::unique_ptr<Species> &&child_species) {
         _species.push_back(std::move(child_species));
         _species.back()->setParent(this);
     }
     
     template<typename T, typename ...Args>
-    void addSpecies( Args&& ...args )
+    void pushBackSpecies( Args&& ...args )
     {
         _species.push_back(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
         _species.back()->setParent(this);
         //        _species.emplace_back(make_unique(Args...));
+    }
+    
+    void pushFrontSpeciesUnique(std::unique_ptr<Species> &&child_species) {
+        _species.push_front(std::move(child_species));
+        _species.front()->setParent(this);
+    }
+    
+    template<typename T, typename ...Args>
+    void pushFrontSpecies( Args&& ...args )
+    {
+        _species.push_front(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
+        _species.front()->setParent(this);
+        //        _species.emplace_front(make_unique(Args...));
     }
     
 public:
@@ -84,11 +98,11 @@ public:
     
     virtual Species* species(size_t i) {return _species[i].get();}
         
-    virtual std::vector<std::unique_ptr<Species>>& species() {
+    virtual std::deque<std::unique_ptr<Species>>& species() {
         return _species;
     }
     
-    virtual const std::vector<std::unique_ptr<Species>> & species() const {
+    virtual const std::deque<std::unique_ptr<Species>> & species() const {
         return _species;
     }
     
