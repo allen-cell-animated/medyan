@@ -73,7 +73,7 @@ private:
     findSignal(Reaction *r) const {
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it==_map_reaction_signal.end())
-            throw std::out_of_range("ChemSignal::broadcastReactionSignal(...) key error...");
+            throw std::out_of_range("ChemSignal::findSignal(Reaction *r) key error...");
         return sig_it;
     }
     
@@ -82,7 +82,7 @@ private:
     findSignal(RSpecies *s) const {
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it==_map_RSpecies_signal.end())
-            throw std::out_of_range("ChemSignal::broadcastRSpeciesSignal(...) key error...");
+            throw std::out_of_range("ChemSignal::findSignal(RSpecies *s) key error...");
         return sig_it;
     }
     
@@ -90,14 +90,14 @@ private:
     void assertSignalDoesNotExist (Reaction *r){
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it!=_map_reaction_signal.end())
-            throw std::runtime_error("ChemSignal::addSignalingReaction(...) Reaction already present in the map...");
+            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (Reaction *r) Reaction already present in the map...");
     }
     
     /// Assert that a signal corresponding to RSpecies *s does not exist or throw std::runtime_error.
     void assertSignalDoesNotExist (RSpecies *s){
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it!=_map_RSpecies_signal.end())
-            throw std::runtime_error("ChemSignal::addSignalingRSpecies(...) RSpecies already present in the map...");
+            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (RSpecies *s) RSpecies already present in the map...");
     }
 
 public:
@@ -146,7 +146,7 @@ public:
     ///        int here corresponds to delta, the change in copy number of the RSpecies (for which the signal was emitted)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
-    boost::signals2::connection connect(Species *s, std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=10) {
+    boost::signals2::connection connect(Species *s, std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
         RSpecies *rs = &s->getRSpecies();
         auto sig_it = findSignal(rs);
         return sig_it->second->connect(priority, RSpecies_callback);

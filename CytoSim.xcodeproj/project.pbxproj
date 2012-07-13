@@ -473,8 +473,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_misc;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
@@ -487,8 +488,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_misc;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
@@ -548,7 +550,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -563,7 +565,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -613,7 +615,6 @@
 				OTHER_LDFLAGS = (
 					"-lgtest",
 					"-lgtest_main",
-					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";
@@ -640,7 +641,6 @@
 				OTHER_LDFLAGS = (
 					"-lgtest",
 					"-lgtest_main",
-					"-lboost_serialization",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";
@@ -656,7 +656,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_composite;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
@@ -671,7 +671,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_composite;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
@@ -684,8 +684,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_kostya;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};
@@ -698,8 +699,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "-lboost_serialization";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = example_kostya;
 				USER_HEADER_SEARCH_PATHS = "~/Dropbox/Codes/CytoSim/CytoSim";
 			};

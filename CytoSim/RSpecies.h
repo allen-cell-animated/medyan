@@ -19,6 +19,7 @@
 #include "common.h"
 #include "utility.h"
 
+#include <iostream>
 
 namespace chem {
 
@@ -143,7 +144,7 @@ namespace chem {
         void makeSignaling (ChemSignal &sm);
     public:
          /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
-        /// Most of the time, this will occur naturally. If not, a an assertion will ungracefully terminate the program.
+        /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
         ~RSpecies(){
             assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
 //            std::cout << "Destructor ~RSpecies() called on ptr=" << this << std::endl;

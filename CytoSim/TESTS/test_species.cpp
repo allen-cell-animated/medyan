@@ -7,7 +7,7 @@
 //
 
 // Note: This test omits many functions of Species that interact with Reaction objects. 
-//        Separate tests will cover those methods.
+//        Separate tests weill cover those methods.
 
 #include <iostream>
 #include "gtest/gtest.h"
@@ -15,6 +15,21 @@
 
 using namespace std;
 using namespace chem;
+
+TEST(SpeciesNamesDBTest, All) {
+    int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");
+    EXPECT_EQ(0,y);
+    std::string x = SpeciesNamesDB::Instance()->intToString(y);
+    EXPECT_EQ("Arp2/3",x);
+    
+    EXPECT_THROW(SpeciesNamesDB::Instance()->intToString(1), std::out_of_range);
+
+    y = SpeciesNamesDB::Instance()->stringToInt("G-Actin");
+    EXPECT_EQ(1,y);
+    x = SpeciesNamesDB::Instance()->intToString(y);
+    EXPECT_EQ("G-Actin",x);
+    EXPECT_NO_THROW(SpeciesNamesDB::Instance()->intToString(1));
+}
 
 TEST(SpeciesTest, CTors) {
 

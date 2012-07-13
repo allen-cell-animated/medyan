@@ -82,7 +82,7 @@ public:
     unsigned char getM() const {return _m;}
     
     /// Returns the number of product RSpecies
-    unsigned char getN() const {return static_cast<unsigned char>(_rspecies.size());}
+    unsigned char getN() const {return static_cast<unsigned char>(_rspecies.size()-_m);}
     
     /// Computes the product of the copy number of all reactant RSpecies. Can be used to quickly 
     /// determined whether this Reaction is active - i.e. if one of the reactants has a 0 copy number, 
@@ -107,18 +107,13 @@ public:
     /// @note To start signaling again, makeSignaling(...) needs to be called
     void stopSignaling (ChemSignal &sm);
 
-    //Return an iterator to the beginning of the sequence of affected Reaction objects
-    vr_iterator         beginAffected() {return _dependents.begin();}
-
-    //Return a const iterator to the beginning of the sequence of affected Reaction objects
-    vr_const_iterator   cbeginAffected() const {return _dependents.cbegin();}
-
-    //Return an iterator to the end of the sequence of affected Reaction objects
-    vr_iterator         endAffected() {return _dependents.end();}
-
-    //Return a const iterator to the end of the sequence of affected Reaction objects
-    vr_const_iterator   cendAffected() const {return _dependents.cend();}
-
+    /// Return a const reference to the vector of dependent reactions
+    /// @note One can obtain two different lists of affected reactions:
+    /// 1) via getAffectedReactions(), where the copy numbers do influence the 
+    /// dependencies, and 2) via dependents(), where dependencies stop being counted 
+    /// if the copy numbers of reactant species drop to 0. 
+    const std::vector<Reaction*>& dependents() {return _dependents;}
+        
     //Return an iterator to the beginning of the sequence of reactants
     vrsp_iterator        beginReactants() {return _rspecies.begin();}
 
@@ -149,8 +144,10 @@ public:
     /// @note This method does not send a reaction event Signal. The latter is usually done
     /// from within a Gillespie-like algorithm. 
     void makeStep() {
-        for(auto sit = beginReactants(); sit!=endReactants(); ++sit) (*sit)->down();
-        for(auto sit = beginProducts(); sit!=endProducts(); ++sit) (*sit)->up();
+        for(auto sit = beginReactants(); sit!=endReactants(); ++sit) 
+            (*sit)->down();
+        for(auto sit = beginProducts(); sit!=endProducts(); ++sit) 
+            (*sit)->up();
     }
     
     /// Compute the Reaction propensity that is needed by a Gillespie like algorithm:
@@ -178,6 +175,8 @@ public:
     
     /// Return the list of Reaction objects that are affected when this Reaction is fired
     /// @return a vector of pointers to the affected Reaction objects
+    /// @note This method is "expensive" because it computes from scratch the dependencies. Importantly, 
+    /// the copy numbers of molecules do not influence the result of this function. \sa dependents()
     std::vector<Reaction*> getAffectedReactions();
     
     /// Request that the Reaction *r adds this Reaction to its list of dependents which it affects. 

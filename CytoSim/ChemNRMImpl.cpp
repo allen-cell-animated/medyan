@@ -42,7 +42,7 @@ void RNodeNRM::printSelf() const {
 
 void RNodeNRM::printDependents() const {
     cout << "RNodeNRM: ptr=" << this << ", the following RNodeNRM objects are dependents:\n\n";
-    for(auto rit = _react->beginAffected(); rit!=_react->endAffected(); ++rit){
+    for(auto rit = _react->dependents().begin(); rit!=_react->dependents().end(); ++rit){
 //        cout << "I am here [" << (*rit)->getRnode() << "]" << endl;
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         rn_other->printSelf();
@@ -121,7 +121,7 @@ void ChemNRMImpl::makeStep()
 //    rn->printSelf();
     // Updating dependencies
     Reaction *r = rn->getReaction();
-    for(auto rit = r->beginAffected(); rit!=r->endAffected(); ++rit){
+    for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
         rn_other->reComputePropensity();

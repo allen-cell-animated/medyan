@@ -71,6 +71,7 @@ void Reaction::activateReaction(){
 
 void Reaction::unregisterDependent(Reaction *r){
     auto it=std::find(_dependents.begin(),_dependents.end(),r);
+//    cout << "Reaction::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
     if(it!=_dependents.end())
         _dependents.erase(it);
 }
