@@ -146,7 +146,14 @@ namespace chem {
         /// Destroy the signal associated with this RSpecies; all associated slots will be destroyed
         /// @note To start signaling again, startSignaling() needs to be called
         void stopSignaling ();
-                       
+        
+        /// Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.
+        /// @param std::function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot)
+        /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
+        ///                       unless absolutely essential.
+        /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
+        boost::signals2::connection connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
+                
     public:
          /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
         /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
