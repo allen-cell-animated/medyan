@@ -9,7 +9,6 @@
 #include <iostream>
 #include "RSpecies.h"
 #include "Reaction.h"
-#include "Signaling.h"
 
 /// Print self into an iostream
 std::ostream& operator<<(std::ostream& os, const chem::RSpecies& s){
@@ -33,14 +32,14 @@ void RSpecies::passivateAssocReacts() {
     for (auto &r : _as_reactants)
         r->passivateReaction();
 }
-
-void RSpecies::makeSignaling (ChemSignal &sm) {
-    sm.addSignalingRSpecies(this);
-    _is_signaling=true;
+    
+void RSpecies::startSignaling () {
+    _signal = new RSpeciesCopyNChangedSignal;
 }
 
-void RSpecies::stopSignaling (ChemSignal &sm) {
-    sm.disconnect(this);
-    _is_signaling=false;
+void RSpecies::stopSignaling () {
+    if (_signal!=nullptr)
+        delete _signal;
+    _signal = nullptr;
 }
 }

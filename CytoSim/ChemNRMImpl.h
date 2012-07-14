@@ -17,7 +17,6 @@
 #include "utility.h"
 #include "Reaction.h"
 #include "ChemSim.h"
-#include "Signaling.h"
 
 namespace chem {
 
@@ -78,8 +77,8 @@ private:
 
 class ChemNRMImpl : public ChemSimImpl {
 public:
-    ChemNRMImpl(const ChemSignal& sm) : 
-    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _sm (sm), _t(0.0), _n_reacts(0) {}
+    ChemNRMImpl() : 
+    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _t(0.0), _n_reacts(0) {}
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     ChemNRMImpl& operator=(ChemNRMImpl &rhs) = delete;
     ~ChemNRMImpl();
@@ -105,7 +104,6 @@ private:
     boost_heap _heap;
     std::mt19937 _eng;
     std::exponential_distribution<double> _exp_distr;
-    const ChemSignal& _sm;
     double _t;
     size_t _n_reacts;
 };

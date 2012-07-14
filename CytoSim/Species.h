@@ -193,14 +193,19 @@ namespace chem {
         bool isSignaling () const {return _rspecies->isSignaling();}
         
         /// Set the signaling behavior of this Species
-        /// @param sm is the ChemSignal which will call the associated Signal (typically initiated by the 
         /// Gillespie-like simulation algorithm)
-        void makeSignaling (ChemSignal &sm) {_rspecies->makeSignaling(sm);}
+        void startSignaling () {_rspecies->startSignaling();}
         
         /// Destroy the signal associated with this Species
-        /// @param sm is the ChemSignal which manages signals
         /// @note To start signaling again, makeSignaling(...) needs to be called
-        void stopSignaling (ChemSignal &sm) {_rspecies->stopSignaling(sm);}
+        void stopSignaling () {_rspecies->stopSignaling();}
+        
+        /// Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.
+        /// @param std::function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot)
+        /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
+        ///                       unless absolutely essential.
+        /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
+        boost::signals2::connection connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
         
         /// Returns true if two Species objects are equal.
         /// This function would accept derived class of Species, such as SpeciesBulk

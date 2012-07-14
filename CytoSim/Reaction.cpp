@@ -15,7 +15,7 @@ using namespace std;
 namespace chem {
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
-_rnode(nullptr), _rate(rate), _m(M), _is_signaling (false) {
+_rnode(nullptr), _rate(rate), _m(M), _signal(nullptr) {
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -33,6 +33,8 @@ Reaction::~Reaction() {
     std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->removeAsProduct(this);} );
     passivateReaction();
+    if(_signal!=nullptr)
+        delete _signal;
 };
 
 std::vector<Reaction*> Reaction::getAffectedReactions() {
@@ -91,16 +93,22 @@ void Reaction::passivateReaction() {
 }
 
 
-void Reaction::makeSignaling (ChemSignal &sm) {
-    sm.addSignalingReaction(this);
-    _is_signaling=true;
+void Reaction::startSignaling () {
+    _signal = new ReactionEventSignal;
 }
 
-void Reaction::stopSignaling (ChemSignal &sm) {
-    sm.disconnect(this);
-    _is_signaling=false;
+void Reaction::stopSignaling () {
+    if (_signal!=nullptr)
+        delete _signal;
+    _signal = nullptr;
 }
 
+boost::signals2::connection Reaction::connect(std::function<void (Reaction *)> const &react_callback, int priority) {
+    if (!isSignaling())
+        startSignaling(); 
+    return _signal->connect(priority, react_callback);
+}
+    
 std::ostream& operator<<(std::ostream& os, const Reaction& rr){
     unsigned char i=0;
     for (auto sit = rr.cbeginReactants(); sit!=rr.cendReactants(); ++sit){

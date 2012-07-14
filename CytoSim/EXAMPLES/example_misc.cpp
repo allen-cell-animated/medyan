@@ -16,7 +16,6 @@
 #include "System.h"
 #include "ChemNRMImpl.h"
 #include "ChemSim.h"
-#include "Signaling.h"
 
 
 using namespace std;
@@ -78,22 +77,21 @@ int main(int argc, const char * argv[])
     
     
     
-    ChemSignal sm;
-    A1.makeSignaling(sm);
+    A1.startSignaling();
     PrintSpecies ps;
     std::function<void (RSpecies *, int)> psf(ps);
-    //    sm.connect(A1, print_species);
-    //    sm.connect(A1, PrintSpecies());
-    //    boost::signals2::shared_connection_block conn_a1(sm.connect(A1,psf), false);
-    boost::signals2::shared_connection_block conn_a1(sm.connect(&A1, [](RSpecies *s, int i){cout << *s << endl;}), false);
+    //    A1.connect(print_species);
+    //    A1.connect(PrintSpecies());
+    //    boost::signals2::shared_connection_block conn_a1(A1.connect(psf), false);
+    boost::signals2::connection conn_a1 = A1.connect([](RSpecies *s, int i){cout << *s << endl;});
     
-    A2.makeSignaling(sm);
+    A2.startSignaling();
     std::function<void (RSpecies *, int)> psff = [](RSpecies *s, int i){cout << *s << endl;};
-    sm.connect(&A2,psff);
+    boost::signals2::connection conn_a2 = A2.connect(psff);
     
     
     
-    ChemNRMImpl chem_nrm_impl(sm);
+    ChemNRMImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
     chem.addReaction(&r1);
     chem.addReaction(&r2);
@@ -110,9 +108,8 @@ int main(int argc, const char * argv[])
     chem.printReactions();
     chem.run(100);   
     
-    A2.stopSignaling(sm);
-    conn_a1.block();
-    //    sm.disconnect(A1,psf);
+    A2.stopSignaling();
+    //conn_a1.block();
     chem.run(100);   
     
     cout << "Final result:" << endl;

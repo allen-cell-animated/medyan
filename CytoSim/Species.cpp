@@ -10,7 +10,7 @@
 
 #include "Species.h"
 #include "Reaction.h"
-#include "Signaling.h"
+
 
 namespace chem {
 
@@ -22,7 +22,12 @@ namespace chem {
         return _instance;
     }
 
-    
+    boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority) {
+        if (!isSignaling())
+            startSignaling(); 
+        return _rspecies->_signal->connect(priority, RSpecies_callback);
+    }
+
     
 //enum class SType : unsigned char {
 //    None = 0, ///< Undefined Species; should only be used privately during construction; 

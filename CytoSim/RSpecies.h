@@ -16,6 +16,10 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <boost/signals2/signal.hpp>
+#include <boost/signals2/connection.hpp>
+#include <boost/signals2/shared_connection_block.hpp>
+
 #include "common.h"
 #include "utility.h"
 
@@ -36,7 +40,9 @@ namespace chem {
     typedef std::vector<RSpecies*>::iterator vrsp_iterator; 
     typedef std::vector<RSpecies*>::const_iterator vrsp_const_iterator; 
     
-    
+    /// This is a RSpecies signal object that can be used to signal when the copy number changes
+    typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSignal;
+ 
     /// RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in [Reactions](@ref Reaction).
     
     /*!  This class represents the reactivity of chemical species. The name RSpecies stems from reacting species.
@@ -58,14 +64,15 @@ namespace chem {
         std::vector<Reaction *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
         Species& _species; ///< reference to the **parent** Species object
         species_copy_t _n; ///< Current copy number of this RSpecies
-        bool _is_signaling; ///< If true, indicates a signal may be sent when a copy number of this Reaction changes
+        RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of 
+                                              ///< this RSpecies (usually when a single step of this Reaction occurs)
         
     private:
         /// Constructors 
         /// @param parent - the Species object to which this RSpecies belongs
         /// @param n - copy number
         RSpecies (Species &parent, species_copy_t n=0) : 
-        _species(parent), _n(n), _is_signaling(false) {}
+        _species(parent), _n(n), _signal(nullptr) {}
         
         /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
         RSpecies (const RSpecies &r) = delete;
@@ -132,22 +139,29 @@ namespace chem {
         
         /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the reactants. 
         void passivateAssocReacts();
-        
-        /// Destroy the signal associated with this RSpecies
-        /// @param sm is the ChemSignal which manages signals
-        /// @note To start signaling again, makeSignaling(...) needs to be called
-        void stopSignaling (ChemSignal &sm);
-        
+               
         /// Set the signaling behavior of this RSpecies
-        /// @param sm is the ChemSignal which will call the associated Signal (typically initiated by the 
-        /// Gillespie-like simulation algorithm)
-        void makeSignaling (ChemSignal &sm);
+        void startSignaling ();
+        
+        /// Destroy the signal associated with this RSpecies; all associated slots will be destroyed
+        /// @note To start signaling again, startSignaling() needs to be called
+        void stopSignaling ();
+                       
     public:
          /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
         /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
         ~RSpecies(){
             assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
 //            std::cout << "Destructor ~RSpecies() called on ptr=" << this << std::endl;
+            if(_signal!=nullptr)
+                delete _signal;
+        }
+        
+        /// Broadcasts signal indicating that the copy number of this RSpecies has changed
+        /// This method should usually called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
+        void emitSignal(int delta) {
+            if(isSignaling())
+                (*_signal)(this, delta);
         }
         
         /// Return the current copy number of this RSpecies
@@ -163,7 +177,7 @@ namespace chem {
         std::string getFullName() const;
                         
         /// Return true if this RSpecies emits signals on copy number change
-        bool isSignaling () const {return _is_signaling;}
+        bool isSignaling () const {return _signal!=nullptr;}
                 
         /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant

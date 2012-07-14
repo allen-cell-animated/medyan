@@ -133,15 +133,14 @@ void ChemNRMImpl::makeStep()
     }
     
     // Send signals
-    if(r->isSignaling())
-        _sm.emitReactionSignal(r);
+    r->emitSignal();
     for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
         if((*sit)->isSignaling())
-            _sm.emitRSpeciesSignal((*sit),-1);
+            (*sit)->emitSignal(-1);
     }
     for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
         if((*sit)->isSignaling())
-            _sm.emitRSpeciesSignal((*sit),1);
+            (*sit)->emitSignal(1);
     }
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
 }

@@ -16,6 +16,9 @@
 #include <cmath>
 #include <initializer_list>
 
+#include <boost/signals2/signal.hpp>
+#include <boost/signals2/connection.hpp>
+#include <boost/signals2/shared_connection_block.hpp>
 
 #include "common.h"
 #include "Species.h"
@@ -37,6 +40,11 @@ class RNode;
  *  up such that it "signals" when a reaction event happens, in which case the corresponding callbacks are called.
  *
  */
+    
+/// This is a Reaction signal object that will be called by ChemSignal, usually when requested by the 
+/// reaction simulation algorithm
+typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
+    
 class Reaction {
 private:
     std::vector<RSpecies*> _rspecies; ///< Reactants and products constituting this Reaction
@@ -44,7 +52,7 @@ private:
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     float _rate; ///< the rate for this Reaction
     const unsigned char _m; ///< indicates the number of reactants
-    bool _is_signaling; ///< If true, indicates a signal may be sent when a single step of this Reaction occurs
+    ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Reaction occurs)
     
 public:
 //    /// Default Constructor produces a Reaction with no reactants or products, zero rate, etc.
@@ -95,18 +103,29 @@ public:
     }
     
     /// Return true if this RSpecies emits signals on copy number change
-    bool isSignaling () const {return _is_signaling;}
+    bool isSignaling () const {return _signal!=nullptr;}
     
     /// Set the signaling behavior of this Reaction
-    /// @param is the ChemSignal which will call the associated Signal (typically initiated by the 
-    /// Gillespie-like simulation algorithm)
-    void makeSignaling (ChemSignal &sm);
+    void startSignaling ();
     
-    /// Destroy the signal associated with this Reaction
-    /// @param is the ChemSignal which manages signals
-    /// @note To start signaling again, makeSignaling(...) needs to be called
-    void stopSignaling (ChemSignal &sm);
+    /// Destroy the signal associated with this Reaction; all associated slots will be destroyed
+    /// @note To start signaling again, startSignaling() needs to be called
+    void stopSignaling ();
 
+    /// Connect the callback, react_callback to a signal corresponding to Reaction *r.
+    /// @param std::function<void (Reaction *)> const &react_callback - a function object to be called (a slot)
+    /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
+    ///                       unless absolutely essential.
+    /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
+    boost::signals2::connection connect(std::function<void (Reaction *)> const &react_callback, int priority=5);
+    
+    /// Broadcasts signal indicating that the Reaction event has taken place 
+    /// This method is only called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
+    void emitSignal() {
+        if(isSignaling())
+            (*_signal)(this);
+    }
+    
     /// Return a const reference to the vector of dependent reactions
     /// @note One can obtain two different lists of affected reactions:
     /// 1) via getAffectedReactions(), where the copy numbers do influence the 

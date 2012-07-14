@@ -13,10 +13,14 @@
 
 #include "Species.h"
 #include "Reaction.h"
-#include "Signaling.h"
 
 using namespace std;
 using namespace chem;
+
+void rspecies_callback (RSpecies *r, int delta){
+    r->getSpecies().setN(33);
+    //    cout << "reaction_callback was called by\n" << *r << endl;
+}
 
 void reaction_callback (Reaction *r){
     r->setRate(0.05);
@@ -102,6 +106,20 @@ TEST(ReactionTest, CTors) {
     EXPECT_EQ("D{Bulk}",(*p_it4)->getFullName());
 
 } 
+
+TEST(ReactionTest, RSpeciesSignaling) {
+    SpeciesBulk A("A",  8);
+    A.startSignaling();
+    auto c = A.connect(rspecies_callback);
+    
+    A.getRSpecies().emitSignal(0);
+    EXPECT_EQ(33,A.getN());
+    
+    c.disconnect();
+    A.setN(9);
+    A.getRSpecies().emitSignal(0);
+    EXPECT_EQ(9,A.getN());
+}
 
 TEST(ReactionTest, Dependents1) {
     SpeciesBulk A("A",  10);
@@ -189,12 +207,11 @@ TEST(ReactionTest, Propensities) {
 
 }
 
-TEST(ReactionTest, Signaling) {
+TEST(ReactionTest, ReactionSignaling) {
     SpeciesBulk A("A",  8);
     SpeciesBulk B("B",  12);
     Reaction rxn = { {&A,&B}, 1, 1, 3.14 }; // A->B
-    ChemSignal sm;
-    rxn.makeSignaling(sm);
+    rxn.startSignaling();
     
     // There are at least ways to set up callbacks: 1) functions; 2) functors; 3) lambda functions
     // In terms of connection management, the return of sm.connect(...) can be captured and 
@@ -203,30 +220,34 @@ TEST(ReactionTest, Signaling) {
     
     //  std::function<void (Reaction *)> rcb(reaction_callback);
 
-    boost::signals2::shared_connection_block rcb(sm.connect(&rxn, reaction_callback), false);
-    sm.emitReactionSignal(&rxn);
+    boost::signals2::shared_connection_block rcb(rxn.connect(reaction_callback), false);
+    rxn.emitSignal();
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-    boost::signals2::shared_connection_block RCB(sm.connect(&rxn, ReactionCallback()), false);
-    sm.emitReactionSignal(&rxn);
+    boost::signals2::shared_connection_block RCB(rxn.connect(ReactionCallback()), false);
+    rxn.emitSignal();
     EXPECT_FLOAT_EQ(1.05, rxn.getRate());
     RCB.block();
     
-    boost::signals2::connection clambda = sm.connect(&rxn, [](Reaction *r){r->setRate(2.05);});
+    boost::signals2::connection clambda = rxn.connect([](Reaction *r){r->setRate(2.05);});
     boost::signals2::shared_connection_block Rlambda (clambda, false); 
-    sm.emitReactionSignal(&rxn);
+    rxn.emitSignal();
     EXPECT_FLOAT_EQ(2.05, rxn.getRate());
     clambda.disconnect(); // permanently disconnecting this signal
 
     rcb.unblock();
-    sm.emitReactionSignal(&rxn);
+    rxn.emitSignal();
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-    boost::signals2::connection c = sm.connect(&rxn, [](Reaction *r){r->setRate(3.05);});
-    sm.emitReactionSignal(&rxn);
+//    boost::signals2::connection c = rxn.connect([](Reaction *r){r->setRate(3.05);});
+    // using "auto" would make the code on the line above less verbose
+    auto c = rxn.connect([](Reaction *r){r->setRate(3.05);});
+    rxn.emitSignal();
     EXPECT_FLOAT_EQ(3.05, rxn.getRate());
     c.disconnect(); // this permanently disconnects the signal vs blocking
     
 }
+
+
