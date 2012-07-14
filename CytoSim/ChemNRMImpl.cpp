@@ -83,6 +83,7 @@ void RNodeNRM::passivateReaction() {
 }
 
 void ChemNRMImpl::initialize() {
+    resetTime();
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
         rn->generateNewRandTau();
@@ -143,6 +144,7 @@ void ChemNRMImpl::makeStep()
             (*sit)->emitSignal(1);
     }
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
+    syncGlobalTime();
 }
 
 void ChemNRMImpl::addReaction(Reaction *r) {

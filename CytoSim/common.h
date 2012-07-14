@@ -13,4 +13,8 @@
 
 typedef unsigned short species_copy_t;
 
+extern double global_time;
+
+inline double tau() {return global_time;}
+
 #endif

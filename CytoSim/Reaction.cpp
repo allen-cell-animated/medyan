@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "Reaction.h"
-#include "ChemNRMImpl.h"
+#include "ChemRNode.h"
 
 using namespace std;
 

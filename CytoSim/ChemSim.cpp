@@ -8,10 +8,11 @@
 
 #include <iostream>
 #include "ChemSim.h"
+#include "ChemSimImpl.h"
 #include "utility.h"
 
 namespace chem {
-
+    
 ChemSim::ChemSim(ChemSimImpl *csi)
 {
     _pimpl=csi;

@@ -11,6 +11,8 @@
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E973D1565A79A002BDF16 /* test_species.cpp */; };
 		F71E97431565B02C002BDF16 /* test_reactions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E97411565B01A002BDF16 /* test_reactions.cpp */; };
+		F71EAF1915B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
+		F71EAF1A15B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F7346A8A1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
@@ -20,6 +22,7 @@
 		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F763ED291548FFED0069DA61 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F763ED2A1548FFED0069DA61 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
+		F7672B5A15B1B278000D412B /* test_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7672B5915B1B278000D412B /* test_gillespie.cpp */; };
 		F771ADBF15655DBA0010B123 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F771ADC015655DBA0010B123 /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F771ADC115655DBA0010B123 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
@@ -89,9 +92,9 @@
 		F702A4581575237F00FF21FC /* Composite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		F7123D701575211E008F64D1 /* example_misc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_misc.cpp; sourceTree = "<group>"; };
 		F7123D8115752161008F64D1 /* example_misc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_misc; sourceTree = BUILT_PRODUCTS_DIR; };
-		F71616F41560371A00B88B00 /* Signaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signaling.h; sourceTree = "<group>"; };
 		F71E973D1565A79A002BDF16 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
 		F71E97411565B01A002BDF16 /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
+		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
 		F7382CCD156BE2DA0022F97B /* RSpecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSpecies.h; sourceTree = "<group>"; };
@@ -108,6 +111,9 @@
 		F763ED201548FFED0069DA61 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
 		F763ED211548FFED0069DA61 /* System.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = System.cpp; sourceTree = "<group>"; };
 		F763ED221548FFED0069DA61 /* System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = System.h; sourceTree = "<group>"; };
+		F7672B5915B1B278000D412B /* test_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie.cpp; sourceTree = "<group>"; };
+		F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
+		F7672B5D15B1CE9A000D412B /* ChemRNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemRNode.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F771ADD9156561680010B123 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
@@ -180,6 +186,7 @@
 			children = (
 				F71E973D1565A79A002BDF16 /* test_species.cpp */,
 				F71E97411565B01A002BDF16 /* test_reactions.cpp */,
+				F7672B5915B1B278000D412B /* test_gillespie.cpp */,
 			);
 			path = TESTS;
 			sourceTree = "<group>";
@@ -210,9 +217,12 @@
 			children = (
 				F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */,
 				F775C6B715576A66008A9C87 /* ChemNRMImpl.h */,
+				F7672B5D15B1CE9A000D412B /* ChemRNode.h */,
 				F7A924DA155BECD000AB05FA /* ChemSim.cpp */,
 				F7BDDE83155231CE0053817E /* ChemSim.h */,
+				F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */,
 				F763ED131548FFED0069DA61 /* common.h */,
+				F71EAF1815B224210072EE4E /* common.cpp */,
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
 				F7346A891578206500326E09 /* Component.cpp */,
@@ -226,7 +236,6 @@
 				F763ED1C1548FFED0069DA61 /* Reaction.h */,
 				F7382CCF156BE2F00022F97B /* RSpecies.cpp */,
 				F7382CCD156BE2DA0022F97B /* RSpecies.h */,
-				F71616F41560371A00B88B00 /* Signaling.h */,
 				F763ED1F1548FFED0069DA61 /* Species.cpp */,
 				F763ED201548FFED0069DA61 /* Species.h */,
 				F763ED211548FFED0069DA61 /* System.cpp */,
@@ -419,6 +428,7 @@
 				F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */,
 				F7F3681E1575C743006727F7 /* Composite.cpp in Sources */,
 				F7346A8A1578206500326E09 /* Component.cpp in Sources */,
+				F71EAF1915B224210072EE4E /* common.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +445,7 @@
 				F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */,
 				F7F3681F1575C743006727F7 /* Composite.cpp in Sources */,
 				F7346A8B1578206500326E09 /* Component.cpp in Sources */,
+				F71EAF1A15B224210072EE4E /* common.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +455,7 @@
 			files = (
 				F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */,
 				F71E97431565B02C002BDF16 /* test_reactions.cpp in Sources */,
+				F7672B5A15B1B278000D412B /* test_gillespie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

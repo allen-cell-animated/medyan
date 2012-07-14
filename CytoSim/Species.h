@@ -63,7 +63,7 @@ namespace chem {
         static SpeciesNamesDB* Instance();
         
         /// Given an integer "i", returns the std::string associated with that integer. Throws an out of range exception.  
-        std::string intToString(int i) const {
+        std::string intToString(unsigned int i) const {
             if (i>=_vec_int_string.size())
                 throw std::out_of_range("SpeciesNamesDB::intToString(int i) index error:[" + std::to_string(i) +"], while the vector size is " + std::to_string(_vec_int_string.size()));
             return _vec_int_string[i];

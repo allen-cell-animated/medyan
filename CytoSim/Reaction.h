@@ -27,6 +27,11 @@ namespace chem {
 
 class RNode;
 
+    
+/// This is a Reaction signal object that will be called by ChemSignal, usually when requested by the 
+/// reaction simulation algorithm
+typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
+
 
 /// Reaction class represents simple chemical reactions of the form A + B -> C.  
 
@@ -40,11 +45,7 @@ class RNode;
  *  up such that it "signals" when a reaction event happens, in which case the corresponding callbacks are called.
  *
  */
-    
-/// This is a Reaction signal object that will be called by ChemSignal, usually when requested by the 
-/// reaction simulation algorithm
-typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
-    
+        
 class Reaction {
 private:
     std::vector<RSpecies*> _rspecies; ///< Reactants and products constituting this Reaction
