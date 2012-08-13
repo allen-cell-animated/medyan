@@ -1,0 +1,411 @@
+\hypertarget{classchem_1_1SpeciesType}{\section{chem\-:\-:Species\-Type Class Reference}
+\label{classchem_1_1SpeciesType}\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}}
+}
+
+
+\hyperlink{classchem_1_1SpeciesType}{Species\-Type} class represents the type of chemical \hyperlink{classchem_1_1Species}{Species} (for example, a \hyperlink{classchem_1_1Species}{Species} with name \char`\"{}\-Arp2/3\char`\"{} and S\-Type Diffusing)  
+
+
+
+
+{\ttfamily \#include $<$Species\-Type.\-h$>$}
+
+
+
+Collaboration diagram for chem\-:\-:Species\-Type\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{classchem_1_1SpeciesType__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classchem_1_1SpeciesType_aba027be970f9815e8c5b06e8e6b35d56}{Species\-Type} (const std\-::string \&name, \hyperlink{namespacechem_ad1edc1332f82ed64dd8a810596e781da}{S\-Type} type)
+\begin{DoxyCompactList}\small\item\em Given a species name as a string and its S\-Type, constructs the \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesType_a265e6d109abe6c02301cb6c4fbd65f04}{Species\-Type} (const \hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&st)
+\begin{DoxyCompactList}\small\item\em Given a species name as a string and its type as a string, constructs the \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesType_af3bea9cdbd84f279ee0569dd00f1d40b}{Species\-Type} (\hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&\&st)
+\begin{DoxyCompactList}\small\item\em The move constructor. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1SpeciesType_a336b4a5d95a260178828b606f24fb3af}{swap} (\hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&other)
+\begin{DoxyCompactList}\small\item\em Specialize swap. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesType}{Species\-Type} \& \hyperlink{classchem_1_1SpeciesType_aed5c9478f09649f885eb2f8697fb3ddd}{operator=} (const \hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&other)
+\begin{DoxyCompactList}\small\item\em The lvalue assignment operator. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesType}{Species\-Type} \& \hyperlink{classchem_1_1SpeciesType_ac77d29789013b307e672e4ecb534b640}{operator=} (\hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&\&st)
+\begin{DoxyCompactList}\small\item\em Move assignment operator (i.\-e. rvalue asignment) \end{DoxyCompactList}\item 
+bool \hyperlink{classchem_1_1SpeciesType_a26cd9f021f86747f960486153cf12531}{operator==} (const \hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&species\-\_\-type) const 
+\begin{DoxyCompactList}\small\item\em Equality operator use both species name and type to compare to \hyperlink{classchem_1_1SpeciesType}{Species\-Type} objects. \end{DoxyCompactList}\item 
+bool \hyperlink{classchem_1_1SpeciesType_a9ed717ed9efe75c589e1cbb8e0c6cec2}{operator!=} (const \hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&species\-\_\-type) const 
+\begin{DoxyCompactList}\small\item\em Inequality operator use both species name and type to compare to \hyperlink{classchem_1_1SpeciesType}{Species\-Type} objects. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classchem_1_1SpeciesType_a46d08ce3d52467ca2f1900015cba5518}{get\-Name} () const 
+\begin{DoxyCompactList}\small\item\em Returns the name associated with this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} as a string. \end{DoxyCompactList}\item 
+\hyperlink{namespacechem_ad1edc1332f82ed64dd8a810596e781da}{S\-Type} \hyperlink{classchem_1_1SpeciesType_a35689373892bc8f87c2e36692f2b9aaf}{get\-Type} () const 
+\begin{DoxyCompactList}\small\item\em Returns the S\-Type associated with this \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classchem_1_1SpeciesType_a827ec7bb7476c9c475ba4f14d7be16c5}{get\-Type\-As\-String} () const 
+\begin{DoxyCompactList}\small\item\em Returns a string representing this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} by concatanating its name and type. \end{DoxyCompactList}\item 
+bool \hyperlink{classchem_1_1SpeciesType_a83fb00e3a5fc394eb12a2dcb06ff8ce0}{is\-\_\-of\-\_\-type} (const std\-::string \&name, \hyperlink{namespacechem_ad1edc1332f82ed64dd8a810596e781da}{S\-Type} type) const 
+\begin{DoxyCompactList}\small\item\em Return if true if this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} has name and S\-Type given as parameters to this function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \hyperlink{classchem_1_1SpeciesType_aa8715b9f522cda6cc27aa9f9d6ed477c}{serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em This class can be serialized via Boost\-::\-Serialization empty f-\/n -\/ because \hyperlink{classchem_1_1SpeciesType}{Species\-Type} does not have default ctor, we have to use instead save\-\_\-construct\-\_\-data and load\-\_\-construct\-\_\-data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\-::string \hyperlink{classchem_1_1SpeciesType_ab7c1653d2c84cfafe2fac832778d74af}{\-\_\-name}
+\begin{DoxyCompactList}\small\item\em the descriptive name associated with this \hyperlink{classchem_1_1Species}{Species} \end{DoxyCompactList}\item 
+\hyperlink{namespacechem_ad1edc1332f82ed64dd8a810596e781da}{S\-Type} \hyperlink{classchem_1_1SpeciesType_ac42a8f904e71a32858821e3c469c09a9}{\-\_\-type}
+\begin{DoxyCompactList}\small\item\em the type of species, such as Bulk, Diffusing, etc. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classchem_1_1SpeciesType_ac98d07dd8f7b70e16ccb9a01abf56b9c}{boost\-::serialization\-::access}
+\begin{DoxyCompactList}\small\item\em Needed by Boost\-::\-Serialization machinery. \end{DoxyCompactList}\item 
+std\-::size\-\_\-t \hyperlink{classchem_1_1SpeciesType_ad48f13e05211225475379004632c68f2}{hash\-\_\-value} (\hyperlink{classchem_1_1SpeciesType}{Species\-Type} const \&species\-\_\-type)
+\begin{DoxyCompactList}\small\item\em boost\-::flyweight needs a hashing function, defined here. \end{DoxyCompactList}\item 
+std\-::ostream \& \hyperlink{classchem_1_1SpeciesType_ac1c8f22ef84ed673f047ea7aec48d064}{operator$<$$<$} (std\-::ostream \&os, const \hyperlink{classchem_1_1SpeciesType}{Species\-Type} \&st)
+\begin{DoxyCompactList}\small\item\em Prints the \hyperlink{classchem_1_1SpeciesType}{Species\-Type} to ostream with a format name\mbox{[}S\-Type\mbox{]}, such as \char`\"{}\-Arp2/3\mbox{[}\-Diffusing\mbox{]}\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classchem_1_1SpeciesType}{Species\-Type} class represents the type of chemical \hyperlink{classchem_1_1Species}{Species} (for example, a \hyperlink{classchem_1_1Species}{Species} with name \char`\"{}\-Arp2/3\char`\"{} and S\-Type Diffusing) 
+
+This class describes the type of \hyperlink{classchem_1_1Species}{Species}. The description is based on a name (std\-::string) and S\-Type (Bulk, Diffusing, etc.). \begin{DoxyNote}{Note}
+In the future may implement the Logging and Persistence interfaces. 
+
+\hyperlink{classchem_1_1SpeciesType}{Species\-Type} is used by \hyperlink{classchem_1_1Species}{Species} with the flyweight pattern, since in a large system millions of unique \hyperlink{classchem_1_1Species}{Species} may exist, but only a handful of \hyperlink{classchem_1_1SpeciesType}{Species\-Type} objects. For example\-: one (\char`\"{}\-F-\/\-Actin\char`\"{},Filament) may correspond to millions of individual \hyperlink{classchem_1_1Species}{Species}. 
+\end{DoxyNote}
+
+
+Definition at line 41 of file Species\-Type.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1SpeciesType_aba027be970f9815e8c5b06e8e6b35d56}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!Species\-Type@{Species\-Type}}
+\index{Species\-Type@{Species\-Type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{Species\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Species\-Type\-::\-Species\-Type} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{{\bf S\-Type}}]{type}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_aba027be970f9815e8c5b06e8e6b35d56}
+
+
+Given a species name as a string and its S\-Type, constructs the \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. 
+
+
+
+Definition at line 57 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_a265e6d109abe6c02301cb6c4fbd65f04}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!Species\-Type@{Species\-Type}}
+\index{Species\-Type@{Species\-Type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{Species\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Species\-Type\-::\-Species\-Type} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{st}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a265e6d109abe6c02301cb6c4fbd65f04}
+
+
+Given a species name as a string and its type as a string, constructs the \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. 
+
+
+
+Definition at line 60 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_af3bea9cdbd84f279ee0569dd00f1d40b}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!Species\-Type@{Species\-Type}}
+\index{Species\-Type@{Species\-Type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{Species\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Species\-Type\-::\-Species\-Type} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Type} \&\&}]{st}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_af3bea9cdbd84f279ee0569dd00f1d40b}
+
+
+The move constructor. 
+
+
+
+Definition at line 63 of file Species\-Type.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1SpeciesType_a46d08ce3d52467ca2f1900015cba5518}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!get\-Name@{get\-Name}}
+\index{get\-Name@{get\-Name}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{get\-Name}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string {\bf chem\-::\-Species\-Type\-::get\-Name} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a46d08ce3d52467ca2f1900015cba5518}
+
+
+Returns the name associated with this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} as a string. 
+
+
+
+Definition at line 100 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name.
+
+
+
+Referenced by operator==(), and boost\-::serialization\-::save\-\_\-construct\-\_\-data().
+
+\hypertarget{classchem_1_1SpeciesType_a35689373892bc8f87c2e36692f2b9aaf}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!get\-Type@{get\-Type}}
+\index{get\-Type@{get\-Type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{get\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf S\-Type} {\bf chem\-::\-Species\-Type\-::get\-Type} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a35689373892bc8f87c2e36692f2b9aaf}
+
+
+Returns the S\-Type associated with this \hyperlink{classchem_1_1SpeciesType}{Species\-Type}. 
+
+
+
+Definition at line 104 of file Species\-Type.\-h.
+
+
+
+References \-\_\-type.
+
+
+
+Referenced by operator==(), and boost\-::serialization\-::save\-\_\-construct\-\_\-data().
+
+\hypertarget{classchem_1_1SpeciesType_a827ec7bb7476c9c475ba4f14d7be16c5}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!get\-Type\-As\-String@{get\-Type\-As\-String}}
+\index{get\-Type\-As\-String@{get\-Type\-As\-String}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{get\-Type\-As\-String}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string {\bf chem\-::\-Species\-Type\-::get\-Type\-As\-String} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classchem_1_1SpeciesType_a827ec7bb7476c9c475ba4f14d7be16c5}
+
+
+Returns a string representing this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} by concatanating its name and type. 
+
+
+
+Definition at line 16 of file Species\-Type.\-cpp.
+
+
+
+References \-\_\-type, and chem\-::vec\-\_\-type\-\_\-name.
+
+\hypertarget{classchem_1_1SpeciesType_a83fb00e3a5fc394eb12a2dcb06ff8ce0}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!is\-\_\-of\-\_\-type@{is\-\_\-of\-\_\-type}}
+\index{is\-\_\-of\-\_\-type@{is\-\_\-of\-\_\-type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{is\-\_\-of\-\_\-type}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Species\-Type\-::is\-\_\-of\-\_\-type} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{{\bf S\-Type}}]{type}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a83fb00e3a5fc394eb12a2dcb06ff8ce0}
+
+
+Return if true if this \hyperlink{classchem_1_1SpeciesType}{Species\-Type} has name and S\-Type given as parameters to this function. 
+
+
+
+Definition at line 110 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name, and \-\_\-type.
+
+\hypertarget{classchem_1_1SpeciesType_a9ed717ed9efe75c589e1cbb8e0c6cec2}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!operator!=@{operator!=}}
+\index{operator!=@{operator!=}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{operator!=}]{\setlength{\rightskip}{0pt plus 5cm}bool chem\-::\-Species\-Type\-::operator!= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{species\-\_\-type}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a9ed717ed9efe75c589e1cbb8e0c6cec2}
+
+
+Inequality operator use both species name and type to compare to \hyperlink{classchem_1_1SpeciesType}{Species\-Type} objects. 
+
+
+
+Definition at line 94 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_aed5c9478f09649f885eb2f8697fb3ddd}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!operator=@{operator=}}
+\index{operator=@{operator=}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-Type}\& chem\-::\-Species\-Type\-::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_aed5c9478f09649f885eb2f8697fb3ddd}
+
+
+The lvalue assignment operator. 
+
+
+
+Definition at line 73 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name, and \-\_\-type.
+
+\hypertarget{classchem_1_1SpeciesType_ac77d29789013b307e672e4ecb534b640}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!operator=@{operator=}}
+\index{operator=@{operator=}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-Type}\& chem\-::\-Species\-Type\-::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Type} \&\&}]{st}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_ac77d29789013b307e672e4ecb534b640}
+
+
+Move assignment operator (i.\-e. rvalue asignment) 
+
+
+
+Definition at line 81 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name, and \-\_\-type.
+
+\hypertarget{classchem_1_1SpeciesType_a26cd9f021f86747f960486153cf12531}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!operator==@{operator==}}
+\index{operator==@{operator==}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{operator==}]{\setlength{\rightskip}{0pt plus 5cm}bool chem\-::\-Species\-Type\-::operator== (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{species\-\_\-type}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a26cd9f021f86747f960486153cf12531}
+
+
+Equality operator use both species name and type to compare to \hyperlink{classchem_1_1SpeciesType}{Species\-Type} objects. 
+
+
+
+Definition at line 88 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name, \-\_\-type, get\-Name(), and get\-Type().
+
+\hypertarget{classchem_1_1SpeciesType_aa8715b9f522cda6cc27aa9f9d6ed477c}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!serialize@{serialize}}
+\index{serialize@{serialize}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{serialize}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Archive $>$ void {\bf chem\-::\-Species\-Type\-::serialize} (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1SpeciesType_aa8715b9f522cda6cc27aa9f9d6ed477c}
+
+
+This class can be serialized via Boost\-::\-Serialization empty f-\/n -\/ because \hyperlink{classchem_1_1SpeciesType}{Species\-Type} does not have default ctor, we have to use instead save\-\_\-construct\-\_\-data and load\-\_\-construct\-\_\-data. 
+
+
+
+Definition at line 50 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_a336b4a5d95a260178828b606f24fb3af}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!swap@{swap}}
+\index{swap@{swap}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Species\-Type\-::swap} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Type} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesType_a336b4a5d95a260178828b606f24fb3af}
+
+
+Specialize swap. 
+
+
+
+Definition at line 66 of file Species\-Type.\-h.
+
+
+
+References \-\_\-name, and \-\_\-type.
+
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{classchem_1_1SpeciesType_ac98d07dd8f7b70e16ccb9a01abf56b9c}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!boost\-::serialization\-::access@{boost\-::serialization\-::access}}
+\index{boost\-::serialization\-::access@{boost\-::serialization\-::access}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{boost\-::serialization\-::access}]{\setlength{\rightskip}{0pt plus 5cm}friend class boost\-::serialization\-::access\hspace{0.3cm}{\ttfamily  \mbox{[}friend\mbox{]}}}}\label{classchem_1_1SpeciesType_ac98d07dd8f7b70e16ccb9a01abf56b9c}
+
+
+Needed by Boost\-::\-Serialization machinery. 
+
+
+
+Definition at line 54 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_ad48f13e05211225475379004632c68f2}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!hash\-\_\-value@{hash\-\_\-value}}
+\index{hash\-\_\-value@{hash\-\_\-value}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{hash\-\_\-value}]{\setlength{\rightskip}{0pt plus 5cm}std\-::size\-\_\-t {\bf hash\-\_\-value} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Type} const \&}]{species\-\_\-type}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}friend\mbox{]}}}}\label{classchem_1_1SpeciesType_ad48f13e05211225475379004632c68f2}
+
+
+boost\-::flyweight needs a hashing function, defined here. 
+
+
+
+Definition at line 113 of file Species\-Type.\-h.
+
+\hypertarget{classchem_1_1SpeciesType_ac1c8f22ef84ed673f047ea7aec48d064}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{operator$<$$<$}]{\setlength{\rightskip}{0pt plus 5cm}std\-::ostream\& operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{std\-::ostream \&}]{os, }
+\item[{const {\bf Species\-Type} \&}]{st}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}friend\mbox{]}}}}\label{classchem_1_1SpeciesType_ac1c8f22ef84ed673f047ea7aec48d064}
+
+
+Prints the \hyperlink{classchem_1_1SpeciesType}{Species\-Type} to ostream with a format name\mbox{[}S\-Type\mbox{]}, such as \char`\"{}\-Arp2/3\mbox{[}\-Diffusing\mbox{]}\char`\"{}. 
+
+
+
+Definition at line 123 of file Species\-Type.\-h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classchem_1_1SpeciesType_ab7c1653d2c84cfafe2fac832778d74af}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!\-\_\-name@{\-\_\-name}}
+\index{\-\_\-name@{\-\_\-name}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{\-\_\-name}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string {\bf chem\-::\-Species\-Type\-::\-\_\-name}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1SpeciesType_ab7c1653d2c84cfafe2fac832778d74af}
+
+
+the descriptive name associated with this \hyperlink{classchem_1_1Species}{Species} 
+
+
+
+Definition at line 43 of file Species\-Type.\-h.
+
+
+
+Referenced by get\-Name(), is\-\_\-of\-\_\-type(), operator=(), operator==(), and swap().
+
+\hypertarget{classchem_1_1SpeciesType_ac42a8f904e71a32858821e3c469c09a9}{\index{chem\-::\-Species\-Type@{chem\-::\-Species\-Type}!\-\_\-type@{\-\_\-type}}
+\index{\-\_\-type@{\-\_\-type}!chem::SpeciesType@{chem\-::\-Species\-Type}}
+\subsubsection[{\-\_\-type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf S\-Type} {\bf chem\-::\-Species\-Type\-::\-\_\-type}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1SpeciesType_ac42a8f904e71a32858821e3c469c09a9}
+
+
+the type of species, such as Bulk, Diffusing, etc. 
+
+
+
+Definition at line 44 of file Species\-Type.\-h.
+
+
+
+Referenced by get\-Type(), get\-Type\-As\-String(), is\-\_\-of\-\_\-type(), operator=(), operator==(), and swap().
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{SpeciesType_8h}{Species\-Type.\-h}\item 
+Cyto\-Sim/\hyperlink{SpeciesType_8cpp}{Species\-Type.\-cpp}\end{DoxyCompactItemize}

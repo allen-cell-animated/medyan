@@ -24,6 +24,9 @@ public:
     /// This method is called by Reaction::passivateReaction(). Its effect depends on the underlying stochastic 
     /// simulatio algorithm. For example, in the NRM algorithm, a tau is set to infinity and the heap is updated. 
     virtual void passivateReaction() = 0;
+    
+    /// Return true if the Reaction is currently passivated
+    virtual bool isPassivated() const = 0;
 };
 
 } // end of namespace

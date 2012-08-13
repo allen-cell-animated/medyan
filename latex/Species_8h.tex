@@ -1,0 +1,70 @@
+\hypertarget{Species_8h}{\section{Cyto\-Sim/\-Species.h File Reference}
+\label{Species_8h}\index{Cyto\-Sim/\-Species.\-h@{Cyto\-Sim/\-Species.\-h}}
+}
+
+
+this header file will contain defininition of the \hyperlink{classSpecies}{Species} hieararchy and associated D\-B and helper classes.  
+
+
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$map$>$}\\*
+{\ttfamily \#include $<$boost/flyweight.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}Object.\-h\char`\"{}}\\*
+Include dependency graph for Species.\-h\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Species_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Species_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structspecies__type__tag}{species\-\_\-type\-\_\-tag}
+\begin{DoxyCompactList}\small\item\em Create a tag for the corresponding Species\-Type flywheights. \end{DoxyCompactList}\item 
+class \hyperlink{classSpecies}{Species}
+\item 
+class \hyperlink{classSBulk}{S\-Bulk}
+\begin{DoxyCompactList}\small\item\em This class represent Bulk species that have no spatial component, i.\-e. are not connected to any Compartmens. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef flyweight$<$ std\-::string, \\*
+tag$<$ \hyperlink{structspecies__type__tag}{species\-\_\-type\-\_\-tag} $>$ $>$ \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type}
+\begin{DoxyCompactList}\small\item\em Species\-Type indicates the molecule. For example, it can be \char`\"{}\-Arp2/3\char`\"{}. It is implemented as a flyweight. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+this header file will contain defininition of the \hyperlink{classSpecies}{Species} hieararchy and associated D\-B and helper classes. \begin{DoxyAuthor}{Author}
+Garegin Papoian $\ast$ 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+4/8/2012 
+\end{DoxyDate}
+
+
+Definition in file \hyperlink{Species_8h_source}{Species.\-h}.
+
+
+
+\subsection{Typedef Documentation}
+\hypertarget{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{\index{Species.\-h@{Species.\-h}!Species\-Type@{Species\-Type}}
+\index{Species\-Type@{Species\-Type}!Species.h@{Species.\-h}}
+\subsubsection[{Species\-Type}]{\setlength{\rightskip}{0pt plus 5cm}typedef flyweight$<$std\-::string,tag$<${\bf species\-\_\-type\-\_\-tag}$>$ $>$ {\bf Species\-Type}}}\label{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}
+
+
+Species\-Type indicates the molecule. For example, it can be \char`\"{}\-Arp2/3\char`\"{}. It is implemented as a flyweight. 
+
+
+
+Definition at line 34 of file Species.\-h.
+

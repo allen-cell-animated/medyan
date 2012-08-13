@@ -64,15 +64,16 @@ namespace chem {
         std::vector<Reaction *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
         Species& _species; ///< reference to the **parent** Species object
         species_copy_t _n; ///< Current copy number of this RSpecies
-        RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of 
+        species_copy_t _ulim; ///< Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off
+        RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of
                                               ///< this RSpecies (usually when a single step of this Reaction occurs)
         
     private:
         /// Constructors 
         /// @param parent - the Species object to which this RSpecies belongs
         /// @param n - copy number
-        RSpecies (Species &parent, species_copy_t n=0) : 
-        _species(parent), _n(n), _signal(nullptr) {}
+        RSpecies (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) :
+        _species(parent), _n(n), _ulim(ulim), _signal(nullptr) {}
         
         /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
         RSpecies (const RSpecies &r) = delete;
@@ -88,20 +89,39 @@ namespace chem {
         /// @note The operation does not emit any signals about the copy number change.
         void setN(species_copy_t n) {_n=n;}
         
+        /// Sets the upper limit for the copy number of this RSpecies.
+        /// @param ulim should be a non-negative number, but no checking is done in run time
+        void setUpperLimitForN(species_copy_t ulim) {_ulim=ulim;}
+        
         /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method 
         /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
         void up() {
             _n+=1;
+#ifdef TRACK_ZERO_COPY_N
             if(_n==1)
-                activateAssocReactions();
+                activateAssocReactantReactions();
+#endif
+#ifdef TRACK_UPPER_COPY_N
+            if(_n==_ulim)
+                passivateAssocProductReactions();
+#endif
         }
         
         /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a "callback"-like method 
         /// to passivate [Reactions](@ref Reaction), where this RSpecies is a Reactant.
         void down() {
+#ifdef TRACK_UPPER_COPY_N
+            species_copy_t prev_n = _n;
+#endif
             _n-=1;
+#ifdef TRACK_ZERO_COPY_N
             if(_n == 0)
-                passivateAssocReacts();
+                passivateAssocReactantReactions();
+#endif
+#ifdef TRACK_UPPER_COPY_N
+            if(prev_n == _ulim)
+                activateAssocProductReactions();
+#endif
         }
         
         // \internal This methods is called by the Reaction class  during construction
@@ -134,11 +154,18 @@ namespace chem {
         /// Reactant. Usually, the Reaction was first passivated, for example if the RSpecies copy number of 
         /// one of the reactants dropeed to zero. This attempt may not succeed if there are still other
         /// reactants in the same Reaction with zero copy count.
-        void activateAssocReactions();
+        void activateAssocReactantReactions();
         
+        /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction) where this RSpecies is involved as a
+        /// Product. Usually, the Reaction was first passivated, for example if the RSpecies copy number of
+        /// one of the reactants went up to max_ulim. 
+        void activateAssocProductReactions();
         
-        /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the reactants. 
-        void passivateAssocReacts();
+        /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the reactants.
+        void passivateAssocReactantReactions();
+        
+        /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the products.
+        void passivateAssocProductReactions();
                
         /// Set the signaling behavior of this RSpecies
         void startSignaling ();
@@ -166,6 +193,9 @@ namespace chem {
         
         /// Return the current copy number of this RSpecies
         species_copy_t getN() const {return _n;}
+        
+        /// Return the upper limit for the copy number of this RSpecies
+        species_copy_t getUpperLimitForN() const {return _ulim;}
         
         /// return parent Species as a reference
         Species& getSpecies () {return _species;}

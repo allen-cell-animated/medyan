@@ -26,8 +26,8 @@ void ChemSim::removeReaction(Reaction *r){
     _pimpl->removeReaction(r); 
 }
 
-void ChemSim::run(int steps){
-    _pimpl->run(steps);
+bool ChemSim::run(int steps){
+    return _pimpl->run(steps);
 }
 
 void ChemSim::initialize() {

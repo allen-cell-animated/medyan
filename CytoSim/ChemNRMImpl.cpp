@@ -56,8 +56,16 @@ void RNodeNRM::updateHeap() {
 }
 
 void RNodeNRM::generateNewRandTau() {
+    double tau;
     reComputePropensity();//calculated new _a
-    double tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+#ifdef TRACK_ZERO_COPY_N
+    tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+#else
+    if(_a<1.0e-10) // std::numeric_limits< double >::min()
+        tau = numeric_limits<double>::infinity();
+    else
+        tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+#endif
     setTau(tau);
     //    cout << "RNodeNRM::generateNewRandTau(): RNodeNRM ptr=" << this << ", was called. Prev tau=" << prev_tau 
     //         << ", New tau=" << tau << endl;
@@ -67,7 +75,7 @@ void RNodeNRM::activateReaction() {
     generateNewRandTau();
     updateHeap();
 //    cout << "RNodeNRM::activateReaction(): ptr=" << _react << ", has been activated." << endl; 
-//    _react->printSelf();
+//    cout << (*_react);
 //    cout << "EndOfRNodeNRM::activateReaction..." << endl;
 
 }
@@ -78,7 +86,7 @@ void RNodeNRM::passivateReaction() {
     setTau(tau);
     updateHeap();
 //    cout << "RNodeNRM::passivateReaction(): ptr=" << _react << ", has been passivated, and tau set to inf." << endl; 
-//    _react->printSelf();
+//    cout << (*_react);
 //    cout << "EndOfRNodeNRM::passivateReaction..." << endl;
 }
 
@@ -86,8 +94,7 @@ void ChemNRMImpl::initialize() {
     resetTime();
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
-        rn->generateNewRandTau();
-        rn->updateHeap();
+        rn->getReaction()->activateReaction();
     }
 }
 
@@ -102,18 +109,18 @@ double ChemNRMImpl::generateTau(double a){
     return _exp_distr(_eng);
 }
 
-void ChemNRMImpl::makeStep() 
+bool ChemNRMImpl::makeStep()
 {
 //    cout << "[ChemNRMImpl::_makeStep(): Starting..." << endl;
     RNodeNRM *rn = _heap.top()._rn;
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
-        return;
+        return false;
     }
     _t=tau_top;
     rn->makeStep();
-    if(rn->getProductOfReactants()!=0){ // otherwise, RNodeNRM::passivateReaction() should have already been called, and tau reset to INF
+    if(!rn->isPassivated()){ 
         rn->generateNewRandTau();
         rn->updateHeap();
     }
@@ -126,9 +133,22 @@ void ChemNRMImpl::makeStep()
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
         rn_other->reComputePropensity();
+        double tau_new;
         double tau_old = rn_other->getTau();
         double a_new = rn_other->getPropensity();
-        double tau_new = (a_old/a_new)*(tau_old-_t)+_t; 
+#ifdef TRACK_ZERO_COPY_N
+        tau_new = (a_old/a_new)*(tau_old-_t)+_t;
+#else
+        if(a_new<1.0e-14) // std::numeric_limits< double >::min()
+            tau_new = numeric_limits<double>::infinity();
+        else if (a_old<1.0e-14){
+            rn_other->generateNewRandTau();
+            tau_new = rn_other->getTau();
+        }
+        else{
+            tau_new = (a_old/a_new)*(tau_old-_t)+_t;
+        }
+#endif
         rn_other->setTau(tau_new);
         rn_other->updateHeap();
     }
@@ -145,6 +165,7 @@ void ChemNRMImpl::makeStep()
     }
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
     syncGlobalTime();
+    return true;
 }
 
 void ChemNRMImpl::addReaction(Reaction *r) {

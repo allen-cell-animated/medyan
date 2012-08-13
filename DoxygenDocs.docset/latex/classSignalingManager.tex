@@ -1,0 +1,432 @@
+\hypertarget{classSignalingManager}{\section{Signaling\-Manager Class Reference}
+\label{classSignalingManager}\index{Signaling\-Manager@{Signaling\-Manager}}
+}
+
+
+\hyperlink{classSignalingManager}{Signaling\-Manager} manages callbacks for \hyperlink{classSpecies}{Species} and Reactions objects.  
+
+
+
+
+{\ttfamily \#include $<$Signaling.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSignalingManager_a20940794f6e6e8ddfb78c3fe7d030eb7}{emit\-Reaction\-Signal} (\hyperlink{classReaction}{Reaction} $\ast$r) const 
+\begin{DoxyCompactList}\small\item\em Broadcasts signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_a54275286426f134a9d8e8f0b53b51b98}{emit\-Species\-Signal} (\hyperlink{classSpecies}{Species} $\ast$s, int delta) const 
+\begin{DoxyCompactList}\small\item\em Broadcasts signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_ae159a4625a5cb3dd1f8bbb620e4d3239}{add\-Signaling\-Species} (\hyperlink{classSpecies}{Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Inserts a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s into the map. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_ab73dca10c163ba44ec6c7bddcb021dd2}{add\-Signaling\-Reaction} (\hyperlink{classReaction}{Reaction} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Inserts a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r into the map. \end{DoxyCompactList}\item 
+boost\-::signals2\-::connection \hyperlink{classSignalingManager_a14226527c31c6dbc758e23f3c37b345d}{connect} (\hyperlink{classReaction}{Reaction} $\ast$r, std\-::function$<$ void(\hyperlink{classReaction}{Reaction} $\ast$)$>$ const \&react\-\_\-callback, int priority=5)
+\begin{DoxyCompactList}\small\item\em Connect the callback, react\-\_\-callback to a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r. \end{DoxyCompactList}\item 
+boost\-::signals2\-::connection \hyperlink{classSignalingManager_a705bc56739da1046abfd74b8e508c5e1}{connect} (\hyperlink{classSpecies}{Species} $\ast$s, std\-::function$<$ void(\hyperlink{classSpecies}{Species} $\ast$, int)$>$ const \&species\-\_\-callback, int priority=10)
+\begin{DoxyCompactList}\small\item\em Connect the callback, species\-\_\-callback to a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_a9132a70c90d2b0363836e237fac31fe7}{disconnect\-\_\-semiprivate} (\hyperlink{classReaction}{Reaction} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_a3b2fc7d242614807e9c0eee774d863d3}{disconnect\-\_\-semiprivate} (\hyperlink{classSpecies}{Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\-::unordered\-\_\-map$<$ \hyperlink{classReaction}{Reaction} \\*
+$\ast$, std\-::unique\-\_\-ptr\\*
+$<$ \hyperlink{Signaling_8h_aa6022d69bb45ab7f3c304c00f34199fd}{Reaction\-Event\-Signal} $>$\\*
+ $>$\-::const\-\_\-iterator \hyperlink{classSignalingManager_acb3e599d14790ceba69dc0ca21c04221}{find\-Signal} (\hyperlink{classReaction}{Reaction} $\ast$r) const 
+\begin{DoxyCompactList}\small\item\em Search the map for a signal corresponding to parameter, \hyperlink{classReaction}{Reaction} $\ast$r. Throw std\-::out\-\_\-of\-\_\-range exception if not found. \end{DoxyCompactList}\item 
+std\-::unordered\-\_\-map$<$ \hyperlink{classSpecies}{Species} \\*
+$\ast$, std\-::unique\-\_\-ptr\\*
+$<$ \hyperlink{Signaling_8h_add19c738ac9a6c73d5900828cf915993}{Species\-Copy\-N\-Changed\-Signal} $>$\\*
+ $>$\-::const\-\_\-iterator \hyperlink{classSignalingManager_ae5aa60f34cdb366d0ed4b7a8f1e1f41a}{find\-Signal} (\hyperlink{classSpecies}{Species} $\ast$s) const 
+\begin{DoxyCompactList}\small\item\em Search the map for a signal corresponding to parameter, \hyperlink{classSpecies}{Species} $\ast$s. Throw std\-::out\-\_\-of\-\_\-range exception if not found. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_aeb31ec544156068f1965762e89e97191}{assert\-Signal\-Does\-Not\-Exist} (\hyperlink{classReaction}{Reaction} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Assert that a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r does not exist or throw std\-::runtime\-\_\-error. \end{DoxyCompactList}\item 
+void \hyperlink{classSignalingManager_a023cb88a4035feb39f5e0f6f52c174f8}{assert\-Signal\-Does\-Not\-Exist} (\hyperlink{classSpecies}{Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Assert that a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s does not exist or throw std\-::runtime\-\_\-error. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\-::unordered\-\_\-map$<$ \hyperlink{classSpecies}{Species} \\*
+$\ast$, std\-::unique\-\_\-ptr\\*
+$<$ \hyperlink{Signaling_8h_add19c738ac9a6c73d5900828cf915993}{Species\-Copy\-N\-Changed\-Signal} $>$ $>$ \hyperlink{classSignalingManager_a4d3a730d33369a40aa09b711dcdc74f0}{\-\_\-map\-\_\-species\-\_\-signal}
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+std\-::unordered\-\_\-map$<$ \hyperlink{classReaction}{Reaction} \\*
+$\ast$, std\-::unique\-\_\-ptr\\*
+$<$ \hyperlink{Signaling_8h_aa6022d69bb45ab7f3c304c00f34199fd}{Reaction\-Event\-Signal} $>$ $>$ \hyperlink{classSignalingManager_a868051ed639fe807560e68e0c9060223}{\-\_\-map\-\_\-reaction\-\_\-signal}
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various Reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classSignalingManager}{Signaling\-Manager} manages callbacks for \hyperlink{classSpecies}{Species} and Reactions objects. 
+
+One \hyperlink{classSignalingManager}{Signaling\-Manager} should be instantiated per chemical network. \hyperlink{classSpecies}{Species} and Reactions that need to be monitored can be made to signal, based on the boost\-:signal2 library. Multiple receiving slots can be connected to signals.
+
+Slots can be temporarily blocked or completely disconnected. Signals can be destroyed. Here is an example of usage\-: 
+\begin{DoxyCode}
+ ...
+ Species* A1 = sc.getSpecies("A1");
+ ...
+ SignalingManager sm;
+ A1->makeSignaling(sm);
+ PrintSpecies ps;
+ std::function<void (Species *, int)> psf(ps);
+ boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](Species *s,
+       int i){s->printSelf();}), true);
+ // or   sm.connect(A1, print_species);
+ // or  sm.connect(A1, PrintSpecies());
+ // or   boost::signals2::shared_connection_block conn_a1(sm.connect(A1,psf),
+       false);
+...
+// run simulation for some time
+ ...
+ conn_a1.block(); // this temporarily stops slots from being called.
+...
+ conn_a1.disconnect(); // this permanently disconnects the slot
+...
+ A1->stopSignaling(sm); // this destroys the Signal itself (with associated
+       multiple slots)
+...
+\end{DoxyCode}
+ 
+
+Definition at line 63 of file Signaling.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSignalingManager_ab73dca10c163ba44ec6c7bddcb021dd2}{\index{Signaling\-Manager@{Signaling\-Manager}!add\-Signaling\-Reaction@{add\-Signaling\-Reaction}}
+\index{add\-Signaling\-Reaction@{add\-Signaling\-Reaction}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{add\-Signaling\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::add\-Signaling\-Reaction} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_ab73dca10c163ba44ec6c7bddcb021dd2}
+
+
+Inserts a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r into the map. 
+
+Should only be called by the \hyperlink{classReaction}{Reaction} class. \begin{DoxyNote}{Note}
+other classes should instead call void \hyperlink{classReaction_ad08cc347d77e7e5c7f816240d96f9256}{Reaction\-::make\-Signaling(\-Signaling\-Manager \&sm)}; 
+\end{DoxyNote}
+
+
+Definition at line 122 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-reaction\-\_\-signal, and assert\-Signal\-Does\-Not\-Exist().
+
+
+
+Referenced by Reaction\-::make\-Signaling().
+
+\hypertarget{classSignalingManager_ae159a4625a5cb3dd1f8bbb620e4d3239}{\index{Signaling\-Manager@{Signaling\-Manager}!add\-Signaling\-Species@{add\-Signaling\-Species}}
+\index{add\-Signaling\-Species@{add\-Signaling\-Species}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{add\-Signaling\-Species}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::add\-Signaling\-Species} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_ae159a4625a5cb3dd1f8bbb620e4d3239}
+
+
+Inserts a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s into the map. 
+
+Should only be called by the \hyperlink{classSpecies}{Species} class. \begin{DoxyNote}{Note}
+other classes should instead call void \hyperlink{group__Chemistry_ga188aa6fa6b7c84f4c740df869a46e263}{Species\-::make\-Signaling(\-Signaling\-Manager \&sm)}; 
+\end{DoxyNote}
+
+
+Definition at line 114 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-species\-\_\-signal, and assert\-Signal\-Does\-Not\-Exist().
+
+
+
+Referenced by Species\-::make\-Signaling().
+
+\hypertarget{classSignalingManager_aeb31ec544156068f1965762e89e97191}{\index{Signaling\-Manager@{Signaling\-Manager}!assert\-Signal\-Does\-Not\-Exist@{assert\-Signal\-Does\-Not\-Exist}}
+\index{assert\-Signal\-Does\-Not\-Exist@{assert\-Signal\-Does\-Not\-Exist}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{assert\-Signal\-Does\-Not\-Exist}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::assert\-Signal\-Does\-Not\-Exist} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classSignalingManager_aeb31ec544156068f1965762e89e97191}
+
+
+Assert that a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r does not exist or throw std\-::runtime\-\_\-error. 
+
+
+
+Definition at line 84 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-reaction\-\_\-signal.
+
+
+
+Referenced by add\-Signaling\-Reaction(), and add\-Signaling\-Species().
+
+\hypertarget{classSignalingManager_a023cb88a4035feb39f5e0f6f52c174f8}{\index{Signaling\-Manager@{Signaling\-Manager}!assert\-Signal\-Does\-Not\-Exist@{assert\-Signal\-Does\-Not\-Exist}}
+\index{assert\-Signal\-Does\-Not\-Exist@{assert\-Signal\-Does\-Not\-Exist}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{assert\-Signal\-Does\-Not\-Exist}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::assert\-Signal\-Does\-Not\-Exist} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classSignalingManager_a023cb88a4035feb39f5e0f6f52c174f8}
+
+
+Assert that a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s does not exist or throw std\-::runtime\-\_\-error. 
+
+
+
+Definition at line 91 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-species\-\_\-signal.
+
+\hypertarget{classSignalingManager_a14226527c31c6dbc758e23f3c37b345d}{\index{Signaling\-Manager@{Signaling\-Manager}!connect@{connect}}
+\index{connect@{connect}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::signals2\-::connection {\bf Signaling\-Manager\-::connect} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r, }
+\item[{std\-::function$<$ void({\bf Reaction} $\ast$)$>$ const \&}]{react\-\_\-callback, }
+\item[{int}]{priority = {\ttfamily 5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a14226527c31c6dbc758e23f3c37b345d}
+
+
+Connect the callback, react\-\_\-callback to a signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{classReaction}{Reaction}} & $\ast$r -\/ the signal will correspond to this \hyperlink{classReaction}{Reaction} \\
+\hline
+{\em std\-::function$<$void} & (\hyperlink{classReaction}{Reaction} $\ast$)$>$ const \&react\-\_\-callback -\/ a function object to be called (a slot) \\
+\hline
+{\em int} & priority -\/ lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 132 of file Signaling.\-h.
+
+
+
+References find\-Signal().
+
+
+
+Referenced by main().
+
+\hypertarget{classSignalingManager_a705bc56739da1046abfd74b8e508c5e1}{\index{Signaling\-Manager@{Signaling\-Manager}!connect@{connect}}
+\index{connect@{connect}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::signals2\-::connection {\bf Signaling\-Manager\-::connect} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s, }
+\item[{std\-::function$<$ void({\bf Species} $\ast$, int)$>$ const \&}]{species\-\_\-callback, }
+\item[{int}]{priority = {\ttfamily 10}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a705bc56739da1046abfd74b8e508c5e1}
+
+
+Connect the callback, species\-\_\-callback to a signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{classSpecies}{Species}} & $\ast$s -\/ the signal will correspond to this \hyperlink{classSpecies}{Species} \\
+\hline
+{\em std\-::function$<$void} & (\hyperlink{classSpecies}{Species} $\ast$, int)$>$ const \&species\-\_\-callback -\/ a function object to be called (a slot). int here corresponds to delta, the change in copy number of the \hyperlink{classSpecies}{Species} (for which the signal was emitted) \\
+\hline
+{\em int} & priority -\/ lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file Signaling.\-h.
+
+
+
+References find\-Signal().
+
+\hypertarget{classSignalingManager_a9132a70c90d2b0363836e237fac31fe7}{\index{Signaling\-Manager@{Signaling\-Manager}!disconnect\-\_\-semiprivate@{disconnect\-\_\-semiprivate}}
+\index{disconnect\-\_\-semiprivate@{disconnect\-\_\-semiprivate}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{disconnect\-\_\-semiprivate}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::disconnect\-\_\-semiprivate} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a9132a70c90d2b0363836e237fac31fe7}
+
+
+Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. 
+
+Should only be used by the \hyperlink{classReaction}{Reaction} class. \begin{DoxyNote}{Note}
+Other classes should instead call void \hyperlink{classReaction_a6468804bff8607215f90ecd436f4902e}{Reaction\-::stop\-Signaling} (\hyperlink{classSignalingManager}{Signaling\-Manager} \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 150 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-reaction\-\_\-signal, and find\-Signal().
+
+
+
+Referenced by Reaction\-::stop\-Signaling(), and Species\-::stop\-Signaling().
+
+\hypertarget{classSignalingManager_a3b2fc7d242614807e9c0eee774d863d3}{\index{Signaling\-Manager@{Signaling\-Manager}!disconnect\-\_\-semiprivate@{disconnect\-\_\-semiprivate}}
+\index{disconnect\-\_\-semiprivate@{disconnect\-\_\-semiprivate}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{disconnect\-\_\-semiprivate}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::disconnect\-\_\-semiprivate} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a3b2fc7d242614807e9c0eee774d863d3}
+
+
+Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. 
+
+Should only be used by the \hyperlink{classSpecies}{Species} class. \begin{DoxyNote}{Note}
+Other classes should instead call void \hyperlink{group__Chemistry_ga2f6bf3f11ba5ac49b3f542d8d5c7ffd3}{Species\-::stop\-Signaling} (\hyperlink{classSignalingManager}{Signaling\-Manager} \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 157 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-species\-\_\-signal, and find\-Signal().
+
+\hypertarget{classSignalingManager_a20940794f6e6e8ddfb78c3fe7d030eb7}{\index{Signaling\-Manager@{Signaling\-Manager}!emit\-Reaction\-Signal@{emit\-Reaction\-Signal}}
+\index{emit\-Reaction\-Signal@{emit\-Reaction\-Signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{emit\-Reaction\-Signal}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::emit\-Reaction\-Signal} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a20940794f6e6e8ddfb78c3fe7d030eb7}
+
+
+Broadcasts signal corresponding to \hyperlink{classReaction}{Reaction} $\ast$r. 
+
+If the \hyperlink{classReaction}{Reaction} is not found, std\-::out\-\_\-of\-\_\-range exception will be thrown. This method is usally only called by the Gillespie-\/like algorithm, and not the outside code. 
+
+Definition at line 100 of file Signaling.\-h.
+
+
+
+References find\-Signal().
+
+
+
+Referenced by Chem\-N\-R\-M\-Impl\-::make\-Step().
+
+\hypertarget{classSignalingManager_a54275286426f134a9d8e8f0b53b51b98}{\index{Signaling\-Manager@{Signaling\-Manager}!emit\-Species\-Signal@{emit\-Species\-Signal}}
+\index{emit\-Species\-Signal@{emit\-Species\-Signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{emit\-Species\-Signal}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Signaling\-Manager\-::emit\-Species\-Signal} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s, }
+\item[{int}]{delta}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSignalingManager_a54275286426f134a9d8e8f0b53b51b98}
+
+
+Broadcasts signal corresponding to \hyperlink{classSpecies}{Species} $\ast$s. 
+
+If the Specis is not found, std\-::out\-\_\-of\-\_\-range exception will be thrown. This method is usally only called by the Gillespie-\/like algorithm, and not the outside code. 
+
+Definition at line 107 of file Signaling.\-h.
+
+
+
+References find\-Signal().
+
+
+
+Referenced by Chem\-N\-R\-M\-Impl\-::make\-Step().
+
+\hypertarget{classSignalingManager_acb3e599d14790ceba69dc0ca21c04221}{\index{Signaling\-Manager@{Signaling\-Manager}!find\-Signal@{find\-Signal}}
+\index{find\-Signal@{find\-Signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{find\-Signal}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<${\bf Reaction} $\ast$, std\-::unique\-\_\-ptr$<${\bf Reaction\-Event\-Signal}$>$ $>$\-::const\-\_\-iterator {\bf Signaling\-Manager\-::find\-Signal} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classSignalingManager_acb3e599d14790ceba69dc0ca21c04221}
+
+
+Search the map for a signal corresponding to parameter, \hyperlink{classReaction}{Reaction} $\ast$r. Throw std\-::out\-\_\-of\-\_\-range exception if not found. 
+
+
+
+Definition at line 67 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-reaction\-\_\-signal.
+
+
+
+Referenced by connect(), disconnect\-\_\-semiprivate(), emit\-Reaction\-Signal(), and emit\-Species\-Signal().
+
+\hypertarget{classSignalingManager_ae5aa60f34cdb366d0ed4b7a8f1e1f41a}{\index{Signaling\-Manager@{Signaling\-Manager}!find\-Signal@{find\-Signal}}
+\index{find\-Signal@{find\-Signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{find\-Signal}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<${\bf Species} $\ast$, std\-::unique\-\_\-ptr$<${\bf Species\-Copy\-N\-Changed\-Signal}$>$ $>$\-::const\-\_\-iterator {\bf Signaling\-Manager\-::find\-Signal} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classSignalingManager_ae5aa60f34cdb366d0ed4b7a8f1e1f41a}
+
+
+Search the map for a signal corresponding to parameter, \hyperlink{classSpecies}{Species} $\ast$s. Throw std\-::out\-\_\-of\-\_\-range exception if not found. 
+
+
+
+Definition at line 76 of file Signaling.\-h.
+
+
+
+References \-\_\-map\-\_\-species\-\_\-signal.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSignalingManager_a868051ed639fe807560e68e0c9060223}{\index{Signaling\-Manager@{Signaling\-Manager}!\-\_\-map\-\_\-reaction\-\_\-signal@{\-\_\-map\-\_\-reaction\-\_\-signal}}
+\index{\-\_\-map\-\_\-reaction\-\_\-signal@{\-\_\-map\-\_\-reaction\-\_\-signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{\-\_\-map\-\_\-reaction\-\_\-signal}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<${\bf Reaction} $\ast$, std\-::unique\-\_\-ptr$<${\bf Reaction\-Event\-Signal}$>$ $>$ {\bf Signaling\-Manager\-::\-\_\-map\-\_\-reaction\-\_\-signal}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classSignalingManager_a868051ed639fe807560e68e0c9060223}
+
+
+Keep track of signals corresponding to various Reactions. 
+
+
+
+Definition at line 163 of file Signaling.\-h.
+
+
+
+Referenced by add\-Signaling\-Reaction(), assert\-Signal\-Does\-Not\-Exist(), disconnect\-\_\-semiprivate(), and find\-Signal().
+
+\hypertarget{classSignalingManager_a4d3a730d33369a40aa09b711dcdc74f0}{\index{Signaling\-Manager@{Signaling\-Manager}!\-\_\-map\-\_\-species\-\_\-signal@{\-\_\-map\-\_\-species\-\_\-signal}}
+\index{\-\_\-map\-\_\-species\-\_\-signal@{\-\_\-map\-\_\-species\-\_\-signal}!SignalingManager@{Signaling\-Manager}}
+\subsubsection[{\-\_\-map\-\_\-species\-\_\-signal}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<${\bf Species} $\ast$, std\-::unique\-\_\-ptr$<${\bf Species\-Copy\-N\-Changed\-Signal}$>$ $>$ {\bf Signaling\-Manager\-::\-\_\-map\-\_\-species\-\_\-signal}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classSignalingManager_a4d3a730d33369a40aa09b711dcdc74f0}
+
+
+Keep track of signals corresponding to various \hyperlink{classSpecies}{Species}. 
+
+
+
+Definition at line 162 of file Signaling.\-h.
+
+
+
+Referenced by add\-Signaling\-Species(), assert\-Signal\-Does\-Not\-Exist(), disconnect\-\_\-semiprivate(), and find\-Signal().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{Signaling_8h}{Signaling.\-h}\end{DoxyCompactItemize}

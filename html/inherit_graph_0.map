@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classObject.html" title="Object" alt="" coords="6,5,66,32"/>
+<area shape="rect" id="node3" href="$classSpecies.html" title="Species" alt="" coords="115,5,183,32"/>
+<area shape="rect" id="node5" href="$classSBulk.html" title="This class represent Bulk species that have no spatial component, i.e. are not connected to any Compa..." alt="" coords="233,5,287,32"/>
+</map>

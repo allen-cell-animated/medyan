@@ -139,7 +139,10 @@ public:
     /// the corresponding PQNode element is updated in the heap.
     /// @note This method does not passivate the Reaction itself, but instead only deals with the activation 
     ///        process related to the corresponding PQNode element.
-    virtual void passivateReaction(); 
+    virtual void passivateReaction();
+    
+    /// Return true if the Reaction is currently passivated
+    bool isPassivated() const {return _react->isPassivated();}
     
     /// Print information about this RNodeNRM such as tau, a and the Reaction which this RNodeNRM tracks.
     void printSelf() const;
@@ -204,7 +207,7 @@ public:
     /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, 
     /// with the propensity given by a.
     double generateTau(double a);
-    
+        
     /// This function iterates over all RNodeNRM objects in the network, generating new tau-s for each case and 
     /// subsequently updating the heap. It needs to be called before calling run(...). 
     /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting 
@@ -213,12 +216,15 @@ public:
     void initialize();
     
     /// This method runs the NRM algorithm for the given number of steps. 
-    void run(int steps) {
+    bool run(int steps) {
         for(int i=0; i<steps; ++i){
-            makeStep();
+            bool success = makeStep();
+            if(!success)
+                return false;
 //            if(i%1000000==0)
 //                std::cout << "ChemNRMImpl::run(): i=" << i << std::endl;
         }
+        return true;
     }
     
     /// Prints all RNodes in the reaction network
@@ -232,7 +238,8 @@ private:
     /// 3) The other affected Reaction objects are found, their taus are recomputed and corresponding PQNode elements are 
     ///    updated in the heap.
     /// 4) For the Reaction and associated Species signals are emitted, if these objects broadcast signals upon change.
-    void makeStep();
+    /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
+    bool makeStep();
 private:
     std::unordered_map<Reaction*, std::unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects, representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm, containing PQNode elements

@@ -44,8 +44,8 @@ TEST(RSpeciesTest, Main) {
     EXPECT_EQ(&A, &RA.getSpecies());
     bool is_sig = RA.isSignaling();
     EXPECT_EQ(0, is_sig);
-    EXPECT_EQ(0, RA.ReactantReactions().size());
-    EXPECT_EQ(0, RA.ProductReactions().size());
+    EXPECT_EQ(static_cast<size_t>(0), RA.ReactantReactions().size());
+    EXPECT_EQ(static_cast<size_t>(0), RA.ProductReactions().size());
 
     SpeciesBulk B("B",  10);
     RSpecies& RB(B.getRSpecies());
@@ -121,6 +121,7 @@ TEST(ReactionTest, RSpeciesSignaling) {
     EXPECT_EQ(9,A.getN());
 }
 
+#ifdef TRACK_ZERO_COPY_N
 TEST(ReactionTest, Dependents1) {
     SpeciesBulk A("A",  10);
     SpeciesBulk B("B",  10);
@@ -137,9 +138,9 @@ TEST(ReactionTest, Dependents1) {
     std::vector<Reaction*> ar1 = rxn1.getAffectedReactions();
     std::vector<Reaction*> ar2 = rxn2.getAffectedReactions();
     std::vector<Reaction*> ar3 = rxn3.getAffectedReactions();
-    EXPECT_EQ(2, ar1.size());
-    EXPECT_EQ(2, ar2.size());
-    EXPECT_EQ(1, ar3.size());
+    EXPECT_EQ(static_cast<size_t>(2), ar1.size());
+    EXPECT_EQ(static_cast<size_t>(2), ar2.size());
+    EXPECT_EQ(static_cast<size_t>(1), ar3.size());
     EXPECT_EQ(&rxn1, ar3[0]);// (3) affects (1)
     
     // Testing passivateAssocReacts() and activateAssocReactions()
@@ -153,23 +154,24 @@ TEST(ReactionTest, Dependents1) {
     EXPECT_EQ(0, A.getN());
     //    for (auto &r : {&rxn1, &rxn2, &rxn3})
     //        cout << (*r) << endl;
-    EXPECT_EQ(0, rxn2.dependents().size());
+    EXPECT_EQ(static_cast<size_t>(0), rxn2.dependents().size());
     
     // But not that the getAffectedReactions() still returns the original depedencices, ignoring the fact 
     // that copy number of A is zero. 
     ar1 = rxn1.getAffectedReactions();
     ar2 = rxn2.getAffectedReactions();
     ar3 = rxn3.getAffectedReactions();
-    EXPECT_EQ(2, ar1.size());
-    EXPECT_EQ(2, ar2.size());
-    EXPECT_EQ(1, ar3.size());
+    EXPECT_EQ(static_cast<size_t>(2), ar1.size());
+    EXPECT_EQ(static_cast<size_t>(2), ar2.size());
+    EXPECT_EQ(static_cast<size_t>(1), ar3.size());
     EXPECT_EQ(&rxn1, ar3[0]);// (3) affects (1)
     
     // Now let's activate (1) and (3) by moving the copy number of A from 0 to 1
     rxn2.makeStep();
     EXPECT_EQ(1, RA.getN());
-    EXPECT_EQ(2, rxn2.dependents().size());
+    EXPECT_EQ(static_cast<size_t>(2), rxn2.dependents().size());
 }
+#endif
 
 TEST(ReactionTest, Dependents2) {
     SpeciesBulk A("A",  10);
@@ -187,9 +189,9 @@ TEST(ReactionTest, Dependents2) {
     EXPECT_EQ(&rxn2, rxn1.dependents()[0]);
     rxn1.registerNewDependent(&rxn3);
     EXPECT_EQ(&rxn3, rxn1.dependents()[1]);
-    EXPECT_EQ(2, rxn1.dependents().size());
+    EXPECT_EQ(static_cast<size_t>(2), rxn1.dependents().size());
     rxn1.unregisterDependent(&rxn3);
-    EXPECT_EQ(1, rxn1.dependents().size());
+    EXPECT_EQ(static_cast<size_t>(1), rxn1.dependents().size());
 }
 
 TEST(ReactionTest, Propensities) {

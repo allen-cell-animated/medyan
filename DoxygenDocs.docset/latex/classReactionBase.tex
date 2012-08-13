@@ -1,0 +1,309 @@
+\hypertarget{classReactionBase}{\section{Reaction\-Base Class Reference}
+\label{classReactionBase}\index{Reaction\-Base@{Reaction\-Base}}
+}
+
+
+{\ttfamily \#include $<$Reaction.\-h$>$}
+
+
+
+Inheritance diagram for Reaction\-Base\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=170pt]{classReactionBase__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classReactionBase_aa7275024a60197c12df24ea1bd2aeb60}{Reaction\-Base} (float f\-\_\-rate, float b\-\_\-rate)
+\item 
+\hyperlink{classReactionBase_a49418fa7263de502777bdd1f944ad824}{Reaction\-Base} (const \hyperlink{classReactionBase}{Reaction\-Base} \&r)
+\item 
+\hyperlink{classReactionBase}{Reaction\-Base} \& \hyperlink{classReactionBase_a338479c4885bf79fd76feb31fb38ce72}{operator=} (\hyperlink{classReactionBase}{Reaction\-Base} \&r)
+\item 
+void \hyperlink{classReactionBase_a5eda4ba652052d18eac0b716b8b88b89}{set\-Forward\-Rate} (float rate)
+\item 
+void \hyperlink{classReactionBase_a80ba209fa5e093be83e9d6837f71a76c}{set\-Backward\-Rate} (float rate)
+\item 
+float \hyperlink{classReactionBase_ab80f5c03018715a4c28b1525757dd7a7}{get\-Forward\-Rate} (float rate)
+\item 
+float \hyperlink{classReactionBase_a5445e530d298c00512d0f68d3ae46ae1}{get\-Backward\-Rate} (float rate)
+\item 
+\hyperlink{common_8h_a319d1c064d902ecce241ce6ff8cb3e82}{reaction\-\_\-num\-\_\-t} \hyperlink{classReactionBase_aba0817709465a544738dedeaad5abefb}{reaction\-I\-D} () const 
+\item 
+virtual \hyperlink{classReactionBase_a57f13fc8a04f01a53e1ead5024c9697a}{$\sim$\-Reaction\-Base} ()
+\item 
+void \hyperlink{classReactionBase_a9ab134f9395c8f28739bb3964bc35421}{do\-Step} (bool forward)
+\item 
+void \hyperlink{classReactionBase_a4d690d311c061d9582f91dcccaba0d3c}{print\-Self} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classReactionBase_adbd7cca78c6b29540aac9b36d9af46ba}{do\-Step\-Impl} (bool forward)=0
+\item 
+virtual void \hyperlink{classReactionBase_a3d59a31ebbffa9ec979d7a3f8dbe3f7f}{print\-Self\-Impl} ()=0
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+float \hyperlink{classReactionBase_a8ff5087b6c0a00af41575f71971e9bd7}{\-\_\-forward\-\_\-rate} = 0.\-0
+\item 
+float \hyperlink{classReactionBase_a2bcf5ba7b900a0af0a7be10f55be095f}{\-\_\-backward\-\_\-rate} = 0.\-0
+\item 
+\hyperlink{common_8h_a319d1c064d902ecce241ce6ff8cb3e82}{reaction\-\_\-num\-\_\-t} \hyperlink{classReactionBase_ae2f1e83b7b64bb2d53b4f9533a5c5741}{\-\_\-id}
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{common_8h_a319d1c064d902ecce241ce6ff8cb3e82}{reaction\-\_\-num\-\_\-t} \hyperlink{classReactionBase_aaf6c18537d4ae9f89a83e2d7041aeb26}{\-\_\-max\-\_\-id} = 0
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 20 of file Reaction.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classReactionBase_aa7275024a60197c12df24ea1bd2aeb60}{\index{Reaction\-Base@{Reaction\-Base}!Reaction\-Base@{Reaction\-Base}}
+\index{Reaction\-Base@{Reaction\-Base}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{Reaction\-Base}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\-Base\-::\-Reaction\-Base} (
+\begin{DoxyParamCaption}
+\item[{float}]{f\-\_\-rate, }
+\item[{float}]{b\-\_\-rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_aa7275024a60197c12df24ea1bd2aeb60}
+
+
+Definition at line 28 of file Reaction.\-h.
+
+\hypertarget{classReactionBase_a49418fa7263de502777bdd1f944ad824}{\index{Reaction\-Base@{Reaction\-Base}!Reaction\-Base@{Reaction\-Base}}
+\index{Reaction\-Base@{Reaction\-Base}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{Reaction\-Base}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\-Base\-::\-Reaction\-Base} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Reaction\-Base} \&}]{r}
+\end{DoxyParamCaption}
+)}}\label{classReactionBase_a49418fa7263de502777bdd1f944ad824}
+\hypertarget{classReactionBase_a57f13fc8a04f01a53e1ead5024c9697a}{\index{Reaction\-Base@{Reaction\-Base}!$\sim$\-Reaction\-Base@{$\sim$\-Reaction\-Base}}
+\index{$\sim$\-Reaction\-Base@{$\sim$\-Reaction\-Base}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{$\sim$\-Reaction\-Base}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Reaction\-Base\-::$\sim$\-Reaction\-Base} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classReactionBase_a57f13fc8a04f01a53e1ead5024c9697a}
+
+
+Definition at line 39 of file Reaction.\-h.
+
+
+
+References \-\_\-id.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classReactionBase_a9ab134f9395c8f28739bb3964bc35421}{\index{Reaction\-Base@{Reaction\-Base}!do\-Step@{do\-Step}}
+\index{do\-Step@{do\-Step}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{do\-Step}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Reaction\-Base\-::do\-Step} (
+\begin{DoxyParamCaption}
+\item[{bool}]{forward}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_a9ab134f9395c8f28739bb3964bc35421}
+
+
+Definition at line 41 of file Reaction.\-h.
+
+
+
+References do\-Step\-Impl().
+
+
+
+Referenced by main().
+
+\hypertarget{classReactionBase_adbd7cca78c6b29540aac9b36d9af46ba}{\index{Reaction\-Base@{Reaction\-Base}!do\-Step\-Impl@{do\-Step\-Impl}}
+\index{do\-Step\-Impl@{do\-Step\-Impl}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{do\-Step\-Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf Reaction\-Base\-::do\-Step\-Impl} (
+\begin{DoxyParamCaption}
+\item[{bool}]{forward}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected, pure virtual\mbox{]}}}}\label{classReactionBase_adbd7cca78c6b29540aac9b36d9af46ba}
+
+
+Implemented in \hyperlink{classReaction_aedc3bcb5535d54e8590f78830750fc3b}{Reaction$<$ M, N $>$}.
+
+
+
+Referenced by do\-Step().
+
+\hypertarget{classReactionBase_a5445e530d298c00512d0f68d3ae46ae1}{\index{Reaction\-Base@{Reaction\-Base}!get\-Backward\-Rate@{get\-Backward\-Rate}}
+\index{get\-Backward\-Rate@{get\-Backward\-Rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{get\-Backward\-Rate}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf Reaction\-Base\-::get\-Backward\-Rate} (
+\begin{DoxyParamCaption}
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_a5445e530d298c00512d0f68d3ae46ae1}
+
+
+Definition at line 36 of file Reaction.\-h.
+
+
+
+References \-\_\-backward\-\_\-rate.
+
+\hypertarget{classReactionBase_ab80f5c03018715a4c28b1525757dd7a7}{\index{Reaction\-Base@{Reaction\-Base}!get\-Forward\-Rate@{get\-Forward\-Rate}}
+\index{get\-Forward\-Rate@{get\-Forward\-Rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{get\-Forward\-Rate}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf Reaction\-Base\-::get\-Forward\-Rate} (
+\begin{DoxyParamCaption}
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_ab80f5c03018715a4c28b1525757dd7a7}
+
+
+Definition at line 35 of file Reaction.\-h.
+
+
+
+References \-\_\-forward\-\_\-rate.
+
+\hypertarget{classReactionBase_a338479c4885bf79fd76feb31fb38ce72}{\index{Reaction\-Base@{Reaction\-Base}!operator=@{operator=}}
+\index{operator=@{operator=}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\-Base}\& Reaction\-Base\-::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\-Base} \&}]{r}
+\end{DoxyParamCaption}
+)}}\label{classReactionBase_a338479c4885bf79fd76feb31fb38ce72}
+\hypertarget{classReactionBase_a4d690d311c061d9582f91dcccaba0d3c}{\index{Reaction\-Base@{Reaction\-Base}!print\-Self@{print\-Self}}
+\index{print\-Self@{print\-Self}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{print\-Self}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Reaction\-Base\-::print\-Self} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_a4d690d311c061d9582f91dcccaba0d3c}
+
+
+Definition at line 42 of file Reaction.\-h.
+
+
+
+References print\-Self\-Impl().
+
+
+
+Referenced by main().
+
+\hypertarget{classReactionBase_a3d59a31ebbffa9ec979d7a3f8dbe3f7f}{\index{Reaction\-Base@{Reaction\-Base}!print\-Self\-Impl@{print\-Self\-Impl}}
+\index{print\-Self\-Impl@{print\-Self\-Impl}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{print\-Self\-Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf Reaction\-Base\-::print\-Self\-Impl} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected, pure virtual\mbox{]}}}}\label{classReactionBase_a3d59a31ebbffa9ec979d7a3f8dbe3f7f}
+
+
+Implemented in \hyperlink{classReaction_aae6ad60e792e8d9b33f9ba58a814bb9f}{Reaction$<$ M, N $>$}.
+
+
+
+Referenced by print\-Self().
+
+\hypertarget{classReactionBase_aba0817709465a544738dedeaad5abefb}{\index{Reaction\-Base@{Reaction\-Base}!reaction\-I\-D@{reaction\-I\-D}}
+\index{reaction\-I\-D@{reaction\-I\-D}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{reaction\-I\-D}]{\setlength{\rightskip}{0pt plus 5cm}{\bf reaction\-\_\-num\-\_\-t} {\bf Reaction\-Base\-::reaction\-I\-D} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_aba0817709465a544738dedeaad5abefb}
+
+
+Definition at line 37 of file Reaction.\-h.
+
+
+
+References \-\_\-id.
+
+\hypertarget{classReactionBase_a80ba209fa5e093be83e9d6837f71a76c}{\index{Reaction\-Base@{Reaction\-Base}!set\-Backward\-Rate@{set\-Backward\-Rate}}
+\index{set\-Backward\-Rate@{set\-Backward\-Rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{set\-Backward\-Rate}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Reaction\-Base\-::set\-Backward\-Rate} (
+\begin{DoxyParamCaption}
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_a80ba209fa5e093be83e9d6837f71a76c}
+
+
+Definition at line 33 of file Reaction.\-h.
+
+
+
+References \-\_\-backward\-\_\-rate.
+
+\hypertarget{classReactionBase_a5eda4ba652052d18eac0b716b8b88b89}{\index{Reaction\-Base@{Reaction\-Base}!set\-Forward\-Rate@{set\-Forward\-Rate}}
+\index{set\-Forward\-Rate@{set\-Forward\-Rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{set\-Forward\-Rate}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Reaction\-Base\-::set\-Forward\-Rate} (
+\begin{DoxyParamCaption}
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classReactionBase_a5eda4ba652052d18eac0b716b8b88b89}
+
+
+Definition at line 32 of file Reaction.\-h.
+
+
+
+References \-\_\-forward\-\_\-rate.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classReactionBase_a2bcf5ba7b900a0af0a7be10f55be095f}{\index{Reaction\-Base@{Reaction\-Base}!\-\_\-backward\-\_\-rate@{\-\_\-backward\-\_\-rate}}
+\index{\-\_\-backward\-\_\-rate@{\-\_\-backward\-\_\-rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{\-\_\-backward\-\_\-rate}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf Reaction\-Base\-::\-\_\-backward\-\_\-rate} = 0.\-0\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classReactionBase_a2bcf5ba7b900a0af0a7be10f55be095f}
+
+
+Definition at line 23 of file Reaction.\-h.
+
+
+
+Referenced by get\-Backward\-Rate(), and set\-Backward\-Rate().
+
+\hypertarget{classReactionBase_a8ff5087b6c0a00af41575f71971e9bd7}{\index{Reaction\-Base@{Reaction\-Base}!\-\_\-forward\-\_\-rate@{\-\_\-forward\-\_\-rate}}
+\index{\-\_\-forward\-\_\-rate@{\-\_\-forward\-\_\-rate}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{\-\_\-forward\-\_\-rate}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf Reaction\-Base\-::\-\_\-forward\-\_\-rate} = 0.\-0\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classReactionBase_a8ff5087b6c0a00af41575f71971e9bd7}
+
+
+Definition at line 22 of file Reaction.\-h.
+
+
+
+Referenced by get\-Forward\-Rate(), and set\-Forward\-Rate().
+
+\hypertarget{classReactionBase_ae2f1e83b7b64bb2d53b4f9533a5c5741}{\index{Reaction\-Base@{Reaction\-Base}!\-\_\-id@{\-\_\-id}}
+\index{\-\_\-id@{\-\_\-id}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{\-\_\-id}]{\setlength{\rightskip}{0pt plus 5cm}{\bf reaction\-\_\-num\-\_\-t} {\bf Reaction\-Base\-::\-\_\-id}\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classReactionBase_ae2f1e83b7b64bb2d53b4f9533a5c5741}
+
+
+Definition at line 24 of file Reaction.\-h.
+
+
+
+Referenced by Reaction$<$ M, N $>$\-::print\-Self\-Impl(), reaction\-I\-D(), and $\sim$\-Reaction\-Base().
+
+\hypertarget{classReactionBase_aaf6c18537d4ae9f89a83e2d7041aeb26}{\index{Reaction\-Base@{Reaction\-Base}!\-\_\-max\-\_\-id@{\-\_\-max\-\_\-id}}
+\index{\-\_\-max\-\_\-id@{\-\_\-max\-\_\-id}!ReactionBase@{Reaction\-Base}}
+\subsubsection[{\-\_\-max\-\_\-id}]{\setlength{\rightskip}{0pt plus 5cm}{\bf reaction\-\_\-num\-\_\-t} {\bf Reaction\-Base\-::\-\_\-max\-\_\-id} = 0\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}\label{classReactionBase_aaf6c18537d4ae9f89a83e2d7041aeb26}
+
+
+Definition at line 25 of file Reaction.\-h.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{Reaction_8h}{Reaction.\-h}\item 
+Cyto\-Sim/\hyperlink{Reaction_8cpp}{Reaction.\-cpp}\end{DoxyCompactItemize}

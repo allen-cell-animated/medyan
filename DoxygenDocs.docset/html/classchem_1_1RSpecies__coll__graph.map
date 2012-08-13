@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="120,200,224,227"/>
+<area shape="rect" id="node4" href="$classchem_1_1Component.html" title="chem::Component" alt="" coords="289,96,412,123"/>
+<area shape="rect" id="node6" href="$classchem_1_1Composite.html" title="chem::Composite" alt="" coords="249,200,367,227"/>
+<area shape="rect" id="node19" href="$classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B &#45;&gt; C." alt="" coords="521,200,628,227"/>
+<area shape="rect" id="node21" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="500,96,599,123"/>
+</map>

@@ -1,0 +1,50 @@
+\hypertarget{ChemNRMImpl_8h}{\section{Cyto\-Sim/\-Chem\-N\-R\-M\-Impl.h File Reference}
+\label{ChemNRMImpl_8h}\index{Cyto\-Sim/\-Chem\-N\-R\-M\-Impl.\-h@{Cyto\-Sim/\-Chem\-N\-R\-M\-Impl.\-h}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$random$>$}\\*
+{\ttfamily \#include $<$boost/heap/pairing\-\_\-heap.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}utility.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Reaction.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Chem\-Sim\-Impl.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Chem\-R\-Node.\-h\char`\"{}}\\*
+Include dependency graph for Chem\-N\-R\-M\-Impl.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ChemNRMImpl_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=333pt]{ChemNRMImpl_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classchem_1_1PQNode}{chem\-::\-P\-Q\-Node}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} stands for Priority Queue Node. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1RNodeNRM}{chem\-::\-R\-Node\-N\-R\-M}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} stands for \hyperlink{classchem_1_1Reaction}{Reaction} Node Next \hyperlink{classchem_1_1Reaction}{Reaction} Method. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ChemNRMImpl}{chem\-::\-Chem\-N\-R\-M\-Impl}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} stands for Chemical Next \hyperlink{classchem_1_1Reaction}{Reaction} Method Implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacechem}{chem}
+\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \\*
+boost\-::heap\-::pairing\-\_\-heap\\*
+$<$ P\-Q\-Node $>$ \hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{chem\-::boost\-\_\-heap}
+\item 
+typedef \\*
+boost\-::heap\-::pairing\-\_\-heap\\*
+$<$ P\-Q\-Node $>$\-::handle\-\_\-type \hyperlink{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{chem\-::handle\-\_\-t}
+\end{DoxyCompactItemize}

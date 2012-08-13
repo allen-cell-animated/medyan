@@ -1,0 +1,270 @@
+\hypertarget{classSpecies}{\section{Species Class Reference}
+\label{classSpecies}\index{Species@{Species}}
+}
+
+
+{\ttfamily \#include $<$Species.\-h$>$}
+
+
+
+Inheritance diagram for Species\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=130pt]{classSpecies__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Species\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=130pt]{classSpecies__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSpecies_ac50a5bb29d417423ea43b6698e357436}{Species} (const \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type} \&name, int N)
+\item 
+int \hyperlink{classSpecies_a166f138f95713c4fd02dfb47a81b515b}{get\-N} ()
+\begin{DoxyCompactList}\small\item\em return the current copy number of this particule \hyperlink{classSpecies}{Species} object \end{DoxyCompactList}\item 
+void \hyperlink{classSpecies_af40a72d3e3f8d3cc7bf1dfe209bed39b}{set\-N} (int N)
+\begin{DoxyCompactList}\small\item\em param N -\/ an integer argument to set the current copy number of this particule \hyperlink{classSpecies}{Species} object \end{DoxyCompactList}\item 
+const \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type} \& \hyperlink{classSpecies_a7b99d16574deaba7a1f4b60d93f33304}{get\-Type} ()
+\begin{DoxyCompactList}\small\item\em return reference to Species\-Type, which should behave as a std\-::string (i.\-e. \char`\"{}\-Arp2/3\char`\"{}) \end{DoxyCompactList}\item 
+virtual void \hyperlink{classSpecies_a8a2ec8930dd89c427245f0013aea9c69}{write\-Self} (std\-::ofstream \&fout)
+\begin{DoxyCompactList}\small\item\em Write the base class \hyperlink{classSpecies}{Species} into the provided output filestream, fout. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classSpecies_a73ca4b8decc02298a91aff1912f57df4}{initialize\-From\-Stream} (std\-::ifstream \&fin)
+\begin{DoxyCompactList}\small\item\em initialize the \hyperlink{classSpecies}{Species} based on the data from the inpute filestream \end{DoxyCompactList}\item 
+\hyperlink{Object_8h_a0b56ddf6ace42572542aae1f2c364e05}{object\-\_\-id} \hyperlink{classObject_a4dd34b912b01d62f8e5aa9bcb4e82e81}{get\-I\-D} ()
+\begin{DoxyCompactList}\small\item\em return the object\-\_\-id associated with this object \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classObject}{Object} $\ast$ \hyperlink{classObject_a0fcfbdfa4439b322c375a5f99c3dfabd}{get\-Objectby\-I\-D} (\hyperlink{Object_8h_a0b56ddf6ace42572542aae1f2c364e05}{object\-\_\-id} id)
+\begin{DoxyCompactList}\small\item\em A static method, which should be invoked as,. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classObject}{Object} $\ast$ \hyperlink{classObject_a11a1dd53ef68fc4a1ad8c6175132c8d5}{clone\-Object} ()
+\begin{DoxyCompactList}\small\item\em Duplicate the \hyperlink{classObject}{Object} instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classSpecies_aaf64f0a20dc213a6f03c69e7c3caa43a}{\-\_\-\-N}
+\item 
+\hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type} \hyperlink{classSpecies_ae80ccbaa2b115cea250b7f87ce517105}{\-\_\-\-Type}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This is the base class of \hyperlink{classSpecies}{Species} hieararchy. Implements the \hyperlink{classObject}{Object}, Logging, and potentiall Persistence interfaces. Since it is derived from \hyperlink{classObject}{Object}, it is not copyable. 
+
+Definition at line 40 of file Species.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSpecies_ac50a5bb29d417423ea43b6698e357436}{\index{Species@{Species}!Species@{Species}}
+\index{Species@{Species}!Species@{Species}}
+\subsubsection[{Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-::\-Species} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{name, }
+\item[{int}]{N}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpecies_ac50a5bb29d417423ea43b6698e357436}
+
+
+Definition at line 45 of file Species.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classObject_a11a1dd53ef68fc4a1ad8c6175132c8d5}{\index{Species@{Species}!clone\-Object@{clone\-Object}}
+\index{clone\-Object@{clone\-Object}!Species@{Species}}
+\subsubsection[{clone\-Object}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Object}$\ast$ {\bf Object\-::clone\-Object} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, protected, inherited\mbox{]}}}}\label{classObject_a11a1dd53ef68fc4a1ad8c6175132c8d5}
+
+
+Duplicate the \hyperlink{classObject}{Object} instance. 
+
+Despite its name, the \-\_\-id variable is not duplicated, because all \hyperlink{classObject}{Object} I\-Ds are required to be unique during any time of the program run. 
+
+Definition at line 86 of file Object.\-h.
+
+
+
+References Object\-::\-Object().
+
+\hypertarget{classObject_a4dd34b912b01d62f8e5aa9bcb4e82e81}{\index{Species@{Species}!get\-I\-D@{get\-I\-D}}
+\index{get\-I\-D@{get\-I\-D}!Species@{Species}}
+\subsubsection[{get\-I\-D}]{\setlength{\rightskip}{0pt plus 5cm}{\bf object\-\_\-id} {\bf Object\-::get\-I\-D} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classObject_a4dd34b912b01d62f8e5aa9bcb4e82e81}
+
+
+return the object\-\_\-id associated with this object 
+
+
+
+Definition at line 39 of file Object.\-h.
+
+\hypertarget{classSpecies_a166f138f95713c4fd02dfb47a81b515b}{\index{Species@{Species}!get\-N@{get\-N}}
+\index{get\-N@{get\-N}!Species@{Species}}
+\subsubsection[{get\-N}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf Species\-::get\-N} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpecies_a166f138f95713c4fd02dfb47a81b515b}
+
+
+return the current copy number of this particule \hyperlink{classSpecies}{Species} object 
+
+
+
+Definition at line 48 of file Species.\-h.
+
+\hypertarget{classObject_a0fcfbdfa4439b322c375a5f99c3dfabd}{\index{Species@{Species}!get\-Objectby\-I\-D@{get\-Objectby\-I\-D}}
+\index{get\-Objectby\-I\-D@{get\-Objectby\-I\-D}!Species@{Species}}
+\subsubsection[{get\-Objectby\-I\-D}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf Object}$\ast$ {\bf Object\-::get\-Objectby\-I\-D} (
+\begin{DoxyParamCaption}
+\item[{{\bf object\-\_\-id}}]{id}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static, inherited\mbox{]}}}}\label{classObject_a0fcfbdfa4439b322c375a5f99c3dfabd}
+
+
+A static method, which should be invoked as,. 
+
+
+\begin{DoxyCode}
+ object_id ID = 35;
+ Object* o = Object::getObjectbyID(ID);
+ ...
+\end{DoxyCode}
+ 
+
+Definition at line 47 of file Object.\-h.
+
+\hypertarget{classSpecies_a7b99d16574deaba7a1f4b60d93f33304}{\index{Species@{Species}!get\-Type@{get\-Type}}
+\index{get\-Type@{get\-Type}!Species@{Species}}
+\subsubsection[{get\-Type}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Species\-Type}\& {\bf Species\-::get\-Type} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpecies_a7b99d16574deaba7a1f4b60d93f33304}
+
+
+return reference to Species\-Type, which should behave as a std\-::string (i.\-e. \char`\"{}\-Arp2/3\char`\"{}) 
+
+
+
+Definition at line 54 of file Species.\-h.
+
+\hypertarget{classSpecies_a73ca4b8decc02298a91aff1912f57df4}{\index{Species@{Species}!initialize\-From\-Stream@{initialize\-From\-Stream}}
+\index{initialize\-From\-Stream@{initialize\-From\-Stream}!Species@{Species}}
+\subsubsection[{initialize\-From\-Stream}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf Species\-::initialize\-From\-Stream} (
+\begin{DoxyParamCaption}
+\item[{std\-::ifstream \&}]{fin}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classSpecies_a73ca4b8decc02298a91aff1912f57df4}
+
+
+initialize the \hyperlink{classSpecies}{Species} based on the data from the inpute filestream 
+
+
+
+Reimplemented from \hyperlink{classObject_a7695d57d88356ed2649255a48e4ffdbe}{Object}.
+
+
+
+Reimplemented in \hyperlink{classSBulk_aade6080b259012cbf1a5a84d64352358}{S\-Bulk}.
+
+
+
+Definition at line 63 of file Species.\-h.
+
+
+
+References Object\-::initialize\-From\-Stream().
+
+
+
+Referenced by S\-Bulk\-::initialize\-From\-Stream().
+
+\hypertarget{classSpecies_af40a72d3e3f8d3cc7bf1dfe209bed39b}{\index{Species@{Species}!set\-N@{set\-N}}
+\index{set\-N@{set\-N}!Species@{Species}}
+\subsubsection[{set\-N}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Species\-::set\-N} (
+\begin{DoxyParamCaption}
+\item[{int}]{N}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpecies_af40a72d3e3f8d3cc7bf1dfe209bed39b}
+
+
+param N -\/ an integer argument to set the current copy number of this particule \hyperlink{classSpecies}{Species} object 
+
+
+
+Definition at line 51 of file Species.\-h.
+
+\hypertarget{classSpecies_a8a2ec8930dd89c427245f0013aea9c69}{\index{Species@{Species}!write\-Self@{write\-Self}}
+\index{write\-Self@{write\-Self}!Species@{Species}}
+\subsubsection[{write\-Self}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf Species\-::write\-Self} (
+\begin{DoxyParamCaption}
+\item[{std\-::ofstream \&}]{fout}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classSpecies_a8a2ec8930dd89c427245f0013aea9c69}
+
+
+Write the base class \hyperlink{classSpecies}{Species} into the provided output filestream, fout. 
+
+
+
+Reimplemented from \hyperlink{classObject_a3f41123d1b33b22e5eb71fd2794577d9}{Object}.
+
+
+
+Reimplemented in \hyperlink{classSBulk_af96d228dfe5348a5a7944b69c3ddf8fa}{S\-Bulk}.
+
+
+
+Definition at line 57 of file Species.\-h.
+
+
+
+References Object\-::write\-Self().
+
+
+
+Referenced by main(), and S\-Bulk\-::write\-Self().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSpecies_aaf64f0a20dc213a6f03c69e7c3caa43a}{\index{Species@{Species}!\-\_\-\-N@{\-\_\-\-N}}
+\index{\-\_\-\-N@{\-\_\-\-N}!Species@{Species}}
+\subsubsection[{\-\_\-\-N}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf Species\-::\-\_\-\-N}\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classSpecies_aaf64f0a20dc213a6f03c69e7c3caa43a}
+
+
+Definition at line 75 of file Species.\-h.
+
+\hypertarget{classSpecies_ae80ccbaa2b115cea250b7f87ce517105}{\index{Species@{Species}!\-\_\-\-Type@{\-\_\-\-Type}}
+\index{\-\_\-\-Type@{\-\_\-\-Type}!Species@{Species}}
+\subsubsection[{\-\_\-\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-Type} {\bf Species\-::\-\_\-\-Type}\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classSpecies_ae80ccbaa2b115cea250b7f87ce517105}
+
+
+Definition at line 76 of file Species.\-h.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{Species_8h}{Species.\-h}\end{DoxyCompactItemize}

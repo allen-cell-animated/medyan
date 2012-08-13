@@ -1,0 +1,265 @@
+\hypertarget{classchem_1_1Component}{\section{chem\-:\-:Component Class Reference}
+\label{classchem_1_1Component}\index{chem\-::\-Component@{chem\-::\-Component}}
+}
+
+
+{\ttfamily \#include $<$Component.\-h$>$}
+
+
+
+Inheritance diagram for chem\-:\-:Component\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=345pt]{classchem_1_1Component__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for chem\-:\-:Component\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=314pt]{classchem_1_1Component__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classchem_1_1Component_a2c7265280625c13151d52a500bcc3095}{Component} ()
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{get\-Parent} ()
+\item 
+void \hyperlink{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{set\-Parent} (\hyperlink{classchem_1_1Composite}{Composite} $\ast$other)
+\item 
+bool \hyperlink{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{is\-Root} () const 
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{get\-Root} ()
+\item 
+virtual bool \hyperlink{classchem_1_1Component_aca92f700484a1ad36c2e656e307fe263}{has\-Children} ()
+\item 
+virtual \hyperlink{classchem_1_1Component_a9a468e72232a30a69d4432d13ac5ffa9}{$\sim$\-Component} () noexcept
+\item 
+virtual std\-::string \hyperlink{classchem_1_1Component_aa98580b14e0246ca9840d5b76f9b4a43}{get\-Full\-Name} () const =0
+\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Component_ab39d0fd77db206513e03aee1c0aeb459}{count\-Species} () const =0
+\item 
+virtual bool \hyperlink{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{apply} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v)
+\item 
+virtual bool \hyperlink{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{apply\-\_\-if} (\hyperlink{classchem_1_1ConditionalVisitor}{Conditional\-Visitor} \&v)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a5da4c5a0d857620fe3e3cf7d8d06ec26}{\-\_\-parent}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 18 of file Component.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1Component_a2c7265280625c13151d52a500bcc3095}{\index{chem\-::\-Component@{chem\-::\-Component}!Component@{Component}}
+\index{Component@{Component}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{Component}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Component\-::\-Component} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Component_a2c7265280625c13151d52a500bcc3095}
+
+
+Definition at line 22 of file Component.\-h.
+
+\hypertarget{classchem_1_1Component_a9a468e72232a30a69d4432d13ac5ffa9}{\index{chem\-::\-Component@{chem\-::\-Component}!$\sim$\-Component@{$\sim$\-Component}}
+\index{$\sim$\-Component@{$\sim$\-Component}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{$\sim$\-Component}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf chem\-::\-Component\-::$\sim$\-Component} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Component_a9a468e72232a30a69d4432d13ac5ffa9}
+
+
+Definition at line 28 of file Component.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{\index{chem\-::\-Component@{chem\-::\-Component}!apply@{apply}}
+\index{apply@{apply}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply} (
+\begin{DoxyParamCaption}
+\item[{{\bf Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_a455876eca36c9648f209f4bcf4dbcd61}{chem\-::\-Composite}.
+
+
+
+Definition at line 23 of file Component.\-cpp.
+
+
+
+References chem\-::\-Visitor\-::visit().
+
+\hypertarget{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{\index{chem\-::\-Component@{chem\-::\-Component}!apply\-\_\-if@{apply\-\_\-if}}
+\index{apply\-\_\-if@{apply\-\_\-if}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Conditional\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_a6acf2bf4e2c14d6e9bfe40d15c3318fb}{chem\-::\-Composite}.
+
+
+
+Definition at line 27 of file Component.\-cpp.
+
+
+
+References chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
+
+\hypertarget{classchem_1_1Component_ab39d0fd77db206513e03aee1c0aeb459}{\index{chem\-::\-Component@{chem\-::\-Component}!count\-Species@{count\-Species}}
+\index{count\-Species@{count\-Species}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{count\-Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::count\-Species} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1Component_ab39d0fd77db206513e03aee1c0aeb459}
+
+
+Implemented in \hyperlink{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}{chem\-::\-Species}.
+
+
+
+Referenced by chem\-::\-Concrete\-Visitor\-::visit(), and chem\-::\-Composite\-Visitor\-::visit().
+
+\hypertarget{classchem_1_1Component_aa98580b14e0246ca9840d5b76f9b4a43}{\index{chem\-::\-Component@{chem\-::\-Component}!get\-Full\-Name@{get\-Full\-Name}}
+\index{get\-Full\-Name@{get\-Full\-Name}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{get\-Full\-Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual std\-::string {\bf chem\-::\-Component\-::get\-Full\-Name} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1Component_aa98580b14e0246ca9840d5b76f9b4a43}
+
+
+Implemented in \hyperlink{classchem_1_1SpeciesDiffusing_a03eba31a17a3713e8c45cc0952e922bb}{chem\-::\-Species\-Diffusing}, \hyperlink{classchem_1_1SpeciesBulk_a340d3f16e075352bf1cbab7918f5ca20}{chem\-::\-Species\-Bulk}, \hyperlink{classchem_1_1Species_a7ac7196a7146f63e297d0995c6081f4b}{chem\-::\-Species}, and \hyperlink{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{chem\-::\-Composite}.
+
+
+
+Referenced by chem\-::\-Concrete\-Visitor\-::visit(), chem\-::\-Composite\-Visitor\-::visit(), and chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
+
+\hypertarget{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{\index{chem\-::\-Component@{chem\-::\-Component}!get\-Parent@{get\-Parent}}
+\index{get\-Parent@{get\-Parent}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{get\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Component\-::get\-Parent} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}
+
+
+Definition at line 23 of file Component.\-h.
+
+
+
+References \-\_\-parent.
+
+
+
+Referenced by get\-Root().
+
+\hypertarget{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{\index{chem\-::\-Component@{chem\-::\-Component}!get\-Root@{get\-Root}}
+\index{get\-Root@{get\-Root}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{get\-Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ {\bf chem\-::\-Component\-::get\-Root} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}
+
+
+Definition at line 16 of file Component.\-cpp.
+
+
+
+References get\-Parent(), get\-Root(), and is\-Root().
+
+
+
+Referenced by get\-Root().
+
+\hypertarget{classchem_1_1Component_aca92f700484a1ad36c2e656e307fe263}{\index{chem\-::\-Component@{chem\-::\-Component}!has\-Children@{has\-Children}}
+\index{has\-Children@{has\-Children}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{has\-Children}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::has\-Children} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Component_aca92f700484a1ad36c2e656e307fe263}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_aa73520e07d39cc47662953f54ee1d1a7}{chem\-::\-Composite}.
+
+
+
+Definition at line 27 of file Component.\-h.
+
+\hypertarget{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{\index{chem\-::\-Component@{chem\-::\-Component}!is\-Root@{is\-Root}}
+\index{is\-Root@{is\-Root}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{is\-Root}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::is\-Root} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}
+
+
+Definition at line 25 of file Component.\-h.
+
+
+
+References \-\_\-parent.
+
+
+
+Referenced by get\-Root().
+
+\hypertarget{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{\index{chem\-::\-Component@{chem\-::\-Component}!set\-Parent@{set\-Parent}}
+\index{set\-Parent@{set\-Parent}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{set\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Component\-::set\-Parent} (
+\begin{DoxyParamCaption}
+\item[{{\bf Composite} $\ast$}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}
+
+
+Definition at line 24 of file Component.\-h.
+
+
+
+References \-\_\-parent.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classchem_1_1Component_a5da4c5a0d857620fe3e3cf7d8d06ec26}{\index{chem\-::\-Component@{chem\-::\-Component}!\-\_\-parent@{\-\_\-parent}}
+\index{\-\_\-parent@{\-\_\-parent}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{\-\_\-parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Component\-::\-\_\-parent}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1Component_a5da4c5a0d857620fe3e3cf7d8d06ec26}
+
+
+Definition at line 20 of file Component.\-h.
+
+
+
+Referenced by get\-Parent(), is\-Root(), and set\-Parent().
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{Component_8h}{Component.\-h}\item 
+Cyto\-Sim/\hyperlink{Component_8cpp}{Component.\-cpp}\end{DoxyCompactItemize}

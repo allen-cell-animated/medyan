@@ -17,6 +17,7 @@ using namespace std;
 using namespace chem;
 
 TEST(SpeciesNamesDBTest, All) {
+    SpeciesNamesDB::Instance()->clear();
     int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");
     EXPECT_EQ(0,y);
     std::string x = SpeciesNamesDB::Instance()->intToString(y);

@@ -3,12 +3,12 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
-FAST = -O3
-LDLIBS = -L../ -L/usr/local/lib/ -L/usr/local/gcc47/gtest-1.6.0/lib/.libs -lcyto -lgtest -lgtest_main -lboost_serialization 
+FAST = -O3 -ffast-math
+LDLIBS = -L../ -L/usr/local/lib/ -L/usr/local/gcc47/gtest-1.6.0/lib/.libs -lcyto -lgtest -lgtest_main 
 
 # $(DEBUG) $(FAST)
 
-CPPFLAGS = -Wall -I../ -I/usr/local/include -I/usr/local/gcc47/gtest-1.6.0/include -std=c++11 $(DEBUG)
+CPPFLAGS = -Wall -I../ -I/usr/local/include -I/usr/local/gcc47/gtest-1.6.0/include -std=c++11 $(FAST) 
 LFLAGS = -Wall -std=c++11 $(FAST)
 
 all: gtest-cyto test

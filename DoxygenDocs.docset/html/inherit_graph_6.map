@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="5,5,104,32"/>
+<area shape="rect" id="node3" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="152,5,280,32"/>
+</map>

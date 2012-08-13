@@ -4,7 +4,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
-FAST = -O3
+FAST = -O3 -ffast-math
 LDLIBS = -L/usr/local/lib/ -lboost_serialization 
 
 # $(DEBUG) $(FAST)
@@ -22,8 +22,8 @@ CytoSim: $(OBJECTS)
 %.o: %.cpp 
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $<
 
-lib: ChemNRMImpl.o  Compartment.o Composite.o  Reaction.o  System.o ChemSim.o      Component.o    RSpecies.o   Species.o
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -dynamiclib -undefined suppress -flat_namespace ChemNRMImpl.o  Compartment.o Composite.o  Reaction.o  System.o ChemSim.o      Component.o    RSpecies.o   Species.o -o libcyto.dylib
+lib: ChemNRMImpl.o  ChemSim.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -dynamiclib -undefined suppress -flat_namespace ChemNRMImpl.o  ChemSim.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o -o libcyto.dylib
 
 clean:
 	\rm -f *.o

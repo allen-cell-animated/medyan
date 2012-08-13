@@ -1,0 +1,45 @@
+\hypertarget{Signaling_8h}{\section{Cyto\-Sim/\-Signaling.h File Reference}
+\label{Signaling_8h}\index{Cyto\-Sim/\-Signaling.\-h@{Cyto\-Sim/\-Signaling.\-h}}
+}
+{\ttfamily \#include $<$memory$>$}\\*
+{\ttfamily \#include $<$unordered\-\_\-map$>$}\\*
+{\ttfamily \#include $<$functional$>$}\\*
+{\ttfamily \#include $<$cassert$>$}\\*
+{\ttfamily \#include $<$boost/signals2/signal.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/connection.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/shared\-\_\-connection\-\_\-block.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}utility.\-h\char`\"{}}\\*
+Include dependency graph for Signaling.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Signaling_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Signaling_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classchem_1_1ChemSignal}{chem\-::\-Chem\-Signal}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemSignal}{Chem\-Signal} manages callbacks for \hyperlink{classchem_1_1RSpecies}{R\-Species} and Reactions objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacechem}{chem}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \\*
+boost\-::signals2\-::signal$<$ void(R\-Species \\*
+$\ast$, int)$>$ \hyperlink{namespacechem_a09aea7e5a24368c13cd7d8d25b4d884e}{chem\-::\-R\-Species\-Copy\-N\-Changed\-Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classchem_1_1RSpecies}{R\-Species} signal object that will be called by \hyperlink{classchem_1_1ChemSignal}{Chem\-Signal}, usually when requested by the reaction simulation algorithm. \end{DoxyCompactList}\item 
+typedef \\*
+boost\-::signals2\-::signal$<$ void(Reaction $\ast$)$>$ \hyperlink{namespacechem_a85c409cf931d658d253b62ab5ad35781}{chem\-::\-Reaction\-Event\-Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classchem_1_1Reaction}{Reaction} signal object that will be called by \hyperlink{classchem_1_1ChemSignal}{Chem\-Signal}, usually when requested by the reaction simulation algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}

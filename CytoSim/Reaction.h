@@ -54,6 +54,7 @@ private:
     float _rate; ///< the rate for this Reaction
     const unsigned char _m; ///< indicates the number of reactants
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Reaction occurs)
+    bool _passivated; ///< Indicates whether the Reaction is currently passivated
     
 public:
 //    /// Default Constructor produces a Reaction with no reactants or products, zero rate, etc.
@@ -65,7 +66,7 @@ public:
     /// @param M - number of reactants
     /// @param N - number of products
     /// @param rate - the rate constant for this reaction
-    Reaction (std::initializer_list<Species*> Species, unsigned char M, unsigned char N, float rate); 
+    Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);
     
     
     Reaction (const Reaction &r) = delete; // no copying (including all derived classes)
@@ -93,15 +94,32 @@ public:
     /// Returns the number of product RSpecies
     unsigned char getN() const {return static_cast<unsigned char>(_rspecies.size()-_m);}
     
-    /// Computes the product of the copy number of all reactant RSpecies. Can be used to quickly 
-    /// determined whether this Reaction is active - i.e. if one of the reactants has a 0 copy number, 
-    /// then the propensity for this Reaction is 0.
+    /// Computes the product of the copy number of all reactant RSpecies.
+    /// Can be used to quickly determine whether this Reaction should be allowed to activate - if one of the
+    /// reactants has a copy number equal to zero, then zero is returned, indicating that
+    /// this Reaction should not be (yet) activated.
     int getProductOfReactants () const {
         int prod = 1;
         for(auto sit = cbeginReactants(); sit!=cendReactants(); ++sit) 
             prod*=(*sit)->getN();
         return prod;
     }
+    
+    /// Computes the product of the copy number of all product RSpecies minus maxium allowed copy number.
+    /// Can be used to quickly determine whether this Reaction should be allowed to activate - if one of the
+    /// products has a copy number equal to the maximum allowed, then zero is returned, indicating that
+    /// this Reaction should not be (yet) activated.
+    int getProductOfProducts () const {
+        int prod = 1;
+        for(auto sit = cbeginProducts(); sit!=cendProducts(); ++sit){
+            prod*=((*sit)->getN()-(*sit)->getUpperLimitForN());
+//            std::cout << "getProductOfProducts(): " << (*sit)->getN() << " " << (*sit)->getUpperLimitForN() << " " << ((*sit)->getN()-(*sit)->getUpperLimitForN()) << std::endl;
+        }
+        return prod;
+    }
+    
+    /// Return true if the Reaction is currently passivated
+    bool isPassivated() const {return _passivated;}
     
     /// Return true if this RSpecies emits signals on copy number change
     bool isSignaling () const {return _signal!=nullptr;}
@@ -173,7 +191,7 @@ public:
     /// Compute the Reaction propensity that is needed by a Gillespie like algorithm:
     /// rate*reactant_1.getN()*reactant_2.getN()...
     float computePropensity () const {
-        return std::accumulate(cbeginReactants(), cendReactants(), 
+        return std::accumulate(cbeginReactants(), cendReactants(),
                                _rate, 
                                [](float prod, RSpecies *s){ 
                                    return prod*=s->getN();
@@ -186,9 +204,25 @@ public:
     /// activateReaction() may be called to restart tracking, if the propensity stops being 0.
     void passivateReaction();
     
+    /// Requests that Reaction objects that may affect this Reaction to start tracking it, which can be
+    /// used to follow Reaction objects whose propensities change upong firing of some Reaction. This
+    /// request is acted upond unconditionally.
+    void activateReactionUnconditional();
+    
     /// Requests that Reaction objects that may affect this Reaction to start tracking it, which can be 
-    /// used to follow Reaction objects whose propensities change upong firing of some Reaction.
-    void activateReaction();
+    /// used to follow Reaction objects whose propensities change upong firing of some Reaction. This
+    /// request will be ignored if the Reaction's propensity is still zero.
+    void activateReaction() {
+#ifdef TRACK_ZERO_COPY_N
+        if(getProductOfReactants()==0) // One of the reactants is still at zero copy n, no need to activate yet...
+            return;
+#endif
+#ifdef TRACK_UPPER_COPY_N
+        if(getProductOfProducts()==0) // One of the products is at the maximum allowed copy number, no need to activate yet...
+            return;
+#endif
+        activateReactionUnconditional();
+    }
     
     /// Print the Reactions that are affacted by this Reaction being fired
     void printDependents() ;

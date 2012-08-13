@@ -1,0 +1,162 @@
+\hypertarget{classchem_1_1ChemSimImpl}{\section{chem\-:\-:Chem\-Sim\-Impl Class Reference}
+\label{classchem_1_1ChemSimImpl}\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}}
+}
+
+
+\hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl} is an abstract base class for algorithms that run stochastic chemical kinetics.  
+
+
+
+
+{\ttfamily \#include $<$Chem\-Sim\-Impl.\-h$>$}
+
+
+
+Inheritance diagram for chem\-:\-:Chem\-Sim\-Impl\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{classchem_1_1ChemSimImpl__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{classchem_1_1ChemSimImpl_a54ce9889cf7a09275d2c8257557a5be1}{$\sim$\-Chem\-Sim\-Impl} ()
+\item 
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{initialize} ()=0
+\begin{DoxyCompactList}\small\item\em After all initial reactions have been added via add\-Reaction(...) method, invoke \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{initialize()} prior to invoking \hyperlink{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{run()} \end{DoxyCompactList}\item 
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}{add\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)=0
+\begin{DoxyCompactList}\small\item\em Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}{remove\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)=0
+\begin{DoxyCompactList}\small\item\em Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{run} (int steps)=0
+\begin{DoxyCompactList}\small\item\em Run the chemical dynamics for a specific number of steps. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a24291dac40633358ab6a9f473d6f861d}{print\-Reactions} () const =0
+\begin{DoxyCompactList}\small\item\em Mainly used for debugging\-: print chemical reactions in the network at this moment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl} is an abstract base class for algorithms that run stochastic chemical kinetics. 
+
+Specific stochastic kinetics algorithm classes should inherit from \hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl}. A user will then attach the corresponding algorithm to \hyperlink{classchem_1_1ChemSim}{Chem\-Sim} via the algoritm's base class \hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl}. 
+
+Definition at line 19 of file Chem\-Sim\-Impl.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1ChemSimImpl_a54ce9889cf7a09275d2c8257557a5be1}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!$\sim$\-Chem\-Sim\-Impl@{$\sim$\-Chem\-Sim\-Impl}}
+\index{$\sim$\-Chem\-Sim\-Impl@{$\sim$\-Chem\-Sim\-Impl}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{$\sim$\-Chem\-Sim\-Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf chem\-::\-Chem\-Sim\-Impl\-::$\sim$\-Chem\-Sim\-Impl} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a54ce9889cf7a09275d2c8257557a5be1}
+
+
+Definition at line 21 of file Chem\-Sim\-Impl.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!add\-Reaction@{add\-Reaction}}
+\index{add\-Reaction@{add\-Reaction}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{add\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::add\-Reaction} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}
+
+
+Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. 
+
+
+
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a1b325b27b22f443f99fce659ae78aeee}{chem\-::\-Chem\-N\-R\-M\-Impl}.
+
+
+
+Referenced by chem\-::\-Chem\-Sim\-::add\-Reaction().
+
+\hypertarget{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!initialize@{initialize}}
+\index{initialize@{initialize}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{initialize}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::initialize} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}
+
+
+After all initial reactions have been added via add\-Reaction(...) method, invoke \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{initialize()} prior to invoking \hyperlink{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{run()} 
+
+
+
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a685ac34bfa4b8226045bd3b8c6cdec95}{chem\-::\-Chem\-N\-R\-M\-Impl}.
+
+
+
+Referenced by chem\-::\-Chem\-Sim\-::initialize().
+
+\hypertarget{classchem_1_1ChemSimImpl_a24291dac40633358ab6a9f473d6f861d}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!print\-Reactions@{print\-Reactions}}
+\index{print\-Reactions@{print\-Reactions}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{print\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::print\-Reactions} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a24291dac40633358ab6a9f473d6f861d}
+
+
+Mainly used for debugging\-: print chemical reactions in the network at this moment. 
+
+
+
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a7898a5e226789a39b51f8fb56cc85c1e}{chem\-::\-Chem\-N\-R\-M\-Impl}.
+
+
+
+Referenced by chem\-::\-Chem\-Sim\-::print\-Reactions().
+
+\hypertarget{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!remove\-Reaction@{remove\-Reaction}}
+\index{remove\-Reaction@{remove\-Reaction}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{remove\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::remove\-Reaction} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}
+
+
+Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. 
+
+
+
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_ad3a2b84f69c444a55b60d21200537338}{chem\-::\-Chem\-N\-R\-M\-Impl}.
+
+
+
+Referenced by chem\-::\-Chem\-Sim\-::remove\-Reaction().
+
+\hypertarget{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!run@{run}}
+\index{run@{run}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Chem\-Sim\-Impl\-::run} (
+\begin{DoxyParamCaption}
+\item[{int}]{steps}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}
+
+
+Run the chemical dynamics for a specific number of steps. 
+
+
+
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a8ccff6cf244e91b8057c323d17a5b48c}{chem\-::\-Chem\-N\-R\-M\-Impl}.
+
+
+
+Referenced by chem\-::\-Chem\-Sim\-::run().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{ChemSimImpl_8h}{Chem\-Sim\-Impl.\-h}\end{DoxyCompactItemize}

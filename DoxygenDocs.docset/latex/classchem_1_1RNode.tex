@@ -1,0 +1,118 @@
+\hypertarget{classchem_1_1RNode}{\section{chem\-:\-:R\-Node Class Reference}
+\label{classchem_1_1RNode}\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}}
+}
+
+
+This is an abstract base class for classes that need to be associated with the given \hyperlink{classchem_1_1Reaction}{Reaction} object.  
+
+
+
+
+{\ttfamily \#include $<$Chem\-R\-Node.\-h$>$}
+
+
+
+Inheritance diagram for chem\-:\-:R\-Node\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=176pt]{classchem_1_1RNode__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{classchem_1_1RNode_af39a9d08d697b5586dad42ce763b902d}{$\sim$\-R\-Node} ()
+\begin{DoxyCompactList}\small\item\em Dtor. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}{activate\-Reaction} ()=0
+\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{Reaction\-::activate\-Reaction()}. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}{passivate\-Reaction} ()=0
+\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{Reaction\-::passivate\-Reaction()}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}{is\-Passivated} () const =0
+\begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classchem_1_1Reaction}{Reaction} is currently passivated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This is an abstract base class for classes that need to be associated with the given \hyperlink{classchem_1_1Reaction}{Reaction} object. 
+
+Definition at line 15 of file Chem\-R\-Node.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1RNode_af39a9d08d697b5586dad42ce763b902d}{\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}!$\sim$\-R\-Node@{$\sim$\-R\-Node}}
+\index{$\sim$\-R\-Node@{$\sim$\-R\-Node}!chem::RNode@{chem\-::\-R\-Node}}
+\subsubsection[{$\sim$\-R\-Node}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf chem\-::\-R\-Node\-::$\sim$\-R\-Node} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1RNode_af39a9d08d697b5586dad42ce763b902d}
+
+
+Dtor. 
+
+
+
+Definition at line 18 of file Chem\-R\-Node.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}{\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}!activate\-Reaction@{activate\-Reaction}}
+\index{activate\-Reaction@{activate\-Reaction}!chem::RNode@{chem\-::\-R\-Node}}
+\subsubsection[{activate\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-R\-Node\-::activate\-Reaction} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}
+
+
+This method is called by \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{Reaction\-::activate\-Reaction()}. 
+
+Its effect depends on the underlying stochastic simulatio algorithm. For example, in the N\-R\-M algorithm, a new tau and a are computed and the heap is updated. 
+
+Implemented in \hyperlink{classchem_1_1RNodeNRM_ae2fc1e8c09f0cda02da6cba29c6d0849}{chem\-::\-R\-Node\-N\-R\-M}.
+
+
+
+Referenced by chem\-::\-Reaction\-::activate\-Reaction().
+
+\hypertarget{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}{\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}!is\-Passivated@{is\-Passivated}}
+\index{is\-Passivated@{is\-Passivated}!chem::RNode@{chem\-::\-R\-Node}}
+\subsubsection[{is\-Passivated}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-R\-Node\-::is\-Passivated} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}
+
+
+Return true if the \hyperlink{classchem_1_1Reaction}{Reaction} is currently passivated. 
+
+
+
+Implemented in \hyperlink{classchem_1_1RNodeNRM_ad6445c86ef589c51c8d0957d437f6c3c}{chem\-::\-R\-Node\-N\-R\-M}.
+
+\hypertarget{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}{\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}!passivate\-Reaction@{passivate\-Reaction}}
+\index{passivate\-Reaction@{passivate\-Reaction}!chem::RNode@{chem\-::\-R\-Node}}
+\subsubsection[{passivate\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-R\-Node\-::passivate\-Reaction} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}
+
+
+This method is called by \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{Reaction\-::passivate\-Reaction()}. 
+
+Its effect depends on the underlying stochastic simulatio algorithm. For example, in the N\-R\-M algorithm, a tau is set to infinity and the heap is updated. 
+
+Implemented in \hyperlink{classchem_1_1RNodeNRM_a1099526d4e797a6d033ad6f60b76dc12}{chem\-::\-R\-Node\-N\-R\-M}.
+
+
+
+Referenced by chem\-::\-Reaction\-::passivate\-Reaction().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{ChemRNode_8h}{Chem\-R\-Node.\-h}\end{DoxyCompactItemize}

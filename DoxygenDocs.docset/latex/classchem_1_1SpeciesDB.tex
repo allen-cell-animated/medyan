@@ -1,0 +1,252 @@
+\hypertarget{classchem_1_1SpeciesDB}{\section{chem\-:\-:Species\-D\-B Class Reference}
+\label{classchem_1_1SpeciesDB}\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}}
+}
+
+
+\hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} can be used to manage the lifetime of \hyperlink{classchem_1_1Species}{Species}.  
+
+
+
+
+{\ttfamily \#include $<$Species\-D\-B.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classchem_1_1SpeciesDB_a9fea0eea2b4e1a03c01223a0027388ce}{Species\-D\-B} ()
+\begin{DoxyCompactList}\small\item\em Defualt constructor; no \hyperlink{classchem_1_1Species}{Species} are in the map initially. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesDB_aa418b479099ecec70190efb6c7028e15}{Species\-D\-B} (const \hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} \&)
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} \& \hyperlink{classchem_1_1SpeciesDB_ab8aa688e314e4b954f85b3e52e8cfc4a}{operator=} (\hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} \&)
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1Species}{Species} $\ast$ \hyperlink{classchem_1_1SpeciesDB_aed75b4d5d680ce4883b70819951eb687}{create} (const std\-::string \&unq\-\_\-key, const std\-::string \&name, \hyperlink{namespacechem_ad1edc1332f82ed64dd8a810596e781da}{S\-Type} type, \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} N)
+\begin{DoxyCompactList}\small\item\em Create new \hyperlink{classchem_1_1Species}{Species}, based on the last three parameters of this function. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1Species}{Species} $\ast$ \hyperlink{classchem_1_1SpeciesDB_a8008dae386b5397a815357e581fec835}{clone} (const std\-::string \&unq\-\_\-key, const \hyperlink{classchem_1_1Species}{Species} \&proto)
+\begin{DoxyCompactList}\small\item\em Create new \hyperlink{classchem_1_1Species}{Species} based on the already existing \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1Species}{Species} $\ast$ \hyperlink{classchem_1_1SpeciesDB_a15138c702e8a942adef5767915c3b846}{get} (const std\-::string \&unq\-\_\-key)
+\begin{DoxyCompactList}\small\item\em Returns a pointer to \hyperlink{classchem_1_1Species}{Species} given a unique string key. Throws std\-::out\-\_\-of\-\_\-range on the key error. \end{DoxyCompactList}\item 
+size\-\_\-t \hyperlink{classchem_1_1SpeciesDB_a452e04c1e03e36d39f8593a10717644b}{size} () const 
+\begin{DoxyCompactList}\small\item\em Return the total number of \hyperlink{classchem_1_1Species}{Species} in the map. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\-::unordered\-\_\-map\\*
+$<$ std\-::string, std\-::unique\-\_\-ptr\\*
+$<$ \hyperlink{classchem_1_1Species}{Species} $>$ $>$ \hyperlink{classchem_1_1SpeciesDB_a158e832778baeefa4add8b27f4e0bdec}{map\-\_\-str\-\_\-species}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classchem_1_1SpeciesDB_a158e832778baeefa4add8b27f4e0bdec}{map\-\_\-str\-\_\-species} \hyperlink{classchem_1_1SpeciesDB_a5ddee3589ef15bfba1f2b98e8ea6aca5}{\-\_\-map\-\_\-species}
+\begin{DoxyCompactList}\small\item\em a map where unique\-\_\-ptr$<$\-Species$>$ are stored, based on std\-::string keys \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} can be used to manage the lifetime of \hyperlink{classchem_1_1Species}{Species}. 
+
+The client code will request either a \hyperlink{classchem_1_1Species}{Species} pointer based on the existing uniq string identifier of that \hyperlink{classchem_1_1Species}{Species} (e.\-g. \char`\"{}\-F\-:20\-:\-F\-A\-:310\char`\"{} -\/ filament 20, F-\/actin, position 310), or a new \hyperlink{classchem_1_1Species}{Species} can be created based on a unique identified. Cloning of existing \hyperlink{classchem_1_1Species}{Species} is supported through this approach.
+
+\begin{DoxyNote}{Note}
+It is recommended the client code uses \hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} exclusively for managing \hyperlink{classchem_1_1Species}{Species} lifetimes, or it should not be used at all, so no uncertainty arises about the \hyperlink{classchem_1_1Species}{Species} lifetime management strategy. In a large scale code, \hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} should be the preferred approach. 
+
+Two \hyperlink{classchem_1_1SpeciesDB}{Species\-D\-B} could be created -\/ one for managing \hyperlink{classchem_1_1Species}{Species} prototypes (e.\-g. read from the input files), and the second one the \hyperlink{classchem_1_1Species}{Species} which will be run in a simulation.
+\end{DoxyNote}
+Example\-: 
+\begin{DoxyCode}
+    SpeciesDB sdb;
+    Species* A1 = sdb.create("A1", "A1", SType::Diffusing, 25);
+    Species* A2 = sdb.create("A2", "A2", SType::Diffusing, 25);
+    Species* A3 = sdb.create("A3", "A3", SType::Diffusing, 25);
+
+    Species *a3 = sdb1.get("A3"); // now A3 and a3 both point to the same
+       Species
+
+    Species *c1 = sdb1.clone("C1", *A1); // A1 was cloned; @see
+       Species::clone()
+    c1->getFullName(); // should produce "A1{Diffusing}"
+    c1->getN(); // should produce 0, because A1 was cloned.
+\end{DoxyCode}
+ 
+
+Definition at line 40 of file Species\-D\-B.\-h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classchem_1_1SpeciesDB_a158e832778baeefa4add8b27f4e0bdec}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!map\-\_\-str\-\_\-species@{map\-\_\-str\-\_\-species}}
+\index{map\-\_\-str\-\_\-species@{map\-\_\-str\-\_\-species}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{map\-\_\-str\-\_\-species}]{\setlength{\rightskip}{0pt plus 5cm}typedef std\-::unordered\-\_\-map$<$std\-::string,std\-::unique\-\_\-ptr$<${\bf Species}$>$ $>$ {\bf chem\-::\-Species\-D\-B\-::map\-\_\-str\-\_\-species}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1SpeciesDB_a158e832778baeefa4add8b27f4e0bdec}
+
+
+Definition at line 42 of file Species\-D\-B.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1SpeciesDB_a9fea0eea2b4e1a03c01223a0027388ce}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!Species\-D\-B@{Species\-D\-B}}
+\index{Species\-D\-B@{Species\-D\-B}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{Species\-D\-B}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Species\-D\-B\-::\-Species\-D\-B} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1SpeciesDB_a9fea0eea2b4e1a03c01223a0027388ce}
+
+
+Defualt constructor; no \hyperlink{classchem_1_1Species}{Species} are in the map initially. 
+
+\hypertarget{classchem_1_1SpeciesDB_aa418b479099ecec70190efb6c7028e15}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!Species\-D\-B@{Species\-D\-B}}
+\index{Species\-D\-B@{Species\-D\-B}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{Species\-D\-B}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Species\-D\-B\-::\-Species\-D\-B} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-D\-B} \&}]{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1SpeciesDB_aa418b479099ecec70190efb6c7028e15}
+
+
+Copying is not allowed. 
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1SpeciesDB_a8008dae386b5397a815357e581fec835}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!clone@{clone}}
+\index{clone@{clone}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{clone}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}$\ast$ {\bf chem\-::\-Species\-D\-B\-::clone} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{unq\-\_\-key, }
+\item[{const {\bf Species} \&}]{proto}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesDB_a8008dae386b5397a815357e581fec835}
+
+
+Create new \hyperlink{classchem_1_1Species}{Species} based on the already existing \hyperlink{classchem_1_1Species}{Species}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em proto} & -\/ \hyperlink{classchem_1_1Species}{Species} that will be cloned \\
+\hline
+{\em unq\-\_\-key} & -\/ should be a unique string identifying this \hyperlink{classchem_1_1Species}{Species} (supplied by the user) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the newly created \hyperlink{classchem_1_1Species}{Species} 
+\end{DoxyReturn}
+
+
+Definition at line 73 of file Species\-D\-B.\-h.
+
+
+
+References \-\_\-map\-\_\-species, and chem\-::\-Species\-::clone().
+
+\hypertarget{classchem_1_1SpeciesDB_aed75b4d5d680ce4883b70819951eb687}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!create@{create}}
+\index{create@{create}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}$\ast$ {\bf chem\-::\-Species\-D\-B\-::create} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{unq\-\_\-key, }
+\item[{const std\-::string \&}]{name, }
+\item[{{\bf S\-Type}}]{type, }
+\item[{{\bf species\-\_\-copy\-\_\-t}}]{N}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesDB_aed75b4d5d680ce4883b70819951eb687}
+
+
+Create new \hyperlink{classchem_1_1Species}{Species}, based on the last three parameters of this function. 
+
+Throws std\-::invalid\-\_\-argument if the key was already present. 
+\begin{DoxyParams}{Parameters}
+{\em unq\-\_\-key} & -\/ should be a unique string identifying this \hyperlink{classchem_1_1Species}{Species} (supplied by the user) \\
+\hline
+{\em name} & -\/ a string for the \hyperlink{classchem_1_1Species}{Species} name associated with this \hyperlink{classchem_1_1Species}{Species}. For example, \char`\"{}\-G-\/\-Actin\char`\"{} or \char`\"{}\-Arp2/3\char`\"{} \\
+\hline
+{\em type\-\_\-enum} & -\/ S\-Type enum, such as S\-Type\-::\-Diffusing \\
+\hline
+{\em n} & -\/ copy number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the newly created \hyperlink{classchem_1_1Species}{Species} 
+\end{DoxyReturn}
+
+
+Definition at line 61 of file Species\-D\-B.\-h.
+
+
+
+References \-\_\-map\-\_\-species.
+
+
+
+Referenced by main().
+
+\hypertarget{classchem_1_1SpeciesDB_a15138c702e8a942adef5767915c3b846}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!get@{get}}
+\index{get@{get}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}$\ast$ {\bf chem\-::\-Species\-D\-B\-::get} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{unq\-\_\-key}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesDB_a15138c702e8a942adef5767915c3b846}
+
+
+Returns a pointer to \hyperlink{classchem_1_1Species}{Species} given a unique string key. Throws std\-::out\-\_\-of\-\_\-range on the key error. 
+
+
+
+Definition at line 81 of file Species\-D\-B.\-h.
+
+
+
+References \-\_\-map\-\_\-species.
+
+\hypertarget{classchem_1_1SpeciesDB_ab8aa688e314e4b954f85b3e52e8cfc4a}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!operator=@{operator=}}
+\index{operator=@{operator=}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-D\-B}\& chem\-::\-Species\-D\-B\-::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-D\-B} \&}]{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1SpeciesDB_ab8aa688e314e4b954f85b3e52e8cfc4a}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classchem_1_1SpeciesDB_a452e04c1e03e36d39f8593a10717644b}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!size@{size}}
+\index{size@{size}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{size}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t {\bf chem\-::\-Species\-D\-B\-::size} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1SpeciesDB_a452e04c1e03e36d39f8593a10717644b}
+
+
+Return the total number of \hyperlink{classchem_1_1Species}{Species} in the map. 
+
+
+
+Definition at line 89 of file Species\-D\-B.\-h.
+
+
+
+References \-\_\-map\-\_\-species.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classchem_1_1SpeciesDB_a5ddee3589ef15bfba1f2b98e8ea6aca5}{\index{chem\-::\-Species\-D\-B@{chem\-::\-Species\-D\-B}!\-\_\-map\-\_\-species@{\-\_\-map\-\_\-species}}
+\index{\-\_\-map\-\_\-species@{\-\_\-map\-\_\-species}!chem::SpeciesDB@{chem\-::\-Species\-D\-B}}
+\subsubsection[{\-\_\-map\-\_\-species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf map\-\_\-str\-\_\-species} {\bf chem\-::\-Species\-D\-B\-::\-\_\-map\-\_\-species}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1SpeciesDB_a5ddee3589ef15bfba1f2b98e8ea6aca5}
+
+
+a map where unique\-\_\-ptr$<$\-Species$>$ are stored, based on std\-::string keys 
+
+
+
+Definition at line 43 of file Species\-D\-B.\-h.
+
+
+
+Referenced by clone(), create(), get(), and size().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{SpeciesDB_8h}{Species\-D\-B.\-h}\end{DoxyCompactItemize}

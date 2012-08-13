@@ -1,0 +1,45 @@
+\hypertarget{Reaction_8h}{\section{Cyto\-Sim/\-Reaction.h File Reference}
+\label{Reaction_8h}\index{Cyto\-Sim/\-Reaction.\-h@{Cyto\-Sim/\-Reaction.\-h}}
+}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$utility$>$}\\*
+{\ttfamily \#include $<$unordered\-\_\-set$>$}\\*
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$initializer\-\_\-list$>$}\\*
+{\ttfamily \#include $<$boost/signals2/signal.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/connection.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/shared\-\_\-connection\-\_\-block.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}common.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Species.\-h\char`\"{}}\\*
+Include dependency graph for Reaction.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Reaction_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Reaction_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classchem_1_1Reaction}{chem\-::\-Reaction}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1Reaction}{Reaction} class represents simple chemical reactions of the form A + B -\/$>$ C. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacechem}{chem}
+\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \\*
+boost\-::signals2\-::signal$<$ void(Reaction $\ast$)$>$ \hyperlink{namespacechem_a85c409cf931d658d253b62ab5ad35781}{chem\-::\-Reaction\-Event\-Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classchem_1_1Reaction}{Reaction} signal object that will be called by Chem\-Signal, usually when requested by the reaction simulation algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}

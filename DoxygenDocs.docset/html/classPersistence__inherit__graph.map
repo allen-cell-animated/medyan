@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classObject.html" title="This is the base class of Species, Reactions, Compartments, Filaments, etc." alt="" coords="18,80,77,107"/>
+<area shape="rect" id="node5" href="$classSpecies.html" title="This is the base class of Species hieararchy. Implements the Object, Logging, and potentiall Persiste..." alt="" coords="14,155,81,181"/>
+</map>

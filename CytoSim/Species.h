@@ -81,6 +81,12 @@ namespace chem {
             else
                 return mit->second;
         }
+        
+        /// Clear the contents of the database
+        void clear() {
+            _map_string_int.clear();
+            _vec_int_string.clear();
+        }
     };
         
     /// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
@@ -110,10 +116,10 @@ namespace chem {
         int _molecule; ///< unique id identifying the molecule (e.g. the integer id corresponding to "Arp2/3") 
         std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
     public:
-        /// Default Constructor; Should not be used by the end users - only internally (although it is marked private)
+        /// Default Constructor; Should not be used by the end users - only internally (although it is not marked as private)
         Species()  : Component() {
             _molecule=SpeciesNamesDB::Instance()->stringToInt("");
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, 0));
+            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this));
 //            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
         }
         
@@ -121,10 +127,11 @@ namespace chem {
         /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
         /// @param type_enum - SType enum, such as SType::Diffusing
         /// @param n - copy number
-        Species (const std::string &name, species_copy_t n=0)  : Component()
+        /// @param ulim - upper limit for this species' copy number
+        Species (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : Component()
         {
             _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n));
+            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n, ulim));
 //            std::cout << "Species (const std::string &name, species_copy_t n=0): Main ctor called, creating ptr=" << this << std::endl;
             
         }
@@ -134,7 +141,7 @@ namespace chem {
         /// the copied destination Species won't be included in any Reaction interactions of the original 
         /// source Species. The species copy numbered is copied to the target.
         Species (const Species &rhs)  : Component(), _molecule(rhs._molecule) {
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN()));
+            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
 //            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
         
@@ -148,7 +155,7 @@ namespace chem {
         /// stealing resources from the source, leaving it for destruction.
         Species (Species &&rhs) noexcept
         : Component(), _molecule(rhs._molecule), _rspecies(std::move(rhs._rspecies)) {
-//            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
+//            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
         }
         
         /// Assignment operator
@@ -158,7 +165,7 @@ namespace chem {
         Species& operator=(const Species& rhs)  {
 //            std::cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << std::endl; 
             _molecule = rhs._molecule;
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN()));
+            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
             return *this;
         }
         
@@ -185,6 +192,9 @@ namespace chem {
         
         /// Return the current copy number of this Species
         species_copy_t getN () const {return _rspecies->getN();}
+        
+        /// Return the upper limit for the copy number of this Species
+        species_copy_t getUpperLimitForN() const {return _rspecies->getUpperLimitForN();}
         
         /// Return this Species' name
         std::string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
@@ -253,7 +263,7 @@ namespace chem {
         /// The main constructor 
         /// @param name - Example, "G-Actin" or "Arp2/3"
         /// @param n - copy number
-        SpeciesBulk (const std::string &name, species_copy_t n=0)  :  Species(name, n) {};
+        SpeciesBulk (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
         
         /// Copy constructor
         SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
@@ -290,7 +300,7 @@ namespace chem {
         /// The main constructor 
         /// @param name - Example, "G-Actin" or "Arp2/3"
         /// @param n - copy number
-        SpeciesDiffusing (const std::string &name, species_copy_t n=0)  :  Species(name, n) {};
+        SpeciesDiffusing (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
         
         /// Copy constructor
         SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}

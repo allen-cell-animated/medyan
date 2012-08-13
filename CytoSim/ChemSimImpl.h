@@ -30,7 +30,7 @@ namespace chem {
         virtual void removeReaction(Reaction *r) = 0;
         
         /// Run the chemical dynamics for a specific number of steps
-        virtual void run(int steps) = 0;
+        virtual bool run(int steps) = 0;
         
         /// Mainly used for debugging: print chemical reactions in the network at this moment
         virtual void printReactions() const = 0;

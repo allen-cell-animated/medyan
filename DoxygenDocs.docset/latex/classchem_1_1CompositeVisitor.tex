@@ -1,0 +1,102 @@
+\hypertarget{classchem_1_1CompositeVisitor}{\section{chem\-:\-:Composite\-Visitor Class Reference}
+\label{classchem_1_1CompositeVisitor}\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}}
+}
+
+
+{\ttfamily \#include $<$Visitor\-Concrete.\-h$>$}
+
+
+
+Inheritance diagram for chem\-:\-:Composite\-Visitor\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classchem_1_1CompositeVisitor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for chem\-:\-:Composite\-Visitor\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classchem_1_1CompositeVisitor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}{visit} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\item 
+virtual bool \hyperlink{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}{pred} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\item 
+virtual bool \hyperlink{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{visit\-\_\-if} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 47 of file Visitor\-Concrete.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!pred@{pred}}
+\index{pred@{pred}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
+\subsubsection[{pred}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::pred} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}
+
+
+Implements \hyperlink{classchem_1_1ConditionalVisitor_ac35925bee54467373d1f44cccec75aa5}{chem\-::\-Conditional\-Visitor}.
+
+
+
+Definition at line 54 of file Visitor\-Concrete.\-h.
+
+\hypertarget{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit@{visit}}
+\index{visit@{visit}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::visit} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}
+
+
+Implements \hyperlink{classchem_1_1ConditionalVisitor_aff08b8bc4b5c193e1fe60f06cca318b1}{chem\-::\-Conditional\-Visitor}.
+
+
+
+Definition at line 49 of file Visitor\-Concrete.\-h.
+
+
+
+References chem\-::\-Component\-::count\-Species(), and chem\-::\-Component\-::get\-Full\-Name().
+
+\hypertarget{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit\-\_\-if@{visit\-\_\-if}}
+\index{visit\-\_\-if@{visit\-\_\-if}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
+\subsubsection[{visit\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Conditional\-Visitor\-::visit\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}
+
+
+Definition at line 25 of file Visitor.\-h.
+
+
+
+References chem\-::\-Component\-::get\-Full\-Name(), chem\-::\-Conditional\-Visitor\-::pred(), and chem\-::\-Conditional\-Visitor\-::visit().
+
+
+
+Referenced by chem\-::\-Component\-::apply\-\_\-if(), and chem\-::\-Composite\-::apply\-\_\-if().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{VisitorConcrete_8h}{Visitor\-Concrete.\-h}\end{DoxyCompactItemize}

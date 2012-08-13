@@ -1,0 +1,87 @@
+\hypertarget{RSpecies_8h}{\section{Cyto\-Sim/\-R\-Species.h File Reference}
+\label{RSpecies_8h}\index{Cyto\-Sim/\-R\-Species.\-h@{Cyto\-Sim/\-R\-Species.\-h}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$unordered\-\_\-map$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$cassert$>$}\\*
+{\ttfamily \#include $<$stdexcept$>$}\\*
+{\ttfamily \#include $<$boost/signals2/signal.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/connection.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/shared\-\_\-connection\-\_\-block.\-hpp$>$}\\*
+{\ttfamily \#include \char`\"{}common.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utility.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+Include dependency graph for R\-Species.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{RSpecies_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{RSpecies_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classchem_1_1RSpecies}{chem\-::\-R\-Species}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1RSpecies}{R\-Species} class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in \hyperlink{classchem_1_1Reaction}{Reactions}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacechem}{chem}
+\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\-::vector$<$ Reaction $\ast$ $>$\\*
+\-::iterator \hyperlink{namespacechem_a6c6fe26056b061cb8512c46063ad758e}{chem\-::vr\-\_\-iterator}
+\begin{DoxyCompactList}\small\item\em vr stands for vector of Reactions \end{DoxyCompactList}\item 
+typedef std\-::vector$<$ Reaction $\ast$ $>$\\*
+\-::const\-\_\-iterator \hyperlink{namespacechem_a39d00f277b52572f1ab739d5354509f9}{chem\-::vr\-\_\-const\-\_\-iterator}
+\item 
+typedef std\-::vector$<$ R\-Species $\ast$ $>$\\*
+\-::iterator \hyperlink{namespacechem_a9b02b32d43473a3cd87fd30f910cc121}{chem\-::vrsp\-\_\-iterator}
+\begin{DoxyCompactList}\small\item\em vsp stands for vector of \hyperlink{classchem_1_1RSpecies}{R\-Species} \end{DoxyCompactList}\item 
+typedef std\-::vector$<$ R\-Species $\ast$ $>$\\*
+\-::const\-\_\-iterator \hyperlink{namespacechem_ab6ba36c9953625b15ff4105e1cdfdb86}{chem\-::vrsp\-\_\-const\-\_\-iterator}
+\item 
+typedef \\*
+boost\-::signals2\-::signal$<$ void(R\-Species \\*
+$\ast$, int)$>$ \hyperlink{namespacechem_a09aea7e5a24368c13cd7d8d25b4d884e}{chem\-::\-R\-Species\-Copy\-N\-Changed\-Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classchem_1_1RSpecies}{R\-Species} signal object that can be used to signal when the copy number changes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\-::ostream \& \hyperlink{RSpecies_8h_ae56ac1bddb814f1e129ffccfffd67aad}{operator$<$$<$} (std\-::ostream \&os, const \hyperlink{classchem_1_1RSpecies}{chem\-::\-R\-Species} \&s)
+\begin{DoxyCompactList}\small\item\em Print self into an iostream. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{RSpecies_8h_ae56ac1bddb814f1e129ffccfffd67aad}{\index{R\-Species.\-h@{R\-Species.\-h}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!RSpecies.h@{R\-Species.\-h}}
+\subsubsection[{operator$<$$<$}]{\setlength{\rightskip}{0pt plus 5cm}std\-::ostream\& operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{std\-::ostream \&}]{os, }
+\item[{const {\bf chem\-::\-R\-Species} \&}]{s}
+\end{DoxyParamCaption}
+)}}\label{RSpecies_8h_ae56ac1bddb814f1e129ffccfffd67aad}
+
+
+Print self into an iostream. 
+
+
+
+Definition at line 14 of file R\-Species.\-cpp.
+
+
+
+References chem\-::\-R\-Species\-::get\-Full\-Name(), and chem\-::\-R\-Species\-::get\-N().
+

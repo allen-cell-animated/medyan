@@ -1,0 +1,119 @@
+\hypertarget{classSpeciesDB}{\section{Species\-D\-B Class Reference}
+\label{classSpeciesDB}\index{Species\-D\-B@{Species\-D\-B}}
+}
+
+
+\hyperlink{classSpeciesDB}{Species\-D\-B} should be used for obtaining new objects of the \hyperlink{classSpecies}{Species} hieararchy.  
+
+
+
+
+{\ttfamily \#include $<$Species\-D\-B.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSpeciesDB_a8c6c7e5c59cf237210b4f91c4235f165}{Initialize} ()
+\item 
+\hyperlink{classSpecies}{Species} $\ast$ \hyperlink{classSpeciesDB_ace46d47499b147c9cb17c18d06e8558a}{make\-Species} (const \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type} \&name, int N=0)
+\item 
+\hyperlink{classSBulk}{S\-Bulk} $\ast$ \hyperlink{classSpeciesDB_a0cb94a600f33c10032595e8fc008c969}{make\-S\-Bulk} (const \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type} \&name, int N=0)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSpeciesDB}{Species\-D\-B} $\ast$ \hyperlink{classSpeciesDB_a8f3e30d93fd019bf0d0d0f657a81794f}{get\-Instance} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classSpeciesDB}{Species\-D\-B} should be used for obtaining new objects of the \hyperlink{classSpecies}{Species} hieararchy. 
+
+It internally uses the Standard\-Species\-Factory to accomplish the construction. It is also a database that can be queried to obtain a pointer to a \hyperlink{classSpecies}{Species} if the \hyperlink{classSpecies}{Species}' I\-D is known. This class is a singleton, and should be used like this\-: 
+\begin{DoxyCode}
+ SpeciesDB *sdb = SpeciesDB::getInstance();
+ sdb->Initialize();
+\end{DoxyCode}
+ 
+
+Definition at line 38 of file Species\-D\-B.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSpeciesDB_a8f3e30d93fd019bf0d0d0f657a81794f}{\index{Species\-D\-B@{Species\-D\-B}!get\-Instance@{get\-Instance}}
+\index{get\-Instance@{get\-Instance}!SpeciesDB@{Species\-D\-B}}
+\subsubsection[{get\-Instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\-D\-B} $\ast$ {\bf Species\-D\-B\-::get\-Instance} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classSpeciesDB_a8f3e30d93fd019bf0d0d0f657a81794f}
+
+
+Definition at line 14 of file Species\-D\-B.\-cpp.
+
+
+
+Referenced by main().
+
+\hypertarget{classSpeciesDB_a8c6c7e5c59cf237210b4f91c4235f165}{\index{Species\-D\-B@{Species\-D\-B}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!SpeciesDB@{Species\-D\-B}}
+\subsubsection[{Initialize}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf Species\-D\-B\-::\-Initialize} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classSpeciesDB_a8c6c7e5c59cf237210b4f91c4235f165}
+
+
+Definition at line 21 of file Species\-D\-B.\-cpp.
+
+
+
+Referenced by main().
+
+\hypertarget{classSpeciesDB_a0cb94a600f33c10032595e8fc008c969}{\index{Species\-D\-B@{Species\-D\-B}!make\-S\-Bulk@{make\-S\-Bulk}}
+\index{make\-S\-Bulk@{make\-S\-Bulk}!SpeciesDB@{Species\-D\-B}}
+\subsubsection[{make\-S\-Bulk}]{\setlength{\rightskip}{0pt plus 5cm}{\bf S\-Bulk}$\ast$ {\bf Species\-D\-B\-::make\-S\-Bulk} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{name, }
+\item[{int}]{N = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpeciesDB_a0cb94a600f33c10032595e8fc008c969}
+
+
+Definition at line 47 of file Species\-D\-B.\-h.
+
+
+
+References Species\-Factory\-::make\-S\-Bulk().
+
+
+
+Referenced by main().
+
+\hypertarget{classSpeciesDB_ace46d47499b147c9cb17c18d06e8558a}{\index{Species\-D\-B@{Species\-D\-B}!make\-Species@{make\-Species}}
+\index{make\-Species@{make\-Species}!SpeciesDB@{Species\-D\-B}}
+\subsubsection[{make\-Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}$\ast$ {\bf Species\-D\-B\-::make\-Species} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\-Type} \&}]{name, }
+\item[{int}]{N = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSpeciesDB_ace46d47499b147c9cb17c18d06e8558a}
+
+
+Definition at line 42 of file Species\-D\-B.\-h.
+
+
+
+References Species\-Factory\-::make\-Species().
+
+
+
+Referenced by main().
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{SpeciesDB_8h}{Species\-D\-B.\-h}\item 
+Cyto\-Sim/\hyperlink{SpeciesDB_8cpp}{Species\-D\-B.\-cpp}\end{DoxyCompactItemize}

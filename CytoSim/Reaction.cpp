@@ -15,15 +15,19 @@ using namespace std;
 namespace chem {
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
-_rnode(nullptr), _rate(rate), _m(M), _signal(nullptr) {
+_rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
     _rspecies.shrink_to_fit();
     assert(_rspecies.size()==(M+N) && "Reaction Ctor Bug");
     _dependents=getAffectedReactions();
-    //activateReaction();
-    std::for_each(beginReactants(), endReactants(), 
+//    cout << "Reaction::Reaction(...): " << this << endl;
+//    for (auto rr : _dependents)
+//        cout <<(*rr);
+//    cout << endl;
+//    activateReactionUnconditional();
+    std::for_each(beginReactants(), endReactants(),
                   [this](RSpecies* s){s->addAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   
                   [this](RSpecies* s){s->addAsProduct(this);} );
@@ -32,7 +36,7 @@ _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr) {
 Reaction::~Reaction() {
     std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->removeAsProduct(this);} );
-    passivateReaction();
+    // passivateReaction();
     if(_signal!=nullptr)
         delete _signal;
 };
@@ -52,10 +56,15 @@ void Reaction::registerNewDependent(Reaction *r){
     if(std::find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
         _dependents.push_back(r);
 }
+    
+void Reaction::unregisterDependent(Reaction *r){
+    auto it=std::find(_dependents.begin(),_dependents.end(),r);
+    //    cout << "Reaction::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
+    if(it!=_dependents.end())
+        _dependents.erase(it);
+}
 
-void Reaction::activateReaction(){
-    if(getProductOfReactants()==0) // One of the reactants is still at zero copy n, no need to activate yet...
-        return;
+void Reaction::activateReactionUnconditional(){
     for(auto s=beginReactants(); s<endReactants();++s)
     {
         for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
@@ -67,15 +76,9 @@ void Reaction::activateReaction(){
                 (*r)->registerNewDependent(this);
         }
     }
+    _passivated=false;
     if(_rnode!=nullptr)
         _rnode->activateReaction();
-}
-
-void Reaction::unregisterDependent(Reaction *r){
-    auto it=std::find(_dependents.begin(),_dependents.end(),r);
-//    cout << "Reaction::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
-    if(it!=_dependents.end())
-        _dependents.erase(it);
 }
 
 void Reaction::passivateReaction() {
@@ -87,7 +90,8 @@ void Reaction::passivateReaction() {
         for(auto r = (*s)->beginProductReactions(); r!=(*s)->endProductReactions(); ++r){
             (*r)->unregisterDependent(this);
         }
-    }    
+    }
+    _passivated=true;
     if(_rnode!=nullptr)
         _rnode->passivateReaction();
 }
@@ -130,8 +134,14 @@ std::ostream& operator<<(std::ostream& os, const Reaction& rr){
 }    
 
 void Reaction::printDependents()  {
-    cout << "Reaction: ptr=" << this << ", the following Reaction objects are dependents:\n";
+    cout << "Reaction: ptr=" << this << "\n"
+         << (*this) << "the following Reaction objects are dependents: ";
+    if(_dependents.size()==0)
+        cout << "NONE" << endl;
+    else
+        cout << endl;
     for(auto r : _dependents)
-        cout << r << endl;
+        cout << (*r) << endl;
 }
-}
+    
+} // end of namespace

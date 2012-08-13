@@ -58,7 +58,7 @@ public:
     void removeReaction(Reaction *r);
     
     /// Run the chemical dynamics for a specific number of steps
-    void run(int steps);
+    bool run(int steps);
     
     /// Mainly used for debugging: print chemical reactions in the network at this moment
     void printReactions() const;

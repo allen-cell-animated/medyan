@@ -1,0 +1,105 @@
+\hypertarget{classchem_1_1ConditionalVisitor}{\section{chem\-:\-:Conditional\-Visitor Class Reference}
+\label{classchem_1_1ConditionalVisitor}\index{chem\-::\-Conditional\-Visitor@{chem\-::\-Conditional\-Visitor}}
+}
+
+
+{\ttfamily \#include $<$Visitor.\-h$>$}
+
+
+
+Inheritance diagram for chem\-:\-:Conditional\-Visitor\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classchem_1_1ConditionalVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{visit\-\_\-if} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\item 
+virtual bool \hyperlink{classchem_1_1ConditionalVisitor_aff08b8bc4b5c193e1fe60f06cca318b1}{visit} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)=0
+\item 
+virtual bool \hyperlink{classchem_1_1ConditionalVisitor_ac35925bee54467373d1f44cccec75aa5}{pred} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)=0
+\item 
+virtual \hyperlink{classchem_1_1ConditionalVisitor_ad4f7c23e000b587469b74455e5c1a8b7}{$\sim$\-Conditional\-Visitor} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 23 of file Visitor.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classchem_1_1ConditionalVisitor_ad4f7c23e000b587469b74455e5c1a8b7}{\index{chem\-::\-Conditional\-Visitor@{chem\-::\-Conditional\-Visitor}!$\sim$\-Conditional\-Visitor@{$\sim$\-Conditional\-Visitor}}
+\index{$\sim$\-Conditional\-Visitor@{$\sim$\-Conditional\-Visitor}!chem::ConditionalVisitor@{chem\-::\-Conditional\-Visitor}}
+\subsubsection[{$\sim$\-Conditional\-Visitor}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf chem\-::\-Conditional\-Visitor\-::$\sim$\-Conditional\-Visitor} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_ad4f7c23e000b587469b74455e5c1a8b7}
+
+
+Definition at line 37 of file Visitor.\-h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classchem_1_1ConditionalVisitor_ac35925bee54467373d1f44cccec75aa5}{\index{chem\-::\-Conditional\-Visitor@{chem\-::\-Conditional\-Visitor}!pred@{pred}}
+\index{pred@{pred}!chem::ConditionalVisitor@{chem\-::\-Conditional\-Visitor}}
+\subsubsection[{pred}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Conditional\-Visitor\-::pred} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_ac35925bee54467373d1f44cccec75aa5}
+
+
+Implemented in \hyperlink{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}{chem\-::\-Composite\-Visitor}.
+
+
+
+Referenced by visit\-\_\-if().
+
+\hypertarget{classchem_1_1ConditionalVisitor_aff08b8bc4b5c193e1fe60f06cca318b1}{\index{chem\-::\-Conditional\-Visitor@{chem\-::\-Conditional\-Visitor}!visit@{visit}}
+\index{visit@{visit}!chem::ConditionalVisitor@{chem\-::\-Conditional\-Visitor}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Conditional\-Visitor\-::visit} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_aff08b8bc4b5c193e1fe60f06cca318b1}
+
+
+Implemented in \hyperlink{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}{chem\-::\-Composite\-Visitor}.
+
+
+
+Referenced by visit\-\_\-if().
+
+\hypertarget{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{\index{chem\-::\-Conditional\-Visitor@{chem\-::\-Conditional\-Visitor}!visit\-\_\-if@{visit\-\_\-if}}
+\index{visit\-\_\-if@{visit\-\_\-if}!chem::ConditionalVisitor@{chem\-::\-Conditional\-Visitor}}
+\subsubsection[{visit\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Conditional\-Visitor\-::visit\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}
+
+
+Definition at line 25 of file Visitor.\-h.
+
+
+
+References chem\-::\-Component\-::get\-Full\-Name(), pred(), and visit().
+
+
+
+Referenced by chem\-::\-Component\-::apply\-\_\-if(), and chem\-::\-Composite\-::apply\-\_\-if().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Cyto\-Sim/\hyperlink{Visitor_8h}{Visitor.\-h}\end{DoxyCompactItemize}

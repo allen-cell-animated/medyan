@@ -23,13 +23,23 @@ std::string RSpecies::getFullName() const {
 }
 
 
-void RSpecies::activateAssocReactions() {
+void RSpecies::activateAssocReactantReactions() {
     for (auto &r : _as_reactants)
         r->activateReaction();
 }
+    
+void RSpecies::activateAssocProductReactions() {
+    for (auto &r : _as_products)
+        r->activateReaction();
+}
 
-void RSpecies::passivateAssocReacts() {
+void RSpecies::passivateAssocReactantReactions() {
     for (auto &r : _as_reactants)
+        r->passivateReaction();
+}
+    
+void RSpecies::passivateAssocProductReactions() {
+    for (auto &r : _as_products)
         r->passivateReaction();
 }
     
