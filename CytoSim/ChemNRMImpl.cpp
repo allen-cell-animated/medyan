@@ -139,9 +139,9 @@ bool ChemNRMImpl::makeStep()
 #ifdef TRACK_ZERO_COPY_N
         tau_new = (a_old/a_new)*(tau_old-_t)+_t;
 #else
-        if(a_new<1.0e-14) // std::numeric_limits< double >::min()
+        if(a_new<1.0e-15) // std::numeric_limits< double >::min()
             tau_new = numeric_limits<double>::infinity();
-        else if (a_old<1.0e-14){
+        else if (a_old<1.0e-15){
             rn_other->generateNewRandTau();
             tau_new = rn_other->getTau();
         }
