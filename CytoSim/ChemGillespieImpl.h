@@ -67,10 +67,7 @@ namespace chem {
         /// (Re)Compute and return the propensity associated with this Reaction.
         double reComputePropensity() {
             _a_prev=_a;
-            if(_react->getProductOfProducts()==0)
-                _a=0;
-            else
-                _a=_react->computePropensity();
+            _a=_react->computePropensity();
             return _a;
         }
         
