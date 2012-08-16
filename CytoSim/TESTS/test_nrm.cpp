@@ -325,7 +325,7 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
     double relative_error=0.05; //i.e. allow a 5% relative error
     
     for(int n=0; n<(Nstart+4); ++n){
-        //        cout << "P[" << n << "]=" << p_nrm[n] << " " << p_numeric[n] << endl;
+//        cout << "P[" << n << "]=" << p_nrm[n] << " " << p_numeric[n] << endl;
         EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
 }

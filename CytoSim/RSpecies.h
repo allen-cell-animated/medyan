@@ -93,34 +93,44 @@ namespace chem {
         /// @param ulim should be a non-negative number, but no checking is done in run time
         void setUpperLimitForN(species_copy_t ulim) {_ulim=ulim;}
         
-        /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method 
+        /// Sets the upper limit for the copy number of this RSpecies.
+        /// @param ulim should be a non-negative number, but no checking is done in run time
+        species_copy_t getUpperLimitForN(species_copy_t ulim) {return _ulim;}
+        
+        /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method
         /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
         void up() {
             _n+=1;
-#ifdef TRACK_ZERO_COPY_N
+#ifdef TRACK_DEPENDENTS
+    #ifdef TRACK_ZERO_COPY_N
             if(_n==1)
                 activateAssocReactantReactions();
-#endif
-#ifdef TRACK_UPPER_COPY_N
+    #endif
+    #ifdef TRACK_UPPER_COPY_N
             if(_n==_ulim)
                 passivateAssocProductReactions();
+    #endif
 #endif
         }
         
         /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a "callback"-like method 
         /// to passivate [Reactions](@ref Reaction), where this RSpecies is a Reactant.
         void down() {
-#ifdef TRACK_UPPER_COPY_N
+#ifdef TRACK_DEPENDENTS
+    #ifdef TRACK_UPPER_COPY_N
             species_copy_t prev_n = _n;
-#endif
+    #endif
             _n-=1;
-#ifdef TRACK_ZERO_COPY_N
+    #ifdef TRACK_ZERO_COPY_N
             if(_n == 0)
                 passivateAssocReactantReactions();
-#endif
-#ifdef TRACK_UPPER_COPY_N
+    #endif
+    #ifdef TRACK_UPPER_COPY_N
             if(prev_n == _ulim)
                 activateAssocProductReactions();
+    #endif
+#else
+    _n-=1;
 #endif
         }
         

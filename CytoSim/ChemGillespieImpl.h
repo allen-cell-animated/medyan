@@ -56,15 +56,23 @@ namespace chem {
         /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
         double getPropensity() const {return _a;}
         
+        void setA(double a) {_a=a;}
+        
         /// Return the propensity, "a", associated with the penultimate step of this Reaction.
         /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
         double getPenultStepPropensity() const {return _a_prev;}
+
+        void setPenultA(double a_prev) {_a_prev=a_prev;}
         
         /// (Re)Compute and return the propensity associated with this Reaction.
         double reComputePropensity() {
             _a_prev=_a;
-            _a=_react->computePropensity();
-            return _a;}
+            if(_react->getProductOfProducts()==0)
+                _a=0;
+            else
+                _a=_react->computePropensity();
+            return _a;
+        }
         
         void reset() {
             _a_prev = 0;
@@ -148,6 +156,8 @@ namespace chem {
         
         /// Remove Reaction *r from the network
         void removeReaction(Reaction *r);
+        
+        double computeTotalA();
         
         /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution,
         /// with the propensity given by a.

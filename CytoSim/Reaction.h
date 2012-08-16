@@ -191,11 +191,24 @@ public:
     /// Compute the Reaction propensity that is needed by a Gillespie like algorithm:
     /// rate*reactant_1.getN()*reactant_2.getN()...
     float computePropensity () const {
+//#ifndef TRACK_UPPER_COPY_N
         return std::accumulate(cbeginReactants(), cendReactants(),
                                _rate, 
                                [](float prod, RSpecies *s){ 
                                    return prod*=s->getN();
                                } );
+//#else   
+//        return std::accumulate(cbeginReactants(), cendReactants(),
+//                               _rate,
+//                               [](float prod, RSpecies *s){
+//                                   species_copy_t N = s->getN();
+//                                   species_copy_t ULIM = s->getUpperLimitForN();
+//                                   if(N!=ULIM)
+//                                       return prod*=s->getN();
+//                                   else
+//                                       return float(0.0);
+//                               } );
+//#endif
     }
     
     /// Usually is applied to Reaction objects with propensity of 0 (e.g. when one of the 

@@ -82,6 +82,8 @@ void Reaction::activateReactionUnconditional(){
 }
 
 void Reaction::passivateReaction() {
+    if(isPassivated())
+        return;
     for(auto s=beginReactants(); s<endReactants();++s)
     {
         for(auto r = (*s)->beginReactantReactions(); r!=(*s)->endReactantReactions(); ++r){
