@@ -35,7 +35,8 @@
 
 #include "Species.h"
 #include "Reaction.h"
-#include "ChemGillespieImpl.h"
+#include "ChemSimpleGillespieImpl.h"
+//#include "ChemSimpleGillespieImpl.h"
 //#include "ChemNRMImpl.h"
 #include "ChemSim.h"
 
@@ -76,7 +77,7 @@ int main(int argc, const char * argv[])
     Reaction r2 = { {&B,&C}, 1, 1, kbc };
     Reaction r3 = { {&C,&A}, 1, 1, kca };
     
-    ChemGillespieImpl chem_nrm_impl;
+    ChemSimpleGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
     chem.addReaction(&xa);
     chem.addReaction(&ax);
@@ -107,7 +108,6 @@ int main(int argc, const char * argv[])
             n_b_pentult=B.getN();
             n_c_pentult=C.getN();
             bool success = chem.run(1);
-//            cout << "tau=" << tau() << ", X=" << X.getN() << ", A=" << A.getN() << ", B=" << B.getN() << ", C=" << C.getN() << endl;
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
                 chem.printReactions();
@@ -146,8 +146,8 @@ int main(int argc, const char * argv[])
     
     for(int n=0; n<(Nstart+4); ++n){
         cout << "P[" << n << "]=" << p_nrm[n] << " " << p_numeric[n] << endl;
+//        EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
-    
     cout << "Main exited..." << endl;
     return 0;
 }

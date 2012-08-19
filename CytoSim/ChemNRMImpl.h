@@ -181,7 +181,7 @@ public:
     ///Dtor: The reaction network is cleared. The RNodeNRM objects will be destructed, but Reaction objects will stay intact. 
     /// When the RNodeNRM objects are destructed, they in turn destruct the corresponding PQNode element, setting the RNode 
     /// pointer of the Reaction object to null. At the end, the heap itself will go out of scope.
-    ~ChemNRMImpl();
+    virtual ~ChemNRMImpl();
     
     /// Return the number of reactions in the network.
     size_t getSize() const {return _n_reacts;}
@@ -199,10 +199,10 @@ public:
     boost_heap* getHeap() {return &_heap;}
     
     /// Add Reaction *r to the network
-    void addReaction(Reaction *r);
+    virtual void addReaction(Reaction *r);
     
     /// Remove Reaction *r from the network
-    void removeReaction(Reaction *r);
+    virtual void removeReaction(Reaction *r);
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, 
     /// with the propensity given by a.
@@ -213,10 +213,10 @@ public:
     /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting 
     /// the simulation from scratch, except with the Species copy numbers given at that moment in time. The global time 
     /// is reset to zero again.
-    void initialize();
+    virtual void initialize();
     
     /// This method runs the NRM algorithm for the given number of steps. 
-    bool run(int steps) {
+    virtual bool run(int steps) {
         for(int i=0; i<steps; ++i){
             bool success = makeStep();
             if(!success)
@@ -228,7 +228,7 @@ public:
     }
     
     /// Prints all RNodes in the reaction network
-    void printReactions() const;
+    virtual void printReactions() const;
     
 private:
     /// This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck NRM algoritm. See the 

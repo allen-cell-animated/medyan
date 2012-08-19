@@ -134,7 +134,7 @@ namespace chem {
         ///Dtor: The reaction network is cleared. The RNodeGillespie objects will be destructed, but Reaction objects will stay intact.
         /// When the RNodeGillespie objects are destructed, they in turn destruct the corresponding PQNode element, setting the RNode
         /// pointer of the Reaction object to null. At the end, the heap itself will go out of scope.
-        ~ChemGillespieImpl();
+        virtual ~ChemGillespieImpl();
         
         /// Return the number of reactions in the network.
         size_t getSize() const {return _n_reacts;}
@@ -149,10 +149,10 @@ namespace chem {
         void syncGlobalTime() {global_time=_t;}
                 
         /// Add Reaction *r to the network
-        void addReaction(Reaction *r);
+        virtual void addReaction(Reaction *r);
         
         /// Remove Reaction *r from the network
-        void removeReaction(Reaction *r);
+        virtual void removeReaction(Reaction *r);
         
         double computeTotalA();
         
@@ -167,10 +167,10 @@ namespace chem {
         /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting
         /// the simulation from scratch, except with the Species copy numbers given at that moment in time. The global time
         /// is reset to zero again.
-        void initialize();
+        virtual void initialize();
         
         /// This method runs the Gillespie algorithm for the given number of steps.
-        bool run(int steps) {
+        virtual bool run(int steps) {
             for(int i=0; i<steps; ++i){
                 bool success = makeStep();
                 if(!success)
@@ -186,7 +186,7 @@ namespace chem {
         void passivateReaction(Reaction *r);
         
         /// Prints all RNodes in the reaction network
-        void printReactions() const;
+        virtual void printReactions() const;
         
     private:
         /// This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck Gillespie algoritm. See the

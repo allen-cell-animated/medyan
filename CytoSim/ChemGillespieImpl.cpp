@@ -113,10 +113,10 @@ namespace chem {
 //        << ", _a_total=" << _a_total << endl;
 //        printReactions();
         
-        if(_a_total!=computeTotalA()){
-            cout << "ChemGillespieImpl::makeStep(): " << _a_total << " vs " << computeTotalA() << endl;
-            assert(0 && "ChemGillespieImpl::makeStep(): The current total rate is not consistent");
-        }
+//        if(_a_total!=computeTotalA()){
+//            cout << "ChemGillespieImpl::makeStep(): " << _a_total << " vs " << computeTotalA() << endl;
+//            assert(0 && "ChemGillespieImpl::makeStep(): The current total rate is not consistent");
+//        }
         
         RNodeGillespie *rn_selected = nullptr;
         

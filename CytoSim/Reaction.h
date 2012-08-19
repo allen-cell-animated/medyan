@@ -113,7 +113,7 @@ public:
         int prod = 1;
         for(auto sit = cbeginProducts(); sit!=cendProducts(); ++sit){
             prod*=((*sit)->getN()-(*sit)->getUpperLimitForN());
-//            std::cout << "getProductOfProducts(): " << (*sit)->getN() << " " << (*sit)->getUpperLimitForN() << " " << ((*sit)->getN()-(*sit)->getUpperLimitForN()) << std::endl;
+//            std::cout << "getProductOfProducts(): " << (*this) << (*sit)->getN() << " " << (*sit)->getUpperLimitForN() << " " << ((*sit)->getN()-(*sit)->getUpperLimitForN()) << std::endl;
         }
         return prod;
     }
@@ -191,9 +191,12 @@ public:
     /// Compute the Reaction propensity that is needed by a Gillespie like algorithm:
     /// rate*reactant_1.getN()*reactant_2.getN()...
     float computePropensity () const {
-#ifndef TRACK_UPPER_COPY_N
-        if(this->getProductOfProducts()==0)
+#ifdef TRACK_UPPER_COPY_N
+        if(this->getProductOfProducts()==0){
+//            std::cout << "Reaction::computePropensity() for the Reaction, " << (*this)
+//            << " will return 0.0";
             return float(0.0);
+        }
 #endif
         return std::accumulate(cbeginReactants(), cendReactants(),
                                _rate, 

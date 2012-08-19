@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F7013D8115D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */; };
 		F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */; };
+		F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */; };
+		F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */; };
 		F7123D8315752172008F64D1 /* example_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7123D701575211E008F64D1 /* example_misc.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E973D1565A79A002BDF16 /* test_species.cpp */; };
@@ -32,10 +34,11 @@
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
+		F77A456C15DF78A2007BB95D /* test_simple_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
-		F7DB0B2415D81A55009A8650 /* test_nrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7DB0B2215D81A55009A8650 /* test_nrm.cpp */; };
+		F7B95B4B15DCF1470014DDB8 /* test_nrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7DB0B2215D81A55009A8650 /* test_nrm.cpp */; };
 		F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB641579A0F9002EAF2C /* example_kostya.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7E3DB5715799F85002EAF2C /* example_kostya.cpp */; };
@@ -94,6 +97,8 @@
 /* Begin PBXFileReference section */
 		F7013D7E15D6C18800A0428D /* ChemGillespieImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemGillespieImpl.h; sourceTree = "<group>"; };
 		F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemGillespieImpl.cpp; sourceTree = "<group>"; };
+		F701749D15DD0C5900AAA2AD /* ChemSimpleGillespieImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimpleGillespieImpl.h; sourceTree = "<group>"; };
+		F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSimpleGillespieImpl.cpp; sourceTree = "<group>"; };
 		F702A4581575237F00FF21FC /* Composite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		F7123D701575211E008F64D1 /* example_misc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_misc.cpp; sourceTree = "<group>"; };
 		F7123D8115752161008F64D1 /* example_misc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_misc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,6 +128,7 @@
 		F771ADD9156561680010B123 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
+		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
 		F7A1DC0F157AF3AD004C738D /* VisitorConcrete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisitorConcrete.h; sourceTree = "<group>"; };
 		F7A77DAC15ACAC5700076046 /* example_composite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_composite; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,6 +200,7 @@
 				F71E97411565B01A002BDF16 /* test_reactions.cpp */,
 				F7672B5915B1B278000D412B /* test_gillespie.cpp */,
 				F7DB0B2215D81A55009A8650 /* test_nrm.cpp */,
+				F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */,
 			);
 			path = TESTS;
 			sourceTree = "<group>";
@@ -222,16 +229,18 @@
 		F763ED091548FFC70069DA61 /* CytoSim */ = {
 			isa = PBXGroup;
 			children = (
+				F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */,
+				F7013D7E15D6C18800A0428D /* ChemGillespieImpl.h */,
 				F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */,
 				F775C6B715576A66008A9C87 /* ChemNRMImpl.h */,
-				F7013D7E15D6C18800A0428D /* ChemGillespieImpl.h */,
-				F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */,
 				F7672B5D15B1CE9A000D412B /* ChemRNode.h */,
 				F7A924DA155BECD000AB05FA /* ChemSim.cpp */,
 				F7BDDE83155231CE0053817E /* ChemSim.h */,
 				F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */,
-				F763ED131548FFED0069DA61 /* common.h */,
+				F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */,
+				F701749D15DD0C5900AAA2AD /* ChemSimpleGillespieImpl.h */,
 				F71EAF1815B224210072EE4E /* common.cpp */,
+				F763ED131548FFED0069DA61 /* common.h */,
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
 				F7346A891578206500326E09 /* Component.cpp */,
@@ -439,6 +448,7 @@
 				F7346A8A1578206500326E09 /* Component.cpp in Sources */,
 				F71EAF1915B224210072EE4E /* common.cpp in Sources */,
 				F7013D8115D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
+				F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +467,7 @@
 				F7346A8B1578206500326E09 /* Component.cpp in Sources */,
 				F71EAF1A15B224210072EE4E /* common.cpp in Sources */,
 				F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
+				F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,7 +478,8 @@
 				F71E973E1565A79A002BDF16 /* test_species.cpp in Sources */,
 				F71E97431565B02C002BDF16 /* test_reactions.cpp in Sources */,
 				F7672B5A15B1B278000D412B /* test_gillespie.cpp in Sources */,
-				F7DB0B2415D81A55009A8650 /* test_nrm.cpp in Sources */,
+				F7B95B4B15DCF1470014DDB8 /* test_nrm.cpp in Sources */,
+				F77A456C15DF78A2007BB95D /* test_simple_gillespie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
