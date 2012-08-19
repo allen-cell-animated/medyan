@@ -22,8 +22,8 @@ CytoSim: $(OBJECTS)
 %.o: %.cpp 
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $<
 
-lib: ChemNRMImpl.o  ChemSim.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -dynamiclib -undefined suppress -flat_namespace ChemNRMImpl.o  ChemSim.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o -o libcyto.dylib
+lib: ChemGillespieImpl.o ChemNRMImpl.o  ChemSim.o ChemSimpleGillespieImpl.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -dynamiclib -undefined suppress -flat_namespace ChemGillespieImpl.o ChemNRMImpl.o  ChemSim.o ChemSimpleGillespieImpl.o Component.o Compartment.o Composite.o  RSpecies.o Reaction.o Species.o System.o common.o -o libcyto.dylib
 
 clean:
 	\rm -f *.o
