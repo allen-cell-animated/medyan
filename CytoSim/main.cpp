@@ -35,8 +35,8 @@
 
 #include "Species.h"
 #include "Reaction.h"
-#include "ChemSimpleGillespieImpl.h"
 //#include "ChemSimpleGillespieImpl.h"
+#include "ChemGillespieImpl.h"
 //#include "ChemNRMImpl.h"
 #include "ChemSim.h"
 
@@ -55,7 +55,7 @@ using namespace chem;
 
 int main(int argc, const char * argv[])
 {
-    const long long int N_SAMPLE_POINTS=pow(10,6);
+    const long long int N_SAMPLE_POINTS=pow(10,5);
     const long long int Nstart = 3;
     const double tau_snapshot = 0.5; //seconds
     //long long int print_freq = pow(10,7);
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
     Reaction r2 = { {&B,&C}, 1, 1, kbc };
     Reaction r3 = { {&C,&A}, 1, 1, kca };
     
-    ChemSimpleGillespieImpl chem_nrm_impl;
+    ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
     chem.addReaction(&xa);
     chem.addReaction(&ax);
@@ -108,6 +108,7 @@ int main(int argc, const char * argv[])
             n_b_pentult=B.getN();
             n_c_pentult=C.getN();
             bool success = chem.run(1);
+            //            cout << "tau=" << tau() << ", X=" << X.getN() << ", A=" << A.getN() << ", B=" << B.getN() << ", C=" << C.getN() << endl;
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
                 chem.printReactions();
@@ -142,12 +143,12 @@ int main(int argc, const char * argv[])
     
     // The results below are for ...
     vector<double> p_numeric {0.001687323512088279, 0.12264078507458409, 0.55515007879166167, 0.3205218126216664, 0.32672439967797662, 0.30766594955383336, 0.17110327024528463};
-//    double relative_error=0.05; //i.e. allow a 5% relative error
+    //    double relative_error=0.05; //i.e. allow a 5% relative error
     
     for(int n=0; n<(Nstart+4); ++n){
         cout << "P[" << n << "]=" << p_nrm[n] << " " << p_numeric[n] << endl;
-//        EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
+    
     cout << "Main exited..." << endl;
     return 0;
 }

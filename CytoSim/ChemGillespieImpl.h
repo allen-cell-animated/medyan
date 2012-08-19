@@ -200,7 +200,6 @@ namespace chem {
         bool makeStep();
     private:
         std::unordered_map<Reaction*, std::unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
-            std::unordered_map<Reaction*, std::unique_ptr<RNodeGillespie>> _map_rnodes_inactive; ///< The database of RNodeGillespie objects, representing the passivated part of the reaction network
         std::mt19937 _eng; ///< Random number generator
         std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
         std::uniform_real_distribution<double> _uniform_distr;

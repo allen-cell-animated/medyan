@@ -62,23 +62,14 @@ namespace chem {
     
     void ChemGillespieImpl::initialize() {
         resetTime();
-        _a_total = 0;
-
-#ifdef TRACK_DEPENDENTS
-        for (auto &mit : _map_rnodes_inactive){
-            _map_rnodes[mit.first]=std::move(mit.second);
-        }
-        _map_rnodes_inactive.clear();
-#endif
         for (auto &x : _map_rnodes){
             auto rn = x.second.get();
 #ifdef TRACK_DEPENDENTS
             rn->getReaction()->activateReactionUnconditional();
 #endif
             rn->reset();
-            double a_new = rn->getPropensity();
-            _a_total+=a_new;
         }
+        _a_total = computeTotalA();
     }
     
     
@@ -100,6 +91,8 @@ namespace chem {
         double rates_sum = 0;
         for (auto &x : _map_rnodes){
             auto rn = x.second.get();
+            if(rn->getReaction()->isPassivated())
+                continue;
             rates_sum+=rn->getPropensity();
         }
         return rates_sum;
@@ -107,16 +100,15 @@ namespace chem {
     
     bool ChemGillespieImpl::makeStep()
     {
-//        cout << "\n\n[ChemGillespieImpl::_makeStep(): Starting..." << endl;
-//        cout << "Sizes of _map_rnodes and _map_rnodes_inactive, "
-//        << _map_rnodes.size() << ", " << _map_rnodes_inactive.size()
-//        << ", _a_total=" << _a_total << endl;
+//        cout << "\n\n[ChemGillespieImpl::_makeStep(): Starting..." << ", _a_total=" << _a_total << endl;
 //        printReactions();
         
 //        if(_a_total!=computeTotalA()){
 //            cout << "ChemGillespieImpl::makeStep(): " << _a_total << " vs " << computeTotalA() << endl;
 //            assert(0 && "ChemGillespieImpl::makeStep(): The current total rate is not consistent");
 //        }
+        
+        //_a_total=computeTotalA();
         
         RNodeGillespie *rn_selected = nullptr;
         
@@ -130,6 +122,8 @@ namespace chem {
         double rates_sum = 0;
         for (auto &x : _map_rnodes){
             auto rn = x.second.get();
+            if(rn->getReaction()->isPassivated())
+                continue;
             rates_sum+=rn->getPropensity();
 //            rn->printSelf();
 //            cout << rn->getReaction()->computePropensity() << " " << rn->getPropensity() << endl;
@@ -208,29 +202,28 @@ namespace chem {
     }
     
     void ChemGillespieImpl::activateReaction(Reaction *r) {
-        auto mit = _map_rnodes_inactive.find(r);
-        if(mit!=_map_rnodes_inactive.end()){
+//        cout << "ChemGillespieImpl::activateReaction(Reaction *r): " << (*r);
+        auto mit = _map_rnodes.find(r);
+        if(mit!=_map_rnodes.end()){
             RNodeGillespie *rn_this = mit->second.get();
             rn_this->reComputePropensity();
             double a_new = rn_this->getPropensity();
             double a_penult = rn_this->getPenultStepPropensity();
             _a_total = _a_total - a_penult + a_new;
-            _map_rnodes[r]=std::move(mit->second);
-            _map_rnodes_inactive.erase(r);
+//            cout << "\nChemGillespieImpl::activateReaction(...): The following reaction has been activated: " << endl;
+//            cout << (*r);
+//            cout << "a_penult=" << a_penult << ", a_new=" << a_new << ", _a_total=" << _a_total << endl;
         }
-        
-//        cout << "ChemGillespieImpl::activateReaction(...): The following reaction has been activated: " << endl;
-//        cout << (*r) << endl;
+        else
+            throw std::out_of_range("ChemGillespieImpl::activateReaction(...): Reaction not found!");
     }
     
     void ChemGillespieImpl::passivateReaction(Reaction *r) {
 //        cout << "ChemGillespieImpl::passivateReaction(Reaction *r): " << (*r);
         auto mit = _map_rnodes.find(r);
         if(mit==_map_rnodes.end())
-            return;
+            throw std::out_of_range("ChemGillespieImpl::passivateReaction(...): Reaction not found!");
         RNodeGillespie *rn_this = mit->second.get();
-        _map_rnodes_inactive[r]=std::move(mit->second);
-        _map_rnodes.erase(r);
         
         double a_new, a_penult;
         a_penult = rn_this->getPropensity();
@@ -239,7 +232,7 @@ namespace chem {
         rn_this->setA(a_new);
         _a_total = _a_total - a_penult + a_new;
 
-//        cout << "ChemGillespieImpl::passivateReaction(...): The following reaction has been passivated: " << endl;
+//        cout << "\nChemGillespieImpl::passivateReaction(...): The following reaction has been passivated: " << endl;
 //        cout << (*r);
 //        cout << "a_penult=" << a_penult << ", a_new=" << a_new << ", _a_total=" << _a_total << endl;
     }
