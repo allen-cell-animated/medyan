@@ -21,22 +21,16 @@ namespace chem {
     
     class RNodeGillespie;
     class ChemGillespieImpl;
+        
+    /// RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorithm.
     
-    /// RNodeGillespie stands for Reaction Node Next Reaction Method.
-    
-    /*! RNodeGillespie manages a single chemical reaction within the Gillespie algorithm. It has a pointer to the PQ element
-     *  containing the Reaction via a handle_t object (and hence can modify both the corresponding PQNode, such as PQNode's tau
-     *  or the underlying Reaction instance). RNodeGillespie can recompute tau if needed and has auxiliary methods for computing
-     *  reaction's propensity. When the propensity drops to zero, the RNodeGillespie can execute the passivateReaction() method.
-     *  Alternatively, passivated RNodeGillespie can be activated via activateReaction(). The main part of the Gillespie algoritm is
-     *  implemented in the makeStep() method.
+    /*! RNodeGillespie manages a single chemical reaction within the Gillespie algorithm. When the propensity drops to zero, the RNodeGillespie can execute the passivateReaction() method. Alternatively, passivated RNodeGillespie can be activated via activateReaction(). The main part of the Gillespie algoritm is implemented in the makeStep() method.
      */
     class RNodeGillespie : public RNode {
     public:
         /// Ctor:
         /// @param *r is the Reaction object corresponding to this RNodeGillespie
-        /// @param &chem_Gillespie is a refernce to ChemGillespieImpl object, which does the overall management of the Gillespie scheme (e.g. it
-        /// gives acces to the heap itself, random distribution generators, etc.)
+        /// @param &chem_Gillespie is a refernce to ChemGillespieImpl object, which does the overall management of the Gillespie scheme (e.g.   random distribution generators, etc.)
         RNodeGillespie(Reaction *r, ChemGillespieImpl &chem_Gillespie);
         
         /// Copying is not allowed
@@ -45,8 +39,7 @@ namespace chem {
         /// Assignment is not allowed
         RNodeGillespie& operator=(RNodeGillespie &rhs) = delete;
         
-        /// Dtor: 1) Erases the corresponding PQNode element in the heap via the handle; 2) The RNode pointer of the
-        /// tracked Reaction object is set to nullptr
+        /// Dtor: The RNode pointer of the tracked Reaction object is set to nullptr
         virtual ~RNodeGillespie();
                 
         /// Returns a pointer to the Reaction which corresponds to this RNodeGillespie.
@@ -56,48 +49,44 @@ namespace chem {
         /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
         double getPropensity() const {return _a;}
         
+        /// Set the propensity, "a", for this Reaction.
         void setA(double a) {_a=a;}
         
         /// Return the propensity, "a", associated with the penultimate step of this Reaction.
         /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
         double getPenultStepPropensity() const {return _a_prev;}
 
+        /// Set the propensity, "a", associated with the penultimate step of this Reaction.
         void setPenultA(double a_prev) {_a_prev=a_prev;}
         
         /// (Re)Compute and return the propensity associated with this Reaction.
+        /// Remembers the penultimate step propensity as well
         double reComputePropensity() {
             _a_prev=_a;
             _a=_react->computePropensity();
             return _a;
         }
         
+        /// Set the the penultimate step propensity to zero and compute
+        /// the current propensity.
         void reset() {
             _a_prev = 0;
             _a = _react->computePropensity();
         }
         
-        /// Compute and return the product of reactant copy numbers. This method can be used to quickly check
-        /// whether this reaction needs to be passivated, if the returned result is zero.
-        int getProductOfReactants () {return _react->getProductOfReactants ();};
-        
         /// This method calls the corresponding Reaction::makeStep() method of the underyling Reaction object
         void makeStep() {_react->makeStep();}
         
-        /// When this method is called, a new tau is computed and the corresponding PQNode element is updated in the heap.
-        /// @note This method does not activate the Reaction itself, but instead only deals with the activation
-        ///       process related to the corresponding PQNode element.
+        /// Forwards the call to the similarly named method of ChemGillespieImpl
         virtual void activateReaction();
         
-        /// When this method is called, reaction's tau is set to infinity, the propensity is set to 0, and
-        /// the corresponding PQNode element is updated in the heap.
-        /// @note This method does not passivate the Reaction itself, but instead only deals with the activation
-        ///        process related to the corresponding PQNode element.
+        /// Forwards the call to the similarly named method of ChemGillespieImpl
         virtual void passivateReaction();
         
-        /// Return true if the Reaction is currently passivated
+        /// Forwards the call to the similarly named method of ChemGillespieImpl
         bool isPassivated() const {return _react->isPassivated();}
         
-        /// Print information about this RNodeGillespie such as tau, a and the Reaction which this RNodeGillespie tracks.
+        /// Print information about this RNodeGillespie such as "a", "a_penult" and the Reaction which this RNodeGillespie tracks.
         void printSelf() const;
         
         /// Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependencies)
@@ -111,11 +100,14 @@ namespace chem {
     
     
     
-    /// ChemGillespieImpl stands for Chemical Next Reaction Method Implementation.
+    /// ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm.
     
-    /*! ChemGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. In particular, this class contains
-     *  the Gillespie heap and the exponential random number generator. Reaction objects can be added and removed from the
-     *  ChemGillespieImpl instance.
+    /*! ChemGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects can be added and removed from the ChemGillespieImpl instance. The propensities of all Reactions are cached, and they are recomputed only when the copy number of associated reactant species gets changed (due to the currently occurring Reaction). 
+        @note The algorithm used by this class relies on tracking dependent 
+        Reactions, so TRACK_DEPENDENTS must be defined. The algorithm can work 
+        both when TRACK_ZERO_COPY_N and TRACK_UPPER_COPY_N are either defined or 
+        undefined. In the former case, Reaction objects with zero propensities 
+        stop being treated as dependents until their propensities become nonzero again.
      */
     class ChemGillespieImpl : public ChemSimImpl {
     public:
@@ -132,17 +124,15 @@ namespace chem {
         ChemGillespieImpl& operator=(ChemGillespieImpl &rhs) = delete;
         
         ///Dtor: The reaction network is cleared. The RNodeGillespie objects will be destructed, but Reaction objects will stay intact.
-        /// When the RNodeGillespie objects are destructed, they in turn destruct the corresponding PQNode element, setting the RNode
-        /// pointer of the Reaction object to null. At the end, the heap itself will go out of scope.
         virtual ~ChemGillespieImpl();
         
         /// Return the number of reactions in the network.
-        size_t getSize() const {return _n_reacts;}
+        size_t getSize() const {return _map_rnodes.size();}
         
         /// Return the current global time (as defined in the Gillespie algorithm)
         double getTime() const {return _t;}
         
-        /// Sets global time to 0.0
+        /// Sets the global time to 0.0
         void resetTime() {_t=0.0; syncGlobalTime(); }
         
         /// Sets global time variable to ChemGillespieImpl's global time
@@ -154,22 +144,23 @@ namespace chem {
         /// Remove Reaction *r from the network
         virtual void removeReaction(Reaction *r);
         
+        /// Unconditionally compute the total propensity associated with the network.
         double computeTotalA();
         
-        /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution,
+        /// Returns a random time tau, drawn from the exponential distribution,
         /// with the propensity given by a.
         double generateTau(double a);
         
-        double generateUniform();
+        /// Returns a random number between 0 and 1, drawn from the uniform distribution
+       double generateUniform();
         
-        /// This function iterates over all RNodeGillespie objects in the network, generating new tau-s for each case and
-        /// subsequently updating the heap. It needs to be called before calling run(...).
-        /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting
-        /// the simulation from scratch, except with the Species copy numbers given at that moment in time. The global time
-        /// is reset to zero again.
+        /// This function iterates over all RNodeGillespie objects in the network, activating all Reaction objects and calling reset(). The total propentsity for the network is computed.
+        /// @note This method needs to be called before calling run(...).
+        /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting the simulation from scratch, except with the Species copy numbers given at that moment in time. The global time is reset to zero again.
         virtual void initialize();
         
         /// This method runs the Gillespie algorithm for the given number of steps.
+        /// @return true if successful.
         virtual bool run(int steps) {
             for(int i=0; i<steps; ++i){
                 bool success = makeStep();
@@ -181,21 +172,18 @@ namespace chem {
             return true;
         }
         
+        /// This method is used to track the change in the total propensity of the network as the previously passivated Reaction *r has become activated
         void activateReaction(Reaction *r);
         
+        /// This method is used to track the change in the total propensity of the network as the Reaction *r has become passivated
         void passivateReaction(Reaction *r);
         
         /// Prints all RNodes in the reaction network
         virtual void printReactions() const;
         
     private:
-        /// This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck Gillespie algoritm. See the
-        /// implementation for details. After this method returns, roughly the following will have happened:
-        /// 1) The Reaction corresponding to the lowest tau RNodeGillespie is executed and the corresponding Species copy numbers are changed
-        /// 2) A new tau is computed from this Reaction and the corresponding PQNode element is updated in the heap
-        /// 3) The other affected Reaction objects are found, their taus are recomputed and corresponding PQNode elements are
-        ///    updated in the heap.
-        /// 4) For the Reaction and associated Species signals are emitted, if these objects broadcast signals upon change.
+
+        /// This subroutine, along with with passivateReaction() and activateReaction() implements a cached version of the Gillespie algorith. Two random numbers get thrown, one for obtaining tau, the time to the next reaction event, and a uniform number to select which Reaction has occurred. Instead of computing the total propensity of the  network from scratch, the cached value is being modified as Reaction events occur.
         /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
         bool makeStep();
     private:

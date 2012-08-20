@@ -255,6 +255,7 @@ namespace chem {
         virtual size_t countSpecies() const {return 1;}
     };
     
+    /// SpeciesBulk should be used for Species without spatial information (i.e. well-mixed in the container)
     class SpeciesBulk : public Species {
     public:
         /// Default constructor
@@ -292,6 +293,7 @@ namespace chem {
         ~SpeciesBulk () noexcept {};
     };
     
+    /// SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neighboring one (i.e. they are the stochastic analogue of determenistic reaction-diffusion processes)
     class SpeciesDiffusing : public Species {
     public:
         /// Default constructor

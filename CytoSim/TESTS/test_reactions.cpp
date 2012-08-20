@@ -121,6 +121,7 @@ TEST(ReactionTest, RSpeciesSignaling) {
     EXPECT_EQ(9,A.getN());
 }
 
+#ifdef TRACK_DEPENDENTS
 #ifdef TRACK_ZERO_COPY_N
 TEST(ReactionTest, Dependents1) {
     SpeciesBulk A("A",  10);
@@ -171,7 +172,8 @@ TEST(ReactionTest, Dependents1) {
     EXPECT_EQ(1, RA.getN());
     EXPECT_EQ(static_cast<size_t>(2), rxn2.dependents().size());
 }
-#endif
+#endif // of TRACK_ZERO_COPY_N
+#endif // of TRACK_UPPER_COPY_N
 
 TEST(ReactionTest, Dependents2) {
     SpeciesBulk A("A",  10);

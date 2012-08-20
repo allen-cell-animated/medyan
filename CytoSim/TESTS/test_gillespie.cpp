@@ -27,6 +27,8 @@ using namespace boost::accumulators;
 using namespace std;
 using namespace chem;
 
+#ifdef TRACK_DEPENDENTS // the cached Gillespie algorithm fundamentally depends on the ability to track dependents
+
 TEST(ChemGillespieTest, SimpleStoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);
     SpeciesBulk A2("A2", 0);
@@ -234,6 +236,7 @@ TEST(ChemGillespieTest, CyclicTransient) {
 }
 
 // Testing transient dynamics for the X<->A->B->C cycle, where A, B, and C can only take two values, n=0,1
+#ifdef TRACK_UPPER_COPY_N
 TEST(ChemGillespieTest, ComplexCyclicTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);
     const long long int Nstart = 3;
@@ -329,3 +332,6 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
         EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
 }
+#endif // of TRACK_UPPER_COPY_N
+
+#endif // TRACK_DEPENDENTS

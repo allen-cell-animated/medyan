@@ -234,6 +234,7 @@ TEST(ChemSimpleGillespieTest, CyclicTransient) {
 }
 
 // Testing transient dynamics for the X<->A->B->C cycle, where A, B, and C can only take two values, n=0,1
+#ifdef TRACK_UPPER_COPY_N
 TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);
     const long long int Nstart = 3;
@@ -329,3 +330,4 @@ TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
         EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
 }
+#endif

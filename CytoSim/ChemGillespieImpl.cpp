@@ -29,14 +29,14 @@ namespace chem {
     
     
     void RNodeGillespie::printSelf() const {
-        cout << "RNodeGillespie: ptr=" << this << ", a=" << _a << ", points to Reaction:\n";
+        cout << "RNodeGillespie: ptr=" << this << ", a=" << _a << ", a_penult=" << _a_prev << ", points to Reaction:\n";
         cout << (*_react);
     }
     
     void RNodeGillespie::printDependents() const {
         cout << "RNodeGillespie: ptr=" << this << ", the following RNodeGillespie objects are dependents:\n\n";
         for(auto rit = _react->dependents().begin(); rit!=_react->dependents().end(); ++rit){
-            //        cout << "I am here [" << (*rit)->getRnode() << "]" << endl;
+            //        cout << "RNodeGillespie::printDependents():" << (*rit)->getRnode() << "]" << endl;
             RNodeGillespie *rn_other = static_cast<RNodeGillespie*>((*rit)->getRnode());
             rn_other->printSelf();
         }
@@ -77,13 +77,13 @@ namespace chem {
         _map_rnodes.clear();
     }
     
-    double ChemGillespieImpl::generateTau(double a){
+    double ChemGillespieImpl::generateTau(double a) {
         exponential_distribution<double>::param_type pm(a);
         _exp_distr.param(pm);
         return _exp_distr(_eng);
     }
     
-    double ChemGillespieImpl::generateUniform(){
+    double ChemGillespieImpl::generateUniform()  {
         return _uniform_distr(_eng);
     }
     
