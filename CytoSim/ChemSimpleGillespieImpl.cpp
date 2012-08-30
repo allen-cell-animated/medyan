@@ -48,6 +48,10 @@ namespace chem {
 //        printReactions();
         
         double a_total = computeTotalA();
+        
+        // this means that the network has come to a halt
+        if(a_total<1e-15)
+            return false;
 
         double tau = generateTau(a_total);
         _t+=tau;

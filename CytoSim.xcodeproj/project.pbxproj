@@ -39,6 +39,7 @@
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F7B95B4B15DCF1470014DDB8 /* test_nrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7DB0B2215D81A55009A8650 /* test_nrm.cpp */; };
+		F7D98ED815E2613200CCD25E /* test_gillespie_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */; };
 		F7DB715815656318004A13FB /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB641579A0F9002EAF2C /* example_kostya.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7E3DB5715799F85002EAF2C /* example_kostya.cpp */; };
@@ -137,6 +138,7 @@
 		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
 		F7BDDE83155231CE0053817E /* ChemSim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSim.h; sourceTree = "<group>"; };
+		F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
 		F7DB0B2215D81A55009A8650 /* test_nrm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
 		F7E3DB5715799F85002EAF2C /* example_kostya.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_kostya.cpp; sourceTree = "<group>"; };
 		F7E3DB621579A03C002EAF2C /* example_kostya */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_kostya; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -201,6 +203,7 @@
 				F7672B5915B1B278000D412B /* test_gillespie.cpp */,
 				F7DB0B2215D81A55009A8650 /* test_nrm.cpp */,
 				F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */,
+				F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */,
 			);
 			path = TESTS;
 			sourceTree = "<group>";
@@ -480,6 +483,7 @@
 				F7672B5A15B1B278000D412B /* test_gillespie.cpp in Sources */,
 				F7B95B4B15DCF1470014DDB8 /* test_nrm.cpp in Sources */,
 				F77A456C15DF78A2007BB95D /* test_simple_gillespie.cpp in Sources */,
+				F7D98ED815E2613200CCD25E /* test_gillespie_cross.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
