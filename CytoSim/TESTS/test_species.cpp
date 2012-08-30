@@ -9,9 +9,14 @@
 // Note: This test omits many functions of Species that interact with Reaction objects. 
 //        Separate tests weill cover those methods.
 
+#define DO_THIS_TEST
+
+#ifdef DO_THIS_TEST
+
 #include <iostream>
 #include "gtest/gtest.h"
 #include "Species.h"
+#include "SpeciesContainer.h"
 
 using namespace std;
 using namespace chem;
@@ -124,3 +129,69 @@ TEST(SpeciesTest, Vector) {
 //
 //    cout << "Still in TEST(SpeciesTest, Vector) {..." << endl;
 }
+
+TEST(SpeciesContainerTest, SpeciesPtrContainerVector) {
+    SpeciesPtrContainerVector scv;
+    
+    Species *x0 = scv.addSpecies<SpeciesBulk>("Profilin",31);
+    Species *x1 = scv.addSpecies<SpeciesDiffusing>("Actin",99);
+    Species *x2 = scv.addSpecies<SpeciesDiffusing>("Arp2/3",11);
+    Species *x3 = scv.addSpecies<SpeciesDiffusing>("Capping",22);
+    
+    EXPECT_EQ(x0, scv.findSpecies(0));
+    EXPECT_EQ(x1, scv.findSpecies(1));
+    EXPECT_EQ(x2, scv.findSpecies(2));
+    EXPECT_EQ(x3, scv.findSpecies(3));
+
+    EXPECT_EQ("Capping", scv.findSpecies(3)->getName());
+
+    //cout << (*x1) << (*x2) << endl;
+    //scv.printSpecies();
+    //cout << endl;
+    
+    scv.removeSpecies(x0);
+    EXPECT_EQ(x3, scv.findSpecies(2));
+//    scv.printSpecies();
+//    cout << endl;
+    
+    scv.removeSpecies("Actin");
+//    scv.printSpecies();
+    EXPECT_EQ(x3, scv.findSpecies(1));
+//    cout << endl;
+    
+    Species *y = scv.findSpecies("Arp2/3");
+    EXPECT_EQ(x2, y);
+//    cout << (*y) << endl;
+}
+
+TEST(SpeciesContainerTest, SpeciesContainerVector) {
+    SpeciesContainerVector<SpeciesDiffusing> scv;
+    
+    size_t profilin = scv.addSpecies("Profilin",species_copy_t(31));
+    size_t actin = scv.addSpecies("Actin",species_copy_t(99));
+    size_t arp23 = scv.addSpecies("Arp2/3",species_copy_t(11));
+    size_t capping = scv.addSpecies("Capping",species_copy_t(22));
+    
+    EXPECT_EQ(size_t(0), profilin);
+    EXPECT_EQ(size_t(1), actin);
+    EXPECT_EQ(size_t(2), arp23);
+    EXPECT_EQ(size_t(3), capping);
+    
+    EXPECT_EQ("Profilin", scv.findSpecies(0).getName());
+    EXPECT_EQ("Actin", scv.findSpecies(1).getName());
+    EXPECT_EQ("Arp2/3", scv.findSpecies(2).getName());
+    EXPECT_EQ("Capping", scv.findSpecies(3).getName());
+    
+    scv.removeSpecies("Profilin");
+    EXPECT_EQ("Capping", scv.findSpecies(2).getName());
+    //    scv.printSpecies();
+    
+    scv.removeSpecies("Actin");
+    //    scv.printSpecies();
+    EXPECT_EQ("Capping", scv.findSpecies(1).getName());
+    
+    Species &y = scv.findSpecies("Arp2/3");
+    EXPECT_EQ("Arp2/3", y.getName());
+}
+
+#endif // DO_THIS_TEST

@@ -10,6 +10,7 @@
 
 #include "Component.h"
 #include "Composite.h"
+#include "Visitor.h"
 
 namespace chem {
     

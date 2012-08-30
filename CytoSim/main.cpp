@@ -33,28 +33,32 @@
 
 #include <iostream>
 
-#include "Species.h"
-#include "Reaction.h"
-#include "ChemNRMImpl.h"
-//#include "ChemGillespieImpl.h"
-//#include "ChemSimpleGillespieImpl.h"
-#include "ChemSim.h"
+//#include "Species.h"
+//#include "Reaction.h"
+//#include "ChemNRMImpl.h"
+////#include "ChemGillespieImpl.h"
+////#include "ChemSimpleGillespieImpl.h"
+//#include "ChemSim.h"
 
-#include <boost/accumulators/accumulators.hpp>
-#include <boost/accumulators/statistics/stats.hpp>
-#include <boost/accumulators/statistics/mean.hpp>
-#include <boost/accumulators/statistics/variance.hpp>
-#include <boost/accumulators/statistics/covariance.hpp>
-#include <boost/accumulators/statistics/variates/covariate.hpp>
+//#include "Composite.h"
 
-using namespace boost::accumulators;
+//#include "SpeciesContainer.h"
 
+#include "Compartment.h"
 
 using namespace std;
 using namespace chem;
 
 int main(int argc, const char * argv[])
 {
+    
+    Compartment C;
+    size_t actin_id = C.addSpecies("Actin",species_copy_t(99));
+    cout << C.findSpecies(actin_id) << ", " << &C.findSpecies(actin_id) << endl;
+    cout << C.species()[actin_id] << ", " << &C.species()[actin_id] << endl;
+    
+    auto Y = C.species();
+    cout << Y[actin_id] << ", " << &Y[actin_id] << endl;
     
     cout << "Main exited..." << endl;
     return 0;

@@ -330,7 +330,6 @@ namespace chem {
         /// Default destructor
         ~SpeciesDiffusing () noexcept {};
     };
-    
 } // end of chem namespace 
 
 /// Print self into an iostream

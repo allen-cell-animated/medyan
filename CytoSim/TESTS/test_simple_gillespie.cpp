@@ -6,6 +6,11 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
+// #define DO_THIS_TEST
+
+#ifdef DO_THIS_TEST
+
+
 #include <iostream>
 
 #include <boost/accumulators/accumulators.hpp>
@@ -331,3 +336,5 @@ TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
     }
 }
 #endif
+
+#endif // DO_THIS_TEST

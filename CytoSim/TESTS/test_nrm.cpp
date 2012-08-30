@@ -6,6 +6,10 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
+// #define DO_THIS_TEST
+
+#ifdef DO_THIS_TEST
+
 #include <iostream>
 
 #include <boost/accumulators/accumulators.hpp>
@@ -335,3 +339,5 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
 #endif // of TRACK_UPPER_COPY_N
 
 #endif // TRACK_DEPENDENTS
+
+#endif // DO_THIS_TEST

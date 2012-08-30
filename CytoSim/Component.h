@@ -20,16 +20,21 @@ namespace chem {
         Composite *_parent;
     public:
         Component() : _parent(nullptr) {}
+        virtual bool apply (Visitor &v);
+        virtual bool apply_if (ConditionalVisitor &v);
         Composite* getParent() {return _parent;}
         void setParent (Composite *other) {_parent=other;}
         bool isRoot() const {return _parent==nullptr? true : false;}
         Composite* getRoot();
-        virtual bool hasChildren() {return false;}
-        virtual ~Component() noexcept {}
-        virtual std::string getFullName() const = 0;
-        virtual size_t countSpecies() const = 0;
-        virtual bool apply (Visitor &v);
-        virtual bool apply_if (ConditionalVisitor &v);
+        
+        virtual bool numberOfChildren() {return 0;}
+        virtual bool isComposite() {return false;}
+        virtual bool isSpeciesContainer() {return false;}
+        virtual bool isReactionsContainer() {return false;}
+        virtual ~Component() noexcept {};
+        virtual std::string getFullName() const {return "Component";};
+        virtual size_t countSpecies() const {return 0;}
+        virtual size_t countReactions() const {return 0;};
     };
 
 }// end of chem

@@ -16,57 +16,46 @@
 
 #include "Component.h"
 #include "Species.h"
-#include "Visitor.h"
 
 namespace chem {
-    
+
+    class Visitor;
+
 class Composite : public Component {
 private:
-    std::vector<std::unique_ptr<Composite>> _children;
+    std::vector<std::unique_ptr<Component>> _children;
 
 public:
     Composite() :  Component() {}
-    
-    virtual bool apply (Visitor &v) {
-        bool res_self = v.visit(this); //pre-order
-        if(!res_self) 
-            return false;
-        for (auto &c : children()) {
-            bool res_child = c->apply(v);
-            if(!res_child) 
-                return false;
-        }
-        return true;
-    }
-    
-    virtual bool apply_if (ConditionalVisitor &v) {
-        bool res_self = v.visit_if(this); //pre-order
-        if(!res_self) 
-            return false;
-        for (auto &c : children()) {
-            bool res_child = c->apply_if(v);
-            if(!res_child) 
-                return false;
-        }
-        return true;
-    }
-
     virtual ~Composite() noexcept {}
     
-    virtual bool hasChildren() {return children().size()>0 ? true : false;}
+    virtual bool apply (Visitor &v);
+    virtual bool apply_if (ConditionalVisitor &v);
+    
+    virtual bool isComposite() {return true;}
+    
+    virtual bool numberOfChildren() {return children().size();}
 
     virtual std::string getFullName() const {return "Composite";}; 
     
-    virtual void addChild (std::unique_ptr<Composite> &&child) {
+    virtual void addChild (std::unique_ptr<Component> &&child) {
         _children.push_back(std::move(child));
         _children.back()->setParent(this);
     }
     
-    virtual std::vector<std::unique_ptr<Composite>>& children () {return _children;}
+    virtual void removeChild (Component* child) {
+        auto child_iter = std::find_if(_children.begin(),_children.end(),
+                    [&child](const std::unique_ptr<Component> &element)
+                     {
+                         return element.get()==child ? true : false;
+                     });
+    }
+    
+    virtual std::vector<std::unique_ptr<Component>>& children () {return _children;}
 
-    virtual const std::vector<std::unique_ptr<Composite>>& children () const {return _children;}
+    virtual const std::vector<std::unique_ptr<Component>>& children () const {return _children;}
 
-    virtual Composite* children (size_t i) {return _children[i].get();}
+    virtual Component* children (size_t i) {return _children[i].get();}
     
 };
        
