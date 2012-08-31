@@ -46,7 +46,7 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
  *
  */
         
-class Reaction {
+class Reaction : public Component {
 private:
     std::vector<RSpecies*> _rspecies; ///< Reactants and products constituting this Reaction
     std::vector<Reaction*> _dependents; ///< Pointers to Reaction objects that depend on this Reaction being executed
@@ -73,7 +73,7 @@ public:
     Reaction& operator=(Reaction &r) = delete;  // no assignment (including all derived classes)
 
     /// Destructor
-    ~Reaction();
+    ~Reaction() noexcept;
 
     /// Sets the reaction rate to the parameter "rate" 
     void setRate(float rate) {_rate=rate;}

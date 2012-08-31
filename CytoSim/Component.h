@@ -27,10 +27,10 @@ namespace chem {
         bool isRoot() const {return _parent==nullptr? true : false;}
         Composite* getRoot();
         
-        virtual bool numberOfChildren() {return 0;}
-        virtual bool isComposite() {return false;}
-        virtual bool isSpeciesContainer() {return false;}
-        virtual bool isReactionsContainer() {return false;}
+        virtual size_t numberOfChildren() const {return 0;}
+        virtual bool isComposite() const {return false;}
+        virtual bool isSpeciesContainer() const {return false;}
+        virtual bool isReactionsContainer() const {return false;}
         virtual ~Component() noexcept {};
         virtual std::string getFullName() const {return "Component";};
         virtual size_t countSpecies() const {return 0;}

@@ -15,7 +15,7 @@ using namespace std;
 namespace chem {
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
-_rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+ Component(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -33,7 +33,7 @@ _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
                   [this](RSpecies* s){s->addAsProduct(this);} );
 }   
 
-Reaction::~Reaction() {
+Reaction::~Reaction() noexcept {
     std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->removeAsProduct(this);} );
     // passivateReaction();

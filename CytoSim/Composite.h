@@ -34,8 +34,6 @@ public:
     
     virtual bool isComposite() {return true;}
     
-    virtual bool numberOfChildren() {return children().size();}
-
     virtual std::string getFullName() const {return "Composite";}; 
     
     virtual void addChild (std::unique_ptr<Component> &&child) {
@@ -49,6 +47,34 @@ public:
                      {
                          return element.get()==child ? true : false;
                      });
+        if(child_iter!=_children.end())
+            _children.erase(child_iter);
+        else
+            throw std::out_of_range("Composite::removeChild(): The name child not found");
+    }
+    
+    virtual size_t numberOfChildren() const {return children().size();}
+
+    virtual size_t numberOfSpecies () const {return 0;}
+
+    virtual size_t numberOfReactions () const {return 0;}
+
+    virtual size_t countSpecies() const {
+        size_t sum = 0;
+        if(this->isSpeciesContainer())
+            sum+=this->numberOfSpecies();
+        for (auto &c : children())
+            sum+=c->countSpecies();
+        return sum;
+    }
+    
+    virtual size_t countReactions() const {
+        size_t sum = 0;
+        if(this->isReactionsContainer())
+            sum+=this->numberOfReactions();
+        for (auto &c : children())
+            sum+=c->countReactions();
+        return sum;
     }
     
     virtual std::vector<std::unique_ptr<Component>>& children () {return _children;}

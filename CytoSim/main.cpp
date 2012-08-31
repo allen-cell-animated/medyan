@@ -54,11 +54,16 @@ int main(int argc, const char * argv[])
     
     Compartment C;
     size_t actin_id = C.addSpecies("Actin",species_copy_t(99));
-    cout << C.findSpecies(actin_id) << ", " << &C.findSpecies(actin_id) << endl;
-    cout << C.species()[actin_id] << ", " << &C.species()[actin_id] << endl;
+    size_t profilin_id = C.addSpecies("Profilin",species_copy_t(29));
+    size_t arp23_id = C.addSpecies("Arp2/3",species_copy_t(33));
+    C.printSpecies();
+//    cout << C.findSpecies(actin_id) << ", " << &C.findSpecies(actin_id) << endl;
+//    cout << C.species()[actin_id] << ", " << &C.species()[actin_id] << endl;
+    cout << C.countSpecies() << endl;
     
-    auto Y = C.species();
-    cout << Y[actin_id] << ", " << &Y[actin_id] << endl;
+    Species &S(C.species()[actin_id]);
+    
+    cout << sizeof(S);
     
     cout << "Main exited..." << endl;
     return 0;

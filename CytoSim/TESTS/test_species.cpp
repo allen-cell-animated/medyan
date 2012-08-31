@@ -192,6 +192,9 @@ TEST(SpeciesContainerTest, SpeciesContainerVector) {
     
     Species &y = scv.findSpecies("Arp2/3");
     EXPECT_EQ("Arp2/3", y.getName());
+    
+    size_t index = scv.findSpeciesIndex("Arp2/3");
+    EXPECT_EQ(0,index);
 }
 
 #endif // DO_THIS_TEST

@@ -18,6 +18,7 @@ namespace  chem {
     public:
         virtual void removeSpecies(const std::string &name) = 0;
         virtual Species& findSpecies(const std::string &name) = 0;
+        virtual size_t findSpeciesIndex(const std::string &name) = 0;
         virtual Species& findSpecies (size_t index) = 0;
         virtual void printSpecies() {}
     };
@@ -103,6 +104,7 @@ namespace  chem {
     public:
         template<typename ...Args>
         size_t addSpecies(Args&& ...args){
+//            std::cout << "SpeciesContainerVector::addSpecies()..." << std::endl;
             _species.push_back({std::forward<Args>(args)...});
             return _species.size()-1;
         }
@@ -128,6 +130,18 @@ namespace  chem {
             else
                 throw std::out_of_range("Species::findSpecies(): The name was not found");
         }
+        
+        virtual size_t findSpeciesIndex(const std::string &name) {
+            size_t index = 0;
+            for(auto &s : _species){
+                if(s.getName()==name)
+                    return index;
+                else
+                    ++index;
+            }
+            throw std::out_of_range("Species::findSpecies(): The name was not found");
+        }
+
         
         virtual Species& findSpecies (size_t index) {
             return _species[index];
