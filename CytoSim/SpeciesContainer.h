@@ -13,15 +13,6 @@
 #include "Species.h"
 
 namespace  chem {
-
-    class SpeciesContainerIFace {
-    public:
-        virtual void removeSpecies(const std::string &name) = 0;
-        virtual Species& findSpecies(const std::string &name) = 0;
-        virtual size_t findSpeciesIndex(const std::string &name) = 0;
-        virtual Species& findSpecies (size_t index) = 0;
-        virtual void printSpecies() {}
-    };
     
     class SpeciesPtrContainerIFace {
     public:
@@ -29,8 +20,9 @@ namespace  chem {
 //        virtual Species* addSpecies(const std::string &name, species_copy_t copy) = 0;
         virtual void removeSpecies(const std::string &name) = 0;
         virtual void removeSpecies(Species* species) = 0;
-        virtual Species* findSpecies(const std::string &name) = 0;
-        virtual Species* findSpecies (size_t index) = 0;
+        virtual Species* findSpeciesByName(const std::string &name) = 0;
+        virtual Species* findSpeciesByIndex (size_t index) = 0;
+        virtual Species* findSpeciesByMolecule (int molecule) = 0;
         virtual void printSpecies() {}
     };
     
@@ -74,7 +66,7 @@ namespace  chem {
                 _species.erase(child_iter);
         }
         
-        virtual Species* findSpecies(const std::string &name) {
+        virtual Species* findSpeciesByName(const std::string &name) {
             auto child_iter = std::find_if(_species.begin(),_species.end(),
                                            [&name](const std::unique_ptr<Species> &element)
                                            {
@@ -86,8 +78,34 @@ namespace  chem {
                 return nullptr;
         }
         
-        virtual Species* findSpecies (size_t index) {
+        virtual Species* findSpeciesByMolecule (int molecule) {
+            auto child_iter = std::find_if(_species.begin(),_species.end(),
+                                           [molecule](const std::unique_ptr<Species> &element)
+                                           {
+                                               return element->getMolecule()==molecule ? true : false;
+                                           });
+            if(child_iter!=_species.end())
+                return child_iter->get();
+            else
+                return nullptr;
+        }
+        
+        
+        virtual Species* findSpeciesByIndex (size_t index) {
             return _species[index].get();
+        }
+        
+        
+        virtual bool areAllSpeciesUnique () {
+            std::vector<int> molecs;
+            std::transform(_species.begin(),_species.end(), std::back_inserter(molecs),
+                           [](std::unique_ptr<Species> &us){return us->getMolecule();});
+            std::sort(molecs.begin(), molecs.end());
+            auto vit = std::adjacent_find(molecs.begin(), molecs.end());
+            if(vit==molecs.end())
+                return true;
+            else
+                return false;
         }
         
         virtual void printSpecies() {
@@ -96,6 +114,23 @@ namespace  chem {
         }
 
     };
+    
+
+    
+    
+    
+    
+    
+    
+    class SpeciesContainerIFace {
+    public:
+        virtual void removeSpecies(const std::string &name) = 0;
+        virtual Species& findSpecies(const std::string &name) = 0;
+        virtual size_t findSpeciesIndex(const std::string &name) = 0;
+        virtual Species& findSpecies (size_t index) = 0;
+        virtual void printSpecies() {}
+    };
+
     
     template <class SpeciesSpecific>
     class SpeciesContainerVector : public  SpeciesContainerIFace {

@@ -178,6 +178,10 @@ namespace chem {
             return *this;
         }
         
+        virtual Species* clone() {
+            return new Species(*this);
+        }
+        
         /// Return a reference to RSpecies. Notice that value copying won't be allowed 
         /// because RSpecies is not copyable.
         RSpecies& getRSpecies () {return (*_rspecies.get());}
@@ -198,6 +202,9 @@ namespace chem {
         
         /// Return this Species' name
         std::string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
+        
+        /// Return the molecule index associated with this Species' (as int)
+        int getMolecule() const {return _molecule;}
         
         /// Return true if this Species emits signals on copy number change
         bool isSignaling () const {return _rspecies->isSignaling();}
@@ -286,6 +293,10 @@ namespace chem {
             return *this;
         }
         
+        virtual SpeciesBulk* clone() {
+            return new SpeciesBulk(*this);
+        }
+        
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         virtual std::string getFullName() const {return getName() + "{Bulk}";}
         
@@ -322,6 +333,10 @@ namespace chem {
         {
             Species::operator=(std::move(rhs));
             return *this;
+        }
+        
+        virtual SpeciesDiffusing* clone() {
+            return new SpeciesDiffusing(*this);
         }
         
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Diffusing}"

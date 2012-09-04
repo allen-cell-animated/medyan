@@ -142,6 +142,7 @@
 		F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeciesContainer.cpp; sourceTree = "<group>"; };
 		F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesContainer.h; sourceTree = "<group>"; };
 		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
+		F7BCA5B615F17EC800D690E4 /* ReactionContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactionContainer.h; sourceTree = "<group>"; };
 		F7BDDE83155231CE0053817E /* ChemSim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSim.h; sourceTree = "<group>"; };
 		F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
 		F7DB0B2215D81A55009A8650 /* test_nrm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
@@ -255,17 +256,18 @@
 				F7346A871578202600326E09 /* Component.h */,
 				F7F3681D1575C743006727F7 /* Composite.cpp */,
 				F702A4581575237F00FF21FC /* Composite.h */,
-				F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */,
-				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F7A20C8F1566023100113920 /* EXAMPLES */,
 				F763ED161548FFED0069DA61 /* main.cpp */,
 				F763ED181548FFED0069DA61 /* notes.txt */,
 				F763ED1B1548FFED0069DA61 /* Reaction.cpp */,
 				F763ED1C1548FFED0069DA61 /* Reaction.h */,
+				F7BCA5B615F17EC800D690E4 /* ReactionContainer.h */,
 				F7382CCF156BE2F00022F97B /* RSpecies.cpp */,
 				F7382CCD156BE2DA0022F97B /* RSpecies.h */,
 				F763ED1F1548FFED0069DA61 /* Species.cpp */,
 				F763ED201548FFED0069DA61 /* Species.h */,
+				F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */,
+				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F763ED211548FFED0069DA61 /* System.cpp */,
 				F763ED221548FFED0069DA61 /* System.h */,
 				F71E973C1565A783002BDF16 /* TESTS */,

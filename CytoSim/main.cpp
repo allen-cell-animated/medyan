@@ -45,6 +45,7 @@
 //#include "SpeciesContainer.h"
 
 #include "Compartment.h"
+#include "ReactionContainer.h"
 
 using namespace std;
 using namespace chem;
@@ -53,17 +54,32 @@ int main(int argc, const char * argv[])
 {
     
     Compartment C;
-    size_t actin_id = C.addSpecies("Actin",species_copy_t(99));
-    size_t profilin_id = C.addSpecies("Profilin",species_copy_t(29));
-    size_t arp23_id = C.addSpecies("Arp2/3",species_copy_t(33));
+    Species *actin = C.addSpecies("Actin",99U);
+    Species *profilin = C.addSpecies("Profilin",29U);
+    Species *arp23 = C.addSpecies("Arp2/3",33U);
     C.printSpecies();
 //    cout << C.findSpecies(actin_id) << ", " << &C.findSpecies(actin_id) << endl;
 //    cout << C.species()[actin_id] << ", " << &C.species()[actin_id] << endl;
     cout << C.countSpecies() << endl;
     
-    Species &S(C.species()[actin_id]);
+    vector<Species*> rs1 = {actin,profilin};
+    Reaction *r1 = C.addReaction(rs1, 1, 1, 10.0);
+    vector<Species*> rs2 = {profilin,actin};
+    Reaction *r2 = C.addReaction(rs2, 1, 1, 10.0);
+    vector<Species*> rs3 = {actin,profilin,arp23};
+    Reaction *r3 = C.addReaction(rs3, 2, 1, 10.0);
+    C.printReactions();
+    cout << "Are all Species unique? " << std::boolalpha << C.areAllSpeciesUnique() << endl;
     
-    cout << sizeof(S);
+    cout << sizeof(*actin) << ", " << sizeof(actin->getRSpecies()) << ", " << sizeof(*r1) << endl;
+
+    cout << endl << endl;
+    
+    Compartment *C2 = C.clone();
+    cout << "The clone:" << endl;
+    C2->printReactions();
+
+    
     
     cout << "Main exited..." << endl;
     return 0;

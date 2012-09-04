@@ -138,28 +138,28 @@ TEST(SpeciesContainerTest, SpeciesPtrContainerVector) {
     Species *x2 = scv.addSpecies<SpeciesDiffusing>("Arp2/3",11);
     Species *x3 = scv.addSpecies<SpeciesDiffusing>("Capping",22);
     
-    EXPECT_EQ(x0, scv.findSpecies(0));
-    EXPECT_EQ(x1, scv.findSpecies(1));
-    EXPECT_EQ(x2, scv.findSpecies(2));
-    EXPECT_EQ(x3, scv.findSpecies(3));
+    EXPECT_EQ(x0, scv.findSpeciesByIndex(0));
+    EXPECT_EQ(x1, scv.findSpeciesByIndex(1));
+    EXPECT_EQ(x2, scv.findSpeciesByIndex(2));
+    EXPECT_EQ(x3, scv.findSpeciesByIndex(3));
 
-    EXPECT_EQ("Capping", scv.findSpecies(3)->getName());
+    EXPECT_EQ("Capping", scv.findSpeciesByIndex(3)->getName());
 
     //cout << (*x1) << (*x2) << endl;
     //scv.printSpecies();
     //cout << endl;
     
     scv.removeSpecies(x0);
-    EXPECT_EQ(x3, scv.findSpecies(2));
+    EXPECT_EQ(x3, scv.findSpeciesByIndex(2));
 //    scv.printSpecies();
 //    cout << endl;
     
     scv.removeSpecies("Actin");
 //    scv.printSpecies();
-    EXPECT_EQ(x3, scv.findSpecies(1));
+    EXPECT_EQ(x3, scv.findSpeciesByIndex(1));
 //    cout << endl;
     
-    Species *y = scv.findSpecies("Arp2/3");
+    Species *y = scv.findSpeciesByName("Arp2/3");
     EXPECT_EQ(x2, y);
 //    cout << (*y) << endl;
 }

@@ -13,34 +13,61 @@
 #include "Reaction.h"
 #include "Species.h"
 #include "SpeciesContainer.h"
+#include "ReactionContainer.h"
 #include "Composite.h"
 
 namespace chem {
     
-    class Compartment : public Composite, public SpeciesContainerVector<SpeciesDiffusing> {
+    class Compartment : public Composite, public SpeciesPtrContainerVector, public ReactionPtrContainerVector {
     protected:
         std::vector<Compartment*> _neighbours;
     public:
-        Compartment() :  Composite(), SpeciesContainerVector<SpeciesDiffusing>() {}
-        virtual ~Compartment() noexcept {}
+        Compartment() :  Composite(), SpeciesPtrContainerVector() {}
+        virtual ~Compartment() noexcept {
+            _reactions.clear();
+            _species.clear();
+        }
         
         virtual bool isSpeciesContainer() const {return true;}
         virtual bool isReactionsContainer() const {return true;}
         virtual std::string getFullName() const {return "Compartment";};
-        virtual size_t numberOfSpecies() const {return _species.size();}
-        virtual size_t numberOfReactions() const {return 0;}
+        size_t numberOfSpecies() const {return _species.size();}
+        size_t numberOfReactions() const {return _reactions.size();}
         
-        template<typename ...Args>
-        size_t addSpecies(Args&& ...args){
-//            std::cout << "Compartment::addSpecies()..." << std::endl;
-            size_t index = SpeciesContainerVector<SpeciesDiffusing>::addSpecies(std::forward<Args>(args)...);
-            _species[index].setParent(this);
-            return index;
+        virtual Species* addSpeciesUnique (std::unique_ptr<Species> &&species) {
+            Species *sp = SpeciesPtrContainerVector::addSpeciesUnique(std::move(species));
+            sp->setParent(this);
+            return sp;
         }
         
-        std::vector<SpeciesDiffusing>& species() {return _species;}
-        const std::vector<SpeciesDiffusing>& species() const {return _species;}
+        virtual Reaction* addReactionUnique (std::unique_ptr<Reaction> &&reaction) {
+            Reaction *r = ReactionPtrContainerVector::addReactionUnique(std::move(reaction));
+            r->setParent(this);
+            return r;
+        }
         
+        template<typename ...Args>
+        Species* addSpecies(Args&& ...args){
+//            std::cout << "Compartment::addSpecies()..." << std::endl;
+            Species *sp = SpeciesPtrContainerVector::addSpecies<SpeciesDiffusing>(std::forward<Args>(args)...);
+            sp->setParent(this);
+            return sp;
+        }
+        
+        template<typename ...Args>
+        Reaction* addReaction (Args&& ...args){
+            //            std::cout << "Compartment::addReaction()..." << std::endl;
+            Reaction *r = ReactionPtrContainerVector::addReaction(std::forward<Args>(args)...);
+            r->setParent(this);
+            return r;
+        }
+        
+        std::vector<std::unique_ptr<Species>>& species() {return _species;}
+        const std::vector<std::unique_ptr<Species>>& species() const {return _species;}
+
+        std::vector<std::unique_ptr<Reaction>>& reactions() {return _reactions;}
+        const std::vector<std::unique_ptr<Reaction>>& reactions() const {return _reactions;}
+
         void addNeighbour(Compartment *comp) {
             auto nit = std::find(_neighbours.begin(),_neighbours.end(), comp);
             if(nit==_neighbours.end())
@@ -55,6 +82,31 @@ namespace chem {
                 _neighbours.erase(nit);
             else
                 throw std::out_of_range("Compartment::removeNeighbour(): Compartment is not a neighbour");
+        }
+        
+        void cloneSpecies (Compartment *target) {
+            assert(target->species().size()==0);
+            for(auto &s : _species){
+                target->addSpeciesUnique(std::unique_ptr<Species>(s->clone()));
+            }
+        }
+        
+        void cloneReactions (Compartment *target) {
+            assert(target->reactions().size()==0);
+            for(auto &r : _reactions){
+                target->addReactionUnique(std::unique_ptr<Reaction>(r->clone(target->species().begin(),target->species().end())));
+            }
+        }
+
+        void cloneSpeciesReactions(Compartment* C) {
+            this->cloneSpecies(C);
+            this->cloneReactions(C);
+        }
+        
+        virtual Compartment* clone() {
+            Compartment *C = new Compartment();
+            cloneSpeciesReactions(C);
+            return C;
         }
         
         size_t numberOfNeighbours() const {return _neighbours.size();}

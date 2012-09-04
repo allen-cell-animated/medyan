@@ -68,6 +68,7 @@ public:
     /// @param rate - the rate constant for this reaction
     Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate);
     
+    Reaction (std::vector<Species*> species, unsigned char M, unsigned char N, float rate);
     
     Reaction (const Reaction &r) = delete; // no copying (including all derived classes)
     Reaction& operator=(Reaction &r) = delete;  // no assignment (including all derived classes)
@@ -75,6 +76,19 @@ public:
     /// Destructor
     ~Reaction() noexcept;
 
+    template <typename iter_begin, typename iter_end>
+    Reaction* clone(iter_begin beg_it, iter_end end_it) {
+        std::vector<Species*> species;
+        for(auto &rs : _rspecies){
+            int molec = rs->getSpecies().getMolecule();
+            auto vit = std::find_if(beg_it,end_it,[molec](std::unique_ptr<Species> &us){return us->getMolecule()==molec;});
+            if(vit==end_it)
+                throw std::runtime_error("Reaction::Clone(): Species is not present.");
+            species.push_back(vit->get());
+        }
+        return new Reaction(species,_m,species.size()-_m,_rate);
+    }
+    
     /// Sets the reaction rate to the parameter "rate" 
     void setRate(float rate) {_rate=rate;}
     

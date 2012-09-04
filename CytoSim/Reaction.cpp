@@ -31,7 +31,26 @@ Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, un
                   [this](RSpecies* s){s->addAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   
                   [this](RSpecies* s){s->addAsProduct(this);} );
-}   
+}
+    
+Reaction::Reaction (std::vector<Species*> species, unsigned char M, unsigned char N, float rate) :
+Component(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+    for( auto &s : species){
+        _rspecies.push_back(&s->getRSpecies());
+    }
+    _rspecies.shrink_to_fit();
+    assert(_rspecies.size()==(M+N) && "Reaction Ctor Bug");
+    _dependents=getAffectedReactions();
+    //    cout << "Reaction::Reaction(...): " << this << endl;
+    //    for (auto rr : _dependents)
+    //        cout <<(*rr);
+    //    cout << endl;
+    //    activateReactionUnconditional();
+    std::for_each(beginReactants(), endReactants(),
+                  [this](RSpecies* s){s->addAsReactant(this);} );
+    std::for_each(beginProducts(), endProducts(),
+                  [this](RSpecies* s){s->addAsProduct(this);} );
+}
 
 Reaction::~Reaction() noexcept {
     std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
