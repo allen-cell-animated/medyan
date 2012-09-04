@@ -53,33 +53,84 @@ using namespace chem;
 int main(int argc, const char * argv[])
 {
     
-    Compartment C;
-    Species *actin = C.addSpecies("Actin",99U);
-    Species *profilin = C.addSpecies("Profilin",29U);
-    Species *arp23 = C.addSpecies("Arp2/3",33U);
-    C.printSpecies();
-//    cout << C.findSpecies(actin_id) << ", " << &C.findSpecies(actin_id) << endl;
-//    cout << C.species()[actin_id] << ", " << &C.species()[actin_id] << endl;
-    cout << C.countSpecies() << endl;
+    Compartment *C1 = new Compartment;
+    Species *actin = C1->addSpecies("Actin",99U);
+    C1->setDiffusionRate(actin,2000);
+    Species *profilin = C1->addSpecies("Profilin",29U);
+    C1->setDiffusionRate(profilin,2000);
+    Species *arp23 = C1->addSpecies("Arp2/3",33U);
+    C1->setDiffusionRate(arp23,2000);
+    C1->printSpecies();
+//    cout << C1->findSpecies(actin_id) << ", " << &C1->findSpecies(actin_id) << endl;
+//    cout << C1->species()[actin_id] << ", " << &C1->species()[actin_id] << endl;
+    cout << C1->countSpecies() << endl;
     
-    vector<Species*> rs1 = {actin,profilin};
-    Reaction *r1 = C.addReaction(rs1, 1, 1, 10.0);
-    vector<Species*> rs2 = {profilin,actin};
-    Reaction *r2 = C.addReaction(rs2, 1, 1, 10.0);
+
+    vector<Species*> rs1 = {profilin,actin};
+    Reaction *r1 = C1->addInternalReaction(rs1, 1, 1, 10.0);
+    vector<Species*> rs2 = {actin,profilin};
+    Reaction *r2 = C1->addInternalReaction(rs2, 1, 1, 10.0);
     vector<Species*> rs3 = {actin,profilin,arp23};
-    Reaction *r3 = C.addReaction(rs3, 2, 1, 10.0);
-    C.printReactions();
-    cout << "Are all Species unique? " << std::boolalpha << C.areAllSpeciesUnique() << endl;
+    Reaction *r3 = C1->addInternalReaction(rs3, 2, 1, 10.0);
+    C1->printReactions();
+    cout << "Are all Species unique? " << std::boolalpha << C1->areAllSpeciesUnique() << endl;
     
     cout << sizeof(*actin) << ", " << sizeof(actin->getRSpecies()) << ", " << sizeof(*r1) << endl;
 
     cout << endl << endl;
     
-    Compartment *C2 = C.clone();
+    Compartment *C2 = C1->clone();
     cout << "The clone:" << endl;
     C2->printReactions();
-
+    cout << "End of The Clone" << endl << endl;
     
+
+    C1->addNeighbour(C2);
+    C2->addNeighbour(C1);
+    
+    C1->generateDiffusionReactions();
+    C2->generateDiffusionReactions();
+    
+    cout << "C1 Compartment:" << endl;
+    C1->printReactions();
+    cout << "C1's neigbour size: " << C1->numberOfNeighbours() << endl;
+    cout << endl << endl;
+    
+    cout << "C2 Compartment:" << endl;
+    C2->printReactions();
+    cout << "C2's neigbour size: " << C2->numberOfNeighbours() << endl;
+    cout << endl << endl;
+    
+    cout << "C3 Compartment:" << endl;
+    Compartment C3Val(*C2);
+    Compartment *C3 = &C3Val;
+    C3->generateDiffusionReactions();
+    C3->printReactions();
+    cout << "C3's neigbour size: " << C3->numberOfNeighbours() << endl;
+    cout << endl << endl;
+    
+    actin->setN(301);
+    cout << "C4 Compartment:" << endl;
+    Compartment C4Val;
+    C4Val.addSpecies("Ena/VASP",28U);
+    C4Val = *C1;
+    Compartment *C4 = &C4Val;
+    //C3->generateDiffusionReactions();
+    C4->printReactions();
+    cout << "C4's neigbour size: " << C4->numberOfNeighbours() << endl;
+    cout << endl << endl;
+    
+    SpeciesDiffusing Actin("Actin",12U);
+    SpeciesDiffusing Profilin("Profilin",2U);
+    Reaction AP({&Actin,&Profilin}, 1, 1, 10.0);
+    
+    cout << "Finding one Species" << endl;
+    Species *C4Actin = C4->findSimilarSpecies(Actin);
+    cout << (*C4Actin) << endl;
+    
+    cout << "Finding one Reaction" << endl;
+    Reaction *C4AP = C4->findSimilarInternalReaction(AP);
+    cout << (*C4AP) << endl;
     
     cout << "Main exited..." << endl;
     return 0;

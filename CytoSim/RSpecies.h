@@ -76,10 +76,10 @@ namespace chem {
         _species(parent), _n(n), _ulim(ulim), _signal(nullptr) {}
         
         /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
-        RSpecies (const RSpecies &r) = delete;
+        RSpecies(const RSpecies &r) = delete;
         
         /// deleted move constructor - each RSpecies is uniquely created by the parent Species
-        RSpecies (RSpecies &&r) = delete;
+        RSpecies(RSpecies &&r) = delete;
         
         /// deleted assignment operator - each RSpecies is uniquely created by the parent Species
         RSpecies& operator=(RSpecies&) = delete;
@@ -178,11 +178,11 @@ namespace chem {
         void passivateAssocProductReactions();
                
         /// Set the signaling behavior of this RSpecies
-        void startSignaling ();
+        void startSignaling();
         
         /// Destroy the signal associated with this RSpecies; all associated slots will be destroyed
         /// @note To start signaling again, startSignaling() needs to be called
-        void stopSignaling ();
+        void stopSignaling();
                         
     public:
          /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
@@ -208,16 +208,16 @@ namespace chem {
         species_copy_t getUpperLimitForN() const {return _ulim;}
         
         /// return parent Species as a reference
-        Species& getSpecies () {return _species;}
+        Species& getSpecies() {return _species;}
         
         /// return parent Species as a const reference
-        const Species& getSpecies () const {return _species;}
+        const Species& getSpecies() const {return _species;}
         
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         std::string getFullName() const;
                         
         /// Return true if this RSpecies emits signals on copy number change
-        bool isSignaling () const {return _signal!=nullptr;}
+        bool isSignaling() const {return _signal!=nullptr;}
                 
         /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant

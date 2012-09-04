@@ -191,6 +191,26 @@ public:
     //Return a const iterator to the end of the sequence of products
     vrsp_const_iterator  cendProducts() const {return _rspecies.cend();}
 
+    
+    /// Returns true if two Reaction objects are equal.
+    /// Two Reaction objects are equal if each of their reactants and products are equal
+    friend bool operator==(const Reaction& a, const Reaction& b)
+    {
+        if(a._m!=b._m or a._rspecies.size()!=b._rspecies.size() or typeid(a) != typeid(b))
+            return false;
+        auto it_pair = std::mismatch(a._rspecies.begin(),a._rspecies.end(),b._rspecies.begin(),
+                                 [](RSpecies* A, RSpecies* B){return A->getSpecies()==B->getSpecies();});
+        if(it_pair.first==a._rspecies.end())
+            return true;
+        return false;
+    }
+    
+    /// Return true if two Reaction are not equal.
+    /// @see operator ==(const Reaction& a, const Reaction& b) above
+    friend bool operator !=(const Reaction& a, const Reaction& b){
+        return !(a==b);
+    }
+    
     /// Fire the Reaction - make a single step, where reactant RSpecies copy numbers are
     /// decreased by one, and the product RSpecies copy numbers are increased by one.
     /// @note This method does not send a reaction event Signal. The latter is usually done

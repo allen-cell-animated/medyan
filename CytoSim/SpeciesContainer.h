@@ -20,6 +20,7 @@ namespace  chem {
 //        virtual Species* addSpecies(const std::string &name, species_copy_t copy) = 0;
         virtual void removeSpecies(const std::string &name) = 0;
         virtual void removeSpecies(Species* species) = 0;
+        virtual void clear() = 0;
         virtual Species* findSpeciesByName(const std::string &name) = 0;
         virtual Species* findSpeciesByIndex (size_t index) = 0;
         virtual Species* findSpeciesByMolecule (int molecule) = 0;
@@ -33,6 +34,19 @@ namespace  chem {
     protected:
         std::vector<std::unique_ptr<Species>> _species;
     public:
+        SpeciesPtrContainerVector() : _species() {}
+        SpeciesPtrContainerVector(const SpeciesPtrContainerVector &) = delete;
+        SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;  // no assignment
+        
+        friend void swap(SpeciesPtrContainerVector& first, SpeciesPtrContainerVector& second) // nothrow
+        {
+            // enable ADL (not necessary in our case, but good practice)
+            using std::swap;
+            swap(first._species, second._species);
+        }
+        
+        virtual void clear() {_species.clear();}
+        
         virtual Species* addSpeciesUnique (std::unique_ptr<Species> &&species) {
             _species.push_back(std::move(species));
             return _species.back().get();
@@ -95,6 +109,17 @@ namespace  chem {
             return _species[index].get();
         }
         
+        virtual Species* findSimilarSpecies (const Species &s) {
+            auto it = std::find_if(_species.begin(),_species.end(),
+                                   [&s](const std::unique_ptr<Species> &element)
+                                   {return s==(*element);});
+            if(it==_species.end())
+                throw std::out_of_range("Species::findSimilarSpecies(): The analogous Species was not found");
+            return it->get();
+        }
+        
+        std::vector<std::unique_ptr<Species>>& species() {return _species;}
+        const std::vector<std::unique_ptr<Species>>& species() const {return _species;}        
         
         virtual bool areAllSpeciesUnique () {
             std::vector<int> molecs;

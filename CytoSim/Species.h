@@ -227,14 +227,12 @@ namespace chem {
         /// Returns true if two Species objects are equal.
         /// This function would accept derived class of Species, such as SpeciesBulk
         /// Two Species are equal if their SType(s) are equal (i.e. are of the same class),
-        /// their names are equal and their copy numbers are equal
-        /// Note that specialized versions can be defined in derived classes 
-        /// by re-implementing: @see virtual bool is_equal(const Species& b) const 
+        /// their names are equal.
         friend bool operator ==(const Species& a, const Species& b)
         {
-            if (a.getN() != b.getN() or a.getName() != b.getName() or typeid(a) != typeid(b))
+            if (a.getMolecule() != b.getMolecule() or typeid(a) != typeid(b))
                 return false;
-            return a.is_equal(b); // Invoke virtual is_equal via derived subclass of a (which should be the same as b)
+            return true;
         }
         
         /// Return true if two Species are not equal.         
@@ -253,11 +251,6 @@ namespace chem {
                 
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         virtual std::string getFullName() const {return getName() + "{None}";}
-        
-        /// Default implementation returns true; subclasses should specialize it, if needed
-        virtual bool is_equal(const Species& b) const {
-            return true;
-        }
         
         virtual size_t countSpecies() const {return 1;}
     };
