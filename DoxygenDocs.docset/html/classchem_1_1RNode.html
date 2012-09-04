@@ -128,7 +128,7 @@ Inheritance diagram for chem::RNode:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1RNode__inherit__graph.png" border="0" usemap="#chem_1_1RNode_inherit__map" alt="Inheritance graph"/></div>
 <map name="chem_1_1RNode_inherit__map" id="chem_1_1RNode_inherit__map">
-<area shape="rect" id="node3" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="5,80,133,107"/></map>
+<area shape="rect" id="node3" href="classchem_1_1RNodeGillespie.html" title="RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith..." alt="" coords="5,80,152,107"/><area shape="rect" id="node5" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="176,80,304,107"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1RNode-members.html">List of all members.</a></p>
@@ -187,9 +187,9 @@ Public Member Functions</h2></td></tr>
 <p>This method is called by <a class="el" href="classchem_1_1Reaction.html#afae5d992f176c16a21ec38fcf3d83649" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction()</a>. </p>
 <p>Its effect depends on the underlying stochastic simulatio algorithm. For example, in the NRM algorithm, a new tau and a are computed and the heap is updated. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849">chem::RNodeNRM</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#aefe90be75d811b0fa92234663c8d29ba">chem::RNodeGillespie</a>.</p>
 
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00063">chem::Reaction::activateReaction()</a>.</p>
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00086">chem::Reaction::activateReactionUnconditional()</a>.</p>
 
 </div>
 </div>
@@ -209,7 +209,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> is currently passivated. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ad6445c86ef589c51c8d0957d437f6c3c">chem::RNodeNRM</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ad6445c86ef589c51c8d0957d437f6c3c">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#a456ac34c578988b02fc003d69ebc2d21">chem::RNodeGillespie</a>.</p>
 
 </div>
 </div>
@@ -230,9 +230,9 @@ Public Member Functions</h2></td></tr>
 <p>This method is called by <a class="el" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa" title="Usually is applied to Reaction objects with propensity of 0 (e.g.">Reaction::passivateReaction()</a>. </p>
 <p>Its effect depends on the underlying stochastic simulatio algorithm. For example, in the NRM algorithm, a tau is set to infinity and the heap is updated. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12">chem::RNodeNRM</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#a6b641601ec312a4169f07e2dcf797f41">chem::RNodeGillespie</a>.</p>
 
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00088">chem::Reaction::passivateReaction()</a>.</p>
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00103">chem::Reaction::passivateReaction()</a>.</p>
 
 </div>
 </div>
@@ -246,7 +246,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1RNode.html">RNode</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:15 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

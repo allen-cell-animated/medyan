@@ -128,16 +128,103 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00012"></a>00012 <span class="preprocessor">#include &lt;vector&gt;</span>
 <a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="Reaction_8h.html">Reaction.h</a>&quot;</span>
 <a name="l00014"></a>00014 <span class="preprocessor">#include &quot;<a class="code" href="Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla...">Species.h</a>&quot;</span>
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017 <span class="preprocessor">#endif</span>
+<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="SpeciesContainer_8h.html">SpeciesContainer.h</a>&quot;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="ReactionContainer_8h.html">ReactionContainer.h</a>&quot;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="Composite_8h.html">Composite.h</a>&quot;</span>
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="keyword">namespace </span>chem {
+<a name="l00020"></a>00020     
+<a name="l00021"></a><a class="code" href="classchem_1_1Compartment.html">00021</a>     <span class="keyword">class </span><a class="code" href="classchem_1_1Compartment.html">Compartment</a> : <span class="keyword">public</span> <a class="code" href="classchem_1_1Composite.html">Composite</a>, <span class="keyword">public</span> <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html">SpeciesPtrContainerVector</a>, <span class="keyword">public</span> <a class="code" href="classchem_1_1ReactionPtrContainerVector.html">ReactionPtrContainerVector</a> {
+<a name="l00022"></a>00022     <span class="keyword">protected</span>:
+<a name="l00023"></a><a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">00023</a>         std::vector&lt;Compartment*&gt; <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>;
+<a name="l00024"></a>00024     <span class="keyword">public</span>:
+<a name="l00025"></a><a class="code" href="classchem_1_1Compartment.html#a08f24223f361ee29f6a4010fe3c97384">00025</a>         <a class="code" href="classchem_1_1Compartment.html#a08f24223f361ee29f6a4010fe3c97384">Compartment</a>() :  <a class="code" href="classchem_1_1Composite.html">Composite</a>(), <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html">SpeciesPtrContainerVector</a>() {}
+<a name="l00026"></a><a class="code" href="classchem_1_1Compartment.html#abb05875f7da146979bc7c88c2d78889a">00026</a>         <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Compartment.html#abb05875f7da146979bc7c88c2d78889a">~Compartment</a>() noexcept {}
+<a name="l00027"></a>00027         
+<a name="l00028"></a><a class="code" href="classchem_1_1Compartment.html#a5b31a84f6a592c44ce8235eca96896af">00028</a>         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#a5b31a84f6a592c44ce8235eca96896af">isSpeciesContainer</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <span class="keyword">true</span>;}
+<a name="l00029"></a><a class="code" href="classchem_1_1Compartment.html#a260d8b2dc70c2834f5702db4743d18ff">00029</a>         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#a260d8b2dc70c2834f5702db4743d18ff">isReactionsContainer</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <span class="keyword">true</span>;}
+<a name="l00030"></a><a class="code" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">00030</a>         <span class="keyword">virtual</span> std::string <a class="code" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">getFullName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <span class="stringliteral">&quot;Compartment&quot;</span>;};
+<a name="l00031"></a><a class="code" href="classchem_1_1Compartment.html#a8c53c911ee4474486eb479d869b83a23">00031</a>         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Compartment.html#a8c53c911ee4474486eb479d869b83a23">numberOfSpecies</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a6b5c9bcab6f5c481a035b7f1502e60ca">_species</a>.size();}
+<a name="l00032"></a><a class="code" href="classchem_1_1Compartment.html#add01255fb00b50c58bd65edc66c25d7a">00032</a>         <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Compartment.html#add01255fb00b50c58bd65edc66c25d7a">numberOfReactions</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> 0;}
+<a name="l00033"></a>00033         
+<a name="l00034"></a><a class="code" href="classchem_1_1Compartment.html#aefde33094f64edae2bfbdf24773ad7ac">00034</a>         <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>* <a class="code" href="classchem_1_1Compartment.html#aefde33094f64edae2bfbdf24773ad7ac">addSpeciesUnique</a> (std::unique_ptr&lt;Species&gt; &amp;&amp;<a class="code" href="classchem_1_1Compartment.html#ac920ab8c845f2ebfe3dd2a1056362082">species</a>) {
+<a name="l00035"></a>00035             <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *sp = <a class="code" href="classchem_1_1Compartment.html#aefde33094f64edae2bfbdf24773ad7ac">SpeciesPtrContainerVector::addSpeciesUnique</a>(std::move(<a class="code" href="classchem_1_1Compartment.html#ac920ab8c845f2ebfe3dd2a1056362082">species</a>));
+<a name="l00036"></a>00036             sp-&gt;<a class="code" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a>(<span class="keyword">this</span>);
+<a name="l00037"></a>00037             <span class="keywordflow">return</span> sp;
+<a name="l00038"></a>00038         }
+<a name="l00039"></a>00039         
+<a name="l00040"></a><a class="code" href="classchem_1_1Compartment.html#a52988f38e8dc1f779edfda63b68e4c6f">00040</a>         <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>* <a class="code" href="classchem_1_1Compartment.html#a52988f38e8dc1f779edfda63b68e4c6f">addReactionUnique</a> (std::unique_ptr&lt;Reaction&gt; &amp;&amp;reaction) {
+<a name="l00041"></a>00041             <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r = <a class="code" href="classchem_1_1Compartment.html#a52988f38e8dc1f779edfda63b68e4c6f">ReactionPtrContainerVector::addReactionUnique</a>(std::move(reaction));
+<a name="l00042"></a>00042             r-&gt;<a class="code" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a>(<span class="keyword">this</span>);
+<a name="l00043"></a>00043             <span class="keywordflow">return</span> r;
+<a name="l00044"></a>00044         }
+<a name="l00045"></a>00045         
+<a name="l00046"></a>00046         <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ...Args&gt;
+<a name="l00047"></a><a class="code" href="classchem_1_1Compartment.html#a5e7c0a9a225feb95e90e42b86c5edbee">00047</a>         <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>* <a class="code" href="classchem_1_1Compartment.html#a5e7c0a9a225feb95e90e42b86c5edbee">addSpecies</a>(Args&amp;&amp; ...args){
+<a name="l00048"></a>00048 <span class="comment">//            std::cout &lt;&lt; &quot;Compartment::addSpecies()...&quot; &lt;&lt; std::endl;</span>
+<a name="l00049"></a>00049             <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *sp = SpeciesPtrContainerVector::addSpecies&lt;SpeciesDiffusing&gt;(std::forward&lt;Args&gt;(args)...);
+<a name="l00050"></a>00050             sp-&gt;<a class="code" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a>(<span class="keyword">this</span>);
+<a name="l00051"></a>00051             <span class="keywordflow">return</span> sp;
+<a name="l00052"></a>00052         }
+<a name="l00053"></a>00053         
+<a name="l00054"></a>00054         <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ...Args&gt;
+<a name="l00055"></a><a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">00055</a>         <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>* <a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">addReaction</a> (Args&amp;&amp; ...args){
+<a name="l00056"></a>00056             <span class="comment">//            std::cout &lt;&lt; &quot;Compartment::addReaction()...&quot; &lt;&lt; std::endl;</span>
+<a name="l00057"></a>00057             <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r = <a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">ReactionPtrContainerVector::addReaction</a>(std::forward&lt;Args&gt;(args)...);
+<a name="l00058"></a>00058             r-&gt;<a class="code" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a>(<span class="keyword">this</span>);
+<a name="l00059"></a>00059             <span class="keywordflow">return</span> r;
+<a name="l00060"></a>00060         }
+<a name="l00061"></a>00061         
+<a name="l00062"></a><a class="code" href="classchem_1_1Compartment.html#ac920ab8c845f2ebfe3dd2a1056362082">00062</a>         std::vector&lt;std::unique_ptr&lt;Species&gt;&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#ac920ab8c845f2ebfe3dd2a1056362082">species</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a6b5c9bcab6f5c481a035b7f1502e60ca">_species</a>;}
+<a name="l00063"></a><a class="code" href="classchem_1_1Compartment.html#aaf9717efd9dd97cbb58800e9ea1214da">00063</a>         <span class="keyword">const</span> std::vector&lt;std::unique_ptr&lt;Species&gt;&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#aaf9717efd9dd97cbb58800e9ea1214da">species</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a6b5c9bcab6f5c481a035b7f1502e60ca">_species</a>;}
+<a name="l00064"></a>00064 
+<a name="l00065"></a><a class="code" href="classchem_1_1Compartment.html#a620e5cf61a5267948ff9f6990166ef3b">00065</a>         std::vector&lt;std::unique_ptr&lt;Reaction&gt;&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#a620e5cf61a5267948ff9f6990166ef3b">reactions</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ab6b7b398562a5f2e79838f8e9a370482">_reactions</a>;}
+<a name="l00066"></a><a class="code" href="classchem_1_1Compartment.html#aa805b60716b0113d33f1d76afa2223f4">00066</a>         <span class="keyword">const</span> std::vector&lt;std::unique_ptr&lt;Reaction&gt;&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#aa805b60716b0113d33f1d76afa2223f4">reactions</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ab6b7b398562a5f2e79838f8e9a370482">_reactions</a>;}
+<a name="l00067"></a>00067 
+<a name="l00068"></a><a class="code" href="classchem_1_1Compartment.html#a110caa7a8a121debaad41206b10e4fb3">00068</a>         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Compartment.html#a110caa7a8a121debaad41206b10e4fb3">addNeighbour</a>(<a class="code" href="classchem_1_1Compartment.html">Compartment</a> *comp) {
+<a name="l00069"></a>00069             <span class="keyword">auto</span> nit = std::find(<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.begin(),<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.end(), comp);
+<a name="l00070"></a>00070             <span class="keywordflow">if</span>(nit==<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.end())
+<a name="l00071"></a>00071                 <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.push_back(comp);
+<a name="l00072"></a>00072             <span class="keywordflow">else</span>
+<a name="l00073"></a>00073                 <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Compartment::addNeighbour(): Compartment is already a neighbour&quot;</span>);
+<a name="l00074"></a>00074         }
+<a name="l00075"></a>00075         
+<a name="l00076"></a><a class="code" href="classchem_1_1Compartment.html#a3400c61cdc13167347e8db246b8cac30">00076</a>         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Compartment.html#a3400c61cdc13167347e8db246b8cac30">removeNeighbour</a>(<a class="code" href="classchem_1_1Compartment.html">Compartment</a> *comp) {
+<a name="l00077"></a>00077             <span class="keyword">auto</span> nit = std::find(<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.begin(),<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.end(), comp);
+<a name="l00078"></a>00078             <span class="keywordflow">if</span>(nit!=<a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.end())
+<a name="l00079"></a>00079                 <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.erase(nit);
+<a name="l00080"></a>00080             <span class="keywordflow">else</span>
+<a name="l00081"></a>00081                 <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Compartment::removeNeighbour(): Compartment is not a neighbour&quot;</span>);
+<a name="l00082"></a>00082         }
+<a name="l00083"></a>00083         
+<a name="l00084"></a><a class="code" href="classchem_1_1Compartment.html#adedb1bd95adf4f858566cc09ebb55ccb">00084</a>         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Compartment.html#adedb1bd95adf4f858566cc09ebb55ccb">_cloneSpecies</a> (<a class="code" href="classchem_1_1Compartment.html">Compartment</a> *target) {
+<a name="l00085"></a>00085             assert(target-&gt;<a class="code" href="classchem_1_1Compartment.html#ac920ab8c845f2ebfe3dd2a1056362082">species</a>().size()==0);
+<a name="l00086"></a>00086             <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s : <a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a6b5c9bcab6f5c481a035b7f1502e60ca">_species</a>){
+<a name="l00087"></a>00087                 target-&gt;<a class="code" href="classchem_1_1Compartment.html#aefde33094f64edae2bfbdf24773ad7ac">addSpeciesUnique</a>(std::unique_ptr&lt;Species&gt;(s-&gt;clone()));
+<a name="l00088"></a>00088             }
+<a name="l00089"></a>00089         }
+<a name="l00090"></a>00090         
+<a name="l00091"></a><a class="code" href="classchem_1_1Compartment.html#ae24c00c81833d284f211e76c7de3a6e6">00091</a>         <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Compartment.html#ae24c00c81833d284f211e76c7de3a6e6">numberOfNeighbours</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>.size();}
+<a name="l00092"></a>00092         
+<a name="l00093"></a><a class="code" href="classchem_1_1Compartment.html#a6b3883c36fe0930cb1aed7955003cff6">00093</a>         std::vector&lt;Compartment*&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#a6b3883c36fe0930cb1aed7955003cff6">neighbours</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>;}
+<a name="l00094"></a>00094         
+<a name="l00095"></a><a class="code" href="classchem_1_1Compartment.html#afb74f648b74eb5fac6b3ad558bd225ae">00095</a>         <span class="keyword">const</span> std::vector&lt;Compartment*&gt;&amp; <a class="code" href="classchem_1_1Compartment.html#afb74f648b74eb5fac6b3ad558bd225ae">neighbours</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>;}
+<a name="l00096"></a>00096         
+<a name="l00097"></a>00097     };
+<a name="l00098"></a>00098 
+<a name="l00099"></a>00099 
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101 }<span class="comment">// end of chem</span>
+<a name="l00102"></a>00102 <span class="comment">//</span>
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104 <span class="preprocessor">#endif</span>
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="Compartment_8h.html">Compartment.h</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:14 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

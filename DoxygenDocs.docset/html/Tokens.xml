@@ -31,6 +31,15 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>TRACK_DEPENDENTS</Name>
+      <APILanguage>unknown</APILanguage>
+      <Type>macro</Type>
+    </TokenIdentifier>
+    <Path>common_8h.html</Path>
+    <Anchor>ac331c2ee4410c5495c7d06314fdbc888</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>TRACK_ZERO_COPY_N</Name>
       <APILanguage>unknown</APILanguage>
       <Type>macro</Type>
@@ -388,6 +397,543 @@
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
     <Anchor>a33c82bc525c0bdd911d321e69eb06cc4</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::RNodeGillespie</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Abstract>RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith...</Abstract>
+    <DeclaredIn>ChemGillespieImpl.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>RNodeGillespie</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a8c00c9b339b7e78187c7cc946479ab37</Anchor>
+    <Abstract>Ctor:</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>RNodeGillespie</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a115ff04231444c00cc006bdac62a9898</Anchor>
+    <Abstract>Copying is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator=</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a2b8706474f037c9260c1afd67490fb94</Anchor>
+    <Abstract>Assignment is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~RNodeGillespie</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a590742c604dbebdbe155d0e29aeeea24</Anchor>
+    <Abstract>Dtor: The RNode pointer of the tracked Reaction object is set to nullptr.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>ae7a920c6c91ad933921a362bf53ca0b9</Anchor>
+    <Abstract>Returns a pointer to the Reaction which corresponds to this RNodeGillespie.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getPropensity</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>ad60ef48ea2b0a2e22be14c6e2639ed67</Anchor>
+    <Abstract>Return the currently stored propensity, &amp;quot;a&amp;quot;, for this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setA</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a70c1522713c7585d12e781c2fc66128a</Anchor>
+    <Abstract>Set the propensity, &amp;quot;a&amp;quot;, for this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getPenultStepPropensity</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>ab029787ccc1fa9dad526637683696bdf</Anchor>
+    <Abstract>Return the propensity, &amp;quot;a&amp;quot;, associated with the penultimate step of this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setPenultA</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>ad3da8f90675173bf71fad8de987db6ff</Anchor>
+    <Abstract>Set the propensity, &amp;quot;a&amp;quot;, associated with the penultimate step of this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>reComputePropensity</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a9e71cbc46d6a2d4f59485ad0e47836bc</Anchor>
+    <Abstract>(Re)Compute and return the propensity associated with this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>reset</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>ad70c516db7d5cc054aa78c46ed358922</Anchor>
+    <Abstract>Set the the penultimate step propensity to zero and compute the current propensity.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStep</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a1b62a05751200001d011a592e900d92f</Anchor>
+    <Abstract>This method calls the corresponding Reaction::makeStep() method of the underyling Reaction object...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>activateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>aefe90be75d811b0fa92234663c8d29ba</Anchor>
+    <Abstract>Forwards the call to the similarly named method of ChemGillespieImpl.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>passivateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a6b641601ec312a4169f07e2dcf797f41</Anchor>
+    <Abstract>Forwards the call to the similarly named method of ChemGillespieImpl.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isPassivated</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a456ac34c578988b02fc003d69ebc2d21</Anchor>
+    <Abstract>Forwards the call to the similarly named method of ChemGillespieImpl.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSelf</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a6f1817637e80b53c0512a066997bd161</Anchor>
+    <Abstract>Print information about this RNodeGillespie such as &amp;quot;a&amp;quot;, &amp;quot;a_penult&amp;quot; and the Reaction which this RNode...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printDependents</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a800d275a256b809657920370e56a8d6a</Anchor>
+    <Abstract>Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependenc...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_chem_Gillespie</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a694fb26e4b3094327c67b299bb501418</Anchor>
+    <Abstract>A reference to the ChemGillespieImpl which containts the heap, random number generators, etc.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_react</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a778806f675247513c8d14d9ad333a81d</Anchor>
+    <Abstract>The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeGilles...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_a</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>af687de57ea452fb72dae1af510c3a3d5</Anchor>
+    <Abstract>The propensity associated with the Reaction. It may be outdated and may need to be recomputed if need...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_a_prev</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RNodeGillespie</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RNodeGillespie.html</Path>
+    <Anchor>a4c8116fddaea96ffdb71ae26b8dc52dc</Anchor>
+    <Abstract>The propensity associated with the penultimate step of this Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::ChemGillespieImpl</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Abstract>ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm.</Abstract>
+    <DeclaredIn>ChemGillespieImpl.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>ChemGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>acae4f82c37a04d44f9c9fe5d3ac9ffc2</Anchor>
+    <Abstract>Ctor: Seeds the random number generator, sets global time to 0.0 and the number of reactions to 0...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>ChemGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a3ace9f976a3fc22390c455e46c63b65b</Anchor>
+    <Abstract>Copying is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator=</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a53e55d106ad85c7b5b8c49c17f3f24fa</Anchor>
+    <Abstract>Assignment is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~ChemGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a286a21027c531cb548d9d536d650c3f1</Anchor>
+    <Abstract>Dtor: The reaction network is cleared. The RNodeGillespie objects will be destructed, but Reaction objects will stay intact.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getSize</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a90bd9d83e9e6a7c272e2ddc88d6403c8</Anchor>
+    <Abstract>Return the number of reactions in the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a6698d9d3062bf349c9c093fa598e114b</Anchor>
+    <Abstract>Return the current global time (as defined in the Gillespie algorithm)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>resetTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>ae96131a441da0d1aa131a1decb4f45cb</Anchor>
+    <Abstract>Sets the global time to 0.0.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>syncGlobalTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a06e81271a59f9b3bf30607ddfdf03a7f</Anchor>
+    <Abstract>Sets global time variable to ChemGillespieImpl&amp;#39;s global time.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>af013022938adb5f1bd34c7430ad1bfd6</Anchor>
+    <Abstract>Add Reaction *r to the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>aab4d9fcdd42b90e72542b5b3af103d27</Anchor>
+    <Abstract>Remove Reaction *r from the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>computeTotalA</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a172ee869ab05da5ae10ad31f7d09bff2</Anchor>
+    <Abstract>Unconditionally compute the total propensity associated with the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>generateTau</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>af3fd1edddd5c4c71bbf7979220f05fc9</Anchor>
+    <Abstract>Returns a random time tau, drawn from the exponential distribution, with the propensity given by a...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>generateUniform</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a792e9d4aab0b6e6d3d336e62fd71bf0a</Anchor>
+    <Abstract>Returns a random number between 0 and 1, drawn from the uniform distribution.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>initialize</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a885fd4d5902be9cb7540766e5efc104f</Anchor>
+    <Abstract>This function iterates over all RNodeGillespie objects in the network, activating all Reaction object...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>run</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a5822d60fd10e7c7374150e55c23da075</Anchor>
+    <Abstract>This method runs the Gillespie algorithm for the given number of steps.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>activateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>ab1659f95afe9b3905103cef6517188ad</Anchor>
+    <Abstract>This method is used to track the change in the total propensity of the network as the previously pass...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>passivateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a61d6ae16f2eccc9b8a1de08a9d4a2ea7</Anchor>
+    <Abstract>This method is used to track the change in the total propensity of the network as the Reaction *r has...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a32d0eac5e52772db6b6b902c08b7df11</Anchor>
+    <Abstract>Prints all RNodes in the reaction network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStep</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a29341a8979c40d31d2baff5fb61fa877</Anchor>
+    <Abstract>This subroutine, along with with passivateReaction() and activateReaction() implements a cached versi...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_map_rnodes</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>ad68df919715c46f0453bb915a16f5aaf</Anchor>
+    <Abstract>The database of RNodeGillespie objects, representing the reaction network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_eng</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>acdcb42ee48274d6693a938444bd02097</Anchor>
+    <Abstract>Random number generator.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_exp_distr</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a9e1f41cc5c2d9a975f9e3cb55169bf63</Anchor>
+    <Abstract>Adaptor for the exponential distribution.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_uniform_distr</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>ac95cdaca65ea19b481437787b33df821</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_t</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a7515d99e3c3bd235918c0622d700b987</Anchor>
+    <Abstract>global time</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_a_total</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>ac41c4e493ecd861dcd2abc34a645906a</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_n_reacts</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemGillespieImpl.html</Path>
+    <Anchor>a661c0d8f1a4622f2ea4e7573c259cdfd</Anchor>
+    <Abstract>number of reactions in the network</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -901,7 +1447,7 @@
       <Scope>chem::ChemNRMImpl</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1ChemNRMImpl.html</Path>
-    <Anchor>a8ccff6cf244e91b8057c323d17a5b48c</Anchor>
+    <Anchor>a236b68389599aa9486959377cfc51496</Anchor>
     <Abstract>This method runs the NRM algorithm for the given number of steps.</Abstract>
   </Token>
   <Token>
@@ -1235,23 +1781,596 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>chem::Component</Name>
+      <Name>chem::ChemSimpleGillespieImpl</Name>
       <APILanguage>c</APILanguage>
       <Type>cl</Type>
-      <Scope>chem::Component</Scope>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <DeclaredIn>Component.h</DeclaredIn>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Abstract>ChemSimpleGillespieImpl implements the simplest version of the Gillespie algorithm, without caching, etc.</Abstract>
+    <DeclaredIn>ChemSimpleGillespieImpl.h</DeclaredIn>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>Component</Name>
+      <Name>ChemSimpleGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a19b1017065814ec41b06a93c4db216f0</Anchor>
+    <Abstract>Ctor: Seeds the random number generator, sets global time to 0.0.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>ChemSimpleGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a585016f05048ef0f586e9ab27263e8df</Anchor>
+    <Abstract>Copying is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator=</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a6d2e89123bbcfaf4a16ea3c3353b8898</Anchor>
+    <Abstract>Assignment is not allowed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~ChemSimpleGillespieImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>af6bd485480daf2e545ac7e8c8bd971f3</Anchor>
+    <Abstract>Dtor: The reaction network is cleared.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getSize</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a40e2f9144f1e22142f33fbe5c952802d</Anchor>
+    <Abstract>Return the number of reactions in the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a0fe6382da5c6ba414de3dc0c101be4df</Anchor>
+    <Abstract>Return the current global time (which should be the sum of all previously occurred tau-s of the Gille...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>resetTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>af25ceac4d4a2f74fedf0079f90d17344</Anchor>
+    <Abstract>Sets global time to 0.0.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>syncGlobalTime</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a04e8d12836fa597a8283d09a51ee739d</Anchor>
+    <Abstract>Sets global time variable to ChemSimpleGillespieImpl&amp;#39;s global time.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a0a4146dfe469c85258874f43a2de02a9</Anchor>
+    <Abstract>Add Reaction *r to the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>ad86d7286f61d76db1de522ce333ce7de</Anchor>
+    <Abstract>Remove Reaction *r from the network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>computeTotalA</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a5525abb558c6be3088dd5f96b556524e</Anchor>
+    <Abstract>Compute the total propensity of the reaction network, by adding all individual reaction propensities...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>generateTau</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a313590d4f0bd91c037bb5132cc730e1d</Anchor>
+    <Abstract>A pure function (without sideeffects), which returns a random time tau, drawn from the exponential di...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>generateUniform</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>ae33de3a1e6dade9a41f72e99a9c39526</Anchor>
+    <Abstract>This function generates a random number between 0 and 1.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>initialize</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>aa92a28ce1a0217d7224587fcf63f52af</Anchor>
+    <Abstract>This function needs to be called before calling run(...).</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>run</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a92ac6288318e6bc6882759aac941fa4e</Anchor>
+    <Abstract>This method runs the Gillespie algorithm for the given number of steps.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a5ac466ce1f5d1985aa2d7dfd0dcc5162</Anchor>
+    <Abstract>Prints all Reaction objects in the reaction network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStep</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a0d169431a6df48703a8f72ae93a4d88c</Anchor>
+    <Abstract>This subroutine implements the vanilla version of the Gillespie algorithm.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_reactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a6f3b0b7d65837885530ebeb65b346097</Anchor>
+    <Abstract>The database of Reaction objects, representing the reaction network.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_eng</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a74ecbda3438e55b564383cbe3cd3793d</Anchor>
+    <Abstract>Random number generator.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_exp_distr</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a5c290ffab069bc053671d4602230b788</Anchor>
+    <Abstract>Adaptor for the exponential distribution.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_uniform_distr</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a6da1caae0bbac7a857f15e24099a4dd2</Anchor>
+    <Abstract>Adaptor for the uniform distribution.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_t</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ChemSimpleGillespieImpl</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ChemSimpleGillespieImpl.html</Path>
+    <Anchor>a8c6dc963891c0589cfda52d8cda003cb</Anchor>
+    <Abstract>global time</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::Compartment</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <DeclaredIn>Compartment.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Compartment</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a08f24223f361ee29f6a4010fe3c97384</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~Compartment</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>abb05875f7da146979bc7c88c2d78889a</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSpeciesContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a5b31a84f6a592c44ce8235eca96896af</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a260d8b2dc70c2834f5702db4743d18ff</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getFullName</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a33a683e6aae89013fce7bde417f49ee1</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a8c53c911ee4474486eb479d869b83a23</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>add01255fb00b50c58bd65edc66c25d7a</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpeciesUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>aefde33094f64edae2bfbdf24773ad7ac</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReactionUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a52988f38e8dc1f779edfda63b68e4c6f</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a5e7c0a9a225feb95e90e42b86c5edbee</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>ab5bddc0371fbf6e32a72dbd713bc23ef</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>species</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>ac920ab8c845f2ebfe3dd2a1056362082</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>species</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>aaf9717efd9dd97cbb58800e9ea1214da</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>reactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a620e5cf61a5267948ff9f6990166ef3b</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>reactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>aa805b60716b0113d33f1d76afa2223f4</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addNeighbour</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a110caa7a8a121debaad41206b10e4fb3</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeNeighbour</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a3400c61cdc13167347e8db246b8cac30</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_cloneSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>adedb1bd95adf4f858566cc09ebb55ccb</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfNeighbours</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>ae24c00c81833d284f211e76c7de3a6e6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>neighbours</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a6b3883c36fe0930cb1aed7955003cff6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>neighbours</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>afb74f648b74eb5fac6b3ad558bd225ae</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>a2c7265280625c13151d52a500bcc3095</Anchor>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addChild</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeChild</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfChildren</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>children</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>children</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>children</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1295,43 +2414,163 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>hasChildren</Name>
+      <Name>removeSpecies</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::Component</Scope>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>aca92f700484a1ad36c2e656e307fe263</Anchor>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>af01cff5af1b0b0ef41fe59f55c7cb67c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>~Component</Name>
+      <Name>removeSpecies</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::Component</Scope>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a9a468e72232a30a69d4432d13ac5ffa9</Anchor>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a79025ede0e18134ea2f367b2c69c7613</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>getFullName</Name>
+      <Name>findSpeciesByName</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::Component</Scope>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>aa98580b14e0246ca9840d5b76f9b4a43</Anchor>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a3d70f73745a46c9ea675a205c83dfc1b</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>countSpecies</Name>
+      <Name>findSpeciesByMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a1d30408fe32ce040757a1d615c0c3c85</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByIndex</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a389f8714f329edf60792eef4b9676c78</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>areAllSpeciesUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a88a5dd2f8bb90309b277a0d3eeec0401</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a60c6a427097f5dbaa3971777a46233e1</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ad135336f8c8fbdd8b16cc6c4501d95b3</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ac9cb0da262972131861cf71a5acf1060</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>a10249651f9ff639ed599fbeb4d692d54</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>a87ce95f8b07cb3943804ff123a8882be</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_neighbours</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a14f1e10204ba273e173cd2fa2b9c0b4b</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_species</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a6b5c9bcab6f5c481a035b7f1502e60ca</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_reactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ab6b7b398562a5f2e79838f8e9a370482</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::Component</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <DeclaredIn>Component.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Component</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ab39d0fd77db206513e03aee1c0aeb459</Anchor>
+    <Anchor>a2c7265280625c13151d52a500bcc3095</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1352,6 +2591,126 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfChildren</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSpeciesContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~Component</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a9a468e72232a30a69d4432d13ac5ffa9</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getFullName</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a1d5884d373fb44fd950d5fe2b0c34e26</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a581a3912035ba493a2a24f1516d65ea8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1385,26 +2744,6 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Composite</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a455876eca36c9648f209f4bcf4dbcd61</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>apply_if</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Composite</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a6acf2bf4e2c14d6e9bfe40d15c3318fb</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>~Composite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -1415,13 +2754,33 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>hasChildren</Name>
+      <Name>apply</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>aa73520e07d39cc47662953f54ee1d1a7</Anchor>
+    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1441,7 +2800,67 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a03f3ca2662b3920f369b4538eef08c50</Anchor>
+    <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeChild</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfChildren</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a97512e021c76460f0b982d4ff16a91d5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a0089cc7bf318c99339d098018ede34c7</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1451,7 +2870,7 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a6671b998c10b78401c82e671a0cab713</Anchor>
+    <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1461,7 +2880,7 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>aa75e96e37ccd077f09fde7c307108e2b</Anchor>
+    <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1471,7 +2890,7 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a0e9373e9cc8135413b10610464f4b036</Anchor>
+    <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1515,13 +2934,33 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>countSpecies</Name>
+      <Name>isComposite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ab39d0fd77db206513e03aee1c0aeb459</Anchor>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSpeciesContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1531,7 +2970,7 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a9eb0d5b42b92d36cf7a1b4d4e4107af1</Anchor>
+    <Anchor>a80fea5cefad1820315fbef6f8d7adf17</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1563,6 +3002,16 @@
       <Scope>chem::Reaction</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a229dd7e90ef4464e450b1a18c31c3f05</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Reaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
     <Anchor>a6557de5f31aa20434edc8ff2c780a71e</Anchor>
   </Token>
   <Token>
@@ -1583,7 +3032,7 @@
       <Scope>chem::Reaction</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a54eb494f216da7e4b462885d7715fc39</Anchor>
+    <Anchor>ae82cba47ed07ed6e12039a58bfd1eb49</Anchor>
     <Abstract>Destructor.</Abstract>
   </Token>
   <Token>
@@ -1866,6 +3315,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>activateReactionUnconditional</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>aea9154fdd7008baf9ee41c13fea8ea5b</Anchor>
+    <Abstract>Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>activateReaction</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -1918,6 +3378,136 @@
     <Path>classchem_1_1Reaction.html</Path>
     <Anchor>ab31fe2ac310f8d17b1af649bcb70e050</Anchor>
     <Abstract>Request that the Reaction *r removes this Reaction from its list of dependents which it affects...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfChildren</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSpeciesContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getFullName</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a1d5884d373fb44fd950d5fe2b0c34e26</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a581a3912035ba493a2a24f1516d65ea8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2006,6 +3596,136 @@
     <Path>classchem_1_1Reaction.html</Path>
     <Anchor>adae3b3c285aa2beddbb06bab27f9398f</Anchor>
     <Abstract>Print self into an iostream.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::ReactionPtrContainerIFace</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <DeclaredIn>ReactionContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReactionUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>a6c4821fbe13c809a7bb060d9aa5b8da0</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>a53bb5b4afa63ee95625c3457d2f509e1</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>ad8e17d427ee018ad155eaa9c26547f07</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>a87ce95f8b07cb3943804ff123a8882be</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::ReactionPtrContainerVector</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <DeclaredIn>ReactionContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReactionUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>a9736898708b92828edc0e896ba7b97a5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>af0e23c907abea34cb69c55207528a0cd</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ad135336f8c8fbdd8b16cc6c4501d95b3</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ac9cb0da262972131861cf71a5acf1060</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>a10249651f9ff639ed599fbeb4d692d54</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerIFace.html</Path>
+    <Anchor>a87ce95f8b07cb3943804ff123a8882be</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_reactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>ab6b7b398562a5f2e79838f8e9a370482</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2236,6 +3956,17 @@
     </TokenIdentifier>
     <Path>classchem_1_1RSpecies.html</Path>
     <Anchor>a13c47ccb546b64f83ac09734c286fcd2</Anchor>
+    <Abstract>Sets the upper limit for the copy number of this RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a32806fa7ef59b5043892e1ad328a569e</Anchor>
     <Abstract>Sets the upper limit for the copy number of this RSpecies.</Abstract>
   </Token>
   <Token>
@@ -2624,6 +4355,16 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>clone</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>acf0054a3704627698ba91293e8d0d370</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getRSpecies</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -2687,6 +4428,17 @@
     <Path>classchem_1_1Species.html</Path>
     <Anchor>aa32c8f7fb344c68539a927c6a7f916c7</Anchor>
     <Abstract>Return this Species&amp;#39; name.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
+    <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2777,6 +4529,26 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getParent</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -2817,33 +4589,53 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>hasChildren</Name>
+      <Name>numberOfChildren</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>aca92f700484a1ad36c2e656e307fe263</Anchor>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply</Name>
+      <Name>isComposite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply_if</Name>
+      <Name>isSpeciesContainer</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2897,6 +4689,7 @@
       <Scope>chem::SpeciesBulk</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1SpeciesBulk.html</Path>
+    <Abstract>SpeciesBulk should be used for Species without spatial information (i.e. well-mixed in the container)...</Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -2964,6 +4757,16 @@
     <Path>classchem_1_1SpeciesBulk.html</Path>
     <Anchor>a9ffd987e1f885746fcb6f6d5293692f3</Anchor>
     <Abstract>Move assignment.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>clone</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesBulk</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesBulk.html</Path>
+    <Anchor>a7bfdd13273d7328c2f7d275796e57873</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3055,6 +4858,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>getMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
+    <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>isSignaling</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -3120,6 +4934,26 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getParent</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -3160,33 +4994,53 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>hasChildren</Name>
+      <Name>numberOfChildren</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>aca92f700484a1ad36c2e656e307fe263</Anchor>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply</Name>
+      <Name>isComposite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply_if</Name>
+      <Name>isSpeciesContainer</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3218,6 +5072,7 @@
       <Scope>chem::SpeciesDiffusing</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1SpeciesDiffusing.html</Path>
+    <Abstract>SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig...</Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -3285,6 +5140,16 @@
     <Path>classchem_1_1SpeciesDiffusing.html</Path>
     <Anchor>add1696a25d2174de8078ef509b313890</Anchor>
     <Abstract>Move assignment.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>clone</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesDiffusing</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesDiffusing.html</Path>
+    <Anchor>a69edbe33378230389a2fb99c4ca2b5ce</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3376,6 +5241,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>getMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
+    <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>isSignaling</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -3441,6 +5317,26 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getParent</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -3481,33 +5377,53 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>hasChildren</Name>
+      <Name>numberOfChildren</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>aca92f700484a1ad36c2e656e307fe263</Anchor>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply</Name>
+      <Name>isComposite</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>apply_if</Name>
+      <Name>isSpeciesContainer</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
-    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>countReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3530,6 +5446,336 @@
     <Path>classchem_1_1Species.html</Path>
     <Anchor>aff630d716711fbbab3bc7f598230316b</Anchor>
     <Abstract>Return true if two Species are not equal.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesPtrContainerIFace</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <DeclaredIn>SpeciesContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpeciesUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>ad8394de1c1f850f2358084eb15de3368</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>a88175732fde6b66176c48dbb7d4c0efa</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>aa9ca25f23b2bad3d567671df748667db</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByName</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>a6a7bee4d486e113db14873b8c828ea9e</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByIndex</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>aadbbf23c184dafe64dd42c7ce73b1cea</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>a18cf162c6034e5ead5c266f38438fab4</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerIFace.html</Path>
+    <Anchor>a8901fb9dfad9e126d8ef2f0c392e034f</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesPtrContainerVector</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <DeclaredIn>SpeciesContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpeciesUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a98a546e4ef3ed180e832b6fcaacea947</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>ac522344b5dbf301582df778682ef5dae</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>af01cff5af1b0b0ef41fe59f55c7cb67c</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a79025ede0e18134ea2f367b2c69c7613</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByName</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a3d70f73745a46c9ea675a205c83dfc1b</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByMolecule</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a1d30408fe32ce040757a1d615c0c3c85</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesByIndex</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a389f8714f329edf60792eef4b9676c78</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>areAllSpeciesUnique</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a88a5dd2f8bb90309b277a0d3eeec0401</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a60c6a427097f5dbaa3971777a46233e1</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_species</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::SpeciesPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
+    <Anchor>a6b5c9bcab6f5c481a035b7f1502e60ca</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesContainerIFace</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <DeclaredIn>SpeciesContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <Anchor>a93eafabd3136a8c186c87bff5b2517ee</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <Anchor>a83955d24882ee36fd0e4a325d051df5d</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesIndex</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <Anchor>aacc7c70f7f79860d0f1d283c601058b3</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <Anchor>af136aa2abde71aa25a7840fcc6c341a8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerIFace</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerIFace.html</Path>
+    <Anchor>aea9582c0433b9feeb0416091dceda729</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesContainerVector</Name>
+      <APILanguage>c</APILanguage>
+      <Type>tmplt</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <DeclaredIn>SpeciesContainer.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>ad4f06de792ba83017a9ca4a36c41b8dd</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>removeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>a98ef3fd869c0f3a9852e662a6c06af2c</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>ad3419df34760541f08b3713f0a26d95f</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpeciesIndex</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>a65390437baeda05c2034516b0c44a81c</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>findSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>a8af073a30c104af1f870ca65333d7d66</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>a2801d1ccac233588ff0c74dc699a61e8</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_species</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::SpeciesContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesContainerVector.html</Path>
+    <Anchor>a4a6b3a1373b9484e3ed496399a5be38a</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>

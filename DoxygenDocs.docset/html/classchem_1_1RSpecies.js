@@ -18,6 +18,7 @@ var classchem_1_1RSpecies =
     [ "getN", "classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8", null ],
     [ "getSpecies", "classchem_1_1RSpecies.html#a585ae6da09ba09c824aac7a0fcddd748", null ],
     [ "getSpecies", "classchem_1_1RSpecies.html#a74953c2446c0261fc5732a63e3392a15", null ],
+    [ "getUpperLimitForN", "classchem_1_1RSpecies.html#a32806fa7ef59b5043892e1ad328a569e", null ],
     [ "getUpperLimitForN", "classchem_1_1RSpecies.html#ad233880e065382e598a95e75d401d9eb", null ],
     [ "isSignaling", "classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8", null ],
     [ "operator=", "classchem_1_1RSpecies.html#a2779fcf9c5103251aa87e7b466ba7752", null ],

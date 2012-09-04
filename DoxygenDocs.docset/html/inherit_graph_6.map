@@ -1,4 +1,5 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="5,5,104,32"/>
-<area shape="rect" id="node3" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="152,5,280,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="5,31,104,57"/>
+<area shape="rect" id="node3" href="$classchem_1_1RNodeGillespie.html" title="RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith..." alt="" coords="152,5,299,32"/>
+<area shape="rect" id="node5" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="161,56,289,83"/>
 </map>

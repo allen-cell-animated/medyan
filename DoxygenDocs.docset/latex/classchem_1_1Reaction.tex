@@ -12,6 +12,16 @@
 
 
 
+Inheritance diagram for chem\-:\-:Reaction\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{classchem_1_1Reaction__inherit__graph}
+\end{center}
+\end{figure}
+
+
 Collaboration diagram for chem\-:\-:Reaction\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
@@ -24,11 +34,13 @@ Collaboration diagram for chem\-:\-:Reaction\-:\nopagebreak
 \item 
 \hyperlink{classchem_1_1Reaction_a357e31612d0c232d22bb3673fffb75c2}{Reaction} (std\-::initializer\-\_\-list$<$ \hyperlink{classchem_1_1Species}{Species} $\ast$ $>$ species, unsigned char M, unsigned char N, float rate)
 \begin{DoxyCompactList}\small\item\em The main constructor\-: \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1Reaction_a229dd7e90ef4464e450b1a18c31c3f05}{Reaction} (std\-::vector$<$ \hyperlink{classchem_1_1Species}{Species} $\ast$ $>$ species, unsigned char M, unsigned char N, float rate)
+\item 
 \hyperlink{classchem_1_1Reaction_a6557de5f31aa20434edc8ff2c780a71e}{Reaction} (const \hyperlink{classchem_1_1Reaction}{Reaction} \&r)
 \item 
 \hyperlink{classchem_1_1Reaction}{Reaction} \& \hyperlink{classchem_1_1Reaction_ae0c7b46c61af874a03ce6d826884711b}{operator=} (\hyperlink{classchem_1_1Reaction}{Reaction} \&r)
 \item 
-\hyperlink{classchem_1_1Reaction_a54eb494f216da7e4b462885d7715fc39}{$\sim$\-Reaction} ()
+\hyperlink{classchem_1_1Reaction_ae82cba47ed07ed6e12039a58bfd1eb49}{$\sim$\-Reaction} () noexcept
 \begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Reaction_aad9d07693c386d626a9cd1eaf64ad507}{set\-Rate} (float rate)
 \begin{DoxyCompactList}\small\item\em Sets the reaction rate to the parameter \char`\"{}rate\char`\"{}. \end{DoxyCompactList}\item 
@@ -82,6 +94,8 @@ float \hyperlink{classchem_1_1Reaction_a676eec8b5b28c191c555a944a2c03857}{comput
 \begin{DoxyCompactList}\small\item\em Compute the \hyperlink{classchem_1_1Reaction}{Reaction} propensity that is needed by a Gillespie like algorithm\-: rate$\ast$reactant\-\_\-1.\hyperlink{classchem_1_1Reaction_a35c63f46973b5cda157661ab9bffb682}{get\-N()}$\ast$reactant\-\_\-2.\hyperlink{classchem_1_1Reaction_a35c63f46973b5cda157661ab9bffb682}{get\-N()}... \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{passivate\-Reaction} ()
 \begin{DoxyCompactList}\small\item\em Usually is applied to \hyperlink{classchem_1_1Reaction}{Reaction} objects with propensity of 0 (e.\-g. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1Reaction_aea9154fdd7008baf9ee41c13fea8ea5b}{activate\-Reaction\-Unconditional} ()
+\begin{DoxyCompactList}\small\item\em Requests that \hyperlink{classchem_1_1Reaction}{Reaction} objects that may affect this \hyperlink{classchem_1_1Reaction}{Reaction} to start tracking it, which can be used to follow \hyperlink{classchem_1_1Reaction}{Reaction} objects whose propensities change upong firing of some \hyperlink{classchem_1_1Reaction}{Reaction}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{activate\-Reaction} ()
 \begin{DoxyCompactList}\small\item\em Requests that \hyperlink{classchem_1_1Reaction}{Reaction} objects that may affect this \hyperlink{classchem_1_1Reaction}{Reaction} to start tracking it, which can be used to follow \hyperlink{classchem_1_1Reaction}{Reaction} objects whose propensities change upong firing of some \hyperlink{classchem_1_1Reaction}{Reaction}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Reaction_af46fe664df202767dfac016253942799}{print\-Dependents} ()
@@ -91,7 +105,33 @@ std\-::vector$<$ \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$ $>$ \hyperli
 void \hyperlink{classchem_1_1Reaction_a9971edbe11bb8c6b3148cbee3a449872}{register\-New\-Dependent} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Request that the \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r adds this \hyperlink{classchem_1_1Reaction}{Reaction} to its list of dependents which it affects. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Reaction_ab31fe2ac310f8d17b1af649bcb70e050}{unregister\-Dependent} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
-\begin{DoxyCompactList}\small\item\em Request that the \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r removes this \hyperlink{classchem_1_1Reaction}{Reaction} from its list of dependents which it affects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Request that the \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r removes this \hyperlink{classchem_1_1Reaction}{Reaction} from its list of dependents which it affects. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{apply} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v)
+\item 
+virtual bool \hyperlink{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{apply\-\_\-if} (\hyperlink{classchem_1_1ConditionalVisitor}{Conditional\-Visitor} \&v)
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{get\-Parent} ()
+\item 
+void \hyperlink{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{set\-Parent} (\hyperlink{classchem_1_1Composite}{Composite} $\ast$other)
+\item 
+bool \hyperlink{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{is\-Root} () const 
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{get\-Root} ()
+\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}{number\-Of\-Children} () const 
+\item 
+virtual bool \hyperlink{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{is\-Composite} () const 
+\item 
+virtual bool \hyperlink{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{is\-Species\-Container} () const 
+\item 
+virtual bool \hyperlink{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{is\-Reactions\-Container} () const 
+\item 
+virtual std\-::string \hyperlink{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}{get\-Full\-Name} () const 
+\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}{count\-Species} () const 
+\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{count\-Reactions} () const 
+\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -161,6 +201,24 @@ Definition at line 17 of file Reaction.\-cpp.
 
 References \-\_\-dependents, \-\_\-rspecies, chem\-::\-R\-Species\-::add\-As\-Product(), chem\-::\-R\-Species\-::add\-As\-Reactant(), begin\-Products(), begin\-Reactants(), end\-Products(), end\-Reactants(), and get\-Affected\-Reactions().
 
+\hypertarget{classchem_1_1Reaction_a229dd7e90ef4464e450b1a18c31c3f05}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!Reaction@{Reaction}}
+\index{Reaction@{Reaction}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Reaction\-::\-Reaction} (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ {\bf Species} $\ast$ $>$}]{species, }
+\item[{unsigned char}]{M, }
+\item[{unsigned char}]{N, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1Reaction_a229dd7e90ef4464e450b1a18c31c3f05}
+
+
+Definition at line 36 of file Reaction.\-cpp.
+
+
+
+References \-\_\-dependents, \-\_\-rspecies, chem\-::\-R\-Species\-::add\-As\-Product(), chem\-::\-R\-Species\-::add\-As\-Reactant(), begin\-Products(), begin\-Reactants(), end\-Products(), end\-Reactants(), and get\-Affected\-Reactions().
+
 \hypertarget{classchem_1_1Reaction_a6557de5f31aa20434edc8ff2c780a71e}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!Reaction@{Reaction}}
 \index{Reaction@{Reaction}!chem::Reaction@{chem\-::\-Reaction}}
 \subsubsection[{Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Reaction\-::\-Reaction} (
@@ -168,20 +226,20 @@ References \-\_\-dependents, \-\_\-rspecies, chem\-::\-R\-Species\-::add\-As\-Pr
 \item[{const {\bf Reaction} \&}]{r}
 \end{DoxyParamCaption}
 )}}\label{classchem_1_1Reaction_a6557de5f31aa20434edc8ff2c780a71e}
-\hypertarget{classchem_1_1Reaction_a54eb494f216da7e4b462885d7715fc39}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!$\sim$\-Reaction@{$\sim$\-Reaction}}
+\hypertarget{classchem_1_1Reaction_ae82cba47ed07ed6e12039a58bfd1eb49}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!$\sim$\-Reaction@{$\sim$\-Reaction}}
 \index{$\sim$\-Reaction@{$\sim$\-Reaction}!chem::Reaction@{chem\-::\-Reaction}}
 \subsubsection[{$\sim$\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-Reaction\-::$\sim$\-Reaction} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1Reaction_a54eb494f216da7e4b462885d7715fc39}
+)}}\label{classchem_1_1Reaction_ae82cba47ed07ed6e12039a58bfd1eb49}
 
 
 Destructor. 
 
 
 
-Definition at line 32 of file Reaction.\-cpp.
+Definition at line 55 of file Reaction.\-cpp.
 
 
 
@@ -196,18 +254,79 @@ References \-\_\-signal, begin\-Products(), begin\-Reactants(), end\-Products(),
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}
 
 
 Requests that \hyperlink{classchem_1_1Reaction}{Reaction} objects that may affect this \hyperlink{classchem_1_1Reaction}{Reaction} to start tracking it, which can be used to follow \hyperlink{classchem_1_1Reaction}{Reaction} objects whose propensities change upong firing of some \hyperlink{classchem_1_1Reaction}{Reaction}. 
 
+This request will be ignored if the \hyperlink{classchem_1_1Reaction}{Reaction}'s propensity is still zero. 
+
+Definition at line 223 of file Reaction.\-h.
 
 
-Definition at line 63 of file Reaction.\-cpp.
+
+References activate\-Reaction\-Unconditional(), get\-Product\-Of\-Products(), and get\-Product\-Of\-Reactants().
+
+\hypertarget{classchem_1_1Reaction_aea9154fdd7008baf9ee41c13fea8ea5b}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!activate\-Reaction\-Unconditional@{activate\-Reaction\-Unconditional}}
+\index{activate\-Reaction\-Unconditional@{activate\-Reaction\-Unconditional}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{activate\-Reaction\-Unconditional}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Reaction\-::activate\-Reaction\-Unconditional} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1Reaction_aea9154fdd7008baf9ee41c13fea8ea5b}
+
+
+Requests that \hyperlink{classchem_1_1Reaction}{Reaction} objects that may affect this \hyperlink{classchem_1_1Reaction}{Reaction} to start tracking it, which can be used to follow \hyperlink{classchem_1_1Reaction}{Reaction} objects whose propensities change upong firing of some \hyperlink{classchem_1_1Reaction}{Reaction}. 
+
+This request is acted upond unconditionally. 
+
+Definition at line 86 of file Reaction.\-cpp.
 
 
 
-References \-\_\-passivated, \-\_\-rnode, chem\-::\-R\-Node\-::activate\-Reaction(), begin\-Reactants(), end\-Reactants(), get\-Product\-Of\-Products(), and get\-Product\-Of\-Reactants().
+References \-\_\-passivated, \-\_\-rnode, chem\-::\-R\-Node\-::activate\-Reaction(), begin\-Reactants(), and end\-Reactants().
+
+
+
+Referenced by activate\-Reaction().
+
+\hypertarget{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!apply@{apply}}
+\index{apply@{apply}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply} (
+\begin{DoxyParamCaption}
+\item[{{\bf Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}{chem\-::\-Composite}.
+
+
+
+Definition at line 24 of file Component.\-cpp.
+
+
+
+References chem\-::\-Visitor\-::visit().
+
+\hypertarget{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!apply\-\_\-if@{apply\-\_\-if}}
+\index{apply\-\_\-if@{apply\-\_\-if}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Conditional\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_ac0ef45069901807e72d478ec59736ee4}{chem\-::\-Composite}.
+
+
+
+Definition at line 28 of file Component.\-cpp.
+
+
+
+References chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
 
 \hypertarget{classchem_1_1Reaction_abd8e1fd6c8f8d247896fc15ebdd02dbc}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!begin\-Products@{begin\-Products}}
 \index{begin\-Products@{begin\-Products}!chem::Reaction@{chem\-::\-Reaction}}
@@ -218,7 +337,7 @@ References \-\_\-passivated, \-\_\-rnode, chem\-::\-R\-Node\-::activate\-Reactio
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_abd8e1fd6c8f8d247896fc15ebdd02dbc}
 
 
-Definition at line 168 of file Reaction.\-h.
+Definition at line 169 of file Reaction.\-h.
 
 
 
@@ -226,7 +345,7 @@ References \-\_\-m, and \-\_\-rspecies.
 
 
 
-Referenced by make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), Reaction(), and $\sim$\-Reaction().
+Referenced by chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), make\-Step(), chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), Reaction(), and $\sim$\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_a7637b6f060d8d1ca859d89966ccfd39e}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!begin\-Reactants@{begin\-Reactants}}
 \index{begin\-Reactants@{begin\-Reactants}!chem::Reaction@{chem\-::\-Reaction}}
@@ -237,7 +356,7 @@ Referenced by make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), React
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a7637b6f060d8d1ca859d89966ccfd39e}
 
 
-Definition at line 156 of file Reaction.\-h.
+Definition at line 157 of file Reaction.\-h.
 
 
 
@@ -245,7 +364,7 @@ References \-\_\-rspecies.
 
 
 
-Referenced by activate\-Reaction(), make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), passivate\-Reaction(), Reaction(), and $\sim$\-Reaction().
+Referenced by activate\-Reaction\-Unconditional(), chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), make\-Step(), chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), passivate\-Reaction(), Reaction(), and $\sim$\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_a369a58328dc07d471ab884924872ba4d}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!cbegin\-Products@{cbegin\-Products}}
 \index{cbegin\-Products@{cbegin\-Products}!chem::Reaction@{chem\-::\-Reaction}}
@@ -256,7 +375,7 @@ Referenced by activate\-Reaction(), make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a369a58328dc07d471ab884924872ba4d}
 
 
-Definition at line 172 of file Reaction.\-h.
+Definition at line 173 of file Reaction.\-h.
 
 
 
@@ -275,7 +394,7 @@ Referenced by get\-Product\-Of\-Products(), and chem\-::operator$<$$<$().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a84a70eef65b79375f92a0b702883da54}
 
 
-Definition at line 159 of file Reaction.\-h.
+Definition at line 160 of file Reaction.\-h.
 
 
 
@@ -294,7 +413,7 @@ Referenced by compute\-Propensity(), get\-Product\-Of\-Reactants(), and chem\-::
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a666cd5d81c28e29af77cabcbd3846540}
 
 
-Definition at line 178 of file Reaction.\-h.
+Definition at line 179 of file Reaction.\-h.
 
 
 
@@ -313,7 +432,7 @@ Referenced by get\-Product\-Of\-Products(), and chem\-::operator$<$$<$().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a0df8820ef13d8ba3014b610b1aeeed9e}
 
 
-Definition at line 165 of file Reaction.\-h.
+Definition at line 166 of file Reaction.\-h.
 
 
 
@@ -336,15 +455,15 @@ Compute the \hyperlink{classchem_1_1Reaction}{Reaction} propensity that is neede
 
 
 
-Definition at line 193 of file Reaction.\-h.
+Definition at line 194 of file Reaction.\-h.
 
 
 
-References \-\_\-rate, cbegin\-Reactants(), cend\-Reactants(), and chem\-::\-R\-Species\-::get\-N().
+References \-\_\-rate, cbegin\-Reactants(), cend\-Reactants(), chem\-::\-R\-Species\-::get\-N(), and get\-Product\-Of\-Products().
 
 
 
-Referenced by chem\-::operator$<$$<$(), chem\-::\-R\-Node\-N\-R\-M\-::re\-Compute\-Propensity(), and chem\-::\-R\-Node\-N\-R\-M\-::\-R\-Node\-N\-R\-M().
+Referenced by chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), chem\-::operator$<$$<$(), chem\-::\-R\-Node\-Gillespie\-::re\-Compute\-Propensity(), chem\-::\-R\-Node\-N\-R\-M\-::re\-Compute\-Propensity(), chem\-::\-R\-Node\-Gillespie\-::reset(), and chem\-::\-R\-Node\-N\-R\-M\-::\-R\-Node\-N\-R\-M().
 
 \hypertarget{classchem_1_1Reaction_af427c88bd882105d317f99d5a9f4a34d}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!connect@{connect}}
 \index{connect@{connect}!chem::Reaction@{chem\-::\-Reaction}}
@@ -370,11 +489,45 @@ a connection object which can be used to later disconnect this particular slot o
 \end{DoxyReturn}
 
 
-Definition at line 114 of file Reaction.\-cpp.
+Definition at line 131 of file Reaction.\-cpp.
 
 
 
 References \-\_\-signal, is\-Signaling(), and start\-Signaling().
+
+\hypertarget{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!count\-Reactions@{count\-Reactions}}
+\index{count\-Reactions@{count\-Reactions}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{count\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::count\-Reactions} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_a1cba92a649f230eab8e0cecb39632640}{chem\-::\-Composite}.
+
+
+
+Definition at line 37 of file Component.\-h.
+
+\hypertarget{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!count\-Species@{count\-Species}}
+\index{count\-Species@{count\-Species}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{count\-Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::count\-Species} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}
+
+
+Reimplemented in \hyperlink{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}{chem\-::\-Species}, and \hyperlink{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}{chem\-::\-Composite}.
+
+
+
+Definition at line 36 of file Component.\-h.
+
+
+
+Referenced by chem\-::\-Concrete\-Visitor\-::visit(), and chem\-::\-Composite\-Visitor\-::visit().
 
 \hypertarget{classchem_1_1Reaction_af001778d48ac0800beba1b7031aeab33}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!dependents@{dependents}}
 \index{dependents@{dependents}!chem::Reaction@{chem\-::\-Reaction}}
@@ -392,7 +545,7 @@ One can obtain two different lists of affected reactions\-: 1) via \hyperlink{cl
 \end{DoxyNote}
 
 
-Definition at line 153 of file Reaction.\-h.
+Definition at line 154 of file Reaction.\-h.
 
 
 
@@ -400,7 +553,7 @@ References \-\_\-dependents.
 
 
 
-Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), and chem\-::\-R\-Node\-N\-R\-M\-::print\-Dependents().
+Referenced by chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), chem\-::\-R\-Node\-Gillespie\-::print\-Dependents(), and chem\-::\-R\-Node\-N\-R\-M\-::print\-Dependents().
 
 \hypertarget{classchem_1_1Reaction_ab76db5606306efa0772f7833a5f2ce68}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!emit\-Signal@{emit\-Signal}}
 \index{emit\-Signal@{emit\-Signal}!chem::Reaction@{chem\-::\-Reaction}}
@@ -415,7 +568,7 @@ Broadcasts signal indicating that the \hyperlink{classchem_1_1Reaction}{Reaction
 
 Gillespie-\/like algorithm) 
 
-Definition at line 143 of file Reaction.\-h.
+Definition at line 144 of file Reaction.\-h.
 
 
 
@@ -423,7 +576,7 @@ References is\-Signaling().
 
 
 
-Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
+Referenced by chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), and chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
 
 \hypertarget{classchem_1_1Reaction_a3d432b1719243cf0bb3259071c488afd}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!end\-Products@{end\-Products}}
 \index{end\-Products@{end\-Products}!chem::Reaction@{chem\-::\-Reaction}}
@@ -434,7 +587,7 @@ Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a3d432b1719243cf0bb3259071c488afd}
 
 
-Definition at line 175 of file Reaction.\-h.
+Definition at line 176 of file Reaction.\-h.
 
 
 
@@ -442,7 +595,7 @@ References \-\_\-rspecies.
 
 
 
-Referenced by make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), Reaction(), and $\sim$\-Reaction().
+Referenced by chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), make\-Step(), chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), Reaction(), and $\sim$\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_a14336488f8477a51295ae8a6e68aacda}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!end\-Reactants@{end\-Reactants}}
 \index{end\-Reactants@{end\-Reactants}!chem::Reaction@{chem\-::\-Reaction}}
@@ -453,7 +606,7 @@ Referenced by make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), React
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Reaction_a14336488f8477a51295ae8a6e68aacda}
 
 
-Definition at line 162 of file Reaction.\-h.
+Definition at line 163 of file Reaction.\-h.
 
 
 
@@ -461,7 +614,7 @@ References \-\_\-m, and \-\_\-rspecies.
 
 
 
-Referenced by activate\-Reaction(), make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), passivate\-Reaction(), Reaction(), and $\sim$\-Reaction().
+Referenced by activate\-Reaction\-Unconditional(), chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), make\-Step(), chem\-::\-Chem\-Gillespie\-Impl\-::make\-Step(), chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step(), passivate\-Reaction(), Reaction(), and $\sim$\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_aff0f07aebff09a5f15f2bd6d17686016}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Affected\-Reactions@{get\-Affected\-Reactions}}
 \index{get\-Affected\-Reactions@{get\-Affected\-Reactions}!chem::Reaction@{chem\-::\-Reaction}}
@@ -485,7 +638,7 @@ This method is \char`\"{}expensive\char`\"{} because it computes from scratch th
 \end{DoxySeeAlso}
 
 
-Definition at line 40 of file Reaction.\-cpp.
+Definition at line 63 of file Reaction.\-cpp.
 
 
 
@@ -494,6 +647,25 @@ References \-\_\-rspecies.
 
 
 Referenced by Reaction().
+
+\hypertarget{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Full\-Name@{get\-Full\-Name}}
+\index{get\-Full\-Name@{get\-Full\-Name}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{get\-Full\-Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual std\-::string {\bf chem\-::\-Component\-::get\-Full\-Name} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}
+
+
+Reimplemented in \hyperlink{classchem_1_1SpeciesDiffusing_a03eba31a17a3713e8c45cc0952e922bb}{chem\-::\-Species\-Diffusing}, \hyperlink{classchem_1_1SpeciesBulk_a340d3f16e075352bf1cbab7918f5ca20}{chem\-::\-Species\-Bulk}, \hyperlink{classchem_1_1Species_a7ac7196a7146f63e297d0995c6081f4b}{chem\-::\-Species}, \hyperlink{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{chem\-::\-Composite}, and \hyperlink{classchem_1_1Compartment_a33a683e6aae89013fce7bde417f49ee1}{chem\-::\-Compartment}.
+
+
+
+Definition at line 35 of file Component.\-h.
+
+
+
+Referenced by chem\-::\-Concrete\-Visitor\-::visit(), chem\-::\-Composite\-Visitor\-::visit(), and chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
 
 \hypertarget{classchem_1_1Reaction_a5f420aec9fb36444175089ab16ddb141}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-M@{get\-M}}
 \index{get\-M@{get\-M}!chem::Reaction@{chem\-::\-Reaction}}
@@ -508,7 +680,7 @@ Returns the number of reactant \hyperlink{classchem_1_1RSpecies}{R\-Species}.
 
 
 
-Definition at line 92 of file Reaction.\-h.
+Definition at line 93 of file Reaction.\-h.
 
 
 
@@ -531,7 +703,7 @@ Returns the number of product \hyperlink{classchem_1_1RSpecies}{R\-Species}.
 
 
 
-Definition at line 95 of file Reaction.\-h.
+Definition at line 96 of file Reaction.\-h.
 
 
 
@@ -540,6 +712,25 @@ References \-\_\-m, and \-\_\-rspecies.
 
 
 Referenced by chem\-::operator$<$$<$().
+
+\hypertarget{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Parent@{get\-Parent}}
+\index{get\-Parent@{get\-Parent}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{get\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Component\-::get\-Parent} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}
+
+
+Definition at line 25 of file Component.\-h.
+
+
+
+References chem\-::\-Component\-::\-\_\-parent.
+
+
+
+Referenced by chem\-::\-Component\-::get\-Root().
 
 \hypertarget{classchem_1_1Reaction_aa2dcaea0bc0893a3c00cb3cbcd0a2d6c}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Product\-Of\-Products@{get\-Product\-Of\-Products}}
 \index{get\-Product\-Of\-Products@{get\-Product\-Of\-Products}!chem::Reaction@{chem\-::\-Reaction}}
@@ -554,7 +745,7 @@ Computes the product of the copy number of all product \hyperlink{classchem_1_1R
 
 Can be used to quickly determine whether this \hyperlink{classchem_1_1Reaction}{Reaction} should be allowed to activate -\/ if one of the products has a copy number equal to the maximum allowed, then zero is returned, indicating that this \hyperlink{classchem_1_1Reaction}{Reaction} should not be (yet) activated. 
 
-Definition at line 112 of file Reaction.\-h.
+Definition at line 113 of file Reaction.\-h.
 
 
 
@@ -562,7 +753,7 @@ References cbegin\-Products(), and cend\-Products().
 
 
 
-Referenced by activate\-Reaction().
+Referenced by activate\-Reaction(), and compute\-Propensity().
 
 \hypertarget{classchem_1_1Reaction_adffedea2cba0124feda82ef9e3cee5e7}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Product\-Of\-Reactants@{get\-Product\-Of\-Reactants}}
 \index{get\-Product\-Of\-Reactants@{get\-Product\-Of\-Reactants}!chem::Reaction@{chem\-::\-Reaction}}
@@ -577,7 +768,7 @@ Computes the product of the copy number of all reactant \hyperlink{classchem_1_1
 
 Can be used to quickly determine whether this \hyperlink{classchem_1_1Reaction}{Reaction} should be allowed to activate -\/ if one of the reactants has a copy number equal to zero, then zero is returned, indicating that this \hyperlink{classchem_1_1Reaction}{Reaction} should not be (yet) activated. 
 
-Definition at line 101 of file Reaction.\-h.
+Definition at line 102 of file Reaction.\-h.
 
 
 
@@ -600,7 +791,7 @@ Returns the rate associated with this \hyperlink{classchem_1_1Reaction}{Reaction
 
 
 
-Definition at line 86 of file Reaction.\-h.
+Definition at line 87 of file Reaction.\-h.
 
 
 
@@ -623,11 +814,41 @@ Returns a pointer to the \hyperlink{classchem_1_1RNode}{R\-Node} associated with
 
 
 
-Definition at line 89 of file Reaction.\-h.
+Definition at line 90 of file Reaction.\-h.
 
 
 
 References \-\_\-rnode.
+
+\hypertarget{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!get\-Root@{get\-Root}}
+\index{get\-Root@{get\-Root}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{get\-Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ {\bf chem\-::\-Component\-::get\-Root} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inherited\mbox{]}}}}\label{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}
+
+
+Definition at line 17 of file Component.\-cpp.
+
+
+
+References chem\-::\-Component\-::get\-Parent(), chem\-::\-Component\-::get\-Root(), and chem\-::\-Component\-::is\-Root().
+
+
+
+Referenced by chem\-::\-Component\-::get\-Root().
+
+\hypertarget{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Composite@{is\-Composite}}
+\index{is\-Composite@{is\-Composite}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{is\-Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Composite} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}
+
+
+Definition at line 31 of file Component.\-h.
 
 \hypertarget{classchem_1_1Reaction_a6c03b9b74a8da07b51a6924bfe2f9571}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Passivated@{is\-Passivated}}
 \index{is\-Passivated@{is\-Passivated}!chem::Reaction@{chem\-::\-Reaction}}
@@ -642,7 +863,7 @@ Return true if the \hyperlink{classchem_1_1Reaction}{Reaction} is currently pass
 
 
 
-Definition at line 122 of file Reaction.\-h.
+Definition at line 123 of file Reaction.\-h.
 
 
 
@@ -650,7 +871,45 @@ References \-\_\-passivated.
 
 
 
-Referenced by chem\-::\-R\-Node\-N\-R\-M\-::is\-Passivated().
+Referenced by chem\-::\-R\-Node\-Gillespie\-::is\-Passivated(), chem\-::\-R\-Node\-N\-R\-M\-::is\-Passivated(), and passivate\-Reaction().
+
+\hypertarget{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Reactions\-Container@{is\-Reactions\-Container}}
+\index{is\-Reactions\-Container@{is\-Reactions\-Container}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{is\-Reactions\-Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Reactions\-Container} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}
+
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_a260d8b2dc70c2834f5702db4743d18ff}{chem\-::\-Compartment}.
+
+
+
+Definition at line 33 of file Component.\-h.
+
+
+
+Referenced by chem\-::\-Composite\-::count\-Reactions().
+
+\hypertarget{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Root@{is\-Root}}
+\index{is\-Root@{is\-Root}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{is\-Root}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::is\-Root} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}
+
+
+Definition at line 27 of file Component.\-h.
+
+
+
+References chem\-::\-Component\-::\-\_\-parent.
+
+
+
+Referenced by chem\-::\-Component\-::get\-Root().
 
 \hypertarget{classchem_1_1Reaction_a316db368606eb9aaf47dfbde6d48f606}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Signaling@{is\-Signaling}}
 \index{is\-Signaling@{is\-Signaling}!chem::Reaction@{chem\-::\-Reaction}}
@@ -665,7 +924,7 @@ Return true if this \hyperlink{classchem_1_1RSpecies}{R\-Species} emits signals 
 
 
 
-Definition at line 125 of file Reaction.\-h.
+Definition at line 126 of file Reaction.\-h.
 
 
 
@@ -674,6 +933,25 @@ References \-\_\-signal.
 
 
 Referenced by connect(), and emit\-Signal().
+
+\hypertarget{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!is\-Species\-Container@{is\-Species\-Container}}
+\index{is\-Species\-Container@{is\-Species\-Container}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{is\-Species\-Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Species\-Container} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}
+
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_a5b31a84f6a592c44ce8235eca96896af}{chem\-::\-Compartment}.
+
+
+
+Definition at line 32 of file Component.\-h.
+
+
+
+Referenced by chem\-::\-Composite\-::count\-Species().
 
 \hypertarget{classchem_1_1Reaction_a1341d466157788c3d547da52c6c59502}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!make\-Step@{make\-Step}}
 \index{make\-Step@{make\-Step}!chem::Reaction@{chem\-::\-Reaction}}
@@ -691,7 +969,7 @@ This method does not send a reaction event Signal. The latter is usually done fr
 \end{DoxyNote}
 
 
-Definition at line 184 of file Reaction.\-h.
+Definition at line 185 of file Reaction.\-h.
 
 
 
@@ -699,7 +977,22 @@ References begin\-Products(), begin\-Reactants(), end\-Products(), and end\-Reac
 
 
 
-Referenced by chem\-::\-R\-Node\-N\-R\-M\-::make\-Step().
+Referenced by chem\-::\-R\-Node\-Gillespie\-::make\-Step(), chem\-::\-Chem\-Simple\-Gillespie\-Impl\-::make\-Step(), and chem\-::\-R\-Node\-N\-R\-M\-::make\-Step().
+
+\hypertarget{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!number\-Of\-Children@{number\-Of\-Children}}
+\index{number\-Of\-Children@{number\-Of\-Children}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{number\-Of\-Children}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::number\-Of\-Children} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}
+
+
+Reimplemented in \hyperlink{classchem_1_1Composite_a89545dad587539c07acff13398e8ee7a}{chem\-::\-Composite}.
+
+
+
+Definition at line 30 of file Component.\-h.
 
 \hypertarget{classchem_1_1Reaction_ae0c7b46c61af874a03ce6d826884711b}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::Reaction@{chem\-::\-Reaction}}
@@ -721,11 +1014,11 @@ Usually is applied to \hyperlink{classchem_1_1Reaction}{Reaction} objects with p
 
 when one of the copy numbers of reactants has dropped to 0. This method call notifies all other \hyperlink{classchem_1_1Reaction}{Reaction} objects that may affect this \hyperlink{classchem_1_1Reaction}{Reaction} to stop tracking this \hyperlink{classchem_1_1Reaction}{Reaction}. Eventually, \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{activate\-Reaction()} may be called to restart tracking, if the propensity stops being 0. 
 
-Definition at line 88 of file Reaction.\-cpp.
+Definition at line 103 of file Reaction.\-cpp.
 
 
 
-References \-\_\-passivated, \-\_\-rnode, begin\-Reactants(), end\-Reactants(), and chem\-::\-R\-Node\-::passivate\-Reaction().
+References \-\_\-passivated, \-\_\-rnode, begin\-Reactants(), end\-Reactants(), is\-Passivated(), and chem\-::\-R\-Node\-::passivate\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_af46fe664df202767dfac016253942799}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!print\-Dependents@{print\-Dependents}}
 \index{print\-Dependents@{print\-Dependents}!chem::Reaction@{chem\-::\-Reaction}}
@@ -740,7 +1033,7 @@ Print the Reactions that are affacted by this \hyperlink{classchem_1_1Reaction}{
 
 
 
-Definition at line 140 of file Reaction.\-cpp.
+Definition at line 157 of file Reaction.\-cpp.
 
 
 
@@ -759,11 +1052,30 @@ Request that the \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r adds this \
 
 
 
-Definition at line 51 of file Reaction.\-cpp.
+Definition at line 74 of file Reaction.\-cpp.
 
 
 
 References \-\_\-dependents.
+
+\hypertarget{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!set\-Parent@{set\-Parent}}
+\index{set\-Parent@{set\-Parent}!chem::Reaction@{chem\-::\-Reaction}}
+\subsubsection[{set\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Component\-::set\-Parent} (
+\begin{DoxyParamCaption}
+\item[{{\bf Composite} $\ast$}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}
+
+
+Definition at line 26 of file Component.\-h.
+
+
+
+References chem\-::\-Component\-::\-\_\-parent.
+
+
+
+Referenced by chem\-::\-Compartment\-::add\-Reaction(), chem\-::\-Compartment\-::add\-Reaction\-Unique(), chem\-::\-Compartment\-::add\-Species(), and chem\-::\-Compartment\-::add\-Species\-Unique().
 
 \hypertarget{classchem_1_1Reaction_aad9d07693c386d626a9cd1eaf64ad507}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!set\-Rate@{set\-Rate}}
 \index{set\-Rate@{set\-Rate}!chem::Reaction@{chem\-::\-Reaction}}
@@ -778,7 +1090,7 @@ Sets the reaction rate to the parameter \char`\"{}rate\char`\"{}.
 
 
 
-Definition at line 79 of file Reaction.\-h.
+Definition at line 80 of file Reaction.\-h.
 
 
 
@@ -797,7 +1109,7 @@ Sets the \hyperlink{classchem_1_1RNode}{R\-Node} pointer associated with this \h
 
 Usually is called only by the Gillespie-\/like algorithms. 
 
-Definition at line 83 of file Reaction.\-h.
+Definition at line 84 of file Reaction.\-h.
 
 
 
@@ -805,7 +1117,7 @@ References \-\_\-rnode.
 
 
 
-Referenced by chem\-::\-R\-Node\-N\-R\-M\-::\-R\-Node\-N\-R\-M(), and chem\-::\-R\-Node\-N\-R\-M\-::$\sim$\-R\-Node\-N\-R\-M().
+Referenced by chem\-::\-R\-Node\-Gillespie\-::\-R\-Node\-Gillespie(), chem\-::\-R\-Node\-N\-R\-M\-::\-R\-Node\-N\-R\-M(), chem\-::\-R\-Node\-Gillespie\-::$\sim$\-R\-Node\-Gillespie(), and chem\-::\-R\-Node\-N\-R\-M\-::$\sim$\-R\-Node\-N\-R\-M().
 
 \hypertarget{classchem_1_1Reaction_a584613fe0d634660a1814744c76a4208}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!start\-Signaling@{start\-Signaling}}
 \index{start\-Signaling@{start\-Signaling}!chem::Reaction@{chem\-::\-Reaction}}
@@ -820,7 +1132,7 @@ Set the signaling behavior of this \hyperlink{classchem_1_1Reaction}{Reaction}.
 
 
 
-Definition at line 104 of file Reaction.\-cpp.
+Definition at line 121 of file Reaction.\-cpp.
 
 
 
@@ -846,7 +1158,7 @@ To start signaling again, \hyperlink{classchem_1_1Reaction_a584613fe0d634660a181
 \end{DoxyNote}
 
 
-Definition at line 108 of file Reaction.\-cpp.
+Definition at line 125 of file Reaction.\-cpp.
 
 
 
@@ -865,7 +1177,7 @@ Request that the \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r removes thi
 
 This is usually requested when the reaction propensity drops to zero (i.\-e. via \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{passivate\-Reaction()}). 
 
-Definition at line 56 of file Reaction.\-cpp.
+Definition at line 79 of file Reaction.\-cpp.
 
 
 
@@ -888,7 +1200,7 @@ Print self into an iostream.
 
 
 
-Definition at line 120 of file Reaction.\-cpp.
+Definition at line 137 of file Reaction.\-cpp.
 
 
 
@@ -936,7 +1248,7 @@ Definition at line 57 of file Reaction.\-h.
 
 
 
-Referenced by activate\-Reaction(), is\-Passivated(), and passivate\-Reaction().
+Referenced by activate\-Reaction\-Unconditional(), is\-Passivated(), and passivate\-Reaction().
 
 \hypertarget{classchem_1_1Reaction_a6c5cd99c16816bfcbee48b8c78a0efe5}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!\-\_\-rate@{\-\_\-rate}}
 \index{\-\_\-rate@{\-\_\-rate}!chem::Reaction@{chem\-::\-Reaction}}
@@ -966,7 +1278,7 @@ Definition at line 53 of file Reaction.\-h.
 
 
 
-Referenced by activate\-Reaction(), get\-Rnode(), passivate\-Reaction(), and set\-Rnode().
+Referenced by activate\-Reaction\-Unconditional(), get\-Rnode(), passivate\-Reaction(), and set\-Rnode().
 
 \hypertarget{classchem_1_1Reaction_a5a8f536126edeb82526f9ac31c3e3c6c}{\index{chem\-::\-Reaction@{chem\-::\-Reaction}!\-\_\-rspecies@{\-\_\-rspecies}}
 \index{\-\_\-rspecies@{\-\_\-rspecies}!chem::Reaction@{chem\-::\-Reaction}}

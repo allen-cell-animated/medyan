@@ -1,5 +1,5 @@
 <map id="G" name="G">
-<area shape="rect" id="node6" href="$classchem_1_1SpeciesBulk.html" title="chem::SpeciesBulk" alt="" coords="823,187,951,213"/>
+<area shape="rect" id="node6" href="$classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="823,187,951,213"/>
 <area shape="rect" id="node8" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="692,96,796,123"/>
 <area shape="rect" id="node22" href="$classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="320,187,435,213"/>
 <area shape="rect" id="node10" href="$classchem_1_1Component.html" title="chem::Component" alt="" coords="881,5,1004,32"/>

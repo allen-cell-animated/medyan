@@ -1,5 +1,5 @@
 <map id="G" name="G">
-<area shape="rect" id="node5" href="$classchem_1_1SpeciesBulk.html" title="chem::SpeciesBulk" alt="" coords="5,155,133,181"/>
-<area shape="rect" id="node7" href="$classchem_1_1SpeciesDiffusing.html" title="chem::SpeciesDiffusing" alt="" coords="157,155,309,181"/>
+<area shape="rect" id="node5" href="$classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="5,155,133,181"/>
+<area shape="rect" id="node7" href="$classchem_1_1SpeciesDiffusing.html" title="SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig..." alt="" coords="157,155,309,181"/>
 <area shape="rect" id="node2" href="$classchem_1_1Component.html" title="chem::Component" alt="" coords="89,5,212,32"/>
 </map>

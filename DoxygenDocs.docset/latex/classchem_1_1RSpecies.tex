@@ -65,6 +65,8 @@ void \hyperlink{classchem_1_1RSpecies_a7939d5255e97d125821f657cadb48bc2}{set\-N}
 \begin{DoxyCompactList}\small\item\em Sets the copy number for this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_a13c47ccb546b64f83ac09734c286fcd2}{set\-Upper\-Limit\-For\-N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} ulim)
 \begin{DoxyCompactList}\small\item\em Sets the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1RSpecies_a32806fa7ef59b5043892e1ad328a569e}{get\-Upper\-Limit\-For\-N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} ulim)
+\begin{DoxyCompactList}\small\item\em Sets the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_ae721e3c649a12e0a81bc6b77afe23f38}{up} ()
 \begin{DoxyCompactList}\small\item\em Increases the copy number by 1. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_a0b9db54a1407d689be7477e77b4bb1c6}{down} ()
@@ -188,7 +190,7 @@ It is required that all \hyperlink{classchem_1_1Reaction}{Reactions} associated 
 
 Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program. 
 
-Definition at line 180 of file R\-Species.\-h.
+Definition at line 190 of file R\-Species.\-h.
 
 
 
@@ -244,7 +246,7 @@ Referenced by up().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1RSpecies_ab81e66709c72efa36ee8f29f969dc477}
 
 
-Definition at line 133 of file R\-Species.\-h.
+Definition at line 143 of file R\-Species.\-h.
 
 
 
@@ -263,7 +265,7 @@ Referenced by chem\-::\-Reaction\-::\-Reaction().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1RSpecies_a88c4e30858e503105a3fa39e649060ef}
 
 
-Definition at line 129 of file R\-Species.\-h.
+Definition at line 139 of file R\-Species.\-h.
 
 
 
@@ -286,7 +288,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$\-::iterator, which points to the beg
 
 
 
-Definition at line 226 of file R\-Species.\-h.
+Definition at line 236 of file R\-Species.\-h.
 
 
 
@@ -305,7 +307,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$\-::iterator, which points to the beg
 
 
 
-Definition at line 222 of file R\-Species.\-h.
+Definition at line 232 of file R\-Species.\-h.
 
 
 
@@ -324,7 +326,7 @@ Decreases the copy number by 1.
 
 If the copy number changes becomes 0, calls a \char`\"{}callback\char`\"{}-\/like method to passivate \hyperlink{classchem_1_1Reaction}{Reactions}, where this \hyperlink{classchem_1_1RSpecies}{R\-Species} is a Reactant. 
 
-Definition at line 112 of file R\-Species.\-h.
+Definition at line 118 of file R\-Species.\-h.
 
 
 
@@ -343,7 +345,7 @@ Broadcasts signal indicating that the copy number of this \hyperlink{classchem_1
 
 Gillespie-\/like algorithm) 
 
-Definition at line 189 of file R\-Species.\-h.
+Definition at line 199 of file R\-Species.\-h.
 
 
 
@@ -362,7 +364,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$\-::iterator, which points to the end
 
 
 
-Definition at line 234 of file R\-Species.\-h.
+Definition at line 244 of file R\-Species.\-h.
 
 
 
@@ -381,7 +383,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$\-::iterator, which points to the end
 
 
 
-Definition at line 230 of file R\-Species.\-h.
+Definition at line 240 of file R\-Species.\-h.
 
 
 
@@ -423,7 +425,7 @@ Return the current copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Spec
 
 
 
-Definition at line 195 of file R\-Species.\-h.
+Definition at line 205 of file R\-Species.\-h.
 
 
 
@@ -446,7 +448,7 @@ return parent \hyperlink{classchem_1_1Species}{Species} as a reference
 
 
 
-Definition at line 201 of file R\-Species.\-h.
+Definition at line 211 of file R\-Species.\-h.
 
 
 
@@ -465,11 +467,35 @@ return parent \hyperlink{classchem_1_1Species}{Species} as a const reference
 
 
 
-Definition at line 204 of file R\-Species.\-h.
+Definition at line 214 of file R\-Species.\-h.
 
 
 
 References \-\_\-species.
+
+\hypertarget{classchem_1_1RSpecies_a32806fa7ef59b5043892e1ad328a569e}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}}
+\index{get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{get\-Upper\-Limit\-For\-N}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\-\_\-copy\-\_\-t} {\bf chem\-::\-R\-Species\-::get\-Upper\-Limit\-For\-N} (
+\begin{DoxyParamCaption}
+\item[{{\bf species\-\_\-copy\-\_\-t}}]{ulim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1RSpecies_a32806fa7ef59b5043892e1ad328a569e}
+
+
+Sets the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ulim} & should be a non-\/negative number, but no checking is done in run time \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 98 of file R\-Species.\-h.
+
+
+
+References \-\_\-ulim.
 
 \hypertarget{classchem_1_1RSpecies_ad233880e065382e598a95e75d401d9eb}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}}
 \index{get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}!chem::RSpecies@{chem\-::\-R\-Species}}
@@ -484,7 +510,7 @@ Return the upper limit for the copy number of this \hyperlink{classchem_1_1RSpec
 
 
 
-Definition at line 198 of file R\-Species.\-h.
+Definition at line 208 of file R\-Species.\-h.
 
 
 
@@ -503,7 +529,7 @@ Return true if this \hyperlink{classchem_1_1RSpecies}{R\-Species} emits signals 
 
 
 
-Definition at line 210 of file R\-Species.\-h.
+Definition at line 220 of file R\-Species.\-h.
 
 
 
@@ -575,7 +601,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$, which contains pointers to all \hyp
 
 
 
-Definition at line 218 of file R\-Species.\-h.
+Definition at line 228 of file R\-Species.\-h.
 
 
 
@@ -594,7 +620,7 @@ Return std\-::vector$<$\-Reaction $\ast$$>$, which contains pointers to all \hyp
 
 
 
-Definition at line 214 of file R\-Species.\-h.
+Definition at line 224 of file R\-Species.\-h.
 
 
 
@@ -609,7 +635,7 @@ References \-\_\-as\-\_\-reactants.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1RSpecies_a423e5852f749ab65553c48ed0239c243}
 
 
-Definition at line 146 of file R\-Species.\-h.
+Definition at line 156 of file R\-Species.\-h.
 
 
 
@@ -628,7 +654,7 @@ Referenced by chem\-::\-Reaction\-::$\sim$\-Reaction().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, private\mbox{]}}}}\label{classchem_1_1RSpecies_ad0a8e2da5b7a0362b1fb20ad72671005}
 
 
-Definition at line 137 of file R\-Species.\-h.
+Definition at line 147 of file R\-Species.\-h.
 
 
 
@@ -743,7 +769,7 @@ Increases the copy number by 1.
 
 If the copy number changes from 0 to 1, calls a \char`\"{}callback\char`\"{}-\/like method to activated previously passivated \hyperlink{classchem_1_1Reaction}{Reactions}, where this \hyperlink{classchem_1_1RSpecies}{R\-Species} is a Reactant. 
 
-Definition at line 98 of file R\-Species.\-h.
+Definition at line 102 of file R\-Species.\-h.
 
 
 

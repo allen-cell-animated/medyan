@@ -128,7 +128,7 @@ Inheritance diagram for chem::ChemSimImpl:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1ChemSimImpl__inherit__graph.png" border="0" usemap="#chem_1_1ChemSimImpl_inherit__map" alt="Inheritance graph"/></div>
 <map name="chem_1_1ChemSimImpl_inherit__map" id="chem_1_1ChemSimImpl_inherit__map">
-<area shape="rect" id="node3" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation." alt="" coords="5,80,149,107"/></map>
+<area shape="rect" id="node3" href="classchem_1_1ChemGillespieImpl.html" title="ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm." alt="" coords="5,80,168,107"/><area shape="rect" id="node5" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation." alt="" coords="193,80,337,107"/><area shape="rect" id="node7" href="classchem_1_1ChemSimpleGillespieImpl.html" title="ChemSimpleGillespieImpl implements the simplest version of the Gillespie algorithm, without caching, etc." alt="" coords="362,80,563,107"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1ChemSimImpl-members.html">List of all members.</a></p>
@@ -189,7 +189,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the chemical network which needs to be simulated. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a1b325b27b22f443f99fce659ae78aeee">chem::ChemNRMImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a1b325b27b22f443f99fce659ae78aeee">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#af013022938adb5f1bd34c7430ad1bfd6">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#a0a4146dfe469c85258874f43a2de02a9">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00021">chem::ChemSim::addReaction()</a>.</p>
 
@@ -211,7 +211,7 @@ Public Member Functions</h2></td></tr>
 
 <p>After all initial reactions have been added via addReaction(...) method, invoke <a class="el" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc" title="After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to...">initialize()</a> prior to invoking <a class="el" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49" title="Run the chemical dynamics for a specific number of steps.">run()</a> </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a685ac34bfa4b8226045bd3b8c6cdec95">chem::ChemNRMImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a685ac34bfa4b8226045bd3b8c6cdec95">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#a885fd4d5902be9cb7540766e5efc104f">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#aa92a28ce1a0217d7224587fcf63f52af">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00033">chem::ChemSim::initialize()</a>.</p>
 
@@ -233,7 +233,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Mainly used for debugging: print chemical reactions in the network at this moment. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a7898a5e226789a39b51f8fb56cc85c1e">chem::ChemNRMImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a7898a5e226789a39b51f8fb56cc85c1e">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#a32d0eac5e52772db6b6b902c08b7df11">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#a5ac466ce1f5d1985aa2d7dfd0dcc5162">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00037">chem::ChemSim::printReactions()</a>.</p>
 
@@ -256,7 +256,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the simulated chemical network. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#ad3a2b84f69c444a55b60d21200537338">chem::ChemNRMImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#ad3a2b84f69c444a55b60d21200537338">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#aab4d9fcdd42b90e72542b5b3af103d27">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#ad86d7286f61d76db1de522ce333ce7de">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00025">chem::ChemSim::removeReaction()</a>.</p>
 
@@ -279,7 +279,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Run the chemical dynamics for a specific number of steps. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a8ccff6cf244e91b8057c323d17a5b48c">chem::ChemNRMImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a236b68389599aa9486959377cfc51496">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#a5822d60fd10e7c7374150e55c23da075">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#a92ac6288318e6bc6882759aac941fa4e">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00029">chem::ChemSim::run()</a>.</p>
 
@@ -295,7 +295,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1ChemSimImpl.html">ChemSimImpl</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:15 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:27 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

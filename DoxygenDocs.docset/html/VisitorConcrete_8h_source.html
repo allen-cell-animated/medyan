@@ -135,8 +135,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00019"></a><a class="code" href="classchem_1_1ConcreteVisitor.html">00019</a> <span class="keyword">class </span><a class="code" href="classchem_1_1ConcreteVisitor.html">ConcreteVisitor</a> : <span class="keyword">public</span> <a class="code" href="classchem_1_1Visitor.html">Visitor</a> {
 <a name="l00020"></a>00020 <span class="keyword">public</span>:
 <a name="l00021"></a><a class="code" href="classchem_1_1ConcreteVisitor.html#abb5892cdcf90fef25aafafaf81baa697">00021</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1ConcreteVisitor.html#abb5892cdcf90fef25aafafaf81baa697">visit</a>(<a class="code" href="classchem_1_1Component.html">Component</a> *c) {
-<a name="l00022"></a>00022         std::cout &lt;&lt; <span class="stringliteral">&quot;Visiting, &quot;</span> &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#aa98580b14e0246ca9840d5b76f9b4a43">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;, which has &quot;</span> 
-<a name="l00023"></a>00023         &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#ab39d0fd77db206513e03aee1c0aeb459">countSpecies</a>() &lt;&lt; <span class="stringliteral">&quot;, Species overall. &quot;</span> &lt;&lt; std::endl;
+<a name="l00022"></a>00022         std::cout &lt;&lt; <span class="stringliteral">&quot;Visiting, &quot;</span> &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#a1d5884d373fb44fd950d5fe2b0c34e26">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;, which has &quot;</span> 
+<a name="l00023"></a>00023         &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#a581a3912035ba493a2a24f1516d65ea8">countSpecies</a>() &lt;&lt; <span class="stringliteral">&quot;, Species overall. &quot;</span> &lt;&lt; std::endl;
 <a name="l00024"></a>00024         <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00025"></a>00025     }
 <a name="l00026"></a>00026 };
@@ -163,8 +163,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00047"></a><a class="code" href="classchem_1_1CompositeVisitor.html">00047</a> <span class="keyword">class </span><a class="code" href="classchem_1_1CompositeVisitor.html">CompositeVisitor</a> : <span class="keyword">public</span> <a class="code" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> {
 <a name="l00048"></a>00048 <span class="keyword">public</span>:
 <a name="l00049"></a><a class="code" href="classchem_1_1CompositeVisitor.html#a04cfd3a93f0b76387b00a11889150d43">00049</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1CompositeVisitor.html#a04cfd3a93f0b76387b00a11889150d43">visit</a>(<a class="code" href="classchem_1_1Component.html">Component</a> *c) {
-<a name="l00050"></a>00050         std::cout &lt;&lt; <span class="stringliteral">&quot;Visiting, &quot;</span> &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#aa98580b14e0246ca9840d5b76f9b4a43">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;, which has &quot;</span> 
-<a name="l00051"></a>00051         &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#ab39d0fd77db206513e03aee1c0aeb459">countSpecies</a>() &lt;&lt; <span class="stringliteral">&quot;, Species overall. &quot;</span> &lt;&lt; std::endl;
+<a name="l00050"></a>00050         std::cout &lt;&lt; <span class="stringliteral">&quot;Visiting, &quot;</span> &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#a1d5884d373fb44fd950d5fe2b0c34e26">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;, which has &quot;</span> 
+<a name="l00051"></a>00051         &lt;&lt; c-&gt;<a class="code" href="classchem_1_1Component.html#a581a3912035ba493a2a24f1516d65ea8">countSpecies</a>() &lt;&lt; <span class="stringliteral">&quot;, Species overall. &quot;</span> &lt;&lt; std::endl;
 <a name="l00052"></a>00052         <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00053"></a>00053     }
 <a name="l00054"></a><a class="code" href="classchem_1_1CompositeVisitor.html#a56074a684bd24ada8bd28b861b5c14ac">00054</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1CompositeVisitor.html#a56074a684bd24ada8bd28b861b5c14ac">pred</a>(<a class="code" href="classchem_1_1Component.html">Component</a> *c) {
@@ -195,7 +195,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="VisitorConcrete_8h.html">VisitorConcrete.h</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:14 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

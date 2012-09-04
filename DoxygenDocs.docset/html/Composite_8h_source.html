@@ -132,69 +132,84 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00016"></a>00016 
 <a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="Component_8h.html">Component.h</a>&quot;</span>
 <a name="l00018"></a>00018 <span class="preprocessor">#include &quot;<a class="code" href="Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla...">Species.h</a>&quot;</span>
-<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="Visitor_8h.html">Visitor.h</a>&quot;</span>
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="keyword">namespace </span>chem {
-<a name="l00022"></a>00022     
-<a name="l00023"></a><a class="code" href="classchem_1_1Composite.html">00023</a> <span class="keyword">class </span><a class="code" href="classchem_1_1Composite.html">Composite</a> : <span class="keyword">public</span> <a class="code" href="classchem_1_1Component.html">Component</a> {
-<a name="l00024"></a>00024 <span class="keyword">private</span>:
-<a name="l00025"></a><a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">00025</a>     std::vector&lt;std::unique_ptr&lt;Composite&gt;&gt; <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>;
-<a name="l00026"></a>00026 
-<a name="l00027"></a>00027 <span class="keyword">public</span>:
-<a name="l00028"></a><a class="code" href="classchem_1_1Composite.html#ae3444220cf51ab3db2616ea4833c4770">00028</a>     <a class="code" href="classchem_1_1Composite.html#ae3444220cf51ab3db2616ea4833c4770">Composite</a>() :  <a class="code" href="classchem_1_1Component.html">Component</a>() {}
-<a name="l00029"></a>00029     
-<a name="l00030"></a><a class="code" href="classchem_1_1Composite.html#a455876eca36c9648f209f4bcf4dbcd61">00030</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a455876eca36c9648f209f4bcf4dbcd61">apply</a> (<a class="code" href="classchem_1_1Visitor.html">Visitor</a> &amp;v) {
-<a name="l00031"></a>00031         <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1Visitor.html#a3a148d3144ed2ef25972509a6a594d1a">visit</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
-<a name="l00032"></a>00032         <span class="keywordflow">if</span>(!res_self) 
-<a name="l00033"></a>00033             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00034"></a>00034         <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#a6671b998c10b78401c82e671a0cab713">children</a>()) {
-<a name="l00035"></a>00035             <span class="keywordtype">bool</span> res_child = c-&gt;apply(v);
-<a name="l00036"></a>00036             <span class="keywordflow">if</span>(!res_child) 
-<a name="l00037"></a>00037                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00038"></a>00038         }
-<a name="l00039"></a>00039         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00040"></a>00040     }
-<a name="l00041"></a>00041     
-<a name="l00042"></a><a class="code" href="classchem_1_1Composite.html#a6acf2bf4e2c14d6e9bfe40d15c3318fb">00042</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a6acf2bf4e2c14d6e9bfe40d15c3318fb">apply_if</a> (<a class="code" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> &amp;v) {
-<a name="l00043"></a>00043         <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1ConditionalVisitor.html#ac5eca1778f8647f7dc85a00489c3d938">visit_if</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
-<a name="l00044"></a>00044         <span class="keywordflow">if</span>(!res_self) 
-<a name="l00045"></a>00045             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00046"></a>00046         <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#a6671b998c10b78401c82e671a0cab713">children</a>()) {
-<a name="l00047"></a>00047             <span class="keywordtype">bool</span> res_child = c-&gt;apply_if(v);
-<a name="l00048"></a>00048             <span class="keywordflow">if</span>(!res_child) 
-<a name="l00049"></a>00049                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00050"></a>00050         }
-<a name="l00051"></a>00051         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00052"></a>00052     }
-<a name="l00053"></a>00053 
-<a name="l00054"></a><a class="code" href="classchem_1_1Composite.html#a36a86821952d10911595120d3d26d683">00054</a>     <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Composite.html#a36a86821952d10911595120d3d26d683">~Composite</a>() noexcept {}
+<a name="l00019"></a>00019 
+<a name="l00020"></a>00020 <span class="keyword">namespace </span>chem {
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022     <span class="keyword">class </span>Visitor;
+<a name="l00023"></a>00023 
+<a name="l00024"></a><a class="code" href="classchem_1_1Composite.html">00024</a> <span class="keyword">class </span><a class="code" href="classchem_1_1Composite.html">Composite</a> : <span class="keyword">public</span> <a class="code" href="classchem_1_1Component.html">Component</a> {
+<a name="l00025"></a>00025 <span class="keyword">private</span>:
+<a name="l00026"></a><a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">00026</a>     std::vector&lt;std::unique_ptr&lt;Component&gt;&gt; <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>;
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028 <span class="keyword">public</span>:
+<a name="l00029"></a><a class="code" href="classchem_1_1Composite.html#ae3444220cf51ab3db2616ea4833c4770">00029</a>     <a class="code" href="classchem_1_1Composite.html#ae3444220cf51ab3db2616ea4833c4770">Composite</a>() :  <a class="code" href="classchem_1_1Component.html">Component</a>() {}
+<a name="l00030"></a><a class="code" href="classchem_1_1Composite.html#a36a86821952d10911595120d3d26d683">00030</a>     <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Composite.html#a36a86821952d10911595120d3d26d683">~Composite</a>() noexcept {}
+<a name="l00031"></a>00031     
+<a name="l00032"></a>00032     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a65464170b82b4531efe620e23e68ea12">apply</a> (<a class="code" href="classchem_1_1Visitor.html">Visitor</a> &amp;v);
+<a name="l00033"></a>00033     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#ac0ef45069901807e72d478ec59736ee4">apply_if</a> (<a class="code" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> &amp;v);
+<a name="l00034"></a>00034     
+<a name="l00035"></a><a class="code" href="classchem_1_1Composite.html#ae4b190f0f14a61d40f68f4a4a51e9192">00035</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#ae4b190f0f14a61d40f68f4a4a51e9192">isComposite</a>() {<span class="keywordflow">return</span> <span class="keyword">true</span>;}
+<a name="l00036"></a>00036     
+<a name="l00037"></a><a class="code" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">00037</a>     <span class="keyword">virtual</span> std::string <a class="code" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">getFullName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <span class="stringliteral">&quot;Composite&quot;</span>;}; 
+<a name="l00038"></a>00038     
+<a name="l00039"></a><a class="code" href="classchem_1_1Composite.html#a7f0737d480f68cb2e37eb061a1cfac36">00039</a>     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Composite.html#a7f0737d480f68cb2e37eb061a1cfac36">addChild</a> (std::unique_ptr&lt;Component&gt; &amp;&amp;child) {
+<a name="l00040"></a>00040         <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.push_back(std::move(child));
+<a name="l00041"></a>00041         <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.back()-&gt;setParent(<span class="keyword">this</span>);
+<a name="l00042"></a>00042     }
+<a name="l00043"></a>00043     
+<a name="l00044"></a><a class="code" href="classchem_1_1Composite.html#a1db2418dfbd583f05088fb4695fda677">00044</a>     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Composite.html#a1db2418dfbd583f05088fb4695fda677">removeChild</a> (<a class="code" href="classchem_1_1Component.html">Component</a>* child) {
+<a name="l00045"></a>00045         <span class="keyword">auto</span> child_iter = std::find_if(<a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.begin(),<a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.end(),
+<a name="l00046"></a>00046                     [&amp;child](<span class="keyword">const</span> std::unique_ptr&lt;Component&gt; &amp;element)
+<a name="l00047"></a>00047                      {
+<a name="l00048"></a>00048                          <span class="keywordflow">return</span> element.get()==child ? <span class="keyword">true</span> : <span class="keyword">false</span>;
+<a name="l00049"></a>00049                      });
+<a name="l00050"></a>00050         <span class="keywordflow">if</span>(child_iter!=<a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.end())
+<a name="l00051"></a>00051             <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>.erase(child_iter);
+<a name="l00052"></a>00052         <span class="keywordflow">else</span>
+<a name="l00053"></a>00053             <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Composite::removeChild(): The name child not found&quot;</span>);
+<a name="l00054"></a>00054     }
 <a name="l00055"></a>00055     
-<a name="l00056"></a><a class="code" href="classchem_1_1Composite.html#aa73520e07d39cc47662953f54ee1d1a7">00056</a>     <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#aa73520e07d39cc47662953f54ee1d1a7">hasChildren</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a6671b998c10b78401c82e671a0cab713">children</a>().size()&gt;0 ? <span class="keyword">true</span> : <span class="keyword">false</span>;}
+<a name="l00056"></a><a class="code" href="classchem_1_1Composite.html#a89545dad587539c07acff13398e8ee7a">00056</a>     <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Composite.html#a89545dad587539c07acff13398e8ee7a">numberOfChildren</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a>().size();}
 <a name="l00057"></a>00057 
-<a name="l00058"></a><a class="code" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">00058</a>     <span class="keyword">virtual</span> std::string <a class="code" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">getFullName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <span class="stringliteral">&quot;Composite&quot;</span>;}; 
-<a name="l00059"></a>00059     
-<a name="l00060"></a><a class="code" href="classchem_1_1Composite.html#a03f3ca2662b3920f369b4538eef08c50">00060</a>     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Composite.html#a03f3ca2662b3920f369b4538eef08c50">addChild</a> (std::unique_ptr&lt;Composite&gt; &amp;&amp;child) {
-<a name="l00061"></a>00061         <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>.push_back(std::move(child));
-<a name="l00062"></a>00062         <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>.back()-&gt;setParent(<span class="keyword">this</span>);
-<a name="l00063"></a>00063     }
-<a name="l00064"></a>00064     
-<a name="l00065"></a><a class="code" href="classchem_1_1Composite.html#a6671b998c10b78401c82e671a0cab713">00065</a>     <span class="keyword">virtual</span> std::vector&lt;std::unique_ptr&lt;Composite&gt;&gt;&amp; <a class="code" href="classchem_1_1Composite.html#a6671b998c10b78401c82e671a0cab713">children</a> () {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>;}
-<a name="l00066"></a>00066 
-<a name="l00067"></a><a class="code" href="classchem_1_1Composite.html#aa75e96e37ccd077f09fde7c307108e2b">00067</a>     <span class="keyword">virtual</span> <span class="keyword">const</span> std::vector&lt;std::unique_ptr&lt;Composite&gt;&gt;&amp; <a class="code" href="classchem_1_1Composite.html#aa75e96e37ccd077f09fde7c307108e2b">children</a> ()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>;}
-<a name="l00068"></a>00068 
-<a name="l00069"></a><a class="code" href="classchem_1_1Composite.html#a0e9373e9cc8135413b10610464f4b036">00069</a>     <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Composite.html">Composite</a>* <a class="code" href="classchem_1_1Composite.html#a0e9373e9cc8135413b10610464f4b036">children</a> (<span class="keywordtype">size_t</span> i) {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a9eb0d5b42b92d36cf7a1b4d4e4107af1">_children</a>[i].get();}
+<a name="l00058"></a><a class="code" href="classchem_1_1Composite.html#a97512e021c76460f0b982d4ff16a91d5">00058</a>     <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Composite.html#a97512e021c76460f0b982d4ff16a91d5">numberOfSpecies</a> ()<span class="keyword"> const </span>{<span class="keywordflow">return</span> 0;}
+<a name="l00059"></a>00059 
+<a name="l00060"></a><a class="code" href="classchem_1_1Composite.html#a0089cc7bf318c99339d098018ede34c7">00060</a>     <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Composite.html#a0089cc7bf318c99339d098018ede34c7">numberOfReactions</a> ()<span class="keyword"> const </span>{<span class="keywordflow">return</span> 0;}
+<a name="l00061"></a>00061 
+<a name="l00062"></a><a class="code" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">00062</a>     <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">countSpecies</a>()<span class="keyword"> const </span>{
+<a name="l00063"></a>00063         <span class="keywordtype">size_t</span> sum = 0;
+<a name="l00064"></a>00064         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="classchem_1_1Component.html#a3c0f652fe5b6910f07c046fe0190b7b5">isSpeciesContainer</a>())
+<a name="l00065"></a>00065             sum+=this-&gt;<a class="code" href="classchem_1_1Composite.html#a97512e021c76460f0b982d4ff16a91d5">numberOfSpecies</a>();
+<a name="l00066"></a>00066         <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a>())
+<a name="l00067"></a>00067             sum+=c-&gt;countSpecies();
+<a name="l00068"></a>00068         <span class="keywordflow">return</span> sum;
+<a name="l00069"></a>00069     }
 <a name="l00070"></a>00070     
-<a name="l00071"></a>00071 };
-<a name="l00072"></a>00072        
-<a name="l00073"></a>00073 } <span class="comment">// end of chem</span>
-<a name="l00074"></a>00074 <span class="preprocessor">#endif</span>
+<a name="l00071"></a><a class="code" href="classchem_1_1Composite.html#a1cba92a649f230eab8e0cecb39632640">00071</a>     <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classchem_1_1Composite.html#a1cba92a649f230eab8e0cecb39632640">countReactions</a>()<span class="keyword"> const </span>{
+<a name="l00072"></a>00072         <span class="keywordtype">size_t</span> sum = 0;
+<a name="l00073"></a>00073         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="classchem_1_1Component.html#a8c79ee4335fadfcef56b14a62b742457">isReactionsContainer</a>())
+<a name="l00074"></a>00074             sum+=this-&gt;<a class="code" href="classchem_1_1Composite.html#a0089cc7bf318c99339d098018ede34c7">numberOfReactions</a>();
+<a name="l00075"></a>00075         <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a>())
+<a name="l00076"></a>00076             sum+=c-&gt;countReactions();
+<a name="l00077"></a>00077         <span class="keywordflow">return</span> sum;
+<a name="l00078"></a>00078     }
+<a name="l00079"></a>00079     
+<a name="l00080"></a><a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">00080</a>     <span class="keyword">virtual</span> std::vector&lt;std::unique_ptr&lt;Component&gt;&gt;&amp; <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a> () {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>;}
+<a name="l00081"></a>00081 
+<a name="l00082"></a><a class="code" href="classchem_1_1Composite.html#a9c66ed039e22fdafc90627db067fea4b">00082</a>     <span class="keyword">virtual</span> <span class="keyword">const</span> std::vector&lt;std::unique_ptr&lt;Component&gt;&gt;&amp; <a class="code" href="classchem_1_1Composite.html#a9c66ed039e22fdafc90627db067fea4b">children</a> ()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>;}
+<a name="l00083"></a>00083 
+<a name="l00084"></a><a class="code" href="classchem_1_1Composite.html#adf797cd6faed6b5f42848c712fd9eb8a">00084</a>     <span class="keyword">virtual</span> <a class="code" href="classchem_1_1Component.html">Component</a>* <a class="code" href="classchem_1_1Composite.html#adf797cd6faed6b5f42848c712fd9eb8a">children</a> (<span class="keywordtype">size_t</span> i) {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17">_children</a>[i].get();}
+<a name="l00085"></a>00085     
+<a name="l00086"></a>00086 };
+<a name="l00087"></a>00087        
+<a name="l00088"></a>00088 } <span class="comment">// end of chem</span>
+<a name="l00089"></a>00089 <span class="preprocessor">#endif</span>
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="Composite_8h.html">Composite.h</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:14 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

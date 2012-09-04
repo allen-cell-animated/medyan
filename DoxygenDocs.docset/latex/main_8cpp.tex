@@ -2,18 +2,9 @@
 \label{main_8cpp}\index{Cyto\-Sim/main.\-cpp@{Cyto\-Sim/main.\-cpp}}
 }
 {\ttfamily \#include $<$iostream$>$}\\*
-{\ttfamily \#include \char`\"{}Species.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Reaction.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Chem\-N\-R\-M\-Impl.\-h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}Chem\-Sim.\-h\char`\"{}}\\*
-{\ttfamily \#include $<$boost/accumulators/accumulators.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/accumulators/statistics/stats.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/accumulators/statistics/mean.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/accumulators/statistics/variance.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/accumulators/statistics/covariance.\-hpp$>$}\\*
-{\ttfamily \#include $<$boost/accumulators/statistics/variates/covariate.\-hpp$>$}\\*
-Include dependency graph for main.\-cpp\-:
-\nopagebreak
+{\ttfamily \#include \char`\"{}Compartment.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Reaction\-Container.\-h\char`\"{}}\\*
+Include dependency graph for main.\-cpp\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -38,9 +29,9 @@ int \hyperlink{main_8cpp_ac0f2228420376f4db7e1274f2b41667c}{main} (int argc, con
 )}}\label{main_8cpp_ac0f2228420376f4db7e1274f2b41667c}
 
 
-Definition at line 54 of file main.\-cpp.
+Definition at line 53 of file main.\-cpp.
 
 
 
-References chem\-::\-Chem\-Sim\-::add\-Reaction(), chem\-::\-Species\-::get\-N(), chem\-::\-Chem\-Sim\-::initialize(), chem\-::\-Chem\-Sim\-::run(), chem\-::\-Species\-::set\-N(), and tau().
+References chem\-::\-Compartment\-::add\-Reaction(), chem\-::\-Compartment\-::add\-Species(), chem\-::\-Species\-Ptr\-Container\-Vector\-::are\-All\-Species\-Unique(), chem\-::\-Composite\-::count\-Species(), chem\-::\-Species\-::get\-R\-Species(), chem\-::\-Reaction\-Ptr\-Container\-Vector\-::print\-Reactions(), and chem\-::\-Species\-Ptr\-Container\-Vector\-::print\-Species().
 

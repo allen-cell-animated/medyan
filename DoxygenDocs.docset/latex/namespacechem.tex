@@ -9,6 +9,10 @@ The algorithm implemented here is based on the following reference\-: $\ast$$\as
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
+class \hyperlink{classchem_1_1RNodeGillespie}{R\-Node\-Gillespie}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1RNodeGillespie}{R\-Node\-Gillespie} is used by \hyperlink{classchem_1_1ChemGillespieImpl}{Chem\-Gillespie\-Impl} to implement the cached version of the Gillespie algorithm. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ChemGillespieImpl}{Chem\-Gillespie\-Impl}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemGillespieImpl}{Chem\-Gillespie\-Impl} implements a slightly optimized version of the Gillespie algorithm. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1PQNode}{P\-Q\-Node}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} stands for Priority Queue Node. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}
@@ -21,12 +25,20 @@ class \hyperlink{classchem_1_1ChemSim}{Chem\-Sim}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemSim}{Chem\-Sim} is used to manage running a network of chemical reactions. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl} is an abstract base class for algorithms that run stochastic chemical kinetics. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ChemSimpleGillespieImpl}{Chem\-Simple\-Gillespie\-Impl}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ChemSimpleGillespieImpl}{Chem\-Simple\-Gillespie\-Impl} implements the simplest version of the Gillespie algorithm, without caching, etc. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1Compartment}{Compartment}
+\item 
 class \hyperlink{classchem_1_1Component}{Component}
 \item 
 class \hyperlink{classchem_1_1Composite}{Composite}
 \item 
 class \hyperlink{classchem_1_1Reaction}{Reaction}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1Reaction}{Reaction} class represents simple chemical reactions of the form A + B -\/$>$ C. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ReactionPtrContainerIFace}{Reaction\-Ptr\-Container\-I\-Face}
+\item 
+class \hyperlink{classchem_1_1ReactionPtrContainerVector}{Reaction\-Ptr\-Container\-Vector}
+\item 
 class \hyperlink{classchem_1_1RSpecies}{R\-Species}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1RSpecies}{R\-Species} class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in \hyperlink{classchem_1_1Reaction}{Reactions}. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1SpeciesNamesDB}{Species\-Names\-D\-B}
@@ -34,8 +46,16 @@ class \hyperlink{classchem_1_1SpeciesNamesDB}{Species\-Names\-D\-B}
 class \hyperlink{classchem_1_1Species}{Species}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1Species}{Species} class represents chemical molecules, tracks their copy number and can be used in \hyperlink{classchem_1_1Reaction}{Reactions}. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1SpeciesBulk}{Species\-Bulk}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1SpeciesBulk}{Species\-Bulk} should be used for \hyperlink{classchem_1_1Species}{Species} without spatial information (i.\-e. well-\/mixed in the container) \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1SpeciesDiffusing}{Species\-Diffusing}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1SpeciesDiffusing}{Species\-Diffusing} should be used for \hyperlink{classchem_1_1Species}{Species} which can move spatially from one compartment to the neighboring one (i.\-e. they are the stochastic analogue of determenistic reaction-\/diffusion processes) \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1SpeciesPtrContainerIFace}{Species\-Ptr\-Container\-I\-Face}
+\item 
+class \hyperlink{classchem_1_1SpeciesPtrContainerVector}{Species\-Ptr\-Container\-Vector}
+\item 
+class \hyperlink{classchem_1_1SpeciesContainerIFace}{Species\-Container\-I\-Face}
+\item 
+class \hyperlink{classchem_1_1SpeciesContainerVector}{Species\-Container\-Vector}
 \item 
 class \hyperlink{classchem_1_1Visitor}{Visitor}
 \item 
@@ -173,7 +193,7 @@ Definition at line 40 of file R\-Species.\-h.
 )}}\label{namespacechem_a33c82bc525c0bdd911d321e69eb06cc4}
 
 
-Definition at line 120 of file Reaction.\-cpp.
+Definition at line 137 of file Reaction.\-cpp.
 
 
 

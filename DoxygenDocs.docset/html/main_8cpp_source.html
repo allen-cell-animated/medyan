@@ -124,94 +124,56 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00008"></a>00008 
 <a name="l00034"></a>00034 <span class="preprocessor">#include &lt;iostream&gt;</span>
 <a name="l00035"></a>00035 
-<a name="l00036"></a>00036 <span class="preprocessor">#include &quot;<a class="code" href="Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla...">Species.h</a>&quot;</span>
-<a name="l00037"></a>00037 <span class="preprocessor">#include &quot;<a class="code" href="Reaction_8h.html">Reaction.h</a>&quot;</span>
-<a name="l00038"></a>00038 <span class="preprocessor">#include &quot;<a class="code" href="ChemNRMImpl_8h.html">ChemNRMImpl.h</a>&quot;</span>
-<a name="l00039"></a>00039 <span class="preprocessor">#include &quot;<a class="code" href="ChemSim_8h.html">ChemSim.h</a>&quot;</span>
-<a name="l00040"></a>00040 
-<a name="l00041"></a>00041 <span class="preprocessor">#include &lt;boost/accumulators/accumulators.hpp&gt;</span>
-<a name="l00042"></a>00042 <span class="preprocessor">#include &lt;boost/accumulators/statistics/stats.hpp&gt;</span>
-<a name="l00043"></a>00043 <span class="preprocessor">#include &lt;boost/accumulators/statistics/mean.hpp&gt;</span>
-<a name="l00044"></a>00044 <span class="preprocessor">#include &lt;boost/accumulators/statistics/variance.hpp&gt;</span>
-<a name="l00045"></a>00045 <span class="preprocessor">#include &lt;boost/accumulators/statistics/covariance.hpp&gt;</span>
-<a name="l00046"></a>00046 <span class="preprocessor">#include &lt;boost/accumulators/statistics/variates/covariate.hpp&gt;</span>
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048 <span class="keyword">using namespace </span>boost::accumulators;
+<a name="l00036"></a>00036 <span class="comment">//#include &quot;Species.h&quot;</span>
+<a name="l00037"></a>00037 <span class="comment">//#include &quot;Reaction.h&quot;</span>
+<a name="l00038"></a>00038 <span class="comment">//#include &quot;ChemNRMImpl.h&quot;</span>
+<a name="l00041"></a>00041 <span class="comment"></span><span class="comment">//#include &quot;ChemSim.h&quot;</span>
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043 <span class="comment">//#include &quot;Composite.h&quot;</span>
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045 <span class="comment">//#include &quot;SpeciesContainer.h&quot;</span>
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047 <span class="preprocessor">#include &quot;<a class="code" href="Compartment_8h.html">Compartment.h</a>&quot;</span>
+<a name="l00048"></a>00048 <span class="preprocessor">#include &quot;<a class="code" href="ReactionContainer_8h.html">ReactionContainer.h</a>&quot;</span>
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051 <span class="keyword">using namespace </span>std;
-<a name="l00052"></a>00052 <span class="keyword">using namespace </span>chem;
-<a name="l00053"></a>00053 
-<a name="l00054"></a><a class="code" href="main_8cpp.html#ac0f2228420376f4db7e1274f2b41667c">00054</a> <span class="keywordtype">int</span> <a class="code" href="main_8cpp.html#ac0f2228420376f4db7e1274f2b41667c">main</a>(<span class="keywordtype">int</span> argc, <span class="keyword">const</span> <span class="keywordtype">char</span> * argv[])
-<a name="l00055"></a>00055 {
-<a name="l00056"></a>00056     <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> N_SAMPLE_POINTS=pow(10,5);
-<a name="l00057"></a>00057     <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> Nstart = 10;
-<a name="l00058"></a>00058     <span class="keyword">const</span> <span class="keywordtype">double</span> tau_snapshot = 0.48; <span class="comment">//seconds</span>
-<a name="l00059"></a>00059     <span class="comment">//long long int print_freq = pow(10,7);</span>
-<a name="l00060"></a>00060     <a class="code" href="classchem_1_1SpeciesBulk.html">SpeciesBulk</a> A1(<span class="stringliteral">&quot;A1&quot;</span>,  Nstart);
-<a name="l00061"></a>00061     <a class="code" href="classchem_1_1SpeciesBulk.html">SpeciesBulk</a> A2(<span class="stringliteral">&quot;A2&quot;</span>, 0);
-<a name="l00062"></a>00062     <span class="comment">// A1 &lt;-&gt; A2 with the same forward and backward rates; [A]~[B] at steady state</span>
-<a name="l00063"></a>00063     <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> r1 = { {&amp;A1,&amp;A2}, 1, 1, 2.5 };
-<a name="l00064"></a>00064     <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> r2 = { {&amp;A2,&amp;A1}, 1, 1, 2.5 };
-<a name="l00065"></a>00065     
-<a name="l00066"></a>00066     <a class="code" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> chem_nrm_impl;
-<a name="l00067"></a>00067     <a class="code" href="classchem_1_1ChemSim.html" title="ChemSim is used to manage running a network of chemical reactions.">ChemSim</a> chem(&amp;chem_nrm_impl);
-<a name="l00068"></a>00068     chem.<a class="code" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(&amp;r1);
-<a name="l00069"></a>00069     chem.<a class="code" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(&amp;r2);
-<a name="l00070"></a>00070     <span class="comment">//    chem.printReactions();</span>
-<a name="l00071"></a>00071     <span class="comment">// chem.printReactions();</span>
-<a name="l00072"></a>00072     vector&lt;long long int&gt; n_hist(Nstart+1);
+<a name="l00050"></a>00050 <span class="keyword">using namespace </span>std;
+<a name="l00051"></a>00051 <span class="keyword">using namespace </span>chem;
+<a name="l00052"></a>00052 
+<a name="l00053"></a><a class="code" href="main_8cpp.html#ac0f2228420376f4db7e1274f2b41667c">00053</a> <span class="keywordtype">int</span> <a class="code" href="main_8cpp.html#ac0f2228420376f4db7e1274f2b41667c">main</a>(<span class="keywordtype">int</span> argc, <span class="keyword">const</span> <span class="keywordtype">char</span> * argv[])
+<a name="l00054"></a>00054 {
+<a name="l00055"></a>00055     
+<a name="l00056"></a>00056     <a class="code" href="classchem_1_1Compartment.html">Compartment</a> C;
+<a name="l00057"></a>00057     <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *actin = C.<a class="code" href="classchem_1_1Compartment.html#a5e7c0a9a225feb95e90e42b86c5edbee">addSpecies</a>(<span class="stringliteral">&quot;Actin&quot;</span>,99U);
+<a name="l00058"></a>00058     <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *profilin = C.<a class="code" href="classchem_1_1Compartment.html#a5e7c0a9a225feb95e90e42b86c5edbee">addSpecies</a>(<span class="stringliteral">&quot;Profilin&quot;</span>,29U);
+<a name="l00059"></a>00059     <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *arp23 = C.<a class="code" href="classchem_1_1Compartment.html#a5e7c0a9a225feb95e90e42b86c5edbee">addSpecies</a>(<span class="stringliteral">&quot;Arp2/3&quot;</span>,33U);
+<a name="l00060"></a>00060     C.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a60c6a427097f5dbaa3971777a46233e1">printSpecies</a>();
+<a name="l00061"></a>00061 <span class="comment">//    cout &lt;&lt; C.findSpecies(actin_id) &lt;&lt; &quot;, &quot; &lt;&lt; &amp;C.findSpecies(actin_id) &lt;&lt; endl;</span>
+<a name="l00062"></a>00062 <span class="comment">//    cout &lt;&lt; C.species()[actin_id] &lt;&lt; &quot;, &quot; &lt;&lt; &amp;C.species()[actin_id] &lt;&lt; endl;</span>
+<a name="l00063"></a>00063     cout &lt;&lt; C.<a class="code" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">countSpecies</a>() &lt;&lt; endl;
+<a name="l00064"></a>00064     
+<a name="l00065"></a>00065     vector&lt;Species*&gt; rs1 = {actin,profilin};
+<a name="l00066"></a>00066     <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r1 = C.<a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">addReaction</a>(rs1, 1, 1, 10.0);
+<a name="l00067"></a>00067     vector&lt;Species*&gt; rs2 = {profilin,actin};
+<a name="l00068"></a>00068     <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r2 = C.<a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">addReaction</a>(rs2, 1, 1, 10.0);
+<a name="l00069"></a>00069     vector&lt;Species*&gt; rs3 = {actin,profilin,arp23};
+<a name="l00070"></a>00070     <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r3 = C.<a class="code" href="classchem_1_1Compartment.html#ab5bddc0371fbf6e32a72dbd713bc23ef">addReaction</a>(rs3, 2, 1, 10.0);
+<a name="l00071"></a>00071     C.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#a10249651f9ff639ed599fbeb4d692d54">printReactions</a>();
+<a name="l00072"></a>00072     cout &lt;&lt; <span class="stringliteral">&quot;Are all Species unique? &quot;</span> &lt;&lt; std::boolalpha &lt;&lt; C.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a88a5dd2f8bb90309b277a0d3eeec0401">areAllSpeciesUnique</a>() &lt;&lt; endl;
 <a name="l00073"></a>00073     
-<a name="l00074"></a>00074     <span class="comment">//int counter = 0;</span>
-<a name="l00075"></a>00075     accumulator_set&lt;double, stats&lt;tag::mean&gt;&gt; accTau;
-<a name="l00076"></a>00076     <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> N_penultimate;
-<a name="l00077"></a>00077     <span class="keywordflow">for</span>(<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i=0;i&lt;N_SAMPLE_POINTS;++i){
-<a name="l00078"></a>00078         A1.<a class="code" href="classchem_1_1Species.html#af10a33a212fdb986fb93613e9c219f7a" title="Sets the copy number for this Species.">setN</a>(Nstart);
-<a name="l00079"></a>00079         A2.<a class="code" href="classchem_1_1Species.html#af10a33a212fdb986fb93613e9c219f7a" title="Sets the copy number for this Species.">setN</a>(0);
-<a name="l00080"></a>00080         chem.<a class="code" href="classchem_1_1ChemSim.html#a691cc53afccbda480a674b7f3014ac72" title="After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to...">initialize</a>();
-<a name="l00081"></a>00081         <span class="comment">//        long long int events=0;</span>
-<a name="l00082"></a>00082         <span class="keywordflow">do</span> {
-<a name="l00083"></a>00083             N_penultimate=A1.<a class="code" href="classchem_1_1Species.html#af7c9f51060b84169b428a7796dad6dca" title="Return the current copy number of this Species.">getN</a>();
-<a name="l00084"></a>00084             chem.<a class="code" href="classchem_1_1ChemSim.html#a1cc6ec051c2f0124bfa327816443b24b" title="Run the chemical dynamics for a specific number of steps.">run</a>(1);
-<a name="l00085"></a>00085             <span class="comment">//            ++events;</span>
-<a name="l00086"></a>00086         } <span class="keywordflow">while</span> (<a class="code" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a>()&lt;tau_snapshot);
-<a name="l00087"></a>00087         ++n_hist[N_penultimate];
-<a name="l00088"></a>00088         <span class="comment">//        ++n_hist[A1.getN()];</span>
-<a name="l00089"></a>00089         accTau(<a class="code" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a>());
-<a name="l00090"></a>00090         
-<a name="l00091"></a>00091         <span class="comment">//        if(i%print_freq==0)</span>
-<a name="l00092"></a>00092         <span class="comment">//            cout &lt;&lt; &quot;i=&quot; &lt;&lt; i &lt;&lt; endl;</span>
-<a name="l00093"></a>00093     }
-<a name="l00094"></a>00094     
-<a name="l00095"></a>00095     <span class="comment">//    cout &lt;&lt; &quot;tau_mean=&quot; &lt;&lt; mean(accTau) &lt;&lt; &quot;, counter=&quot; &lt;&lt; N_SAMPLE_POINTS &lt;&lt; endl;;</span>
-<a name="l00096"></a>00096     <span class="comment">//    for (long long int n=0; n&lt;=Nstart; ++n){</span>
-<a name="l00097"></a>00097     <span class="comment">//        cout &lt;&lt; &quot;P[&quot; &lt;&lt; n &lt;&lt; &quot;]=&quot; &lt;&lt; double(n_hist[n])/N_SAMPLE_POINTS &lt;&lt; endl;</span>
-<a name="l00098"></a>00098     <span class="comment">//    }</span>
-<a name="l00099"></a>00099     
-<a name="l00100"></a>00100     <span class="keywordtype">double</span> sum=0;
-<a name="l00101"></a>00101     <span class="keywordflow">for</span>(<span class="keyword">auto</span> num: n_hist)
-<a name="l00102"></a>00102         sum+=double(num)/N_SAMPLE_POINTS;
-<a name="l00103"></a>00103     
-<a name="l00104"></a>00104     <span class="comment">// The results below are for N=10 (coming from both analytical formula and numerical integration)</span>
-<a name="l00105"></a>00105     vector&lt;double&gt; n_hist_analyt {0.0003773 ,  0.00452585,  0.02443017,  0.0781464 ,  0.1640442 , 0.23613261,  0.23604161,  0.1617947,  0.07277957,  0.01940041, 0.00232715};
-<a name="l00106"></a>00106     <span class="comment">//double relative_error=0.15; //i.e. allow a 15% relative error</span>
-<a name="l00107"></a>00107     <span class="keywordflow">for</span>(<span class="keywordtype">int</span> n=0; n&lt;11; ++n){
-<a name="l00108"></a>00108         <span class="keywordtype">double</span> p_est=double(n_hist[n])/N_SAMPLE_POINTS;
-<a name="l00109"></a>00109         <span class="keywordtype">double</span> p_analyt=n_hist_analyt[n];
-<a name="l00110"></a>00110         cout &lt;&lt; <span class="stringliteral">&quot;P[&quot;</span> &lt;&lt; n &lt;&lt; <span class="stringliteral">&quot;]=&quot;</span> &lt;&lt; p_est &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; p_analyt &lt;&lt; endl;
-<a name="l00111"></a>00111     }
-<a name="l00112"></a>00112     
-<a name="l00113"></a>00113     cout &lt;&lt; <span class="stringliteral">&quot;Main exited...&quot;</span> &lt;&lt; endl;
-<a name="l00114"></a>00114     <span class="keywordflow">return</span> 0;
-<a name="l00115"></a>00115 }
-<a name="l00116"></a>00116 
+<a name="l00074"></a>00074     cout &lt;&lt; <span class="keyword">sizeof</span>(*actin) &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; <span class="keyword">sizeof</span>(actin-&gt;<a class="code" href="classchem_1_1Species.html#a1719a8155a69e9a62593d23d4bfc8514" title="Return a reference to RSpecies.">getRSpecies</a>()) &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; <span class="keyword">sizeof</span>(*r1) &lt;&lt; endl;
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076     
+<a name="l00077"></a>00077     cout &lt;&lt; <span class="stringliteral">&quot;Main exited...&quot;</span> &lt;&lt; endl;
+<a name="l00078"></a>00078     <span class="keywordflow">return</span> 0;
+<a name="l00079"></a>00079 }
+<a name="l00080"></a>00080 
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="main_8cpp.html">main.cpp</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:14 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

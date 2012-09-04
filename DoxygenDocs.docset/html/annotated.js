@@ -1,8 +1,11 @@
 var annotated =
 [
+    [ "chem::ChemGillespieImpl", "classchem_1_1ChemGillespieImpl.html", "classchem_1_1ChemGillespieImpl" ],
     [ "chem::ChemNRMImpl", "classchem_1_1ChemNRMImpl.html", "classchem_1_1ChemNRMImpl" ],
     [ "chem::ChemSim", "classchem_1_1ChemSim.html", "classchem_1_1ChemSim" ],
     [ "chem::ChemSimImpl", "classchem_1_1ChemSimImpl.html", "classchem_1_1ChemSimImpl" ],
+    [ "chem::ChemSimpleGillespieImpl", "classchem_1_1ChemSimpleGillespieImpl.html", "classchem_1_1ChemSimpleGillespieImpl" ],
+    [ "chem::Compartment", "classchem_1_1Compartment.html", "classchem_1_1Compartment" ],
     [ "chem::Component", "classchem_1_1Component.html", "classchem_1_1Component" ],
     [ "chem::Composite", "classchem_1_1Composite.html", "classchem_1_1Composite" ],
     [ "chem::CompositeVisitor", "classchem_1_1CompositeVisitor.html", "classchem_1_1CompositeVisitor" ],
@@ -11,13 +14,20 @@ var annotated =
     [ "chem::FindFirstSpeciesVisitor", "classchem_1_1FindFirstSpeciesVisitor.html", "classchem_1_1FindFirstSpeciesVisitor" ],
     [ "chem::PQNode", "classchem_1_1PQNode.html", "classchem_1_1PQNode" ],
     [ "chem::Reaction", "classchem_1_1Reaction.html", "classchem_1_1Reaction" ],
+    [ "chem::ReactionPtrContainerIFace", "classchem_1_1ReactionPtrContainerIFace.html", "classchem_1_1ReactionPtrContainerIFace" ],
+    [ "chem::ReactionPtrContainerVector", "classchem_1_1ReactionPtrContainerVector.html", "classchem_1_1ReactionPtrContainerVector" ],
     [ "chem::RNode", "classchem_1_1RNode.html", "classchem_1_1RNode" ],
+    [ "chem::RNodeGillespie", "classchem_1_1RNodeGillespie.html", "classchem_1_1RNodeGillespie" ],
     [ "chem::RNodeNRM", "classchem_1_1RNodeNRM.html", "classchem_1_1RNodeNRM" ],
     [ "chem::RSpecies", "classchem_1_1RSpecies.html", "classchem_1_1RSpecies" ],
     [ "chem::Species", "classchem_1_1Species.html", "classchem_1_1Species" ],
     [ "chem::SpeciesBulk", "classchem_1_1SpeciesBulk.html", "classchem_1_1SpeciesBulk" ],
+    [ "chem::SpeciesContainerIFace", "classchem_1_1SpeciesContainerIFace.html", "classchem_1_1SpeciesContainerIFace" ],
+    [ "chem::SpeciesContainerVector< SpeciesSpecific >", "classchem_1_1SpeciesContainerVector.html", "classchem_1_1SpeciesContainerVector" ],
     [ "chem::SpeciesDiffusing", "classchem_1_1SpeciesDiffusing.html", "classchem_1_1SpeciesDiffusing" ],
     [ "chem::SpeciesNamesDB", "classchem_1_1SpeciesNamesDB.html", "classchem_1_1SpeciesNamesDB" ],
+    [ "chem::SpeciesPtrContainerIFace", "classchem_1_1SpeciesPtrContainerIFace.html", "classchem_1_1SpeciesPtrContainerIFace" ],
+    [ "chem::SpeciesPtrContainerVector", "classchem_1_1SpeciesPtrContainerVector.html", "classchem_1_1SpeciesPtrContainerVector" ],
     [ "System", "classSystem.html", "classSystem" ],
     [ "chem::Visitor", "classchem_1_1Visitor.html", "classchem_1_1Visitor" ]
 ];

@@ -131,141 +131,164 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00015"></a>00015 <span class="keyword">namespace </span>chem {
 <a name="l00016"></a>00016     
 <a name="l00017"></a><a class="code" href="classchem_1_1Reaction.html#a357e31612d0c232d22bb3673fffb75c2">00017</a> Reaction::Reaction (std::initializer_list&lt;Species*&gt; species, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> M, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> N, <span class="keywordtype">float</span> rate) : 
-<a name="l00018"></a>00018 _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+<a name="l00018"></a>00018  <a class="code" href="classchem_1_1Component.html">Component</a>(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
 <a name="l00019"></a>00019     <span class="keywordflow">for</span>( <span class="keyword">auto</span> &amp;s : species){
 <a name="l00020"></a>00020         <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.push_back(&amp;s-&gt;getRSpecies());
 <a name="l00021"></a>00021     }
 <a name="l00022"></a>00022     <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.shrink_to_fit();
 <a name="l00023"></a>00023     assert(<a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.size()==(M+N) &amp;&amp; <span class="stringliteral">&quot;Reaction Ctor Bug&quot;</span>);
 <a name="l00024"></a>00024     <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>=<a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016" title="Return the list of Reaction objects that are affected when this Reaction is fired.">getAffectedReactions</a>();
-<a name="l00025"></a>00025     <span class="comment">//activateReaction();</span>
-<a name="l00026"></a>00026     std::for_each(<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(), <a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>(), 
-<a name="l00027"></a>00027                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant</a>(<span class="keyword">this</span>);} );
-<a name="l00028"></a>00028     std::for_each(<a class="code" href="classchem_1_1Reaction.html#abd8e1fd6c8f8d247896fc15ebdd02dbc">beginProducts</a>(), <a class="code" href="classchem_1_1Reaction.html#a3d432b1719243cf0bb3259071c488afd">endProducts</a>(),   
-<a name="l00029"></a>00029                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#ab81e66709c72efa36ee8f29f969dc477">addAsProduct</a>(<span class="keyword">this</span>);} );
-<a name="l00030"></a>00030 }   
-<a name="l00031"></a>00031 
-<a name="l00032"></a><a class="code" href="classchem_1_1Reaction.html#a54eb494f216da7e4b462885d7715fc39">00032</a> <a class="code" href="classchem_1_1Reaction.html#a54eb494f216da7e4b462885d7715fc39" title="Destructor.">Reaction::~Reaction</a>() {
-<a name="l00033"></a>00033     std::for_each(<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(), <a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>(), [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">removeAsReactant</a>(<span class="keyword">this</span>);} );
-<a name="l00034"></a>00034     std::for_each(<a class="code" href="classchem_1_1Reaction.html#abd8e1fd6c8f8d247896fc15ebdd02dbc">beginProducts</a>(), <a class="code" href="classchem_1_1Reaction.html#a3d432b1719243cf0bb3259071c488afd">endProducts</a>(),   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#a423e5852f749ab65553c48ed0239c243">removeAsProduct</a>(<span class="keyword">this</span>);} );
-<a name="l00035"></a>00035     <span class="comment">// passivateReaction();</span>
-<a name="l00036"></a>00036     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>!=<span class="keyword">nullptr</span>)
-<a name="l00037"></a>00037         <span class="keyword">delete</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>;
-<a name="l00038"></a>00038 };
-<a name="l00039"></a>00039 
-<a name="l00040"></a><a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016">00040</a> std::vector&lt;Reaction*&gt; <a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016" title="Return the list of Reaction objects that are affected when this Reaction is fired.">Reaction::getAffectedReactions</a>() {
-<a name="l00041"></a>00041     std::unordered_set&lt;Reaction*&gt; rxns;
-<a name="l00042"></a>00042     <span class="keywordflow">for</span>(<span class="keyword">auto</span> s : <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>){
-<a name="l00043"></a>00043         rxns.insert(s-&gt;beginReactantReactions(),s-&gt;endReactantReactions());
-<a name="l00044"></a>00044     }
-<a name="l00045"></a>00045     <span class="comment">//        std::sort(rxns.begin(),rxns.end());</span>
-<a name="l00046"></a>00046     <span class="comment">//        rxns.erase(std::unique(rxns.begin(),rxns.end()), rxns.end());</span>
-<a name="l00047"></a>00047     rxns.erase(<span class="keyword">this</span>);
-<a name="l00048"></a>00048     <span class="keywordflow">return</span> std::vector&lt;Reaction*&gt;(rxns.begin(),rxns.end());
-<a name="l00049"></a>00049 }
-<a name="l00050"></a>00050     
-<a name="l00051"></a><a class="code" href="classchem_1_1Reaction.html#a9971edbe11bb8c6b3148cbee3a449872">00051</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a9971edbe11bb8c6b3148cbee3a449872" title="Request that the Reaction *r adds this Reaction to its list of dependents which it affects...">Reaction::registerNewDependent</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
-<a name="l00052"></a>00052     <span class="keywordflow">if</span>(std::find(<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.begin(),<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end(),r)==<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end())
-<a name="l00053"></a>00053         <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.push_back(r);
-<a name="l00054"></a>00054 }
-<a name="l00055"></a>00055     
-<a name="l00056"></a><a class="code" href="classchem_1_1Reaction.html#ab31fe2ac310f8d17b1af649bcb70e050">00056</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#ab31fe2ac310f8d17b1af649bcb70e050" title="Request that the Reaction *r removes this Reaction from its list of dependents which it affects...">Reaction::unregisterDependent</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
-<a name="l00057"></a>00057     <span class="keyword">auto</span> it=std::find(<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.begin(),<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end(),r);
-<a name="l00058"></a>00058     <span class="comment">//    cout &lt;&lt; &quot;Reaction::unregisterDependent: &quot; &lt;&lt; this &lt;&lt; &quot;, this rxn ptr needs to be erased from the dependent&#39;s list&quot; &lt;&lt; r &lt;&lt; endl;</span>
-<a name="l00059"></a>00059     <span class="keywordflow">if</span>(it!=<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end())
-<a name="l00060"></a>00060         <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.erase(it);
-<a name="l00061"></a>00061 }
+<a name="l00025"></a>00025 <span class="comment">//    cout &lt;&lt; &quot;Reaction::Reaction(...): &quot; &lt;&lt; this &lt;&lt; endl;</span>
+<a name="l00026"></a>00026 <span class="comment">//    for (auto rr : _dependents)</span>
+<a name="l00027"></a>00027 <span class="comment">//        cout &lt;&lt;(*rr);</span>
+<a name="l00028"></a>00028 <span class="comment">//    cout &lt;&lt; endl;</span>
+<a name="l00029"></a>00029 <span class="comment">//    activateReactionUnconditional();</span>
+<a name="l00030"></a>00030     std::for_each(<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(), <a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>(),
+<a name="l00031"></a>00031                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant</a>(<span class="keyword">this</span>);} );
+<a name="l00032"></a>00032     std::for_each(<a class="code" href="classchem_1_1Reaction.html#abd8e1fd6c8f8d247896fc15ebdd02dbc">beginProducts</a>(), <a class="code" href="classchem_1_1Reaction.html#a3d432b1719243cf0bb3259071c488afd">endProducts</a>(),   
+<a name="l00033"></a>00033                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#ab81e66709c72efa36ee8f29f969dc477">addAsProduct</a>(<span class="keyword">this</span>);} );
+<a name="l00034"></a>00034 }
+<a name="l00035"></a>00035     
+<a name="l00036"></a><a class="code" href="classchem_1_1Reaction.html#a229dd7e90ef4464e450b1a18c31c3f05">00036</a> <a class="code" href="classchem_1_1Reaction.html#a357e31612d0c232d22bb3673fffb75c2" title="The main constructor:">Reaction::Reaction</a> (std::vector&lt;Species*&gt; species, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> M, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> N, <span class="keywordtype">float</span> rate) :
+<a name="l00037"></a>00037 <a class="code" href="classchem_1_1Component.html">Component</a>(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+<a name="l00038"></a>00038     <span class="keywordflow">for</span>( <span class="keyword">auto</span> &amp;s : species){
+<a name="l00039"></a>00039         <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.push_back(&amp;s-&gt;getRSpecies());
+<a name="l00040"></a>00040     }
+<a name="l00041"></a>00041     <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.shrink_to_fit();
+<a name="l00042"></a>00042     assert(<a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>.size()==(M+N) &amp;&amp; <span class="stringliteral">&quot;Reaction Ctor Bug&quot;</span>);
+<a name="l00043"></a>00043     <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>=<a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016" title="Return the list of Reaction objects that are affected when this Reaction is fired.">getAffectedReactions</a>();
+<a name="l00044"></a>00044     <span class="comment">//    cout &lt;&lt; &quot;Reaction::Reaction(...): &quot; &lt;&lt; this &lt;&lt; endl;</span>
+<a name="l00045"></a>00045     <span class="comment">//    for (auto rr : _dependents)</span>
+<a name="l00046"></a>00046     <span class="comment">//        cout &lt;&lt;(*rr);</span>
+<a name="l00047"></a>00047     <span class="comment">//    cout &lt;&lt; endl;</span>
+<a name="l00048"></a>00048     <span class="comment">//    activateReactionUnconditional();</span>
+<a name="l00049"></a>00049     std::for_each(<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(), <a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>(),
+<a name="l00050"></a>00050                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant</a>(<span class="keyword">this</span>);} );
+<a name="l00051"></a>00051     std::for_each(<a class="code" href="classchem_1_1Reaction.html#abd8e1fd6c8f8d247896fc15ebdd02dbc">beginProducts</a>(), <a class="code" href="classchem_1_1Reaction.html#a3d432b1719243cf0bb3259071c488afd">endProducts</a>(),
+<a name="l00052"></a>00052                   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#ab81e66709c72efa36ee8f29f969dc477">addAsProduct</a>(<span class="keyword">this</span>);} );
+<a name="l00053"></a>00053 }
+<a name="l00054"></a>00054 
+<a name="l00055"></a><a class="code" href="classchem_1_1Reaction.html#ae82cba47ed07ed6e12039a58bfd1eb49">00055</a> <a class="code" href="classchem_1_1Reaction.html#ae82cba47ed07ed6e12039a58bfd1eb49" title="Destructor.">Reaction::~Reaction</a>() noexcept {
+<a name="l00056"></a>00056     std::for_each(<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(), <a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>(), [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">removeAsReactant</a>(<span class="keyword">this</span>);} );
+<a name="l00057"></a>00057     std::for_each(<a class="code" href="classchem_1_1Reaction.html#abd8e1fd6c8f8d247896fc15ebdd02dbc">beginProducts</a>(), <a class="code" href="classchem_1_1Reaction.html#a3d432b1719243cf0bb3259071c488afd">endProducts</a>(),   [<span class="keyword">this</span>](<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>* s){s-&gt;<a class="code" href="classchem_1_1RSpecies.html#a423e5852f749ab65553c48ed0239c243">removeAsProduct</a>(<span class="keyword">this</span>);} );
+<a name="l00058"></a>00058     <span class="comment">// passivateReaction();</span>
+<a name="l00059"></a>00059     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>!=<span class="keyword">nullptr</span>)
+<a name="l00060"></a>00060         <span class="keyword">delete</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>;
+<a name="l00061"></a>00061 };
 <a name="l00062"></a>00062 
-<a name="l00063"></a><a class="code" href="classchem_1_1Reaction.html#afae5d992f176c16a21ec38fcf3d83649">00063</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#afae5d992f176c16a21ec38fcf3d83649" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction</a>(){
-<a name="l00064"></a>00064 <span class="preprocessor">#ifdef TRACK_ZERO_COPY_N</span>
-<a name="l00065"></a>00065 <span class="preprocessor"></span>    <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#adffedea2cba0124feda82ef9e3cee5e7" title="Computes the product of the copy number of all reactant RSpecies.">getProductOfReactants</a>()==0) <span class="comment">// One of the reactants is still at zero copy n, no need to activate yet...</span>
-<a name="l00066"></a>00066         <span class="keywordflow">return</span>;
-<a name="l00067"></a>00067 <span class="preprocessor">#endif</span>
-<a name="l00068"></a>00068 <span class="preprocessor"></span><span class="preprocessor">#ifdef TRACK_UPPER_COPY_N</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>    <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#aa2dcaea0bc0893a3c00cb3cbcd0a2d6c" title="Computes the product of the copy number of all product RSpecies minus maxium allowed copy number...">getProductOfProducts</a>()==0) <span class="comment">// One of the products is at the maximum allowed copy number, no need to activate yet...</span>
-<a name="l00070"></a>00070         <span class="keywordflow">return</span>;
-<a name="l00071"></a>00071 <span class="preprocessor">#endif</span>
-<a name="l00072"></a>00072 <span class="preprocessor"></span>    <span class="keywordflow">for</span>(<span class="keyword">auto</span> s=<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(); s&lt;<a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>();++s)
-<a name="l00073"></a>00073     {
-<a name="l00074"></a>00074         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginReactantReactions(); r!=(*s)-&gt;endReactantReactions(); ++r){
-<a name="l00075"></a>00075             <span class="keywordflow">if</span>(<span class="keyword">this</span>!=(*r))
-<a name="l00076"></a>00076                 (*r)-&gt;registerNewDependent(<span class="keyword">this</span>);
-<a name="l00077"></a>00077         }
-<a name="l00078"></a>00078         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginProductReactions(); r!=(*s)-&gt;endProductReactions(); ++r){
-<a name="l00079"></a>00079             <span class="keywordflow">if</span>(<span class="keyword">this</span>!=(*r))
-<a name="l00080"></a>00080                 (*r)-&gt;registerNewDependent(<span class="keyword">this</span>);
-<a name="l00081"></a>00081         }
-<a name="l00082"></a>00082     }
-<a name="l00083"></a>00083     <a class="code" href="classchem_1_1Reaction.html#aa0151836a315ac001ef94277b126c329" title="Indicates whether the Reaction is currently passivated.">_passivated</a>=<span class="keyword">false</span>;
-<a name="l00084"></a>00084     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>!=<span class="keyword">nullptr</span>)
-<a name="l00085"></a>00085         <a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>-&gt;<a class="code" href="classchem_1_1RNode.html#a979370f4102fdfda1ee562788318b556" title="This method is called by Reaction::activateReaction().">activateReaction</a>();
-<a name="l00086"></a>00086 }
-<a name="l00087"></a>00087 
-<a name="l00088"></a><a class="code" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa">00088</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa" title="Usually is applied to Reaction objects with propensity of 0 (e.g.">Reaction::passivateReaction</a>() {
-<a name="l00089"></a>00089     <span class="keywordflow">for</span>(<span class="keyword">auto</span> s=<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(); s&lt;<a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>();++s)
-<a name="l00090"></a>00090     {
-<a name="l00091"></a>00091         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginReactantReactions(); r!=(*s)-&gt;endReactantReactions(); ++r){
-<a name="l00092"></a>00092             (*r)-&gt;unregisterDependent(<span class="keyword">this</span>);
-<a name="l00093"></a>00093         }
-<a name="l00094"></a>00094         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginProductReactions(); r!=(*s)-&gt;endProductReactions(); ++r){
-<a name="l00095"></a>00095             (*r)-&gt;unregisterDependent(<span class="keyword">this</span>);
+<a name="l00063"></a><a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016">00063</a> std::vector&lt;Reaction*&gt; <a class="code" href="classchem_1_1Reaction.html#aff0f07aebff09a5f15f2bd6d17686016" title="Return the list of Reaction objects that are affected when this Reaction is fired.">Reaction::getAffectedReactions</a>() {
+<a name="l00064"></a>00064     std::unordered_set&lt;Reaction*&gt; rxns;
+<a name="l00065"></a>00065     <span class="keywordflow">for</span>(<span class="keyword">auto</span> s : <a class="code" href="classchem_1_1Reaction.html#a5a8f536126edeb82526f9ac31c3e3c6c" title="Reactants and products constituting this Reaction.">_rspecies</a>){
+<a name="l00066"></a>00066         rxns.insert(s-&gt;beginReactantReactions(),s-&gt;endReactantReactions());
+<a name="l00067"></a>00067     }
+<a name="l00068"></a>00068     <span class="comment">//        std::sort(rxns.begin(),rxns.end());</span>
+<a name="l00069"></a>00069     <span class="comment">//        rxns.erase(std::unique(rxns.begin(),rxns.end()), rxns.end());</span>
+<a name="l00070"></a>00070     rxns.erase(<span class="keyword">this</span>);
+<a name="l00071"></a>00071     <span class="keywordflow">return</span> std::vector&lt;Reaction*&gt;(rxns.begin(),rxns.end());
+<a name="l00072"></a>00072 }
+<a name="l00073"></a>00073     
+<a name="l00074"></a><a class="code" href="classchem_1_1Reaction.html#a9971edbe11bb8c6b3148cbee3a449872">00074</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a9971edbe11bb8c6b3148cbee3a449872" title="Request that the Reaction *r adds this Reaction to its list of dependents which it affects...">Reaction::registerNewDependent</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
+<a name="l00075"></a>00075     <span class="keywordflow">if</span>(std::find(<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.begin(),<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end(),r)==<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end())
+<a name="l00076"></a>00076         <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.push_back(r);
+<a name="l00077"></a>00077 }
+<a name="l00078"></a>00078     
+<a name="l00079"></a><a class="code" href="classchem_1_1Reaction.html#ab31fe2ac310f8d17b1af649bcb70e050">00079</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#ab31fe2ac310f8d17b1af649bcb70e050" title="Request that the Reaction *r removes this Reaction from its list of dependents which it affects...">Reaction::unregisterDependent</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
+<a name="l00080"></a>00080     <span class="keyword">auto</span> it=std::find(<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.begin(),<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end(),r);
+<a name="l00081"></a>00081     <span class="comment">//    cout &lt;&lt; &quot;Reaction::unregisterDependent: &quot; &lt;&lt; this &lt;&lt; &quot;, this rxn ptr needs to be erased from the dependent&#39;s list&quot; &lt;&lt; r &lt;&lt; endl;</span>
+<a name="l00082"></a>00082     <span class="keywordflow">if</span>(it!=<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.end())
+<a name="l00083"></a>00083         <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.erase(it);
+<a name="l00084"></a>00084 }
+<a name="l00085"></a>00085 
+<a name="l00086"></a><a class="code" href="classchem_1_1Reaction.html#aea9154fdd7008baf9ee41c13fea8ea5b">00086</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#aea9154fdd7008baf9ee41c13fea8ea5b" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReactionUnconditional</a>(){
+<a name="l00087"></a>00087     <span class="keywordflow">for</span>(<span class="keyword">auto</span> s=<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(); s&lt;<a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>();++s)
+<a name="l00088"></a>00088     {
+<a name="l00089"></a>00089         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginReactantReactions(); r!=(*s)-&gt;endReactantReactions(); ++r){
+<a name="l00090"></a>00090             <span class="keywordflow">if</span>(<span class="keyword">this</span>!=(*r))
+<a name="l00091"></a>00091                 (*r)-&gt;registerNewDependent(<span class="keyword">this</span>);
+<a name="l00092"></a>00092         }
+<a name="l00093"></a>00093         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginProductReactions(); r!=(*s)-&gt;endProductReactions(); ++r){
+<a name="l00094"></a>00094             <span class="keywordflow">if</span>(<span class="keyword">this</span>!=(*r))
+<a name="l00095"></a>00095                 (*r)-&gt;registerNewDependent(<span class="keyword">this</span>);
 <a name="l00096"></a>00096         }
 <a name="l00097"></a>00097     }
-<a name="l00098"></a>00098     <a class="code" href="classchem_1_1Reaction.html#aa0151836a315ac001ef94277b126c329" title="Indicates whether the Reaction is currently passivated.">_passivated</a>=<span class="keyword">true</span>;
+<a name="l00098"></a>00098     <a class="code" href="classchem_1_1Reaction.html#aa0151836a315ac001ef94277b126c329" title="Indicates whether the Reaction is currently passivated.">_passivated</a>=<span class="keyword">false</span>;
 <a name="l00099"></a>00099     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>!=<span class="keyword">nullptr</span>)
-<a name="l00100"></a>00100         <a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>-&gt;<a class="code" href="classchem_1_1RNode.html#a007a65ede4d89e562929fc0ae9df5661" title="This method is called by Reaction::passivateReaction().">passivateReaction</a>();
+<a name="l00100"></a>00100         <a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>-&gt;<a class="code" href="classchem_1_1RNode.html#a979370f4102fdfda1ee562788318b556" title="This method is called by Reaction::activateReaction().">activateReaction</a>();
 <a name="l00101"></a>00101 }
 <a name="l00102"></a>00102 
-<a name="l00103"></a>00103 
-<a name="l00104"></a><a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208">00104</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208" title="Set the signaling behavior of this Reaction.">Reaction::startSignaling</a> () {
-<a name="l00105"></a>00105     <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a> = <span class="keyword">new</span> <a class="code" href="namespacechem.html#a85c409cf931d658d253b62ab5ad35781" title="This is a Reaction signal object that will be called by ChemSignal, usually when requested by the rea...">ReactionEventSignal</a>;
-<a name="l00106"></a>00106 }
-<a name="l00107"></a>00107 
-<a name="l00108"></a><a class="code" href="classchem_1_1Reaction.html#ace48838b7b1bac957e840ad7b2f4a4e1">00108</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#ace48838b7b1bac957e840ad7b2f4a4e1" title="Destroy the signal associated with this Reaction; all associated slots will be destroyed.">Reaction::stopSignaling</a> () {
-<a name="l00109"></a>00109     <span class="keywordflow">if</span> (<a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>!=<span class="keyword">nullptr</span>)
-<a name="l00110"></a>00110         <span class="keyword">delete</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>;
-<a name="l00111"></a>00111     <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a> = <span class="keyword">nullptr</span>;
-<a name="l00112"></a>00112 }
-<a name="l00113"></a>00113 
-<a name="l00114"></a><a class="code" href="classchem_1_1Reaction.html#af427c88bd882105d317f99d5a9f4a34d">00114</a> boost::signals2::connection <a class="code" href="classchem_1_1Reaction.html#af427c88bd882105d317f99d5a9f4a34d" title="Connect the callback, react_callback to a signal corresponding to Reaction *r.">Reaction::connect</a>(std::function&lt;<span class="keywordtype">void</span> (<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *)&gt; <span class="keyword">const</span> &amp;react_callback, <span class="keywordtype">int</span> priority) {
-<a name="l00115"></a>00115     <span class="keywordflow">if</span> (!<a class="code" href="classchem_1_1Reaction.html#a316db368606eb9aaf47dfbde6d48f606" title="Return true if this RSpecies emits signals on copy number change.">isSignaling</a>())
-<a name="l00116"></a>00116         <a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208" title="Set the signaling behavior of this Reaction.">startSignaling</a>(); 
-<a name="l00117"></a>00117     <span class="keywordflow">return</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>-&gt;connect(priority, react_callback);
+<a name="l00103"></a><a class="code" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa">00103</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa" title="Usually is applied to Reaction objects with propensity of 0 (e.g.">Reaction::passivateReaction</a>() {
+<a name="l00104"></a>00104     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#a6c03b9b74a8da07b51a6924bfe2f9571" title="Return true if the Reaction is currently passivated.">isPassivated</a>())
+<a name="l00105"></a>00105         <span class="keywordflow">return</span>;
+<a name="l00106"></a>00106     <span class="keywordflow">for</span>(<span class="keyword">auto</span> s=<a class="code" href="classchem_1_1Reaction.html#a7637b6f060d8d1ca859d89966ccfd39e">beginReactants</a>(); s&lt;<a class="code" href="classchem_1_1Reaction.html#a14336488f8477a51295ae8a6e68aacda">endReactants</a>();++s)
+<a name="l00107"></a>00107     {
+<a name="l00108"></a>00108         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginReactantReactions(); r!=(*s)-&gt;endReactantReactions(); ++r){
+<a name="l00109"></a>00109             (*r)-&gt;unregisterDependent(<span class="keyword">this</span>);
+<a name="l00110"></a>00110         }
+<a name="l00111"></a>00111         <span class="keywordflow">for</span>(<span class="keyword">auto</span> r = (*s)-&gt;beginProductReactions(); r!=(*s)-&gt;endProductReactions(); ++r){
+<a name="l00112"></a>00112             (*r)-&gt;unregisterDependent(<span class="keyword">this</span>);
+<a name="l00113"></a>00113         }
+<a name="l00114"></a>00114     }
+<a name="l00115"></a>00115     <a class="code" href="classchem_1_1Reaction.html#aa0151836a315ac001ef94277b126c329" title="Indicates whether the Reaction is currently passivated.">_passivated</a>=<span class="keyword">true</span>;
+<a name="l00116"></a>00116     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>!=<span class="keyword">nullptr</span>)
+<a name="l00117"></a>00117         <a class="code" href="classchem_1_1Reaction.html#ae10d6d1a25e37bc4b3b5df478094e745" title="A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...">_rnode</a>-&gt;<a class="code" href="classchem_1_1RNode.html#a007a65ede4d89e562929fc0ae9df5661" title="This method is called by Reaction::passivateReaction().">passivateReaction</a>();
 <a name="l00118"></a>00118 }
-<a name="l00119"></a>00119     
-<a name="l00120"></a><a class="code" href="namespacechem.html#a33c82bc525c0bdd911d321e69eb06cc4">00120</a> std::ostream&amp; <a class="code" href="namespacechem.html#a33c82bc525c0bdd911d321e69eb06cc4">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>&amp; rr){
-<a name="l00121"></a>00121     <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> i=0;
-<a name="l00122"></a>00122     <span class="keywordflow">for</span> (<span class="keyword">auto</span> sit = rr.<a class="code" href="classchem_1_1Reaction.html#a84a70eef65b79375f92a0b702883da54">cbeginReactants</a>(); sit!=rr.<a class="code" href="classchem_1_1Reaction.html#a0df8820ef13d8ba3014b610b1aeeed9e">cendReactants</a>(); ++sit){
-<a name="l00123"></a>00123         os &lt;&lt; (*sit)-&gt;getFullName() &lt;&lt; <span class="stringliteral">&quot;{&quot;</span> &lt;&lt; (*sit)-&gt;getN() &lt;&lt; <span class="stringliteral">&quot;}&quot;</span>;
-<a name="l00124"></a>00124         <span class="keywordflow">if</span>(i&lt;rr.<a class="code" href="classchem_1_1Reaction.html#a5f420aec9fb36444175089ab16ddb141" title="Returns the number of reactant RSpecies.">getM</a>()-1)
-<a name="l00125"></a>00125             os &lt;&lt; <span class="stringliteral">&quot; + &quot;</span>;
-<a name="l00126"></a>00126         ++i;
-<a name="l00127"></a>00127     }
-<a name="l00128"></a>00128     os &lt;&lt; <span class="stringliteral">&quot; ---&gt; &quot;</span>;
-<a name="l00129"></a>00129     i=0;
-<a name="l00130"></a>00130     <span class="keywordflow">for</span> (<span class="keyword">auto</span> sit = rr.<a class="code" href="classchem_1_1Reaction.html#a369a58328dc07d471ab884924872ba4d">cbeginProducts</a>(); sit!=rr.<a class="code" href="classchem_1_1Reaction.html#a666cd5d81c28e29af77cabcbd3846540">cendProducts</a>(); ++sit){
-<a name="l00131"></a>00131         os &lt;&lt; (*sit)-&gt;getFullName() &lt;&lt; <span class="stringliteral">&quot;{&quot;</span> &lt;&lt; (*sit)-&gt;getN() &lt;&lt; <span class="stringliteral">&quot;}&quot;</span>;
-<a name="l00132"></a>00132         <span class="keywordflow">if</span>(i&lt;((rr.<a class="code" href="classchem_1_1Reaction.html#a35c63f46973b5cda157661ab9bffb682" title="Returns the number of product RSpecies.">getN</a>()-rr.<a class="code" href="classchem_1_1Reaction.html#a5f420aec9fb36444175089ab16ddb141" title="Returns the number of reactant RSpecies.">getM</a>())-1))
-<a name="l00133"></a>00133             os &lt;&lt; <span class="stringliteral">&quot; + &quot;</span>;
-<a name="l00134"></a>00134         ++i;
-<a name="l00135"></a>00135     }
-<a name="l00136"></a>00136     os &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; <span class="stringliteral">&quot;curr_rate = &quot;</span> &lt;&lt; rr.<a class="code" href="classchem_1_1Reaction.html#a4661af0fbf33c822ba8ee530a8498ae7" title="Returns the rate associated with this Reaction.">getRate</a>() &lt;&lt; <span class="stringliteral">&quot;, a=&quot;</span> &lt;&lt;rr.<a class="code" href="classchem_1_1Reaction.html#a676eec8b5b28c191c555a944a2c03857" title="Compute the Reaction propensity that is needed by a Gillespie like algorithm: rate*reactant_1.getN()*reactant_2.getN()...">computePropensity</a>() &lt;&lt; <span class="stringliteral">&quot;, Reaction ptr=&quot;</span> &lt;&lt; &amp;rr &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;
-<a name="l00137"></a>00137     <span class="keywordflow">return</span> os;
-<a name="l00138"></a>00138 }    
-<a name="l00139"></a>00139 
-<a name="l00140"></a><a class="code" href="classchem_1_1Reaction.html#af46fe664df202767dfac016253942799">00140</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#af46fe664df202767dfac016253942799" title="Print the Reactions that are affacted by this Reaction being fired.">Reaction::printDependents</a>()  {
-<a name="l00141"></a>00141     cout &lt;&lt; <span class="stringliteral">&quot;Reaction: ptr=&quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot;, the following Reaction objects are dependents:\n&quot;</span>;
-<a name="l00142"></a>00142     <span class="keywordflow">for</span>(<span class="keyword">auto</span> r : <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>)
-<a name="l00143"></a>00143         cout &lt;&lt; r &lt;&lt; endl;
-<a name="l00144"></a>00144 }
-<a name="l00145"></a>00145 }
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120 
+<a name="l00121"></a><a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208">00121</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208" title="Set the signaling behavior of this Reaction.">Reaction::startSignaling</a> () {
+<a name="l00122"></a>00122     <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a> = <span class="keyword">new</span> <a class="code" href="namespacechem.html#a85c409cf931d658d253b62ab5ad35781" title="This is a Reaction signal object that will be called by ChemSignal, usually when requested by the rea...">ReactionEventSignal</a>;
+<a name="l00123"></a>00123 }
+<a name="l00124"></a>00124 
+<a name="l00125"></a><a class="code" href="classchem_1_1Reaction.html#ace48838b7b1bac957e840ad7b2f4a4e1">00125</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#ace48838b7b1bac957e840ad7b2f4a4e1" title="Destroy the signal associated with this Reaction; all associated slots will be destroyed.">Reaction::stopSignaling</a> () {
+<a name="l00126"></a>00126     <span class="keywordflow">if</span> (<a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>!=<span class="keyword">nullptr</span>)
+<a name="l00127"></a>00127         <span class="keyword">delete</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>;
+<a name="l00128"></a>00128     <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a> = <span class="keyword">nullptr</span>;
+<a name="l00129"></a>00129 }
+<a name="l00130"></a>00130 
+<a name="l00131"></a><a class="code" href="classchem_1_1Reaction.html#af427c88bd882105d317f99d5a9f4a34d">00131</a> boost::signals2::connection <a class="code" href="classchem_1_1Reaction.html#af427c88bd882105d317f99d5a9f4a34d" title="Connect the callback, react_callback to a signal corresponding to Reaction *r.">Reaction::connect</a>(std::function&lt;<span class="keywordtype">void</span> (<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *)&gt; <span class="keyword">const</span> &amp;react_callback, <span class="keywordtype">int</span> priority) {
+<a name="l00132"></a>00132     <span class="keywordflow">if</span> (!<a class="code" href="classchem_1_1Reaction.html#a316db368606eb9aaf47dfbde6d48f606" title="Return true if this RSpecies emits signals on copy number change.">isSignaling</a>())
+<a name="l00133"></a>00133         <a class="code" href="classchem_1_1Reaction.html#a584613fe0d634660a1814744c76a4208" title="Set the signaling behavior of this Reaction.">startSignaling</a>(); 
+<a name="l00134"></a>00134     <span class="keywordflow">return</span> <a class="code" href="classchem_1_1Reaction.html#a55ca3408f31e6074775d6a8cb2a6b95b" title="Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Re...">_signal</a>-&gt;connect(priority, react_callback);
+<a name="l00135"></a>00135 }
+<a name="l00136"></a>00136     
+<a name="l00137"></a><a class="code" href="namespacechem.html#a33c82bc525c0bdd911d321e69eb06cc4">00137</a> std::ostream&amp; <a class="code" href="namespacechem.html#a33c82bc525c0bdd911d321e69eb06cc4">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>&amp; rr){
+<a name="l00138"></a>00138     <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> i=0;
+<a name="l00139"></a>00139     <span class="keywordflow">for</span> (<span class="keyword">auto</span> sit = rr.<a class="code" href="classchem_1_1Reaction.html#a84a70eef65b79375f92a0b702883da54">cbeginReactants</a>(); sit!=rr.<a class="code" href="classchem_1_1Reaction.html#a0df8820ef13d8ba3014b610b1aeeed9e">cendReactants</a>(); ++sit){
+<a name="l00140"></a>00140         os &lt;&lt; (*sit)-&gt;getFullName() &lt;&lt; <span class="stringliteral">&quot;{&quot;</span> &lt;&lt; (*sit)-&gt;getN() &lt;&lt; <span class="stringliteral">&quot;}&quot;</span>;
+<a name="l00141"></a>00141         <span class="keywordflow">if</span>(i&lt;rr.<a class="code" href="classchem_1_1Reaction.html#a5f420aec9fb36444175089ab16ddb141" title="Returns the number of reactant RSpecies.">getM</a>()-1)
+<a name="l00142"></a>00142             os &lt;&lt; <span class="stringliteral">&quot; + &quot;</span>;
+<a name="l00143"></a>00143         ++i;
+<a name="l00144"></a>00144     }
+<a name="l00145"></a>00145     os &lt;&lt; <span class="stringliteral">&quot; ---&gt; &quot;</span>;
+<a name="l00146"></a>00146     i=0;
+<a name="l00147"></a>00147     <span class="keywordflow">for</span> (<span class="keyword">auto</span> sit = rr.<a class="code" href="classchem_1_1Reaction.html#a369a58328dc07d471ab884924872ba4d">cbeginProducts</a>(); sit!=rr.<a class="code" href="classchem_1_1Reaction.html#a666cd5d81c28e29af77cabcbd3846540">cendProducts</a>(); ++sit){
+<a name="l00148"></a>00148         os &lt;&lt; (*sit)-&gt;getFullName() &lt;&lt; <span class="stringliteral">&quot;{&quot;</span> &lt;&lt; (*sit)-&gt;getN() &lt;&lt; <span class="stringliteral">&quot;}&quot;</span>;
+<a name="l00149"></a>00149         <span class="keywordflow">if</span>(i&lt;((rr.<a class="code" href="classchem_1_1Reaction.html#a35c63f46973b5cda157661ab9bffb682" title="Returns the number of product RSpecies.">getN</a>()-rr.<a class="code" href="classchem_1_1Reaction.html#a5f420aec9fb36444175089ab16ddb141" title="Returns the number of reactant RSpecies.">getM</a>())-1))
+<a name="l00150"></a>00150             os &lt;&lt; <span class="stringliteral">&quot; + &quot;</span>;
+<a name="l00151"></a>00151         ++i;
+<a name="l00152"></a>00152     }
+<a name="l00153"></a>00153     os &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; <span class="stringliteral">&quot;curr_rate = &quot;</span> &lt;&lt; rr.<a class="code" href="classchem_1_1Reaction.html#a4661af0fbf33c822ba8ee530a8498ae7" title="Returns the rate associated with this Reaction.">getRate</a>() &lt;&lt; <span class="stringliteral">&quot;, a=&quot;</span> &lt;&lt;rr.<a class="code" href="classchem_1_1Reaction.html#a676eec8b5b28c191c555a944a2c03857" title="Compute the Reaction propensity that is needed by a Gillespie like algorithm: rate*reactant_1.getN()*reactant_2.getN()...">computePropensity</a>() &lt;&lt; <span class="stringliteral">&quot;, Reaction ptr=&quot;</span> &lt;&lt; &amp;rr &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;
+<a name="l00154"></a>00154     <span class="keywordflow">return</span> os;
+<a name="l00155"></a>00155 }    
+<a name="l00156"></a>00156 
+<a name="l00157"></a><a class="code" href="classchem_1_1Reaction.html#af46fe664df202767dfac016253942799">00157</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Reaction.html#af46fe664df202767dfac016253942799" title="Print the Reactions that are affacted by this Reaction being fired.">Reaction::printDependents</a>()  {
+<a name="l00158"></a>00158     cout &lt;&lt; <span class="stringliteral">&quot;Reaction: ptr=&quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>
+<a name="l00159"></a>00159          &lt;&lt; (*this) &lt;&lt; <span class="stringliteral">&quot;the following Reaction objects are dependents: &quot;</span>;
+<a name="l00160"></a>00160     <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>.size()==0)
+<a name="l00161"></a>00161         cout &lt;&lt; <span class="stringliteral">&quot;NONE&quot;</span> &lt;&lt; endl;
+<a name="l00162"></a>00162     <span class="keywordflow">else</span>
+<a name="l00163"></a>00163         cout &lt;&lt; endl;
+<a name="l00164"></a>00164     <span class="keywordflow">for</span>(<span class="keyword">auto</span> r : <a class="code" href="classchem_1_1Reaction.html#a10b1e663b3c3677064d2b466e3dca437" title="Pointers to Reaction objects that depend on this Reaction being executed.">_dependents</a>)
+<a name="l00165"></a>00165         cout &lt;&lt; (*r) &lt;&lt; endl;
+<a name="l00166"></a>00166 }
+<a name="l00167"></a>00167     
+<a name="l00168"></a>00168 } <span class="comment">// end of namespace</span>
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="Reaction_8cpp.html">Reaction.cpp</a>      </li>
 
-    <li class="footer">Generated on Sat Aug 11 2012 18:34:14 for CytoSim by
+    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

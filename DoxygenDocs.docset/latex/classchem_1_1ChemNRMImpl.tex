@@ -37,7 +37,7 @@ Collaboration diagram for chem\-:\-:Chem\-N\-R\-M\-Impl\-:\nopagebreak
 \begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} \& \hyperlink{classchem_1_1ChemNRMImpl_ab9a899fd0d206d67fa30f1aeac103eae}{operator=} (\hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} \&rhs)
 \begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
-\hyperlink{classchem_1_1ChemNRMImpl_a7ce15fefe312380122c36b0860e3014a}{$\sim$\-Chem\-N\-R\-M\-Impl} ()
+virtual \hyperlink{classchem_1_1ChemNRMImpl_a7ce15fefe312380122c36b0860e3014a}{$\sim$\-Chem\-N\-R\-M\-Impl} ()
 \begin{DoxyCompactList}\small\item\em Dtor\-: The reaction network is cleared. \end{DoxyCompactList}\item 
 size\-\_\-t \hyperlink{classchem_1_1ChemNRMImpl_a0be634b1313bcce9adc160614f34821c}{get\-Size} () const 
 \begin{DoxyCompactList}\small\item\em Return the number of reactions in the network. \end{DoxyCompactList}\item 
@@ -49,17 +49,17 @@ void \hyperlink{classchem_1_1ChemNRMImpl_ad096a21196bb3e5a978dc3fdb50d8e1b}{sync
 \begin{DoxyCompactList}\small\item\em Sets global time variable to \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl}'s global time. \end{DoxyCompactList}\item 
 \hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{boost\-\_\-heap} $\ast$ \hyperlink{classchem_1_1ChemNRMImpl_ae52572d35469dd8569457dbce96af78e}{get\-Heap} ()
 \begin{DoxyCompactList}\small\item\em Return a pointer to the heap. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemNRMImpl_a1b325b27b22f443f99fce659ae78aeee}{add\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
+virtual void \hyperlink{classchem_1_1ChemNRMImpl_a1b325b27b22f443f99fce659ae78aeee}{add\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the network. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemNRMImpl_ad3a2b84f69c444a55b60d21200537338}{remove\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
+virtual void \hyperlink{classchem_1_1ChemNRMImpl_ad3a2b84f69c444a55b60d21200537338}{remove\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the network. \end{DoxyCompactList}\item 
 double \hyperlink{classchem_1_1ChemNRMImpl_a196f525d2e2392c0531f763fd8169701}{generate\-Tau} (double a)
 \begin{DoxyCompactList}\small\item\em A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, with the propensity given by a. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemNRMImpl_a685ac34bfa4b8226045bd3b8c6cdec95}{initialize} ()
+virtual void \hyperlink{classchem_1_1ChemNRMImpl_a685ac34bfa4b8226045bd3b8c6cdec95}{initialize} ()
 \begin{DoxyCompactList}\small\item\em This function iterates over all \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} objects in the network, generating new tau-\/s for each case and subsequently updating the heap. \end{DoxyCompactList}\item 
-bool \hyperlink{classchem_1_1ChemNRMImpl_a8ccff6cf244e91b8057c323d17a5b48c}{run} (int steps)
+virtual bool \hyperlink{classchem_1_1ChemNRMImpl_a236b68389599aa9486959377cfc51496}{run} (int steps)
 \begin{DoxyCompactList}\small\item\em This method runs the N\-R\-M algorithm for the given number of steps. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemNRMImpl_a7898a5e226789a39b51f8fb56cc85c1e}{print\-Reactions} () const 
+virtual void \hyperlink{classchem_1_1ChemNRMImpl_a7898a5e226789a39b51f8fb56cc85c1e}{print\-Reactions} () const 
 \begin{DoxyCompactList}\small\item\em Prints all R\-Nodes in the reaction network. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
@@ -131,14 +131,14 @@ Copying is not allowed.
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1ChemNRMImpl_a7ce15fefe312380122c36b0860e3014a}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classchem_1_1ChemNRMImpl_a7ce15fefe312380122c36b0860e3014a}
 
 
 Dtor\-: The reaction network is cleared. 
 
 The \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} objects will be destructed, but \hyperlink{classchem_1_1Reaction}{Reaction} objects will stay intact. When the \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} objects are destructed, they in turn destruct the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element, setting the \hyperlink{classchem_1_1RNode}{R\-Node} pointer of the \hyperlink{classchem_1_1Reaction}{Reaction} object to null. At the end, the heap itself will go out of scope. 
 
-Definition at line 94 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 102 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -164,7 +164,7 @@ Implements \hyperlink{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf
 
 
 
-Definition at line 150 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 171 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -183,7 +183,7 @@ A pure function (without sideeffects), which returns a random time tau, drawn fr
 
 
 
-Definition at line 98 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 106 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -278,7 +278,7 @@ Implements \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc
 
 
 
-Definition at line 85 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 93 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -297,7 +297,7 @@ This is a somewhat complex subroutine which implements the main part of the Gibs
 
 See the implementation for details. After this method returns, roughly the following will have happened\-: 1) The \hyperlink{classchem_1_1Reaction}{Reaction} corresponding to the lowest tau \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} is executed and the corresponding \hyperlink{classchem_1_1Species}{Species} copy numbers are changed 2) A new tau is computed from this \hyperlink{classchem_1_1Reaction}{Reaction} and the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element is updated in the heap 3) The other affected \hyperlink{classchem_1_1Reaction}{Reaction} objects are found, their taus are recomputed and corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} elements are updated in the heap. 4) For the \hyperlink{classchem_1_1Reaction}{Reaction} and associated \hyperlink{classchem_1_1Species}{Species} signals are emitted, if these objects broadcast signals upon change. Returns true if successful, and false if the heap is exchausted and there no more reactions to fire 
 
-Definition at line 104 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 112 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -335,7 +335,7 @@ Implements \hyperlink{classchem_1_1ChemSimImpl_a24291dac40633358ab6a9f473d6f861d
 
 
 
-Definition at line 160 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 181 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -358,7 +358,7 @@ Implements \hyperlink{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a
 
 
 
-Definition at line 155 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 176 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -387,13 +387,13 @@ References \-\_\-t, and sync\-Global\-Time().
 
 Referenced by Chem\-N\-R\-M\-Impl(), and initialize().
 
-\hypertarget{classchem_1_1ChemNRMImpl_a8ccff6cf244e91b8057c323d17a5b48c}{\index{chem\-::\-Chem\-N\-R\-M\-Impl@{chem\-::\-Chem\-N\-R\-M\-Impl}!run@{run}}
+\hypertarget{classchem_1_1ChemNRMImpl_a236b68389599aa9486959377cfc51496}{\index{chem\-::\-Chem\-N\-R\-M\-Impl@{chem\-::\-Chem\-N\-R\-M\-Impl}!run@{run}}
 \index{run@{run}!chem::ChemNRMImpl@{chem\-::\-Chem\-N\-R\-M\-Impl}}
-\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Chem\-N\-R\-M\-Impl\-::run} (
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Chem\-N\-R\-M\-Impl\-::run} (
 \begin{DoxyParamCaption}
 \item[{int}]{steps}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1ChemNRMImpl_a8ccff6cf244e91b8057c323d17a5b48c}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1ChemNRMImpl_a236b68389599aa9486959377cfc51496}
 
 
 This method runs the N\-R\-M algorithm for the given number of steps. 

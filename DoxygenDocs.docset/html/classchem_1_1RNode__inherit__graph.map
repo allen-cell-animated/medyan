@@ -1,3 +1,4 @@
 <map id="G" name="G">
-<area shape="rect" id="node3" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="5,80,133,107"/>
+<area shape="rect" id="node3" href="$classchem_1_1RNodeGillespie.html" title="RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith..." alt="" coords="5,80,152,107"/>
+<area shape="rect" id="node5" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="176,80,304,107"/>
 </map>
