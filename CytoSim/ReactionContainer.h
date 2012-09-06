@@ -68,6 +68,18 @@ namespace  chem {
                 _reactions.erase(child_iter);
         }
         
+        virtual void removeReactions (Species* s)
+        {
+            for(auto &r : _reactions)
+            {
+                if(r->containsSpecies(s)){
+                    removeReaction(r.get());
+                    return;
+                }
+            }
+        }
+        
+        
         virtual Reaction* findReaction (size_t index) {
             return _reactions[index].get();
         }

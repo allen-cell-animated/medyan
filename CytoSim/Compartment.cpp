@@ -7,3 +7,66 @@
 //
 
 #include "Compartment.h"
+
+namespace chem {
+
+    
+    Compartment& Compartment::operator=(const Compartment &other)
+    {
+        //            swap(*this, other);
+        _species.clear();
+        _internal_reactions.clear();
+        _diffusion_reactions.clear();
+        other.cloneSpecies(this);
+        other.cloneReactions(this);
+        _diffusion_rates = other._diffusion_rates;
+        return *this;
+        // Note that _neighbours is not copied
+    }
+    
+    void Compartment::generateDiffusionReactions()
+    {
+        for(auto &sp_this : _species.species()) {
+            int molecule = sp_this->getMolecule();
+            int diff_rate = _diffusion_rates[molecule];
+            if(diff_rate<0) // Based on a convention that diffusing reactions require positive rates
+                continue;
+            for(auto &C : _neighbours){
+                Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
+                Reaction *R = new Reaction({sp_this.get(),sp_neighbour},1,1,diff_rate);
+                this->addDiffusionReactionUnique(std::unique_ptr<Reaction>(R));
+            }
+        }
+    }
+    
+    bool operator==(const Compartment& a, const Compartment& b)
+    {
+        if(a.numberOfSpecies()!=b.numberOfSpecies() or a.numberOfInternalReactions()!=b.numberOfInternalReactions())
+            return false;
+        
+        if(typeid(a)!=typeid(b))
+            return false;
+        
+        bool spec_bool = false;
+        auto sit_pair = std::mismatch(a._species.species().begin(),a._species.species().end(),b._species.species().begin(),
+                                      [](const std::unique_ptr<Species> &A, const std::unique_ptr<Species> &B)
+                                      {
+                                          return (*A)==(*B);
+                                      });
+        if(sit_pair.first==a._species.species().end())
+            spec_bool=true;
+        
+        
+        bool reac_bool = false;
+        auto rit_pair = std::mismatch(a._internal_reactions.reactions().begin(),a._internal_reactions.reactions().end(),b._internal_reactions.reactions().begin(),
+                                      [](const std::unique_ptr<Reaction> &A, const std::unique_ptr<Reaction> &B)
+                                      {
+                                          return (*A)==(*B);
+                                      });
+        if(rit_pair.first==a._internal_reactions.reactions().end())
+            reac_bool=true;
+        
+        return spec_bool && reac_bool;
+    }
+
+} // end of chem

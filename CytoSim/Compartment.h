@@ -10,6 +10,7 @@
 #define CytoSim_Experimenting_Compartment_h
 
 #include <vector>
+#include <array>
 #include <unordered_map>
 #include "Reaction.h"
 #include "Species.h"
@@ -53,37 +54,82 @@ namespace chem {
 //            swap(first._diffusion_rates, second._diffusion_rates);
 //        }
         
-        Compartment& operator=(const Compartment &other)
+        Compartment& operator=(const Compartment &other);
+        
+        virtual ~Compartment() noexcept
         {
-//            swap(*this, other);
-            _species.clear();
-            _internal_reactions.clear();
-            _diffusion_reactions.clear();
-            other.cloneSpecies(this);
-            other.cloneReactions(this);
-            _diffusion_rates = other._diffusion_rates;
-            return *this;
-            // Note that _neighbours is not copied
+//            std::cout << "~Compartment(): ptr=" << this << std::endl;
+            clearReactions();
+            clearNeighbouringReactions();
+            clearSpecies();
+            removeFromNeighboursList();
+        }
+        
+        virtual void clearReactions()
+        {
+            _internal_reactions.reactions().clear();
+            _diffusion_reactions.reactions().clear();
+        }
+        
+        virtual void clearSpecies()
+        {
+            _species.species().clear();
+        }
+        
+        virtual void clearNeighbouringReactions()
+        {
+            for(auto &s : _species.species())
+            {
+                for(auto &n : _neighbours)
+                {
+                    n->removeDiffusionReactions(s.get());
+                }
+            }
+        }
+            
+        virtual void removeFromNeighboursList()
+        {
+            for(auto &n : _neighbours)
+            {
+                n->removeNeighbour(this);
+            }
         }
 
         
-        virtual ~Compartment() noexcept {
-            _internal_reactions.reactions().clear();
-            _diffusion_reactions.reactions().clear();
-            _species.species().clear();
+        /// Returns true if two Compartment objects are equal.
+        /// Two Compartment objects are equal if each contains analogous Species and Reaction objects, in the same order
+        friend bool operator==(const Compartment& a, const Compartment& b);
+        
+        /// Return true if two Compartment are not equal.
+        /// @see operator ==(const Compartment& a, const Compartment& b) above
+        friend bool operator !=(const Compartment& a, const Compartment& b)
+        {
+            return !(a==b);
         }
         
         virtual bool isSpeciesContainer() const {return true;}
         virtual bool isReactionsContainer() const {return true;}
         virtual std::string getFullName() const {return "Compartment";};
         size_t numberOfSpecies() const {return _species.species().size();}
+        size_t numberOfInternalReactions() const {return _internal_reactions.reactions().size();}
         size_t numberOfReactions() const {return _internal_reactions.reactions().size()+_diffusion_reactions.reactions().size();}
         
-        virtual Species* findSpeciesByName(const std::string &name) {return _species.findSpeciesByName(name);};
-        virtual Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
-        virtual Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
+        Species* findSpeciesByName(const std::string &name) {return _species.findSpeciesByName(name);};
+        Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
+        Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
+        Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
+        Reaction* findSimilarInternalReaction (const Reaction &r)
+        {
+            return _internal_reactions.findSimilarReaction(r);
+        }
+        Reaction* findSimilarDiffusionReaction (const Reaction &r)
+        {
+            return _diffusion_reactions.findSimilarReaction(r);
+        }
         
-        virtual Species* addSpeciesUnique (std::unique_ptr<Species> &&species, float diff_rate = -1.0)
+        virtual void removeDiffusionReactions (Species* s) {_diffusion_reactions.removeReactions(s);}
+        
+        Species* addSpeciesUnique (std::unique_ptr<Species> &&species, float diff_rate = -1.0)
         {
             Species *sp = _species.addSpeciesUnique(std::move(species));
             sp->setParent(this);
@@ -91,14 +137,14 @@ namespace chem {
             return sp;
         }
         
-        virtual Reaction* addInternalReactionUnique (std::unique_ptr<Reaction> &&reaction)
+        Reaction* addInternalReactionUnique (std::unique_ptr<Reaction> &&reaction)
         {
             Reaction *r = _internal_reactions.addReactionUnique(std::move(reaction));
             r->setParent(this);
             return r;
         }
         
-        virtual Reaction* addDiffusionReactionUnique (std::unique_ptr<Reaction> &&reaction)
+        Reaction* addDiffusionReactionUnique (std::unique_ptr<Reaction> &&reaction)
         {
             Reaction *r = _diffusion_reactions.addReactionUnique(std::move(reaction));
             r->setParent(this);
@@ -199,50 +245,84 @@ namespace chem {
             return C;
         }
         
-        void generateDiffusionReactions()
-        {
-            for(auto &sp_this : _species.species()) {
-                int molecule = sp_this->getMolecule();
-                int diff_rate = _diffusion_rates[molecule];
-                if(diff_rate<0) // Based on a convention that diffusing reactions require positive rates
-                    continue;
-                for(auto &C : _neighbours){
-                    Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-                    Reaction *R = new Reaction({sp_this.get(),sp_neighbour},1,1,diff_rate);
-                    this->addDiffusionReactionUnique(std::unique_ptr<Reaction>(R));
-                }
-            }
-        }
-        
-        virtual Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
-
-        virtual Reaction* findSimilarInternalReaction (const Reaction &r)
-        {
-            return _internal_reactions.findSimilarReaction(r);
-        }
-        
-        virtual Reaction* findSimilarDiffusionReaction (const Reaction &r)
-        {
-            return _diffusion_reactions.findSimilarReaction(r);
-        }
+        void generateDiffusionReactions();
             
         size_t numberOfNeighbours() const {return _neighbours.size();}
         
         std::vector<Compartment*>& neighbours() {return _neighbours;}
         const std::vector<Compartment*>& neighbours() const {return _neighbours;}
         
-        virtual void printSpecies() {_species.printSpecies();}
-        virtual void printReactions()
+        void printSpecies() {_species.printSpecies();}
+        void printReactions()
         {
             _internal_reactions.printReactions();
             _diffusion_reactions.printReactions();
         }
         
-        virtual bool areAllSpeciesUnique () {return _species.areAllSpeciesUnique();}
+        bool areAllSpeciesUnique () {return _species.areAllSpeciesUnique();}
+        
+        virtual void printSelf()
+        {
+            std::cout << this->getFullName() << "\n"
+            << "Number of neighbors: " << numberOfNeighbours() << std::endl;
+            printSpecies();
+            std::cout << "Reactions:" << std::endl;
+            printReactions();
+        }
 
     };
 
+    template <size_t NDIM>
+    class CompartmentCubic : public Compartment {
+    private:
+        std::array<float, NDIM> _coords;
+        std::array<float, NDIM> _sides;
+    public:
+        CompartmentCubic() : Compartment() {};
 
+        CompartmentCubic(const CompartmentCubic &other) : Compartment(other), _sides(other._sides) {}
+        
+        CompartmentCubic& operator=(const CompartmentCubic &other) {
+            this->Compartment::operator=(other);
+            _sides=other._sides;
+        }
+        
+        virtual ~CompartmentCubic() noexcept {
+        }
+
+        virtual std::string getFullName() const {return "CompartmentCubic<"+std::to_string(NDIM)+">";};
+        
+        void setSideLength(size_t i, float value) {_sides[i]=value;}
+        
+        void setCoord(size_t i, float value) {_coords[i]=value;}
+
+        template <class input_iter>
+        void setSides(input_iter input_it)
+        {
+            std::copy_n(input_it,NDIM,_sides.begin());
+        }
+        
+        template <class input_iter>
+        void setCoords(input_iter input_it)
+        {
+            std::copy_n(input_it,NDIM,_coords.begin());
+        }
+
+        virtual void printSelf()
+        {
+            Compartment::printSelf();
+            std::cout << "Coords: ";
+            for(auto &x : _coords) std::cout << x << " ";
+            std::cout << "\nSide: ";
+            for(auto &y : _sides) std::cout << y << " ";
+        }
+        
+        std::array<float, NDIM>& coords() {return _coords;}
+        const std::array<float, NDIM>& coords() const {return _coords;}
+        std::array<float, NDIM>& sides() {return _sides;}
+        const std::array<float, NDIM>& sides() const {return _sides;}
+
+    };
 
 }// end of chem
 //

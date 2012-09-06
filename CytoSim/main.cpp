@@ -32,6 +32,7 @@
  */
 
 #include <iostream>
+#include <numeric>
 
 //#include "Species.h"
 //#include "Reaction.h"
@@ -44,8 +45,11 @@
 
 //#include "SpeciesContainer.h"
 
+
+
 #include "Compartment.h"
 #include "ReactionContainer.h"
+#include "CompartmentContainer.h"
 
 using namespace std;
 using namespace chem;
@@ -131,6 +135,42 @@ int main(int argc, const char * argv[])
     cout << "Finding one Reaction" << endl;
     Reaction *C4AP = C4->findSimilarInternalReaction(AP);
     cout << (*C4AP) << endl;
+    
+    cout << "Testing equality operator:" << endl;
+    cout << boolalpha << ((*C1)==(*C4)) << endl;
+    
+    CompartmentCubic<3> CC1;
+    vector<float> sides{100.0,100.0,100.0};
+    CC1.setSides(sides.begin());
+    vector<float> coords{12.3,1.2,22.1};
+    CC1.setCoords(coords.begin());
+    CC1.printSelf();
+    cout << endl << endl;
+    
+    const int NDIM =3;
+    const int NGRID = 2;
+    CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
+    Compartment &Cproto = ccv.getProtoCompartment();
+    Species *M1 = Cproto.addSpecies("Myosin",9U);
+    Cproto.setDiffusionRate(M1,2000);
+    Species *M2 = Cproto.addSpecies("Fascin",5);
+    Cproto.setDiffusionRate(M2,2500);
+    vector<Species*> RSM1M2 = {M1,M2};
+    Reaction *RM1M2 = Cproto.addInternalReaction(RSM1M2, 1, 1, 311.2);
+    ccv.initialize();
+    ccv.printSelf();
+//    size_t range[NGRID];
+//    iota(range,range+NGRID,0);
+//    for(size_t i : range)
+//        for(size_t j : range)
+//            for(size_t k : range)
+//            {
+//                Compartment *C5 = ccv.getCompartment(i,j,k);
+//                cout << i << " " << j << " " << k << ": " << C5 << endl;
+//                C5->printSelf();
+//                cout << endl;
+//            }
+
     
     cout << "Main exited..." << endl;
     return 0;

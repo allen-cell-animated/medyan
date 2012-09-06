@@ -35,6 +35,7 @@ namespace chem {
         virtual std::string getFullName() const {return "Component";};
         virtual size_t countSpecies() const {return 0;}
         virtual size_t countReactions() const {return 0;};
+        virtual void printSelf() {}
     };
 
 }// end of chem

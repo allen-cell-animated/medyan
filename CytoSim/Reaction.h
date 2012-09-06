@@ -138,6 +138,13 @@ public:
     /// Return true if this RSpecies emits signals on copy number change
     bool isSignaling () const {return _signal!=nullptr;}
     
+    bool containsSpecies (Species *s) const
+    {
+        auto it = std::find_if(_rspecies.begin(), _rspecies.end(),
+                               [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
+        return it!=_rspecies.end();
+    }
+    
     /// Set the signaling behavior of this Reaction
     void startSignaling ();
     

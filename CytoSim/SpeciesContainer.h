@@ -24,6 +24,7 @@ namespace  chem {
         virtual Species* findSpeciesByName(const std::string &name) = 0;
         virtual Species* findSpeciesByIndex (size_t index) = 0;
         virtual Species* findSpeciesByMolecule (int molecule) = 0;
+        virtual Species* findSimilarSpecies (const Species &s) = 0;
         virtual void printSpecies() {}
     };
     
