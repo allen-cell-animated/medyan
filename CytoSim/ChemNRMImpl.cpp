@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <chrono>
 
 //#define epsilon 
 
@@ -16,6 +17,12 @@ using namespace std;
 #include "ChemNRMImpl.h"
 
 namespace chem {
+    
+    long long int elapsed14 = 0;
+    long long int elapsed16 = 0;
+    long long int elapsed23 = 0;
+    long long int elapsed45 = 0;
+    long long int elapsed56 = 0;
 
 RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
  _chem_nrm (chem_nrm), _react(r) {
@@ -101,6 +108,8 @@ void ChemNRMImpl::initialize() {
 
 ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
+//    double sec = std::pow(10,9);
+//    cout << "Elapsed times in ChemNRMImpl::makeStep(): dt14=" << elapsed14/sec << ", dt23=" << elapsed23/sec  << ", dt45=" << elapsed45/sec <<  ", dt56=" << elapsed56/sec <<  ", dt16=" << elapsed16/sec << endl;
 }
 
 double ChemNRMImpl::generateTau(double a){
@@ -112,6 +121,10 @@ double ChemNRMImpl::generateTau(double a){
 bool ChemNRMImpl::makeStep()
 {
 //    cout << "[ChemNRMImpl::_makeStep(): Starting..." << endl;
+//    std::chrono::time_point<std::chrono::system_clock> chk1, chk2, chk3, chk4, chk5, chk6;
+
+//    chk1 = std::chrono::system_clock::now();
+
     RNodeNRM *rn = _heap.top()._rn;
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
@@ -120,10 +133,12 @@ bool ChemNRMImpl::makeStep()
     }
     _t=tau_top;
     rn->makeStep();
-    if(!rn->isPassivated()){ 
+    if(!rn->isPassivated()){
         rn->generateNewRandTau();
         rn->updateHeap();
     }
+    
+//    chk4 = std::chrono::system_clock::now();
     
 //    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. t=" << _t << "\n" << endl;
 //    rn->printSelf();
@@ -132,7 +147,9 @@ bool ChemNRMImpl::makeStep()
     for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
+//        chk2 = std::chrono::system_clock::now();
         rn_other->reComputePropensity();
+//        chk3 = std::chrono::system_clock::now();
         double tau_new;
         double tau_old = rn_other->getTau();
         double a_new = rn_other->getPropensity();
@@ -151,7 +168,10 @@ bool ChemNRMImpl::makeStep()
 #endif
         rn_other->setTau(tau_new);
         rn_other->updateHeap();
+//        elapsed23 += std::chrono::duration_cast<std::chrono::nanoseconds>(chk3-chk2).count();
     }
+    
+//    chk5 = std::chrono::system_clock::now();
     
     // Send signals
     r->emitSignal();
@@ -165,6 +185,14 @@ bool ChemNRMImpl::makeStep()
     }
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
     syncGlobalTime();
+    
+//    chk6 = std::chrono::system_clock::now();
+    
+//    elapsed14 += std::chrono::duration_cast<std::chrono::nanoseconds>(chk4-chk1).count();
+//    elapsed45 += std::chrono::duration_cast<std::chrono::nanoseconds>(chk5-chk4).count();
+//    elapsed56 += std::chrono::duration_cast<std::chrono::nanoseconds>(chk6-chk5).count();
+//    elapsed16 += std::chrono::duration_cast<std::chrono::nanoseconds>(chk6-chk1).count();
+
     return true;
 }
 

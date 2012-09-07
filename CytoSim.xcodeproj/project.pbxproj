@@ -21,6 +21,9 @@
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
 		F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
+		F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
+		F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
+		F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F76148D015F79CE800587017 /* CompartmentContainer.h */; };
 		F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
 		F763ED241548FFED0069DA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED161548FFED0069DA61 /* main.cpp */; };
 		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
@@ -113,6 +116,8 @@
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
 		F7382CCD156BE2DA0022F97B /* RSpecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSpecies.h; sourceTree = "<group>"; };
 		F7382CCF156BE2F00022F97B /* RSpecies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RSpecies.cpp; sourceTree = "<group>"; };
+		F76148CF15F79CE800587017 /* CompartmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentContainer.cpp; sourceTree = "<group>"; };
+		F76148D015F79CE800587017 /* CompartmentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompartmentContainer.h; sourceTree = "<group>"; };
 		F763ED061548FFC70069DA61 /* CytoSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoSim; sourceTree = BUILT_PRODUCTS_DIR; };
 		F763ED131548FFED0069DA61 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		F763ED141548FFED0069DA61 /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compartment.cpp; sourceTree = "<group>"; };
@@ -252,6 +257,8 @@
 				F763ED131548FFED0069DA61 /* common.h */,
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
+				F76148CF15F79CE800587017 /* CompartmentContainer.cpp */,
+				F76148D015F79CE800587017 /* CompartmentContainer.h */,
 				F7346A891578206500326E09 /* Component.cpp */,
 				F7346A871578202600326E09 /* Component.h */,
 				F7F3681D1575C743006727F7 /* Composite.cpp */,
@@ -297,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7B99A7015EFBBE8004A245A /* SpeciesContainer.h in Headers */,
+				F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +471,7 @@
 				F7013D8115D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
 				F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7B99A6E15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */,
+				F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +492,7 @@
 				F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
 				F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7B99A6F15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */,
+				F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

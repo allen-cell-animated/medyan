@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "Compartment.h"
+#include "ChemSim.h"
 
 namespace chem {
 
@@ -67,7 +68,8 @@ namespace chem {
             size_t i = NDIM-1;
             for(auto x: {args...})
             {
-                index+=x*std::pow(_grid[i],i--);
+                index+=x*std::pow(_grid[i],i);
+                --i;
             }
             //            std::cout << "CompartmentsSimpleGrid::getCompartment(): index=" << index << std::endl;
             return static_cast<Compartment*>(children()[index].get());
@@ -82,7 +84,8 @@ namespace chem {
             size_t i = NDIM-1;
             for(auto x: indices)
             {
-                index+=x*std::pow(_grid[i],i--);
+                index+=x*std::pow(_grid[i],i);
+                --i;
             }
             //            std::cout << "CompartmentsSimpleGrid::getCompartment(): index=" << index << std::endl;
             return static_cast<Compartment*>(children()[index].get());
@@ -103,7 +106,7 @@ namespace chem {
                         for(int ii: {-1,1})
                         {
                             int iprime = i+ii;
-                            if(iprime<0 or iprime==_grid[0])
+                            if(iprime<0 or iprime==int(_grid[0]))
                                 continue;
                             Compartment *neighbor = this->getCompartment(size_t(iprime),j,k);
                             target->addNeighbour(neighbor);
@@ -112,7 +115,7 @@ namespace chem {
                         for(int jj: {-1,1})
                         {
                             int jprime = j+jj;
-                            if(jprime<0 or jprime==_grid[1])
+                            if(jprime<0 or jprime==int(_grid[1]))
                                 continue;
                             Compartment *neighbor = this->getCompartment(i,size_t(jprime),k);
                             target->addNeighbour(neighbor);
@@ -121,7 +124,7 @@ namespace chem {
                         for(int kk: {-1,1})
                         {
                             int kprime = k+kk;
-                            if(kprime<0 or kprime==_grid[2])
+                            if(kprime<0 or kprime==int(_grid[2]))
                                 continue;
                             Compartment *neighbor = this->getCompartment(i,j,size_t(kprime));
                             target->addNeighbour(neighbor);
@@ -129,6 +132,15 @@ namespace chem {
                         }
                     }
 
+        }
+        
+        virtual void addChemSimReactions(ChemSim &chem)
+        {
+            for(auto &c : children())
+            {
+                Compartment *C = static_cast<Compartment*>(c.get());
+                C->addChemSimReactions(chem);
+            }
         }
         
         virtual void printSelf()

@@ -17,6 +17,7 @@
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
 #include "Composite.h"
+#include "ChemSim.h"
 
 namespace chem {
     
@@ -261,6 +262,14 @@ namespace chem {
         
         bool areAllSpeciesUnique () {return _species.areAllSpeciesUnique();}
         
+        virtual void addChemSimReactions(ChemSim &chem)
+        {
+            for(auto &r1 : _internal_reactions.reactions())
+                chem.addReaction(r1.get());
+            for(auto &r2 : _diffusion_reactions.reactions())
+                chem.addReaction(r2.get());
+        }
+        
         virtual void printSelf()
         {
             std::cout << this->getFullName() << "\n"
@@ -320,8 +329,7 @@ namespace chem {
         std::array<float, NDIM>& coords() {return _coords;}
         const std::array<float, NDIM>& coords() const {return _coords;}
         std::array<float, NDIM>& sides() {return _sides;}
-        const std::array<float, NDIM>& sides() const {return _sides;}
-
+        const std::array<float, NDIM>& sides() const {return _sides;}        
     };
 
 }// end of chem

@@ -33,12 +33,14 @@
 
 #include <iostream>
 #include <numeric>
+#include <chrono>
+
 
 //#include "Species.h"
 //#include "Reaction.h"
-//#include "ChemNRMImpl.h"
-////#include "ChemGillespieImpl.h"
-////#include "ChemSimpleGillespieImpl.h"
+#include "ChemNRMImpl.h"
+#include "ChemGillespieImpl.h"
+#include "ChemSimpleGillespieImpl.h"
 //#include "ChemSim.h"
 
 //#include "Composite.h"
@@ -147,18 +149,24 @@ int main(int argc, const char * argv[])
     CC1.printSelf();
     cout << endl << endl;
     
+    std::chrono::time_point<std::chrono::system_clock> chk_ccv_1, chk_ccv_2;
+    chk_ccv_1 = std::chrono::system_clock::now();
     const int NDIM =3;
-    const int NGRID = 2;
+    const int NGRID = 50;
     CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
     Compartment &Cproto = ccv.getProtoCompartment();
-    Species *M1 = Cproto.addSpecies("Myosin",9U);
+    Species *M1 = Cproto.addSpecies("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
-    Species *M2 = Cproto.addSpecies("Fascin",5);
-    Cproto.setDiffusionRate(M2,2500);
+    Species *M2 = Cproto.addSpecies("Fascin",6U);
+    Cproto.setDiffusionRate(M2,2000);
     vector<Species*> RSM1M2 = {M1,M2};
-    Reaction *RM1M2 = Cproto.addInternalReaction(RSM1M2, 1, 1, 311.2);
+    Reaction *RM1M2 = Cproto.addInternalReaction(RSM1M2, 1, 1, 40.2);
+    vector<Species*> RSM2M1 = {M2,M1};
+    Reaction *RM2M1 = Cproto.addInternalReaction(RSM2M1, 1, 1, 90.9);
     ccv.initialize();
-    ccv.printSelf();
+    //ccv.printSelf();
+    cout << "Num of Species: " << ccv.countSpecies() << endl;
+    cout << "Num of Reactions: " << ccv.countReactions() << endl;
 //    size_t range[NGRID];
 //    iota(range,range+NGRID,0);
 //    for(size_t i : range)
@@ -171,7 +179,39 @@ int main(int argc, const char * argv[])
 //                cout << endl;
 //            }
 
+
+    //ChemSimpleGillespieImpl chem_sim_impl;
+    //ChemGillespieImpl chem_sim_impl;
+    ChemNRMImpl chem_sim_impl;
+    ChemSim chem(&chem_sim_impl);
     
+    cout << "ccv.addChemSimReactions(chem)..." << endl;
+    ccv.addChemSimReactions(chem);
+    cout << "chem.initialize()..." << endl;
+    chem.initialize();
+    Compartment *C000 = ccv.getCompartment(0U,0U,0U);
+    C000->printSelf();
+
+    //chem.printReactions();
+    long int NUM_OF_STEP = pow(10,7);
+    std::chrono::time_point<std::chrono::system_clock> chk1, chk2;
+    chk1 = std::chrono::system_clock::now();
+    chem.run(NUM_OF_STEP);
+    chk2 = std::chrono::system_clock::now();
+
+    
+    C000->printSelf();
+    cout << "tau=" << tau() <<endl;
+    
+    double sec = std::pow(10,9);
+
+    long long int elapsed_run = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
+    cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run/sec << endl;
+
+    chk_ccv_2 = std::chrono::system_clock::now();
+    long long int elapsed_ccv = std::chrono::duration_cast<std::chrono::nanoseconds>(chk_ccv_2-chk_ccv_1).count();
+    cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv/sec << endl;
+
     cout << "Main exited..." << endl;
     return 0;
 }
