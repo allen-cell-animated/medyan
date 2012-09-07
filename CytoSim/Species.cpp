@@ -10,6 +10,7 @@
 
 #include "Species.h"
 #include "Reaction.h"
+#include "Composite.h"
 
 
 namespace chem {
@@ -27,6 +28,14 @@ namespace chem {
             startSignaling(); 
         return _rspecies->_signal->connect(priority, RSpecies_callback);
     }
+    
+    Composite* Species::getRoot()
+    {
+        if(hasParent())
+           return this->getParent()->getRoot();
+        return nullptr;
+    }
+
 
     
 //enum class SType : unsigned char {

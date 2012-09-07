@@ -25,7 +25,8 @@
 
 namespace chem {
 
-class RNode;
+    class RNode;
+    class Composite;
 
     
 /// This is a Reaction signal object that will be called by ChemSignal, usually when requested by the 
@@ -46,14 +47,15 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
  *
  */
         
-class Reaction : public Component {
+class Reaction {
 private:
     std::vector<RSpecies*> _rspecies; ///< Reactants and products constituting this Reaction
     std::vector<Reaction*> _dependents; ///< Pointers to Reaction objects that depend on this Reaction being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     float _rate; ///< the rate for this Reaction
-    const unsigned char _m; ///< indicates the number of reactants
+    Composite *_parent;
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Reaction occurs)
+    const unsigned char _m; ///< indicates the number of reactants
     bool _passivated; ///< Indicates whether the Reaction is currently passivated
     
 public:
@@ -107,6 +109,14 @@ public:
     
     /// Returns the number of product RSpecies
     unsigned char getN() const {return static_cast<unsigned char>(_rspecies.size()-_m);}
+    
+    Composite* getParent() {return _parent;}
+    
+    void setParent (Composite *other) {_parent=other;}
+    
+    bool hasParent() const {return _parent!=nullptr? true : false;}
+    
+    Composite* getRoot();
     
     /// Computes the product of the copy number of all reactant RSpecies.
     /// Can be used to quickly determine whether this Reaction should be allowed to activate - if one of the

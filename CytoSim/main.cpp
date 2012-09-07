@@ -149,8 +149,7 @@ int main(int argc, const char * argv[])
     CC1.printSelf();
     cout << endl << endl;
     
-    std::chrono::time_point<std::chrono::system_clock> chk_ccv_1, chk_ccv_2;
-    chk_ccv_1 = std::chrono::system_clock::now();
+    auto chk_ccv_1 = chrono::high_resolution_clock::now();
     const int NDIM =3;
     const int NGRID = 50;
     CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
@@ -194,25 +193,26 @@ int main(int argc, const char * argv[])
 
     //chem.printReactions();
     long int NUM_OF_STEP = pow(10,7);
-    std::chrono::time_point<std::chrono::system_clock> chk1, chk2;
-    chk1 = std::chrono::system_clock::now();
+    //chrono::high_resolution_clock::time_point chk1, chk2;
+    auto chk1 = chrono::high_resolution_clock::now();
     chem.run(NUM_OF_STEP);
-    chk2 = std::chrono::system_clock::now();
+    auto chk2 = chrono::high_resolution_clock::now();
 
     
     C000->printSelf();
     cout << "tau=" << tau() <<endl;
     
-    double sec = std::pow(10,9);
+    chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
+    //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
+    
+    cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
 
-    long long int elapsed_run = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
-    cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run/sec << endl;
-
-    chk_ccv_2 = std::chrono::system_clock::now();
-    long long int elapsed_ccv = std::chrono::duration_cast<std::chrono::nanoseconds>(chk_ccv_2-chk_ccv_1).count();
-    cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv/sec << endl;
+    auto chk_ccv_2 = chrono::high_resolution_clock::now(); // duration in seconds
+    chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1);
+    cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
 
     cout << "Main exited..." << endl;
+    
     return 0;
 }
 

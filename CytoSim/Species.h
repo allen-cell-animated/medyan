@@ -27,13 +27,13 @@
 
 #include "common.h"
 #include "utility.h"
-#include "Component.h"
 #include "RSpecies.h"
 
 class System;
 
 namespace chem {
     
+    class Composite;
     
     /// SpeciesNamesDB class is used to associate unique integers with character based names of Species
     /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, for example
@@ -111,13 +111,14 @@ namespace chem {
      *
      *  @note The Species class allows callbacks (see makeSignaling and related methods). 
     */
-    class Species : public Component {
+    class Species {
     private: //Variables
         int _molecule; ///< unique id identifying the molecule (e.g. the integer id corresponding to "Arp2/3") 
         std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
+        Composite *_parent;
     public:
         /// Default Constructor; Should not be used by the end users - only internally (although it is not marked as private)
-        Species()  : Component() {
+        Species()  : _parent(nullptr) {
             _molecule=SpeciesNamesDB::Instance()->stringToInt("");
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this));
 //            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
@@ -128,7 +129,7 @@ namespace chem {
         /// @param type_enum - SType enum, such as SType::Diffusing
         /// @param n - copy number
         /// @param ulim - upper limit for this species' copy number
-        Species (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : Component()
+        Species (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr)
         {
             _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n, ulim));
@@ -140,7 +141,8 @@ namespace chem {
         /// @note The associated RSpecies subpart is not copied, but a new one is created. This means that 
         /// the copied destination Species won't be included in any Reaction interactions of the original 
         /// source Species. The species copy numbered is copied to the target.
-        Species (const Species &rhs)  : Component(), _molecule(rhs._molecule) {
+        /// The A Species parent attriute is not copied, but set to nullptr. 
+        Species (const Species &rhs)  : _molecule(rhs._molecule), _parent(nullptr) {
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
 //            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
         }
@@ -152,20 +154,21 @@ namespace chem {
         /// associated RSpecies), hence, the Reaction network of the Species will be lost. Since this behavior is 
         /// most likely not desired or unacceptable, the internal vector operations should only "move" 
         /// the Species around, without copying. Moving transfers the RSpecies pointer from source to target, 
-        /// stealing resources from the source, leaving it for destruction.
+        /// stealing resources from the source, leaving it for destruction. The Species parent attriute is moved it. 
         Species (Species &&rhs) noexcept
-        : Component(), _molecule(rhs._molecule), _rspecies(std::move(rhs._rspecies)) {
+        : _molecule(rhs._molecule), _rspecies(std::move(rhs._rspecies)), _parent(rhs._parent) {
 //            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
         }
         
         /// Assignment operator
         /// An assignment A = B copies the name of B to A. It destroys the Reaction interactions of A, and resents 
         /// them to a blank value (i.e. A won't be involced in any Reactions). B's Reaction interactions are not copied.
-        /// The copy number of B is copied to A.
+        /// The copy number of B is copied to A. The A Species parent attriute is not copied, but set to nullptr. 
         Species& operator=(const Species& rhs)  {
 //            std::cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << std::endl; 
             _molecule = rhs._molecule;
             _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
+            _parent = nullptr;
             return *this;
         }
         
@@ -175,12 +178,21 @@ namespace chem {
 //            std::cout << "Species& operator=(Species&& rhs):" << this << ", " << &rhs << std::endl; 
             _molecule = rhs._molecule;
             _rspecies = std::move(rhs._rspecies);
+            _parent=rhs._parent;
             return *this;
         }
         
         virtual Species* clone() {
             return new Species(*this);
         }
+        
+        Composite* getParent() {return _parent;}
+        
+        void setParent (Composite *other) {_parent=other;}
+        
+        bool hasParent() const {return _parent!=nullptr? true : false;}
+        
+        Composite* getRoot();
         
         /// Return a reference to RSpecies. Notice that value copying won't be allowed 
         /// because RSpecies is not copyable.

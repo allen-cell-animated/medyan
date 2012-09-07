@@ -9,13 +9,14 @@
 #include <iostream>
 #include "Reaction.h"
 #include "ChemRNode.h"
+#include "Composite.h"
 
 using namespace std;
 
 namespace chem {
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
- Component(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+ _rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passivated(false) {
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -34,7 +35,7 @@ Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, un
 }
     
 Reaction::Reaction (std::vector<Species*> species, unsigned char M, unsigned char N, float rate) :
-Component(), _rnode(nullptr), _rate(rate), _m(M), _signal(nullptr), _passivated(false) {
+_rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passivated(false) {
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -60,6 +61,13 @@ Reaction::~Reaction() noexcept {
         delete _signal;
 };
 
+Composite* Reaction::getRoot()
+{
+    if(hasParent())
+        return this->getParent()->getRoot();
+    return nullptr;
+}
+    
 std::vector<Reaction*> Reaction::getAffectedReactions() {
     std::unordered_set<Reaction*> rxns;
     for(auto s : _rspecies){
