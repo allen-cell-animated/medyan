@@ -219,6 +219,7 @@ TEST(ReactionTest, Propensities) {
 
 }
 
+#ifdef REACTION_SIGNALING
 TEST(ReactionTest, ReactionSignaling) {
     SpeciesBulk A("A",  8);
     SpeciesBulk B("B",  12);
@@ -261,6 +262,7 @@ TEST(ReactionTest, ReactionSignaling) {
     c.disconnect(); // this permanently disconnects the signal vs blocking
     
 }
+#endif
 
 #endif // DO_THIS_TEST
 
