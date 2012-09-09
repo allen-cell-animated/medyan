@@ -303,8 +303,13 @@ public:
     void unregisterDependent(Reaction *r);
 
     /// Print self into an iostream
-    friend std::ostream& operator<<(std::ostream& os, const Reaction& rr);    
+    friend std::ostream& operator<<(std::ostream& os, const Reaction& rr);
+    
+    /// Advanced memory management
+    void* operator new(std::size_t size);
+    
+    void operator delete(void* ptr) noexcept;
 };
 
-} // end of namespace 
+} // end of namespace
 #endif

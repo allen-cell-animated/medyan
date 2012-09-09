@@ -1,11 +1,15 @@
 ######################### 9/8/2012 ##########################
 Benchmarking CytoSim 0.10 with a large reaction-diffusion system
 
+%%%% Befor introducing boost::pool; signaling is turned off %%%%
+
 const int NGRID = 50;
 NUM_OF_STEP = pow(10,7);
 Num of Species: 250000
 Num of Reactions: 1720000
 
+Main Elapsed for ChemNRMImpl::run(...): dt=72.9795
+Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=87.1045
 
 ##############################################################
 

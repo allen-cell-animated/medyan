@@ -9,6 +9,9 @@
 #include <iostream>
 #include "RSpecies.h"
 #include "Reaction.h"
+#include <boost/pool/pool.hpp>
+
+//struct RSpeciesPoolTag { };
 
 /// Print self into an iostream
 std::ostream& operator<<(std::ostream& os, const chem::RSpecies& s){
@@ -17,6 +20,24 @@ std::ostream& operator<<(std::ostream& os, const chem::RSpecies& s){
 }
 
 namespace chem {
+    
+    using namespace std;
+    boost::pool<> allocator_64bytes(sizeof(RSpecies),1024);
+ 
+void* RSpecies::operator new(size_t size)
+{
+//    cout << "RSpecies::operator new(std::size_t size) called..." << endl;
+    void *ptr = allocator_64bytes.malloc();
+    return ptr;
+    // RSpecies* cell = new (ptr) RSpecies();
+}
+    
+void RSpecies::operator delete(void* ptr) noexcept
+{
+//    cout << "RSpecies::operator operator delete(void* ptr) called..." << endl;
+    allocator_64bytes.free(ptr);
+}
+
     
 std::string RSpecies::getFullName() const {
     return _species.getFullName();
@@ -42,6 +63,8 @@ void RSpecies::passivateAssocProductReactions() {
     for (auto &r : _as_products)
         r->passivateReaction();
 }
+    
+    
 
 #ifdef RSPECIES_SIGNALING    
 void RSpecies::startSignaling () {
@@ -53,5 +76,6 @@ void RSpecies::stopSignaling () {
         delete _signal;
     _signal = nullptr;
 }
-#endif
+#endif // of RSPECIES_SIGNALING
+    
 }

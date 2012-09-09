@@ -260,6 +260,11 @@ namespace chem {
         
 //        /// Print self into an iostream
 //        friend std::ostream& operator<<(std::ostream& os, const RSpecies& s);
+        
+        /// Advanced memory management
+        void* operator new(std::size_t size);
+        
+        void operator delete(void* ptr) noexcept;
     };
     
 } // end of chem namespace 

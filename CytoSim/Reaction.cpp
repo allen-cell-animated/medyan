@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
+#include <boost/pool/pool.hpp>
+
 #include <iostream>
 #include "Reaction.h"
 #include "ChemRNode.h"
@@ -14,6 +16,24 @@
 using namespace std;
 
 namespace chem {
+
+boost::pool<> allocator_88bytes(sizeof(Reaction),1024);
+
+void* Reaction::operator new(size_t size)
+{
+    //    cout << "Reaction::operator new(std::size_t size) called..." << endl;
+    void *ptr = allocator_88bytes.malloc();
+    return ptr;
+    // RSpecies* cell = new (ptr) RSpecies();
+}
+
+void Reaction::operator delete(void* ptr) noexcept
+{
+    //    cout << "Reaction::operator operator delete(void* ptr) called..." << endl;
+    allocator_88bytes.free(ptr);
+}
+    
+
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
  _rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passivated(false) {

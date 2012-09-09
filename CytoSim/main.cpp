@@ -207,11 +207,12 @@ int main(int argc, const char * argv[])
     
     cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
 
-    auto chk_ccv_2 = chrono::high_resolution_clock::now(); // duration in seconds
-    chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1);
+    auto chk_ccv_2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1); // duration in seconds
     cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
 
     cout << "Size of RSpecies: " << sizeof(M1->getRSpecies()) << endl;
+    cout << "Size of Reaction: " << sizeof(*RM1M2) << endl;
     
     cout << "Main exited..." << endl;
     

@@ -46,8 +46,10 @@ TEST(RSpeciesTest, Main) {
     RSpecies& RA(A.getRSpecies());
     EXPECT_EQ(10, RA.getN());
     EXPECT_EQ(&A, &RA.getSpecies());
+#ifdef RSPECIES_SIGNALING
     bool is_sig = RA.isSignaling();
     EXPECT_EQ(0, is_sig);
+#endif
     EXPECT_EQ(static_cast<size_t>(0), RA.ReactantReactions().size());
     EXPECT_EQ(static_cast<size_t>(0), RA.ProductReactions().size());
 
@@ -111,6 +113,7 @@ TEST(ReactionTest, CTors) {
 
 } 
 
+#ifdef RSPECIES_SIGNALING
 TEST(ReactionTest, RSpeciesSignaling) {
     SpeciesBulk A("A",  8);
     A.startSignaling();
@@ -124,6 +127,7 @@ TEST(ReactionTest, RSpeciesSignaling) {
     A.getRSpecies().emitSignal(0);
     EXPECT_EQ(9,A.getN());
 }
+#endif // of RSPECIES_SIGNALING
 
 #ifdef TRACK_DEPENDENTS
 #ifdef TRACK_ZERO_COPY_N
