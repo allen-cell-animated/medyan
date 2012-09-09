@@ -174,7 +174,9 @@ bool ChemNRMImpl::makeStep()
 //    chk5 = std::chrono::system_clock::now();
     
     // Send signals
+#ifdef REACTION_SIGNALING
     r->emitSignal();
+#endif
 #ifdef RSPECIES_SIGNALING
     for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
         if((*sit)->isSignaling())

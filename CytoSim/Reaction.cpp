@@ -36,7 +36,14 @@ void Reaction::operator delete(void* ptr) noexcept
 
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
- _rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passivated(false) {
+ _rnode(nullptr), _rate(rate), _parent(nullptr), _m(M)
+    {
+#ifdef REACTION_SIGNALING
+    _signal=nullptr;
+#endif
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+    _passivated=false;
+#endif
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -55,7 +62,14 @@ Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, un
 }
     
 Reaction::Reaction (std::vector<Species*> species, unsigned char M, unsigned char N, float rate) :
-_rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passivated(false) {
+_rnode(nullptr), _rate(rate), _parent(nullptr), _m(M)
+    {
+#ifdef REACTION_SIGNALING
+    _signal=nullptr;
+#endif
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+    _passivated=false;
+#endif
     for( auto &s : species){
         _rspecies.push_back(&s->getRSpecies());
     }
@@ -73,13 +87,16 @@ _rnode(nullptr), _rate(rate), _parent(nullptr), _signal(nullptr), _m(M), _passiv
                   [this](RSpecies* s){s->addAsProduct(this);} );
 }
 
-Reaction::~Reaction() noexcept {
+Reaction::~Reaction() noexcept
+    {
     std::for_each(beginReactants(), endReactants(), [this](RSpecies* s){s->removeAsReactant(this);} );
     std::for_each(beginProducts(), endProducts(),   [this](RSpecies* s){s->removeAsProduct(this);} );
     // passivateReaction();
+#ifdef REACTION_SIGNALING
     if(_signal!=nullptr)
         delete _signal;
-};
+#endif
+    }
 
 Composite* Reaction::getRoot()
 {
@@ -123,7 +140,9 @@ void Reaction::activateReactionUnconditional(){
                 (*r)->registerNewDependent(this);
         }
     }
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
     _passivated=false;
+#endif
     if(_rnode!=nullptr)
         _rnode->activateReaction();
 }
@@ -140,12 +159,14 @@ void Reaction::passivateReaction() {
             (*r)->unregisterDependent(this);
         }
     }
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
     _passivated=true;
+#endif
     if(_rnode!=nullptr)
         _rnode->passivateReaction();
 }
 
-
+#ifdef REACTION_SIGNALING
 void Reaction::startSignaling () {
     _signal = new ReactionEventSignal;
 }
@@ -161,6 +182,8 @@ boost::signals2::connection Reaction::connect(std::function<void (Reaction *)> c
         startSignaling(); 
     return _signal->connect(priority, react_callback);
 }
+#endif
+
     
 std::ostream& operator<<(std::ostream& os, const Reaction& rr){
     unsigned char i=0;

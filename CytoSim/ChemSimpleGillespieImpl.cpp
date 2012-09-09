@@ -81,7 +81,9 @@ namespace chem {
         r_selected->makeStep();
 
         // Send signals
+#ifdef REACTION_SIGNALING
         r_selected->emitSignal();
+#endif
 #ifdef RSPECIES_SIGNALING
         for(auto sit = r_selected->beginReactants(); sit!=r_selected->endReactants(); ++sit){
             if((*sit)->isSignaling())

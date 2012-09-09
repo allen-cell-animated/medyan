@@ -24,7 +24,8 @@ namespace chem {
     }
 
 #ifdef RSPECIES_SIGNALING
-    boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority) {
+    boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
+    {
         if (!isSignaling())
             startSignaling(); 
         return _rspecies->_signal->connect(priority, RSpecies_callback);

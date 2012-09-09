@@ -54,9 +54,13 @@ private:
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     float _rate; ///< the rate for this Reaction
     Composite *_parent;
+#ifdef REACTION_SIGNALING
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Reaction occurs)
-    const unsigned char _m; ///< indicates the number of reactants
+#endif
+    const int _m; ///< indicates the number of reactants
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the Reaction is currently passivated
+#endif 
     
 public:
 //    /// Default Constructor produces a Reaction with no reactants or products, zero rate, etc.
@@ -147,10 +151,11 @@ public:
     }
     
     /// Return true if the Reaction is currently passivated
+#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
     bool isPassivated() const {return _passivated;}
-    
-    /// Return true if this RSpecies emits signals on copy number change
-    bool isSignaling () const {return _signal!=nullptr;}
+#else
+    bool isPassivated() const {return false;}
+#endif
     
     bool containsSpecies (Species *s) const
     {
@@ -158,6 +163,10 @@ public:
                                [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
         return it!=_rspecies.end();
     }
+    
+#ifdef REACTION_SIGNALING
+    /// Return true if this RSpecies emits signals on copy number change
+    bool isSignaling () const {return _signal!=nullptr;}
     
     /// Set the signaling behavior of this Reaction
     void startSignaling ();
@@ -179,6 +188,7 @@ public:
         if(isSignaling())
             (*_signal)(this);
     }
+#endif
     
     /// Return a const reference to the vector of dependent reactions
     /// @note One can obtain two different lists of affected reactions:
