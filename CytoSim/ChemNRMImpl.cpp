@@ -175,6 +175,7 @@ bool ChemNRMImpl::makeStep()
     
     // Send signals
     r->emitSignal();
+#ifdef RSPECIES_SIGNALING
     for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
         if((*sit)->isSignaling())
             (*sit)->emitSignal(-1);
@@ -183,6 +184,8 @@ bool ChemNRMImpl::makeStep()
         if((*sit)->isSignaling())
             (*sit)->emitSignal(1);
     }
+#endif
+
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;
     syncGlobalTime();
     

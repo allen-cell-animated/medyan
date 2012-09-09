@@ -42,7 +42,8 @@ void RSpecies::passivateAssocProductReactions() {
     for (auto &r : _as_products)
         r->passivateReaction();
 }
-    
+
+#ifdef RSPECIES_SIGNALING    
 void RSpecies::startSignaling () {
     _signal = new RSpeciesCopyNChangedSignal;
 }
@@ -52,4 +53,5 @@ void RSpecies::stopSignaling () {
         delete _signal;
     _signal = nullptr;
 }
+#endif
 }

@@ -82,6 +82,7 @@ namespace chem {
 
         // Send signals
         r_selected->emitSignal();
+#ifdef RSPECIES_SIGNALING
         for(auto sit = r_selected->beginReactants(); sit!=r_selected->endReactants(); ++sit){
             if((*sit)->isSignaling())
                 (*sit)->emitSignal(-1);
@@ -90,6 +91,7 @@ namespace chem {
             if((*sit)->isSignaling())
                 (*sit)->emitSignal(1);
         }
+#endif
 //        cout << "ChemSimpleGillespieImpl::_makeStep(): Ending..., _a_total=" << a_total << "\n\n" << endl;
         syncGlobalTime();
         return true;

@@ -64,16 +64,27 @@ namespace chem {
         std::vector<Reaction *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
         Species& _species; ///< reference to the **parent** Species object
         species_copy_t _n; ///< Current copy number of this RSpecies
+#ifdef TRACK_UPPER_COPY_N
         species_copy_t _ulim; ///< Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off
+#endif
+#ifdef RSPECIES_SIGNALING
         RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of
-                                              ///< this RSpecies (usually when a single step of this Reaction occurs)
+#endif                                              ///< this RSpecies (usually when a single step of this Reaction occurs)
         
     private:
         /// Constructors 
         /// @param parent - the Species object to which this RSpecies belongs
         /// @param n - copy number
         RSpecies (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) :
-        _species(parent), _n(n), _ulim(ulim), _signal(nullptr) {}
+        _species(parent), _n(n)
+        {
+#ifdef TRACK_UPPER_COPY_N
+            _ulim = ulim;
+#endif
+#ifdef RSPECIES_SIGNALING
+            _signal(nullptr)
+#endif
+        }
         
         /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
         RSpecies(const RSpecies &r) = delete;
@@ -88,14 +99,15 @@ namespace chem {
         /// @param n should be a non-negative number, but no checking is done in run time
         /// @note The operation does not emit any signals about the copy number change.
         void setN(species_copy_t n) {_n=n;}
-        
+
+#ifdef TRACK_UPPER_COPY_N        
         /// Sets the upper limit for the copy number of this RSpecies.
         /// @param ulim should be a non-negative number, but no checking is done in run time
         void setUpperLimitForN(species_copy_t ulim) {_ulim=ulim;}
         
-        /// Sets the upper limit for the copy number of this RSpecies.
-        /// @param ulim should be a non-negative number, but no checking is done in run time
-        species_copy_t getUpperLimitForN(species_copy_t ulim) {return _ulim;}
+        /// Return the upper limit for the copy number of this RSpecies
+        species_copy_t getUpperLimitForN() const {return _ulim;}
+#endif
         
         /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method
         /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
@@ -177,23 +189,28 @@ namespace chem {
         /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the products.
         void passivateAssocProductReactions();
                
+#ifdef RSPECIES_SIGNALING
         /// Set the signaling behavior of this RSpecies
         void startSignaling();
         
         /// Destroy the signal associated with this RSpecies; all associated slots will be destroyed
         /// @note To start signaling again, startSignaling() needs to be called
         void stopSignaling();
-                        
+#endif
+        
     public:
          /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
         /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
         ~RSpecies(){
             assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
 //            std::cout << "Destructor ~RSpecies() called on ptr=" << this << std::endl;
+#ifdef RSPECIES_SIGNALING
             if(_signal!=nullptr)
                 delete _signal;
+#endif
         }
         
+#ifdef RSPECIES_SIGNALING
         /// Broadcasts signal indicating that the copy number of this RSpecies has changed
         /// This method should usually called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
         void emitSignal(int delta) {
@@ -201,11 +218,12 @@ namespace chem {
                 (*_signal)(this, delta);
         }
         
+        /// Return true if this RSpecies emits signals on copy number change
+        bool isSignaling() const {return _signal!=nullptr;}
+#endif
+        
         /// Return the current copy number of this RSpecies
         species_copy_t getN() const {return _n;}
-        
-        /// Return the upper limit for the copy number of this RSpecies
-        species_copy_t getUpperLimitForN() const {return _ulim;}
         
         /// return parent Species as a reference
         Species& getSpecies() {return _species;}
@@ -215,9 +233,6 @@ namespace chem {
         
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         std::string getFullName() const;
-                        
-        /// Return true if this RSpecies emits signals on copy number change
-        bool isSignaling() const {return _signal!=nullptr;}
                 
         /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant

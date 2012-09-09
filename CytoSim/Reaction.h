@@ -134,12 +134,16 @@ public:
     /// products has a copy number equal to the maximum allowed, then zero is returned, indicating that
     /// this Reaction should not be (yet) activated.
     int getProductOfProducts () const {
+#ifdef TRACK_UPPER_COPY_N
         int prod = 1;
         for(auto sit = cbeginProducts(); sit!=cendProducts(); ++sit){
             prod*=((*sit)->getN()-(*sit)->getUpperLimitForN());
 //            std::cout << "getProductOfProducts(): " << (*this) << (*sit)->getN() << " " << (*sit)->getUpperLimitForN() << " " << ((*sit)->getN()-(*sit)->getUpperLimitForN()) << std::endl;
         }
         return prod;
+#else
+        return 1;
+#endif
     }
     
     /// Return true if the Reaction is currently passivated

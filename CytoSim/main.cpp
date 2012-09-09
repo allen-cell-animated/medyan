@@ -211,6 +211,8 @@ int main(int argc, const char * argv[])
     chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1);
     cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
 
+    cout << "Size of RSpecies: " << sizeof(M1->getRSpecies()) << endl;
+    
     cout << "Main exited..." << endl;
     
     return 0;

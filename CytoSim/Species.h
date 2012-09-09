@@ -114,13 +114,13 @@ namespace chem {
     class Species {
     private: //Variables
         int _molecule; ///< unique id identifying the molecule (e.g. the integer id corresponding to "Arp2/3") 
-        std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
-        Composite *_parent;
+        RSpecies* _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
+        Composite *_parent; ///< pointer to the "container" object holding this Species (could be a nullptr)
     public:
         /// Default Constructor; Should not be used by the end users - only internally (although it is not marked as private)
         Species()  : _parent(nullptr) {
             _molecule=SpeciesNamesDB::Instance()->stringToInt("");
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this));
+            _rspecies = new RSpecies(*this);
 //            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
         }
         
@@ -132,7 +132,7 @@ namespace chem {
         Species (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr)
         {
             _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, n, ulim));
+            _rspecies = new RSpecies(*this, n, ulim);
 //            std::cout << "Species (const std::string &name, species_copy_t n=0): Main ctor called, creating ptr=" << this << std::endl;
             
         }
@@ -143,8 +143,12 @@ namespace chem {
         /// source Species. The species copy numbered is copied to the target.
         /// The A Species parent attriute is not copied, but set to nullptr. 
         Species (const Species &rhs)  : _molecule(rhs._molecule), _parent(nullptr) {
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
-//            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl; 
+#ifdef TRACK_UPPER_COPY_N
+            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+#else
+            _rspecies = new RSpecies(*this, rhs.getN());
+#endif
+//            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
         }
         
         /// Move constructor - makes it possible to easily add Species to STL containers, such as vector<Species>
@@ -156,7 +160,8 @@ namespace chem {
         /// the Species around, without copying. Moving transfers the RSpecies pointer from source to target, 
         /// stealing resources from the source, leaving it for destruction. The Species parent attriute is moved it. 
         Species (Species &&rhs) noexcept
-        : _molecule(rhs._molecule), _rspecies(std::move(rhs._rspecies)), _parent(rhs._parent) {
+        : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent) {
+            rhs._rspecies = nullptr;
 //            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
         }
         
@@ -167,7 +172,11 @@ namespace chem {
         Species& operator=(const Species& rhs)  {
 //            std::cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << std::endl; 
             _molecule = rhs._molecule;
-            _rspecies = std::unique_ptr<RSpecies>(new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN()));
+#ifdef TRACK_UPPER_COPY_N
+            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+#else
+            _rspecies = new RSpecies(*this, rhs.getN());
+#endif
             _parent = nullptr;
             return *this;
         }
@@ -177,7 +186,8 @@ namespace chem {
         Species& operator=(Species&& rhs)  {
 //            std::cout << "Species& operator=(Species&& rhs):" << this << ", " << &rhs << std::endl; 
             _molecule = rhs._molecule;
-            _rspecies = std::move(rhs._rspecies);
+            _rspecies = rhs._rspecies;
+            rhs._rspecies = nullptr;
             _parent=rhs._parent;
             return *this;
         }
@@ -196,10 +206,10 @@ namespace chem {
         
         /// Return a reference to RSpecies. Notice that value copying won't be allowed 
         /// because RSpecies is not copyable.
-        RSpecies& getRSpecies () {return (*_rspecies.get());}
+        RSpecies& getRSpecies () {return *_rspecies;}
         
         /// Return a constant reference to RSpecies. 
-        const RSpecies& getRSpecies () const {return (*_rspecies.get());}
+        const RSpecies& getRSpecies () const {return *_rspecies;}
         
         /// Sets the copy number for this Species. 
         /// @param n should be a non-negative number, but no checking is done in run time
@@ -209,8 +219,10 @@ namespace chem {
         /// Return the current copy number of this Species
         species_copy_t getN () const {return _rspecies->getN();}
         
+#ifdef TRACK_UPPER_COPY_N
         /// Return the upper limit for the copy number of this Species
         species_copy_t getUpperLimitForN() const {return _rspecies->getUpperLimitForN();}
+#endif
         
         /// Return this Species' name
         std::string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
@@ -218,6 +230,7 @@ namespace chem {
         /// Return the molecule index associated with this Species' (as int)
         int getMolecule() const {return _molecule;}
         
+#ifdef RSPECIES_SIGNALING
         /// Return true if this Species emits signals on copy number change
         bool isSignaling () const {return _rspecies->isSignaling();}
         
@@ -235,6 +248,7 @@ namespace chem {
         ///                       unless absolutely essential.
         /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
         boost::signals2::connection connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
+#endif
         
         /// Returns true if two Species objects are equal.
         /// This function would accept derived class of Species, such as SpeciesBulk
@@ -259,7 +273,11 @@ namespace chem {
         /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
         /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug 
         /// (as of gcc 4.703), and will presumbaly be fixed in the future.
-        virtual ~Species () noexcept {};
+        virtual ~Species () noexcept
+        {
+            if(_rspecies!=nullptr)
+                delete _rspecies;
+        };
                 
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         virtual std::string getFullName() const {return getName() + "{None}";}
