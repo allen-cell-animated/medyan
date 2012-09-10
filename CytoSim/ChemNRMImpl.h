@@ -17,11 +17,16 @@
 #include <random>
 
 #include <boost/heap/pairing_heap.hpp>
+#include <boost/pool/pool_alloc.hpp>
 
 #include "utility.h"
 #include "Reaction.h"
 #include "ChemSimImpl.h"
 #include "ChemRNode.h"
+
+#define BOOST_POOL_MEM_PQNODE
+#define BOOST_POOL_MEM_RNODENRM
+#define BOOST_POOL_MEM_HEAP_ELEMENT
 
 namespace chem {
 
@@ -29,8 +34,14 @@ class PQNode;
 class RNodeNRM;
 class ChemNRMImpl;
 
+#if defined BOOST_MEM_POOL && defined BOOST_POOL_MEM_HEAP_ELEMENT
+typedef boost::fast_pool_allocator<PQNode> fast_allocator_t;
+typedef boost::heap::pairing_heap<PQNode, boost::heap::allocator<fast_allocator_t>> boost_heap;
+typedef boost::heap::pairing_heap<PQNode, boost::heap::allocator<fast_allocator_t>>::handle_type handle_t;
+#else
 typedef boost::heap::pairing_heap<PQNode> boost_heap;
 typedef boost::heap::pairing_heap<PQNode>::handle_type handle_t;
+#endif
     
 /// PQNode stands for Priority Queue Node. It is stored as an element of a heap, such as 
 /// boost::heap::pairing_heap<PQNode>. There will be an associated heap handle which can be 
@@ -57,6 +68,15 @@ public:
     bool operator<(PQNode const &rhs) const{
         return _tau > rhs._tau;
     }
+    
+#ifdef BOOST_MEM_POOL
+#ifdef BOOST_POOL_MEM_PQNODE
+    /// Advanced memory management
+    void* operator new(std::size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
+#endif
 private: 
     RNodeNRM *_rn; ///< Pointer to the reaction node (RNodeNRM) which this PQNode represents (or tracks)
     double _tau; ///< tau for this reaction for the Gibson-Bruck NRM algoritm
@@ -149,6 +169,15 @@ public:
     
     /// Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependencies)
     void printDependents() const;
+    
+#ifdef BOOST_MEM_POOL
+#ifdef BOOST_POOL_MEM_RNODENRM
+    /// Advanced memory management
+    void* operator new(std::size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
+#endif
 private:
     ChemNRMImpl &_chem_nrm; ///< A reference to the ChemNRMImpl which containts the heap, random number generators, etc.
     handle_t _handle; ///< The handle to the associated PQNode element in the heap.

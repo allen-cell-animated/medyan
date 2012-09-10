@@ -9,7 +9,10 @@
 #include <iostream>
 #include "RSpecies.h"
 #include "Reaction.h"
+
 #include <boost/pool/pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
+
 
 //struct RSpeciesPoolTag { };
 
@@ -21,13 +24,17 @@ std::ostream& operator<<(std::ostream& os, const chem::RSpecies& s){
 
 namespace chem {
     
-    using namespace std;
-    boost::pool<> allocator_64bytes(sizeof(RSpecies),1024);
+using namespace std;
+
+#ifdef BOOST_MEM_POOL
+boost::pool<> allocator_rspecies(sizeof(RSpecies),BOOL_POOL_NSIZE);
  
 void* RSpecies::operator new(size_t size)
 {
 //    cout << "RSpecies::operator new(std::size_t size) called..." << endl;
-    void *ptr = allocator_64bytes.malloc();
+//    void *ptr = allocator_rspecies.malloc();
+    void *ptr = boost::fast_pool_allocator<RSpecies>::allocate();
+
     return ptr;
     // RSpecies* cell = new (ptr) RSpecies();
 }
@@ -35,9 +42,10 @@ void* RSpecies::operator new(size_t size)
 void RSpecies::operator delete(void* ptr) noexcept
 {
 //    cout << "RSpecies::operator operator delete(void* ptr) called..." << endl;
-    allocator_64bytes.free(ptr);
+//    allocator_rspecies.free(ptr);
+    boost::fast_pool_allocator<RSpecies>::deallocate((RSpecies*)ptr);
 }
-
+#endif
     
 std::string RSpecies::getFullName() const {
     return _species.getFullName();

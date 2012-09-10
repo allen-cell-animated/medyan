@@ -7,6 +7,7 @@
 //
 
 #include <boost/pool/pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
 
 #include <iostream>
 #include "Reaction.h"
@@ -17,12 +18,14 @@ using namespace std;
 
 namespace chem {
 
-boost::pool<> allocator_88bytes(sizeof(Reaction),1024);
+#ifdef BOOST_MEM_POOL
+boost::pool<> allocator_reaction(sizeof(Reaction),BOOL_POOL_NSIZE);
 
 void* Reaction::operator new(size_t size)
 {
     //    cout << "Reaction::operator new(std::size_t size) called..." << endl;
-    void *ptr = allocator_88bytes.malloc();
+//    void *ptr = allocator_reaction.malloc();
+    void *ptr = boost::fast_pool_allocator<Reaction>::allocate();
     return ptr;
     // RSpecies* cell = new (ptr) RSpecies();
 }
@@ -30,10 +33,10 @@ void* Reaction::operator new(size_t size)
 void Reaction::operator delete(void* ptr) noexcept
 {
     //    cout << "Reaction::operator operator delete(void* ptr) called..." << endl;
-    allocator_88bytes.free(ptr);
+//    allocator_reaction.free(ptr);
+    boost::fast_pool_allocator<Reaction>::deallocate((Reaction*)ptr);
 }
-    
-
+#endif
     
 Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, unsigned char N, float rate) : 
  _rnode(nullptr), _rate(rate), _parent(nullptr), _m(M)
@@ -41,7 +44,7 @@ Reaction::Reaction (std::initializer_list<Species*> species, unsigned char M, un
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
     for( auto &s : species){
@@ -67,7 +70,7 @@ _rnode(nullptr), _rate(rate), _parent(nullptr), _m(M)
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
     for( auto &s : species){
@@ -140,7 +143,7 @@ void Reaction::activateReactionUnconditional(){
                 (*r)->registerNewDependent(this);
         }
     }
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
     if(_rnode!=nullptr)
@@ -159,7 +162,7 @@ void Reaction::passivateReaction() {
             (*r)->unregisterDependent(this);
         }
     }
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif
     if(_rnode!=nullptr)

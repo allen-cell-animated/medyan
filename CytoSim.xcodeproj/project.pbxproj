@@ -612,7 +612,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -628,7 +628,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "-std=c++11";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -678,6 +678,7 @@
 				OTHER_LDFLAGS = (
 					"-lgtest",
 					"-lgtest_main",
+					"-lboost_system",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";
@@ -705,6 +706,7 @@
 				OTHER_LDFLAGS = (
 					"-lgtest",
 					"-lgtest_main",
+					"-lboost_system",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "/usr/local/gcc47/gtest-1.6.0/lib/.libs /usr/local/lib";

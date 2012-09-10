@@ -58,7 +58,7 @@ private:
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this Reaction (usuall when a single step of this Reaction occurs)
 #endif
     const int _m; ///< indicates the number of reactants
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the Reaction is currently passivated
 #endif 
     
@@ -151,7 +151,7 @@ public:
     }
     
     /// Return true if the Reaction is currently passivated
-#if defined TRACK_ZERO_COPY_N || TRACK_UPPER_COPY_N
+#if defined TRACK_ZERO_COPY_N || defined  TRACK_UPPER_COPY_N
     bool isPassivated() const {return _passivated;}
 #else
     bool isPassivated() const {return false;}
@@ -314,11 +314,13 @@ public:
 
     /// Print self into an iostream
     friend std::ostream& operator<<(std::ostream& os, const Reaction& rr);
-    
+
+#ifdef BOOST_MEM_POOL
     /// Advanced memory management
     void* operator new(std::size_t size);
     
     void operator delete(void* ptr) noexcept;
+#endif
 };
 
 } // end of namespace

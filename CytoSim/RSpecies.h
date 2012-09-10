@@ -82,7 +82,7 @@ namespace chem {
             _ulim = ulim;
 #endif
 #ifdef RSPECIES_SIGNALING
-            _signal(nullptr)
+            _signal=nullptr;
 #endif
         }
         
@@ -260,11 +260,13 @@ namespace chem {
         
 //        /// Print self into an iostream
 //        friend std::ostream& operator<<(std::ostream& os, const RSpecies& s);
-        
+
+#ifdef BOOST_MEM_POOL
         /// Advanced memory management
         void* operator new(std::size_t size);
         
         void operator delete(void* ptr) noexcept;
+#endif
     };
     
 } // end of chem namespace 

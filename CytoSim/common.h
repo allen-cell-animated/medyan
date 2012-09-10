@@ -13,12 +13,14 @@
 //#define TRACK_ZERO_COPY_N
 //#define TRACK_UPPER_COPY_N
 //#define RSPECIES_SIGNALING
-//#define REACTION_SIGNALING
+#define REACTION_SIGNALING
+#define BOOST_MEM_POOL
+#define BOOL_POOL_NSIZE 65536
 
 #include <cstdint>
 
 typedef unsigned short species_copy_t;
-const species_copy_t max_ulim = 1024;
+const species_copy_t max_ulim = 32;
 extern double global_time;
 
 inline double tau() {return global_time;}

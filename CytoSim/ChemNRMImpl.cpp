@@ -9,7 +9,8 @@
 #include <iostream>
 #include <chrono>
 
-//#define epsilon 
+#include <boost/pool/pool.hpp>
+//#define epsilon
 
 using namespace std;
 
@@ -17,12 +18,60 @@ using namespace std;
 #include "ChemNRMImpl.h"
 
 namespace chem {
+
+#ifdef BOOST_MEM_POOL
     
-    long long int elapsed14 = 0;
-    long long int elapsed16 = 0;
-    long long int elapsed23 = 0;
-    long long int elapsed45 = 0;
-    long long int elapsed56 = 0;
+#ifdef BOOST_POOL_MEM_RNODENRM
+boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
+#endif
+    
+#ifdef BOOST_POOL_MEM_PQNODE
+boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
+#endif
+
+    
+
+#ifdef BOOST_POOL_MEM_PQNODE
+void* PQNode::operator new(size_t size)
+{
+    //    cout << "PQNode::operator new(std::size_t size) called..." << endl;
+//    void *ptr = allocator_pqnode.malloc();
+    void *ptr = boost::fast_pool_allocator<PQNode>::allocate();
+    return ptr;
+}
+
+void PQNode::operator delete(void* ptr) noexcept
+{
+    //    cout << "PQNode::operator operator delete(void* ptr) called..." << endl;
+    //allocator_pqnode.free(ptr);
+    boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
+}
+#endif
+ 
+#ifdef BOOST_POOL_MEM_RNODENRM
+void* RNodeNRM::operator new(size_t size)
+{
+    //    cout << "RNodeNRM::operator new(std::size_t size) called..." << endl;
+//    void *ptr = allocator_rnodenrm.malloc();
+    void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
+    return ptr;
+}
+
+void RNodeNRM::operator delete(void* ptr) noexcept
+{
+    //    cout << "RNodeNRM::operator operator delete(void* ptr) called..." << endl;
+//    allocator_rnodenrm.free(ptr);
+    boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
+}
+#endif
+    
+#endif
+
+long long int elapsed14 = 0;
+long long int elapsed16 = 0;
+long long int elapsed23 = 0;
+long long int elapsed45 = 0;
+long long int elapsed56 = 0;
 
 RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
  _chem_nrm (chem_nrm), _react(r) {
@@ -40,7 +89,6 @@ RNodeNRM::~RNodeNRM ()
     heap->erase(_handle);
     _react->setRnode(nullptr);
 }
-
 
 void RNodeNRM::printSelf() const {
     cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
