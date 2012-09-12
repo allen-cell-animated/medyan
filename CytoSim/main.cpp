@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-/*! \mainpage The Main Page for the CytoSim software package 
+/*! \mainpage The Main Page for the CytoSim software package
  
  \section intro_sec Introduction
  
- Cell motility plays a key role in human biology and disease, contributing ubiquitously to such important processes as embryonic development, wound repair and cancer metastasis. Papoian laboratory is interested in gaining deeper understanding of the physical chemistry behind these complex, far-from-equilibrium mechano-chemical processes. His approach is based on combining stochastic reaction-diffusion treatment of cellular biochemical processes with polymer physics of cytoskeletal filament network growth, while explicitly coupling chemistry and mechanics. 
+ Cell motility plays a key role in human biology and disease, contributing ubiquitously to such important processes as embryonic development, wound repair and cancer metastasis. Papoian laboratory is interested in gaining deeper understanding of the physical chemistry behind these complex, far-from-equilibrium mechano-chemical processes. His approach is based on combining stochastic reaction-diffusion treatment of cellular biochemical processes with polymer physics of cytoskeletal filament network growth, while explicitly coupling chemistry and mechanics.
  
  Papoian laboratory has developed **CytoSim**, a software package to simulate growth dynamics of actin based filamentous networks *in vitro* and *in vivo*. Recent papers where **CytoSim** or its predecessor, **StochTools**, were used can be found on the publication section of [the Papoian group's main web page: ](http://papoian.chem.umd.edu/)
  
@@ -67,22 +67,22 @@ int main(int argc, const char * argv[])
     Species *arp23 = C1->addSpecies("Arp2/3",33U);
     C1->setDiffusionRate(arp23,2000);
     C1->printSpecies();
-//    cout << C1->findSpecies(actin_id) << ", " << &C1->findSpecies(actin_id) << endl;
-//    cout << C1->species()[actin_id] << ", " << &C1->species()[actin_id] << endl;
+    //    cout << C1->findSpecies(actin_id) << ", " << &C1->findSpecies(actin_id) << endl;
+    //    cout << C1->species()[actin_id] << ", " << &C1->species()[actin_id] << endl;
     cout << C1->countSpecies() << endl;
     
-
+    
     vector<Species*> rs1 = {profilin,actin};
-    Reaction *r1 = C1->addInternalReaction(rs1, 1, 1, 10.0);
+    ReactionBase *r1 = C1->addInternalReaction<1,1>(rs1, 10.0);
     vector<Species*> rs2 = {actin,profilin};
-    Reaction *r2 = C1->addInternalReaction(rs2, 1, 1, 10.0);
+    ReactionBase *r2 = C1->addInternalReaction<1,1>(rs2, 10.0);
     vector<Species*> rs3 = {actin,profilin,arp23};
-    Reaction *r3 = C1->addInternalReaction(rs3, 2, 1, 10.0);
+    ReactionBase *r3 = C1->addInternalReaction<2,1>(rs3, 10.0);
     C1->printReactions();
     cout << "Are all Species unique? " << std::boolalpha << C1->areAllSpeciesUnique() << endl;
     
     cout << sizeof(*actin) << ", " << sizeof(actin->getRSpecies()) << ", " << sizeof(*r1) << endl;
-
+    
     cout << endl << endl;
     
     Compartment *C2 = C1->clone();
@@ -90,7 +90,7 @@ int main(int argc, const char * argv[])
     C2->printReactions();
     cout << "End of The Clone" << endl << endl;
     
-
+    
     C1->addNeighbour(C2);
     C2->addNeighbour(C1);
     
@@ -128,14 +128,14 @@ int main(int argc, const char * argv[])
     
     SpeciesDiffusing Actin("Actin",12U);
     SpeciesDiffusing Profilin("Profilin",2U);
-    Reaction AP({&Actin,&Profilin}, 1, 1, 10.0);
+    Reaction<1,1> AP({&Actin,&Profilin}, 10.0);
     
     cout << "Finding one Species" << endl;
     Species *C4Actin = C4->findSimilarSpecies(Actin);
     cout << (*C4Actin) << endl;
     
     cout << "Finding one Reaction" << endl;
-    Reaction *C4AP = C4->findSimilarInternalReaction(AP);
+    ReactionBase *C4AP = C4->findSimilarInternalReaction(AP);
     cout << (*C4AP) << endl;
     
     cout << "Testing equality operator:" << endl;
@@ -159,26 +159,26 @@ int main(int argc, const char * argv[])
     Species *M2 = Cproto.addSpecies("Fascin",6U);
     Cproto.setDiffusionRate(M2,2000);
     vector<Species*> RSM1M2 = {M1,M2};
-    Reaction *RM1M2 = Cproto.addInternalReaction(RSM1M2, 1, 1, 40.2);
+    ReactionBase *RM1M2 = Cproto.addInternalReaction<1,1>(RSM1M2, 40.2);
     vector<Species*> RSM2M1 = {M2,M1};
-    Reaction *RM2M1 = Cproto.addInternalReaction(RSM2M1, 1, 1, 90.9);
+    ReactionBase *RM2M1 = Cproto.addInternalReaction<1,1>(RSM2M1, 90.9);
     ccv.initialize();
     //ccv.printSelf();
     cout << "Num of Species: " << ccv.countSpecies() << endl;
     cout << "Num of Reactions: " << ccv.countReactions() << endl;
-//    size_t range[NGRID];
-//    iota(range,range+NGRID,0);
-//    for(size_t i : range)
-//        for(size_t j : range)
-//            for(size_t k : range)
-//            {
-//                Compartment *C5 = ccv.getCompartment(i,j,k);
-//                cout << i << " " << j << " " << k << ": " << C5 << endl;
-//                C5->printSelf();
-//                cout << endl;
-//            }
-
-
+    //    size_t range[NGRID];
+    //    iota(range,range+NGRID,0);
+    //    for(size_t i : range)
+    //        for(size_t j : range)
+    //            for(size_t k : range)
+    //            {
+    //                Compartment *C5 = ccv.getCompartment(i,j,k);
+    //                cout << i << " " << j << " " << k << ": " << C5 << endl;
+    //                C5->printSelf();
+    //                cout << endl;
+    //            }
+    
+    
     //ChemSimpleGillespieImpl chem_sim_impl;
     //ChemGillespieImpl chem_sim_impl;
     ChemNRMImpl chem_sim_impl;
@@ -190,14 +190,14 @@ int main(int argc, const char * argv[])
     chem.initialize();
     Compartment *C000 = ccv.getCompartment(0U,0U,0U);
     C000->printSelf();
-
+    
     //chem.printReactions();
     long int NUM_OF_STEP = pow(10,7);
     //chrono::high_resolution_clock::time_point chk1, chk2;
     auto chk1 = chrono::high_resolution_clock::now();
     chem.run(NUM_OF_STEP);
     auto chk2 = chrono::high_resolution_clock::now();
-
+    
     
     C000->printSelf();
     cout << "tau=" << tau() <<endl;
@@ -206,13 +206,14 @@ int main(int argc, const char * argv[])
     //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
     
     cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
-
+    
     auto chk_ccv_2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1); // duration in seconds
     cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
-
+    
     cout << "Size of RSpecies: " << sizeof(M1->getRSpecies()) << endl;
-    cout << "Size of Reaction: " << sizeof(*RM1M2) << endl;
+    cout << "Size of ReactionBase: " << sizeof(*RM1M2) << endl;
+    cout << "Size of Reaction: " << sizeof(*static_cast<Reaction<1,1>*>(RM1M2)) << endl;
     
     cout << "Main exited..." << endl;
     

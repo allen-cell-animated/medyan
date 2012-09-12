@@ -53,11 +53,11 @@ namespace chem {
         /// Sets global time variable to ChemSimpleGillespieImpl's global time
         void syncGlobalTime() {global_time=_t;}
         
-        /// Add Reaction *r to the network
-        virtual void addReaction(Reaction *r);
+        /// Add ReactionBase *r to the network
+        virtual void addReaction(ReactionBase *r);
         
-        /// Remove Reaction *r from the network
-        virtual void removeReaction(Reaction *r);
+        /// Remove ReactionBase *r from the network
+        virtual void removeReaction(ReactionBase *r);
         
         /// Compute the total propensity of the reaction network, by adding all individual reaction propensities
         double computeTotalA();
@@ -94,7 +94,7 @@ namespace chem {
         /// This subroutine implements the vanilla version of the Gillespie algorithm
         bool makeStep();
     private:
-        std::vector<Reaction*> _reactions; ///< The database of Reaction objects, representing the reaction network
+        std::vector<ReactionBase*> _reactions; ///< The database of Reaction objects, representing the reaction network
         std::mt19937 _eng; ///< Random number generator
         std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
         std::uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution

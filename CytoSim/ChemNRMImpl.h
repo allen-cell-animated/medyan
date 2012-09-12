@@ -17,12 +17,16 @@
 #include <random>
 
 #include <boost/heap/pairing_heap.hpp>
-#include <boost/pool/pool_alloc.hpp>
 
 #include "utility.h"
 #include "Reaction.h"
 #include "ChemSimImpl.h"
 #include "ChemRNode.h"
+
+#ifdef BOOST_MEM_POOL
+#include <boost/pool/pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
+#endif
 
 #define BOOST_POOL_MEM_PQNODE
 #define BOOST_POOL_MEM_RNODENRM
@@ -102,7 +106,7 @@ public:
     /// @param *r is the Reaction object corresponding to this RNodeNRM
     /// @param &chem_nrm is a refernce to ChemNRMImpl object, which does the overall management of the NRM scheme (e.g. it 
     /// gives acces to the heap itself, random distribution generators, etc.)
-    RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm);
+    RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm);
     
     /// Copying is not allowed
     RNodeNRM(const RNodeNRM& rhs) = delete;
@@ -121,7 +125,7 @@ public:
     void generateNewRandTau();
     
     /// Returns a pointer to the Reaction which corresponds to this RNodeNRM.
-    Reaction* getReaction() const {return _react;};
+    ReactionBase* getReaction() const {return _react;};
     
     /// The heap is updated only with respect to the specific PQNode element which presumably 
     /// was modified (e.g. via generateNewRandTau()).
@@ -181,7 +185,7 @@ public:
 private:
     ChemNRMImpl &_chem_nrm; ///< A reference to the ChemNRMImpl which containts the heap, random number generators, etc.
     handle_t _handle; ///< The handle to the associated PQNode element in the heap.
-    Reaction *_react; ///< The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeNRM.
+    ReactionBase *_react; ///< The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeNRM.
     double _a; ///< The propensity associated with the Reaction. It may be outdated and may need to be recomputed if needed.
 };
 
@@ -228,10 +232,10 @@ public:
     boost_heap* getHeap() {return &_heap;}
     
     /// Add Reaction *r to the network
-    virtual void addReaction(Reaction *r);
+    virtual void addReaction(ReactionBase *r);
     
     /// Remove Reaction *r from the network
-    virtual void removeReaction(Reaction *r);
+    virtual void removeReaction(ReactionBase *r);
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, 
     /// with the propensity given by a.
@@ -270,7 +274,7 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
     bool makeStep();
 private:
-    std::unordered_map<Reaction*, std::unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects, representing the reaction network
+    std::unordered_map<ReactionBase*, std::unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects, representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm, containing PQNode elements
     std::mt19937 _eng; ///< Random number generator
     std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution

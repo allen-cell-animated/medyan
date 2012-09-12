@@ -33,8 +33,8 @@ namespace chem {
                 continue;
             for(auto &C : _neighbours){
                 Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-                Reaction *R = new Reaction({sp_this.get(),sp_neighbour},1,1,diff_rate);
-                this->addDiffusionReactionUnique(std::unique_ptr<Reaction>(R));
+                ReactionBase *R = new Reaction<1,1>({sp_this.get(),sp_neighbour},diff_rate);
+                this->addDiffusionReactionUnique(std::unique_ptr<ReactionBase>(R));
             }
         }
     }
@@ -59,7 +59,7 @@ namespace chem {
         
         bool reac_bool = false;
         auto rit_pair = std::mismatch(a._internal_reactions.reactions().begin(),a._internal_reactions.reactions().end(),b._internal_reactions.reactions().begin(),
-                                      [](const std::unique_ptr<Reaction> &A, const std::unique_ptr<Reaction> &B)
+                                      [](const std::unique_ptr<ReactionBase> &A, const std::unique_ptr<ReactionBase> &B)
                                       {
                                           return (*A)==(*B);
                                       });

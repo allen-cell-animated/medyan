@@ -52,10 +52,10 @@ public:
     void initialize();
     
     /// Add Reaction *r to the chemical network which needs to be simulated
-    void addReaction(Reaction *r);
+    void addReaction(ReactionBase *r);
     
     /// Remove Reaction *r from the simulated chemical network 
-    void removeReaction(Reaction *r);
+    void removeReaction(ReactionBase *r);
     
     /// Run the chemical dynamics for a specific number of steps
     bool run(int steps);

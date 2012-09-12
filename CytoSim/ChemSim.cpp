@@ -18,11 +18,11 @@ ChemSim::ChemSim(ChemSimImpl *csi)
     _pimpl=csi;
 }
 
-void ChemSim::addReaction(Reaction *r){
+void ChemSim::addReaction(ReactionBase *r){
     _pimpl->addReaction(r);
 }
 
-void ChemSim::removeReaction(Reaction *r){
+void ChemSim::removeReaction(ReactionBase *r){
     _pimpl->removeReaction(r); 
 }
 

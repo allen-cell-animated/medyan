@@ -31,7 +31,7 @@ namespace chem {
         /// Ctor:
         /// @param *r is the Reaction object corresponding to this RNodeGillespie
         /// @param &chem_Gillespie is a refernce to ChemGillespieImpl object, which does the overall management of the Gillespie scheme (e.g.   random distribution generators, etc.)
-        RNodeGillespie(Reaction *r, ChemGillespieImpl &chem_Gillespie);
+        RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie);
         
         /// Copying is not allowed
         RNodeGillespie(const RNodeGillespie& rhs) = delete;
@@ -43,7 +43,7 @@ namespace chem {
         virtual ~RNodeGillespie();
                 
         /// Returns a pointer to the Reaction which corresponds to this RNodeGillespie.
-        Reaction* getReaction() const {return _react;};
+        ReactionBase* getReaction() const {return _react;};
         
         /// Return the currently stored propensity, "a", for this Reaction.
         /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
@@ -93,7 +93,7 @@ namespace chem {
         void printDependents() const;
     private:
         ChemGillespieImpl &_chem_Gillespie; ///< A reference to the ChemGillespieImpl which containts the heap, random number generators, etc.
-        Reaction *_react; ///< The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeGillespie.
+        ReactionBase *_react; ///< The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeGillespie.
         double _a; ///< The propensity associated with the Reaction. It may be outdated and may need to be recomputed if needed.
         double _a_prev; ///< The propensity associated with the penultimate step of this Reaction.
     };
@@ -138,11 +138,11 @@ namespace chem {
         /// Sets global time variable to ChemGillespieImpl's global time
         void syncGlobalTime() {global_time=_t;}
                 
-        /// Add Reaction *r to the network
-        virtual void addReaction(Reaction *r);
+        /// Add ReactionBase *r to the network
+        virtual void addReaction(ReactionBase *r);
         
-        /// Remove Reaction *r from the network
-        virtual void removeReaction(Reaction *r);
+        /// Remove ReactionBase *r from the network
+        virtual void removeReaction(ReactionBase *r);
         
         /// Unconditionally compute the total propensity associated with the network.
         double computeTotalA();
@@ -172,11 +172,11 @@ namespace chem {
             return true;
         }
         
-        /// This method is used to track the change in the total propensity of the network as the previously passivated Reaction *r has become activated
-        void activateReaction(Reaction *r);
+        /// This method is used to track the change in the total propensity of the network as the previously passivated ReactionBase *r has become activated
+        void activateReaction(ReactionBase *r);
         
-        /// This method is used to track the change in the total propensity of the network as the Reaction *r has become passivated
-        void passivateReaction(Reaction *r);
+        /// This method is used to track the change in the total propensity of the network as the ReactionBase *r has become passivated
+        void passivateReaction(ReactionBase *r);
         
         /// Prints all RNodes in the reaction network
         virtual void printReactions() const;
@@ -187,7 +187,7 @@ namespace chem {
         /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
         bool makeStep();
     private:
-        std::unordered_map<Reaction*, std::unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
+        std::unordered_map<ReactionBase*, std::unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
         std::mt19937 _eng; ///< Random number generator
         std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
         std::uniform_real_distribution<double> _uniform_distr;

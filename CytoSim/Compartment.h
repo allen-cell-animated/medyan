@@ -119,11 +119,11 @@ namespace chem {
         Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
         Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
         Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
-        Reaction* findSimilarInternalReaction (const Reaction &r)
+        ReactionBase* findSimilarInternalReaction (const ReactionBase &r)
         {
             return _internal_reactions.findSimilarReaction(r);
         }
-        Reaction* findSimilarDiffusionReaction (const Reaction &r)
+        ReactionBase* findSimilarDiffusionReaction (const ReactionBase &r)
         {
             return _diffusion_reactions.findSimilarReaction(r);
         }
@@ -138,16 +138,16 @@ namespace chem {
             return sp;
         }
         
-        Reaction* addInternalReactionUnique (std::unique_ptr<Reaction> &&reaction)
+        ReactionBase* addInternalReactionUnique (std::unique_ptr<ReactionBase> &&reaction)
         {
-            Reaction *r = _internal_reactions.addReactionUnique(std::move(reaction));
+            ReactionBase *r = _internal_reactions.addReactionUnique(std::move(reaction));
             r->setParent(this);
             return r;
         }
         
-        Reaction* addDiffusionReactionUnique (std::unique_ptr<Reaction> &&reaction)
+        ReactionBase* addDiffusionReactionUnique (std::unique_ptr<ReactionBase> &&reaction)
         {
-            Reaction *r = _diffusion_reactions.addReactionUnique(std::move(reaction));
+            ReactionBase *r = _diffusion_reactions.addReactionUnique(std::move(reaction));
             r->setParent(this);
             return r;
         }
@@ -162,20 +162,20 @@ namespace chem {
             return sp;
         }
         
-        template<typename ...Args>
-        Reaction* addInternalReaction (Args&& ...args)
+        template<unsigned short M, unsigned short N, typename ...Args>
+        ReactionBase* addInternalReaction (Args&& ...args)
         {
             //            std::cout << "Compartment::addReaction()..." << std::endl;
-            Reaction *r = _internal_reactions.addReaction(std::forward<Args>(args)...);
+            ReactionBase *r = _internal_reactions.addReaction<M,N>(std::forward<Args>(args)...);
             r->setParent(this);
             return r;
         }
         
         template<typename ...Args>
-        Reaction* addDiffusionReaction (Args&& ...args)
+        ReactionBase* addDiffusionReaction (Args&& ...args)
         {
             //            std::cout << "Compartment::addReaction()..." << std::endl;
-            Reaction *r = _diffusion_reactions.addReaction(std::forward<Args>(args)...);
+            ReactionBase *r = _diffusion_reactions.addReaction<1,1>(std::forward<Args>(args)...);
             r->setParent(this);
             return r;
         }
@@ -227,7 +227,7 @@ namespace chem {
         {
             assert(target->numberOfReactions()==0);
             for(auto &r : _internal_reactions.reactions()){
-                target->addInternalReactionUnique(std::unique_ptr<Reaction>(r->clone(target->_species.species().begin(),target->_species.species().end())));
+                target->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r->clone(target->_species)));
             }
         }
 

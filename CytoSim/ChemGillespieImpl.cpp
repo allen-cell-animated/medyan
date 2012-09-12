@@ -14,7 +14,7 @@ using namespace std;
 
 namespace chem {
     
-    RNodeGillespie::RNodeGillespie(Reaction *r, ChemGillespieImpl &chem_Gillespie) :
+    RNodeGillespie::RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie) :
     _chem_Gillespie (chem_Gillespie), _react(r) {
         _react->setRnode(this);
         reset();
@@ -159,7 +159,7 @@ namespace chem {
         }
 
         // Updating dependencies
-        Reaction *r = rn_selected->getReaction();
+        ReactionBase *r = rn_selected->getReaction();
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
             RNodeGillespie *rn_other = static_cast<RNodeGillespie*>((*rit)->getRnode());
             rn_other->reComputePropensity();
@@ -188,12 +188,12 @@ namespace chem {
         return true;
     }
     
-    void ChemGillespieImpl::addReaction(Reaction *r) {
+    void ChemGillespieImpl::addReaction(ReactionBase *r) {
         _map_rnodes.emplace(r,make_unique<RNodeGillespie>(r,*this));
         ++_n_reacts;
     }
     
-    void ChemGillespieImpl::removeReaction(Reaction *r) {
+    void ChemGillespieImpl::removeReaction(ReactionBase *r) {
         _map_rnodes.erase(r);
         --_n_reacts;
     }
@@ -205,8 +205,8 @@ namespace chem {
         }
     }
     
-    void ChemGillespieImpl::activateReaction(Reaction *r) {
-//        cout << "ChemGillespieImpl::activateReaction(Reaction *r): " << (*r);
+    void ChemGillespieImpl::activateReaction(ReactionBase *r) {
+//        cout << "ChemGillespieImpl::activateReaction(ReactionBase *r): " << (*r);
         auto mit = _map_rnodes.find(r);
         if(mit!=_map_rnodes.end()){
             RNodeGillespie *rn_this = mit->second.get();
@@ -222,8 +222,8 @@ namespace chem {
             throw std::out_of_range("ChemGillespieImpl::activateReaction(...): Reaction not found!");
     }
     
-    void ChemGillespieImpl::passivateReaction(Reaction *r) {
-//        cout << "ChemGillespieImpl::passivateReaction(Reaction *r): " << (*r);
+    void ChemGillespieImpl::passivateReaction(ReactionBase *r) {
+//        cout << "ChemGillespieImpl::passivateReaction(ReactionBase *r): " << (*r);
         auto mit = _map_rnodes.find(r);
         if(mit==_map_rnodes.end())
             throw std::out_of_range("ChemGillespieImpl::passivateReaction(...): Reaction not found!");

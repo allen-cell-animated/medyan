@@ -60,7 +60,7 @@ namespace chem {
         //Gillespie algorithm's second step: finding which reaction happened;
         double mu = a_total*generateUniform();
         double rates_sum = 0;
-        Reaction* r_selected = nullptr;
+        ReactionBase* r_selected = nullptr;
         for (auto &r : _reactions){
             rates_sum+=r->computePropensity();
             if(rates_sum>mu){
@@ -99,14 +99,14 @@ namespace chem {
         return true;
     }
     
-    void ChemSimpleGillespieImpl::addReaction(Reaction *r) {
-        std::vector<Reaction*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
+    void ChemSimpleGillespieImpl::addReaction(ReactionBase *r) {
+        std::vector<ReactionBase*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
         if(vit==_reactions.end())
             _reactions.push_back(r);
     }
     
-    void ChemSimpleGillespieImpl::removeReaction(Reaction *r) {
-        std::vector<Reaction*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
+    void ChemSimpleGillespieImpl::removeReaction(ReactionBase *r) {
+        std::vector<ReactionBase*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
         if(vit!=_reactions.end())
             _reactions.erase(vit);
     }

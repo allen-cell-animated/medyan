@@ -17,9 +17,9 @@ namespace  chem {
     class ReactionPtrContainerIFace {
     public:
         virtual void clear() = 0;
-        virtual Reaction* addReactionUnique(std::unique_ptr<Reaction> &&Reaction) = 0;
-        virtual void removeReaction(Reaction* Reaction) = 0;
-        virtual Reaction* findReaction (size_t index) = 0;
+        virtual ReactionBase* addReactionUnique(std::unique_ptr<ReactionBase> &&Reaction) = 0;
+        virtual void removeReaction(ReactionBase* Reaction) = 0;
+        virtual ReactionBase* findReaction (size_t index) = 0;
         virtual void printReaction() {}
     };
     
@@ -28,7 +28,7 @@ namespace  chem {
     
     class ReactionPtrContainerVector : public  ReactionPtrContainerIFace {
     protected:
-        std::vector<std::unique_ptr<Reaction>> _reactions;
+        std::vector<std::unique_ptr<ReactionBase>> _reactions;
     public:
         ReactionPtrContainerVector() : _reactions() {}
         ReactionPtrContainerVector(const ReactionPtrContainerVector &) = delete;
@@ -44,23 +44,23 @@ namespace  chem {
         virtual void clear() {_reactions.clear();}
 
         
-        virtual Reaction* addReactionUnique (std::unique_ptr<Reaction> &&Reaction) {
+        virtual ReactionBase* addReactionUnique (std::unique_ptr<ReactionBase> &&Reaction) {
             _reactions.push_back(std::move(Reaction));
             return _reactions.back().get();
         }
         
-        template<typename ...Args>
-        Reaction* addReaction( Args&& ...args )
+        template<unsigned short M, unsigned short N, typename ...Args>
+        ReactionBase* addReaction( Args&& ...args )
         {
-            _reactions.push_back(std::unique_ptr<Reaction>( new Reaction( std::forward<Args>(args)...) ));
+            _reactions.push_back(std::unique_ptr<ReactionBase>( new Reaction<M,N>( std::forward<Args>(args)...) ));
             //        _reactions.emplace_back(make_unique(Args...));
             return _reactions.back().get();
         }
         
         
-        virtual void removeReaction (Reaction* R) {
+        virtual void removeReaction (ReactionBase* R) {
             auto child_iter = std::find_if(_reactions.begin(),_reactions.end(),
-                                           [R](const std::unique_ptr<Reaction> &element)
+                                           [R](const std::unique_ptr<ReactionBase> &element)
                                            {
                                                return element.get()==R ? true : false;
                                            });
@@ -80,22 +80,22 @@ namespace  chem {
         }
         
         
-        virtual Reaction* findReaction (size_t index) {
+        virtual ReactionBase* findReaction (size_t index) {
             return _reactions[index].get();
         }
         
         
-        std::vector<std::unique_ptr<Reaction>>& reactions() {return _reactions;}
-        const std::vector<std::unique_ptr<Reaction>>& reactions() const {return _reactions;}
+        std::vector<std::unique_ptr<ReactionBase>>& reactions() {return _reactions;}
+        const std::vector<std::unique_ptr<ReactionBase>>& reactions() const {return _reactions;}
         
         virtual void printReactions() {
             for(auto &r : _reactions)
                 std::cout << (*r.get());
         }
         
-        virtual Reaction* findSimilarReaction (const Reaction &r) {
+        virtual ReactionBase* findSimilarReaction (const ReactionBase &r) {
             auto it = std::find_if(_reactions.begin(),_reactions.end(),
-                                   [&r](const std::unique_ptr<Reaction> &element)
+                                   [&r](const std::unique_ptr<ReactionBase> &element)
                                    {return r==(*element);});
             if(it==_reactions.end())
                 throw std::out_of_range("Reaction::findSimilarReaction(): The analogous Reaction was not found");

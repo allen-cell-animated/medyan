@@ -29,12 +29,12 @@ namespace chem {
 
     class Species;
     class RSpecies;
-    class Reaction;
+    class ReactionBase;
     class ChemSignal;
     
     /// vr stands for vector of Reactions
-    typedef std::vector<Reaction*>::iterator vr_iterator; 
-    typedef std::vector<Reaction*>::const_iterator vr_const_iterator; 
+    typedef std::vector<ReactionBase*>::iterator vr_iterator; 
+    typedef std::vector<ReactionBase*>::const_iterator vr_const_iterator; 
     
     /// vsp stands for vector of RSpecies
     typedef std::vector<RSpecies*>::iterator vrsp_iterator; 
@@ -55,13 +55,10 @@ namespace chem {
      *   be written such that dynamically allocated RSpecies (through new), are arranged contigiously in memory.
      */
     class RSpecies {
-        /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call
-        friend class Reaction; 
-        friend class Species;
-        
+        /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call        
     private: //Variables
-        std::vector<Reaction *> _as_reactants; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
-        std::vector<Reaction *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
+        std::vector<ReactionBase *> _as_reactants; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
+        std::vector<ReactionBase *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
         Species& _species; ///< reference to the **parent** Species object
         species_copy_t _n; ///< Current copy number of this RSpecies
 #ifdef TRACK_UPPER_COPY_N
@@ -71,7 +68,7 @@ namespace chem {
         RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of
 #endif                                              ///< this RSpecies (usually when a single step of this Reaction occurs)
         
-    private:
+    public:
         /// Constructors 
         /// @param parent - the Species object to which this RSpecies belongs
         /// @param n - copy number
@@ -148,15 +145,15 @@ namespace chem {
         
         // \internal This methods is called by the Reaction class  during construction
         // of the Reaction where this RSpecies is involved as a Reactant
-        void addAsReactant(Reaction *r){_as_reactants.push_back(r);}
+        void addAsReactant(ReactionBase *r){_as_reactants.push_back(r);}
         
         // \internal This methods is called by the Reaction class during construction
         // of the Reaction where this RSpecies is involved as a Product    
-        void addAsProduct(Reaction *r){_as_products.push_back(r);}
+        void addAsProduct(ReactionBase *r){_as_products.push_back(r);}
         
         // \internal This method is called by the Reaction class during destruction
         // of the Reaction where this RSpecies is involved as a Reactant
-        void removeAsReactant(const Reaction *r) {
+        void removeAsReactant(const ReactionBase *r) {
             auto rxit = std::find(_as_reactants.begin(),_as_reactants.end(),r);
             if(rxit!=_as_products.end()){
                 _as_reactants.erase(rxit);
@@ -165,7 +162,7 @@ namespace chem {
         }
         // \internal This method is called by the Reaction class during destruction
         // of the Reaction where this RSpecies is involved as a Product
-        void removeAsProduct(const Reaction *r) {
+        void removeAsProduct(const ReactionBase *r) {
             auto rxit = std::find(_as_products.begin(),_as_products.end(),r);
             if(rxit!=_as_products.end()){
                 _as_products.erase(rxit);
@@ -234,27 +231,27 @@ namespace chem {
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         std::string getFullName() const;
                 
-        /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
+        /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant
-        std::vector<Reaction *> ReactantReactions(){return _as_reactants;}
+        std::vector<ReactionBase *> ReactantReactions(){return _as_reactants;}
         
-        /// Return std::vector<Reaction *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
+        /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Product
-        std::vector<Reaction *> ProductReactions(){return _as_products;}
+        std::vector<ReactionBase *> ProductReactions(){return _as_products;}
         
-        /// Return std::vector<Reaction *>::iterator, which points to the beginning of all 
+        /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant
         vr_iterator beginReactantReactions() {return _as_reactants.begin();}
         
-        /// Return std::vector<Reaction *>::iterator, which points to the beginning of all 
+        /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
         vr_iterator beginProductReactions() {return _as_products.begin();}
         
-        /// Return std::vector<Reaction *>::iterator, which points to the end of all 
+        /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant    
         vr_iterator endReactantReactions() {return _as_reactants.end();}
         
-        /// Return std::vector<Reaction *>::iterator, which points to the end of all 
+        /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
         vr_iterator endProductReactions() {return _as_products.end();}
         

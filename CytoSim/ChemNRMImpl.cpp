@@ -9,7 +9,10 @@
 #include <iostream>
 #include <chrono>
 
-#include <boost/pool/pool.hpp>
+#ifdef BOOST_MEM_POOL
+    #include <boost/pool/pool.hpp>
+    #include <boost/pool/pool_alloc.hpp>
+#endif
 //#define epsilon
 
 using namespace std;
@@ -73,8 +76,8 @@ long long int elapsed23 = 0;
 long long int elapsed45 = 0;
 long long int elapsed56 = 0;
 
-RNodeNRM::RNodeNRM(Reaction *r, ChemNRMImpl &chem_nrm) :
- _chem_nrm (chem_nrm), _react(r) {
+RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm) : _chem_nrm (chem_nrm), _react(r)
+{
     _react->setRnode(this);
      boost_heap *heap = _chem_nrm.getHeap();
     _handle = heap->emplace(this);
@@ -191,7 +194,7 @@ bool ChemNRMImpl::makeStep()
 //    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. t=" << _t << "\n" << endl;
 //    rn->printSelf();
     // Updating dependencies
-    Reaction *r = rn->getReaction();
+    ReactionBase *r = rn->getReaction();
     for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
@@ -249,12 +252,12 @@ bool ChemNRMImpl::makeStep()
     return true;
 }
 
-void ChemNRMImpl::addReaction(Reaction *r) {
+void ChemNRMImpl::addReaction(ReactionBase *r) {
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
 
-void ChemNRMImpl::removeReaction(Reaction *r) {
+void ChemNRMImpl::removeReaction(ReactionBase *r) {
     _map_rnodes.erase(r);
     --_n_reacts;
 }

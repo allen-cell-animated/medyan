@@ -10,9 +10,10 @@
 #include "RSpecies.h"
 #include "Reaction.h"
 
-#include <boost/pool/pool.hpp>
-#include <boost/pool/pool_alloc.hpp>
-
+#ifdef BOOST_MEM_POOL
+    #include <boost/pool/pool.hpp>
+    #include <boost/pool/pool_alloc.hpp>
+#endif
 
 //struct RSpeciesPoolTag { };
 

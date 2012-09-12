@@ -36,7 +36,7 @@ using namespace chem;
 TEST(ChemGillespieTest, SimpleStoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);
     SpeciesBulk A2("A2", 0);
-    Reaction r1 = { {&A1,&A2}, 1, 1, 100.0 };
+    Reaction<1,1> r1 = { {&A1,&A2}, 100.0 };
 
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
@@ -53,9 +53,9 @@ TEST(ChemGillespieTest, StoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);
     SpeciesBulk A2("A2", 0);
     SpeciesBulk A3("A3", 0);
-    Reaction r1 = { {&A1,&A2}, 1, 1, 10.0 };
-    Reaction r2 = { {&A2,&A1}, 1, 1, 15.0 };
-    Reaction r3 = { {&A1,&A3}, 1, 1, 20.0 };
+    Reaction<1,1> r1 = { {&A1,&A2}, 10.0 };
+    Reaction<1,1> r2 = { {&A2,&A1}, 15.0 };
+    Reaction<1,1> r3 = { {&A1,&A3}, 20.0 };
     
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
@@ -75,8 +75,8 @@ TEST(ChemGillespieTest, SimpleSteadyState) {
     SpeciesBulk A1("A1",  Nstart);
     SpeciesBulk A2("A2", 0);
     // A1 <-> A2 with the same forward and backward rates; [A]~[B] at steady state
-    Reaction r1 = { {&A1,&A2}, 1, 1, 100.0 };
-    Reaction r2 = { {&A2,&A1}, 1, 1, 100.0 };
+    Reaction<1,1> r1 = { {&A1,&A2}, 100.0 };
+    Reaction<1,1> r2 = { {&A2,&A1}, 100.0 };
     
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
@@ -116,8 +116,8 @@ TEST(ChemGillespieTest, SimpleTransient) {
     SpeciesBulk A1("A1",  Nstart);
     SpeciesBulk A2("A2", 0);
     // A1 <-> A2 with the same forward and backward rates; [A]~[B] at steady state
-    Reaction r1 = { {&A1,&A2}, 1, 1, 2.5 };
-    Reaction r2 = { {&A2,&A1}, 1, 1, 2.5 };
+    Reaction<1,1> r1 = { {&A1,&A2}, 2.5 };
+    Reaction<1,1> r2 = { {&A2,&A1}, 2.5 };
     
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
@@ -181,9 +181,9 @@ TEST(ChemGillespieTest, CyclicTransient) {
     
     // cout << "A2: upper limit: " << A2.getUpperLimitForN() << endl;
     // A1 <-> A2 with the same forward and backward rates; [A]~[B] at steady state
-    Reaction r1 = { {&A1,&A2}, 1, 1, 4.5 };
-    Reaction r2 = { {&A2,&A3}, 1, 1, 2.5 };
-    Reaction r3 = { {&A3,&A1}, 1, 1, 0.5 };
+    Reaction<1,1> r1 = { {&A1,&A2}, 4.5 };
+    Reaction<1,1> r2 = { {&A2,&A3}, 2.5 };
+    Reaction<1,1> r3 = { {&A3,&A1}, 0.5 };
     
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);
@@ -258,11 +258,11 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
     float kab=4.5; // s^-1
     float kbc=2.5; // s^-1
     float kca=0.5; // s^-1
-    Reaction xa = { {&X,&A}, 1, 1, kxa };
-    Reaction ax = { {&A,&X}, 1, 1, kax };
-    Reaction r1 = { {&A,&B}, 1, 1, kab };
-    Reaction r2 = { {&B,&C}, 1, 1, kbc };
-    Reaction r3 = { {&C,&A}, 1, 1, kca };
+    Reaction<1,1> xa = { {&X,&A}, kxa };
+    Reaction<1,1> ax = { {&A,&X}, kax };
+    Reaction<1,1> r1 = { {&A,&B}, kab };
+    Reaction<1,1> r2 = { {&B,&C}, kbc };
+    Reaction<1,1> r3 = { {&C,&A}, kca };
     
     ChemGillespieImpl chem_nrm_impl;
     ChemSim chem(&chem_nrm_impl);

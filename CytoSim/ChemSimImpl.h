@@ -24,10 +24,10 @@ namespace chem {
         virtual void initialize() = 0;
         
         /// Add Reaction *r to the chemical network which needs to be simulated
-        virtual void addReaction(Reaction *r) = 0;
+        virtual void addReaction(ReactionBase *r) = 0;
         
         /// Remove Reaction *r from the simulated chemical network 
-        virtual void removeReaction(Reaction *r) = 0;
+        virtual void removeReaction(ReactionBase *r) = 0;
         
         /// Run the chemical dynamics for a specific number of steps
         virtual bool run(int steps) = 0;
