@@ -174,14 +174,14 @@ namespace chem {
         r->emitSignal();
 #endif
 #ifdef RSPECIES_SIGNALING
-        for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
-            if((*sit)->isSignaling())
-                (*sit)->emitSignal(-1);
-        }
-        for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
-            if((*sit)->isSignaling())
-                (*sit)->emitSignal(1);
-        }
+//        for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
+//            if((*sit)->isSignaling())
+//                (*sit)->emitSignal(-1);
+//        }
+//        for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
+//            if((*sit)->isSignaling())
+//                (*sit)->emitSignal(1);
+//        }
 #endif
 //        cout << "ChemGillespieImpl::_makeStep(): Ending..., _a_total=" << _a_total << "\n\n" << endl;
         syncGlobalTime();

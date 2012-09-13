@@ -55,6 +55,7 @@ namespace chem {
      *   be written such that dynamically allocated RSpecies (through new), are arranged contigiously in memory.
      */
     class RSpecies {
+        friend Species;
         /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call        
     private: //Variables
         std::vector<ReactionBase *> _as_reactants; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
@@ -108,7 +109,7 @@ namespace chem {
         
         /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method
         /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
-        void up() {
+        inline void up() {
             _n+=1;
 #ifdef TRACK_DEPENDENTS
     #ifdef TRACK_ZERO_COPY_N
@@ -124,7 +125,7 @@ namespace chem {
         
         /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a "callback"-like method 
         /// to passivate [Reactions](@ref Reaction), where this RSpecies is a Reactant.
-        void down() {
+        inline void down() {
 #ifdef TRACK_DEPENDENTS
     #ifdef TRACK_UPPER_COPY_N
             species_copy_t prev_n = _n;
@@ -210,50 +211,50 @@ namespace chem {
 #ifdef RSPECIES_SIGNALING
         /// Broadcasts signal indicating that the copy number of this RSpecies has changed
         /// This method should usually called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
-        void emitSignal(int delta) {
+        inline void emitSignal(int delta) {
             if(isSignaling())
                 (*_signal)(this, delta);
         }
         
         /// Return true if this RSpecies emits signals on copy number change
-        bool isSignaling() const {return _signal!=nullptr;}
+        inline bool isSignaling() const {return _signal!=nullptr;}
 #endif
         
         /// Return the current copy number of this RSpecies
-        species_copy_t getN() const {return _n;}
+        inline species_copy_t getN() const {return _n;}
         
         /// return parent Species as a reference
-        Species& getSpecies() {return _species;}
+        inline Species& getSpecies() {return _species;}
         
         /// return parent Species as a const reference
-        const Species& getSpecies() const {return _species;}
+        inline const Species& getSpecies() const {return _species;}
         
         /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
         std::string getFullName() const;
                 
         /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant
-        std::vector<ReactionBase *> ReactantReactions(){return _as_reactants;}
+        inline std::vector<ReactionBase *> ReactantReactions(){return _as_reactants;}
         
         /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Product
-        std::vector<ReactionBase *> ProductReactions(){return _as_products;}
+        inline std::vector<ReactionBase *> ProductReactions(){return _as_products;}
         
         /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant
-        vr_iterator beginReactantReactions() {return _as_reactants.begin();}
+        inline vr_iterator beginReactantReactions() {return _as_reactants.begin();}
         
         /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
-        vr_iterator beginProductReactions() {return _as_products.begin();}
+        inline vr_iterator beginProductReactions() {return _as_products.begin();}
         
         /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant    
-        vr_iterator endReactantReactions() {return _as_reactants.end();}
+        inline vr_iterator endReactantReactions() {return _as_reactants.end();}
         
         /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
-        vr_iterator endProductReactions() {return _as_products.end();}
+        inline vr_iterator endProductReactions() {return _as_products.end();}
         
 //        /// Print self into an iostream
 //        friend std::ostream& operator<<(std::ostream& os, const RSpecies& s);

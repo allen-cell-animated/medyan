@@ -24,7 +24,7 @@ using namespace std;
 namespace chem {
     
 ReactionBase::ReactionBase (float rate) : 
- _rnode(nullptr), _rate(rate) //, _parent(nullptr)
+ _rnode(nullptr), _rate(rate), _parent(nullptr)
     {
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
@@ -34,12 +34,12 @@ ReactionBase::ReactionBase (float rate) :
 #endif
 }
 
-//Composite* ReactionBase::getRoot()
-//{
-//    if(hasParent())
-//        return this->getParent()->getRoot();
-//    return nullptr;
-//}
+Composite* ReactionBase::getRoot()
+{
+    if(hasParent())
+        return this->getParent()->getRoot();
+    return nullptr;
+}
     
     
 void ReactionBase::registerNewDependent(ReactionBase *r){
@@ -162,7 +162,6 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     
 #ifdef BOOST_MEM_POOL
 // boost::pool<> allocator_reaction(sizeof(Reaction<1,1>),BOOL_POOL_NSIZE);
-
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size)
 {
@@ -212,4 +211,6 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
     template void Reaction<2,2>::initializeSpecies(const std::vector<Species*> &species);
     template void Reaction<2,2>::passivateReactionImpl();
     template Reaction<2,2>* Reaction<2,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+    
+    
 } // end of namespace

@@ -69,7 +69,7 @@ public:
     /// The PQ heap requires a comparision operator for ordering elements within the heap/
     /// @note In a bit of hack, the less operator is actually defined via real greater comparison of tau's
     /// of two corresponding PQNode objects. We do this so the top PQ node has the smallest tau and not largest.
-    bool operator<(PQNode const &rhs) const{
+    inline bool operator<(PQNode const &rhs) const{
         return _tau > rhs._tau;
     }
     
@@ -125,34 +125,34 @@ public:
     void generateNewRandTau();
     
     /// Returns a pointer to the Reaction which corresponds to this RNodeNRM.
-    ReactionBase* getReaction() const {return _react;};
+    inline ReactionBase* getReaction() const {return _react;};
     
     /// The heap is updated only with respect to the specific PQNode element which presumably 
     /// was modified (e.g. via generateNewRandTau()).
     void updateHeap();
     
     /// Returns the tau from the the associated PQNode element
-    double getTau() const {return (*_handle)._tau;}
+    inline double getTau() const {return (*_handle)._tau;}
     
     /// Sets the tau of the the associated PQNode element. Does not update the heap.
-    void setTau(double tau) {(*_handle)._tau=tau;}
+    inline void setTau(double tau) {(*_handle)._tau=tau;}
     
     /// Returns a handle to the associated PQNode element, which can be used to access tau, for example.
-    handle_t& getHandle() {return _handle;}
+    inline handle_t& getHandle() {return _handle;}
     
     /// Return the currently stored propensity, "a", for this Reaction.
     /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
-    double getPropensity() const {return _a;}
+    inline double getPropensity() const {return _a;}
     
     /// (Re)Compute and return the propensity associated with this Reaction.
-    double reComputePropensity() {_a=_react->computePropensity(); return _a;}
+    inline double reComputePropensity() {_a=_react->computePropensity(); return _a;}
 
     /// Compute and return the product of reactant copy numbers. This method can be used to quickly check 
     /// whether this reaction needs to be passivated, if the returned result is zero.
-    int getProductOfReactants () {return _react->getProductOfReactants ();};
+    inline int getProductOfReactants () {return _react->getProductOfReactants ();};
     
     /// This method calls the corresponding Reaction::makeStep() method of the underyling Reaction object
-    void makeStep() {_react->makeStep();}
+    inline void makeStep() {_react->makeStep();}
     
     /// When this method is called, a new tau is computed and the corresponding PQNode element is updated in the heap.
     /// @note This method does not activate the Reaction itself, but instead only deals with the activation 
@@ -166,7 +166,7 @@ public:
     virtual void passivateReaction();
     
     /// Return true if the Reaction is currently passivated
-    bool isPassivated() const {return _react->isPassivated();}
+    inline bool isPassivated() const {return _react->isPassivated();}
     
     /// Print information about this RNodeNRM such as tau, a and the Reaction which this RNodeNRM tracks.
     void printSelf() const;
@@ -217,19 +217,19 @@ public:
     virtual ~ChemNRMImpl();
     
     /// Return the number of reactions in the network.
-    size_t getSize() const {return _n_reacts;}
+    inline size_t getSize() const {return _n_reacts;}
     
     /// Return the current global time (as defined in the NRM algorithm)
-    double getTime() const {return _t;}
+    inline double getTime() const {return _t;}
     
     /// Sets global time to 0.0
-    void resetTime() {_t=0.0; syncGlobalTime(); }
+    inline void resetTime() {_t=0.0; syncGlobalTime(); }
     
     /// Sets global time variable to ChemNRMImpl's global time
-    void syncGlobalTime() {global_time=_t;}
+    inline void syncGlobalTime() {global_time=_t;}
     
     /// Return a pointer to the heap
-    boost_heap* getHeap() {return &_heap;}
+    inline boost_heap* getHeap() {return &_heap;}
     
     /// Add Reaction *r to the network
     virtual void addReaction(ReactionBase *r);

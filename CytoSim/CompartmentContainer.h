@@ -41,21 +41,28 @@ namespace chem {
             
             for(size_t i=0; i<length; ++i)
             {
-                addChild(std::unique_ptr<Component>(new Compartment(_prototype_compartment)));
+                addChild(std::unique_ptr<Component>(new Compartment()));
             }
-            
-//           std::cout << "CompartmentsSimpleGrid(CTOR): length=" << length << std::endl;
             
             _is_initialized=true;
 
             if(NDIM==3)
                 generateConnections3D();
             
-            for(auto &c: children())
+            for(auto &c : children())
+            {
+                Compartment *C = static_cast<Compartment*>(c.get());
+                *C = _prototype_compartment;
+            }
+            
+            for(auto &c : children())
             {
                 Compartment *C = static_cast<Compartment*>(c.get());
                 C->generateDiffusionReactions();
             }
+            
+//           std::cout << "CompartmentsSimpleGrid(CTOR): length=" << length << std::endl;
+            
         }
         
         template<typename ...Args>
@@ -94,45 +101,7 @@ namespace chem {
         Compartment& getProtoCompartment() {return _prototype_compartment;}
         const Compartment& getProtoCompartment() const {return _prototype_compartment;}
         
-        void generateConnections3D()
-        {
-            assert(NDIM==3);
-            for(size_t i=0U; i<_grid[0]; ++i)
-                for(size_t j=0U; j<_grid[1]; ++j)
-                    for(size_t k=0U; k<_grid[2]; ++k)
-                    {
-                        Compartment *target = this->getCompartment(i,j,k);
-//                        std::cout << "CompartmentsSimpleGrid::generateConnections3D(): " << i << " " << j << " " << k << std::endl;
-                        for(int ii: {-1,1})
-                        {
-                            int iprime = i+ii;
-                            if(iprime<0 or iprime==int(_grid[0]))
-                                continue;
-                            Compartment *neighbor = this->getCompartment(size_t(iprime),j,k);
-                            target->addNeighbour(neighbor);
-//                            std::cout << "Added neighbor, " << iprime << " " << j << " " << k << std::endl;
-                        }
-                        for(int jj: {-1,1})
-                        {
-                            int jprime = j+jj;
-                            if(jprime<0 or jprime==int(_grid[1]))
-                                continue;
-                            Compartment *neighbor = this->getCompartment(i,size_t(jprime),k);
-                            target->addNeighbour(neighbor);
-//                            std::cout << "Added neighbor, " << i << " " << jprime << " " << k << std::endl;
-                        }
-                        for(int kk: {-1,1})
-                        {
-                            int kprime = k+kk;
-                            if(kprime<0 or kprime==int(_grid[2]))
-                                continue;
-                            Compartment *neighbor = this->getCompartment(i,j,size_t(kprime));
-                            target->addNeighbour(neighbor);
-//                            std::cout << "Added neighbor, " << i << " " << j << " " << kprime << std::endl;
-                        }
-                    }
-
-        }
+        void generateConnections3D();
         
         virtual void addChemSimReactions(ChemSim &chem)
         {

@@ -184,11 +184,14 @@ bool ChemNRMImpl::makeStep()
     }
     _t=tau_top;
     rn->makeStep();
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
+#endif
         rn->generateNewRandTau();
         rn->updateHeap();
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
-    
+#endif
 //    chk4 = std::chrono::system_clock::now();
     
 //    cout << "ChemNRMImpl::makeStep(): RNodeNRM ptr=" << rn << " made a chemical step. t=" << _t << "\n" << endl;
@@ -229,14 +232,15 @@ bool ChemNRMImpl::makeStep()
     r->emitSignal();
 #endif
 #ifdef RSPECIES_SIGNALING
-    for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
-        if((*sit)->isSignaling())
-            (*sit)->emitSignal(-1);
-    }
-    for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
-        if((*sit)->isSignaling())
-            (*sit)->emitSignal(1);
-    }
+    r->broadcastRSpeciesSignals();
+//    for(auto sit = r->beginReactants(); sit!=r->endReactants(); ++sit){
+//        if((*sit)->isSignaling())
+//            (*sit)->emitSignal(-1);
+//    }
+//    for(auto sit = r->beginProducts(); sit!=r->endProducts(); ++sit){
+//        if((*sit)->isSignaling())
+//            (*sit)->emitSignal(1);
+//    }
 #endif
 
 //    cout << "ChemNRMImpl::_makeStep(): Ending...]\n\n" << endl;

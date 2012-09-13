@@ -55,7 +55,7 @@ protected:
     std::vector<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     float _rate; ///< the rate for this ReactionBase
-    // Composite *_parent;
+    Composite *_parent;
 #ifdef REACTION_SIGNALING
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
@@ -93,7 +93,9 @@ public:
     
     virtual ReactionBase* cloneImpl(const SpeciesPtrContainerVector &spcv) = 0;
     
-    /// Sets the ReactionBase rate to the parameter "rate" 
+    virtual RSpecies** rspecies() = 0;
+    
+    /// Sets the ReactionBase rate to the parameter "rate"
     void setRate(float rate) {_rate=rate;}
     
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is called only by the 
@@ -113,24 +115,29 @@ public:
     
     /// Returns the number of product RSpecies
     unsigned short getN() const {return getNImpl();}
-    
-    virtual unsigned short getNImpl() const = 0;
         
-//    Composite* getParent() {return _parent;}
+    virtual unsigned short getNImpl() const = 0;
+    
+    /// Returns the total number of RSpecies
+    unsigned short size() const {return sizeImpl();}
+    
+    virtual unsigned short sizeImpl() const = 0;
+    
+    Composite* getParent() {return _parent;}
+    
+    void setParent (Composite *other) {_parent=other;}
+    
+    bool hasParent() const {return _parent!=nullptr? true : false;}
+    
+    Composite* getRoot();
+    
+//    Composite* getParent() {return nullptr;}
 //    
-//    void setParent (Composite *other) {_parent=other;}
+//    void setParent (Composite *other) {}
 //    
-//    bool hasParent() const {return _parent!=nullptr? true : false;}
+//    bool hasParent() const {return false;}
 //    
-//    Composite* getRoot();
-    
-    Composite* getParent() {return nullptr;}
-    
-    void setParent (Composite *other) {}
-    
-    bool hasParent() const {return false;}
-    
-    Composite* getRoot() {return nullptr;}
+//    Composite* getRoot() {return nullptr;}
     
     /// Computes the product of the copy number of all reactant RSpecies.
     /// Can be used to quickly determine whether this ReactionBase should be allowed to activate - if one of the
@@ -183,6 +190,10 @@ public:
         if(isSignaling())
             (*_signal)(this);
     }
+#endif
+    
+#ifdef RSPECIES_SIGNALING
+    virtual void broadcastRSpeciesSignals() = 0;
 #endif
     
     /// Return a const reference to the vector of dependent ReactionBases
@@ -309,9 +320,9 @@ template <unsigned short M, unsigned short N>
             _rspecies[i]->removeAsProduct(this);
 
         }
-        std::array<RSpecies*, M+N>& rspecies() {return _rspecies;}
-        const std::array<RSpecies*, M+N>& rspecies() const {return _rspecies;}
         
+        inline virtual RSpecies** rspecies() override {return &_rspecies[0];}
+                
         virtual std::vector<ReactionBase*> getAffectedReactions() override
         {
             std::unordered_set<ReactionBase*> rxns;
@@ -326,8 +337,10 @@ template <unsigned short M, unsigned short N>
         }
         
     protected:
-        virtual unsigned short getMImpl() const override {return M;};
-        virtual unsigned short getNImpl() const override {return N;};
+        inline virtual unsigned short getMImpl() const override {return M;}
+        inline virtual unsigned short getNImpl() const override {return N;}
+        inline virtual unsigned short sizeImpl() const override {return M+N;}
+
         
         virtual bool is_equal(const ReactionBase& other) const override
         {
@@ -340,7 +353,7 @@ template <unsigned short M, unsigned short N>
             return false;
         }
         
-        virtual int getProductOfReactantsImpl() const override
+        inline virtual int getProductOfReactantsImpl() const override
         {
             int prod = 1;
             for(auto i=0U; i<M; ++i)
@@ -349,7 +362,7 @@ template <unsigned short M, unsigned short N>
             
         }
 
-        virtual float computePropensityImpl() const override
+        inline virtual float computePropensityImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
             if(this->Reaction<M,N>::getProductOfProductsImpl()==0){
@@ -358,14 +371,14 @@ template <unsigned short M, unsigned short N>
                 return float(0.0);
             }
 #endif
-//            return _rate*Reaction<M,N>::getProductOfReactantsImpl();
-            int prod = 1;
-            for(auto i=0U; i<M; ++i)
-                prod*=_rspecies[i]->getN();
-            return _rate*prod;
+            return _rate*Reaction<M,N>::getProductOfReactantsImpl();
+//            int prod = 1;
+//            for(auto i=0U; i<M; ++i)
+//                prod*=_rspecies[i]->getN();
+//            return _rate*prod;
         }
         
-        virtual int getProductOfProductsImpl() const override
+        inline virtual int getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
             int prod = 1;
@@ -379,7 +392,7 @@ template <unsigned short M, unsigned short N>
 #endif
         }
     
-        virtual bool containsSpeciesImpl(Species *s) const override
+        inline virtual bool containsSpeciesImpl(Species *s) const override
         {
             auto it = std::find_if(_rspecies.begin(), _rspecies.end(),
                                    [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
@@ -387,7 +400,7 @@ template <unsigned short M, unsigned short N>
             
         }
     
-        virtual void makeStepImpl() override
+        inline virtual void makeStepImpl() override
         {
             for(auto i=0U; i<M; ++i)
                 _rspecies[i]->down();
@@ -421,10 +434,51 @@ template <unsigned short M, unsigned short N>
             }
             os << ", " << "curr_rate = " << getRate() << ", a=" << computePropensity() << ", ReactionBase ptr=" << this << "\n";
         }
+        
+#ifdef RSPECIES_SIGNALING
+        virtual void broadcastRSpeciesSignals() 
+        {
+            for(auto i=0U; i<M; ++i)
+            {
+                if(_rspecies[i]->isSignaling())
+                        _rspecies[i]->emitSignal(-1);
+
+            }
+            for(auto i=M; i<(M+N); ++i)
+            {
+                if(_rspecies[i]->isSignaling())
+                    _rspecies[i]->emitSignal(+1);
+            }
+        }
+#endif
 
         virtual Reaction<M,N>* cloneImpl(const SpeciesPtrContainerVector &spcv) override;
     };
-                
+
+    template <> inline float Reaction<1,1>::computePropensityImpl() const
+    {
+//        std::cout << "\ntemplate <> float Reaction<1,1>::computePropensityImpl() const: Partial specialization is used. " << std::endl;
+        return _rate*_rspecies[0]->getN();
+    }
+    
+    template <> inline void Reaction<1,1>::makeStepImpl()
+    {
+//        std::cout << "\ntemplate <> void Reaction<1,1>::makeStepImpl(): Partial specialization is used. " << std::endl;
+        _rspecies[0]->down();
+        _rspecies[1]->up();
+    }
+    
+#ifdef RSPECIES_SIGNALING
+    template <>  inline void Reaction<1,1>::broadcastRSpeciesSignals()
+    {
+//        std::cout << "\ntemplate <>  void Reaction<1,1>::broadcastRSpeciesSignals(): Partial specialization is used. " << std::endl;
+        if(_rspecies[0]->isSignaling())
+            _rspecies[0]->emitSignal(-1);
+        
+        if(_rspecies[1]->isSignaling())
+            _rspecies[1]->emitSignal(+1);
+    }
+#endif
 
 } // end of namespace
 #endif
