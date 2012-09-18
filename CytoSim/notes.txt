@@ -20,6 +20,22 @@ Main Elapsed for ChemNRMImpl::run(...): dt=61.8113
 Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=72.5796
 
 
+%%%% After reworking Reactions to a hieararchy; signaling is turned off %%%%
+NUM_OF_STEP = pow(10,7);
+Num of Species: 250000
+Num of Reactions: 1720000
+
+Main Elapsed for ChemNRMImpl::run(...): dt=55.3242
+Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=65.3534
+
+
+%%%% As above, but on MacbBook Pro Retina %%%%
+NUM_OF_STEP = pow(10,7);
+Num of Species: 250000
+Num of Reactions: 1720000
+
+Main Elapsed for ChemNRMImpl::run(...): dt=41.94436
+Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=49.1104
 
 ##############################################################
 

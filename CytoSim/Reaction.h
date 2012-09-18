@@ -32,21 +32,21 @@ namespace chem {
     class SpeciesPtrContainerVector;
 
     
-/// This is a ReactionBase signal object that will be called by ChemSignal, usually when requested by the 
-/// ReactionBase simulation algorithm
+/// This is a ReactionBase signal object that may be called by a ReactionBase simulation algorithm
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
 
-/// ReactionBase class represents simple chemical ReactionBases of the form A + B -> C.  
+/// ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -> C.  
 
-/*! ReactionBase is defined in terms of reactant and product RSpecies. In the current implementation, 
- *  the stoichiometric coefficents can only be one: i.e. A + B -> C + D is allowed, but A + 2B -> C + D is not allowed. 
- *  Almost all chemical ReactionBases are either unimolecular or bimolecular, so this restriction should not be too
- *  burdensom. Also, the ReactionBase indicates a forward process only. For processes in both directions, e.g. A <-> B, 
+/*! ReactionBase provides an interface for managing a chemical reaction. It is an abstract interface, so 
+ *  it cannot be directly instantiated, but other concrete classes may be derived from it. ReactionBase
+ *  may have a composite object as a parent. A signaling interface may be used to make callbacks when 
+ *  some event, such as a single reaction step, has been executed.
+ 
+ *  The ReactionBase indicates a forward process only. For processes in both directions, e.g. A <-> B,
  *  two ReactionBases objects need to be defined, corresponding to A->B and B->A. 
  *
- *  A ReactionBase tracks other ReactionBase objects that are affected if this ReactionBase is executed. A ReactionBase may be set 
- *  up such that it "signals" when a ReactionBase event happens, in which case the corresponding callbacks are called.
+ *  A ReactionBase tracks other ReactionBase objects that are affected if this ReactionBase is executed. A ReactionBase may be set up such that it "signals" when a ReactionBase event happens, in which case the corresponding callbacks are called.
  *
  */
         
@@ -54,8 +54,8 @@ class ReactionBase {
 protected:
     std::vector<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
+    Composite *_parent; ///< A pointer to a Composite object to which this Reaction belongs
     float _rate; ///< the rate for this ReactionBase
-    Composite *_parent;
 #ifdef REACTION_SIGNALING
     ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
@@ -64,19 +64,15 @@ protected:
 #endif 
     
 public:
-//    /// Default Constructor produces a ReactionBase with no reactants or products, zero rate, etc.
-//    ReactionBase () :  _rnode(nullptr), _rate(0.0), _m(0), _is_signaling (false) {}  
-//    
-
     /// The main constructor:
-    /// @param Species that are reactants and products are put together into a single list (starting from reactants)
-    /// @param M - number of reactants
-    /// @param N - number of products
     /// @param rate - the rate constant for this ReactionBase
     ReactionBase (float rate);
         
-    ReactionBase (const ReactionBase &rb) = delete; // no copying (including all derived classes)
-    ReactionBase& operator=(ReactionBase &rb) = delete;  // no assignment (including all derived classes)
+    /// No copying (including all derived classes)
+    ReactionBase (const ReactionBase &rb) = delete;
+    
+    /// no assignment (including all derived classes)
+    ReactionBase& operator=(ReactionBase &rb) = delete;
 
     /// Destructor
     virtual ~ReactionBase() noexcept
@@ -87,12 +83,19 @@ public:
 #endif
     }
 
+    /// Copy this reaction using SpeciesPtrContainerVector &spcv as a source of analogous Species.
+    /// @return the cloned ReactionBase pointer.
+    /// @note the receving object should take care of the memory management of the returned pointer
     ReactionBase* clone(const SpeciesPtrContainerVector &spcv) {
         return cloneImpl(spcv);
     }
     
+    /// (Private) implementation of the clone() method to be elaborated in derived classes
     virtual ReactionBase* cloneImpl(const SpeciesPtrContainerVector &spcv) = 0;
     
+    /// Returns a pointer to the first element of the std::array<RSpecies*>. This pointer can be used
+    /// to iterate over RSpecies* if necessary (also by relying on getM() and size() to determine
+    /// the iteration limits). The corresponding std::array<RSpecies*> is defined by the derived classes.
     virtual RSpecies** rspecies() = 0;
     
     /// Sets the ReactionBase rate to the parameter "rate"
@@ -102,33 +105,41 @@ public:
     /// Gillespie-like algorithms.
     void setRnode(RNode *rhs) {_rnode=rhs;} 
 
-    /// Returns the rate associated with this ReactionBase
+    /// Returns the rate associated with this ReactionBase.
     float getRate() const {return _rate;}
     
-    /// Returns a pointer to the RNode associated with this ReactionBase
+    /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;} 
     
     /// Returns the number of reactant RSpecies
     unsigned short getM() const {return getMImpl();}
     
+    /// (Private) implementation of the getM() method to be elaborated in derived classes.
     virtual unsigned short getMImpl() const = 0;
     
     /// Returns the number of product RSpecies
     unsigned short getN() const {return getNImpl();}
         
+    /// (Private) implementation of the getN() method to be elaborated in derived classes.
     virtual unsigned short getNImpl() const = 0;
     
     /// Returns the total number of RSpecies
     unsigned short size() const {return sizeImpl();}
     
+    /// (Private) implementation of the size() method to be elaborated in derived classes.
     virtual unsigned short sizeImpl() const = 0;
     
+    /// Return the parent Composite object pointer, to which this Reaction belongs to. If not present,
+    /// return a nullptr.
     Composite* getParent() {return _parent;}
     
+    /// Set the parent Composite object pointer to which this Reaction belongs to.
     void setParent (Composite *other) {_parent=other;}
     
+    /// Returns true if this Reaction has a parent Composite object to which it belongs to.
     bool hasParent() const {return _parent!=nullptr? true : false;}
     
+    /// Get the root parent (i.e. follow the pointers of parentage until the root node in the Composition hieararchy)
     Composite* getRoot();
     
 //    Composite* getParent() {return nullptr;}
@@ -145,6 +156,7 @@ public:
     /// this ReactionBase should not be (yet) activated.
     int getProductOfReactants () const {return getProductOfReactantsImpl();}
     
+    /// (Private) implementation of the getProductOfReactants() method to be elaborated in derived classes.
     virtual int getProductOfReactantsImpl() const = 0;
     
     /// Computes the product of the copy number of all product RSpecies minus maxium allowed copy number.
@@ -153,6 +165,7 @@ public:
     /// this ReactionBase should not be (yet) activated.
     int getProductOfProducts () const {return getProductOfProductsImpl();}
     
+    /// (Private) implementation of the getProductOfProducts() method to be elaborated in derived classes.
     virtual int getProductOfProductsImpl() const = 0;
     
     /// Return true if the ReactionBase is currently passivated
@@ -162,8 +175,10 @@ public:
     bool isPassivated() const {return false;}
 #endif
     
+    /// Returns true of this Reaction contains Species *s either as a reactant or a product
     bool containsSpecies(Species *s) const {return containsSpeciesImpl(s);}
     
+    /// (Private) implementation of the containsSpecies() method to be elaborated in derived classes.
     virtual bool containsSpeciesImpl(Species *s) const = 0;
     
 #ifdef REACTION_SIGNALING
@@ -212,6 +227,7 @@ public:
         return a.is_equal(b); // Invoke virtual is_equal via derived subclass of a (which should be the same as b)
     }
     
+    /// (Private) implementation of the operator==(...) method to be elaborated in derived classes.
     virtual bool is_equal(const ReactionBase& b) const = 0;
         
     /// Return true if two ReactionBase are not equal.
@@ -226,12 +242,14 @@ public:
     /// from within a Gillespie-like algorithm. 
     void makeStep() {makeStepImpl();}
     
+    /// (Private) implementation of the makeStep() method to be elaborated in derived classes.
     virtual void makeStepImpl() = 0;
     
     /// Compute the ReactionBase propensity that is needed by a Gillespie like algorithm:
     /// rate*reactant_1.getN()*reactant_2.getN()...
     float computePropensity() const {return computePropensityImpl();}
 
+    /// (Private) implementation of the computePropensity() method to be elaborated in derived classes.
     virtual float computePropensityImpl() const = 0;
     
     /// Usually is applied to ReactionBase objects with propensity of 0 (e.g. when one of the 
@@ -240,6 +258,7 @@ public:
     /// activateReaction() may be called to restart tracking, if the propensity stops being 0.
     void passivateReaction() {passivateReactionImpl();}
     
+    /// (Private) implementation of the passivateReaction() method to be elaborated in derived classes.
     virtual void passivateReactionImpl() = 0;
     
     /// Requests that ReactionBase objects that may affect this Reaction to start tracking it, which can be
@@ -290,18 +309,45 @@ public:
     }
 };
     
+    
+    
+    
+    
+    
+    
+    
+    
+/// Reaction<M,N> class represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N is the number of products.
+
+/*! Reaction<M,N> encodes a chemical reaction between M reactants and N products. It follows the ReactionBase interface, where 
+ *  many methods are defined. Most of the methods defined in Reaction<M,N> are specific implementations of virtual functions 
+ *  declared in ReactionBase. Hence, to a very large degree, Reaction<M,N> is an implementation class, while ReactionBase 
+ *  provides the public interface for reaction objects. The documentation of the latter should be mainly consulted when 
+ *  working with reactions.
+ */
 template <unsigned short M, unsigned short N>
     class Reaction : public ReactionBase {
     private:
-        std::array<RSpecies*, M+N> _rspecies;
+        std::array<RSpecies*, M+N> _rspecies;///< An array of RSpecies objects (reactants followed by products)
     public:
+        /// The main constructor:
+        /// @param species - are reactants and products put together into a single list (starting from reactants)
+        /// @param rate - the rate constant for this ReactionBase
         Reaction(const std::vector<Species*> &species, float rate = 0.0) : ReactionBase(rate)
         {
             initializeSpecies(species);
         }
         
-        Reaction (const Reaction &rb) = delete; // no copying (including all derived classes)
-        Reaction& operator=(Reaction &rb) = delete;  // no assignment (including all derived classes)
+        Reaction(std::initializer_list<Species*> species, float rate = 0.0) : ReactionBase(rate)
+        {
+            initializeSpecies(species);
+        }
+        
+        /// no copying (including all derived classes)
+        Reaction (const Reaction &rb) = delete;
+        
+        /// no assignment (including all derived classes)
+        Reaction& operator=(Reaction &rb) = delete;
 
 #ifdef BOOST_MEM_POOL
         /// Advanced memory management
@@ -309,9 +355,8 @@ template <unsigned short M, unsigned short N>
         
         void operator delete(void* ptr) noexcept;
 #endif
-        void initializeSpecies(const std::vector<Species*> &species);
-
         /// Destructor
+        /// Tell Rspecies to remove this Reaction from its internal lists if reactions
         virtual ~Reaction() noexcept
         {
         for(auto i=0U; i<M; ++i)
@@ -321,8 +366,13 @@ template <unsigned short M, unsigned short N>
 
         }
         
+        /// Returns a pointer to the first element of std::array<RSpecies*, M+N>
+        /// The type of the pointer is RSpecies**. In conjunction with getM() and getN(),
+        /// this pointer can be used to iterate over RSpecies associated with this reaction.
         inline virtual RSpecies** rspecies() override {return &_rspecies[0];}
-                
+        
+        /// Return a list of reactions which rates would be affected if this
+        /// reaction were to be executed.
         virtual std::vector<ReactionBase*> getAffectedReactions() override
         {
             std::unordered_set<ReactionBase*> rxns;
@@ -337,11 +387,32 @@ template <unsigned short M, unsigned short N>
         }
         
     protected:
+        /// An implementation method used by the constructor.
+        template <typename SpeciesContainer>
+        void initializeSpecies(SpeciesContainer &species)
+        {
+            assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+            std::transform(species.begin(),species.end(),_rspecies.begin(),
+                      [](Species *s){return &s->getRSpecies();});
+            
+            _dependents=getAffectedReactions();
+            for(auto i=0U; i<M; ++i)
+                _rspecies[i]->addAsReactant(this);
+            for(auto i=M; i<(M+N); ++i)
+                _rspecies[i]->addAsProduct(this);
+
+        }
+        
+        /// Implementation of getM()
         inline virtual unsigned short getMImpl() const override {return M;}
+
+        /// Implementation of getN()
         inline virtual unsigned short getNImpl() const override {return N;}
+
+        /// Implementation of size()
         inline virtual unsigned short sizeImpl() const override {return M+N;}
 
-        
+        /// Implementation of the operator==(...)
         virtual bool is_equal(const ReactionBase& other) const override
         {
             const Reaction<M,N> *a = this;
@@ -353,6 +424,7 @@ template <unsigned short M, unsigned short N>
             return false;
         }
         
+        /// Implementation of getProductOfReactants()
         inline virtual int getProductOfReactantsImpl() const override
         {
             int prod = 1;
@@ -362,6 +434,7 @@ template <unsigned short M, unsigned short N>
             
         }
 
+        /// Implementation of computePropensity()
         inline virtual float computePropensityImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
@@ -378,6 +451,7 @@ template <unsigned short M, unsigned short N>
 //            return _rate*prod;
         }
         
+        /// Implementation of getProductOfProducts()
         inline virtual int getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
@@ -392,6 +466,7 @@ template <unsigned short M, unsigned short N>
 #endif
         }
     
+        /// Implementation of containsSpecies()
         inline virtual bool containsSpeciesImpl(Species *s) const override
         {
             auto it = std::find_if(_rspecies.begin(), _rspecies.end(),
@@ -400,6 +475,7 @@ template <unsigned short M, unsigned short N>
             
         }
     
+        /// Implementation of makeStep()
         inline virtual void makeStepImpl() override
         {
             for(auto i=0U; i<M; ++i)
@@ -408,9 +484,13 @@ template <unsigned short M, unsigned short N>
                 _rspecies[i]->up();
         }
 
+        /// Implementation of activateReactionUnconditional()
         virtual void activateReactionUnconditionalImpl() override;
+
+        /// Implementation of passivateReaction()
         virtual void passivateReactionImpl() override;
         
+        /// Print information about this reaction to std::ostream
         virtual void printToStream(std::ostream& os) const override
         {
             unsigned char i=0;
@@ -436,6 +516,9 @@ template <unsigned short M, unsigned short N>
         }
         
 #ifdef RSPECIES_SIGNALING
+        /// This method may be called after a makeStep() took place. It iterates over all
+        /// reactants and products, and call the emitSignal(delta) of the corresponding
+        /// RSpecies objects, where delta=-1 for reactants and delta=+1 for products.
         virtual void broadcastRSpeciesSignals() 
         {
             for(auto i=0U; i<M; ++i)
@@ -451,16 +534,33 @@ template <unsigned short M, unsigned short N>
             }
         }
 #endif
-
+        
+        /// Implementation of  clone()
         virtual Reaction<M,N>* cloneImpl(const SpeciesPtrContainerVector &spcv) override;
     };
 
+
+    
+    
+    
+    
+    
+    
+    
+    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline float Reaction<1,1>::computePropensityImpl() const
     {
 //        std::cout << "\ntemplate <> float Reaction<1,1>::computePropensityImpl() const: Partial specialization is used. " << std::endl;
+#ifdef TRACK_UPPER_COPY_N
+        if(_rspecies[1]->getN()>=_rspecies[1]->getUpperLimitForN())
+            return 0;
+#endif
         return _rate*_rspecies[0]->getN();
     }
     
+
+    
+    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline void Reaction<1,1>::makeStepImpl()
     {
 //        std::cout << "\ntemplate <> void Reaction<1,1>::makeStepImpl(): Partial specialization is used. " << std::endl;
@@ -469,6 +569,7 @@ template <unsigned short M, unsigned short N>
     }
     
 #ifdef RSPECIES_SIGNALING
+    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <>  inline void Reaction<1,1>::broadcastRSpeciesSignals()
     {
 //        std::cout << "\ntemplate <>  void Reaction<1,1>::broadcastRSpeciesSignals(): Partial specialization is used. " << std::endl;

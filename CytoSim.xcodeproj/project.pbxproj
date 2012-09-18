@@ -702,11 +702,12 @@
 					/Users/papoian/Dropbox/codes/CytoSim/CytoSim,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/gcc47/gtest-1.6.0/lib/.libs",
-					/usr/local/lib,
+					"/usr/local/lib/**",
+					"/usr/local/gcc47/gtest-1.6.0/lib/.libs/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
+					"-lboost_system",
 					"-lgtest",
 					"-lgtest_main",
 				);
@@ -728,11 +729,12 @@
 					/Users/papoian/Dropbox/codes/CytoSim/CytoSim,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/gcc47/gtest-1.6.0/lib/.libs",
-					/usr/local/lib,
+					"/usr/local/lib/**",
+					"/usr/local/gcc47/gtest-1.6.0/lib/.libs/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
+					"-lboost_system",
 					"-lgtest",
 					"-lgtest_main",
 				);

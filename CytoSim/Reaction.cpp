@@ -6,18 +6,16 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#include <boost/pool/pool_alloc.hpp>
-
-#ifdef BOOST_MEM_POOL
-    #include <boost/pool/pool.hpp>
-    #include <boost/pool/pool_alloc.hpp>
-#endif
-
 #include <iostream>
 #include "Reaction.h"
 #include "ChemRNode.h"
 #include "Composite.h"
 #include "SpeciesContainer.h"
+
+#ifdef BOOST_MEM_POOL
+#include <boost/pool/pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
+#endif
 
 using namespace std;
 
@@ -83,24 +81,24 @@ void ReactionBase::printDependents()  {
         cout << (*r) << endl;
 }
     
-template <unsigned short M, unsigned short N>
-    void Reaction<M,N>::initializeSpecies(const std::vector<Species*> &species)
-{
-    assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
-    transform(species.begin(),species.end(),_rspecies.begin(),
-              [](Species *s){return &s->getRSpecies();});
-
-    _dependents=getAffectedReactions();
-    //    cout << "Reaction::Reaction(...): " << this << endl;
-    //    for (auto rr : _dependents)
-    //        cout <<(*rr);
-    //    cout << endl;
-    //    activateReactionUnconditional();
-    for(auto i=0U; i<M; ++i)
-        _rspecies[i]->addAsReactant(this);
-    for(auto i=M; i<(M+N); ++i)
-        _rspecies[i]->addAsProduct(this);
-}
+//template <unsigned short M, unsigned short N>
+//    void Reaction<M,N>::initializeSpecies(const std::vector<Species*> &species)
+//{
+//    assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+//    transform(species.begin(),species.end(),_rspecies.begin(),
+//              [](Species *s){return &s->getRSpecies();});
+//
+//    _dependents=getAffectedReactions();
+//    //    cout << "Reaction::Reaction(...): " << this << endl;
+//    //    for (auto rr : _dependents)
+//    //        cout <<(*rr);
+//    //    cout << endl;
+//    //    activateReactionUnconditional();
+//    for(auto i=0U; i<M; ++i)
+//        _rspecies[i]->addAsReactant(this);
+//    for(auto i=M; i<(M+N); ++i)
+//        _rspecies[i]->addAsProduct(this);
+//}
 
 
 template <unsigned short M, unsigned short N>
@@ -193,22 +191,18 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
 #endif
     
     template void Reaction<1,1>::activateReactionUnconditionalImpl();
-    template void Reaction<1,1>::initializeSpecies(const std::vector<Species*> &species);
     template void Reaction<1,1>::passivateReactionImpl();
     template Reaction<1,1>* Reaction<1,1>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
     template void Reaction<2,1>::activateReactionUnconditionalImpl();
-    template void Reaction<2,1>::initializeSpecies(const std::vector<Species*> &species);
     template void Reaction<2,1>::passivateReactionImpl();
     template Reaction<2,1>* Reaction<2,1>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     
     template void Reaction<1,2>::activateReactionUnconditionalImpl();
-    template void Reaction<1,2>::initializeSpecies(const std::vector<Species*> &species);
     template void Reaction<1,2>::passivateReactionImpl();
     template Reaction<1,2>* Reaction<1,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     
     template void Reaction<2,2>::activateReactionUnconditionalImpl();
-    template void Reaction<2,2>::initializeSpecies(const std::vector<Species*> &species);
     template void Reaction<2,2>::passivateReactionImpl();
     template Reaction<2,2>* Reaction<2,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     

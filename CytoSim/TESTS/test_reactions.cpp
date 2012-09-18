@@ -87,23 +87,23 @@ TEST(ReactionTest, CTors) {
     EXPECT_EQ(2, rxn4.getM()); EXPECT_EQ(2, rxn4.getN());
 
     // rxn1
-    auto it1 = rxn1.rspecies().begin();
+    auto it1 = rxn1.rspecies();
     EXPECT_EQ("A{Bulk}",(*it1)->getFullName());
     // rxn2
-    auto it2 = rxn2.rspecies().begin();
+    auto it2 = rxn2.rspecies();
     EXPECT_EQ("A{Bulk}",(*it2)->getFullName());
     ++it2;
     EXPECT_EQ("B{Bulk}",(*it2)->getFullName());
-    EXPECT_EQ("C{Bulk}",(*(rxn2.rspecies().begin()+rxn2.getM()))->getFullName());
+    EXPECT_EQ("C{Bulk}",(*(rxn2.rspecies()+rxn2.getM()))->getFullName());
     // rxn3
-    auto it3 = rxn3.rspecies().begin()+rxn2.getM();
-    EXPECT_EQ("A{Bulk}",(*rxn3.rspecies().begin())->getFullName());
+    auto it3 = rxn3.rspecies()+rxn2.getM();
+    EXPECT_EQ("A{Bulk}",(*rxn3.rspecies())->getFullName());
     EXPECT_EQ("B{Bulk}",(*it2)->getFullName());
     ++it3;
-    EXPECT_EQ("C{Bulk}",(*(rxn2.rspecies().begin()+rxn2.getM()))->getFullName());
+    EXPECT_EQ("C{Bulk}",(*(rxn2.rspecies()+rxn2.getM()))->getFullName());
     // rxn4
-    auto r_it4 = rxn4.rspecies().begin();
-    auto p_it4 = rxn4.rspecies().begin()+rxn4.getM();
+    auto r_it4 = rxn4.rspecies();
+    auto p_it4 = rxn4.rspecies()+rxn4.getM();
     EXPECT_EQ("A{Bulk}",(*r_it4)->getFullName());
     ++r_it4;
     EXPECT_EQ("B{Bulk}",(*r_it4)->getFullName());
