@@ -2,10 +2,13 @@
 Here are the classes, structs, unions and interfaces with brief descriptions\-:\begin{DoxyCompactList}
 \item\contentsline{section}{\hyperlink{classchem_1_1ChemGillespieImpl}{chem\-::\-Chem\-Gillespie\-Impl} \\*\hyperlink{classchem_1_1ChemGillespieImpl}{Chem\-Gillespie\-Impl} implements a slightly optimized version of the Gillespie algorithm }{\pageref{classchem_1_1ChemGillespieImpl}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ChemNRMImpl}{chem\-::\-Chem\-N\-R\-M\-Impl} \\*\hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} stands for Chemical Next \hyperlink{classchem_1_1Reaction}{Reaction} Method Implementation }{\pageref{classchem_1_1ChemNRMImpl}}{}
+\item\contentsline{section}{\hyperlink{classchem_1_1ChemSignal}{chem\-::\-Chem\-Signal} \\*\hyperlink{classchem_1_1ChemSignal}{Chem\-Signal} manages callbacks for \hyperlink{classchem_1_1RSpecies}{R\-Species} and Reactions objects }{\pageref{classchem_1_1ChemSignal}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ChemSim}{chem\-::\-Chem\-Sim} \\*\hyperlink{classchem_1_1ChemSim}{Chem\-Sim} is used to manage running a network of chemical reactions }{\pageref{classchem_1_1ChemSim}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ChemSimImpl}{chem\-::\-Chem\-Sim\-Impl} \\*\hyperlink{classchem_1_1ChemSimImpl}{Chem\-Sim\-Impl} is an abstract base class for algorithms that run stochastic chemical kinetics }{\pageref{classchem_1_1ChemSimImpl}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ChemSimpleGillespieImpl}{chem\-::\-Chem\-Simple\-Gillespie\-Impl} \\*\hyperlink{classchem_1_1ChemSimpleGillespieImpl}{Chem\-Simple\-Gillespie\-Impl} implements the simplest version of the Gillespie algorithm, without caching, etc }{\pageref{classchem_1_1ChemSimpleGillespieImpl}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1Compartment}{chem\-::\-Compartment} }{\pageref{classchem_1_1Compartment}}{}
+\item\contentsline{section}{\hyperlink{classchem_1_1CompartmentCubic}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$} }{\pageref{classchem_1_1CompartmentCubic}}{}
+\item\contentsline{section}{\hyperlink{classchem_1_1CompartmentsSimpleGrid}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$} }{\pageref{classchem_1_1CompartmentsSimpleGrid}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1Component}{chem\-::\-Component} }{\pageref{classchem_1_1Component}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1Composite}{chem\-::\-Composite} }{\pageref{classchem_1_1Composite}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1CompositeVisitor}{chem\-::\-Composite\-Visitor} }{\pageref{classchem_1_1CompositeVisitor}}{}
@@ -13,7 +16,8 @@ Here are the classes, structs, unions and interfaces with brief descriptions\-:\
 \item\contentsline{section}{\hyperlink{classchem_1_1ConditionalVisitor}{chem\-::\-Conditional\-Visitor} }{\pageref{classchem_1_1ConditionalVisitor}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1FindFirstSpeciesVisitor}{chem\-::\-Find\-First\-Species\-Visitor} }{\pageref{classchem_1_1FindFirstSpeciesVisitor}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1PQNode}{chem\-::\-P\-Q\-Node} \\*\hyperlink{classchem_1_1PQNode}{P\-Q\-Node} stands for Priority Queue Node }{\pageref{classchem_1_1PQNode}}{}
-\item\contentsline{section}{\hyperlink{classchem_1_1Reaction}{chem\-::\-Reaction} \\*\hyperlink{classchem_1_1Reaction}{Reaction} class represents simple chemical reactions of the form A + B -\/$>$ C }{\pageref{classchem_1_1Reaction}}{}
+\item\contentsline{section}{\hyperlink{classchem_1_1Reaction}{chem\-::\-Reaction$<$ M, N $>$} \\*Reaction$<$\-M,\-N$>$ class represents a concrete chemical reaction, such as A + B -\/$>$ C, where M is the number of reactants and N is the number of products }{\pageref{classchem_1_1Reaction}}{}
+\item\contentsline{section}{\hyperlink{classchem_1_1ReactionBase}{chem\-::\-Reaction\-Base} \\*\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} class represents an abstract interface for simple chemical Reactions of the form A + B -\/$>$ C }{\pageref{classchem_1_1ReactionBase}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ReactionPtrContainerIFace}{chem\-::\-Reaction\-Ptr\-Container\-I\-Face} }{\pageref{classchem_1_1ReactionPtrContainerIFace}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1ReactionPtrContainerVector}{chem\-::\-Reaction\-Ptr\-Container\-Vector} }{\pageref{classchem_1_1ReactionPtrContainerVector}}{}
 \item\contentsline{section}{\hyperlink{classchem_1_1RNode}{chem\-::\-R\-Node} \\*This is an abstract base class for classes that need to be associated with the given \hyperlink{classchem_1_1Reaction}{Reaction} object }{\pageref{classchem_1_1RNode}}{}

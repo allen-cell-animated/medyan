@@ -8,14 +8,18 @@
 {\ttfamily \#include \char`\"{}Reaction.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}Chem\-Sim\-Impl.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}Chem\-R\-Node.\-h\char`\"{}}\\*
-Include dependency graph for Chem\-N\-R\-M\-Impl.\-h\-:\nopagebreak
+{\ttfamily \#include $<$boost/pool/pool.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/pool/pool\-\_\-alloc.\-hpp$>$}\\*
+Include dependency graph for Chem\-N\-R\-M\-Impl.\-h\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{ChemNRMImpl_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\-:\nopagebreak
+This graph shows which files directly or indirectly include this file\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -35,15 +39,61 @@ class \hyperlink{classchem_1_1ChemNRMImpl}{chem\-::\-Chem\-N\-R\-M\-Impl}
 \begin{DoxyCompactItemize}
 \item 
 namespace \hyperlink{namespacechem}{chem}
-\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{DoxyCompactItemize}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{ChemNRMImpl_8h_ac7284cce00b645fa49b08ae6aecbdc11}{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E}
+\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\item 
+\#define \hyperlink{ChemNRMImpl_8h_a6d805cd02e3606f51cda9faca85b1670}{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M}
+\item 
+\#define \hyperlink{ChemNRMImpl_8h_ad9d458cf298e6ecf4f6b58527b9e5281}{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T}
+\end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
 typedef \\*
-boost\-::heap\-::pairing\-\_\-heap\\*
-$<$ P\-Q\-Node $>$ \hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{chem\-::boost\-\_\-heap}
+boost\-::fast\-\_\-pool\-\_\-allocator\\*
+$<$ P\-Q\-Node $>$ \hyperlink{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}{chem\-::fast\-\_\-allocator\-\_\-t}
 \item 
 typedef \\*
 boost\-::heap\-::pairing\-\_\-heap\\*
-$<$ P\-Q\-Node $>$\-::handle\-\_\-type \hyperlink{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{chem\-::handle\-\_\-t}
+$<$ P\-Q\-Node, \\*
+boost\-::heap\-::allocator\\*
+$<$ fast\-\_\-allocator\-\_\-t $>$ $>$ \hyperlink{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}{chem\-::boost\-\_\-heap}
+\item 
+typedef \\*
+boost\-::heap\-::pairing\-\_\-heap\\*
+$<$ P\-Q\-Node, \\*
+boost\-::heap\-::allocator\\*
+$<$ fast\-\_\-allocator\-\_\-t $>$\\*
+ $>$\-::handle\-\_\-type \hyperlink{namespacechem_abf1718e53f56f85003559d20e531a1a4}{chem\-::handle\-\_\-t}
 \end{DoxyCompactItemize}
+
+
+\subsection{Define Documentation}
+\hypertarget{ChemNRMImpl_8h_ad9d458cf298e6ecf4f6b58527b9e5281}{\index{Chem\-N\-R\-M\-Impl.\-h@{Chem\-N\-R\-M\-Impl.\-h}!B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T}}
+\index{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T}!ChemNRMImpl.h@{Chem\-N\-R\-M\-Impl.\-h}}
+\subsubsection[{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-H\-E\-A\-P\-\_\-\-E\-L\-E\-M\-E\-N\-T}}}\label{ChemNRMImpl_8h_ad9d458cf298e6ecf4f6b58527b9e5281}
+
+
+Definition at line 33 of file Chem\-N\-R\-M\-Impl.\-h.
+
+\hypertarget{ChemNRMImpl_8h_ac7284cce00b645fa49b08ae6aecbdc11}{\index{Chem\-N\-R\-M\-Impl.\-h@{Chem\-N\-R\-M\-Impl.\-h}!B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E}}
+\index{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E}!ChemNRMImpl.h@{Chem\-N\-R\-M\-Impl.\-h}}
+\subsubsection[{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-P\-Q\-N\-O\-D\-E}}}\label{ChemNRMImpl_8h_ac7284cce00b645fa49b08ae6aecbdc11}
+
+
+The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. 
+
+
+
+Definition at line 31 of file Chem\-N\-R\-M\-Impl.\-h.
+
+\hypertarget{ChemNRMImpl_8h_a6d805cd02e3606f51cda9faca85b1670}{\index{Chem\-N\-R\-M\-Impl.\-h@{Chem\-N\-R\-M\-Impl.\-h}!B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M}}
+\index{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M@{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M}!ChemNRMImpl.h@{Chem\-N\-R\-M\-Impl.\-h}}
+\subsubsection[{B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf B\-O\-O\-S\-T\-\_\-\-P\-O\-O\-L\-\_\-\-M\-E\-M\-\_\-\-R\-N\-O\-D\-E\-N\-R\-M}}}\label{ChemNRMImpl_8h_a6d805cd02e3606f51cda9faca85b1670}
+
+
+Definition at line 32 of file Chem\-N\-R\-M\-Impl.\-h.
+

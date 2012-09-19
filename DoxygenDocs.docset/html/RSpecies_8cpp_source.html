@@ -126,55 +126,90 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00010"></a>00010 <span class="preprocessor">#include &quot;<a class="code" href="RSpecies_8h.html">RSpecies.h</a>&quot;</span>
 <a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="Reaction_8h.html">Reaction.h</a>&quot;</span>
 <a name="l00012"></a>00012 
-<a name="l00014"></a><a class="code" href="RSpecies_8h.html#ae56ac1bddb814f1e129ffccfffd67aad">00014</a> std::ostream&amp; <a class="code" href="namespacechem.html#a33c82bc525c0bdd911d321e69eb06cc4">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">chem::RSpecies</a>&amp; s){
-<a name="l00015"></a>00015     os &lt;&lt; s.<a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399" title="Return the full name of this Species in a std::string format (e.g. &quot;Arp2/3{Bulk}&quot;.">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; s.<a class="code" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8" title="Return the current copy number of this RSpecies.">getN</a>() &lt;&lt; <span class="stringliteral">&quot;]&quot;</span>;
-<a name="l00016"></a>00016     <span class="keywordflow">return</span> os;
-<a name="l00017"></a>00017 }
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="keyword">namespace </span>chem {
-<a name="l00020"></a>00020     
-<a name="l00021"></a><a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399">00021</a> std::string <a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399" title="Return the full name of this Species in a std::string format (e.g. &quot;Arp2/3{Bulk}&quot;.">RSpecies::getFullName</a>()<span class="keyword"> const </span>{
-<a name="l00022"></a>00022     <span class="keywordflow">return</span> <a class="code" href="classchem_1_1RSpecies.html#a3a979b9226800417c7aad81a2162fac5" title="reference to the parent Species object">_species</a>.<a class="code" href="classchem_1_1Species.html#a7ac7196a7146f63e297d0995c6081f4b" title="Return the full name of this Species in a std::string format (e.g. &quot;Arp2/3{Bulk}&quot;.">getFullName</a>();
-<a name="l00023"></a>00023 }
-<a name="l00024"></a>00024 
+<a name="l00013"></a>00013 <span class="preprocessor">#ifdef BOOST_MEM_POOL</span>
+<a name="l00014"></a>00014 <span class="preprocessor"></span><span class="preprocessor">    #include &lt;boost/pool/pool.hpp&gt;</span>
+<a name="l00015"></a>00015 <span class="preprocessor">    #include &lt;boost/pool/pool_alloc.hpp&gt;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#endif</span>
+<a name="l00017"></a>00017 <span class="preprocessor"></span>
+<a name="l00018"></a>00018 <span class="comment">//struct RSpeciesPoolTag { };</span>
+<a name="l00019"></a>00019 
+<a name="l00021"></a><a class="code" href="RSpecies_8h.html#ae56ac1bddb814f1e129ffccfffd67aad">00021</a> std::ostream&amp; <a class="code" href="RSpecies_8cpp.html#ae56ac1bddb814f1e129ffccfffd67aad" title="Print self into an iostream.">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">chem::RSpecies</a>&amp; s){
+<a name="l00022"></a>00022     os &lt;&lt; s.<a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399" title="Return the full name of this Species in a std::string format (e.g. &quot;Arp2/3{Bulk}&quot;.">getFullName</a>() &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; s.<a class="code" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8" title="Return the current copy number of this RSpecies.">getN</a>() &lt;&lt; <span class="stringliteral">&quot;]&quot;</span>;
+<a name="l00023"></a>00023     <span class="keywordflow">return</span> os;
+<a name="l00024"></a>00024 }
 <a name="l00025"></a>00025 
-<a name="l00026"></a><a class="code" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">00026</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">RSpecies::activateAssocReactantReactions</a>() {
-<a name="l00027"></a>00027     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1RSpecies.html#a3749fed57bf55e5677b4519b403598ba" title="a vector of Reactions where this RSpecies is a Reactant">_as_reactants</a>)
-<a name="l00028"></a>00028         r-&gt;activateReaction();
-<a name="l00029"></a>00029 }
-<a name="l00030"></a>00030     
-<a name="l00031"></a><a class="code" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">00031</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">RSpecies::activateAssocProductReactions</a>() {
-<a name="l00032"></a>00032     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1RSpecies.html#a680c86be9b2ef8f87525291fabb15f11" title="a vector of Reactions where this RSpecies is a Product">_as_products</a>)
-<a name="l00033"></a>00033         r-&gt;activateReaction();
-<a name="l00034"></a>00034 }
-<a name="l00035"></a>00035 
-<a name="l00036"></a><a class="code" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">00036</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">RSpecies::passivateAssocReactantReactions</a>() {
-<a name="l00037"></a>00037     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1RSpecies.html#a3749fed57bf55e5677b4519b403598ba" title="a vector of Reactions where this RSpecies is a Reactant">_as_reactants</a>)
-<a name="l00038"></a>00038         r-&gt;passivateReaction();
-<a name="l00039"></a>00039 }
-<a name="l00040"></a>00040     
-<a name="l00041"></a><a class="code" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">00041</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">RSpecies::passivateAssocProductReactions</a>() {
-<a name="l00042"></a>00042     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1RSpecies.html#a680c86be9b2ef8f87525291fabb15f11" title="a vector of Reactions where this RSpecies is a Product">_as_products</a>)
-<a name="l00043"></a>00043         r-&gt;passivateReaction();
-<a name="l00044"></a>00044 }
-<a name="l00045"></a>00045     
-<a name="l00046"></a><a class="code" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734">00046</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734" title="Set the signaling behavior of this RSpecies.">RSpecies::startSignaling</a> () {
-<a name="l00047"></a>00047     <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a> = <span class="keyword">new</span> <a class="code" href="namespacechem.html#a09aea7e5a24368c13cd7d8d25b4d884e" title="This is a RSpecies signal object that can be used to signal when the copy number changes.">RSpeciesCopyNChangedSignal</a>;
+<a name="l00026"></a>00026 <span class="keyword">namespace </span>chem {
+<a name="l00027"></a>00027     
+<a name="l00028"></a>00028 <span class="keyword">using namespace </span>std;
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030 <span class="preprocessor">#ifdef BOOST_MEM_POOL</span>
+<a name="l00031"></a>00031 <span class="preprocessor"></span>boost::pool&lt;&gt; <a class="code" href="namespacechem.html#a34e31b7a797e903435a3be4751cd4f42">allocator_rspecies</a>(<span class="keyword">sizeof</span>(RSpecies),<a class="code" href="common_8h.html#a8584922303a6a83690f6091592285a7f">BOOL_POOL_NSIZE</a>);
+<a name="l00032"></a>00032  
+<a name="l00033"></a><a class="code" href="classchem_1_1RSpecies.html#a8f8eeb52d60143c6fb7b7f87eee4f55c">00033</a> <span class="keywordtype">void</span>* <a class="code" href="classchem_1_1RSpecies.html#a8f8eeb52d60143c6fb7b7f87eee4f55c" title="Advanced memory management.">RSpecies::operator new</a>(<span class="keywordtype">size_t</span> size)
+<a name="l00034"></a>00034 {
+<a name="l00035"></a>00035 <span class="comment">//    cout &lt;&lt; &quot;RSpecies::operator new(std::size_t size) called...&quot; &lt;&lt; endl;</span>
+<a name="l00036"></a>00036 <span class="comment">//    void *ptr = allocator_rspecies.malloc();</span>
+<a name="l00037"></a>00037     <span class="keywordtype">void</span> *ptr = boost::fast_pool_allocator&lt;RSpecies&gt;::allocate();
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039     <span class="keywordflow">return</span> ptr;
+<a name="l00040"></a>00040     <span class="comment">// RSpecies* cell = new (ptr) RSpecies();</span>
+<a name="l00041"></a>00041 }
+<a name="l00042"></a>00042     
+<a name="l00043"></a><a class="code" href="classchem_1_1RSpecies.html#a59eeac181b75f878e4804fb2ce57dbb2">00043</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a59eeac181b75f878e4804fb2ce57dbb2">RSpecies::operator delete</a>(<span class="keywordtype">void</span>* ptr) noexcept
+<a name="l00044"></a>00044 {
+<a name="l00045"></a>00045 <span class="comment">//    cout &lt;&lt; &quot;RSpecies::operator operator delete(void* ptr) called...&quot; &lt;&lt; endl;</span>
+<a name="l00046"></a>00046 <span class="comment">//    allocator_rspecies.free(ptr);</span>
+<a name="l00047"></a>00047     boost::fast_pool_allocator&lt;RSpecies&gt;::deallocate((<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>*)ptr);
 <a name="l00048"></a>00048 }
-<a name="l00049"></a>00049 
-<a name="l00050"></a><a class="code" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537">00050</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537" title="Destroy the signal associated with this RSpecies; all associated slots will be destroyed.">RSpecies::stopSignaling</a> () {
-<a name="l00051"></a>00051     <span class="keywordflow">if</span> (<a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>!=<span class="keyword">nullptr</span>)
-<a name="l00052"></a>00052         <span class="keyword">delete</span> <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>;
-<a name="l00053"></a>00053     <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a> = <span class="keyword">nullptr</span>;
-<a name="l00054"></a>00054 }
-<a name="l00055"></a>00055 }
+<a name="l00049"></a>00049 <span class="preprocessor">#endif</span>
+<a name="l00050"></a>00050 <span class="preprocessor"></span>    
+<a name="l00051"></a><a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399">00051</a> std::string <a class="code" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399" title="Return the full name of this Species in a std::string format (e.g. &quot;Arp2/3{Bulk}&quot;.">RSpecies::getFullName</a>()<span class="keyword"> const </span>{
+<a name="l00052"></a>00052     <span class="keywordflow">return</span> _species.getFullName();
+<a name="l00053"></a>00053 }
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055 
+<a name="l00056"></a><a class="code" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">00056</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">RSpecies::activateAssocReactantReactions</a>() {
+<a name="l00057"></a>00057     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : _as_reactants)
+<a name="l00058"></a>00058         r-&gt;activateReaction();
+<a name="l00059"></a>00059 }
+<a name="l00060"></a>00060     
+<a name="l00061"></a><a class="code" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">00061</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">RSpecies::activateAssocProductReactions</a>() {
+<a name="l00062"></a>00062     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : _as_products)
+<a name="l00063"></a>00063         r-&gt;activateReaction();
+<a name="l00064"></a>00064 }
+<a name="l00065"></a>00065 
+<a name="l00066"></a><a class="code" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">00066</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">RSpecies::passivateAssocReactantReactions</a>() {
+<a name="l00067"></a>00067     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : _as_reactants)
+<a name="l00068"></a>00068         r-&gt;passivateReaction();
+<a name="l00069"></a>00069 }
+<a name="l00070"></a>00070     
+<a name="l00071"></a><a class="code" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">00071</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">RSpecies::passivateAssocProductReactions</a>() {
+<a name="l00072"></a>00072     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;r : _as_products)
+<a name="l00073"></a>00073         r-&gt;passivateReaction();
+<a name="l00074"></a>00074 }
+<a name="l00075"></a>00075     
+<a name="l00076"></a>00076     
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078 <span class="preprocessor">#ifdef RSPECIES_SIGNALING    </span>
+<a name="l00079"></a>00079 <span class="preprocessor"></span><span class="keywordtype">void</span> RSpecies::startSignaling () {
+<a name="l00080"></a>00080     _signal = <span class="keyword">new</span> <a class="code" href="namespacechem.html#a6cb4144586460e7b7ae0dffdf08eb57c" title="This is a RSpecies signal object that can be used to signal when the copy number changes.">RSpeciesCopyNChangedSignal</a>;
+<a name="l00081"></a>00081 }
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083 <span class="keywordtype">void</span> RSpecies::stopSignaling () {
+<a name="l00084"></a>00084     <span class="keywordflow">if</span> (_signal!=<span class="keyword">nullptr</span>)
+<a name="l00085"></a>00085         <span class="keyword">delete</span> _signal;
+<a name="l00086"></a>00086     _signal = <span class="keyword">nullptr</span>;
+<a name="l00087"></a>00087 }
+<a name="l00088"></a>00088 <span class="preprocessor">#endif // of RSPECIES_SIGNALING</span>
+<a name="l00089"></a>00089 <span class="preprocessor"></span>    
+<a name="l00090"></a>00090 }
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="RSpecies_8cpp.html">RSpecies.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

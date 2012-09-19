@@ -4,8 +4,10 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
-FAST = -O3 -ffast-math
-LDLIBS = -L/usr/local/lib/ -lboost_serialization 
+FAST = -O3 -ffast-math -mtune=corei7-avx -flto -funroll-loops -DNDEBUG
+# -mtune=native
+# -O3 -funroll-loops -DNDEBUG -Wall -Wno-unknown-pragmas -fPIC -mtune=corei7-avx -flto -funroll-loops -DNDEBUG
+LDLIBS = -L/usr/local/lib/ -lboost_system
 
 # $(DEBUG) $(FAST)
 
@@ -17,7 +19,7 @@ LFLAGS = -Wall -std=c++11 $(FAST)
 all: CytoSim
 
 CytoSim: $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o CytoSim $(OBJECTS) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o CytoSim $(OBJECTS) $(LDLIBS) $(FAST)
 
 %.o: %.cpp 
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $<

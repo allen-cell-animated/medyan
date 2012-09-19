@@ -119,6 +119,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
+<code>#include &lt;array&gt;</code><br/>
 <code>#include &lt;algorithm&gt;</code><br/>
 <code>#include &lt;utility&gt;</code><br/>
 <code>#include &lt;unordered_set&gt;</code><br/>
@@ -148,17 +149,18 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Reaction.html">chem::Reaction</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> class represents simple chemical reactions of the form A + B -&gt; C.  <a href="classchem_1_1Reaction.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ReactionBase.html">chem::ReactionBase</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> class represents an abstract interface for simple chemical Reactions of the form A + B -&gt; C.  <a href="classchem_1_1ReactionBase.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Reaction.html">chem::Reaction&lt; M, N &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the number of reactants and N is the number of products.  <a href="classchem_1_1Reaction.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacechem"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html">chem</a></td></tr>
-<tr class="memdesc:namespacechem"><td class="mdescLeft">&#160;</td><td class="mdescRight">The algorithm implemented here is based on the following reference: ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-1889 **. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a85c409cf931d658d253b62ab5ad35781"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-boost::signals2::signal&lt; void(Reaction *)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a85c409cf931d658d253b62ab5ad35781">chem::ReactionEventSignal</a></td></tr>
-<tr class="memdesc:a85c409cf931d658d253b62ab5ad35781"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> signal object that will be called by ChemSignal, usually when requested by the reaction simulation algorithm.  <a href="#a85c409cf931d658d253b62ab5ad35781"></a><br/></td></tr>
+<tr class="memitem:a40bfcc5c8ae87e2713c68fae68215991"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+boost::signals2::signal&lt; void(ReactionBase *)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a40bfcc5c8ae87e2713c68fae68215991">chem::ReactionEventSignal</a></td></tr>
+<tr class="memdesc:a40bfcc5c8ae87e2713c68fae68215991"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> signal object that may be called by a <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> simulation algorithm.  <a href="#a40bfcc5c8ae87e2713c68fae68215991"></a><br/></td></tr>
 </table>
 </div><!-- contents -->
 </div>
@@ -166,7 +168,7 @@ boost::signals2::signal&lt; void(Reaction *)&gt;&#160;</td><td class="memItemRig
     <ul>
       <li class="navelem"><a class="el" href="Reaction_8h.html">Reaction.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

@@ -121,7 +121,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method Implementation.  
+<p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method Implementation.  
  <a href="classchem_1_1ChemNRMImpl.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>&gt;</code></p>
@@ -160,12 +160,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:abc38c43b16a4ab1aa31505152e4426ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets global time to 0.0.  <a href="#abc38c43b16a4ab1aa31505152e4426ed"></a><br/></td></tr>
 <tr class="memitem:ad096a21196bb3e5a978dc3fdb50d8e1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#ad096a21196bb3e5a978dc3fdb50d8e1b">syncGlobalTime</a> ()</td></tr>
 <tr class="memdesc:ad096a21196bb3e5a978dc3fdb50d8e1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets global time variable to <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a>'s global time.  <a href="#ad096a21196bb3e5a978dc3fdb50d8e1b"></a><br/></td></tr>
-<tr class="memitem:ae52572d35469dd8569457dbce96af78e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">getHeap</a> ()</td></tr>
+<tr class="memitem:ae52572d35469dd8569457dbce96af78e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">getHeap</a> ()</td></tr>
 <tr class="memdesc:ae52572d35469dd8569457dbce96af78e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a pointer to the heap.  <a href="#ae52572d35469dd8569457dbce96af78e"></a><br/></td></tr>
-<tr class="memitem:a1b325b27b22f443f99fce659ae78aeee"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a1b325b27b22f443f99fce659ae78aeee">addReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memdesc:a1b325b27b22f443f99fce659ae78aeee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the network.  <a href="#a1b325b27b22f443f99fce659ae78aeee"></a><br/></td></tr>
-<tr class="memitem:ad3a2b84f69c444a55b60d21200537338"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#ad3a2b84f69c444a55b60d21200537338">removeReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memdesc:ad3a2b84f69c444a55b60d21200537338"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the network.  <a href="#ad3a2b84f69c444a55b60d21200537338"></a><br/></td></tr>
+<tr class="memitem:afdd66d28d760064d5edc4472b8146a08"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#afdd66d28d760064d5edc4472b8146a08">addReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memdesc:afdd66d28d760064d5edc4472b8146a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the network.  <a href="#afdd66d28d760064d5edc4472b8146a08"></a><br/></td></tr>
+<tr class="memitem:a529cafc541d6eb933a6c1bf5869e2d45"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a529cafc541d6eb933a6c1bf5869e2d45">removeReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memdesc:a529cafc541d6eb933a6c1bf5869e2d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the network.  <a href="#a529cafc541d6eb933a6c1bf5869e2d45"></a><br/></td></tr>
 <tr class="memitem:a196f525d2e2392c0531f763fd8169701"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a196f525d2e2392c0531f763fd8169701">generateTau</a> (double a)</td></tr>
 <tr class="memdesc:a196f525d2e2392c0531f763fd8169701"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, with the propensity given by a.  <a href="#a196f525d2e2392c0531f763fd8169701"></a><br/></td></tr>
 <tr class="memitem:a685ac34bfa4b8226045bd3b8c6cdec95"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a685ac34bfa4b8226045bd3b8c6cdec95">initialize</a> ()</td></tr>
@@ -180,10 +180,11 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a9f17d2b5953fd3ffc8b5337e78021ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck NRM algoritm.  <a href="#a9f17d2b5953fd3ffc8b5337e78021ed2"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a6b86101b0c90389e5f027cc4bffccfd3"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; <a class="el" href="classchem_1_1Reaction.html">Reaction</a> <br class="typebreak"/>
-*, std::unique_ptr&lt; <a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a6b86101b0c90389e5f027cc4bffccfd3">_map_rnodes</a></td></tr>
-<tr class="memdesc:a6b86101b0c90389e5f027cc4bffccfd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The database of <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects, representing the reaction network.  <a href="#a6b86101b0c90389e5f027cc4bffccfd3"></a><br/></td></tr>
-<tr class="memitem:af2063c9b768c13ac541886947c567c1f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">_heap</a></td></tr>
+<tr class="memitem:a8eb526f8bc56b8aeeadca537004576db"><td class="memItemLeft" align="right" valign="top">std::unordered_map<br class="typebreak"/>
+&lt; <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> <br class="typebreak"/>
+*, std::unique_ptr&lt; <a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#a8eb526f8bc56b8aeeadca537004576db">_map_rnodes</a></td></tr>
+<tr class="memdesc:a8eb526f8bc56b8aeeadca537004576db"><td class="mdescLeft">&#160;</td><td class="mdescRight">The database of <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects, representing the reaction network.  <a href="#a8eb526f8bc56b8aeeadca537004576db"></a><br/></td></tr>
+<tr class="memitem:af2063c9b768c13ac541886947c567c1f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">_heap</a></td></tr>
 <tr class="memdesc:af2063c9b768c13ac541886947c567c1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">A priority queue for the NRM algorithm, containing <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> elements.  <a href="#af2063c9b768c13ac541886947c567c1f"></a><br/></td></tr>
 <tr class="memitem:ad0dce1073a3c37dd21c6523a81dd18e6"><td class="memItemLeft" align="right" valign="top">std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html#ad0dce1073a3c37dd21c6523a81dd18e6">_eng</a></td></tr>
 <tr class="memdesc:ad0dce1073a3c37dd21c6523a81dd18e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random number generator.  <a href="#ad0dce1073a3c37dd21c6523a81dd18e6"></a><br/></td></tr>
@@ -196,10 +197,10 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:a7e53992b28e926d1a19f3fd7dea171c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of reactions in the network  <a href="#a7e53992b28e926d1a19f3fd7dea171c3"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method Implementation. </p>
-<p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> manages the NRM algorithm at the level of the network of reactions. In particular, this class contains the NRM heap and the exponential random number generator. <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> objects can be added and removed from the <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> instance. </p>
+<div class="textblock"><p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method Implementation. </p>
+<p><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> manages the NRM algorithm at the level of the network of reactions. In particular, this class contains the NRM heap and the exponential random number generator. <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> objects can be added and removed from the <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> instance. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00167">167</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00200">200</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ac1d00b6e06300f4959eb7e850a472ab3"></a>
 <div class="memitem">
@@ -217,9 +218,9 @@ Private Attributes</h2></td></tr>
 
 <p>Ctor: Seeds the random number generator, sets global time to 0.0 and the number of reactions to 0. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00170">170</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00203">203</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00193">resetTime()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00226">resetTime()</a>.</p>
 
 </div>
 </div>
@@ -257,23 +258,23 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>Dtor: The reaction network is cleared. </p>
-<p>The <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects will be destructed, but <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> objects will stay intact. When the <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects are destructed, they in turn destruct the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element, setting the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object to null. At the end, the heap itself will go out of scope. </p>
+<p>The <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects will be destructed, but <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> objects will stay intact. When the <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects are destructed, they in turn destruct the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element, setting the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object to null. At the end, the heap itself will go out of scope. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00102">102</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00160">160</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00244">_map_rnodes</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00277">_map_rnodes</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a1b325b27b22f443f99fce659ae78aeee"></a>
+<a class="anchor" id="afdd66d28d760064d5edc4472b8146a08"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1ChemNRMImpl.html#a1b325b27b22f443f99fce659ae78aeee">chem::ChemNRMImpl::addReaction</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1ChemNRMImpl.html#afdd66d28d760064d5edc4472b8146a08">chem::ChemNRMImpl::addReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -281,13 +282,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the network. </p>
+<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the network. </p>
 
-<p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf">chem::ChemSimImpl</a>.</p>
+<p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944">chem::ChemSimImpl</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00171">171</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00259">259</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00244">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00249">_n_reacts</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00277">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00282">_n_reacts</a>.</p>
 
 </div>
 </div>
@@ -308,11 +309,11 @@ Private Attributes</h2></td></tr>
 
 <p>A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution, with the propensity given by a. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00106">106</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00166">166</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00246">_eng</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00247">_exp_distr</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00279">_eng</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00280">_exp_distr</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">chem::RNodeNRM::generateNewRandTau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">chem::RNodeNRM::generateNewRandTau()</a>.</p>
 
 </div>
 </div>
@@ -321,7 +322,7 @@ Private Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a>* <a class="el" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">chem::ChemNRMImpl::getHeap</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a>* <a class="el" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">chem::ChemNRMImpl::getHeap</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -332,11 +333,11 @@ Private Attributes</h2></td></tr>
 
 <p>Return a pointer to the heap. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00199">199</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00232">232</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00245">_heap</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00278">_heap</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">chem::RNodeNRM::RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">chem::RNodeNRM::updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00028">chem::RNodeNRM::~RNodeNRM()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">chem::RNodeNRM::RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">chem::RNodeNRM::updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00087">chem::RNodeNRM::~RNodeNRM()</a>.</p>
 
 </div>
 </div>
@@ -356,9 +357,9 @@ Private Attributes</h2></td></tr>
 
 <p>Return the number of reactions in the network. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00187">187</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00220">220</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00249">_n_reacts</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00282">_n_reacts</a>.</p>
 
 </div>
 </div>
@@ -378,11 +379,11 @@ Private Attributes</h2></td></tr>
 
 <p>Return the current global time (as defined in the NRM algorithm) </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00190">190</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00223">223</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00248">_t</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00281">_t</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">chem::RNodeNRM::generateNewRandTau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">chem::RNodeNRM::generateNewRandTau()</a>.</p>
 
 </div>
 </div>
@@ -406,9 +407,9 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc">chem::ChemSimImpl</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00093">93</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00151">151</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00244">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00193">resetTime()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00277">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00226">resetTime()</a>.</p>
 
 </div>
 </div>
@@ -427,13 +428,13 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck NRM algoritm. </p>
-<p>See the implementation for details. After this method returns, roughly the following will have happened: 1) The <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> corresponding to the lowest tau <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> is executed and the corresponding <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> copy numbers are changed 2) A new tau is computed from this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap 3) The other affected <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> objects are found, their taus are recomputed and corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> elements are updated in the heap. 4) For the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> and associated <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> signals are emitted, if these objects broadcast signals upon change. Returns true if successful, and false if the heap is exchausted and there no more reactions to fire </p>
+<p>See the implementation for details. After this method returns, roughly the following will have happened: 1) The <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> corresponding to the lowest tau <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> is executed and the corresponding <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> copy numbers are changed 2) A new tau is computed from this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap 3) The other affected <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> objects are found, their taus are recomputed and corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> elements are updated in the heap. 4) For the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> and associated <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> signals are emitted, if these objects broadcast signals upon change. Returns true if successful, and false if the heap is exchausted and there no more reactions to fire </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">112</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">172</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00245">_heap</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00248">_t</a>, <a class="el" href="Reaction_8h_source.html#l00169">chem::Reaction::beginProducts()</a>, <a class="el" href="Reaction_8h_source.html#l00157">chem::Reaction::beginReactants()</a>, <a class="el" href="Reaction_8h_source.html#l00154">chem::Reaction::dependents()</a>, <a class="el" href="Reaction_8h_source.html#l00144">chem::Reaction::emitSignal()</a>, <a class="el" href="Reaction_8h_source.html#l00176">chem::Reaction::endProducts()</a>, <a class="el" href="Reaction_8h_source.html#l00163">chem::Reaction::endReactants()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">chem::RNodeNRM::generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00121">chem::RNodeNRM::getPropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00104">chem::RNodeNRM::getReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00111">chem::RNodeNRM::getTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00145">chem::RNodeNRM::isPassivated()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00131">chem::RNodeNRM::makeStep()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00124">chem::RNodeNRM::reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00114">chem::RNodeNRM::setTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00196">syncGlobalTime()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">chem::RNodeNRM::updateHeap()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00278">_heap</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00281">_t</a>, <a class="el" href="Reaction_8h_source.html#l00219">chem::ReactionBase::dependents()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">chem::RNodeNRM::generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00145">chem::RNodeNRM::getPropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00128">chem::RNodeNRM::getReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00135">chem::RNodeNRM::getTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00169">chem::RNodeNRM::isPassivated()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00155">chem::RNodeNRM::makeStep()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00148">chem::RNodeNRM::reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00138">chem::RNodeNRM::setTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00229">syncGlobalTime()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">chem::RNodeNRM::updateHeap()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00219">run()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00252">run()</a>.</p>
 
 </div>
 </div>
@@ -474,20 +475,20 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a24291dac40633358ab6a9f473d6f861d">chem::ChemSimImpl</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00181">181</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00269">269</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00244">_map_rnodes</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00277">_map_rnodes</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ad3a2b84f69c444a55b60d21200537338"></a>
+<a class="anchor" id="a529cafc541d6eb933a6c1bf5869e2d45"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1ChemNRMImpl.html#ad3a2b84f69c444a55b60d21200537338">chem::ChemNRMImpl::removeReaction</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1ChemNRMImpl.html#a529cafc541d6eb933a6c1bf5869e2d45">chem::ChemNRMImpl::removeReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -495,13 +496,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the network. </p>
+<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the network. </p>
 
-<p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a">chem::ChemSimImpl</a>.</p>
+<p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148">chem::ChemSimImpl</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00176">176</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00264">264</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00244">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00249">_n_reacts</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00277">_map_rnodes</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00282">_n_reacts</a>.</p>
 
 </div>
 </div>
@@ -521,11 +522,11 @@ Private Attributes</h2></td></tr>
 
 <p>Sets global time to 0.0. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00193">193</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00226">226</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00248">_t</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00196">syncGlobalTime()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00281">_t</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00229">syncGlobalTime()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00170">ChemNRMImpl()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00093">initialize()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00203">ChemNRMImpl()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00151">initialize()</a>.</p>
 
 </div>
 </div>
@@ -548,9 +549,9 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49">chem::ChemSimImpl</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00219">219</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00252">252</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">makeStep()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">makeStep()</a>.</p>
 
 </div>
 </div>
@@ -570,11 +571,11 @@ Private Attributes</h2></td></tr>
 
 <p>Sets global time variable to <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a>'s global time. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00196">196</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00229">229</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00248">_t</a>, and <a class="el" href="common_8cpp_source.html#l00011">global_time</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00281">_t</a>, and <a class="el" href="common_8cpp_source.html#l00011">global_time</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">makeStep()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00193">resetTime()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">makeStep()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00226">resetTime()</a>.</p>
 
 </div>
 </div>
@@ -592,9 +593,9 @@ Private Attributes</h2></td></tr>
 
 <p>Random number generator. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00246">246</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00279">279</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00106">generateTau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00166">generateTau()</a>.</p>
 
 </div>
 </div>
@@ -611,9 +612,9 @@ Private Attributes</h2></td></tr>
 
 <p>Adaptor for the exponential distribution. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00247">247</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00280">280</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00106">generateTau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00166">generateTau()</a>.</p>
 
 </div>
 </div>
@@ -622,7 +623,7 @@ Private Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a> <a class="el" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">chem::ChemNRMImpl::_heap</a><code> [private]</code></td>
+          <td class="memname"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a> <a class="el" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">chem::ChemNRMImpl::_heap</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -630,18 +631,18 @@ Private Attributes</h2></td></tr>
 
 <p>A priority queue for the NRM algorithm, containing <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> elements. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00245">245</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00278">278</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00199">getHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00232">getHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">makeStep()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a6b86101b0c90389e5f027cc4bffccfd3"></a>
+<a class="anchor" id="a8eb526f8bc56b8aeeadca537004576db"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt;<a class="el" href="classchem_1_1Reaction.html">Reaction</a>*, std::unique_ptr&lt;<a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a>&gt; &gt; <a class="el" href="classchem_1_1ChemNRMImpl.html#a6b86101b0c90389e5f027cc4bffccfd3">chem::ChemNRMImpl::_map_rnodes</a><code> [private]</code></td>
+          <td class="memname">std::unordered_map&lt;<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a>*, std::unique_ptr&lt;<a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a>&gt; &gt; <a class="el" href="classchem_1_1ChemNRMImpl.html#a8eb526f8bc56b8aeeadca537004576db">chem::ChemNRMImpl::_map_rnodes</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -649,9 +650,9 @@ Private Attributes</h2></td></tr>
 
 <p>The database of <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> objects, representing the reaction network. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00244">244</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00277">277</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00171">addReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00093">initialize()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00181">printReactions()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00176">removeReaction()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00102">~ChemNRMImpl()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00259">addReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00151">initialize()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00269">printReactions()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00264">removeReaction()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00160">~ChemNRMImpl()</a>.</p>
 
 </div>
 </div>
@@ -668,9 +669,9 @@ Private Attributes</h2></td></tr>
 
 <p>number of reactions in the network </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00249">249</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00282">282</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00171">addReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00187">getSize()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00176">removeReaction()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00259">addReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00220">getSize()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00264">removeReaction()</a>.</p>
 
 </div>
 </div>
@@ -687,9 +688,9 @@ Private Attributes</h2></td></tr>
 
 <p>global time </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00248">248</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00281">281</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00190">getTime()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">makeStep()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00193">resetTime()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00196">syncGlobalTime()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00223">getTime()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">makeStep()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00226">resetTime()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00229">syncGlobalTime()</a>.</p>
 
 </div>
 </div>
@@ -704,7 +705,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1ChemNRMImpl.html">ChemNRMImpl</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

@@ -138,10 +138,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a54ce9889cf7a09275d2c8257557a5be1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a54ce9889cf7a09275d2c8257557a5be1">~ChemSimImpl</a> ()</td></tr>
 <tr class="memitem:a250b43230ac66832bbcecf4f630f2fbc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc">initialize</a> ()=0</td></tr>
 <tr class="memdesc:a250b43230ac66832bbcecf4f630f2fbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">After all initial reactions have been added via addReaction(...) method, invoke <a class="el" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc" title="After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to...">initialize()</a> prior to invoking <a class="el" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49" title="Run the chemical dynamics for a specific number of steps.">run()</a>  <a href="#a250b43230ac66832bbcecf4f630f2fbc"></a><br/></td></tr>
-<tr class="memitem:a9000e6ec731865360762f483dd7e91cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf">addReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)=0</td></tr>
-<tr class="memdesc:a9000e6ec731865360762f483dd7e91cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the chemical network which needs to be simulated.  <a href="#a9000e6ec731865360762f483dd7e91cf"></a><br/></td></tr>
-<tr class="memitem:a00e43cfb099cb26e44d04a715b6cba0a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a">removeReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)=0</td></tr>
-<tr class="memdesc:a00e43cfb099cb26e44d04a715b6cba0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the simulated chemical network.  <a href="#a00e43cfb099cb26e44d04a715b6cba0a"></a><br/></td></tr>
+<tr class="memitem:a2a9ea4429bf00103d923556559012944"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944">addReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)=0</td></tr>
+<tr class="memdesc:a2a9ea4429bf00103d923556559012944"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the chemical network which needs to be simulated.  <a href="#a2a9ea4429bf00103d923556559012944"></a><br/></td></tr>
+<tr class="memitem:a8a732fedbcb6ae7c5d4d4cec2b540148"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148">removeReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)=0</td></tr>
+<tr class="memdesc:a8a732fedbcb6ae7c5d4d4cec2b540148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the simulated chemical network.  <a href="#a8a732fedbcb6ae7c5d4d4cec2b540148"></a><br/></td></tr>
 <tr class="memitem:a9f051e00a754fdd76d5e2b3a217f3a49"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49">run</a> (int steps)=0</td></tr>
 <tr class="memdesc:a9f051e00a754fdd76d5e2b3a217f3a49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the chemical dynamics for a specific number of steps.  <a href="#a9f051e00a754fdd76d5e2b3a217f3a49"></a><br/></td></tr>
 <tr class="memitem:a24291dac40633358ab6a9f473d6f861d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSimImpl.html#a24291dac40633358ab6a9f473d6f861d">printReactions</a> () const =0</td></tr>
@@ -172,14 +172,14 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a9000e6ec731865360762f483dd7e91cf"></a>
+<a class="anchor" id="a2a9ea4429bf00103d923556559012944"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf">chem::ChemSimImpl::addReaction</a> </td>
+          <td class="memname">virtual void <a class="el" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944">chem::ChemSimImpl::addReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td><code> [pure virtual]</code></td>
         </tr>
@@ -187,9 +187,9 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the chemical network which needs to be simulated. </p>
+<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the chemical network which needs to be simulated. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a1b325b27b22f443f99fce659ae78aeee">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#af013022938adb5f1bd34c7430ad1bfd6">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#a0a4146dfe469c85258874f43a2de02a9">chem::ChemSimpleGillespieImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#afdd66d28d760064d5edc4472b8146a08">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#ad1e494223a112b5ab37ff82d9b61e951">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#acd712834326710d436adc1f804d7ea67">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00021">chem::ChemSim::addReaction()</a>.</p>
 
@@ -239,14 +239,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a00e43cfb099cb26e44d04a715b6cba0a"></a>
+<a class="anchor" id="a8a732fedbcb6ae7c5d4d4cec2b540148"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a">chem::ChemSimImpl::removeReaction</a> </td>
+          <td class="memname">virtual void <a class="el" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148">chem::ChemSimImpl::removeReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td><code> [pure virtual]</code></td>
         </tr>
@@ -254,9 +254,9 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the simulated chemical network. </p>
+<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the simulated chemical network. </p>
 
-<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#ad3a2b84f69c444a55b60d21200537338">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#aab4d9fcdd42b90e72542b5b3af103d27">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#ad86d7286f61d76db1de522ce333ce7de">chem::ChemSimpleGillespieImpl</a>.</p>
+<p>Implemented in <a class="el" href="classchem_1_1ChemNRMImpl.html#a529cafc541d6eb933a6c1bf5869e2d45">chem::ChemNRMImpl</a>, <a class="el" href="classchem_1_1ChemGillespieImpl.html#ac4b74e7076b022aec0928b24ec9ba3b5">chem::ChemGillespieImpl</a>, and <a class="el" href="classchem_1_1ChemSimpleGillespieImpl.html#ab273400d1cd391350347463828905ab2">chem::ChemSimpleGillespieImpl</a>.</p>
 
 <p>Referenced by <a class="el" href="ChemSim_8cpp_source.html#l00025">chem::ChemSim::removeReaction()</a>.</p>
 
@@ -295,7 +295,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1ChemSimImpl.html">ChemSimImpl</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:27 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

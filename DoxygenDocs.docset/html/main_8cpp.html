@@ -117,8 +117,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
+<code>#include &lt;numeric&gt;</code><br/>
+<code>#include &lt;chrono&gt;</code><br/>
+<code>#include &quot;<a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="ChemGillespieImpl_8h_source.html">ChemGillespieImpl.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="ChemSimpleGillespieImpl_8h_source.html">ChemSimpleGillespieImpl.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="Compartment_8h_source.html">Compartment.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="ReactionContainer_8h_source.html">ReactionContainer.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="CompartmentContainer_8h_source.html">CompartmentContainer.h</a>&quot;</code><br/>
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for main.cpp:</div>
 <div class="dyncontent">
@@ -159,9 +165,9 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="main_8cpp_source.html#l00053">53</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p>Definition at line <a class="el" href="main_8cpp_source.html#l00059">59</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
-<p>References <a class="el" href="Compartment_8h_source.html#l00055">chem::Compartment::addReaction()</a>, <a class="el" href="Compartment_8h_source.html#l00047">chem::Compartment::addSpecies()</a>, <a class="el" href="SpeciesContainer_8h_source.html#l00099">chem::SpeciesPtrContainerVector::areAllSpeciesUnique()</a>, <a class="el" href="Composite_8h_source.html#l00062">chem::Composite::countSpecies()</a>, <a class="el" href="Species_8h_source.html#l00187">chem::Species::getRSpecies()</a>, <a class="el" href="ReactionContainer_8h_source.html#l00060">chem::ReactionPtrContainerVector::printReactions()</a>, and <a class="el" href="SpeciesContainer_8h_source.html#l00111">chem::SpeciesPtrContainerVector::printSpecies()</a>.</p>
+<p>References <a class="el" href="Compartment_8h_source.html#l00166">chem::Compartment::addInternalReaction()</a>, <a class="el" href="Compartment_8h_source.html#l00200">chem::Compartment::addNeighbour()</a>, <a class="el" href="Compartment_8h_source.html#l00156">chem::Compartment::addSpecies()</a>, <a class="el" href="Compartment_8h_source.html#l00263">chem::Compartment::areAllSpeciesUnique()</a>, <a class="el" href="Compartment_8h_source.html#l00242">chem::Compartment::clone()</a>, <a class="el" href="Composite_8h_source.html#l00062">chem::Composite::countSpecies()</a>, <a class="el" href="Compartment_8h_source.html#l00122">chem::Compartment::findSimilarInternalReaction()</a>, <a class="el" href="Compartment_8h_source.html#l00121">chem::Compartment::findSimilarSpecies()</a>, <a class="el" href="Compartment_8cpp_source.html#l00027">chem::Compartment::generateDiffusionReactions()</a>, <a class="el" href="Species_8h_source.html#l00209">chem::Species::getRSpecies()</a>, <a class="el" href="ChemSim_8cpp_source.html#l00033">chem::ChemSim::initialize()</a>, <a class="el" href="Compartment_8h_source.html#l00251">chem::Compartment::numberOfNeighbours()</a>, <a class="el" href="Compartment_8h_source.html#l00257">chem::Compartment::printReactions()</a>, <a class="el" href="Compartment_8h_source.html#l00273">chem::Compartment::printSelf()</a>, <a class="el" href="Compartment_8h_source.html#l00256">chem::Compartment::printSpecies()</a>, <a class="el" href="ChemSim_8cpp_source.html#l00029">chem::ChemSim::run()</a>, <a class="el" href="Compartment_8h_source.html#l00183">chem::Compartment::setDiffusionRate()</a>, <a class="el" href="Species_8h_source.html#l00217">chem::Species::setN()</a>, <a class="el" href="Compartment_8h_source.html#l00309">chem::CompartmentCubic&lt; NDIM &gt;::setSides()</a>, and <a class="el" href="common_8h_source.html#l00026">tau()</a>.</p>
 
 </div>
 </div>
@@ -171,7 +177,7 @@ Functions</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="main_8cpp.html">main.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

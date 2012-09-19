@@ -120,7 +120,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method.  
+<p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method.  
  <a href="classchem_1_1RNodeNRM.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>&gt;</code></p>
@@ -143,69 +143,72 @@ Collaboration diagram for chem::RNodeNRM:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7ab2483c555b42b19a3274ffa9a44d8e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a7ab2483c555b42b19a3274ffa9a44d8e">RNodeNRM</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r, <a class="el" href="classchem_1_1ChemNRMImpl.html">ChemNRMImpl</a> &amp;chem_nrm)</td></tr>
-<tr class="memdesc:a7ab2483c555b42b19a3274ffa9a44d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ctor:  <a href="#a7ab2483c555b42b19a3274ffa9a44d8e"></a><br/></td></tr>
+<tr class="memitem:a4c5827a0d0682ecfbe7c9154ff5644ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a4c5827a0d0682ecfbe7c9154ff5644ce">RNodeNRM</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r, <a class="el" href="classchem_1_1ChemNRMImpl.html">ChemNRMImpl</a> &amp;chem_nrm)</td></tr>
+<tr class="memdesc:a4c5827a0d0682ecfbe7c9154ff5644ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ctor:  <a href="#a4c5827a0d0682ecfbe7c9154ff5644ce"></a><br/></td></tr>
 <tr class="memitem:a12d79f33bd69c1b58e18fa4de0d500df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a12d79f33bd69c1b58e18fa4de0d500df">RNodeNRM</a> (const <a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a12d79f33bd69c1b58e18fa4de0d500df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copying is not allowed.  <a href="#a12d79f33bd69c1b58e18fa4de0d500df"></a><br/></td></tr>
 <tr class="memitem:aba4753c700f2f6d707e2c94b2c5e5749"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#aba4753c700f2f6d707e2c94b2c5e5749">operator=</a> (<a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &amp;rhs)</td></tr>
 <tr class="memdesc:aba4753c700f2f6d707e2c94b2c5e5749"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment is not allowed.  <a href="#aba4753c700f2f6d707e2c94b2c5e5749"></a><br/></td></tr>
 <tr class="memitem:ada0f6d009280070f3b89a22ab05c32a2"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ada0f6d009280070f3b89a22ab05c32a2">~RNodeNRM</a> ()</td></tr>
-<tr class="memdesc:ada0f6d009280070f3b89a22ab05c32a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dtor: 1) Erases the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap via the handle; 2) The <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object is set to nullptr.  <a href="#ada0f6d009280070f3b89a22ab05c32a2"></a><br/></td></tr>
+<tr class="memdesc:ada0f6d009280070f3b89a22ab05c32a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dtor: 1) Erases the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap via the handle; 2) The <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object is set to nullptr.  <a href="#ada0f6d009280070f3b89a22ab05c32a2"></a><br/></td></tr>
 <tr class="memitem:a33025de761dc8d29928f8e5b1148eff1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a33025de761dc8d29928f8e5b1148eff1">generateNewRandTau</a> ()</td></tr>
 <tr class="memdesc:a33025de761dc8d29928f8e5b1148eff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This methods recomputes the reaction propensity based on current coefficients and the rate, and then obtains a corresponding new tau drawn from an exponential distribution.  <a href="#a33025de761dc8d29928f8e5b1148eff1"></a><br/></td></tr>
-<tr class="memitem:ab56b46ea4fdb4ed3cd3d9e478fbf3863"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ab56b46ea4fdb4ed3cd3d9e478fbf3863">getReaction</a> () const </td></tr>
-<tr class="memdesc:ab56b46ea4fdb4ed3cd3d9e478fbf3863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> which corresponds to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>.  <a href="#ab56b46ea4fdb4ed3cd3d9e478fbf3863"></a><br/></td></tr>
+<tr class="memitem:a8a96e9750901ff0629d43855ff096194"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a8a96e9750901ff0629d43855ff096194">getReaction</a> () const </td></tr>
+<tr class="memdesc:a8a96e9750901ff0629d43855ff096194"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> which corresponds to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>.  <a href="#a8a96e9750901ff0629d43855ff096194"></a><br/></td></tr>
 <tr class="memitem:a9de7334d3f16fc695929e97d9d296282"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a9de7334d3f16fc695929e97d9d296282">updateHeap</a> ()</td></tr>
 <tr class="memdesc:a9de7334d3f16fc695929e97d9d296282"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heap is updated only with respect to the specific <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element which presumably was modified (e.g.  <a href="#a9de7334d3f16fc695929e97d9d296282"></a><br/></td></tr>
 <tr class="memitem:a570e4a825862fdf03d10e36fa186ba64"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a570e4a825862fdf03d10e36fa186ba64">getTau</a> () const </td></tr>
 <tr class="memdesc:a570e4a825862fdf03d10e36fa186ba64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the tau from the the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element.  <a href="#a570e4a825862fdf03d10e36fa186ba64"></a><br/></td></tr>
 <tr class="memitem:aae070cd16c0acee98250c3d1bccd8fd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#aae070cd16c0acee98250c3d1bccd8fd0">setTau</a> (double <a class="el" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a>)</td></tr>
 <tr class="memdesc:aae070cd16c0acee98250c3d1bccd8fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the tau of the the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. Does not update the heap.  <a href="#aae070cd16c0acee98250c3d1bccd8fd0"></a><br/></td></tr>
-<tr class="memitem:af5334e740100ba592f15abfe18b971a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">getHandle</a> ()</td></tr>
+<tr class="memitem:af5334e740100ba592f15abfe18b971a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">getHandle</a> ()</td></tr>
 <tr class="memdesc:af5334e740100ba592f15abfe18b971a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle to the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element, which can be used to access tau, for example.  <a href="#af5334e740100ba592f15abfe18b971a7"></a><br/></td></tr>
 <tr class="memitem:a5894ae93a6ef48f7b0bfa82add5bce5d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a5894ae93a6ef48f7b0bfa82add5bce5d">getPropensity</a> () const </td></tr>
-<tr class="memdesc:a5894ae93a6ef48f7b0bfa82add5bce5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the currently stored propensity, "a", for this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>.  <a href="#a5894ae93a6ef48f7b0bfa82add5bce5d"></a><br/></td></tr>
+<tr class="memdesc:a5894ae93a6ef48f7b0bfa82add5bce5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the currently stored propensity, "a", for this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>.  <a href="#a5894ae93a6ef48f7b0bfa82add5bce5d"></a><br/></td></tr>
 <tr class="memitem:adb047e14398dc54d6940158e408d504e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#adb047e14398dc54d6940158e408d504e">reComputePropensity</a> ()</td></tr>
-<tr class="memdesc:adb047e14398dc54d6940158e408d504e"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Re)Compute and return the propensity associated with this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>.  <a href="#adb047e14398dc54d6940158e408d504e"></a><br/></td></tr>
+<tr class="memdesc:adb047e14398dc54d6940158e408d504e"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Re)Compute and return the propensity associated with this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>.  <a href="#adb047e14398dc54d6940158e408d504e"></a><br/></td></tr>
 <tr class="memitem:a1fd03a524da0a5ee5a63e9095b807bcf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a1fd03a524da0a5ee5a63e9095b807bcf">getProductOfReactants</a> ()</td></tr>
 <tr class="memdesc:a1fd03a524da0a5ee5a63e9095b807bcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the product of reactant copy numbers.  <a href="#a1fd03a524da0a5ee5a63e9095b807bcf"></a><br/></td></tr>
 <tr class="memitem:a1294bf93224e88f4bb0a64282ef9f950"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a1294bf93224e88f4bb0a64282ef9f950">makeStep</a> ()</td></tr>
-<tr class="memdesc:a1294bf93224e88f4bb0a64282ef9f950"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method calls the corresponding <a class="el" href="classchem_1_1Reaction.html#a1341d466157788c3d547da52c6c59502" title="Fire the Reaction - make a single step, where reactant RSpecies copy numbers are decreased by one...">Reaction::makeStep()</a> method of the underyling <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object.  <a href="#a1294bf93224e88f4bb0a64282ef9f950"></a><br/></td></tr>
+<tr class="memdesc:a1294bf93224e88f4bb0a64282ef9f950"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method calls the corresponding <a class="el" href="classchem_1_1ReactionBase.html#acb5575b08ca39fc6dd7a571fb246806b" title="Fire the ReactionBase - make a single step, where reactant RSpecies copy numbers are decreased by one...">Reaction::makeStep()</a> method of the underyling <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object.  <a href="#a1294bf93224e88f4bb0a64282ef9f950"></a><br/></td></tr>
 <tr class="memitem:ae2fc1e8c09f0cda02da6cba29c6d0849"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849">activateReaction</a> ()</td></tr>
 <tr class="memdesc:ae2fc1e8c09f0cda02da6cba29c6d0849"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this method is called, a new tau is computed and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap.  <a href="#ae2fc1e8c09f0cda02da6cba29c6d0849"></a><br/></td></tr>
 <tr class="memitem:a1099526d4e797a6d033ad6f60b76dc12"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12">passivateReaction</a> ()</td></tr>
 <tr class="memdesc:a1099526d4e797a6d033ad6f60b76dc12"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this method is called, reaction's tau is set to infinity, the propensity is set to 0, and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap.  <a href="#a1099526d4e797a6d033ad6f60b76dc12"></a><br/></td></tr>
 <tr class="memitem:ad6445c86ef589c51c8d0957d437f6c3c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ad6445c86ef589c51c8d0957d437f6c3c">isPassivated</a> () const </td></tr>
-<tr class="memdesc:ad6445c86ef589c51c8d0957d437f6c3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> is currently passivated.  <a href="#ad6445c86ef589c51c8d0957d437f6c3c"></a><br/></td></tr>
+<tr class="memdesc:ad6445c86ef589c51c8d0957d437f6c3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> is currently passivated.  <a href="#ad6445c86ef589c51c8d0957d437f6c3c"></a><br/></td></tr>
 <tr class="memitem:a1855b936b240d7764907434421258c5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a1855b936b240d7764907434421258c5a">printSelf</a> () const </td></tr>
-<tr class="memdesc:a1855b936b240d7764907434421258c5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print information about this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> such as tau, a and the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> which this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> tracks.  <a href="#a1855b936b240d7764907434421258c5a"></a><br/></td></tr>
+<tr class="memdesc:a1855b936b240d7764907434421258c5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print information about this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> such as tau, a and the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> which this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> tracks.  <a href="#a1855b936b240d7764907434421258c5a"></a><br/></td></tr>
 <tr class="memitem:ad8e5f9557c3ba701596aff928dc5270e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ad8e5f9557c3ba701596aff928dc5270e">printDependents</a> () const </td></tr>
-<tr class="memdesc:ad8e5f9557c3ba701596aff928dc5270e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> objects which are dependents of this <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> (via the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object dependencies)  <a href="#ad8e5f9557c3ba701596aff928dc5270e"></a><br/></td></tr>
+<tr class="memdesc:ad8e5f9557c3ba701596aff928dc5270e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> objects which are dependents of this <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> (via the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object dependencies)  <a href="#ad8e5f9557c3ba701596aff928dc5270e"></a><br/></td></tr>
+<tr class="memitem:ae76175a4d99e9eb3389dce6c77c9edb6"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ae76175a4d99e9eb3389dce6c77c9edb6">operator new</a> (std::size_t size)</td></tr>
+<tr class="memdesc:ae76175a4d99e9eb3389dce6c77c9edb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advanced memory management.  <a href="#ae76175a4d99e9eb3389dce6c77c9edb6"></a><br/></td></tr>
+<tr class="memitem:abe32c9de55bd8deb22c2894ae753b708"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#abe32c9de55bd8deb22c2894ae753b708">operator delete</a> (void *ptr) noexcept</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:acff43a1b27a778b6534bd8010904f821"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1ChemNRMImpl.html">ChemNRMImpl</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#acff43a1b27a778b6534bd8010904f821">_chem_nrm</a></td></tr>
 <tr class="memdesc:acff43a1b27a778b6534bd8010904f821"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> which containts the heap, random number generators, etc.  <a href="#acff43a1b27a778b6534bd8010904f821"></a><br/></td></tr>
-<tr class="memitem:ad124c85b0f1b479cf0c1f4bf75230c19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">_handle</a></td></tr>
+<tr class="memitem:ad124c85b0f1b479cf0c1f4bf75230c19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">_handle</a></td></tr>
 <tr class="memdesc:ad124c85b0f1b479cf0c1f4bf75230c19"><td class="mdescLeft">&#160;</td><td class="mdescRight">The handle to the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap.  <a href="#ad124c85b0f1b479cf0c1f4bf75230c19"></a><br/></td></tr>
-<tr class="memitem:a2430f6bd22239fc5b629bca05f9d34a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#a2430f6bd22239fc5b629bca05f9d34a8">_react</a></td></tr>
-<tr class="memdesc:a2430f6bd22239fc5b629bca05f9d34a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pointer to the associated <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object. The corresponding memory is not managed by <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>.  <a href="#a2430f6bd22239fc5b629bca05f9d34a8"></a><br/></td></tr>
+<tr class="memitem:add823fa4b223afe0d750ed731c827d07"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#add823fa4b223afe0d750ed731c827d07">_react</a></td></tr>
+<tr class="memdesc:add823fa4b223afe0d750ed731c827d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pointer to the associated <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object. The corresponding memory is not managed by <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>.  <a href="#add823fa4b223afe0d750ed731c827d07"></a><br/></td></tr>
 <tr class="memitem:ae16aa8e75649d855f4b6eae8b00ed1db"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html#ae16aa8e75649d855f4b6eae8b00ed1db">_a</a></td></tr>
-<tr class="memdesc:ae16aa8e75649d855f4b6eae8b00ed1db"><td class="mdescLeft">&#160;</td><td class="mdescRight">The propensity associated with the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>. It may be outdated and may need to be recomputed if needed.  <a href="#ae16aa8e75649d855f4b6eae8b00ed1db"></a><br/></td></tr>
+<tr class="memdesc:ae16aa8e75649d855f4b6eae8b00ed1db"><td class="mdescLeft">&#160;</td><td class="mdescRight">The propensity associated with the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>. It may be outdated and may need to be recomputed if needed.  <a href="#ae16aa8e75649d855f4b6eae8b00ed1db"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method. </p>
-<p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element containing the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> via a handle_t object (and hence can modify both the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a>, such as <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a>'s tau or the underlying <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> instance). <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can recompute tau if needed and has auxiliary methods for computing reaction's propensity. When the propensity drops to zero, the <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can execute the <a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12" title="When this method is called, reaction&#39;s tau is set to infinity, the propensity is set to 0...">passivateReaction()</a> method. Alternatively, passivated <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can be activated via <a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849" title="When this method is called, a new tau is computed and the corresponding PQNode element is updated in ...">activateReaction()</a>. The main part of the NRM algoritm is implemented in the <a class="el" href="classchem_1_1RNodeNRM.html#a1294bf93224e88f4bb0a64282ef9f950" title="This method calls the corresponding Reaction::makeStep() method of the underyling Reaction object...">makeStep()</a> method. </p>
+<div class="textblock"><p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method. </p>
+<p><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element containing the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> via a handle_t object (and hence can modify both the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a>, such as <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a>'s tau or the underlying <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> instance). <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can recompute tau if needed and has auxiliary methods for computing reaction's propensity. When the propensity drops to zero, the <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can execute the <a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12" title="When this method is called, reaction&#39;s tau is set to infinity, the propensity is set to 0...">passivateReaction()</a> method. Alternatively, passivated <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> can be activated via <a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849" title="When this method is called, a new tau is computed and the corresponding PQNode element is updated in ...">activateReaction()</a>. The main part of the NRM algoritm is implemented in the <a class="el" href="classchem_1_1RNodeNRM.html#a1294bf93224e88f4bb0a64282ef9f950" title="This method calls the corresponding Reaction::makeStep() method of the underyling Reaction object...">makeStep()</a> method. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00079">79</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00103">103</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a7ab2483c555b42b19a3274ffa9a44d8e"></a>
+<a class="anchor" id="a4c5827a0d0682ecfbe7c9154ff5644ce"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classchem_1_1RNodeNRM.html#a7ab2483c555b42b19a3274ffa9a44d8e">chem::RNodeNRM::RNodeNRM</a> </td>
+          <td class="memname"><a class="el" href="classchem_1_1RNodeNRM.html#a4c5827a0d0682ecfbe7c9154ff5644ce">chem::RNodeNRM::RNodeNRM</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em>, </td>
         </tr>
         <tr>
@@ -226,15 +229,15 @@ Private Attributes</h2></td></tr>
 <p>Ctor: </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">*r</td><td>is the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object corresponding to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> </td></tr>
+    <tr><td class="paramname">*r</td><td>is the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object corresponding to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> </td></tr>
     <tr><td class="paramname">&amp;chem_nrm</td><td>is a refernce to <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> object, which does the overall management of the NRM scheme (e.g. it gives acces to the heap itself, random distribution generators, etc.) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">20</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">79</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00153">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00154">_handle</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, <a class="el" href="Reaction_8h_source.html#l00194">chem::Reaction::computePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00199">chem::ChemNRMImpl::getHeap()</a>, and <a class="el" href="Reaction_8h_source.html#l00084">chem::Reaction::setRnode()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00186">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00187">_handle</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, <a class="el" href="Reaction_8h_source.html#l00250">chem::ReactionBase::computePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00232">chem::ChemNRMImpl::getHeap()</a>, and <a class="el" href="Reaction_8h_source.html#l00106">chem::ReactionBase::setRnode()</a>.</p>
 
 </div>
 </div>
@@ -243,7 +246,7 @@ Private Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classchem_1_1RNodeNRM.html#a7ab2483c555b42b19a3274ffa9a44d8e">chem::RNodeNRM::RNodeNRM</a> </td>
+          <td class="memname"><a class="el" href="classchem_1_1RNodeNRM.html#a4c5827a0d0682ecfbe7c9154ff5644ce">chem::RNodeNRM::RNodeNRM</a> </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
@@ -271,11 +274,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Dtor: 1) Erases the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap via the handle; 2) The <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object is set to nullptr. </p>
+<p>Dtor: 1) Erases the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap via the handle; 2) The <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> pointer of the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object is set to nullptr. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00028">28</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00087">87</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00153">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00154">_handle</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00199">chem::ChemNRMImpl::getHeap()</a>, and <a class="el" href="Reaction_8h_source.html#l00084">chem::Reaction::setRnode()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00186">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00187">_handle</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00232">chem::ChemNRMImpl::getHeap()</a>, and <a class="el" href="Reaction_8h_source.html#l00106">chem::ReactionBase::setRnode()</a>.</p>
 
 </div>
 </div>
@@ -295,13 +298,13 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>When this method is called, a new tau is computed and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap. </p>
-<dl class="section note"><dt>Note:</dt><dd>This method does not activate the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> itself, but instead only deals with the activation process related to the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. </dd></dl>
+<dl class="section note"><dt>Note:</dt><dd>This method does not activate the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> itself, but instead only deals with the activation process related to the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. </dd></dl>
 
 <p>Implements <a class="el" href="classchem_1_1RNode.html#a979370f4102fdfda1ee562788318b556">chem::RNode</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00074">74</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00132">132</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">generateNewRandTau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">updateHeap()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">generateNewRandTau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">updateHeap()</a>.</p>
 
 </div>
 </div>
@@ -322,11 +325,11 @@ Private Attributes</h2></td></tr>
 <p>This methods recomputes the reaction propensity based on current coefficients and the rate, and then obtains a corresponding new tau drawn from an exponential distribution. </p>
 <dl class="section note"><dt>Note:</dt><dd>This methods modifies tau which is stored in the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> object. However, it does not update the heap - this needs to be done seprately. </dd></dl>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">58</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">116</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00153">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00106">chem::ChemNRMImpl::generateTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00190">chem::ChemNRMImpl::getTime()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00124">reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00114">setTau()</a>, and <a class="el" href="common_8h_source.html#l00022">tau()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00186">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00166">chem::ChemNRMImpl::generateTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00223">chem::ChemNRMImpl::getTime()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00148">reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00138">setTau()</a>, and <a class="el" href="common_8h_source.html#l00026">tau()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00074">activateReaction()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00132">activateReaction()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
 
 </div>
 </div>
@@ -335,7 +338,7 @@ Private Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a>&amp; <a class="el" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">chem::RNodeNRM::getHandle</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a>&amp; <a class="el" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">chem::RNodeNRM::getHandle</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -346,9 +349,9 @@ Private Attributes</h2></td></tr>
 
 <p>Returns a handle to the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element, which can be used to access tau, for example. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00117">117</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00141">141</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00154">_handle</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00187">_handle</a>.</p>
 
 </div>
 </div>
@@ -369,9 +372,9 @@ Private Attributes</h2></td></tr>
 <p>Compute and return the product of reactant copy numbers. </p>
 <p>This method can be used to quickly check whether this reaction needs to be passivated, if the returned result is zero. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00128">128</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00152">152</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00102">chem::Reaction::getProductOfReactants()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00157">chem::ReactionBase::getProductOfReactants()</a>.</p>
 
 </div>
 </div>
@@ -389,23 +392,23 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return the currently stored propensity, "a", for this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>. </p>
+<p>Return the currently stored propensity, "a", for this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>. </p>
 <dl class="section note"><dt>Note:</dt><dd>The propensity is not recomputed in this method, so it potentially can be out of sync. </dd></dl>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00121">121</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00145">145</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ab56b46ea4fdb4ed3cd3d9e478fbf3863"></a>
+<a class="anchor" id="a8a96e9750901ff0629d43855ff096194"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classchem_1_1Reaction.html">Reaction</a>* <a class="el" href="classchem_1_1RNodeNRM.html#ab56b46ea4fdb4ed3cd3d9e478fbf3863">chem::RNodeNRM::getReaction</a> </td>
+          <td class="memname"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a>* <a class="el" href="classchem_1_1RNodeNRM.html#a8a96e9750901ff0629d43855ff096194">chem::RNodeNRM::getReaction</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const<code> [inline]</code></td>
@@ -414,13 +417,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Returns a pointer to the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> which corresponds to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>. </p>
+<p>Returns a pointer to the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> which corresponds to this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00104">104</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00128">128</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
 
 </div>
 </div>
@@ -440,9 +443,9 @@ Private Attributes</h2></td></tr>
 
 <p>Returns the tau from the the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00111">111</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00135">135</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">printSelf()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00096">printSelf()</a>.</p>
 
 </div>
 </div>
@@ -460,15 +463,15 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> is currently passivated. </p>
+<p>Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> is currently passivated. </p>
 
 <p>Implements <a class="el" href="classchem_1_1RNode.html#a30bdb95406ebc217c1a732bf36883b3f">chem::RNode</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00145">145</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00169">169</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00123">chem::Reaction::isPassivated()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00175">chem::ReactionBase::isPassivated()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
 
 </div>
 </div>
@@ -486,13 +489,53 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>This method calls the corresponding <a class="el" href="classchem_1_1Reaction.html#a1341d466157788c3d547da52c6c59502" title="Fire the Reaction - make a single step, where reactant RSpecies copy numbers are decreased by one...">Reaction::makeStep()</a> method of the underyling <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object. </p>
+<p>This method calls the corresponding <a class="el" href="classchem_1_1ReactionBase.html#acb5575b08ca39fc6dd7a571fb246806b" title="Fire the ReactionBase - make a single step, where reactant RSpecies copy numbers are decreased by one...">Reaction::makeStep()</a> method of the underyling <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00131">131</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00155">155</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00185">chem::Reaction::makeStep()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00243">chem::ReactionBase::makeStep()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abe32c9de55bd8deb22c2894ae753b708"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void chem::RNodeNRM::operator delete </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00063">63</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae76175a4d99e9eb3389dce6c77c9edb6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * chem::RNodeNRM::operator new </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Advanced memory management. </p>
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00055">55</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -530,13 +573,13 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>When this method is called, reaction's tau is set to infinity, the propensity is set to 0, and the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element is updated in the heap. </p>
-<dl class="section note"><dt>Note:</dt><dd>This method does not passivate the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> itself, but instead only deals with the activation process related to the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. </dd></dl>
+<dl class="section note"><dt>Note:</dt><dd>This method does not passivate the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> itself, but instead only deals with the activation process related to the corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. </dd></dl>
 
 <p>Implements <a class="el" href="classchem_1_1RNode.html#a007a65ede4d89e562929fc0ae9df5661">chem::RNode</a>.</p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00083">83</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00141">141</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00114">setTau()</a>, <a class="el" href="common_8h_source.html#l00022">tau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">updateHeap()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00138">setTau()</a>, <a class="el" href="common_8h_source.html#l00026">tau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">updateHeap()</a>.</p>
 
 </div>
 </div>
@@ -554,11 +597,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Print the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> objects which are dependents of this <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> (via the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object dependencies) </p>
+<p>Print the <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> objects which are dependents of this <a class="el" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object...">RNode</a> (via the tracked <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object dependencies) </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00043">43</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00101">101</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, <a class="el" href="Reaction_8h_source.html#l00154">chem::Reaction::dependents()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">printSelf()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, <a class="el" href="Reaction_8h_source.html#l00219">chem::ReactionBase::dependents()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00096">printSelf()</a>.</p>
 
 </div>
 </div>
@@ -576,13 +619,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Print information about this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> such as tau, a and the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> which this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> tracks. </p>
+<p>Print information about this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> such as tau, a and the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> which this <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> tracks. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">38</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00096">96</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00111">getTau()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00135">getTau()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00043">printDependents()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00101">printDependents()</a>.</p>
 
 </div>
 </div>
@@ -600,13 +643,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>(Re)Compute and return the propensity associated with this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>. </p>
+<p>(Re)Compute and return the propensity associated with this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00124">124</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00148">148</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00156">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00155">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00194">chem::Reaction::computePropensity()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00189">_a</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00188">_react</a>, and <a class="el" href="Reaction_8h_source.html#l00250">chem::ReactionBase::computePropensity()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">generateNewRandTau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">generateNewRandTau()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>.</p>
 
 </div>
 </div>
@@ -627,11 +670,11 @@ Private Attributes</h2></td></tr>
 
 <p>Sets the tau of the the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element. Does not update the heap. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00114">114</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00138">138</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="common_8h_source.html#l00022">tau()</a>.</p>
+<p>References <a class="el" href="common_8h_source.html#l00026">tau()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00083">passivateReaction()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00141">passivateReaction()</a>.</p>
 
 </div>
 </div>
@@ -652,11 +695,11 @@ Private Attributes</h2></td></tr>
 <p>The heap is updated only with respect to the specific <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element which presumably was modified (e.g. </p>
 <p>via <a class="el" href="classchem_1_1RNodeNRM.html#a33025de761dc8d29928f8e5b1148eff1" title="This methods recomputes the reaction propensity based on current coefficients and the rate...">generateNewRandTau()</a>). </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">53</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">111</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00153">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00154">_handle</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00199">chem::ChemNRMImpl::getHeap()</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00186">_chem_nrm</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00187">_handle</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00232">chem::ChemNRMImpl::getHeap()</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00074">activateReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00112">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00083">passivateReaction()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00132">activateReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00172">chem::ChemNRMImpl::makeStep()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00141">passivateReaction()</a>.</p>
 
 </div>
 </div>
@@ -672,11 +715,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>The propensity associated with the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>. It may be outdated and may need to be recomputed if needed. </p>
+<p>The propensity associated with the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>. It may be outdated and may need to be recomputed if needed. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00156">156</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00189">189</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00121">getPropensity()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00083">passivateReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">printSelf()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00124">reComputePropensity()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">RNodeNRM()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00145">getPropensity()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00141">passivateReaction()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00096">printSelf()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00148">reComputePropensity()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">RNodeNRM()</a>.</p>
 
 </div>
 </div>
@@ -693,9 +736,9 @@ Private Attributes</h2></td></tr>
 
 <p>A reference to the <a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> which containts the heap, random number generators, etc. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00153">153</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00186">186</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00028">~RNodeNRM()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">generateNewRandTau()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00087">~RNodeNRM()</a>.</p>
 
 </div>
 </div>
@@ -704,7 +747,7 @@ Private Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a> <a class="el" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">chem::RNodeNRM::_handle</a><code> [private]</code></td>
+          <td class="memname"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a> <a class="el" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">chem::RNodeNRM::_handle</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -712,28 +755,28 @@ Private Attributes</h2></td></tr>
 
 <p>The handle to the associated <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> element in the heap. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00154">154</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00187">187</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00117">getHandle()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00053">updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00028">~RNodeNRM()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00141">getHandle()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">RNodeNRM()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00111">updateHeap()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00087">~RNodeNRM()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a2430f6bd22239fc5b629bca05f9d34a8"></a>
+<a class="anchor" id="add823fa4b223afe0d750ed731c827d07"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classchem_1_1Reaction.html">Reaction</a>* <a class="el" href="classchem_1_1RNodeNRM.html#a2430f6bd22239fc5b629bca05f9d34a8">chem::RNodeNRM::_react</a><code> [private]</code></td>
+          <td class="memname"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a>* <a class="el" href="classchem_1_1RNodeNRM.html#add823fa4b223afe0d750ed731c827d07">chem::RNodeNRM::_react</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>The pointer to the associated <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object. The corresponding memory is not managed by <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>. </p>
+<p>The pointer to the associated <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object. The corresponding memory is not managed by <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00155">155</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00188">188</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00128">getProductOfReactants()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00104">getReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00145">isPassivated()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00131">makeStep()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00043">printDependents()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00124">reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00020">RNodeNRM()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00028">~RNodeNRM()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00152">getProductOfReactants()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00128">getReaction()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00169">isPassivated()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00155">makeStep()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00101">printDependents()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00148">reComputePropensity()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00079">RNodeNRM()</a>, and <a class="el" href="ChemNRMImpl_8cpp_source.html#l00087">~RNodeNRM()</a>.</p>
 
 </div>
 </div>
@@ -748,7 +791,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

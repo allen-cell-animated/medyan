@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['species',['Species',['../classchem_1_1RSpecies.html#a4f9920dbd864c252e3275a3f4f09dd84',1,'chem::RSpecies']]]
+  ['swap',['swap',['../classchem_1_1ReactionPtrContainerVector.html#ae4230b7c32a5f731b8ec4bcb81c7351d',1,'chem::ReactionPtrContainerVector::swap()'],['../classchem_1_1SpeciesPtrContainerVector.html#a0d849ceda52bcfbe5afc95490e85729b',1,'chem::SpeciesPtrContainerVector::swap()']]]
 ];

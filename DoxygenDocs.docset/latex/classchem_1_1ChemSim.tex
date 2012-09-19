@@ -30,9 +30,9 @@ Collaboration diagram for chem\-:\-:Chem\-Sim\-:\nopagebreak
 \begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1ChemSim_a691cc53afccbda480a674b7f3014ac72}{initialize} ()
 \begin{DoxyCompactList}\small\item\em After all initial reactions have been added via add\-Reaction(...) method, invoke \hyperlink{classchem_1_1ChemSim_a691cc53afccbda480a674b7f3014ac72}{initialize()} prior to invoking \hyperlink{classchem_1_1ChemSim_a1cc6ec051c2f0124bfa327816443b24b}{run()} \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemSim_a9416fd66c400440bd13779a3060a1ec0}{add\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
+void \hyperlink{classchem_1_1ChemSim_a5e3df263e6dc6f2b6c174bd6b5cddee9}{add\-Reaction} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1ChemSim_a50f196d75b70e55e0257f20851f8aacf}{remove\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)
+void \hyperlink{classchem_1_1ChemSim_a1949fb943a9e5e463d39122c29827e06}{remove\-Reaction} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. \end{DoxyCompactList}\item 
 bool \hyperlink{classchem_1_1ChemSim_a1cc6ec051c2f0124bfa327816443b24b}{run} (int steps)
 \begin{DoxyCompactList}\small\item\em Run the chemical dynamics for a specific number of steps. \end{DoxyCompactList}\item 
@@ -109,13 +109,13 @@ Copying is not allowed.
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classchem_1_1ChemSim_a9416fd66c400440bd13779a3060a1ec0}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!add\-Reaction@{add\-Reaction}}
+\hypertarget{classchem_1_1ChemSim_a5e3df263e6dc6f2b6c174bd6b5cddee9}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!add\-Reaction@{add\-Reaction}}
 \index{add\-Reaction@{add\-Reaction}!chem::ChemSim@{chem\-::\-Chem\-Sim}}
 \subsubsection[{add\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Chem\-Sim\-::add\-Reaction} (
 \begin{DoxyParamCaption}
-\item[{{\bf Reaction} $\ast$}]{r}
+\item[{{\bf Reaction\-Base} $\ast$}]{r}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1ChemSim_a9416fd66c400440bd13779a3060a1ec0}
+)}}\label{classchem_1_1ChemSim_a5e3df263e6dc6f2b6c174bd6b5cddee9}
 
 
 Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. 
@@ -127,6 +127,10 @@ Definition at line 21 of file Chem\-Sim.\-cpp.
 
 
 References \-\_\-pimpl, and chem\-::\-Chem\-Sim\-Impl\-::add\-Reaction().
+
+
+
+Referenced by chem\-::\-Compartment\-::add\-Chem\-Sim\-Reactions().
 
 \hypertarget{classchem_1_1ChemSim_a691cc53afccbda480a674b7f3014ac72}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!initialize@{initialize}}
 \index{initialize@{initialize}!chem::ChemSim@{chem\-::\-Chem\-Sim}}
@@ -146,6 +150,10 @@ Definition at line 33 of file Chem\-Sim.\-cpp.
 
 
 References \-\_\-pimpl, and chem\-::\-Chem\-Sim\-Impl\-::initialize().
+
+
+
+Referenced by main().
 
 \hypertarget{classchem_1_1ChemSim_a80f99f736b36adacb3888052f6ab933d}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::ChemSim@{chem\-::\-Chem\-Sim}}
@@ -177,13 +185,13 @@ Definition at line 37 of file Chem\-Sim.\-cpp.
 
 References \-\_\-pimpl, and chem\-::\-Chem\-Sim\-Impl\-::print\-Reactions().
 
-\hypertarget{classchem_1_1ChemSim_a50f196d75b70e55e0257f20851f8aacf}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!remove\-Reaction@{remove\-Reaction}}
+\hypertarget{classchem_1_1ChemSim_a1949fb943a9e5e463d39122c29827e06}{\index{chem\-::\-Chem\-Sim@{chem\-::\-Chem\-Sim}!remove\-Reaction@{remove\-Reaction}}
 \index{remove\-Reaction@{remove\-Reaction}!chem::ChemSim@{chem\-::\-Chem\-Sim}}
 \subsubsection[{remove\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Chem\-Sim\-::remove\-Reaction} (
 \begin{DoxyParamCaption}
-\item[{{\bf Reaction} $\ast$}]{r}
+\item[{{\bf Reaction\-Base} $\ast$}]{r}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1ChemSim_a50f196d75b70e55e0257f20851f8aacf}
+)}}\label{classchem_1_1ChemSim_a1949fb943a9e5e463d39122c29827e06}
 
 
 Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. 
@@ -214,6 +222,10 @@ Definition at line 29 of file Chem\-Sim.\-cpp.
 
 
 References \-\_\-pimpl, and chem\-::\-Chem\-Sim\-Impl\-::run().
+
+
+
+Referenced by main().
 
 
 

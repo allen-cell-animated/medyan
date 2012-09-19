@@ -114,9 +114,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">chem::RSpecies Class Reference</div>  </div>
 </div><!--header-->
@@ -138,36 +136,6 @@ Collaboration diagram for chem::RSpecies:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3c875e360f7f53b2ca8bd30f7dbbb7ed"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a3c875e360f7f53b2ca8bd30f7dbbb7ed">~RSpecies</a> ()</td></tr>
-<tr class="memdesc:a3c875e360f7f53b2ca8bd30f7dbbb7ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">It is required that all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> associated with this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> are destructed before this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is destructed.  <a href="#a3c875e360f7f53b2ca8bd30f7dbbb7ed"></a><br/></td></tr>
-<tr class="memitem:afaee31bbc312ca6fa84a9ffc02457611"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#afaee31bbc312ca6fa84a9ffc02457611">emitSignal</a> (int delta)</td></tr>
-<tr class="memdesc:afaee31bbc312ca6fa84a9ffc02457611"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcasts signal indicating that the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> has changed This method should usually called by the code which runs the chemical dynamics (i.e.  <a href="#afaee31bbc312ca6fa84a9ffc02457611"></a><br/></td></tr>
-<tr class="memitem:a5a96cf2a67af375c6471dfa5a21990f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8">getN</a> () const </td></tr>
-<tr class="memdesc:a5a96cf2a67af375c6471dfa5a21990f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a5a96cf2a67af375c6471dfa5a21990f8"></a><br/></td></tr>
-<tr class="memitem:ad233880e065382e598a95e75d401d9eb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ad233880e065382e598a95e75d401d9eb">getUpperLimitForN</a> () const </td></tr>
-<tr class="memdesc:ad233880e065382e598a95e75d401d9eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#ad233880e065382e598a95e75d401d9eb"></a><br/></td></tr>
-<tr class="memitem:a585ae6da09ba09c824aac7a0fcddd748"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Species.html">Species</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a585ae6da09ba09c824aac7a0fcddd748">getSpecies</a> ()</td></tr>
-<tr class="memdesc:a585ae6da09ba09c824aac7a0fcddd748"><td class="mdescLeft">&#160;</td><td class="mdescRight">return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a reference  <a href="#a585ae6da09ba09c824aac7a0fcddd748"></a><br/></td></tr>
-<tr class="memitem:a74953c2446c0261fc5732a63e3392a15"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classchem_1_1Species.html">Species</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a74953c2446c0261fc5732a63e3392a15">getSpecies</a> () const </td></tr>
-<tr class="memdesc:a74953c2446c0261fc5732a63e3392a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a const reference  <a href="#a74953c2446c0261fc5732a63e3392a15"></a><br/></td></tr>
-<tr class="memitem:af4e42cfd817f05b2de169275e3496399"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399">getFullName</a> () const </td></tr>
-<tr class="memdesc:af4e42cfd817f05b2de169275e3496399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the full name of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> in a std::string format (e.g. "Arp2/3{Bulk}".  <a href="#af4e42cfd817f05b2de169275e3496399"></a><br/></td></tr>
-<tr class="memitem:a652a2d0f305a8ab84305ff1dd1fd41b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8">isSignaling</a> () const </td></tr>
-<tr class="memdesc:a652a2d0f305a8ab84305ff1dd1fd41b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> emits signals on copy number change.  <a href="#a652a2d0f305a8ab84305ff1dd1fd41b8"></a><br/></td></tr>
-<tr class="memitem:a2ef2e5df3813cade5fdeea7e9ca8b219"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1Reaction.html">Reaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a2ef2e5df3813cade5fdeea7e9ca8b219">ReactantReactions</a> ()</td></tr>
-<tr class="memdesc:a2ef2e5df3813cade5fdeea7e9ca8b219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#a2ef2e5df3813cade5fdeea7e9ca8b219"></a><br/></td></tr>
-<tr class="memitem:a7b4e705a0195b0a7575c6fd3a4ff2a32"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1Reaction.html">Reaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a7b4e705a0195b0a7575c6fd3a4ff2a32">ProductReactions</a> ()</td></tr>
-<tr class="memdesc:a7b4e705a0195b0a7575c6fd3a4ff2a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#a7b4e705a0195b0a7575c6fd3a4ff2a32"></a><br/></td></tr>
-<tr class="memitem:abb162e65b6a0bb4953be60299e23a8e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#abb162e65b6a0bb4953be60299e23a8e1">beginReactantReactions</a> ()</td></tr>
-<tr class="memdesc:abb162e65b6a0bb4953be60299e23a8e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#abb162e65b6a0bb4953be60299e23a8e1"></a><br/></td></tr>
-<tr class="memitem:a28a722faa4f1784cf42cb1aeadee9bcb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a28a722faa4f1784cf42cb1aeadee9bcb">beginProductReactions</a> ()</td></tr>
-<tr class="memdesc:a28a722faa4f1784cf42cb1aeadee9bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#a28a722faa4f1784cf42cb1aeadee9bcb"></a><br/></td></tr>
-<tr class="memitem:a1b228d34e6277a15f672247480f4b51a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a1b228d34e6277a15f672247480f4b51a">endReactantReactions</a> ()</td></tr>
-<tr class="memdesc:a1b228d34e6277a15f672247480f4b51a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#a1b228d34e6277a15f672247480f4b51a"></a><br/></td></tr>
-<tr class="memitem:a1b3db9e6c2246f6d1b4d98d344ff9e9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a1b3db9e6c2246f6d1b4d98d344ff9e9e">endProductReactions</a> ()</td></tr>
-<tr class="memdesc:a1b3db9e6c2246f6d1b4d98d344ff9e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;Reaction *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#a1b3db9e6c2246f6d1b4d98d344ff9e9e"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
 <tr class="memitem:a66b426fdb13ec0e9ec61a96fadda465d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a66b426fdb13ec0e9ec61a96fadda465d">RSpecies</a> (<a class="el" href="classchem_1_1Species.html">Species</a> &amp;parent, <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> n=0, <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> ulim=<a class="el" href="common_8h.html#adaf831a0b61083f29adf8fc6e8edab35">max_ulim</a>)</td></tr>
 <tr class="memdesc:a66b426fdb13ec0e9ec61a96fadda465d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructors.  <a href="#a66b426fdb13ec0e9ec61a96fadda465d"></a><br/></td></tr>
 <tr class="memitem:aed7fd68d286fab8190372a4dd98c14e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#aed7fd68d286fab8190372a4dd98c14e3">RSpecies</a> (const <a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> &amp;r)</td></tr>
@@ -178,50 +146,59 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a2779fcf9c5103251aa87e7b466ba7752"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleted assignment operator - each <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is uniquely created by the parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>  <a href="#a2779fcf9c5103251aa87e7b466ba7752"></a><br/></td></tr>
 <tr class="memitem:a7939d5255e97d125821f657cadb48bc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a7939d5255e97d125821f657cadb48bc2">setN</a> (<a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> n)</td></tr>
 <tr class="memdesc:a7939d5255e97d125821f657cadb48bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the copy number for this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a7939d5255e97d125821f657cadb48bc2"></a><br/></td></tr>
-<tr class="memitem:a13c47ccb546b64f83ac09734c286fcd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a13c47ccb546b64f83ac09734c286fcd2">setUpperLimitForN</a> (<a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> ulim)</td></tr>
-<tr class="memdesc:a13c47ccb546b64f83ac09734c286fcd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a13c47ccb546b64f83ac09734c286fcd2"></a><br/></td></tr>
-<tr class="memitem:a32806fa7ef59b5043892e1ad328a569e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a32806fa7ef59b5043892e1ad328a569e">getUpperLimitForN</a> (<a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> ulim)</td></tr>
-<tr class="memdesc:a32806fa7ef59b5043892e1ad328a569e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a32806fa7ef59b5043892e1ad328a569e"></a><br/></td></tr>
 <tr class="memitem:ae721e3c649a12e0a81bc6b77afe23f38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ae721e3c649a12e0a81bc6b77afe23f38">up</a> ()</td></tr>
 <tr class="memdesc:ae721e3c649a12e0a81bc6b77afe23f38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the copy number by 1.  <a href="#ae721e3c649a12e0a81bc6b77afe23f38"></a><br/></td></tr>
 <tr class="memitem:a0b9db54a1407d689be7477e77b4bb1c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a0b9db54a1407d689be7477e77b4bb1c6">down</a> ()</td></tr>
 <tr class="memdesc:a0b9db54a1407d689be7477e77b4bb1c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decreases the copy number by 1.  <a href="#a0b9db54a1407d689be7477e77b4bb1c6"></a><br/></td></tr>
-<tr class="memitem:a88c4e30858e503105a3fa39e649060ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memitem:ab81e66709c72efa36ee8f29f969dc477"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ab81e66709c72efa36ee8f29f969dc477">addAsProduct</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memitem:ad0a8e2da5b7a0362b1fb20ad72671005"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">removeAsReactant</a> (const <a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memitem:a423e5852f749ab65553c48ed0239c243"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a423e5852f749ab65553c48ed0239c243">removeAsProduct</a> (const <a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
+<tr class="memitem:a2f69141d801e4660ab411953fef74ea2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a2f69141d801e4660ab411953fef74ea2">addAsReactant</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memitem:a0df14f94c944f38f8794dc9229f8079c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a0df14f94c944f38f8794dc9229f8079c">addAsProduct</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memitem:ab8f32e15791cfddea7cf4cac5a39c0fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ab8f32e15791cfddea7cf4cac5a39c0fa">removeAsReactant</a> (const <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memitem:a951496132075bd03ba51ba4d753f0d7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a951496132075bd03ba51ba4d753f0d7f">removeAsProduct</a> (const <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
 <tr class="memitem:a1589cd0e045a084a32dff4a02612d4a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">activateAssocReactantReactions</a> ()</td></tr>
 <tr class="memitem:ab275b0c9fb9352abe35a3bd68f3917fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">activateAssocProductReactions</a> ()</td></tr>
 <tr class="memitem:a0c33c29f86ee16b84151bc5f38953076"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">passivateAssocReactantReactions</a> ()</td></tr>
 <tr class="memitem:aff8862396958db832848c94135282f1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">passivateAssocProductReactions</a> ()</td></tr>
-<tr class="memitem:a0beefdc1ec28646df87b0690a2d66734"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734">startSignaling</a> ()</td></tr>
-<tr class="memdesc:a0beefdc1ec28646df87b0690a2d66734"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the signaling behavior of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a0beefdc1ec28646df87b0690a2d66734"></a><br/></td></tr>
-<tr class="memitem:a3519759c28c5d50108753ebe6c67a537"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537">stopSignaling</a> ()</td></tr>
-<tr class="memdesc:a3519759c28c5d50108753ebe6c67a537"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the signal associated with this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>; all associated slots will be destroyed.  <a href="#a3519759c28c5d50108753ebe6c67a537"></a><br/></td></tr>
+<tr class="memitem:a3c875e360f7f53b2ca8bd30f7dbbb7ed"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a3c875e360f7f53b2ca8bd30f7dbbb7ed">~RSpecies</a> ()</td></tr>
+<tr class="memdesc:a3c875e360f7f53b2ca8bd30f7dbbb7ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">It is required that all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> associated with this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> are destructed before this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is destructed.  <a href="#a3c875e360f7f53b2ca8bd30f7dbbb7ed"></a><br/></td></tr>
+<tr class="memitem:a5a96cf2a67af375c6471dfa5a21990f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8">getN</a> () const </td></tr>
+<tr class="memdesc:a5a96cf2a67af375c6471dfa5a21990f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a5a96cf2a67af375c6471dfa5a21990f8"></a><br/></td></tr>
+<tr class="memitem:a585ae6da09ba09c824aac7a0fcddd748"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Species.html">Species</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a585ae6da09ba09c824aac7a0fcddd748">getSpecies</a> ()</td></tr>
+<tr class="memdesc:a585ae6da09ba09c824aac7a0fcddd748"><td class="mdescLeft">&#160;</td><td class="mdescRight">return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a reference  <a href="#a585ae6da09ba09c824aac7a0fcddd748"></a><br/></td></tr>
+<tr class="memitem:a74953c2446c0261fc5732a63e3392a15"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classchem_1_1Species.html">Species</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a74953c2446c0261fc5732a63e3392a15">getSpecies</a> () const </td></tr>
+<tr class="memdesc:a74953c2446c0261fc5732a63e3392a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a const reference  <a href="#a74953c2446c0261fc5732a63e3392a15"></a><br/></td></tr>
+<tr class="memitem:af4e42cfd817f05b2de169275e3496399"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#af4e42cfd817f05b2de169275e3496399">getFullName</a> () const </td></tr>
+<tr class="memdesc:af4e42cfd817f05b2de169275e3496399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the full name of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> in a std::string format (e.g. "Arp2/3{Bulk}".  <a href="#af4e42cfd817f05b2de169275e3496399"></a><br/></td></tr>
+<tr class="memitem:a777147e17b1ef1e733cd35a1d2aa98ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a777147e17b1ef1e733cd35a1d2aa98ba">ReactantReactions</a> ()</td></tr>
+<tr class="memdesc:a777147e17b1ef1e733cd35a1d2aa98ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#a777147e17b1ef1e733cd35a1d2aa98ba"></a><br/></td></tr>
+<tr class="memitem:ab978fcc67f44cf5a2aba3d8281f57dcf"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ab978fcc67f44cf5a2aba3d8281f57dcf">ProductReactions</a> ()</td></tr>
+<tr class="memdesc:ab978fcc67f44cf5a2aba3d8281f57dcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#ab978fcc67f44cf5a2aba3d8281f57dcf"></a><br/></td></tr>
+<tr class="memitem:abb162e65b6a0bb4953be60299e23a8e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#abb162e65b6a0bb4953be60299e23a8e1">beginReactantReactions</a> ()</td></tr>
+<tr class="memdesc:abb162e65b6a0bb4953be60299e23a8e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#abb162e65b6a0bb4953be60299e23a8e1"></a><br/></td></tr>
+<tr class="memitem:a28a722faa4f1784cf42cb1aeadee9bcb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a28a722faa4f1784cf42cb1aeadee9bcb">beginProductReactions</a> ()</td></tr>
+<tr class="memdesc:a28a722faa4f1784cf42cb1aeadee9bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#a28a722faa4f1784cf42cb1aeadee9bcb"></a><br/></td></tr>
+<tr class="memitem:a1b228d34e6277a15f672247480f4b51a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a1b228d34e6277a15f672247480f4b51a">endReactantReactions</a> ()</td></tr>
+<tr class="memdesc:a1b228d34e6277a15f672247480f4b51a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant.  <a href="#a1b228d34e6277a15f672247480f4b51a"></a><br/></td></tr>
+<tr class="memitem:a1b3db9e6c2246f6d1b4d98d344ff9e9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a1b3db9e6c2246f6d1b4d98d344ff9e9e">endProductReactions</a> ()</td></tr>
+<tr class="memdesc:a1b3db9e6c2246f6d1b4d98d344ff9e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product.  <a href="#a1b3db9e6c2246f6d1b4d98d344ff9e9e"></a><br/></td></tr>
+<tr class="memitem:a8f8eeb52d60143c6fb7b7f87eee4f55c"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a8f8eeb52d60143c6fb7b7f87eee4f55c">operator new</a> (std::size_t size)</td></tr>
+<tr class="memdesc:a8f8eeb52d60143c6fb7b7f87eee4f55c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advanced memory management.  <a href="#a8f8eeb52d60143c6fb7b7f87eee4f55c"></a><br/></td></tr>
+<tr class="memitem:a59eeac181b75f878e4804fb2ce57dbb2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a59eeac181b75f878e4804fb2ce57dbb2">operator delete</a> (void *ptr) noexcept</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a3749fed57bf55e5677b4519b403598ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1Reaction.html">Reaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a3749fed57bf55e5677b4519b403598ba">_as_reactants</a></td></tr>
-<tr class="memdesc:a3749fed57bf55e5677b4519b403598ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">a vector of <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Reactant  <a href="#a3749fed57bf55e5677b4519b403598ba"></a><br/></td></tr>
-<tr class="memitem:a680c86be9b2ef8f87525291fabb15f11"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1Reaction.html">Reaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a680c86be9b2ef8f87525291fabb15f11">_as_products</a></td></tr>
-<tr class="memdesc:a680c86be9b2ef8f87525291fabb15f11"><td class="mdescLeft">&#160;</td><td class="mdescRight">a vector of <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Product  <a href="#a680c86be9b2ef8f87525291fabb15f11"></a><br/></td></tr>
+<tr class="memitem:af22c5fa6d6a8be2cd26b77fc4cbb820f"><td class="memItemLeft" align="right" valign="top">friend&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#af22c5fa6d6a8be2cd26b77fc4cbb820f">Species</a></td></tr>
+<tr class="memitem:a7ffda464bbe610c372cac83e6e735023"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a7ffda464bbe610c372cac83e6e735023">_as_reactants</a></td></tr>
+<tr class="memdesc:a7ffda464bbe610c372cac83e6e735023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reactions calls <a class="el" href="classchem_1_1RSpecies.html#a2f69141d801e4660ab411953fef74ea2">addAsReactant()</a>, <a class="el" href="classchem_1_1RSpecies.html#ab8f32e15791cfddea7cf4cac5a39c0fa">removeAsReactant()</a> - which other classes should not call.  <a href="#a7ffda464bbe610c372cac83e6e735023"></a><br/></td></tr>
+<tr class="memitem:ad4d3712865ed15fd9b581810ffe1b0e7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#ad4d3712865ed15fd9b581810ffe1b0e7">_as_products</a></td></tr>
+<tr class="memdesc:ad4d3712865ed15fd9b581810ffe1b0e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">a vector of <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Product  <a href="#ad4d3712865ed15fd9b581810ffe1b0e7"></a><br/></td></tr>
 <tr class="memitem:a3a979b9226800417c7aad81a2162fac5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Species.html">Species</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a3a979b9226800417c7aad81a2162fac5">_species</a></td></tr>
 <tr class="memdesc:a3a979b9226800417c7aad81a2162fac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">reference to the <b>parent</b> <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> object  <a href="#a3a979b9226800417c7aad81a2162fac5"></a><br/></td></tr>
 <tr class="memitem:a60e53ebfe464923452c54322dfd479dc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc">_n</a></td></tr>
 <tr class="memdesc:a60e53ebfe464923452c54322dfd479dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>.  <a href="#a60e53ebfe464923452c54322dfd479dc"></a><br/></td></tr>
-<tr class="memitem:a189084cfe75e004f42a6a27b2c1c09ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad">_ulim</a></td></tr>
-<tr class="memdesc:a189084cfe75e004f42a6a27b2c1c09ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.  <a href="#a189084cfe75e004f42a6a27b2c1c09ad"></a><br/></td></tr>
-<tr class="memitem:acd60296c77857284cd935cb6faaf4200"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechem.html#a09aea7e5a24368c13cd7d8d25b4d884e">RSpeciesCopyNChangedSignal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200">_signal</a></td></tr>
-<tr class="memdesc:acd60296c77857284cd935cb6faaf4200"><td class="mdescLeft">&#160;</td><td class="mdescRight">Can be used to broadcast a signal associated with change of n of.  <a href="#acd60296c77857284cd935cb6faaf4200"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a5f86463029cca47f8aa15ff8cd5b9e51"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a5f86463029cca47f8aa15ff8cd5b9e51">Reaction</a></td></tr>
-<tr class="memdesc:a5f86463029cca47f8aa15ff8cd5b9e51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reactions calls <a class="el" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant()</a>, <a class="el" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">removeAsReactant()</a> - which other classes should not call.  <a href="#a5f86463029cca47f8aa15ff8cd5b9e51"></a><br/></td></tr>
-<tr class="memitem:a4f9920dbd864c252e3275a3f4f09dd84"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RSpecies.html#a4f9920dbd864c252e3275a3f4f09dd84">Species</a></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in <a class="el" href="classchem_1_1Reaction.html">Reactions</a>. </p>
 <p>This class represents the reactivity of chemical species. The name <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> stems from reacting species. <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> tracks the copy number of molecules and the <a class="el" href="classchem_1_1Reaction.html">Reactions</a> in which it is involed (</p>
-<dl class="section see"><dt>See also:</dt><dd><a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a>). </dd></dl>
+<dl class="section see"><dt>See also:</dt><dd><a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a>). </dd></dl>
 <dl class="section note"><dt>Note:</dt><dd>Each intantiation of <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is unique, and hence, cannot be neither copied nor moved (C++11). This has significant implications - e.g., <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> cannot be used in std::vector&lt;RSpecies&gt;. Instead, one should use either std::vector&lt;RSpecies*&gt; if not owning the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> pointers, or std::vector&lt;std::unique_ptr&lt;RSpecies&gt;&gt; if owning the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> pointers. A special allocator can be written such that dynamically allocated <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> (through new), are arranged contigiously in memory. </dd></dl>
 
 <p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00057">57</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
@@ -251,7 +228,7 @@ Friends</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td><code> [inline, private]</code></td>
+          <td></td><td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -266,7 +243,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00075">75</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00076">76</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
 </div>
 </div>
@@ -279,7 +256,7 @@ Friends</h2></td></tr>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> &amp;&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
@@ -298,7 +275,7 @@ Friends</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
@@ -325,9 +302,9 @@ Friends</h2></td></tr>
 <p>It is required that all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> associated with this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> are destructed before this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is destructed. </p>
 <p>Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00190">190</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00202">202</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>, <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>, and <a class="el" href="RSpecies_8h_source.html#l00068">_signal</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>, and <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
 
 </div>
 </div>
@@ -340,18 +317,16 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">chem::RSpecies::activateAssocProductReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Attempts to activate previously passivated <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. Usually, the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> was first passivated, for example if the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> copy number of one of the reactants went up to max_ulim. </p>
+<p>Attempts to activate previously passivated <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. Usually, the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> was first passivated, for example if the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> copy number of one of the reactants went up to max_ulim. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00031">31</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00061">61</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00118">down()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00128">down()</a>.</p>
 
 </div>
 </div>
@@ -363,64 +338,58 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">chem::RSpecies::activateAssocReactantReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Attempts to activate previously passivated <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. Usually, the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> was first passivated, for example if the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> copy number of one of the reactants dropeed to zero. This attempt may not succeed if there are still other reactants in the same <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> with zero copy count. </p>
+<p>Attempts to activate previously passivated <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. Usually, the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> was first passivated, for example if the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> copy number of one of the reactants dropeed to zero. This attempt may not succeed if there are still other reactants in the same <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> with zero copy count. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00026">26</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00056">56</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00102">up()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00112">up()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ab81e66709c72efa36ee8f29f969dc477"></a>
+<a class="anchor" id="a0df14f94c944f38f8794dc9229f8079c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#ab81e66709c72efa36ee8f29f969dc477">chem::RSpecies::addAsProduct</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a0df14f94c944f38f8794dc9229f8079c">chem::RSpecies::addAsProduct</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00143">143</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00153">153</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00017">chem::Reaction::Reaction()</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a88c4e30858e503105a3fa39e649060ef"></a>
+<a class="anchor" id="a2f69141d801e4660ab411953fef74ea2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">chem::RSpecies::addAsReactant</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a2f69141d801e4660ab411953fef74ea2">chem::RSpecies::addAsReactant</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00139">139</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00149">149</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00017">chem::Reaction::Reaction()</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
 
 </div>
 </div>
@@ -429,7 +398,7 @@ Friends</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a28a722faa4f1784cf42cb1aeadee9bcb">chem::RSpecies::beginProductReactions</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a28a722faa4f1784cf42cb1aeadee9bcb">chem::RSpecies::beginProductReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -438,11 +407,13 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00236">236</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00249">249</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>.</p>
+
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00105">chem::Reaction&lt; M, N &gt;::activateReactionUnconditionalImpl()</a>, and <a class="el" href="Reaction_8cpp_source.html#l00126">chem::Reaction&lt; M, N &gt;::passivateReactionImpl()</a>.</p>
 
 </div>
 </div>
@@ -451,7 +422,7 @@ Friends</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#abb162e65b6a0bb4953be60299e23a8e1">chem::RSpecies::beginReactantReactions</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#abb162e65b6a0bb4953be60299e23a8e1">chem::RSpecies::beginReactantReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -460,11 +431,13 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the beginning of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00232">232</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00245">245</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
+
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00105">chem::Reaction&lt; M, N &gt;::activateReactionUnconditionalImpl()</a>, and <a class="el" href="Reaction_8cpp_source.html#l00126">chem::Reaction&lt; M, N &gt;::passivateReactionImpl()</a>.</p>
 
 </div>
 </div>
@@ -476,7 +449,7 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a0b9db54a1407d689be7477e77b4bb1c6">chem::RSpecies::down</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -485,33 +458,9 @@ Friends</h2></td></tr>
 <p>Decreases the copy number by 1. </p>
 <p>If the copy number changes becomes 0, calls a "callback"-like method to passivate <a class="el" href="classchem_1_1Reaction.html">Reactions</a>, where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Reactant. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00118">118</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00128">128</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00066">_n</a>, <a class="el" href="RSpecies_8h_source.html#l00067">_ulim</a>, <a class="el" href="RSpecies_8cpp_source.html#l00031">activateAssocProductReactions()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00036">passivateAssocReactantReactions()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="afaee31bbc312ca6fa84a9ffc02457611"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#afaee31bbc312ca6fa84a9ffc02457611">chem::RSpecies::emitSignal</a> </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>delta</em></td><td>)</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Broadcasts signal indicating that the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> has changed This method should usually called by the code which runs the chemical dynamics (i.e. </p>
-<p>Gillespie-like algorithm) </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00199">199</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00220">isSignaling()</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_n</a>, <a class="el" href="RSpecies_8cpp_source.html#l00061">activateAssocProductReactions()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00066">passivateAssocReactantReactions()</a>.</p>
 
 </div>
 </div>
@@ -520,7 +469,7 @@ Friends</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a1b3db9e6c2246f6d1b4d98d344ff9e9e">chem::RSpecies::endProductReactions</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a1b3db9e6c2246f6d1b4d98d344ff9e9e">chem::RSpecies::endProductReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -529,11 +478,13 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00244">244</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00257">257</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>.</p>
+
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00105">chem::Reaction&lt; M, N &gt;::activateReactionUnconditionalImpl()</a>, and <a class="el" href="Reaction_8cpp_source.html#l00126">chem::Reaction&lt; M, N &gt;::passivateReactionImpl()</a>.</p>
 
 </div>
 </div>
@@ -542,7 +493,7 @@ Friends</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a6c6fe26056b061cb8512c46063ad758e">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a1b228d34e6277a15f672247480f4b51a">chem::RSpecies::endReactantReactions</a> </td>
+          <td class="memname"><a class="el" href="namespacechem.html#a0decff3bb0047ac3a45bc12163f063e4">vr_iterator</a> <a class="el" href="classchem_1_1RSpecies.html#a1b228d34e6277a15f672247480f4b51a">chem::RSpecies::endReactantReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -551,11 +502,13 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;::iterator, which points to the end of all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00240">240</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00253">253</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
+
+<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00105">chem::Reaction&lt; M, N &gt;::activateReactionUnconditionalImpl()</a>, and <a class="el" href="Reaction_8cpp_source.html#l00126">chem::Reaction&lt; M, N &gt;::passivateReactionImpl()</a>.</p>
 
 </div>
 </div>
@@ -575,11 +528,9 @@ Friends</h2></td></tr>
 
 <p>Return the full name of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> in a std::string format (e.g. "Arp2/3{Bulk}". </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00021">21</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00051">51</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00065">_species</a>, and <a class="el" href="Species_8h_source.html#l00255">chem::Species::getFullName()</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8cpp_source.html#l00014">operator&lt;&lt;()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8cpp_source.html#l00021">operator&lt;&lt;()</a>.</p>
 
 </div>
 </div>
@@ -599,11 +550,11 @@ Friends</h2></td></tr>
 
 <p>Return the current copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00205">205</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00224">224</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00066">_n</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_n</a>.</p>
 
-<p>Referenced by <a class="el" href="Reaction_8h_source.html#l00194">chem::Reaction::computePropensity()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00014">operator&lt;&lt;()</a>.</p>
+<p>Referenced by <a class="el" href="Species_8h_source.html#l00220">chem::Species::getN()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00021">operator&lt;&lt;()</a>.</p>
 
 </div>
 </div>
@@ -623,9 +574,11 @@ Friends</h2></td></tr>
 
 <p>return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a reference </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00211">211</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00227">227</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00065">_species</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_species</a>.</p>
+
+<p>Referenced by <a class="el" href="Reaction_8h_source.html#l00398">chem::Reaction&lt; M, N &gt;::is_equal()</a>.</p>
 
 </div>
 </div>
@@ -645,84 +598,49 @@ Friends</h2></td></tr>
 
 <p>return parent <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> as a const reference </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00214">214</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00230">230</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00065">_species</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_species</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a32806fa7ef59b5043892e1ad328a569e"></a>
+<a class="anchor" id="a59eeac181b75f878e4804fb2ce57dbb2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="classchem_1_1RSpecies.html#a32806fa7ef59b5043892e1ad328a569e">chem::RSpecies::getUpperLimitForN</a> </td>
+          <td class="memname">void chem::RSpecies::operator delete </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td>
-          <td class="paramname"><em>ulim</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Sets the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ulim</td><td>should be a non-negative number, but no checking is done in run time </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00098">98</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00067">_ulim</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00043">43</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ad233880e065382e598a95e75d401d9eb"></a>
+<a class="anchor" id="a8f8eeb52d60143c6fb7b7f87eee4f55c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="classchem_1_1RSpecies.html#a32806fa7ef59b5043892e1ad328a569e">chem::RSpecies::getUpperLimitForN</a> </td>
+          <td class="memname">void * chem::RSpecies::operator new </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const<code> [inline]</code></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Return the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
+<p>Advanced memory management. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00208">208</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00067">_ulim</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a652a2d0f305a8ab84305ff1dd1fd41b8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8">chem::RSpecies::isSignaling</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const<code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Return true if this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> emits signals on copy number change. </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00220">220</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00068">_signal</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00199">emitSignal()</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00033">33</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
 </div>
 </div>
@@ -735,7 +653,7 @@ Friends</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
@@ -753,18 +671,16 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">chem::RSpecies::passivateAssocProductReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Passivates all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is among the products. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00041">41</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00071">71</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00102">up()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00112">up()</a>.</p>
 
 </div>
 </div>
@@ -776,27 +692,25 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">chem::RSpecies::passivateAssocReactantReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Passivates all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is among the reactants. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00036">36</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00066">66</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00118">down()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00128">down()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a7b4e705a0195b0a7575c6fd3a4ff2a32"></a>
+<a class="anchor" id="ab978fcc67f44cf5a2aba3d8281f57dcf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a7b4e705a0195b0a7575c6fd3a4ff2a32">chem::RSpecies::ProductReactions</a> </td>
+          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#ab978fcc67f44cf5a2aba3d8281f57dcf">chem::RSpecies::ProductReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -805,20 +719,20 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Product. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00228">228</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00241">241</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a2ef2e5df3813cade5fdeea7e9ca8b219"></a>
+<a class="anchor" id="a777147e17b1ef1e733cd35a1d2aa98ba"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a2ef2e5df3813cade5fdeea7e9ca8b219">chem::RSpecies::ReactantReactions</a> </td>
+          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a777147e17b1ef1e733cd35a1d2aa98ba">chem::RSpecies::ReactantReactions</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [inline]</code></td>
@@ -827,57 +741,53 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return std::vector&lt;Reaction *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
+<p>Return std::vector&lt;ReactionBase *&gt;, which contains pointers to all <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is involved as a Reactant. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00224">224</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00237">237</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a423e5852f749ab65553c48ed0239c243"></a>
+<a class="anchor" id="a951496132075bd03ba51ba4d753f0d7f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a423e5852f749ab65553c48ed0239c243">chem::RSpecies::removeAsProduct</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a951496132075bd03ba51ba4d753f0d7f">chem::RSpecies::removeAsProduct</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00156">156</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00166">166</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00055">chem::Reaction::~Reaction()</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ad0a8e2da5b7a0362b1fb20ad72671005"></a>
+<a class="anchor" id="ab8f32e15791cfddea7cf4cac5a39c0fa"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">chem::RSpecies::removeAsReactant</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#ab8f32e15791cfddea7cf4cac5a39c0fa">chem::RSpecies::removeAsReactant</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00147">147</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00157">157</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_as_products</a>, and <a class="el" href="RSpecies_8h_source.html#l00063">_as_reactants</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00055">chem::Reaction::~Reaction()</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00062">_as_products</a>, and <a class="el" href="RSpecies_8h_source.html#l00061">_as_reactants</a>.</p>
 
 </div>
 </div>
@@ -890,7 +800,7 @@ Friends</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -905,83 +815,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note:</dt><dd>The operation does not emit any signals about the copy number change. </dd></dl>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00090">90</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00099">99</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00066">_n</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_n</a>.</p>
 
-</div>
-</div>
-<a class="anchor" id="a13c47ccb546b64f83ac09734c286fcd2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a13c47ccb546b64f83ac09734c286fcd2">chem::RSpecies::setUpperLimitForN</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td>
-          <td class="paramname"><em>ulim</em></td><td>)</td>
-          <td><code> [inline, private]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Sets the upper limit for the copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ulim</td><td>should be a non-negative number, but no checking is done in run time </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00094">94</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00067">_ulim</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a0beefdc1ec28646df87b0690a2d66734"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734">chem::RSpecies::startSignaling</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Set the signaling behavior of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00046">46</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00068">_signal</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a3519759c28c5d50108753ebe6c67a537"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537">chem::RSpecies::stopSignaling</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [private]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Destroy the signal associated with this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>; all associated slots will be destroyed. </p>
-<dl class="section note"><dt>Note:</dt><dd>To start signaling again, <a class="el" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734" title="Set the signaling behavior of this RSpecies.">startSignaling()</a> needs to be called </dd></dl>
-
-<p>Definition at line <a class="el" href="RSpecies_8cpp_source.html#l00050">50</a> of file <a class="el" href="RSpecies_8cpp_source.html">RSpecies.cpp</a>.</p>
-
-<p>References <a class="el" href="RSpecies_8h_source.html#l00068">_signal</a>.</p>
+<p>Referenced by <a class="el" href="Species_8h_source.html#l00217">chem::Species::setN()</a>.</p>
 
 </div>
 </div>
@@ -993,7 +831,7 @@ Friends</h2></td></tr>
           <td class="memname">void <a class="el" href="classchem_1_1RSpecies.html#ae721e3c649a12e0a81bc6b77afe23f38">chem::RSpecies::up</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [inline, private]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -1002,52 +840,19 @@ Friends</h2></td></tr>
 <p>Increases the copy number by 1. </p>
 <p>If the copy number changes from 0 to 1, calls a "callback"-like method to activated previously passivated <a class="el" href="classchem_1_1Reaction.html">Reactions</a>, where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Reactant. </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00102">102</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00112">112</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>References <a class="el" href="RSpecies_8h_source.html#l00066">_n</a>, <a class="el" href="RSpecies_8h_source.html#l00067">_ulim</a>, <a class="el" href="RSpecies_8cpp_source.html#l00026">activateAssocReactantReactions()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00041">passivateAssocProductReactions()</a>.</p>
-
-</div>
-</div>
-<hr/><h2>Friends And Related Function Documentation</h2>
-<a class="anchor" id="a5f86463029cca47f8aa15ff8cd5b9e51"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classchem_1_1Reaction.html">Reaction</a><code> [friend]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Reactions calls <a class="el" href="classchem_1_1RSpecies.html#a88c4e30858e503105a3fa39e649060ef">addAsReactant()</a>, <a class="el" href="classchem_1_1RSpecies.html#ad0a8e2da5b7a0362b1fb20ad72671005">removeAsReactant()</a> - which other classes should not call. </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00059">59</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a4f9920dbd864c252e3275a3f4f09dd84"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classchem_1_1Species.html">Species</a><code> [friend]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00060">60</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>References <a class="el" href="RSpecies_8h_source.html#l00064">_n</a>, <a class="el" href="RSpecies_8cpp_source.html#l00056">activateAssocReactantReactions()</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00071">passivateAssocProductReactions()</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Data Documentation</h2>
-<a class="anchor" id="a680c86be9b2ef8f87525291fabb15f11"></a>
+<a class="anchor" id="ad4d3712865ed15fd9b581810ffe1b0e7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a680c86be9b2ef8f87525291fabb15f11">chem::RSpecies::_as_products</a><code> [private]</code></td>
+          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#ad4d3712865ed15fd9b581810ffe1b0e7">chem::RSpecies::_as_products</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -1055,28 +860,29 @@ Friends</h2></td></tr>
 
 <p>a vector of <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Product </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00064">64</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00062">62</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>Referenced by <a class="el" href="RSpecies_8cpp_source.html#l00031">activateAssocProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00143">addAsProduct()</a>, <a class="el" href="RSpecies_8h_source.html#l00236">beginProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00244">endProductReactions()</a>, <a class="el" href="RSpecies_8cpp_source.html#l00041">passivateAssocProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00228">ProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00156">removeAsProduct()</a>, <a class="el" href="RSpecies_8h_source.html#l00147">removeAsReactant()</a>, and <a class="el" href="RSpecies_8h_source.html#l00190">~RSpecies()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00153">addAsProduct()</a>, <a class="el" href="RSpecies_8h_source.html#l00249">beginProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00257">endProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00241">ProductReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00166">removeAsProduct()</a>, <a class="el" href="RSpecies_8h_source.html#l00157">removeAsReactant()</a>, and <a class="el" href="RSpecies_8h_source.html#l00202">~RSpecies()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a3749fed57bf55e5677b4519b403598ba"></a>
+<a class="anchor" id="a7ffda464bbe610c372cac83e6e735023"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a3749fed57bf55e5677b4519b403598ba">chem::RSpecies::_as_reactants</a><code> [private]</code></td>
+          <td class="memname">std::vector&lt;<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&gt; <a class="el" href="classchem_1_1RSpecies.html#a7ffda464bbe610c372cac83e6e735023">chem::RSpecies::_as_reactants</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
+<p>Reactions calls <a class="el" href="classchem_1_1RSpecies.html#a2f69141d801e4660ab411953fef74ea2">addAsReactant()</a>, <a class="el" href="classchem_1_1RSpecies.html#ab8f32e15791cfddea7cf4cac5a39c0fa">removeAsReactant()</a> - which other classes should not call. </p>
 <p>a vector of <a class="el" href="classchem_1_1Reaction.html">Reactions</a> where this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> is a Reactant </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00063">63</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00061">61</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>Referenced by <a class="el" href="RSpecies_8cpp_source.html#l00026">activateAssocReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00139">addAsReactant()</a>, <a class="el" href="RSpecies_8h_source.html#l00232">beginReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00240">endReactantReactions()</a>, <a class="el" href="RSpecies_8cpp_source.html#l00036">passivateAssocReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00224">ReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00147">removeAsReactant()</a>, and <a class="el" href="RSpecies_8h_source.html#l00190">~RSpecies()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00149">addAsReactant()</a>, <a class="el" href="RSpecies_8h_source.html#l00245">beginReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00253">endReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00237">ReactantReactions()</a>, <a class="el" href="RSpecies_8h_source.html#l00157">removeAsReactant()</a>, and <a class="el" href="RSpecies_8h_source.html#l00202">~RSpecies()</a>.</p>
 
 </div>
 </div>
@@ -1092,30 +898,11 @@ Friends</h2></td></tr>
 <div class="memdoc">
 
 <p>Current copy number of this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a>. </p>
+<p>this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> (usually when a single step of this <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> occurs) </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00066">66</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00064">64</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00118">down()</a>, <a class="el" href="RSpecies_8h_source.html#l00205">getN()</a>, <a class="el" href="RSpecies_8h_source.html#l00090">setN()</a>, and <a class="el" href="RSpecies_8h_source.html#l00102">up()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="acd60296c77857284cd935cb6faaf4200"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacechem.html#a09aea7e5a24368c13cd7d8d25b4d884e">RSpeciesCopyNChangedSignal</a>* <a class="el" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200">chem::RSpecies::_signal</a><code> [private]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Can be used to broadcast a signal associated with change of n of. </p>
-<p>this <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> (usually when a single step of this <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> occurs) </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00068">68</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00220">isSignaling()</a>, <a class="el" href="RSpecies_8cpp_source.html#l00046">startSignaling()</a>, <a class="el" href="RSpecies_8cpp_source.html#l00050">stopSignaling()</a>, and <a class="el" href="RSpecies_8h_source.html#l00190">~RSpecies()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00128">down()</a>, <a class="el" href="RSpecies_8h_source.html#l00224">getN()</a>, <a class="el" href="RSpecies_8h_source.html#l00099">setN()</a>, and <a class="el" href="RSpecies_8h_source.html#l00112">up()</a>.</p>
 
 </div>
 </div>
@@ -1132,28 +919,24 @@ Friends</h2></td></tr>
 
 <p>reference to the <b>parent</b> <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> object </p>
 
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00065">65</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00063">63</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
-<p>Referenced by <a class="el" href="RSpecies_8cpp_source.html#l00021">getFullName()</a>, and <a class="el" href="RSpecies_8h_source.html#l00211">getSpecies()</a>.</p>
+<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00227">getSpecies()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a189084cfe75e004f42a6a27b2c1c09ad"></a>
+<a class="anchor" id="af22c5fa6d6a8be2cd26b77fc4cbb820f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad">chem::RSpecies::_ulim</a><code> [private]</code></td>
+          <td class="memname">friend <a class="el" href="classchem_1_1RSpecies.html#af22c5fa6d6a8be2cd26b77fc4cbb820f">chem::RSpecies::Species</a><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off. </p>
-
-<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00067">67</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
-
-<p>Referenced by <a class="el" href="RSpecies_8h_source.html#l00118">down()</a>, <a class="el" href="RSpecies_8h_source.html#l00098">getUpperLimitForN()</a>, <a class="el" href="RSpecies_8h_source.html#l00094">setUpperLimitForN()</a>, and <a class="el" href="RSpecies_8h_source.html#l00102">up()</a>.</p>
+<p>Definition at line <a class="el" href="RSpecies_8h_source.html#l00058">58</a> of file <a class="el" href="RSpecies_8h_source.html">RSpecies.h</a>.</p>
 
 </div>
 </div>
@@ -1168,7 +951,7 @@ Friends</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1RSpecies.html">RSpecies</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:27 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

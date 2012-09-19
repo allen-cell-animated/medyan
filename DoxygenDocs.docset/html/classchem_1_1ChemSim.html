@@ -144,10 +144,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a80f99f736b36adacb3888052f6ab933d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment is not allowed.  <a href="#a80f99f736b36adacb3888052f6ab933d"></a><br/></td></tr>
 <tr class="memitem:a691cc53afccbda480a674b7f3014ac72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a691cc53afccbda480a674b7f3014ac72">initialize</a> ()</td></tr>
 <tr class="memdesc:a691cc53afccbda480a674b7f3014ac72"><td class="mdescLeft">&#160;</td><td class="mdescRight">After all initial reactions have been added via addReaction(...) method, invoke <a class="el" href="classchem_1_1ChemSim.html#a691cc53afccbda480a674b7f3014ac72" title="After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to...">initialize()</a> prior to invoking <a class="el" href="classchem_1_1ChemSim.html#a1cc6ec051c2f0124bfa327816443b24b" title="Run the chemical dynamics for a specific number of steps.">run()</a>  <a href="#a691cc53afccbda480a674b7f3014ac72"></a><br/></td></tr>
-<tr class="memitem:a9416fd66c400440bd13779a3060a1ec0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0">addReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memdesc:a9416fd66c400440bd13779a3060a1ec0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the chemical network which needs to be simulated.  <a href="#a9416fd66c400440bd13779a3060a1ec0"></a><br/></td></tr>
-<tr class="memitem:a50f196d75b70e55e0257f20851f8aacf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a50f196d75b70e55e0257f20851f8aacf">removeReaction</a> (<a class="el" href="classchem_1_1Reaction.html">Reaction</a> *r)</td></tr>
-<tr class="memdesc:a50f196d75b70e55e0257f20851f8aacf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the simulated chemical network.  <a href="#a50f196d75b70e55e0257f20851f8aacf"></a><br/></td></tr>
+<tr class="memitem:a5e3df263e6dc6f2b6c174bd6b5cddee9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a5e3df263e6dc6f2b6c174bd6b5cddee9">addReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memdesc:a5e3df263e6dc6f2b6c174bd6b5cddee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the chemical network which needs to be simulated.  <a href="#a5e3df263e6dc6f2b6c174bd6b5cddee9"></a><br/></td></tr>
+<tr class="memitem:a1949fb943a9e5e463d39122c29827e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a1949fb943a9e5e463d39122c29827e06">removeReaction</a> (<a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *r)</td></tr>
+<tr class="memdesc:a1949fb943a9e5e463d39122c29827e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the simulated chemical network.  <a href="#a1949fb943a9e5e463d39122c29827e06"></a><br/></td></tr>
 <tr class="memitem:a1cc6ec051c2f0124bfa327816443b24b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a1cc6ec051c2f0124bfa327816443b24b">run</a> (int steps)</td></tr>
 <tr class="memdesc:a1cc6ec051c2f0124bfa327816443b24b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the chemical dynamics for a specific number of steps.  <a href="#a1cc6ec051c2f0124bfa327816443b24b"></a><br/></td></tr>
 <tr class="memitem:a95687a56c1c6197aa7513638b8ace4da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemSim.html#a95687a56c1c6197aa7513638b8ace4da">printReactions</a> () const </td></tr>
@@ -223,14 +223,14 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a9416fd66c400440bd13779a3060a1ec0"></a>
+<a class="anchor" id="a5e3df263e6dc6f2b6c174bd6b5cddee9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0">chem::ChemSim::addReaction</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1ChemSim.html#a5e3df263e6dc6f2b6c174bd6b5cddee9">chem::ChemSim::addReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td></td>
         </tr>
@@ -238,11 +238,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r to the chemical network which needs to be simulated. </p>
+<p>Add <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r to the chemical network which needs to be simulated. </p>
 
 <p>Definition at line <a class="el" href="ChemSim_8cpp_source.html#l00021">21</a> of file <a class="el" href="ChemSim_8cpp_source.html">ChemSim.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf">chem::ChemSimImpl::addReaction()</a>.</p>
+<p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944">chem::ChemSimImpl::addReaction()</a>.</p>
+
+<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00265">chem::Compartment::addChemSimReactions()</a>.</p>
 
 </div>
 </div>
@@ -265,6 +267,8 @@ Private Attributes</h2></td></tr>
 <p>Definition at line <a class="el" href="ChemSim_8cpp_source.html#l00033">33</a> of file <a class="el" href="ChemSim_8cpp_source.html">ChemSim.cpp</a>.</p>
 
 <p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc">chem::ChemSimImpl::initialize()</a>.</p>
+
+<p>Referenced by <a class="el" href="main_8cpp_source.html#l00059">main()</a>.</p>
 
 </div>
 </div>
@@ -309,14 +313,14 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a50f196d75b70e55e0257f20851f8aacf"></a>
+<a class="anchor" id="a1949fb943a9e5e463d39122c29827e06"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classchem_1_1ChemSim.html#a50f196d75b70e55e0257f20851f8aacf">chem::ChemSim::removeReaction</a> </td>
+          <td class="memname">void <a class="el" href="classchem_1_1ChemSim.html#a1949fb943a9e5e463d39122c29827e06">chem::ChemSim::removeReaction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1Reaction.html">Reaction</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionBase.html">ReactionBase</a> *&#160;</td>
           <td class="paramname"><em>r</em></td><td>)</td>
           <td></td>
         </tr>
@@ -324,11 +328,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r from the simulated chemical network. </p>
+<p>Remove <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> *r from the simulated chemical network. </p>
 
 <p>Definition at line <a class="el" href="ChemSim_8cpp_source.html#l00025">25</a> of file <a class="el" href="ChemSim_8cpp_source.html">ChemSim.cpp</a>.</p>
 
-<p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a">chem::ChemSimImpl::removeReaction()</a>.</p>
+<p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148">chem::ChemSimImpl::removeReaction()</a>.</p>
 
 </div>
 </div>
@@ -352,6 +356,8 @@ Private Attributes</h2></td></tr>
 <p>Definition at line <a class="el" href="ChemSim_8cpp_source.html#l00029">29</a> of file <a class="el" href="ChemSim_8cpp_source.html">ChemSim.cpp</a>.</p>
 
 <p>References <a class="el" href="ChemSim_8h_source.html#l00066">_pimpl</a>, and <a class="el" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49">chem::ChemSimImpl::run()</a>.</p>
+
+<p>Referenced by <a class="el" href="main_8cpp_source.html#l00059">main()</a>.</p>
 
 </div>
 </div>
@@ -386,7 +392,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1ChemSim.html">ChemSim</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:27 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

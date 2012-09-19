@@ -4,7 +4,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 CXX = /opt/local/bin/g++-mp-4.7
 DEBUG = -g
 FAST = -O3 -ffast-math
-LDLIBS = -L../ -L/usr/local/lib/ -L/usr/local/gcc47/gtest-1.6.0/lib/.libs -lcyto -lgtest -lgtest_main 
+LDLIBS = -L../ -L/usr/local/lib/ -L/usr/local/gcc47/gtest-1.6.0/lib/.libs -lcyto -lgtest -lgtest_main -lboost_system
 
 # $(DEBUG) $(FAST)
 
@@ -17,7 +17,7 @@ gtest-cyto: $(OBJECTS)
 	$(CXX) $(LDFLAGS) -o gtest-cyto $(OBJECTS) $(LDLIBS)
 
 test: gtest-cyto
-	export DYLD_LIBRARY_PATH=/usr/local/gcc47/gtest-1.6.0/lib/.libs:/Users/papoian/Dropbox/Codes/CytoSim/CytoSim:$DYLD_LIBRARY_PATH
+	export DYLD_LIBRARY_PATH=/usr/local/gcc47/gtest-1.6.0/lib/.libs:/Users/papoian/Dropbox/Codes/CytoSim/CytoSim:/usr/local/lib/:/opt/local/lib
 	./gtest-cyto
 
 %.o: %.cpp 

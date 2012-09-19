@@ -12,7 +12,8 @@
 
 
 
-Inheritance diagram for chem\-:\-:Species\-:\nopagebreak
+Inheritance diagram for chem\-:\-:Species\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -21,7 +22,8 @@ Inheritance diagram for chem\-:\-:Species\-:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for chem\-:\-:Species\-:\nopagebreak
+Collaboration diagram for chem\-:\-:Species\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -45,6 +47,14 @@ Collaboration diagram for chem\-:\-:Species\-:\nopagebreak
 \begin{DoxyCompactList}\small\item\em Move assignment is needed for the same reasons as move constructor. \end{DoxyCompactList}\item 
 virtual \hyperlink{classchem_1_1Species}{Species} $\ast$ \hyperlink{classchem_1_1Species_acf0054a3704627698ba91293e8d0d370}{clone} ()
 \item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Species_acdc83314b339310022d56e024f124a34}{get\-Parent} ()
+\item 
+void \hyperlink{classchem_1_1Species_a50e1e828d0b8a03efc9354e2c00174f5}{set\-Parent} (\hyperlink{classchem_1_1Composite}{Composite} $\ast$other)
+\item 
+bool \hyperlink{classchem_1_1Species_a6ddddc5be2b0e4427486f80a891879b3}{has\-Parent} () const 
+\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Species_aa5931e2aae4856c1b438691c23ada5aa}{get\-Root} ()
+\item 
 \hyperlink{classchem_1_1RSpecies}{R\-Species} \& \hyperlink{classchem_1_1Species_a1719a8155a69e9a62593d23d4bfc8514}{get\-R\-Species} ()
 \begin{DoxyCompactList}\small\item\em Return a reference to \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
 const \hyperlink{classchem_1_1RSpecies}{R\-Species} \& \hyperlink{classchem_1_1Species_a438dae186317809effdd040ed38c568b}{get\-R\-Species} () const 
@@ -53,57 +63,25 @@ void \hyperlink{classchem_1_1Species_af10a33a212fdb986fb93613e9c219f7a}{set\-N} 
 \begin{DoxyCompactList}\small\item\em Sets the copy number for this \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
 \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1Species_af7c9f51060b84169b428a7796dad6dca}{get\-N} () const 
 \begin{DoxyCompactList}\small\item\em Return the current copy number of this \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
-\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1Species_a05fbe0a05f028beb1bb729f19d44a56a}{get\-Upper\-Limit\-For\-N} () const 
-\begin{DoxyCompactList}\small\item\em Return the upper limit for the copy number of this \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
 std\-::string \hyperlink{classchem_1_1Species_aa32c8f7fb344c68539a927c6a7f916c7}{get\-Name} () const 
 \begin{DoxyCompactList}\small\item\em Return this \hyperlink{classchem_1_1Species}{Species}' name. \end{DoxyCompactList}\item 
 int \hyperlink{classchem_1_1Species_a330ef4514a8979a6ea0e6f71ed5cb820}{get\-Molecule} () const 
 \begin{DoxyCompactList}\small\item\em Return the molecule index associated with this \hyperlink{classchem_1_1Species}{Species}' (as int) \end{DoxyCompactList}\item 
-bool \hyperlink{classchem_1_1Species_aa412f592e88600b48e3df591fc4cd655}{is\-Signaling} () const 
-\begin{DoxyCompactList}\small\item\em Return true if this \hyperlink{classchem_1_1Species}{Species} emits signals on copy number change. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1Species_a2d3d9f6e7c7d9c7bdd87ff5373a7d08c}{start\-Signaling} ()
-\begin{DoxyCompactList}\small\item\em Set the signaling behavior of this \hyperlink{classchem_1_1Species}{Species} Gillespie-\/like simulation algorithm) \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1Species_a9d34195d05f3e35e00dd20892ff7393b}{stop\-Signaling} ()
-\begin{DoxyCompactList}\small\item\em Destroy the signal associated with this \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
-boost\-::signals2\-::connection \hyperlink{classchem_1_1Species_a9a582e18e231a65761cb10c14d0a0a68}{connect} (std\-::function$<$ void(\hyperlink{classchem_1_1RSpecies}{R\-Species} $\ast$, int)$>$ const \&R\-Species\-\_\-callback, int priority=5)
-\begin{DoxyCompactList}\small\item\em Connect the callback, rspecies\-\_\-callback to a signal corresponding to \hyperlink{classchem_1_1RSpecies}{R\-Species} $\ast$s. \end{DoxyCompactList}\item 
 virtual \hyperlink{classchem_1_1Species_afb5803da12a3192f0c1b5bcbea4054d7}{$\sim$\-Species} () noexcept
 \begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\item 
 virtual std\-::string \hyperlink{classchem_1_1Species_a7ac7196a7146f63e297d0995c6081f4b}{get\-Full\-Name} () const 
 \begin{DoxyCompactList}\small\item\em Return the full name of this \hyperlink{classchem_1_1Species}{Species} in a std\-::string format (e.\-g. \char`\"{}\-Arp2/3\{\-Bulk\}\char`\"{}. \end{DoxyCompactList}\item 
-virtual bool \hyperlink{classchem_1_1Species_ac01be786c36974eb1e288b1bfdbf02f2}{is\-\_\-equal} (const \hyperlink{classchem_1_1Species}{Species} \&b) const 
-\begin{DoxyCompactList}\small\item\em Default implementation returns true; subclasses should specialize it, if needed. \end{DoxyCompactList}\item 
 virtual size\-\_\-t \hyperlink{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}{count\-Species} () const 
-\item 
-virtual bool \hyperlink{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{apply} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v)
-\item 
-virtual bool \hyperlink{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{apply\-\_\-if} (\hyperlink{classchem_1_1ConditionalVisitor}{Conditional\-Visitor} \&v)
-\item 
-\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{get\-Parent} ()
-\item 
-void \hyperlink{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{set\-Parent} (\hyperlink{classchem_1_1Composite}{Composite} $\ast$other)
-\item 
-bool \hyperlink{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{is\-Root} () const 
-\item 
-\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{get\-Root} ()
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}{number\-Of\-Children} () const 
-\item 
-virtual bool \hyperlink{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{is\-Composite} () const 
-\item 
-virtual bool \hyperlink{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{is\-Species\-Container} () const 
-\item 
-virtual bool \hyperlink{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{is\-Reactions\-Container} () const 
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{count\-Reactions} () const 
 \end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 int \hyperlink{classchem_1_1Species_afc69264ab4c24ac17b7d1946b1b380f4}{\-\_\-molecule}
 \begin{DoxyCompactList}\small\item\em unique id identifying the molecule (e.\-g. the integer id corresponding to \char`\"{}\-Arp2/3\char`\"{}) \end{DoxyCompactList}\item 
-std\-::unique\-\_\-ptr$<$ \hyperlink{classchem_1_1RSpecies}{R\-Species} $>$ \hyperlink{classchem_1_1Species_ae6e8e6ad9e05b4eb3f28cf20249caa67}{\-\_\-rspecies}
-\begin{DoxyCompactList}\small\item\em pointer to \hyperlink{classchem_1_1RSpecies}{R\-Species}; \hyperlink{classchem_1_1Species}{Species} is responsible for creating and destroying \hyperlink{classchem_1_1RSpecies}{R\-Species} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\hyperlink{classchem_1_1RSpecies}{R\-Species} $\ast$ \hyperlink{classchem_1_1Species_aa6a2ec40f6f1b08c76a184d11571c570}{\-\_\-rspecies}
+\begin{DoxyCompactList}\small\item\em pointer to \hyperlink{classchem_1_1RSpecies}{R\-Species}; \hyperlink{classchem_1_1Species}{Species} is responsible for creating and destroying \hyperlink{classchem_1_1RSpecies}{R\-Species} \end{DoxyCompactList}\item 
+\hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Species_ae0743ec422b63dcb29b4cbfee484902d}{\-\_\-parent}
+\begin{DoxyCompactList}\small\item\em pointer to the \char`\"{}container\char`\"{} object holding this \hyperlink{classchem_1_1Species}{Species} (could be a nullptr) \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -151,7 +129,7 @@ Default Constructor; Should not be used by the end users -\/ only internally (al
 
 
 
-Definition at line 120 of file Species.\-h.
+Definition at line 121 of file Species.\-h.
 
 
 
@@ -187,7 +165,7 @@ The constructor for this base class of \hyperlink{classchem_1_1Species}{Species}
 \end{DoxyParams}
 
 
-Definition at line 131 of file Species.\-h.
+Definition at line 132 of file Species.\-h.
 
 
 
@@ -205,15 +183,15 @@ References \-\_\-molecule, \-\_\-rspecies, chem\-::\-Species\-Names\-D\-B\-::\-I
 Copy constructor. 
 
 \begin{DoxyNote}{Note}
-The associated \hyperlink{classchem_1_1RSpecies}{R\-Species} subpart is not copied, but a new one is created. This means that the copied destination \hyperlink{classchem_1_1Species}{Species} won't be included in any \hyperlink{classchem_1_1Reaction}{Reaction} interactions of the original source \hyperlink{classchem_1_1Species}{Species}. The species copy numbered is copied to the target. 
+The associated \hyperlink{classchem_1_1RSpecies}{R\-Species} subpart is not copied, but a new one is created. This means that the copied destination \hyperlink{classchem_1_1Species}{Species} won't be included in any \hyperlink{classchem_1_1Reaction}{Reaction} interactions of the original source \hyperlink{classchem_1_1Species}{Species}. The species copy numbered is copied to the target. The A \hyperlink{classchem_1_1Species}{Species} parent attriute is not copied, but set to nullptr. 
 \end{DoxyNote}
 
 
-Definition at line 143 of file Species.\-h.
+Definition at line 145 of file Species.\-h.
 
 
 
-References \-\_\-rspecies, get\-N(), and get\-Upper\-Limit\-For\-N().
+References \-\_\-rspecies, and get\-N().
 
 \hypertarget{classchem_1_1Species_a4a2af0ad2237d60a579e53c0410a8627}{\index{chem\-::\-Species@{chem\-::\-Species}!Species@{Species}}
 \index{Species@{Species}!chem::Species@{chem\-::\-Species}}
@@ -226,9 +204,9 @@ References \-\_\-rspecies, get\-N(), and get\-Upper\-Limit\-For\-N().
 
 Move constructor -\/ makes it possible to easily add \hyperlink{classchem_1_1Species}{Species} to S\-T\-L containers, such as vector$<$\-Species$>$ One has to be careful with vector$<$\-Species$>$ as opposed to vector$<$\-Species$\ast$$>$. 
 
-The latter is \char`\"{}safe\char`\"{} in terms of being internally moved around by vector.\-resize, etc., but vector$<$\-Species$>$ would copy \hyperlink{classchem_1_1Species}{Species} if a move constructor is not available. This will then destruct the original \hyperlink{classchem_1_1Species}{Species} (with its associated \hyperlink{classchem_1_1RSpecies}{R\-Species}), hence, the \hyperlink{classchem_1_1Reaction}{Reaction} network of the \hyperlink{classchem_1_1Species}{Species} will be lost. Since this behavior is most likely not desired or unacceptable, the internal vector operations should only \char`\"{}move\char`\"{} the \hyperlink{classchem_1_1Species}{Species} around, without copying. Moving transfers the \hyperlink{classchem_1_1RSpecies}{R\-Species} pointer from source to target, stealing resources from the source, leaving it for destruction. 
+The latter is \char`\"{}safe\char`\"{} in terms of being internally moved around by vector.\-resize, etc., but vector$<$\-Species$>$ would copy \hyperlink{classchem_1_1Species}{Species} if a move constructor is not available. This will then destruct the original \hyperlink{classchem_1_1Species}{Species} (with its associated \hyperlink{classchem_1_1RSpecies}{R\-Species}), hence, the \hyperlink{classchem_1_1Reaction}{Reaction} network of the \hyperlink{classchem_1_1Species}{Species} will be lost. Since this behavior is most likely not desired or unacceptable, the internal vector operations should only \char`\"{}move\char`\"{} the \hyperlink{classchem_1_1Species}{Species} around, without copying. Moving transfers the \hyperlink{classchem_1_1RSpecies}{R\-Species} pointer from source to target, stealing resources from the source, leaving it for destruction. The \hyperlink{classchem_1_1Species}{Species} parent attriute is moved it. 
 
-Definition at line 156 of file Species.\-h.
+Definition at line 162 of file Species.\-h.
 
 \hypertarget{classchem_1_1Species_afb5803da12a3192f0c1b5bcbea4054d7}{\index{chem\-::\-Species@{chem\-::\-Species}!$\sim$\-Species@{$\sim$\-Species}}
 \index{$\sim$\-Species@{$\sim$\-Species}!chem::Species@{chem\-::\-Species}}
@@ -246,49 +224,15 @@ noexcept is important here. Otherwise, gcc flags the constructor as potentially 
 \end{DoxyNote}
 
 
-Definition at line 252 of file Species.\-h.
+Definition at line 276 of file Species.\-h.
+
+
+
+References \-\_\-rspecies.
 
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{\index{chem\-::\-Species@{chem\-::\-Species}!apply@{apply}}
-\index{apply@{apply}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply} (
-\begin{DoxyParamCaption}
-\item[{{\bf Visitor} \&}]{v}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}
-
-
-Reimplemented in \hyperlink{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}{chem\-::\-Composite}.
-
-
-
-Definition at line 24 of file Component.\-cpp.
-
-
-
-References chem\-::\-Visitor\-::visit().
-
-\hypertarget{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{\index{chem\-::\-Species@{chem\-::\-Species}!apply\-\_\-if@{apply\-\_\-if}}
-\index{apply\-\_\-if@{apply\-\_\-if}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::apply\-\_\-if} (
-\begin{DoxyParamCaption}
-\item[{{\bf Conditional\-Visitor} \&}]{v}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}
-
-
-Reimplemented in \hyperlink{classchem_1_1Composite_ac0ef45069901807e72d478ec59736ee4}{chem\-::\-Composite}.
-
-
-
-Definition at line 28 of file Component.\-cpp.
-
-
-
-References chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
-
 \hypertarget{classchem_1_1Species_acf0054a3704627698ba91293e8d0d370}{\index{chem\-::\-Species@{chem\-::\-Species}!clone@{clone}}
 \index{clone@{clone}!chem::Species@{chem\-::\-Species}}
 \subsubsection[{clone}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species}$\ast$ {\bf chem\-::\-Species\-::clone} (
@@ -302,56 +246,11 @@ Reimplemented in \hyperlink{classchem_1_1SpeciesDiffusing_a69edbe33378230389a2fb
 
 
 
-Definition at line 181 of file Species.\-h.
+Definition at line 195 of file Species.\-h.
 
 
 
 References Species().
-
-\hypertarget{classchem_1_1Species_a9a582e18e231a65761cb10c14d0a0a68}{\index{chem\-::\-Species@{chem\-::\-Species}!connect@{connect}}
-\index{connect@{connect}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::signals2\-::connection {\bf chem\-::\-Species\-::connect} (
-\begin{DoxyParamCaption}
-\item[{std\-::function$<$ void({\bf R\-Species} $\ast$, int)$>$ const \&}]{R\-Species\-\_\-callback, }
-\item[{int}]{priority = {\ttfamily 5}}
-\end{DoxyParamCaption}
-)}}\label{classchem_1_1Species_a9a582e18e231a65761cb10c14d0a0a68}
-
-
-Connect the callback, rspecies\-\_\-callback to a signal corresponding to \hyperlink{classchem_1_1RSpecies}{R\-Species} $\ast$s. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em std\-::function$<$void} & (\hyperlink{classchem_1_1RSpecies}{R\-Species} $\ast$, int)$>$ const \&R\-Species\-\_\-callback -\/ a function object to be called (a slot) \\
-\hline
-{\em int} & priority -\/ lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-a connection object which can be used to later disconnect this particular slot or temporarily block it 
-\end{DoxyReturn}
-
-
-Definition at line 25 of file Species.\-cpp.
-
-
-
-References \-\_\-rspecies, is\-Signaling(), and start\-Signaling().
-
-\hypertarget{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{\index{chem\-::\-Species@{chem\-::\-Species}!count\-Reactions@{count\-Reactions}}
-\index{count\-Reactions@{count\-Reactions}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{count\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::count\-Reactions} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}
-
-
-Reimplemented in \hyperlink{classchem_1_1Composite_a1cba92a649f230eab8e0cecb39632640}{chem\-::\-Composite}.
-
-
-
-Definition at line 37 of file Component.\-h.
 
 \hypertarget{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}{\index{chem\-::\-Species@{chem\-::\-Species}!count\-Species@{count\-Species}}
 \index{count\-Species@{count\-Species}!chem::Species@{chem\-::\-Species}}
@@ -362,11 +261,7 @@ Definition at line 37 of file Component.\-h.
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}
 
 
-Reimplemented from \hyperlink{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}{chem\-::\-Component}.
-
-
-
-Definition at line 262 of file Species.\-h.
+Definition at line 285 of file Species.\-h.
 
 \hypertarget{classchem_1_1Species_a7ac7196a7146f63e297d0995c6081f4b}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Full\-Name@{get\-Full\-Name}}
 \index{get\-Full\-Name@{get\-Full\-Name}!chem::Species@{chem\-::\-Species}}
@@ -381,15 +276,11 @@ Return the full name of this \hyperlink{classchem_1_1Species}{Species} in a std\
 
 
 
-Reimplemented from \hyperlink{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}{chem\-::\-Component}.
-
-
-
 Reimplemented in \hyperlink{classchem_1_1SpeciesDiffusing_a03eba31a17a3713e8c45cc0952e922bb}{chem\-::\-Species\-Diffusing}, and \hyperlink{classchem_1_1SpeciesBulk_a340d3f16e075352bf1cbab7918f5ca20}{chem\-::\-Species\-Bulk}.
 
 
 
-Definition at line 255 of file Species.\-h.
+Definition at line 283 of file Species.\-h.
 
 
 
@@ -397,7 +288,7 @@ References get\-Name().
 
 
 
-Referenced by chem\-::\-R\-Species\-::get\-Full\-Name(), and operator$<$$<$().
+Referenced by operator$<$$<$().
 
 \hypertarget{classchem_1_1Species_a330ef4514a8979a6ea0e6f71ed5cb820}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Molecule@{get\-Molecule}}
 \index{get\-Molecule@{get\-Molecule}!chem::Species@{chem\-::\-Species}}
@@ -412,11 +303,15 @@ Return the molecule index associated with this \hyperlink{classchem_1_1Species}{
 
 
 
-Definition at line 207 of file Species.\-h.
+Definition at line 231 of file Species.\-h.
 
 
 
 References \-\_\-molecule.
+
+
+
+Referenced by chem\-::\-Compartment\-::add\-Species(), chem\-::\-Compartment\-::add\-Species\-Unique(), and chem\-::\-Compartment\-::set\-Diffusion\-Rate().
 
 \hypertarget{classchem_1_1Species_af7c9f51060b84169b428a7796dad6dca}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-N@{get\-N}}
 \index{get\-N@{get\-N}!chem::Species@{chem\-::\-Species}}
@@ -431,11 +326,11 @@ Return the current copy number of this \hyperlink{classchem_1_1Species}{Species}
 
 
 
-Definition at line 198 of file Species.\-h.
+Definition at line 220 of file Species.\-h.
 
 
 
-References \-\_\-rspecies.
+References \-\_\-rspecies, and chem\-::\-R\-Species\-::get\-N().
 
 
 
@@ -454,7 +349,7 @@ Return this \hyperlink{classchem_1_1Species}{Species}' name.
 
 
 
-Definition at line 204 of file Species.\-h.
+Definition at line 228 of file Species.\-h.
 
 
 
@@ -464,43 +359,39 @@ References \-\_\-molecule, chem\-::\-Species\-Names\-D\-B\-::\-Instance(), and c
 
 Referenced by get\-Full\-Name(), chem\-::\-Species\-Bulk\-::get\-Full\-Name(), and chem\-::\-Species\-Diffusing\-::get\-Full\-Name().
 
-\hypertarget{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Parent@{get\-Parent}}
+\hypertarget{classchem_1_1Species_acdc83314b339310022d56e024f124a34}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Parent@{get\-Parent}}
 \index{get\-Parent@{get\-Parent}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{get\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Component\-::get\-Parent} (
+\subsubsection[{get\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Species\-::get\-Parent} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_acdc83314b339310022d56e024f124a34}
 
 
-Definition at line 25 of file Component.\-h.
-
-
-
-References chem\-::\-Component\-::\-\_\-parent.
+Definition at line 199 of file Species.\-h.
 
 
 
-Referenced by chem\-::\-Component\-::get\-Root().
+References \-\_\-parent.
 
-\hypertarget{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Root@{get\-Root}}
+
+
+Referenced by get\-Root().
+
+\hypertarget{classchem_1_1Species_aa5931e2aae4856c1b438691c23ada5aa}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Root@{get\-Root}}
 \index{get\-Root@{get\-Root}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{get\-Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ {\bf chem\-::\-Component\-::get\-Root} (
+\subsubsection[{get\-Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ {\bf chem\-::\-Species\-::get\-Root} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inherited\mbox{]}}}}\label{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}
+)}}\label{classchem_1_1Species_aa5931e2aae4856c1b438691c23ada5aa}
 
 
-Definition at line 17 of file Component.\-cpp.
-
-
-
-References chem\-::\-Component\-::get\-Parent(), chem\-::\-Component\-::get\-Root(), and chem\-::\-Component\-::is\-Root().
+Definition at line 35 of file Species.\-cpp.
 
 
 
-Referenced by chem\-::\-Component\-::get\-Root().
+References get\-Parent(), chem\-::\-Component\-::get\-Root(), and has\-Parent().
 
 \hypertarget{classchem_1_1Species_a1719a8155a69e9a62593d23d4bfc8514}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-R\-Species@{get\-R\-Species}}
 \index{get\-R\-Species@{get\-R\-Species}!chem::Species@{chem\-::\-Species}}
@@ -515,7 +406,7 @@ Return a reference to \hyperlink{classchem_1_1RSpecies}{R\-Species}.
 
 Notice that value copying won't be allowed because \hyperlink{classchem_1_1RSpecies}{R\-Species} is not copyable. 
 
-Definition at line 187 of file Species.\-h.
+Definition at line 209 of file Species.\-h.
 
 
 
@@ -523,7 +414,7 @@ References \-\_\-rspecies.
 
 
 
-Referenced by main().
+Referenced by chem\-::\-Chem\-Signal\-::connect(), and main().
 
 \hypertarget{classchem_1_1Species_a438dae186317809effdd040ed38c568b}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-R\-Species@{get\-R\-Species}}
 \index{get\-R\-Species@{get\-R\-Species}!chem::Species@{chem\-::\-Species}}
@@ -538,155 +429,30 @@ Return a constant reference to \hyperlink{classchem_1_1RSpecies}{R\-Species}.
 
 
 
-Definition at line 190 of file Species.\-h.
+Definition at line 212 of file Species.\-h.
 
 
 
 References \-\_\-rspecies.
 
-\hypertarget{classchem_1_1Species_a05fbe0a05f028beb1bb729f19d44a56a}{\index{chem\-::\-Species@{chem\-::\-Species}!get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}}
-\index{get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{get\-Upper\-Limit\-For\-N}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\-\_\-copy\-\_\-t} {\bf chem\-::\-Species\-::get\-Upper\-Limit\-For\-N} (
+\hypertarget{classchem_1_1Species_a6ddddc5be2b0e4427486f80a891879b3}{\index{chem\-::\-Species@{chem\-::\-Species}!has\-Parent@{has\-Parent}}
+\index{has\-Parent@{has\-Parent}!chem::Species@{chem\-::\-Species}}
+\subsubsection[{has\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Species\-::has\-Parent} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_a05fbe0a05f028beb1bb729f19d44a56a}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_a6ddddc5be2b0e4427486f80a891879b3}
 
 
-Return the upper limit for the copy number of this \hyperlink{classchem_1_1Species}{Species}. 
+Definition at line 203 of file Species.\-h.
 
 
 
-Definition at line 201 of file Species.\-h.
+References \-\_\-parent.
 
 
 
-References \-\_\-rspecies.
-
-
-
-Referenced by operator=(), and Species().
-
-\hypertarget{classchem_1_1Species_ac01be786c36974eb1e288b1bfdbf02f2}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-\_\-equal@{is\-\_\-equal}}
-\index{is\-\_\-equal@{is\-\_\-equal}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Species\-::is\-\_\-equal} (
-\begin{DoxyParamCaption}
-\item[{const {\bf Species} \&}]{b}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Species_ac01be786c36974eb1e288b1bfdbf02f2}
-
-
-Default implementation returns true; subclasses should specialize it, if needed. 
-
-
-
-Definition at line 258 of file Species.\-h.
-
-\hypertarget{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-Composite@{is\-Composite}}
-\index{is\-Composite@{is\-Composite}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Composite} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}
-
-
-Definition at line 31 of file Component.\-h.
-
-\hypertarget{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-Reactions\-Container@{is\-Reactions\-Container}}
-\index{is\-Reactions\-Container@{is\-Reactions\-Container}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-Reactions\-Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Reactions\-Container} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}
-
-
-Reimplemented in \hyperlink{classchem_1_1Compartment_a260d8b2dc70c2834f5702db4743d18ff}{chem\-::\-Compartment}.
-
-
-
-Definition at line 33 of file Component.\-h.
-
-
-
-Referenced by chem\-::\-Composite\-::count\-Reactions().
-
-\hypertarget{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-Root@{is\-Root}}
-\index{is\-Root@{is\-Root}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-Root}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Component\-::is\-Root} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}
-
-
-Definition at line 27 of file Component.\-h.
-
-
-
-References chem\-::\-Component\-::\-\_\-parent.
-
-
-
-Referenced by chem\-::\-Component\-::get\-Root().
-
-\hypertarget{classchem_1_1Species_aa412f592e88600b48e3df591fc4cd655}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-Signaling@{is\-Signaling}}
-\index{is\-Signaling@{is\-Signaling}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Species\-::is\-Signaling} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_aa412f592e88600b48e3df591fc4cd655}
-
-
-Return true if this \hyperlink{classchem_1_1Species}{Species} emits signals on copy number change. 
-
-
-
-Definition at line 210 of file Species.\-h.
-
-
-
-References \-\_\-rspecies.
-
-
-
-Referenced by connect().
-
-\hypertarget{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{\index{chem\-::\-Species@{chem\-::\-Species}!is\-Species\-Container@{is\-Species\-Container}}
-\index{is\-Species\-Container@{is\-Species\-Container}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{is\-Species\-Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Species\-Container} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}
-
-
-Reimplemented in \hyperlink{classchem_1_1Compartment_a5b31a84f6a592c44ce8235eca96896af}{chem\-::\-Compartment}.
-
-
-
-Definition at line 32 of file Component.\-h.
-
-
-
-Referenced by chem\-::\-Composite\-::count\-Species().
-
-\hypertarget{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}{\index{chem\-::\-Species@{chem\-::\-Species}!number\-Of\-Children@{number\-Of\-Children}}
-\index{number\-Of\-Children@{number\-Of\-Children}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{number\-Of\-Children}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Component\-::number\-Of\-Children} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}
-
-
-Reimplemented in \hyperlink{classchem_1_1Composite_a89545dad587539c07acff13398e8ee7a}{chem\-::\-Composite}.
-
-
-
-Definition at line 30 of file Component.\-h.
+Referenced by get\-Root().
 
 \hypertarget{classchem_1_1Species_ae885477a490e183f1981cf2591cdbee8}{\index{chem\-::\-Species@{chem\-::\-Species}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::Species@{chem\-::\-Species}}
@@ -699,13 +465,13 @@ Definition at line 30 of file Component.\-h.
 
 Assignment operator An assignment A = B copies the name of B to A. 
 
-It destroys the \hyperlink{classchem_1_1Reaction}{Reaction} interactions of A, and resents them to a blank value (i.\-e. A won't be involced in any Reactions). B's \hyperlink{classchem_1_1Reaction}{Reaction} interactions are not copied. The copy number of B is copied to A. 
+It destroys the \hyperlink{classchem_1_1Reaction}{Reaction} interactions of A, and resents them to a blank value (i.\-e. A won't be involced in any Reactions). B's \hyperlink{classchem_1_1Reaction}{Reaction} interactions are not copied. The copy number of B is copied to A. The A \hyperlink{classchem_1_1Species}{Species} parent attriute is not copied, but set to nullptr. 
 
-Definition at line 165 of file Species.\-h.
+Definition at line 172 of file Species.\-h.
 
 
 
-References \-\_\-molecule, \-\_\-rspecies, get\-N(), and get\-Upper\-Limit\-For\-N().
+References \-\_\-molecule, \-\_\-parent, \-\_\-rspecies, and get\-N().
 
 \hypertarget{classchem_1_1Species_ae9344aa4bcd5fb1a511361bef72162f6}{\index{chem\-::\-Species@{chem\-::\-Species}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::Species@{chem\-::\-Species}}
@@ -723,11 +489,11 @@ Move assignment is needed for the same reasons as move constructor.
 \end{DoxySeeAlso}
 
 
-Definition at line 174 of file Species.\-h.
+Definition at line 186 of file Species.\-h.
 
 
 
-References \-\_\-molecule, and \-\_\-rspecies.
+References \-\_\-molecule, \-\_\-parent, and \-\_\-rspecies.
 
 \hypertarget{classchem_1_1Species_af10a33a212fdb986fb93613e9c219f7a}{\index{chem\-::\-Species@{chem\-::\-Species}!set\-N@{set\-N}}
 \index{set\-N@{set\-N}!chem::Species@{chem\-::\-Species}}
@@ -750,75 +516,34 @@ The operation does not emit any signals about the copy number change.
 \end{DoxyNote}
 
 
-Definition at line 195 of file Species.\-h.
+Definition at line 217 of file Species.\-h.
 
 
 
-References \-\_\-rspecies.
+References \-\_\-rspecies, and chem\-::\-R\-Species\-::set\-N().
 
-\hypertarget{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{\index{chem\-::\-Species@{chem\-::\-Species}!set\-Parent@{set\-Parent}}
+
+
+Referenced by main().
+
+\hypertarget{classchem_1_1Species_a50e1e828d0b8a03efc9354e2c00174f5}{\index{chem\-::\-Species@{chem\-::\-Species}!set\-Parent@{set\-Parent}}
 \index{set\-Parent@{set\-Parent}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{set\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Component\-::set\-Parent} (
+\subsubsection[{set\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Species\-::set\-Parent} (
 \begin{DoxyParamCaption}
 \item[{{\bf Composite} $\ast$}]{other}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_a50e1e828d0b8a03efc9354e2c00174f5}
 
 
-Definition at line 26 of file Component.\-h.
-
-
-
-References chem\-::\-Component\-::\-\_\-parent.
+Definition at line 201 of file Species.\-h.
 
 
 
-Referenced by chem\-::\-Compartment\-::add\-Reaction(), chem\-::\-Compartment\-::add\-Reaction\-Unique(), chem\-::\-Compartment\-::add\-Species(), and chem\-::\-Compartment\-::add\-Species\-Unique().
-
-\hypertarget{classchem_1_1Species_a2d3d9f6e7c7d9c7bdd87ff5373a7d08c}{\index{chem\-::\-Species@{chem\-::\-Species}!start\-Signaling@{start\-Signaling}}
-\index{start\-Signaling@{start\-Signaling}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{start\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Species\-::start\-Signaling} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_a2d3d9f6e7c7d9c7bdd87ff5373a7d08c}
-
-
-Set the signaling behavior of this \hyperlink{classchem_1_1Species}{Species} Gillespie-\/like simulation algorithm) 
+References \-\_\-parent.
 
 
 
-Definition at line 214 of file Species.\-h.
-
-
-
-References \-\_\-rspecies.
-
-
-
-Referenced by connect().
-
-\hypertarget{classchem_1_1Species_a9d34195d05f3e35e00dd20892ff7393b}{\index{chem\-::\-Species@{chem\-::\-Species}!stop\-Signaling@{stop\-Signaling}}
-\index{stop\-Signaling@{stop\-Signaling}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{stop\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Species\-::stop\-Signaling} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Species_a9d34195d05f3e35e00dd20892ff7393b}
-
-
-Destroy the signal associated with this \hyperlink{classchem_1_1Species}{Species}. 
-
-\begin{DoxyNote}{Note}
-To start signaling again, make\-Signaling(...) needs to be called 
-\end{DoxyNote}
-
-
-Definition at line 218 of file Species.\-h.
-
-
-
-References \-\_\-rspecies.
+Referenced by chem\-::\-Compartment\-::add\-Species(), and chem\-::\-Compartment\-::add\-Species\-Unique().
 
 
 
@@ -840,7 +565,7 @@ Return true if two \hyperlink{classchem_1_1Species}{Species} are not equal.
 \end{DoxySeeAlso}
 
 
-Definition at line 242 of file Species.\-h.
+Definition at line 266 of file Species.\-h.
 
 \hypertarget{classchem_1_1Species_a22987c5719b74c50465256ea5b9d80bf}{\index{chem\-::\-Species@{chem\-::\-Species}!operator==@{operator==}}
 \index{operator==@{operator==}!chem::Species@{chem\-::\-Species}}
@@ -854,12 +579,9 @@ Definition at line 242 of file Species.\-h.
 
 Returns true if two \hyperlink{classchem_1_1Species}{Species} objects are equal. 
 
-This function would accept derived class of \hyperlink{classchem_1_1Species}{Species}, such as \hyperlink{classchem_1_1SpeciesBulk}{Species\-Bulk} Two \hyperlink{classchem_1_1Species}{Species} are equal if their S\-Type(s) are equal (i.\-e. are of the same class), their names are equal and their copy numbers are equal Note that specialized versions can be defined in derived classes by re-\/implementing\-: \begin{DoxySeeAlso}{See also}
-virtual bool \hyperlink{classchem_1_1Species_ac01be786c36974eb1e288b1bfdbf02f2}{is\-\_\-equal(const Species\& b) const } 
-\end{DoxySeeAlso}
+This function would accept derived class of \hyperlink{classchem_1_1Species}{Species}, such as \hyperlink{classchem_1_1SpeciesBulk}{Species\-Bulk} Two \hyperlink{classchem_1_1Species}{Species} are equal if their S\-Type(s) are equal (i.\-e. are of the same class), their names are equal. 
 
-
-Definition at line 233 of file Species.\-h.
+Definition at line 257 of file Species.\-h.
 
 
 
@@ -879,9 +601,24 @@ Definition at line 116 of file Species.\-h.
 
 Referenced by get\-Molecule(), get\-Name(), operator=(), and Species().
 
-\hypertarget{classchem_1_1Species_ae6e8e6ad9e05b4eb3f28cf20249caa67}{\index{chem\-::\-Species@{chem\-::\-Species}!\-\_\-rspecies@{\-\_\-rspecies}}
+\hypertarget{classchem_1_1Species_ae0743ec422b63dcb29b4cbfee484902d}{\index{chem\-::\-Species@{chem\-::\-Species}!\-\_\-parent@{\-\_\-parent}}
+\index{\-\_\-parent@{\-\_\-parent}!chem::Species@{chem\-::\-Species}}
+\subsubsection[{\-\_\-parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ {\bf chem\-::\-Species\-::\-\_\-parent}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1Species_ae0743ec422b63dcb29b4cbfee484902d}
+
+
+pointer to the \char`\"{}container\char`\"{} object holding this \hyperlink{classchem_1_1Species}{Species} (could be a nullptr) 
+
+
+
+Definition at line 118 of file Species.\-h.
+
+
+
+Referenced by get\-Parent(), has\-Parent(), operator=(), and set\-Parent().
+
+\hypertarget{classchem_1_1Species_aa6a2ec40f6f1b08c76a184d11571c570}{\index{chem\-::\-Species@{chem\-::\-Species}!\-\_\-rspecies@{\-\_\-rspecies}}
 \index{\-\_\-rspecies@{\-\_\-rspecies}!chem::Species@{chem\-::\-Species}}
-\subsubsection[{\-\_\-rspecies}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unique\-\_\-ptr$<${\bf R\-Species}$>$ {\bf chem\-::\-Species\-::\-\_\-rspecies}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1Species_ae6e8e6ad9e05b4eb3f28cf20249caa67}
+\subsubsection[{\-\_\-rspecies}]{\setlength{\rightskip}{0pt plus 5cm}{\bf R\-Species}$\ast$ {\bf chem\-::\-Species\-::\-\_\-rspecies}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1Species_aa6a2ec40f6f1b08c76a184d11571c570}
 
 
 pointer to \hyperlink{classchem_1_1RSpecies}{R\-Species}; \hyperlink{classchem_1_1Species}{Species} is responsible for creating and destroying \hyperlink{classchem_1_1RSpecies}{R\-Species} 
@@ -892,7 +629,7 @@ Definition at line 117 of file Species.\-h.
 
 
 
-Referenced by connect(), get\-N(), get\-R\-Species(), get\-Upper\-Limit\-For\-N(), is\-Signaling(), operator=(), set\-N(), Species(), start\-Signaling(), and stop\-Signaling().
+Referenced by get\-N(), get\-R\-Species(), operator=(), set\-N(), Species(), and $\sim$\-Species().
 
 
 

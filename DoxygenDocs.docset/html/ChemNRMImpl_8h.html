@@ -113,6 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Defines</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">CytoSim/ChemNRMImpl.h File Reference</div>  </div>
@@ -125,6 +126,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="Reaction_8h_source.html">Reaction.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="ChemSimImpl_8h_source.html">ChemSimImpl.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="ChemRNode_8h_source.html">ChemRNode.h</a>&quot;</code><br/>
+<code>#include &lt;boost/pool/pool.hpp&gt;</code><br/>
+<code>#include &lt;boost/pool/pool_alloc.hpp&gt;</code><br/>
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ChemNRMImpl.h:</div>
 <div class="dyncontent">
@@ -147,29 +150,90 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html">chem::PQNode</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> stands for Priority Queue Node.  <a href="classchem_1_1PQNode.html#details">More...</a><br/></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNodeNRM.html">chem::RNodeNRM</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method.  <a href="classchem_1_1RNodeNRM.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> stands for <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Node Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method.  <a href="classchem_1_1RNodeNRM.html#details">More...</a><br/></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ChemNRMImpl.html">chem::ChemNRMImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> Method Implementation.  <a href="classchem_1_1ChemNRMImpl.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> stands for Chemical Next <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> Method Implementation.  <a href="classchem_1_1ChemNRMImpl.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacechem"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html">chem</a></td></tr>
-<tr class="memdesc:namespacechem"><td class="mdescLeft">&#160;</td><td class="mdescRight">The algorithm implemented here is based on the following reference: ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-1889 **. <br/></td></tr>
+<tr><td colspan="2"><h2><a name="define-members"></a>
+Defines</h2></td></tr>
+<tr class="memitem:ac7284cce00b645fa49b08ae6aecbdc11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ChemNRMImpl_8h.html#ac7284cce00b645fa49b08ae6aecbdc11">BOOST_POOL_MEM_PQNODE</a></td></tr>
+<tr class="memdesc:ac7284cce00b645fa49b08ae6aecbdc11"><td class="mdescLeft">&#160;</td><td class="mdescRight">The algorithm implemented here is based on the following reference: ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-1889 **.  <a href="#ac7284cce00b645fa49b08ae6aecbdc11"></a><br/></td></tr>
+<tr class="memitem:a6d805cd02e3606f51cda9faca85b1670"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ChemNRMImpl_8h.html#a6d805cd02e3606f51cda9faca85b1670">BOOST_POOL_MEM_RNODENRM</a></td></tr>
+<tr class="memitem:ad9d458cf298e6ecf4f6b58527b9e5281"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ChemNRMImpl_8h.html#ad9d458cf298e6ecf4f6b58527b9e5281">BOOST_POOL_MEM_HEAP_ELEMENT</a></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:aacd1d2bb93e0bb1b1af9bb1fbb5133ca"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+<tr class="memitem:a98412a4cd9bafe9f3edd66b3a68327a3"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+boost::fast_pool_allocator<br class="typebreak"/>
+&lt; PQNode &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a98412a4cd9bafe9f3edd66b3a68327a3">chem::fast_allocator_t</a></td></tr>
+<tr class="memitem:ad3c7e19583b71f442e2d969972ed21f9"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
 boost::heap::pairing_heap<br class="typebreak"/>
-&lt; PQNode &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">chem::boost_heap</a></td></tr>
-<tr class="memitem:a33be80d87771bff54f5cede2e5d81cd1"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+&lt; PQNode, <br class="typebreak"/>
+boost::heap::allocator<br class="typebreak"/>
+&lt; fast_allocator_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">chem::boost_heap</a></td></tr>
+<tr class="memitem:abf1718e53f56f85003559d20e531a1a4"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
 boost::heap::pairing_heap<br class="typebreak"/>
-&lt; PQNode &gt;::handle_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">chem::handle_t</a></td></tr>
+&lt; PQNode, <br class="typebreak"/>
+boost::heap::allocator<br class="typebreak"/>
+&lt; fast_allocator_t &gt;<br class="typebreak"/>
+ &gt;::handle_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">chem::handle_t</a></td></tr>
 </table>
+<hr/><h2>Define Documentation</h2>
+<a class="anchor" id="ad9d458cf298e6ecf4f6b58527b9e5281"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="ChemNRMImpl_8h.html#ad9d458cf298e6ecf4f6b58527b9e5281">BOOST_POOL_MEM_HEAP_ELEMENT</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00033">33</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac7284cce00b645fa49b08ae6aecbdc11"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="ChemNRMImpl_8h.html#ac7284cce00b645fa49b08ae6aecbdc11">BOOST_POOL_MEM_PQNODE</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>The algorithm implemented here is based on the following reference: ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-1889 **. </p>
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00031">31</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6d805cd02e3606f51cda9faca85b1670"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="ChemNRMImpl_8h.html#a6d805cd02e3606f51cda9faca85b1670">BOOST_POOL_MEM_RNODENRM</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00032">32</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="ChemNRMImpl_8h.html">ChemNRMImpl.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

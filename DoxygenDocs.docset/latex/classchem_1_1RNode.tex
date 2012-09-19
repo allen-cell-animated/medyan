@@ -25,9 +25,9 @@ Inheritance diagram for chem\-:\-:R\-Node\-:\nopagebreak
 virtual \hyperlink{classchem_1_1RNode_af39a9d08d697b5586dad42ce763b902d}{$\sim$\-R\-Node} ()
 \begin{DoxyCompactList}\small\item\em Dtor. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}{activate\-Reaction} ()=0
-\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{Reaction\-::activate\-Reaction()}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1ReactionBase_aeb6c8f208d4c6ed1e0149090647eb035}{Reaction\-::activate\-Reaction()}. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}{passivate\-Reaction} ()=0
-\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{Reaction\-::passivate\-Reaction()}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em This method is called by \hyperlink{classchem_1_1ReactionBase_a9fe4cf91fcff8c4aea65e759841c28fe}{Reaction\-::passivate\-Reaction()}. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}{is\-Passivated} () const =0
 \begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classchem_1_1Reaction}{Reaction} is currently passivated. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -67,15 +67,11 @@ Definition at line 18 of file Chem\-R\-Node.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}
 
 
-This method is called by \hyperlink{classchem_1_1Reaction_afae5d992f176c16a21ec38fcf3d83649}{Reaction\-::activate\-Reaction()}. 
+This method is called by \hyperlink{classchem_1_1ReactionBase_aeb6c8f208d4c6ed1e0149090647eb035}{Reaction\-::activate\-Reaction()}. 
 
 Its effect depends on the underlying stochastic simulatio algorithm. For example, in the N\-R\-M algorithm, a new tau and a are computed and the heap is updated. 
 
 Implemented in \hyperlink{classchem_1_1RNodeNRM_ae2fc1e8c09f0cda02da6cba29c6d0849}{chem\-::\-R\-Node\-N\-R\-M}, and \hyperlink{classchem_1_1RNodeGillespie_aefe90be75d811b0fa92234663c8d29ba}{chem\-::\-R\-Node\-Gillespie}.
-
-
-
-Referenced by chem\-::\-Reaction\-::activate\-Reaction\-Unconditional().
 
 \hypertarget{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}{\index{chem\-::\-R\-Node@{chem\-::\-R\-Node}!is\-Passivated@{is\-Passivated}}
 \index{is\-Passivated@{is\-Passivated}!chem::RNode@{chem\-::\-R\-Node}}
@@ -101,15 +97,11 @@ Implemented in \hyperlink{classchem_1_1RNodeNRM_ad6445c86ef589c51c8d0957d437f6c3
 )\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}
 
 
-This method is called by \hyperlink{classchem_1_1Reaction_a6990bf5dfc31f04bcab6bda8392174aa}{Reaction\-::passivate\-Reaction()}. 
+This method is called by \hyperlink{classchem_1_1ReactionBase_a9fe4cf91fcff8c4aea65e759841c28fe}{Reaction\-::passivate\-Reaction()}. 
 
 Its effect depends on the underlying stochastic simulatio algorithm. For example, in the N\-R\-M algorithm, a tau is set to infinity and the heap is updated. 
 
 Implemented in \hyperlink{classchem_1_1RNodeNRM_a1099526d4e797a6d033ad6f60b76dc12}{chem\-::\-R\-Node\-N\-R\-M}, and \hyperlink{classchem_1_1RNodeGillespie_a6b641601ec312a4169f07e2dcf797f41}{chem\-::\-R\-Node\-Gillespie}.
-
-
-
-Referenced by chem\-::\-Reaction\-::passivate\-Reaction().
 
 
 

@@ -7,7 +7,8 @@
 
 
 
-Inheritance diagram for chem\-:\-:Composite\-:\nopagebreak
+Inheritance diagram for chem\-:\-:Composite\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -73,6 +74,8 @@ virtual bool \hyperlink{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8
 virtual bool \hyperlink{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{is\-Species\-Container} () const 
 \item 
 virtual bool \hyperlink{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{is\-Reactions\-Container} () const 
+\item 
+virtual void \hyperlink{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}{print\-Self} ()
 \end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
@@ -130,6 +133,10 @@ Definition at line 39 of file Composite.\-h.
 
 References \-\_\-children.
 
+
+
+Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::initialize().
+
 \hypertarget{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply@{apply}}
 \index{apply@{apply}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply} (
@@ -185,7 +192,7 @@ References \-\_\-children.
 
 
 
-Referenced by apply(), apply\-\_\-if(), count\-Reactions(), count\-Species(), and number\-Of\-Children().
+Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::add\-Chem\-Sim\-Reactions(), apply(), apply\-\_\-if(), count\-Reactions(), count\-Species(), chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::get\-Compartment(), chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::initialize(), number\-Of\-Children(), and chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::print\-Self().
 
 \hypertarget{classchem_1_1Composite_a9c66ed039e22fdafc90627db067fea4b}{\index{chem\-::\-Composite@{chem\-::\-Composite}!children@{children}}
 \index{children@{children}!chem::Composite@{chem\-::\-Composite}}
@@ -272,7 +279,7 @@ Reimplemented from \hyperlink{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0
 
 
 
-Reimplemented in \hyperlink{classchem_1_1Compartment_a33a683e6aae89013fce7bde417f49ee1}{chem\-::\-Compartment}.
+Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_aeb15278bbc2c30f7de92ad03e12fbdd5}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$}, \hyperlink{classchem_1_1Compartment_a33a683e6aae89013fce7bde417f49ee1}{chem\-::\-Compartment}, and \hyperlink{classchem_1_1CompartmentsSimpleGrid_a9d1006f2fd5ab559bc3ff3f98249ea19}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$}.
 
 
 
@@ -314,7 +321,7 @@ References chem\-::\-Component\-::get\-Parent(), chem\-::\-Component\-::get\-Roo
 
 
 
-Referenced by chem\-::\-Component\-::get\-Root().
+Referenced by chem\-::\-Component\-::get\-Root(), chem\-::\-Reaction\-Base\-::get\-Root(), and chem\-::\-Species\-::get\-Root().
 
 \hypertarget{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{\index{chem\-::\-Composite@{chem\-::\-Composite}!is\-Composite@{is\-Composite}}
 \index{is\-Composite@{is\-Composite}!chem::Composite@{chem\-::\-Composite}}
@@ -414,6 +421,10 @@ Definition at line 56 of file Composite.\-h.
 
 References children().
 
+
+
+Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::print\-Self().
+
 \hypertarget{classchem_1_1Composite_a0089cc7bf318c99339d098018ede34c7}{\index{chem\-::\-Composite@{chem\-::\-Composite}!number\-Of\-Reactions@{number\-Of\-Reactions}}
 \index{number\-Of\-Reactions@{number\-Of\-Reactions}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{number\-Of\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Composite\-::number\-Of\-Reactions} (
@@ -423,7 +434,7 @@ References children().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a0089cc7bf318c99339d098018ede34c7}
 
 
-Reimplemented in \hyperlink{classchem_1_1Compartment_add01255fb00b50c58bd65edc66c25d7a}{chem\-::\-Compartment}.
+Reimplemented in \hyperlink{classchem_1_1Compartment_a83cbc46fd0bef477a1f3e779b93ca8d6}{chem\-::\-Compartment}.
 
 
 
@@ -442,7 +453,7 @@ Referenced by count\-Reactions().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a97512e021c76460f0b982d4ff16a91d5}
 
 
-Reimplemented in \hyperlink{classchem_1_1Compartment_a8c53c911ee4474486eb479d869b83a23}{chem\-::\-Compartment}.
+Reimplemented in \hyperlink{classchem_1_1Compartment_ac203d0d3da7bba141cc766f7281205aa}{chem\-::\-Compartment}.
 
 
 
@@ -451,6 +462,21 @@ Definition at line 58 of file Composite.\-h.
 
 
 Referenced by count\-Species().
+
+\hypertarget{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}{\index{chem\-::\-Composite@{chem\-::\-Composite}!print\-Self@{print\-Self}}
+\index{print\-Self@{print\-Self}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{print\-Self}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Component\-::print\-Self} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}
+
+
+Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_a2c7c92befc69c7033c34574f469d5fa8}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$}, \hyperlink{classchem_1_1Compartment_a4b1309d480039e985a7692030e9bca7b}{chem\-::\-Compartment}, and \hyperlink{classchem_1_1CompartmentsSimpleGrid_a5be8454b952a926dd6a7449ff27a3f67}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$}.
+
+
+
+Definition at line 38 of file Component.\-h.
 
 \hypertarget{classchem_1_1Composite_a1db2418dfbd583f05088fb4695fda677}{\index{chem\-::\-Composite@{chem\-::\-Composite}!remove\-Child@{remove\-Child}}
 \index{remove\-Child@{remove\-Child}!chem::Composite@{chem\-::\-Composite}}
@@ -481,10 +507,6 @@ Definition at line 26 of file Component.\-h.
 
 
 References chem\-::\-Component\-::\-\_\-parent.
-
-
-
-Referenced by chem\-::\-Compartment\-::add\-Reaction(), chem\-::\-Compartment\-::add\-Reaction\-Unique(), chem\-::\-Compartment\-::add\-Species(), and chem\-::\-Compartment\-::add\-Species\-Unique().
 
 
 

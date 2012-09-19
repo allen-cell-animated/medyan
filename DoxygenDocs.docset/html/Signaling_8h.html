@@ -100,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Defines</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,8 +112,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
 <div class="title">CytoSim/Signaling.h File Reference</div>  </div>
 </div><!--header-->
@@ -133,13 +132,6 @@ Include dependency graph for Signaling.h:</div>
 <map name="CytoSim_2Signaling_8h" id="CytoSim_2Signaling_8h">
 <area shape="rect" id="node17" href="utility_8h.html" title="utility.h" alt="" coords="1058,80,1117,107"/></map>
 </div>
-</div><div class="textblock"><div class="dynheader">
-This graph shows which files directly or indirectly include this file:</div>
-<div class="dyncontent">
-<div class="center"><img src="Signaling_8h__dep__incl.png" border="0" usemap="#CytoSim_2Signaling_8hdep" alt=""/></div>
-<map name="CytoSim_2Signaling_8hdep" id="CytoSim_2Signaling_8hdep">
-<area shape="rect" id="node3" href="ChemNRMImpl_8h.html" title="CytoSim/ChemNRMImpl.h" alt="" coords="109,80,280,107"/><area shape="rect" id="node9" href="RSpecies_8cpp.html" title="CytoSim/RSpecies.cpp" alt="" coords="304,80,459,107"/><area shape="rect" id="node11" href="Species_8cpp.html" title="CytoSim/Species.cpp" alt="" coords="483,80,628,107"/><area shape="rect" id="node5" href="ChemNRMImpl_8cpp.html" title="CytoSim/ChemNRMImpl.cpp" alt="" coords="5,155,192,181"/><area shape="rect" id="node7" href="Reaction_8cpp.html" title="CytoSim/Reaction.cpp" alt="" coords="216,155,365,181"/></map>
-</div>
 </div>
 <p><a href="Signaling_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -150,15 +142,6 @@ Classes</h2></td></tr>
 <tr><td colspan="2"><h2><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacechem"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html">chem</a></td></tr>
-<tr><td colspan="2"><h2><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a09aea7e5a24368c13cd7d8d25b4d884e"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-boost::signals2::signal&lt; void(RSpecies <br class="typebreak"/>
-*, int)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a09aea7e5a24368c13cd7d8d25b4d884e">chem::RSpeciesCopyNChangedSignal</a></td></tr>
-<tr class="memdesc:a09aea7e5a24368c13cd7d8d25b4d884e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> signal object that will be called by <a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a>, usually when requested by the reaction simulation algorithm.  <a href="#a09aea7e5a24368c13cd7d8d25b4d884e"></a><br/></td></tr>
-<tr class="memitem:a85c409cf931d658d253b62ab5ad35781"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-boost::signals2::signal&lt; void(Reaction *)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a85c409cf931d658d253b62ab5ad35781">chem::ReactionEventSignal</a></td></tr>
-<tr class="memdesc:a85c409cf931d658d253b62ab5ad35781"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> signal object that will be called by <a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a>, usually when requested by the reaction simulation algorithm.  <a href="#a85c409cf931d658d253b62ab5ad35781"></a><br/></td></tr>
 </table>
 </div><!-- contents -->
 </div>
@@ -166,7 +149,7 @@ boost::signals2::signal&lt; void(Reaction *)&gt;&#160;</td><td class="memItemRig
     <ul>
       <li class="navelem"><a class="el" href="Signaling_8h.html">Signaling.h</a>      </li>
 
-    <li class="footer">Generated on Thu Jul 12 2012 14:58:42 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

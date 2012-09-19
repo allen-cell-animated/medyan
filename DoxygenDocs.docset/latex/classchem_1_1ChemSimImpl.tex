@@ -26,9 +26,9 @@ virtual \hyperlink{classchem_1_1ChemSimImpl_a54ce9889cf7a09275d2c8257557a5be1}{$
 \item 
 virtual void \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{initialize} ()=0
 \begin{DoxyCompactList}\small\item\em After all initial reactions have been added via add\-Reaction(...) method, invoke \hyperlink{classchem_1_1ChemSimImpl_a250b43230ac66832bbcecf4f630f2fbc}{initialize()} prior to invoking \hyperlink{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{run()} \end{DoxyCompactList}\item 
-virtual void \hyperlink{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}{add\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)=0
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a2a9ea4429bf00103d923556559012944}{add\-Reaction} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r)=0
 \begin{DoxyCompactList}\small\item\em Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. \end{DoxyCompactList}\item 
-virtual void \hyperlink{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}{remove\-Reaction} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r)=0
+virtual void \hyperlink{classchem_1_1ChemSimImpl_a8a732fedbcb6ae7c5d4d4cec2b540148}{remove\-Reaction} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r)=0
 \begin{DoxyCompactList}\small\item\em Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classchem_1_1ChemSimImpl_a9f051e00a754fdd76d5e2b3a217f3a49}{run} (int steps)=0
 \begin{DoxyCompactList}\small\item\em Run the chemical dynamics for a specific number of steps. \end{DoxyCompactList}\item 
@@ -60,20 +60,20 @@ Definition at line 21 of file Chem\-Sim\-Impl.\-h.
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!add\-Reaction@{add\-Reaction}}
+\hypertarget{classchem_1_1ChemSimImpl_a2a9ea4429bf00103d923556559012944}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!add\-Reaction@{add\-Reaction}}
 \index{add\-Reaction@{add\-Reaction}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
 \subsubsection[{add\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::add\-Reaction} (
 \begin{DoxyParamCaption}
-\item[{{\bf Reaction} $\ast$}]{r}
+\item[{{\bf Reaction\-Base} $\ast$}]{r}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a9000e6ec731865360762f483dd7e91cf}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a2a9ea4429bf00103d923556559012944}
 
 
 Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the chemical network which needs to be simulated. 
 
 
 
-Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a1b325b27b22f443f99fce659ae78aeee}{chem\-::\-Chem\-N\-R\-M\-Impl}, \hyperlink{classchem_1_1ChemGillespieImpl_af013022938adb5f1bd34c7430ad1bfd6}{chem\-::\-Chem\-Gillespie\-Impl}, and \hyperlink{classchem_1_1ChemSimpleGillespieImpl_a0a4146dfe469c85258874f43a2de02a9}{chem\-::\-Chem\-Simple\-Gillespie\-Impl}.
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_afdd66d28d760064d5edc4472b8146a08}{chem\-::\-Chem\-N\-R\-M\-Impl}, \hyperlink{classchem_1_1ChemGillespieImpl_ad1e494223a112b5ab37ff82d9b61e951}{chem\-::\-Chem\-Gillespie\-Impl}, and \hyperlink{classchem_1_1ChemSimpleGillespieImpl_acd712834326710d436adc1f804d7ea67}{chem\-::\-Chem\-Simple\-Gillespie\-Impl}.
 
 
 
@@ -117,20 +117,20 @@ Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a7898a5e226789a39b51f8fb56cc8
 
 Referenced by chem\-::\-Chem\-Sim\-::print\-Reactions().
 
-\hypertarget{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!remove\-Reaction@{remove\-Reaction}}
+\hypertarget{classchem_1_1ChemSimImpl_a8a732fedbcb6ae7c5d4d4cec2b540148}{\index{chem\-::\-Chem\-Sim\-Impl@{chem\-::\-Chem\-Sim\-Impl}!remove\-Reaction@{remove\-Reaction}}
 \index{remove\-Reaction@{remove\-Reaction}!chem::ChemSimImpl@{chem\-::\-Chem\-Sim\-Impl}}
 \subsubsection[{remove\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Chem\-Sim\-Impl\-::remove\-Reaction} (
 \begin{DoxyParamCaption}
-\item[{{\bf Reaction} $\ast$}]{r}
+\item[{{\bf Reaction\-Base} $\ast$}]{r}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a00e43cfb099cb26e44d04a715b6cba0a}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classchem_1_1ChemSimImpl_a8a732fedbcb6ae7c5d4d4cec2b540148}
 
 
 Remove \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r from the simulated chemical network. 
 
 
 
-Implemented in \hyperlink{classchem_1_1ChemNRMImpl_ad3a2b84f69c444a55b60d21200537338}{chem\-::\-Chem\-N\-R\-M\-Impl}, \hyperlink{classchem_1_1ChemGillespieImpl_aab4d9fcdd42b90e72542b5b3af103d27}{chem\-::\-Chem\-Gillespie\-Impl}, and \hyperlink{classchem_1_1ChemSimpleGillespieImpl_ad86d7286f61d76db1de522ce333ce7de}{chem\-::\-Chem\-Simple\-Gillespie\-Impl}.
+Implemented in \hyperlink{classchem_1_1ChemNRMImpl_a529cafc541d6eb933a6c1bf5869e2d45}{chem\-::\-Chem\-N\-R\-M\-Impl}, \hyperlink{classchem_1_1ChemGillespieImpl_ac4b74e7076b022aec0928b24ec9ba3b5}{chem\-::\-Chem\-Gillespie\-Impl}, and \hyperlink{classchem_1_1ChemSimpleGillespieImpl_ab273400d1cd391350347463828905ab2}{chem\-::\-Chem\-Simple\-Gillespie\-Impl}.
 
 
 

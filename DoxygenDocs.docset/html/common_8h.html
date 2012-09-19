@@ -138,8 +138,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
 <tr class="memitem:ac331c2ee4410c5495c7d06314fdbc888"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#ac331c2ee4410c5495c7d06314fdbc888">TRACK_DEPENDENTS</a></td></tr>
-<tr class="memitem:a03fd44bcbf25c32054a4982f84f45259"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#a03fd44bcbf25c32054a4982f84f45259">TRACK_ZERO_COPY_N</a></td></tr>
-<tr class="memitem:a318b9661d7fcfe101415b83880576138"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#a318b9661d7fcfe101415b83880576138">TRACK_UPPER_COPY_N</a></td></tr>
+<tr class="memitem:a6181e591120e12507215c5a21ba9b2aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#a6181e591120e12507215c5a21ba9b2aa">BOOST_MEM_POOL</a></td></tr>
+<tr class="memitem:a8584922303a6a83690f6091592285a7f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#a8584922303a6a83690f6091592285a7f">BOOL_POOL_NSIZE</a>&#160;&#160;&#160;65536</td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a3503f321fd36304ee274141275cca586"><td class="memItemLeft" align="right" valign="top">typedef unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a></td></tr>
@@ -148,10 +148,40 @@ Functions</h2></td></tr>
 <tr class="memitem:abca55e6a21e0401c42bfb5da79ad3ad5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:adaf831a0b61083f29adf8fc6e8edab35"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#adaf831a0b61083f29adf8fc6e8edab35">max_ulim</a> = 1024</td></tr>
+<tr class="memitem:adaf831a0b61083f29adf8fc6e8edab35"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#adaf831a0b61083f29adf8fc6e8edab35">max_ulim</a> = 32</td></tr>
 <tr class="memitem:aa3ea98c7e5ad42511b3ec7e0e90e61a4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="common_8h.html#aa3ea98c7e5ad42511b3ec7e0e90e61a4">global_time</a></td></tr>
 </table>
 <hr/><h2>Define Documentation</h2>
+<a class="anchor" id="a8584922303a6a83690f6091592285a7f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="common_8h.html#a8584922303a6a83690f6091592285a7f">BOOL_POOL_NSIZE</a>&#160;&#160;&#160;65536</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="common_8h_source.html#l00018">18</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6181e591120e12507215c5a21ba9b2aa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="common_8h.html#a6181e591120e12507215c5a21ba9b2aa">BOOST_MEM_POOL</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="common_8h_source.html#l00017">17</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ac331c2ee4410c5495c7d06314fdbc888"></a>
 <div class="memitem">
 <div class="memproto">
@@ -167,36 +197,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a318b9661d7fcfe101415b83880576138"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define <a class="el" href="common_8h.html#a318b9661d7fcfe101415b83880576138">TRACK_UPPER_COPY_N</a></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Definition at line <a class="el" href="common_8h_source.html#l00014">14</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a03fd44bcbf25c32054a4982f84f45259"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define <a class="el" href="common_8h.html#a03fd44bcbf25c32054a4982f84f45259">TRACK_ZERO_COPY_N</a></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Definition at line <a class="el" href="common_8h_source.html#l00013">13</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
-
-</div>
-</div>
 <hr/><h2>Typedef Documentation</h2>
 <a class="anchor" id="a3503f321fd36304ee274141275cca586"></a>
 <div class="memitem">
@@ -209,7 +209,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="common_8h_source.html#l00018">18</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
+<p>Definition at line <a class="el" href="common_8h_source.html#l00022">22</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
 
 </div>
 </div>
@@ -228,11 +228,11 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="common_8h_source.html#l00022">22</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
+<p>Definition at line <a class="el" href="common_8h_source.html#l00026">26</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
 
 <p>References <a class="el" href="common_8cpp_source.html#l00011">global_time</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00058">chem::RNodeNRM::generateNewRandTau()</a>, <a class="el" href="ChemSimpleGillespieImpl_8cpp_source.html#l00044">chem::ChemSimpleGillespieImpl::makeStep()</a>, <a class="el" href="ChemGillespieImpl_8cpp_source.html#l00101">chem::ChemGillespieImpl::makeStep()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00083">chem::RNodeNRM::passivateReaction()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00114">chem::RNodeNRM::setTau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8cpp_source.html#l00116">chem::RNodeNRM::generateNewRandTau()</a>, <a class="el" href="main_8cpp_source.html#l00059">main()</a>, <a class="el" href="ChemSimpleGillespieImpl_8cpp_source.html#l00044">chem::ChemSimpleGillespieImpl::makeStep()</a>, <a class="el" href="ChemGillespieImpl_8cpp_source.html#l00101">chem::ChemGillespieImpl::makeStep()</a>, <a class="el" href="ChemNRMImpl_8cpp_source.html#l00141">chem::RNodeNRM::passivateReaction()</a>, and <a class="el" href="ChemNRMImpl_8h_source.html#l00138">chem::RNodeNRM::setTau()</a>.</p>
 
 </div>
 </div>
@@ -250,7 +250,7 @@ Variables</h2></td></tr>
 
 <p>Definition at line <a class="el" href="common_8cpp_source.html#l00011">11</a> of file <a class="el" href="common_8cpp_source.html">common.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemSimpleGillespieImpl_8h_source.html#l00054">chem::ChemSimpleGillespieImpl::syncGlobalTime()</a>, <a class="el" href="ChemGillespieImpl_8h_source.html#l00139">chem::ChemGillespieImpl::syncGlobalTime()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00196">chem::ChemNRMImpl::syncGlobalTime()</a>, and <a class="el" href="common_8h_source.html#l00022">tau()</a>.</p>
+<p>Referenced by <a class="el" href="ChemSimpleGillespieImpl_8h_source.html#l00054">chem::ChemSimpleGillespieImpl::syncGlobalTime()</a>, <a class="el" href="ChemGillespieImpl_8h_source.html#l00139">chem::ChemGillespieImpl::syncGlobalTime()</a>, <a class="el" href="ChemNRMImpl_8h_source.html#l00229">chem::ChemNRMImpl::syncGlobalTime()</a>, and <a class="el" href="common_8h_source.html#l00026">tau()</a>.</p>
 
 </div>
 </div>
@@ -259,13 +259,13 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="common_8h.html#adaf831a0b61083f29adf8fc6e8edab35">max_ulim</a> = 1024</td>
+          <td class="memname">const <a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="common_8h.html#adaf831a0b61083f29adf8fc6e8edab35">max_ulim</a> = 32</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="common_8h_source.html#l00019">19</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
+<p>Definition at line <a class="el" href="common_8h_source.html#l00023">23</a> of file <a class="el" href="common_8h_source.html">common.h</a>.</p>
 
 </div>
 </div>
@@ -275,7 +275,7 @@ Variables</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="common_8h.html">common.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

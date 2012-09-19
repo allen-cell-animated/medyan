@@ -143,6 +143,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a12604503b292d71658be54c9952afcbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dtor: we only reassign _rn to null, the actual pointer needs to be deleted somewhere else to avoid memory leaks.  <a href="#a12604503b292d71658be54c9952afcbd"></a><br/></td></tr>
 <tr class="memitem:a0ba52697bcbc5b2c4accb7dece0aff24"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#a0ba52697bcbc5b2c4accb7dece0aff24">operator&lt;</a> (<a class="el" href="classchem_1_1PQNode.html">PQNode</a> const &amp;rhs) const </td></tr>
 <tr class="memdesc:a0ba52697bcbc5b2c4accb7dece0aff24"><td class="mdescLeft">&#160;</td><td class="mdescRight">The PQ heap requires a comparision operator for ordering elements within the heap/.  <a href="#a0ba52697bcbc5b2c4accb7dece0aff24"></a><br/></td></tr>
+<tr class="memitem:a1364ee21435946152266840256b8dd3f"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#a1364ee21435946152266840256b8dd3f">operator new</a> (std::size_t size)</td></tr>
+<tr class="memdesc:a1364ee21435946152266840256b8dd3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advanced memory management.  <a href="#a1364ee21435946152266840256b8dd3f"></a><br/></td></tr>
+<tr class="memitem:af127d116cdefe86ba41005ef691affc1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#af127d116cdefe86ba41005ef691affc1">operator delete</a> (void *ptr) noexcept</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ae0ddd94f908ec800ae02f592e83c630d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#ae0ddd94f908ec800ae02f592e83c630d">_rn</a></td></tr>
@@ -159,7 +162,7 @@ Friends</h2></td></tr>
 <p>It is stored as an element of a heap, such as boost::heap::pairing_heap&lt;PQNode&gt;. There will be an associated heap handle which can be used to dynamically access <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a>'s fields (e.g. boost::heap::pairing_heap&lt;PQNode&gt;::handle_type)</p>
 <p>This is a simple structure which holds a pointer to <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a> and stores the last computed tau assoicated with this reaction. On some occasions tau needs to be recomputed, for example when another reaction took place which affects this reaction. handle_t of the corresponding heap element is used to get access to tau (and <a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>). </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00044">44</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00059">59</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a216292a150c44b3f2bfeca4518663663"></a>
 <div class="memitem">
@@ -185,7 +188,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note:</dt><dd>tau is set to infinity in the constructor </dd></dl>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00049">49</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00064">64</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
 </div>
 </div>
@@ -205,13 +208,53 @@ Friends</h2></td></tr>
 
 <p>Dtor: we only reassign _rn to null, the actual pointer needs to be deleted somewhere else to avoid memory leaks. </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00052">52</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00067">67</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00061">_rn</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00085">_rn</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="af127d116cdefe86ba41005ef691affc1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void chem::PQNode::operator delete </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00046">46</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1364ee21435946152266840256b8dd3f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * chem::PQNode::operator new </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Advanced memory management. </p>
+
+<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">38</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a0ba52697bcbc5b2c4accb7dece0aff24"></a>
 <div class="memitem">
 <div class="memproto">
@@ -230,9 +273,9 @@ Friends</h2></td></tr>
 <p>The PQ heap requires a comparision operator for ordering elements within the heap/. </p>
 <dl class="section note"><dt>Note:</dt><dd>In a bit of hack, the less operator is actually defined via real greater comparison of tau's of two corresponding <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> objects. We do this so the top PQ node has the smallest tau and not largest. </dd></dl>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00057">57</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00072">72</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00062">_tau</a>.</p>
+<p>References <a class="el" href="ChemNRMImpl_8h_source.html#l00086">_tau</a>.</p>
 
 </div>
 </div>
@@ -248,7 +291,7 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00065">65</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00089">89</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
 </div>
 </div>
@@ -263,7 +306,7 @@ Friends</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00066">66</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00090">90</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
 </div>
 </div>
@@ -281,9 +324,9 @@ Friends</h2></td></tr>
 
 <p>Pointer to the reaction node (<a class="el" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method.">RNodeNRM</a>) which this <a class="el" href="classchem_1_1PQNode.html" title="PQNode stands for Priority Queue Node.">PQNode</a> represents (or tracks) </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00061">61</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00085">85</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00052">~PQNode()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00067">~PQNode()</a>.</p>
 
 </div>
 </div>
@@ -300,14 +343,15 @@ Friends</h2></td></tr>
 
 <p>tau for this reaction for the Gibson-Bruck NRM algoritm </p>
 
-<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00062">62</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
+<p>Definition at line <a class="el" href="ChemNRMImpl_8h_source.html#l00086">86</a> of file <a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a>.</p>
 
-<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00057">operator&lt;()</a>.</p>
+<p>Referenced by <a class="el" href="ChemNRMImpl_8h_source.html#l00072">operator&lt;()</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>CytoSim/<a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a></li>
+<li>CytoSim/<a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div>
@@ -316,7 +360,7 @@ Friends</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1PQNode.html">PQNode</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

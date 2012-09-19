@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['haschildren',['hasChildren',['../classchem_1_1Component.html#aca92f700484a1ad36c2e656e307fe263',1,'chem::Component::hasChildren()'],['../classchem_1_1Composite.html#aa73520e07d39cc47662953f54ee1d1a7',1,'chem::Composite::hasChildren()']]]
+  ['hasparent',['hasParent',['../classchem_1_1ReactionBase.html#a6a789a4a17855b1c6184c438e4e40ff8',1,'chem::ReactionBase::hasParent()'],['../classchem_1_1Species.html#a6ddddc5be2b0e4427486f80a891879b3',1,'chem::Species::hasParent()']]]
 ];

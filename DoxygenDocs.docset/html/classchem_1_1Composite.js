@@ -21,6 +21,7 @@ var classchem_1_1Composite =
     [ "numberOfChildren", "classchem_1_1Composite.html#a89545dad587539c07acff13398e8ee7a", null ],
     [ "numberOfReactions", "classchem_1_1Composite.html#a0089cc7bf318c99339d098018ede34c7", null ],
     [ "numberOfSpecies", "classchem_1_1Composite.html#a97512e021c76460f0b982d4ff16a91d5", null ],
+    [ "printSelf", "classchem_1_1Component.html#a778911b6f9505f1d8a39fc39e093974e", null ],
     [ "removeChild", "classchem_1_1Composite.html#a1db2418dfbd583f05088fb4695fda677", null ],
     [ "setParent", "classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9", null ],
     [ "_children", "classchem_1_1Composite.html#a80fea5cefad1820315fbef6f8d7adf17", null ]

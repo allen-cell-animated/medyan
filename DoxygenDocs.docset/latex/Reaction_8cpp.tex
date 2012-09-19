@@ -4,7 +4,12 @@
 {\ttfamily \#include $<$iostream$>$}\\*
 {\ttfamily \#include \char`\"{}Reaction.\-h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}Chem\-R\-Node.\-h\char`\"{}}\\*
-Include dependency graph for Reaction.\-cpp\-:\nopagebreak
+{\ttfamily \#include \char`\"{}Composite.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Species\-Container.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$boost/pool/pool.\-hpp$>$}\\*
+{\ttfamily \#include $<$boost/pool/pool\-\_\-alloc.\-hpp$>$}\\*
+Include dependency graph for Reaction.\-cpp\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -15,9 +20,4 @@ Include dependency graph for Reaction.\-cpp\-:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 namespace \hyperlink{namespacechem}{chem}
-\begin{DoxyCompactList}\small\item\em The algorithm implemented here is based on the following reference\-: $\ast$$\ast$ Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-\/1889 $\ast$$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{Functions}
-\begin{DoxyCompactItemize}
-\item 
-std\-::ostream \& \hyperlink{namespacechem_a33c82bc525c0bdd911d321e69eb06cc4}{chem\-::operator$<$$<$} (std\-::ostream \&os, const Reaction \&rr)
 \end{DoxyCompactItemize}

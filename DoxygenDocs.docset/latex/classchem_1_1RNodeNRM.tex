@@ -21,7 +21,8 @@ Inheritance diagram for chem\-:\-:R\-Node\-N\-R\-M\-:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for chem\-:\-:R\-Node\-N\-R\-M\-:\nopagebreak
+Collaboration diagram for chem\-:\-:R\-Node\-N\-R\-M\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -31,7 +32,7 @@ Collaboration diagram for chem\-:\-:R\-Node\-N\-R\-M\-:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classchem_1_1RNodeNRM_a7ab2483c555b42b19a3274ffa9a44d8e}{R\-Node\-N\-R\-M} (\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r, \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} \&chem\-\_\-nrm)
+\hyperlink{classchem_1_1RNodeNRM_a4c5827a0d0682ecfbe7c9154ff5644ce}{R\-Node\-N\-R\-M} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r, \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} \&chem\-\_\-nrm)
 \begin{DoxyCompactList}\small\item\em Ctor\-: \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1RNodeNRM_a12d79f33bd69c1b58e18fa4de0d500df}{R\-Node\-N\-R\-M} (const \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} \&rhs)
 \begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
@@ -41,7 +42,7 @@ virtual \hyperlink{classchem_1_1RNodeNRM_ada0f6d009280070f3b89a22ab05c32a2}{$\si
 \begin{DoxyCompactList}\small\item\em Dtor\-: 1) Erases the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element in the heap via the handle; 2) The \hyperlink{classchem_1_1RNode}{R\-Node} pointer of the tracked \hyperlink{classchem_1_1Reaction}{Reaction} object is set to nullptr. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RNodeNRM_a33025de761dc8d29928f8e5b1148eff1}{generate\-New\-Rand\-Tau} ()
 \begin{DoxyCompactList}\small\item\em This methods recomputes the reaction propensity based on current coefficients and the rate, and then obtains a corresponding new tau drawn from an exponential distribution. \end{DoxyCompactList}\item 
-\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$ \hyperlink{classchem_1_1RNodeNRM_ab56b46ea4fdb4ed3cd3d9e478fbf3863}{get\-Reaction} () const 
+\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$ \hyperlink{classchem_1_1RNodeNRM_a8a96e9750901ff0629d43855ff096194}{get\-Reaction} () const 
 \begin{DoxyCompactList}\small\item\em Returns a pointer to the \hyperlink{classchem_1_1Reaction}{Reaction} which corresponds to this \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RNodeNRM_a9de7334d3f16fc695929e97d9d296282}{update\-Heap} ()
 \begin{DoxyCompactList}\small\item\em The heap is updated only with respect to the specific \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element which presumably was modified (e.\-g. \end{DoxyCompactList}\item 
@@ -49,7 +50,7 @@ double \hyperlink{classchem_1_1RNodeNRM_a570e4a825862fdf03d10e36fa186ba64}{get\-
 \begin{DoxyCompactList}\small\item\em Returns the tau from the the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RNodeNRM_aae070cd16c0acee98250c3d1bccd8fd0}{set\-Tau} (double \hyperlink{common_8h_abca55e6a21e0401c42bfb5da79ad3ad5}{tau})
 \begin{DoxyCompactList}\small\item\em Sets the tau of the the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element. Does not update the heap. \end{DoxyCompactList}\item 
-\hyperlink{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{handle\-\_\-t} \& \hyperlink{classchem_1_1RNodeNRM_af5334e740100ba592f15abfe18b971a7}{get\-Handle} ()
+\hyperlink{namespacechem_abf1718e53f56f85003559d20e531a1a4}{handle\-\_\-t} \& \hyperlink{classchem_1_1RNodeNRM_af5334e740100ba592f15abfe18b971a7}{get\-Handle} ()
 \begin{DoxyCompactList}\small\item\em Returns a handle to the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element, which can be used to access tau, for example. \end{DoxyCompactList}\item 
 double \hyperlink{classchem_1_1RNodeNRM_a5894ae93a6ef48f7b0bfa82add5bce5d}{get\-Propensity} () const 
 \begin{DoxyCompactList}\small\item\em Return the currently stored propensity, \char`\"{}a\char`\"{}, for this \hyperlink{classchem_1_1Reaction}{Reaction}. \end{DoxyCompactList}\item 
@@ -58,7 +59,7 @@ double \hyperlink{classchem_1_1RNodeNRM_adb047e14398dc54d6940158e408d504e}{re\-C
 int \hyperlink{classchem_1_1RNodeNRM_a1fd03a524da0a5ee5a63e9095b807bcf}{get\-Product\-Of\-Reactants} ()
 \begin{DoxyCompactList}\small\item\em Compute and return the product of reactant copy numbers. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RNodeNRM_a1294bf93224e88f4bb0a64282ef9f950}{make\-Step} ()
-\begin{DoxyCompactList}\small\item\em This method calls the corresponding \hyperlink{classchem_1_1Reaction_a1341d466157788c3d547da52c6c59502}{Reaction\-::make\-Step()} method of the underyling \hyperlink{classchem_1_1Reaction}{Reaction} object. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em This method calls the corresponding \hyperlink{classchem_1_1ReactionBase_acb5575b08ca39fc6dd7a571fb246806b}{Reaction\-::make\-Step()} method of the underyling \hyperlink{classchem_1_1Reaction}{Reaction} object. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1RNodeNRM_ae2fc1e8c09f0cda02da6cba29c6d0849}{activate\-Reaction} ()
 \begin{DoxyCompactList}\small\item\em When this method is called, a new tau is computed and the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element is updated in the heap. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1RNodeNRM_a1099526d4e797a6d033ad6f60b76dc12}{passivate\-Reaction} ()
@@ -68,15 +69,19 @@ bool \hyperlink{classchem_1_1RNodeNRM_ad6445c86ef589c51c8d0957d437f6c3c}{is\-Pas
 void \hyperlink{classchem_1_1RNodeNRM_a1855b936b240d7764907434421258c5a}{print\-Self} () const 
 \begin{DoxyCompactList}\small\item\em Print information about this \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} such as tau, a and the \hyperlink{classchem_1_1Reaction}{Reaction} which this \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} tracks. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RNodeNRM_ad8e5f9557c3ba701596aff928dc5270e}{print\-Dependents} () const 
-\begin{DoxyCompactList}\small\item\em Print the \hyperlink{classchem_1_1RNode}{R\-Node} objects which are dependents of this \hyperlink{classchem_1_1RNode}{R\-Node} (via the tracked \hyperlink{classchem_1_1Reaction}{Reaction} object dependencies) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Print the \hyperlink{classchem_1_1RNode}{R\-Node} objects which are dependents of this \hyperlink{classchem_1_1RNode}{R\-Node} (via the tracked \hyperlink{classchem_1_1Reaction}{Reaction} object dependencies) \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{classchem_1_1RNodeNRM_ae76175a4d99e9eb3389dce6c77c9edb6}{operator new} (std\-::size\-\_\-t size)
+\begin{DoxyCompactList}\small\item\em Advanced memory management. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1RNodeNRM_abe32c9de55bd8deb22c2894ae753b708}{operator delete} (void $\ast$ptr) noexcept
+\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} \& \hyperlink{classchem_1_1RNodeNRM_acff43a1b27a778b6534bd8010904f821}{\-\_\-chem\-\_\-nrm}
 \begin{DoxyCompactList}\small\item\em A reference to the \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} which containts the heap, random number generators, etc. \end{DoxyCompactList}\item 
-\hyperlink{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{handle\-\_\-t} \hyperlink{classchem_1_1RNodeNRM_ad124c85b0f1b479cf0c1f4bf75230c19}{\-\_\-handle}
+\hyperlink{namespacechem_abf1718e53f56f85003559d20e531a1a4}{handle\-\_\-t} \hyperlink{classchem_1_1RNodeNRM_ad124c85b0f1b479cf0c1f4bf75230c19}{\-\_\-handle}
 \begin{DoxyCompactList}\small\item\em The handle to the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element in the heap. \end{DoxyCompactList}\item 
-\hyperlink{classchem_1_1Reaction}{Reaction} $\ast$ \hyperlink{classchem_1_1RNodeNRM_a2430f6bd22239fc5b629bca05f9d34a8}{\-\_\-react}
+\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$ \hyperlink{classchem_1_1RNodeNRM_add823fa4b223afe0d750ed731c827d07}{\-\_\-react}
 \begin{DoxyCompactList}\small\item\em The pointer to the associated \hyperlink{classchem_1_1Reaction}{Reaction} object. The corresponding memory is not managed by \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}. \end{DoxyCompactList}\item 
 double \hyperlink{classchem_1_1RNodeNRM_ae16aa8e75649d855f4b6eae8b00ed1db}{\-\_\-a}
 \begin{DoxyCompactList}\small\item\em The propensity associated with the \hyperlink{classchem_1_1Reaction}{Reaction}. It may be outdated and may need to be recomputed if needed. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -87,19 +92,19 @@ double \hyperlink{classchem_1_1RNodeNRM_ae16aa8e75649d855f4b6eae8b00ed1db}{\-\_\
 
 \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} manages a single chemical reaction within the N\-R\-M algorithm. It has a pointer to the P\-Q element containing the \hyperlink{classchem_1_1Reaction}{Reaction} via a handle\-\_\-t object (and hence can modify both the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node}, such as \hyperlink{classchem_1_1PQNode}{P\-Q\-Node}'s tau or the underlying \hyperlink{classchem_1_1Reaction}{Reaction} instance). \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} can recompute tau if needed and has auxiliary methods for computing reaction's propensity. When the propensity drops to zero, the \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} can execute the \hyperlink{classchem_1_1RNodeNRM_a1099526d4e797a6d033ad6f60b76dc12}{passivate\-Reaction()} method. Alternatively, passivated \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} can be activated via \hyperlink{classchem_1_1RNodeNRM_ae2fc1e8c09f0cda02da6cba29c6d0849}{activate\-Reaction()}. The main part of the N\-R\-M algoritm is implemented in the \hyperlink{classchem_1_1RNodeNRM_a1294bf93224e88f4bb0a64282ef9f950}{make\-Step()} method. 
 
-Definition at line 79 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 103 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classchem_1_1RNodeNRM_a7ab2483c555b42b19a3274ffa9a44d8e}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!R\-Node\-N\-R\-M@{R\-Node\-N\-R\-M}}
+\hypertarget{classchem_1_1RNodeNRM_a4c5827a0d0682ecfbe7c9154ff5644ce}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!R\-Node\-N\-R\-M@{R\-Node\-N\-R\-M}}
 \index{R\-Node\-N\-R\-M@{R\-Node\-N\-R\-M}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
 \subsubsection[{R\-Node\-N\-R\-M}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-R\-Node\-N\-R\-M\-::\-R\-Node\-N\-R\-M} (
 \begin{DoxyParamCaption}
-\item[{{\bf Reaction} $\ast$}]{r, }
+\item[{{\bf Reaction\-Base} $\ast$}]{r, }
 \item[{{\bf Chem\-N\-R\-M\-Impl} \&}]{chem\-\_\-nrm}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1RNodeNRM_a7ab2483c555b42b19a3274ffa9a44d8e}
+)}}\label{classchem_1_1RNodeNRM_a4c5827a0d0682ecfbe7c9154ff5644ce}
 
 
 Ctor\-: 
@@ -113,11 +118,11 @@ Ctor\-:
 \end{DoxyParams}
 
 
-Definition at line 20 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 79 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
-References \-\_\-a, \-\_\-chem\-\_\-nrm, \-\_\-handle, \-\_\-react, chem\-::\-Reaction\-::compute\-Propensity(), chem\-::\-Chem\-N\-R\-M\-Impl\-::get\-Heap(), and chem\-::\-Reaction\-::set\-Rnode().
+References \-\_\-a, \-\_\-chem\-\_\-nrm, \-\_\-handle, \-\_\-react, chem\-::\-Reaction\-Base\-::compute\-Propensity(), chem\-::\-Chem\-N\-R\-M\-Impl\-::get\-Heap(), and chem\-::\-Reaction\-Base\-::set\-Rnode().
 
 \hypertarget{classchem_1_1RNodeNRM_a12d79f33bd69c1b58e18fa4de0d500df}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!R\-Node\-N\-R\-M@{R\-Node\-N\-R\-M}}
 \index{R\-Node\-N\-R\-M@{R\-Node\-N\-R\-M}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
@@ -143,11 +148,11 @@ Dtor\-: 1) Erases the corresponding \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} 
 
 
 
-Definition at line 28 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 87 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
-References \-\_\-chem\-\_\-nrm, \-\_\-handle, \-\_\-react, chem\-::\-Chem\-N\-R\-M\-Impl\-::get\-Heap(), and chem\-::\-Reaction\-::set\-Rnode().
+References \-\_\-chem\-\_\-nrm, \-\_\-handle, \-\_\-react, chem\-::\-Chem\-N\-R\-M\-Impl\-::get\-Heap(), and chem\-::\-Reaction\-Base\-::set\-Rnode().
 
 
 
@@ -172,7 +177,7 @@ Implements \hyperlink{classchem_1_1RNode_a979370f4102fdfda1ee562788318b556}{chem
 
 
 
-Definition at line 74 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 132 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -194,7 +199,7 @@ This methods modifies tau which is stored in the associated \hyperlink{classchem
 \end{DoxyNote}
 
 
-Definition at line 58 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 116 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -217,7 +222,7 @@ Returns a handle to the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} e
 
 
 
-Definition at line 117 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 141 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -236,11 +241,11 @@ Compute and return the product of reactant copy numbers.
 
 This method can be used to quickly check whether this reaction needs to be passivated, if the returned result is zero. 
 
-Definition at line 128 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 152 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
-References \-\_\-react, and chem\-::\-Reaction\-::get\-Product\-Of\-Reactants().
+References \-\_\-react, and chem\-::\-Reaction\-Base\-::get\-Product\-Of\-Reactants().
 
 \hypertarget{classchem_1_1RNodeNRM_a5894ae93a6ef48f7b0bfa82add5bce5d}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!get\-Propensity@{get\-Propensity}}
 \index{get\-Propensity@{get\-Propensity}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
@@ -258,7 +263,7 @@ The propensity is not recomputed in this method, so it potentially can be out of
 \end{DoxyNote}
 
 
-Definition at line 121 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 145 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -268,20 +273,20 @@ References \-\_\-a.
 
 Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
 
-\hypertarget{classchem_1_1RNodeNRM_ab56b46ea4fdb4ed3cd3d9e478fbf3863}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!get\-Reaction@{get\-Reaction}}
+\hypertarget{classchem_1_1RNodeNRM_a8a96e9750901ff0629d43855ff096194}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!get\-Reaction@{get\-Reaction}}
 \index{get\-Reaction@{get\-Reaction}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
-\subsubsection[{get\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction}$\ast$ {\bf chem\-::\-R\-Node\-N\-R\-M\-::get\-Reaction} (
+\subsubsection[{get\-Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\-Base}$\ast$ {\bf chem\-::\-R\-Node\-N\-R\-M\-::get\-Reaction} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RNodeNRM_ab56b46ea4fdb4ed3cd3d9e478fbf3863}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RNodeNRM_a8a96e9750901ff0629d43855ff096194}
 
 
 Returns a pointer to the \hyperlink{classchem_1_1Reaction}{Reaction} which corresponds to this \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}. 
 
 
 
-Definition at line 104 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 128 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -304,7 +309,7 @@ Returns the tau from the the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-No
 
 
 
-Definition at line 111 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 135 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -327,11 +332,11 @@ Implements \hyperlink{classchem_1_1RNode_a30bdb95406ebc217c1a732bf36883b3f}{chem
 
 
 
-Definition at line 145 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 169 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
-References \-\_\-react, and chem\-::\-Reaction\-::is\-Passivated().
+References \-\_\-react, and chem\-::\-Reaction\-Base\-::is\-Passivated().
 
 
 
@@ -346,19 +351,45 @@ Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RNodeNRM_a1294bf93224e88f4bb0a64282ef9f950}
 
 
-This method calls the corresponding \hyperlink{classchem_1_1Reaction_a1341d466157788c3d547da52c6c59502}{Reaction\-::make\-Step()} method of the underyling \hyperlink{classchem_1_1Reaction}{Reaction} object. 
+This method calls the corresponding \hyperlink{classchem_1_1ReactionBase_acb5575b08ca39fc6dd7a571fb246806b}{Reaction\-::make\-Step()} method of the underyling \hyperlink{classchem_1_1Reaction}{Reaction} object. 
 
 
 
-Definition at line 131 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 155 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
-References \-\_\-react, and chem\-::\-Reaction\-::make\-Step().
+References \-\_\-react, and chem\-::\-Reaction\-Base\-::make\-Step().
 
 
 
 Referenced by chem\-::\-Chem\-N\-R\-M\-Impl\-::make\-Step().
+
+\hypertarget{classchem_1_1RNodeNRM_abe32c9de55bd8deb22c2894ae753b708}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!operator delete@{operator delete}}
+\index{operator delete@{operator delete}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
+\subsubsection[{operator delete}]{\setlength{\rightskip}{0pt plus 5cm}void chem\-::\-R\-Node\-N\-R\-M\-::operator delete (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{ptr}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1RNodeNRM_abe32c9de55bd8deb22c2894ae753b708}
+
+
+Definition at line 63 of file Chem\-N\-R\-M\-Impl.\-cpp.
+
+\hypertarget{classchem_1_1RNodeNRM_ae76175a4d99e9eb3389dce6c77c9edb6}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!operator new@{operator new}}
+\index{operator new@{operator new}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
+\subsubsection[{operator new}]{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ chem\-::\-R\-Node\-N\-R\-M\-::operator new (
+\begin{DoxyParamCaption}
+\item[{std\-::size\-\_\-t}]{size}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1RNodeNRM_ae76175a4d99e9eb3389dce6c77c9edb6}
+
+
+Advanced memory management. 
+
+
+
+Definition at line 55 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 \hypertarget{classchem_1_1RNodeNRM_aba4753c700f2f6d707e2c94b2c5e5749}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
@@ -391,7 +422,7 @@ Implements \hyperlink{classchem_1_1RNode_a007a65ede4d89e562929fc0ae9df5661}{chem
 
 
 
-Definition at line 83 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 141 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -410,11 +441,11 @@ Print the \hyperlink{classchem_1_1RNode}{R\-Node} objects which are dependents o
 
 
 
-Definition at line 43 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 101 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
-References \-\_\-react, chem\-::\-Reaction\-::dependents(), and print\-Self().
+References \-\_\-react, chem\-::\-Reaction\-Base\-::dependents(), and print\-Self().
 
 \hypertarget{classchem_1_1RNodeNRM_a1855b936b240d7764907434421258c5a}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!print\-Self@{print\-Self}}
 \index{print\-Self@{print\-Self}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
@@ -429,7 +460,7 @@ Print information about this \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}
 
 
 
-Definition at line 38 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 96 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -452,11 +483,11 @@ Referenced by print\-Dependents().
 
 
 
-Definition at line 124 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 148 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
-References \-\_\-a, \-\_\-react, and chem\-::\-Reaction\-::compute\-Propensity().
+References \-\_\-a, \-\_\-react, and chem\-::\-Reaction\-Base\-::compute\-Propensity().
 
 
 
@@ -475,7 +506,7 @@ Sets the tau of the the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} e
 
 
 
-Definition at line 114 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 138 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -498,7 +529,7 @@ The heap is updated only with respect to the specific \hyperlink{classchem_1_1PQ
 
 via \hyperlink{classchem_1_1RNodeNRM_a33025de761dc8d29928f8e5b1148eff1}{generate\-New\-Rand\-Tau()}). 
 
-Definition at line 53 of file Chem\-N\-R\-M\-Impl.\-cpp.
+Definition at line 111 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
@@ -520,7 +551,7 @@ The propensity associated with the \hyperlink{classchem_1_1Reaction}{Reaction}. 
 
 
 
-Definition at line 156 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 189 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -535,7 +566,7 @@ A reference to the \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl} whi
 
 
 
-Definition at line 153 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 186 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
@@ -550,22 +581,22 @@ The handle to the associated \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} element
 
 
 
-Definition at line 154 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 187 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 
 Referenced by get\-Handle(), R\-Node\-N\-R\-M(), update\-Heap(), and $\sim$\-R\-Node\-N\-R\-M().
 
-\hypertarget{classchem_1_1RNodeNRM_a2430f6bd22239fc5b629bca05f9d34a8}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!\-\_\-react@{\-\_\-react}}
+\hypertarget{classchem_1_1RNodeNRM_add823fa4b223afe0d750ed731c827d07}{\index{chem\-::\-R\-Node\-N\-R\-M@{chem\-::\-R\-Node\-N\-R\-M}!\-\_\-react@{\-\_\-react}}
 \index{\-\_\-react@{\-\_\-react}!chem::RNodeNRM@{chem\-::\-R\-Node\-N\-R\-M}}
-\subsubsection[{\-\_\-react}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction}$\ast$ {\bf chem\-::\-R\-Node\-N\-R\-M\-::\-\_\-react}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1RNodeNRM_a2430f6bd22239fc5b629bca05f9d34a8}
+\subsubsection[{\-\_\-react}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\-Base}$\ast$ {\bf chem\-::\-R\-Node\-N\-R\-M\-::\-\_\-react}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1RNodeNRM_add823fa4b223afe0d750ed731c827d07}
 
 
 The pointer to the associated \hyperlink{classchem_1_1Reaction}{Reaction} object. The corresponding memory is not managed by \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}. 
 
 
 
-Definition at line 155 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 188 of file Chem\-N\-R\-M\-Impl.\-h.
 
 
 

@@ -134,9 +134,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00022"></a>00022         
 <a name="l00024"></a>00024         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a250b43230ac66832bbcecf4f630f2fbc" title="After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to...">initialize</a>() = 0;
 <a name="l00025"></a>00025         
-<a name="l00027"></a>00027         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r) = 0;
+<a name="l00027"></a>00027         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(<a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *r) = 0;
 <a name="l00028"></a>00028         
-<a name="l00030"></a>00030         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a" title="Remove Reaction *r from the simulated chemical network.">removeReaction</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r) = 0;
+<a name="l00030"></a>00030         <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148" title="Remove Reaction *r from the simulated chemical network.">removeReaction</a>(<a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *r) = 0;
 <a name="l00031"></a>00031         
 <a name="l00033"></a>00033         <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1ChemSimImpl.html#a9f051e00a754fdd76d5e2b3a217f3a49" title="Run the chemical dynamics for a specific number of steps.">run</a>(<span class="keywordtype">int</span> steps) = 0;
 <a name="l00034"></a>00034         
@@ -151,7 +151,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="ChemSimImpl_8h.html">ChemSimImpl.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

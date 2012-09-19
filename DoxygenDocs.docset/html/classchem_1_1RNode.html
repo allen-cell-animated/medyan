@@ -119,7 +119,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>This is an abstract base class for classes that need to be associated with the given <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object.  
+<p>This is an abstract base class for classes that need to be associated with the given <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object.  
  <a href="classchem_1_1RNode.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ChemRNode_8h_source.html">ChemRNode.h</a>&gt;</code></p>
@@ -138,14 +138,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af39a9d08d697b5586dad42ce763b902d"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNode.html#af39a9d08d697b5586dad42ce763b902d">~RNode</a> ()</td></tr>
 <tr class="memdesc:af39a9d08d697b5586dad42ce763b902d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dtor.  <a href="#af39a9d08d697b5586dad42ce763b902d"></a><br/></td></tr>
 <tr class="memitem:a979370f4102fdfda1ee562788318b556"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNode.html#a979370f4102fdfda1ee562788318b556">activateReaction</a> ()=0</td></tr>
-<tr class="memdesc:a979370f4102fdfda1ee562788318b556"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called by <a class="el" href="classchem_1_1Reaction.html#afae5d992f176c16a21ec38fcf3d83649" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction()</a>.  <a href="#a979370f4102fdfda1ee562788318b556"></a><br/></td></tr>
+<tr class="memdesc:a979370f4102fdfda1ee562788318b556"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called by <a class="el" href="classchem_1_1ReactionBase.html#aeb6c8f208d4c6ed1e0149090647eb035" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction()</a>.  <a href="#a979370f4102fdfda1ee562788318b556"></a><br/></td></tr>
 <tr class="memitem:a007a65ede4d89e562929fc0ae9df5661"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNode.html#a007a65ede4d89e562929fc0ae9df5661">passivateReaction</a> ()=0</td></tr>
-<tr class="memdesc:a007a65ede4d89e562929fc0ae9df5661"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called by <a class="el" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa" title="Usually is applied to Reaction objects with propensity of 0 (e.g.">Reaction::passivateReaction()</a>.  <a href="#a007a65ede4d89e562929fc0ae9df5661"></a><br/></td></tr>
+<tr class="memdesc:a007a65ede4d89e562929fc0ae9df5661"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called by <a class="el" href="classchem_1_1ReactionBase.html#a9fe4cf91fcff8c4aea65e759841c28fe" title="Usually is applied to ReactionBase objects with propensity of 0 (e.g.">Reaction::passivateReaction()</a>.  <a href="#a007a65ede4d89e562929fc0ae9df5661"></a><br/></td></tr>
 <tr class="memitem:a30bdb95406ebc217c1a732bf36883b3f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1RNode.html#a30bdb95406ebc217c1a732bf36883b3f">isPassivated</a> () const =0</td></tr>
-<tr class="memdesc:a30bdb95406ebc217c1a732bf36883b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> is currently passivated.  <a href="#a30bdb95406ebc217c1a732bf36883b3f"></a><br/></td></tr>
+<tr class="memdesc:a30bdb95406ebc217c1a732bf36883b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> is currently passivated.  <a href="#a30bdb95406ebc217c1a732bf36883b3f"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>This is an abstract base class for classes that need to be associated with the given <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> object. </p>
+<div class="textblock"><p>This is an abstract base class for classes that need to be associated with the given <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> object. </p>
 
 <p>Definition at line <a class="el" href="ChemRNode_8h_source.html#l00015">15</a> of file <a class="el" href="ChemRNode_8h_source.html">ChemRNode.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
@@ -184,12 +184,10 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>This method is called by <a class="el" href="classchem_1_1Reaction.html#afae5d992f176c16a21ec38fcf3d83649" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction()</a>. </p>
+<p>This method is called by <a class="el" href="classchem_1_1ReactionBase.html#aeb6c8f208d4c6ed1e0149090647eb035" title="Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.">Reaction::activateReaction()</a>. </p>
 <p>Its effect depends on the underlying stochastic simulatio algorithm. For example, in the NRM algorithm, a new tau and a are computed and the heap is updated. </p>
 
 <p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ae2fc1e8c09f0cda02da6cba29c6d0849">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#aefe90be75d811b0fa92234663c8d29ba">chem::RNodeGillespie</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00086">chem::Reaction::activateReactionUnconditional()</a>.</p>
 
 </div>
 </div>
@@ -207,7 +205,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> is currently passivated. </p>
+<p>Return true if the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> is currently passivated. </p>
 
 <p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#ad6445c86ef589c51c8d0957d437f6c3c">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#a456ac34c578988b02fc003d69ebc2d21">chem::RNodeGillespie</a>.</p>
 
@@ -227,12 +225,10 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>This method is called by <a class="el" href="classchem_1_1Reaction.html#a6990bf5dfc31f04bcab6bda8392174aa" title="Usually is applied to Reaction objects with propensity of 0 (e.g.">Reaction::passivateReaction()</a>. </p>
+<p>This method is called by <a class="el" href="classchem_1_1ReactionBase.html#a9fe4cf91fcff8c4aea65e759841c28fe" title="Usually is applied to ReactionBase objects with propensity of 0 (e.g.">Reaction::passivateReaction()</a>. </p>
 <p>Its effect depends on the underlying stochastic simulatio algorithm. For example, in the NRM algorithm, a tau is set to infinity and the heap is updated. </p>
 
 <p>Implemented in <a class="el" href="classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12">chem::RNodeNRM</a>, and <a class="el" href="classchem_1_1RNodeGillespie.html#a6b641601ec312a4169f07e2dcf797f41">chem::RNodeGillespie</a>.</p>
-
-<p>Referenced by <a class="el" href="Reaction_8cpp_source.html#l00103">chem::Reaction::passivateReaction()</a>.</p>
 
 </div>
 </div>
@@ -246,7 +242,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1RNode.html">RNode</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:26 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

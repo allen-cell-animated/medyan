@@ -155,6 +155,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1d5884d373fb44fd950d5fe2b0c34e26"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a1d5884d373fb44fd950d5fe2b0c34e26">getFullName</a> () const </td></tr>
 <tr class="memitem:a581a3912035ba493a2a24f1516d65ea8"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a581a3912035ba493a2a24f1516d65ea8">countSpecies</a> () const </td></tr>
 <tr class="memitem:ab061b8b7d97db554af402ebb9723dc4c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ab061b8b7d97db554af402ebb9723dc4c">countReactions</a> () const </td></tr>
+<tr class="memitem:a778911b6f9505f1d8a39fc39e093974e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a778911b6f9505f1d8a39fc39e093974e">printSelf</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a5da4c5a0d857620fe3e3cf7d8d06ec26"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a5da4c5a0d857620fe3e3cf7d8d06ec26">_parent</a></td></tr>
@@ -280,7 +281,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1Species.html#a5e8aedfe4c4b5e08fb0ee672c3d80ace">chem::Species</a>, and <a class="el" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">chem::Composite</a>.</p>
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">chem::Composite</a>.</p>
 
 <p>Definition at line <a class="el" href="Component_8h_source.html#l00036">36</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
@@ -302,7 +303,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1SpeciesDiffusing.html#a03eba31a17a3713e8c45cc0952e922bb">chem::SpeciesDiffusing</a>, <a class="el" href="classchem_1_1SpeciesBulk.html#a340d3f16e075352bf1cbab7918f5ca20">chem::SpeciesBulk</a>, <a class="el" href="classchem_1_1Species.html#a7ac7196a7146f63e297d0995c6081f4b">chem::Species</a>, <a class="el" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">chem::Composite</a>, and <a class="el" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">chem::Compartment</a>.</p>
+<p>Reimplemented in <a class="el" href="classchem_1_1CompartmentCubic.html#aeb15278bbc2c30f7de92ad03e12fbdd5">chem::CompartmentCubic&lt; NDIM &gt;</a>, <a class="el" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">chem::Compartment</a>, <a class="el" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">chem::Composite</a>, and <a class="el" href="classchem_1_1CompartmentsSimpleGrid.html#a9d1006f2fd5ab559bc3ff3f98249ea19">chem::CompartmentsSimpleGrid&lt; NDIM &gt;</a>.</p>
 
 <p>Definition at line <a class="el" href="Component_8h_source.html#l00035">35</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
@@ -350,7 +351,7 @@ Private Attributes</h2></td></tr>
 
 <p>References <a class="el" href="Component_8h_source.html#l00025">getParent()</a>, <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, and <a class="el" href="Component_8h_source.html#l00027">isRoot()</a>.</p>
 
-<p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>.</p>
+<p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, <a class="el" href="Reaction_8cpp_source.html#l00035">chem::ReactionBase::getRoot()</a>, and <a class="el" href="Species_8cpp_source.html#l00035">chem::Species::getRoot()</a>.</p>
 
 </div>
 </div>
@@ -458,6 +459,26 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a778911b6f9505f1d8a39fc39e093974e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classchem_1_1Component.html#a778911b6f9505f1d8a39fc39e093974e">chem::Component::printSelf</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classchem_1_1CompartmentCubic.html#a2c7c92befc69c7033c34574f469d5fa8">chem::CompartmentCubic&lt; NDIM &gt;</a>, <a class="el" href="classchem_1_1Compartment.html#a4b1309d480039e985a7692030e9bca7b">chem::Compartment</a>, and <a class="el" href="classchem_1_1CompartmentsSimpleGrid.html#a5be8454b952a926dd6a7449ff27a3f67">chem::CompartmentsSimpleGrid&lt; NDIM &gt;</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00038">38</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a1f4e4d1566f1d3026f1e2a14fa3dffd9"></a>
 <div class="memitem">
 <div class="memproto">
@@ -476,8 +497,6 @@ Private Attributes</h2></td></tr>
 <p>Definition at line <a class="el" href="Component_8h_source.html#l00026">26</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 <p>References <a class="el" href="Component_8h_source.html#l00020">_parent</a>.</p>
-
-<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00055">chem::Compartment::addReaction()</a>, <a class="el" href="Compartment_8h_source.html#l00040">chem::Compartment::addReactionUnique()</a>, <a class="el" href="Compartment_8h_source.html#l00047">chem::Compartment::addSpecies()</a>, and <a class="el" href="Compartment_8h_source.html#l00034">chem::Compartment::addSpeciesUnique()</a>.</p>
 
 </div>
 </div>
@@ -510,7 +529,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1Component.html">Component</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:27 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

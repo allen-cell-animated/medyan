@@ -134,12 +134,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00018"></a>00018     <a class="code" href="classchem_1_1ChemSim.html#a1e7c8136d1599176ecd517dfd419930a" title="Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership.">_pimpl</a>=csi;
 <a name="l00019"></a>00019 }
 <a name="l00020"></a>00020 
-<a name="l00021"></a><a class="code" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0">00021</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSim.html#a9416fd66c400440bd13779a3060a1ec0" title="Add Reaction *r to the chemical network which needs to be simulated.">ChemSim::addReaction</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
-<a name="l00022"></a>00022     <a class="code" href="classchem_1_1ChemSim.html#a1e7c8136d1599176ecd517dfd419930a" title="Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership.">_pimpl</a>-&gt;<a class="code" href="classchem_1_1ChemSimImpl.html#a9000e6ec731865360762f483dd7e91cf" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(r);
+<a name="l00021"></a><a class="code" href="classchem_1_1ChemSim.html#a5e3df263e6dc6f2b6c174bd6b5cddee9">00021</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSim.html#a5e3df263e6dc6f2b6c174bd6b5cddee9" title="Add Reaction *r to the chemical network which needs to be simulated.">ChemSim::addReaction</a>(<a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *r){
+<a name="l00022"></a>00022     <a class="code" href="classchem_1_1ChemSim.html#a1e7c8136d1599176ecd517dfd419930a" title="Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership.">_pimpl</a>-&gt;<a class="code" href="classchem_1_1ChemSimImpl.html#a2a9ea4429bf00103d923556559012944" title="Add Reaction *r to the chemical network which needs to be simulated.">addReaction</a>(r);
 <a name="l00023"></a>00023 }
 <a name="l00024"></a>00024 
-<a name="l00025"></a><a class="code" href="classchem_1_1ChemSim.html#a50f196d75b70e55e0257f20851f8aacf">00025</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSim.html#a50f196d75b70e55e0257f20851f8aacf" title="Remove Reaction *r from the simulated chemical network.">ChemSim::removeReaction</a>(<a class="code" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B -&gt; C.">Reaction</a> *r){
-<a name="l00026"></a>00026     <a class="code" href="classchem_1_1ChemSim.html#a1e7c8136d1599176ecd517dfd419930a" title="Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership.">_pimpl</a>-&gt;<a class="code" href="classchem_1_1ChemSimImpl.html#a00e43cfb099cb26e44d04a715b6cba0a" title="Remove Reaction *r from the simulated chemical network.">removeReaction</a>(r); 
+<a name="l00025"></a><a class="code" href="classchem_1_1ChemSim.html#a1949fb943a9e5e463d39122c29827e06">00025</a> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemSim.html#a1949fb943a9e5e463d39122c29827e06" title="Remove Reaction *r from the simulated chemical network.">ChemSim::removeReaction</a>(<a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *r){
+<a name="l00026"></a>00026     <a class="code" href="classchem_1_1ChemSim.html#a1e7c8136d1599176ecd517dfd419930a" title="Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership.">_pimpl</a>-&gt;<a class="code" href="classchem_1_1ChemSimImpl.html#a8a732fedbcb6ae7c5d4d4cec2b540148" title="Remove Reaction *r from the simulated chemical network.">removeReaction</a>(r); 
 <a name="l00027"></a>00027 }
 <a name="l00028"></a>00028 
 <a name="l00029"></a><a class="code" href="classchem_1_1ChemSim.html#a1cc6ec051c2f0124bfa327816443b24b">00029</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1ChemSim.html#a1cc6ec051c2f0124bfa327816443b24b" title="Run the chemical dynamics for a specific number of steps.">ChemSim::run</a>(<span class="keywordtype">int</span> steps){
@@ -161,7 +161,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="ChemSim_8cpp.html">ChemSim.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 3 2012 21:23:25 for CytoSim by
+    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

@@ -7,7 +7,8 @@
 
 
 
-Inheritance diagram for chem\-:\-:Component\-:\nopagebreak
+Inheritance diagram for chem\-:\-:Component\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -55,6 +56,8 @@ virtual std\-::string \hyperlink{classchem_1_1Component_a1d5884d373fb44fd950d5fe
 virtual size\-\_\-t \hyperlink{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}{count\-Species} () const 
 \item 
 virtual size\-\_\-t \hyperlink{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{count\-Reactions} () const 
+\item 
+virtual void \hyperlink{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}{print\-Self} ()
 \end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
@@ -158,7 +161,7 @@ Definition at line 37 of file Component.\-h.
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}
 
 
-Reimplemented in \hyperlink{classchem_1_1Species_a5e8aedfe4c4b5e08fb0ee672c3d80ace}{chem\-::\-Species}, and \hyperlink{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}{chem\-::\-Composite}.
+Reimplemented in \hyperlink{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}{chem\-::\-Composite}.
 
 
 
@@ -177,7 +180,7 @@ Referenced by chem\-::\-Concrete\-Visitor\-::visit(), and chem\-::\-Composite\-V
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}
 
 
-Reimplemented in \hyperlink{classchem_1_1SpeciesDiffusing_a03eba31a17a3713e8c45cc0952e922bb}{chem\-::\-Species\-Diffusing}, \hyperlink{classchem_1_1SpeciesBulk_a340d3f16e075352bf1cbab7918f5ca20}{chem\-::\-Species\-Bulk}, \hyperlink{classchem_1_1Species_a7ac7196a7146f63e297d0995c6081f4b}{chem\-::\-Species}, \hyperlink{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{chem\-::\-Composite}, and \hyperlink{classchem_1_1Compartment_a33a683e6aae89013fce7bde417f49ee1}{chem\-::\-Compartment}.
+Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_aeb15278bbc2c30f7de92ad03e12fbdd5}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$}, \hyperlink{classchem_1_1Compartment_a33a683e6aae89013fce7bde417f49ee1}{chem\-::\-Compartment}, \hyperlink{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{chem\-::\-Composite}, and \hyperlink{classchem_1_1CompartmentsSimpleGrid_a9d1006f2fd5ab559bc3ff3f98249ea19}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$}.
 
 
 
@@ -223,7 +226,7 @@ References get\-Parent(), get\-Root(), and is\-Root().
 
 
 
-Referenced by get\-Root().
+Referenced by get\-Root(), chem\-::\-Reaction\-Base\-::get\-Root(), and chem\-::\-Species\-::get\-Root().
 
 \hypertarget{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{\index{chem\-::\-Component@{chem\-::\-Component}!is\-Composite@{is\-Composite}}
 \index{is\-Composite@{is\-Composite}!chem::Component@{chem\-::\-Component}}
@@ -308,6 +311,21 @@ Reimplemented in \hyperlink{classchem_1_1Composite_a89545dad587539c07acff13398e8
 
 Definition at line 30 of file Component.\-h.
 
+\hypertarget{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}{\index{chem\-::\-Component@{chem\-::\-Component}!print\-Self@{print\-Self}}
+\index{print\-Self@{print\-Self}!chem::Component@{chem\-::\-Component}}
+\subsubsection[{print\-Self}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf chem\-::\-Component\-::print\-Self} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}
+
+
+Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_a2c7c92befc69c7033c34574f469d5fa8}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$}, \hyperlink{classchem_1_1Compartment_a4b1309d480039e985a7692030e9bca7b}{chem\-::\-Compartment}, and \hyperlink{classchem_1_1CompartmentsSimpleGrid_a5be8454b952a926dd6a7449ff27a3f67}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$}.
+
+
+
+Definition at line 38 of file Component.\-h.
+
 \hypertarget{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{\index{chem\-::\-Component@{chem\-::\-Component}!set\-Parent@{set\-Parent}}
 \index{set\-Parent@{set\-Parent}!chem::Component@{chem\-::\-Component}}
 \subsubsection[{set\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-Component\-::set\-Parent} (
@@ -322,10 +340,6 @@ Definition at line 26 of file Component.\-h.
 
 
 References \-\_\-parent.
-
-
-
-Referenced by chem\-::\-Compartment\-::add\-Reaction(), chem\-::\-Compartment\-::add\-Reaction\-Unique(), chem\-::\-Compartment\-::add\-Species(), and chem\-::\-Compartment\-::add\-Species\-Unique().
 
 
 
