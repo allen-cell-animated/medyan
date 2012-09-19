@@ -74,10 +74,8 @@ int main(int argc, const char * argv[])
     
     ReactionBase *r1 = C1->addInternal<Reaction,1,1>({profilin,actin}, 10.0);
     ReactionBase *r2 = C1->addInternal<Reaction,1,1>({actin,profilin}, 10.0);
-    ReactionBase *r3 = C1->addInternal<Reaction,2,1>({actin,profilin,arp23}, 10.0);
     
-//    vector<Species*> rs3 = {actin,profilin,arp23};
-//    ReactionBase *r3 = C1->addInternalReaction<2,1>(rs3, 10.0);
+    ReactionBase *r3 = C1->addInternalReaction<2,1>(vector<Species*>{actin,profilin,arp23}, 10.0);
     
     C1->printReactions();
     cout << "Are all Species unique? " << std::boolalpha << C1->areAllSpeciesUnique() << endl;

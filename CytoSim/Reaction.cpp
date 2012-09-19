@@ -74,7 +74,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
         species.push_back(vit->get());
     }
-    return new Reaction<M,N>(species.begin(), species.end(),_rate);
+    return new Reaction<M,N>(species,_rate);
 }
     
 #ifdef BOOST_MEM_POOL

@@ -32,18 +32,18 @@ template <unsigned short M, unsigned short N>
         Reaction(std::initializer_list<Species*> species, float rate = 0.0) : ReactionBase(rate)
         {
             //            std::cout << "Reaction<M,N>(std::initializer_list<Species*> species, float rate) called..." << std::endl;
-            initializeSpecies(species.begin(), species.end());
+            initializeSpecies(species);
         }
         
         /// The main constructor:
         /// @param it_begin - an iterator to the beginning of an RSpecies* container
         /// @param it_end - an iterator to the end of an RSpecies* container
         /// @param rate - the rate constant for this ReactionBase
-        template <typename input_iter>
-        Reaction(input_iter it_begin, input_iter it_end, float rate = 0.0) : ReactionBase(rate)
+        template <typename InputContainer>
+        Reaction(const InputContainer &species, float rate = 0.0) : ReactionBase(rate)
         {
             //            std::cout << "Reaction<M,N>(const std::vector<Species*> &species, float rate) called..." << std::endl;
-            initializeSpecies(it_begin, it_end);
+            initializeSpecies(species);
         }
         
         /// no copying (including all derived classes)
@@ -91,11 +91,11 @@ template <unsigned short M, unsigned short N>
         
     protected:
         /// An implementation method used by the constructor.
-        template <typename input_iter>
-        void initializeSpecies(input_iter it_begin, input_iter it_end)
+        template <typename InputContainer>
+        void initializeSpecies(const InputContainer &species)
         {
-            assert(std::distance(it_begin,it_end)==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
-            std::transform(it_begin,it_end,_rspecies.begin(),
+            assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+            std::transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             
             _dependents=getAffectedReactions();
