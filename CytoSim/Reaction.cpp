@@ -9,7 +9,6 @@
 #include <iostream>
 #include "Reaction.h"
 #include "ChemRNode.h"
-#include "Composite.h"
 #include "SpeciesContainer.h"
 
 #ifdef BOOST_MEM_POOL
@@ -20,86 +19,6 @@
 using namespace std;
 
 namespace chem {
-    
-ReactionBase::ReactionBase (float rate) : 
- _rnode(nullptr), _rate(rate), _parent(nullptr)
-    {
-#ifdef REACTION_SIGNALING
-    _signal=nullptr;
-#endif
-#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
-    _passivated=false;
-#endif
-}
-
-Composite* ReactionBase::getRoot()
-{
-    if(hasParent())
-        return this->getParent()->getRoot();
-    return nullptr;
-}
-    
-    
-void ReactionBase::registerNewDependent(ReactionBase *r){
-    if(std::find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
-        _dependents.push_back(r);
-}
-    
-void ReactionBase::unregisterDependent(ReactionBase *r){
-    auto it=std::find(_dependents.begin(),_dependents.end(),r);
-    //    cout << "ReactionBase::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
-    if(it!=_dependents.end())
-        _dependents.erase(it);
-}
-
-#ifdef REACTION_SIGNALING
-void ReactionBase::startSignaling () {
-    _signal = new ReactionEventSignal;
-}
-
-void ReactionBase::stopSignaling () {
-    if (_signal!=nullptr)
-        delete _signal;
-    _signal = nullptr;
-}
-
-boost::signals2::connection ReactionBase::connect(std::function<void (ReactionBase *)> const &react_callback, int priority) {
-    if (!isSignaling())
-        startSignaling(); 
-    return _signal->connect(priority, react_callback);
-}
-#endif
-
-void ReactionBase::printDependents()  {
-    cout << "ReactionBase: ptr=" << this << "\n"
-         << (*this) << "the following ReactionBase objects are dependents: ";
-    if(_dependents.size()==0)
-        cout << "NONE" << endl;
-    else
-        cout << endl;
-    for(auto r : _dependents)
-        cout << (*r) << endl;
-}
-    
-//template <unsigned short M, unsigned short N>
-//    void Reaction<M,N>::initializeSpecies(const std::vector<Species*> &species)
-//{
-//    assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
-//    transform(species.begin(),species.end(),_rspecies.begin(),
-//              [](Species *s){return &s->getRSpecies();});
-//
-//    _dependents=getAffectedReactions();
-//    //    cout << "Reaction::Reaction(...): " << this << endl;
-//    //    for (auto rr : _dependents)
-//    //        cout <<(*rr);
-//    //    cout << endl;
-//    //    activateReactionUnconditional();
-//    for(auto i=0U; i<M; ++i)
-//        _rspecies[i]->addAsReactant(this);
-//    for(auto i=M; i<(M+N); ++i)
-//        _rspecies[i]->addAsProduct(this);
-//}
-
 
 template <unsigned short M, unsigned short N>
     void Reaction<M,N>::activateReactionUnconditionalImpl(){
@@ -155,7 +74,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
         species.push_back(vit->get());
     }
-    return new Reaction<M,N>(species,_rate);
+    return new Reaction<M,N>(species.begin(), species.end(),_rate);
 }
     
 #ifdef BOOST_MEM_POOL

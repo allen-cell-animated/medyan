@@ -12,8 +12,6 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
-#include "Reaction.h"
-#include "Species.h"
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
 #include "Composite.h"
@@ -167,6 +165,14 @@ namespace chem {
         {
             //            std::cout << "Compartment::addReaction()..." << std::endl;
             ReactionBase *r = _internal_reactions.addReaction<M,N>(std::forward<Args>(args)...);
+            r->setParent(this);
+            return r;
+        }
+        
+        template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
+        ReactionBase* addInternal(std::initializer_list<Species*> species, float rate)
+        {
+            ReactionBase *r = _internal_reactions.add<RXN,M,N>(species,rate);
             r->setParent(this);
             return r;
         }

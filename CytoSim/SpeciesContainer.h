@@ -39,12 +39,12 @@ namespace  chem {
         SpeciesPtrContainerVector(const SpeciesPtrContainerVector &) = delete;
         SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;  // no assignment
         
-        friend void swap(SpeciesPtrContainerVector& first, SpeciesPtrContainerVector& second) // nothrow
-        {
-            // enable ADL (not necessary in our case, but good practice)
-            using std::swap;
-            swap(first._species, second._species);
-        }
+//        friend void swap(SpeciesPtrContainerVector& first, SpeciesPtrContainerVector& second) // nothrow
+//        {
+//            // enable ADL (not necessary in our case, but good practice)
+//            using std::swap;
+//            swap(first._species, second._species);
+//        }
         
         virtual void clear() {_species.clear();}
         

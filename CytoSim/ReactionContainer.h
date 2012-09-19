@@ -10,6 +10,7 @@
 #define CytoSim_ReactionContainer_h
 
 #include <iostream>
+#include "ReactionBase.h"
 #include "Reaction.h"
 
 namespace  chem {
@@ -57,6 +58,13 @@ namespace  chem {
             return _reactions.back().get();
         }
         
+        template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
+        ReactionBase* add(std::initializer_list<Species*> species, float rate)
+        {
+            _reactions.push_back(std::unique_ptr<ReactionBase>( new RXN<M,N>(species,rate) ));
+            //        _reactions.emplace_back(make_unique(Args...));
+            return _reactions.back().get();
+        }
         
         virtual void removeReaction (ReactionBase* R) {
             auto child_iter = std::find_if(_reactions.begin(),_reactions.end(),

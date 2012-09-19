@@ -17,6 +17,9 @@
 		F71EAF1A15B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F7346A8A1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
+		F737B37F160961B1001722DD /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
+		F737B380160961B1001722DD /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
+		F737B381160961B1001722DD /* ReactionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F737B37E160961B1001722DD /* ReactionBase.h */; };
 		F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
 		F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
 		F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
@@ -114,6 +117,8 @@
 		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
+		F737B37D160961B1001722DD /* ReactionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionBase.cpp; sourceTree = "<group>"; };
+		F737B37E160961B1001722DD /* ReactionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionBase.h; sourceTree = "<group>"; };
 		F7382CCD156BE2DA0022F97B /* RSpecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSpecies.h; sourceTree = "<group>"; };
 		F7382CCF156BE2F00022F97B /* RSpecies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RSpecies.cpp; sourceTree = "<group>"; };
 		F76148CF15F79CE800587017 /* CompartmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentContainer.cpp; sourceTree = "<group>"; };
@@ -269,6 +274,8 @@
 				F763ED181548FFED0069DA61 /* notes.txt */,
 				F763ED1B1548FFED0069DA61 /* Reaction.cpp */,
 				F763ED1C1548FFED0069DA61 /* Reaction.h */,
+				F737B37D160961B1001722DD /* ReactionBase.cpp */,
+				F737B37E160961B1001722DD /* ReactionBase.h */,
 				F7BCA5B615F17EC800D690E4 /* ReactionContainer.h */,
 				F7382CCF156BE2F00022F97B /* RSpecies.cpp */,
 				F7382CCD156BE2DA0022F97B /* RSpecies.h */,
@@ -307,6 +314,7 @@
 			files = (
 				F7B99A7015EFBBE8004A245A /* SpeciesContainer.h in Headers */,
 				F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */,
+				F737B381160961B1001722DD /* ReactionBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +482,7 @@
 				F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7B99A6E15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */,
 				F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */,
+				F737B37F160961B1001722DD /* ReactionBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,6 +504,7 @@
 				F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7B99A6F15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */,
 				F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */,
+				F737B380160961B1001722DD /* ReactionBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
