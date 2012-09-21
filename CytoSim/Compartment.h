@@ -63,22 +63,14 @@ namespace chem {
             clearSpecies();
             removeFromNeighboursList();
         }
-        
+
         /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain Species.
         virtual bool apply_impl(SpeciesVisitor &v) override;
         
-        /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
-        /// This method needs to be overriden by descendent classes that contain Species.
-        virtual bool apply_impl_if(SpeciesVisitor &v) override;
-
         /// Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain ReactionBase.
         virtual bool apply_impl(ReactionVisitor &v) override;
-        
-        /// Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.
-        /// This method needs to be overriden by descendent classes that contain ReactionBase.
-        virtual bool apply_impl_if(ReactionVisitor &v) override;
         
         virtual void clearReactions()
         {

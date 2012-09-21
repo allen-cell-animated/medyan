@@ -37,47 +37,27 @@ namespace chem {
         
         /// Virtual Destructor
         virtual ~Component() noexcept {};
-
-        /// When this function is applied to a Visitor v, the corresponding v.visit(this) is called,
-        /// and v is further applied to all children of this node recursively
-        virtual bool apply (Visitor &v);
         
         /// When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called,
         /// and v is further applied to all children of this node recursively. However, the ConditionalVisitor
         /// allows the visit() function to be applied only selectively to nodes that conform to specific criteria.
-        virtual bool apply_if (Visitor &v);
-        
-        /// When this function is applied to a SpeciesVisitor sv, the corresponding v.visit(s) is called
-        /// for each Species pointer *s owned by the node. v is further applied to all children of this node recursively.
-        virtual bool apply (SpeciesVisitor &v) {return apply_impl(v);}
+        virtual bool apply (Visitor &v);
  
         /// Implements the apply_if() method of the Component class by recursively applying it
         /// to itself and all its children that contain Species.
-        virtual bool apply_if (SpeciesVisitor &v) {return apply_impl(v);}
+        virtual bool apply (SpeciesVisitor &v) {return apply_impl(v);}
 
         /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain Species.
         virtual bool apply_impl(SpeciesVisitor &v) {return true;}
-        
-        /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
-        /// This method needs to be overriden by descendent classes that contain Species.
-        virtual bool apply_impl_if(SpeciesVisitor &v) {return true;}
 
-        /// When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called
-        /// for each ReactionBase pointer *s owned by the node. v is further applied to all children of this node recursively.
-        virtual bool apply (ReactionVisitor &v) {return apply_impl(v);}
-        
         /// Implements the apply_if() method of the Component class by recursively applying it
         /// to itself and all its children that contain ReactionBase.
-        virtual bool apply_if (ReactionVisitor &v) {return apply_impl(v);}
-        
-        /// Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.
-        /// This method needs to be overriden by descendent classes that contain ReactionBase.
-        virtual bool apply_impl(ReactionVisitor &v) {return true;}
+        virtual bool apply (ReactionVisitor &v) {return apply_impl(v);}
         
         /// Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain ReactionBase.
-        virtual bool apply_impl_if(ReactionVisitor &v) {return true;}
+        virtual bool apply_impl(ReactionVisitor &v) {return true;}
 
         /// Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist.
         Composite* getParent() {return _parent;}

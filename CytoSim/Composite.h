@@ -45,30 +45,17 @@ public:
     /// Virtual Destructor does nothing.
     virtual ~Composite() noexcept {}
     
-    
-    /// Implements the apply() method of the Component class by recursively applying it
+    /// Implements the apply_if() method of the Component class by recursively applying it
     /// to itself and all its children.
     virtual bool apply (Visitor &v) override;
     
     /// Implements the apply_if() method of the Component class by recursively applying it
-    /// to itself and all its children.
-    virtual bool apply_if (Visitor &v) override;
-
-    /// Implements the apply() method of the Component class by recursively applying it
     /// to itself and all its children that contain Species.
     virtual bool apply (SpeciesVisitor &v) override;
     
     /// Implements the apply_if() method of the Component class by recursively applying it
-    /// to itself and all its children that contain Species.
-    virtual bool apply_if (SpeciesVisitor &v) override;
-
-    /// When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called
-    /// for each ReactionBase pointer *s owned by the node. v is further applied to all children of this node recursively.
-    virtual bool apply (ReactionVisitor &v) override;
-    
-    /// Implements the apply_if() method of the Component class by recursively applying it
     /// to itself and all its children that contain ReactionBase.
-    virtual bool apply_if (ReactionVisitor &v) override;
+    virtual bool apply (ReactionVisitor &v) override;
     
     /// Returns true.
     virtual bool isComposite() const override {return true;}

@@ -24,9 +24,4 @@ namespace chem {
     bool Component::apply (Visitor &v) {
         return v.visit(this);
     }
-    
-    bool Component::apply_if (Visitor &v) {
-        return v.visit_if(this);
-    }
-
 }// end of chem

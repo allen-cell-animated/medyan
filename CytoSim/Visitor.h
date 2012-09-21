@@ -24,22 +24,14 @@ namespace chem {
      */
     class Visitor {
     public:
-        /// When this visitor, *v, is propagated through the Composite hieararchy, at each
-        /// Component node pointer *c, the following method is called: v->visit(c).
-        /// If a false value is returned from this function called, then the further
-        /// propagation of the tree is terminated.
-        bool visit(Component *c) {return visitImpl(c);}
-
         /// When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each
         /// Component node pointer *c, the following method is called: v->visit(c), if v->pred(c) returns true.
         /// If v->visit(c) returns a false value,  then the further propagation of the tree is terminated.
-        bool visit_if(Component *c) {
-            //        std::cout << "ConditionalVisitor::visit_if: checking " << c->getFullName() << std::endl;
+        bool visit(Component *c) {
             if(predImpl(c)){
                 return visitImpl(c);
             }
             else{
-                //            std::cout << "ConditionalVisitor::visit_if: Predicate failed, moving on..." << std::endl;
                 return true;
             }
         }
@@ -55,20 +47,13 @@ namespace chem {
         virtual bool visitImpl(Component *c) = 0;
         
         /// Return true if the Component *c satisfies the desired predicate
-        virtual bool predImpl(Component *c) = 0;
+        virtual bool predImpl(Component *c) {return true;};
     };
     
         
 /// The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon.
 class VisitorLambda : public Visitor {
 public:
-    /// Default Constructor
-    VisitorLambda() : Visitor(), _pred([](Component*){return true;}) {}
-    
-    /// @param std::function<bool (Component*)> g defines the action to be perfomed on each node
-    /// @param std::function<bool (Component*)> pred defines the predicate whether the particular node should be processed
-    VisitorLambda(std::function<bool (Component*)> g, std::function<bool (Component*)> pred = [](Component*){return true;}) : Visitor(), _f(g), _pred(pred) {}
-    
     /// Sets the action to be perfomed on each node as std::function<bool (Component*)> g
     void setLambda(std::function<bool (Component*)> g) {_f=g;}
     
@@ -76,7 +61,7 @@ public:
     void setLambdaPred(std::function<bool (Component*)> pred) {_pred=pred;}
 protected:
     std::function<bool (Component*)> _f;///< The function to be perfomed on each node
-    std::function<bool (Component*)> _pred;///< The predicate which checks whether the node should be evaluated
+    std::function<bool (Component*)> _pred = [](Component*){return true;};///< The predicate which checks whether the node should be evaluated
     
     /// Implementation of the visit(...) method
     virtual bool visitImpl(Component *c) override {return _f(c);}
@@ -85,7 +70,22 @@ protected:
     virtual bool predImpl(Component *c) override {return _pred(c);}
 };
     
-        
+    template <class ComponentType>
+    class TypeVisitor : public Visitor {
+    protected:
+        virtual bool predImpl(Component *c) override {
+            return isSame<ComponentType>(*c);
+        }
+    };
+    
+    template <class ComponentType>
+    class TypeVisitorLambda : public VisitorLambda {
+    protected:
+        virtual bool predImpl(Component *c) override {
+            return isSame<ComponentType>(*c) && VisitorLambda::predImpl(c);
+        }
+    };
+    
     /*! The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
      *  classes derived from Visitor must implement the visit(Component *c) method.
      */
@@ -96,21 +96,12 @@ protected:
         /// Species *s of that node.
         /// If a false value is returned from this function called, then the further
         /// propagation of the tree is terminated.
-        bool visit(Species *s) {return visitImpl(s);}
-        
-        /// When this visitor, *v, is propagated through the Composite hieararchy, at each
-        /// Component node pointer *c, the following method is called: v->visit(s), for each of the
-        /// Species *s of that node.
-        /// If a false value is returned from this function called, then the further
-        /// propagation of the tree is terminated.
-        bool visit_if(Species *s)
+        bool visit(Species *s)
         {
-            //        std::cout << "ConditionalVisitor::visit_if: checking " << c->getFullName() << std::endl;
             if(predImpl(s)){
                 return visitImpl(s);
             }
             else{
-                //            std::cout << "ConditionalVisitor::visit_if: Predicate failed, moving on..." << std::endl;
                 return true;
             }
             
@@ -126,7 +117,7 @@ protected:
         virtual bool visitImpl(Species *s) = 0;
         
         /// Return true if the Species *s satisfies the desired predicate
-        virtual bool predImpl(Species *s) = 0;
+        virtual bool predImpl(Species *s) {return true;}
     };
     
     
@@ -135,14 +126,6 @@ protected:
     /// each Species of the node and its descendent nodes
     class SpeciesVisitorLambda : public SpeciesVisitor {
     public:
-        /// Default Constructor
-        SpeciesVisitorLambda() = default;
-        
-        /// Constructor:
-        /// @param std::function<bool (Species*)> g defines the action to be perfomed on each Species of the node
-        /// @param std::function<bool (Species*)> pred defines the predicate whether the particular Species should be processed
-        SpeciesVisitorLambda(std::function<bool (Species *)> g, std::function<bool (Species *)> pred = [](Species *){return true;}) : SpeciesVisitor(), _f(g), _pred(pred) {}
-        
         /// Sets the action to be perfomed on each node as std::function<bool (Component*)> g
         void setLambda(std::function<bool (Species *)> g) {_f=g;}
         
@@ -150,7 +133,7 @@ protected:
         void setLambdaPred(std::function<bool (Species*)> pred) {_pred=pred;}
     protected:
         std::function<bool (Species *)> _f;///< The function to be perfomed on each node
-        std::function<bool (Species *)> _pred;///< The predicate which checks whether the Species should be evaluated
+        std::function<bool (Species *)> _pred =[](Species *){return true;};///< The predicate which checks whether the Species should be evaluated
         
         /// Implementation of the visit(...) method
         virtual bool visitImpl(Species *s) override {return _f(s);}
@@ -166,18 +149,11 @@ protected:
     class ReactionVisitor {
     public:
         /// When this visitor, *v, is propagated through the Composite hieararchy, at each
-        /// Component node pointer *c, the following method is called: v->visit(r), for each of the
-        /// Reaction *r of that node.
-        /// If a false value is returned from this function called, then the further
-        /// propagation of the tree is terminated.
-        bool visit(ReactionBase *r) {return visitImpl(r);}
-        
-        /// When this visitor, *v, is propagated through the Composite hieararchy, at each
         /// Component node pointer *c, the following method is called: v->visit(s), for each of the
         /// Reaction *r of that node.
         /// If a false value is returned from this function called, then the further
         /// propagation of the tree is terminated.
-        bool visit_if(ReactionBase *r)
+        bool visit(ReactionBase *r)
         {
             //        std::cout << "ConditionalVisitor::visit_if: checking " << c->getFullName() << std::endl;
             if(predImpl(r)){

@@ -69,8 +69,8 @@ int main(int argc, const char * argv[])
         counter+=c->numberOfSpecies();
         return true;
     });
-    ccv.apply_if(cvl1);
-    cout << "ConditionalVisitorLambda: counted " << counter << " Species" << endl;
+    ccv.apply(cvl1);
+    cout << "VisitorLambda: counted " << counter << " Species" << endl;
 
     
     counter=0;
@@ -94,20 +94,33 @@ int main(int argc, const char * argv[])
         ++counter;
         return true;
     });
-    ccv.apply_if(svl1);
+    ccv.apply(svl1);
 
     counter=0;
     ReactionVisitorLambda rvl1;
     rvl1.setLambdaPred([](ReactionBase *r){return r->getRate()<50.0;});
     rvl1.setLambda( [&counter](ReactionBase *r){
-        if(counter%1==0){
+        if(counter%10==0){
             cout << "Visiting Reaction: i=" << counter << ", " << r << ", Parent ptr=" << r->getParent() << ",\n" << *r;
         }
         ++counter;
         return true;
     });
-    ccv.apply_if(rvl1);
+    ccv.apply(rvl1);
+    
+    cout << endl;
 
+    counter=0;
+    TypeVisitorLambda<Compartment> uvl1;
+    uvl1.setLambda( [&counter](Component *c){
+        if(counter%10==0){
+            Compartment *C = static_cast<Compartment*>(c);
+            cout << "Visiting Compartment: i=" << counter << ", has " << C->countReactions() << " reactions." << endl;
+        }
+        ++counter;
+        return true;
+    });
+    ccv.apply(uvl1);
     
     cout << "Main exited..." << endl;
     return 0;
