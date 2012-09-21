@@ -118,6 +118,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 This is the complete list of members for <a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a>, including all inherited members.<table>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#a69edbe33378230389a2fb99c4ca2b5ce">clone</a>()</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68">connect</a>(std::function&lt; void(RSpecies *, int)&gt; const &amp;RSpecies_callback, int priority=5)</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a5e8aedfe4c4b5e08fb0ee672c3d80ace">countSpecies</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#a03eba31a17a3713e8c45cc0952e922bb">getFullName</a>() const </td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a330ef4514a8979a6ea0e6f71ed5cb820">getMolecule</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
@@ -127,7 +128,9 @@ This is the complete list of members for <a class="el" href="classchem_1_1Specie
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa">getRoot</a>()</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a1719a8155a69e9a62593d23d4bfc8514">getRSpecies</a>()</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a438dae186317809effdd040ed38c568b">getRSpecies</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a05fbe0a05f028beb1bb729f19d44a56a">getUpperLimitForN</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a6ddddc5be2b0e4427486f80a891879b3">hasParent</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655">isSignaling</a>() const </td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#aff630d716711fbbab3bc7f598230316b">operator!=</a>(const Species &amp;a, const Species &amp;b)</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [friend]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#a88592474fe2dd281951e15c6b8ddf201">operator=</a>(const SpeciesDiffusing &amp;rhs)</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#add1696a25d2174de8078ef509b313890">operator=</a>(SpeciesDiffusing &amp;&amp;rhs)</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
@@ -144,6 +147,8 @@ This is the complete list of members for <a class="el" href="classchem_1_1Specie
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#aa0183d61ee28bcc845674d3b649bf100">SpeciesDiffusing</a>(const std::string &amp;name, species_copy_t n=0, species_copy_t ulim=max_ulim)</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#ae5a9f9e77809772866d2bbfb440ae817">SpeciesDiffusing</a>(const SpeciesDiffusing &amp;rhs)</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#a560f9bc8c0d7da4a91a969e78917afa4">SpeciesDiffusing</a>(SpeciesDiffusing &amp;&amp;rhs) noexcept</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c">startSignaling</a>()</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#a9d34195d05f3e35e00dd20892ff7393b">stopSignaling</a>()</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Species.html#afb5803da12a3192f0c1b5bcbea4054d7">~Species</a>() noexcept</td><td><a class="el" href="classchem_1_1Species.html">chem::Species</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1SpeciesDiffusing.html#a683ab39a97cef1b68be11c68b476a840">~SpeciesDiffusing</a>() noexcept</td><td><a class="el" href="classchem_1_1SpeciesDiffusing.html">chem::SpeciesDiffusing</a></td><td><code> [inline]</code></td></tr>
 </table></div><!-- contents -->
@@ -151,7 +156,7 @@ This is the complete list of members for <a class="el" href="classchem_1_1Specie
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:51 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

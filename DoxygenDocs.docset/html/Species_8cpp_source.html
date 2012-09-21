@@ -140,18 +140,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00024"></a>00024     }
 <a name="l00025"></a>00025 
 <a name="l00026"></a>00026 <span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
-<a name="l00027"></a>00027 <span class="preprocessor"></span>    boost::signals2::connection Species::connect(std::function&lt;<span class="keywordtype">void</span> (<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> *, <span class="keywordtype">int</span>)&gt; <span class="keyword">const</span> &amp;RSpecies_callback, <span class="keywordtype">int</span> priority)
+<a name="l00027"></a><a class="code" href="classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68">00027</a> <span class="preprocessor"></span>    boost::signals2::connection <a class="code" href="classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68" title="Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.">Species::connect</a>(std::function&lt;<span class="keywordtype">void</span> (<a class="code" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> *, <span class="keywordtype">int</span>)&gt; <span class="keyword">const</span> &amp;RSpecies_callback, <span class="keywordtype">int</span> priority)
 <a name="l00028"></a>00028     {
-<a name="l00029"></a>00029         <span class="keywordflow">if</span> (!isSignaling())
-<a name="l00030"></a>00030             startSignaling(); 
-<a name="l00031"></a>00031         <span class="keywordflow">return</span> <a class="code" href="classchem_1_1Species.html#aa6a2ec40f6f1b08c76a184d11571c570" title="pointer to RSpecies; Species is responsible for creating and destroying RSpecies">_rspecies</a>-&gt;_signal-&gt;connect(priority, RSpecies_callback);
+<a name="l00029"></a>00029         <span class="keywordflow">if</span> (!<a class="code" href="classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655" title="Return true if this Species emits signals on copy number change.">isSignaling</a>())
+<a name="l00030"></a>00030             <a class="code" href="classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c" title="Set the signaling behavior of this Species Gillespie-like simulation algorithm)">startSignaling</a>(); 
+<a name="l00031"></a>00031         <span class="keywordflow">return</span> <a class="code" href="classchem_1_1Species.html#aa6a2ec40f6f1b08c76a184d11571c570" title="pointer to RSpecies; Species is responsible for creating and destroying RSpecies">_rspecies</a>-&gt;<a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>-&gt;connect(priority, RSpecies_callback);
 <a name="l00032"></a>00032     }
 <a name="l00033"></a>00033 <span class="preprocessor">#endif</span>
 <a name="l00034"></a>00034 <span class="preprocessor"></span>    
-<a name="l00035"></a><a class="code" href="classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa">00035</a>     <a class="code" href="classchem_1_1Composite.html">Composite</a>* <a class="code" href="classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa">Species::getRoot</a>()
+<a name="l00035"></a><a class="code" href="classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa">00035</a>     <a class="code" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a>* <a class="code" href="classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa">Species::getRoot</a>()
 <a name="l00036"></a>00036     {
 <a name="l00037"></a>00037         <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1Species.html#a6ddddc5be2b0e4427486f80a891879b3">hasParent</a>())
-<a name="l00038"></a>00038            <span class="keywordflow">return</span> this-&gt;<a class="code" href="classchem_1_1Species.html#acdc83314b339310022d56e024f124a34">getParent</a>()-&gt;<a class="code" href="classchem_1_1Component.html#a7f1166f8fb4c9526cd1794ec3c2714f5">getRoot</a>();
+<a name="l00038"></a>00038            <span class="keywordflow">return</span> this-&gt;<a class="code" href="classchem_1_1Species.html#acdc83314b339310022d56e024f124a34">getParent</a>()-&gt;<a class="code" href="classchem_1_1Component.html#a7f1166f8fb4c9526cd1794ec3c2714f5" title="Returns the root node of the hieararchy to which this node belongs to.">getRoot</a>();
 <a name="l00039"></a>00039         <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;
 <a name="l00040"></a>00040     }
 <a name="l00041"></a>00041 
@@ -185,7 +185,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="Species_8cpp.html">Species.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

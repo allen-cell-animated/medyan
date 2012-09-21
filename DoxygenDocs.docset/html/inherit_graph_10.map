@@ -1,3 +1,5 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classSystem.html" title="System" alt="" coords="6,5,71,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="6,31,114,59"/>
+<area shape="rect" id="node3" href="$classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="175,5,310,33"/>
+<area shape="rect" id="node5" href="$classchem_1_1SpeciesDiffusing.html" title="SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig..." alt="" coords="162,57,323,85"/>
 </map>

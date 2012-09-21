@@ -120,20 +120,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
+<p><a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class is the base class for the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern hieararchy.  
+ <a href="classchem_1_1Component.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Component_8h_source.html">Component.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for chem::Component:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1Component__inherit__graph.png" border="0" usemap="#chem_1_1Component_inherit__map" alt="Inheritance graph"/></div>
 <map name="chem_1_1Component_inherit__map" id="chem_1_1Component_inherit__map">
-<area shape="rect" id="node3" href="classchem_1_1Composite.html" title="chem::Composite" alt="" coords="5,80,123,107"/><area shape="rect" id="node5" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="148,80,252,107"/><area shape="rect" id="node7" href="classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="55,155,183,181"/><area shape="rect" id="node9" href="classchem_1_1SpeciesDiffusing.html" title="SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig..." alt="" coords="207,155,359,181"/></map>
+<area shape="rect" id="node3" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="173,83,297,111"/><area shape="rect" id="node5" href="classchem_1_1Compartment.html" title="chem::Compartment" alt="" coords="50,161,192,189"/><area shape="rect" id="node9" href="classchem_1_1CompartmentsSimpleGrid.html" title="chem::CompartmentsSimpleGrid\&lt; NDIM \&gt;" alt="" coords="216,161,487,189"/><area shape="rect" id="node7" href="classchem_1_1CompartmentCubic.html" title="chem::CompartmentCubic\&lt; NDIM \&gt;" alt="" coords="5,238,237,266"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for chem::Component:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1Component__coll__graph.png" border="0" usemap="#chem_1_1Component_coll__map" alt="Collaboration graph"/></div>
 <map name="chem_1_1Component_coll__map" id="chem_1_1Component_coll__map">
-<area shape="rect" id="node2" href="classchem_1_1Composite.html" title="chem::Composite" alt="" coords="145,96,263,123"/></map>
+<area shape="rect" id="node2" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="108,286,232,314"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1Component-members.html">List of all members.</a></p>
@@ -141,28 +144,68 @@ Collaboration diagram for chem::Component:</div>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2c7265280625c13151d52a500bcc3095"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a2c7265280625c13151d52a500bcc3095">Component</a> ()</td></tr>
-<tr class="memitem:ae9efcf2fb203ab7514f81f04d7e4dec2"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ae9efcf2fb203ab7514f81f04d7e4dec2">apply</a> (<a class="el" href="classchem_1_1Visitor.html">Visitor</a> &amp;v)</td></tr>
-<tr class="memitem:ac40e9d75a554324ba1d007a2d5234a38"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ac40e9d75a554324ba1d007a2d5234a38">apply_if</a> (<a class="el" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> &amp;v)</td></tr>
-<tr class="memitem:a32812270ee52f07ceae2194c56864fd6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a32812270ee52f07ceae2194c56864fd6">getParent</a> ()</td></tr>
-<tr class="memitem:a1f4e4d1566f1d3026f1e2a14fa3dffd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a> (<a class="el" href="classchem_1_1Composite.html">Composite</a> *other)</td></tr>
-<tr class="memitem:a75cd13a0d884f82fcddd574de33fbfe6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a75cd13a0d884f82fcddd574de33fbfe6">isRoot</a> () const </td></tr>
-<tr class="memitem:a7f1166f8fb4c9526cd1794ec3c2714f5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a7f1166f8fb4c9526cd1794ec3c2714f5">getRoot</a> ()</td></tr>
-<tr class="memitem:a720ec4ef4aaadfec3e47c31451d28637"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a720ec4ef4aaadfec3e47c31451d28637">numberOfChildren</a> () const </td></tr>
-<tr class="memitem:af2c73f75f937d457a55c1e0120833cb8"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#af2c73f75f937d457a55c1e0120833cb8">isComposite</a> () const </td></tr>
-<tr class="memitem:a3c0f652fe5b6910f07c046fe0190b7b5"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a3c0f652fe5b6910f07c046fe0190b7b5">isSpeciesContainer</a> () const </td></tr>
-<tr class="memitem:a8c79ee4335fadfcef56b14a62b742457"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a8c79ee4335fadfcef56b14a62b742457">isReactionsContainer</a> () const </td></tr>
+<tr class="memdesc:a2c7265280625c13151d52a500bcc3095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor; Parent is assigned to nullptr.  <a href="#a2c7265280625c13151d52a500bcc3095"></a><br/></td></tr>
 <tr class="memitem:a9a468e72232a30a69d4432d13ac5ffa9"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a9a468e72232a30a69d4432d13ac5ffa9">~Component</a> () noexcept</td></tr>
+<tr class="memdesc:a9a468e72232a30a69d4432d13ac5ffa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="#a9a468e72232a30a69d4432d13ac5ffa9"></a><br/></td></tr>
+<tr class="memitem:ae9efcf2fb203ab7514f81f04d7e4dec2"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ae9efcf2fb203ab7514f81f04d7e4dec2">apply</a> (<a class="el" href="classchem_1_1Visitor.html">Visitor</a> &amp;v)</td></tr>
+<tr class="memdesc:ae9efcf2fb203ab7514f81f04d7e4dec2"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this function is applied to a <a class="el" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> v, the corresponding v.visit(this) is called, and v is further applied to all children of this node recursively.  <a href="#ae9efcf2fb203ab7514f81f04d7e4dec2"></a><br/></td></tr>
+<tr class="memitem:af351fbf0deb48884c27806997f5954fd"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd">apply_if</a> (<a class="el" href="classchem_1_1Visitor.html">Visitor</a> &amp;v)</td></tr>
+<tr class="memdesc:af351fbf0deb48884c27806997f5954fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called, and v is further applied to all children of this node recursively.  <a href="#af351fbf0deb48884c27806997f5954fd"></a><br/></td></tr>
+<tr class="memitem:aea52312b501cefd0fc2a26ff5671d711"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#aea52312b501cefd0fc2a26ff5671d711">apply</a> (<a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:aea52312b501cefd0fc2a26ff5671d711"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this function is applied to a <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> sv, the corresponding v.visit(s) is called for each <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> pointer *s owned by the node.  <a href="#aea52312b501cefd0fc2a26ff5671d711"></a><br/></td></tr>
+<tr class="memitem:a97dbbb586bb63e5ea296a20778006c5d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a97dbbb586bb63e5ea296a20778006c5d">apply_if</a> (<a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a97dbbb586bb63e5ea296a20778006c5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd" title="When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called...">apply_if()</a> method of the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#a97dbbb586bb63e5ea296a20778006c5d"></a><br/></td></tr>
+<tr class="memitem:a5dcddefb6fd14be8973a35e9787f87ca"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca">apply_impl</a> (<a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a5dcddefb6fd14be8973a35e9787f87ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#a5dcddefb6fd14be8973a35e9787f87ca"></a><br/></td></tr>
+<tr class="memitem:a7e28efdd01ed9613ebb7fad8e3a24b07"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07">apply_impl_if</a> (<a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a7e28efdd01ed9613ebb7fad8e3a24b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#a7e28efdd01ed9613ebb7fad8e3a24b07"></a><br/></td></tr>
+<tr class="memitem:a04abbd7b2e96d2ea320f88921266f596"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a04abbd7b2e96d2ea320f88921266f596">apply</a> (<a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a04abbd7b2e96d2ea320f88921266f596"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this function is applied to a <a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> sv, the corresponding v.visit(s) is called for each <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> pointer *s owned by the node.  <a href="#a04abbd7b2e96d2ea320f88921266f596"></a><br/></td></tr>
+<tr class="memitem:ac68ab2a8444e5f9ae4f5cc0b5fb9104d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ac68ab2a8444e5f9ae4f5cc0b5fb9104d">apply_if</a> (<a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:ac68ab2a8444e5f9ae4f5cc0b5fb9104d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd" title="When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called...">apply_if()</a> method of the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a>.  <a href="#ac68ab2a8444e5f9ae4f5cc0b5fb9104d"></a><br/></td></tr>
+<tr class="memitem:a6db30c430a0eec9b0891cf3fc635ae1a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a6db30c430a0eec9b0891cf3fc635ae1a">apply_impl</a> (<a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a6db30c430a0eec9b0891cf3fc635ae1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node.  <a href="#a6db30c430a0eec9b0891cf3fc635ae1a"></a><br/></td></tr>
+<tr class="memitem:a9d22fee87e12e9dbe66ad7fe7e6df130"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a9d22fee87e12e9dbe66ad7fe7e6df130">apply_impl_if</a> (<a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
+<tr class="memdesc:a9d22fee87e12e9dbe66ad7fe7e6df130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node.  <a href="#a9d22fee87e12e9dbe66ad7fe7e6df130"></a><br/></td></tr>
+<tr class="memitem:a32812270ee52f07ceae2194c56864fd6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a32812270ee52f07ceae2194c56864fd6">getParent</a> ()</td></tr>
+<tr class="memdesc:a32812270ee52f07ceae2194c56864fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist.  <a href="#a32812270ee52f07ceae2194c56864fd6"></a><br/></td></tr>
+<tr class="memitem:a1f4e4d1566f1d3026f1e2a14fa3dffd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a> (<a class="el" href="classchem_1_1Composite.html">Composite</a> *other)</td></tr>
+<tr class="memdesc:a1f4e4d1566f1d3026f1e2a14fa3dffd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the parent of this node to other.  <a href="#a1f4e4d1566f1d3026f1e2a14fa3dffd9"></a><br/></td></tr>
+<tr class="memitem:a75cd13a0d884f82fcddd574de33fbfe6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a75cd13a0d884f82fcddd574de33fbfe6">isRoot</a> () const </td></tr>
+<tr class="memdesc:a75cd13a0d884f82fcddd574de33fbfe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node is the root node.  <a href="#a75cd13a0d884f82fcddd574de33fbfe6"></a><br/></td></tr>
+<tr class="memitem:a7f1166f8fb4c9526cd1794ec3c2714f5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a7f1166f8fb4c9526cd1794ec3c2714f5">getRoot</a> ()</td></tr>
+<tr class="memdesc:a7f1166f8fb4c9526cd1794ec3c2714f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the root node of the hieararchy to which this node belongs to.  <a href="#a7f1166f8fb4c9526cd1794ec3c2714f5"></a><br/></td></tr>
+<tr class="memitem:a720ec4ef4aaadfec3e47c31451d28637"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a720ec4ef4aaadfec3e47c31451d28637">numberOfChildren</a> () const </td></tr>
+<tr class="memdesc:a720ec4ef4aaadfec3e47c31451d28637"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of children of this node.  <a href="#a720ec4ef4aaadfec3e47c31451d28637"></a><br/></td></tr>
+<tr class="memitem:af2c73f75f937d457a55c1e0120833cb8"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#af2c73f75f937d457a55c1e0120833cb8">isComposite</a> () const </td></tr>
+<tr class="memdesc:af2c73f75f937d457a55c1e0120833cb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node is a <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> node.  <a href="#af2c73f75f937d457a55c1e0120833cb8"></a><br/></td></tr>
+<tr class="memitem:a3c0f652fe5b6910f07c046fe0190b7b5"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a3c0f652fe5b6910f07c046fe0190b7b5">isSpeciesContainer</a> () const </td></tr>
+<tr class="memdesc:a3c0f652fe5b6910f07c046fe0190b7b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node contains non-zero number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#a3c0f652fe5b6910f07c046fe0190b7b5"></a><br/></td></tr>
+<tr class="memitem:a8c79ee4335fadfcef56b14a62b742457"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a8c79ee4335fadfcef56b14a62b742457">isReactionsContainer</a> () const </td></tr>
+<tr class="memdesc:a8c79ee4335fadfcef56b14a62b742457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> pointers)  <a href="#a8c79ee4335fadfcef56b14a62b742457"></a><br/></td></tr>
+<tr class="memitem:a41d313350ea214ae94d54cb0c6263a9c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a41d313350ea214ae94d54cb0c6263a9c">numberOfSpecies</a> () const </td></tr>
+<tr class="memdesc:a41d313350ea214ae94d54cb0c6263a9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> being immediately managed by this node (i.e.  <a href="#a41d313350ea214ae94d54cb0c6263a9c"></a><br/></td></tr>
+<tr class="memitem:af76701fa683d7378915b5b6ad55bd357"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#af76701fa683d7378915b5b6ad55bd357">numberOfReactions</a> () const </td></tr>
+<tr class="memdesc:af76701fa683d7378915b5b6ad55bd357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> objets being immediately managed by this node (i.e.  <a href="#af76701fa683d7378915b5b6ad55bd357"></a><br/></td></tr>
 <tr class="memitem:a1d5884d373fb44fd950d5fe2b0c34e26"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a1d5884d373fb44fd950d5fe2b0c34e26">getFullName</a> () const </td></tr>
+<tr class="memdesc:a1d5884d373fb44fd950d5fe2b0c34e26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a std::string indicating the full name of this node (presumably used mainly for debugging)  <a href="#a1d5884d373fb44fd950d5fe2b0c34e26"></a><br/></td></tr>
 <tr class="memitem:a581a3912035ba493a2a24f1516d65ea8"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a581a3912035ba493a2a24f1516d65ea8">countSpecies</a> () const </td></tr>
+<tr class="memdesc:a581a3912035ba493a2a24f1516d65ea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> contained under this node's hieararchy.  <a href="#a581a3912035ba493a2a24f1516d65ea8"></a><br/></td></tr>
 <tr class="memitem:ab061b8b7d97db554af402ebb9723dc4c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#ab061b8b7d97db554af402ebb9723dc4c">countReactions</a> () const </td></tr>
+<tr class="memdesc:ab061b8b7d97db554af402ebb9723dc4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> objects contained under this node's hieararchy.  <a href="#ab061b8b7d97db554af402ebb9723dc4c"></a><br/></td></tr>
 <tr class="memitem:a778911b6f9505f1d8a39fc39e093974e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a778911b6f9505f1d8a39fc39e093974e">printSelf</a> ()</td></tr>
+<tr class="memdesc:a778911b6f9505f1d8a39fc39e093974e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints information about this node. Useful for debugging.  <a href="#a778911b6f9505f1d8a39fc39e093974e"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a5da4c5a0d857620fe3e3cf7d8d06ec26"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1Composite.html">Composite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Component.html#a5da4c5a0d857620fe3e3cf7d8d06ec26">_parent</a></td></tr>
+<tr class="memdesc:a5da4c5a0d857620fe3e3cf7d8d06ec26"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parent of this object. May be a nullptr if this object has no parent.  <a href="#a5da4c5a0d857620fe3e3cf7d8d06ec26"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00018">18</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<div class="textblock"><p><a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class is the base class for the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern hieararchy. </p>
+<p>The <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> patter allows building of complex hieararchical objects, with convenient methods for applying a function to all nodes (i.e. the <a class="el" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> pattern). Each node in the hieararchy may have a parent and may contain several children nodes. A class that is derived directly from <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> and not from <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a>, cannot contain children, i.e. it is a leaf node. </p>
+<dl class="section note"><dt>Note:</dt><dd><a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> objects may contain <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> and <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> collections, however, this is treated seperately from the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern (i.e. separate methods exist for the corresponding access to elements, changes, etc.) </dd></dl>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00030">30</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2c7265280625c13151d52a500bcc3095"></a>
 <div class="memitem">
@@ -178,7 +221,9 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00022">22</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Default Constructor; Parent is assigned to nullptr. </p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00036">36</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -196,7 +241,9 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00034">34</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Virtual Destructor. </p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00039">39</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -216,22 +263,76 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a65464170b82b4531efe620e23e68ea12">chem::Composite</a>.</p>
+<p>When this function is applied to a <a class="el" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> v, the corresponding v.visit(this) is called, and v is further applied to all children of this node recursively. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a58123ab346f6621a187bebe456e383ea">chem::Composite</a>.</p>
 
 <p>Definition at line <a class="el" href="Component_8cpp_source.html#l00024">24</a> of file <a class="el" href="Component_8cpp_source.html">Component.cpp</a>.</p>
 
-<p>References <a class="el" href="classchem_1_1Visitor.html#a3a148d3144ed2ef25972509a6a594d1a">chem::Visitor::visit()</a>.</p>
+<p>References <a class="el" href="Visitor_8h_source.html#l00031">chem::Visitor::visit()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ac40e9d75a554324ba1d007a2d5234a38"></a>
+<a class="anchor" id="aea52312b501cefd0fc2a26ff5671d711"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classchem_1_1Component.html#ac40e9d75a554324ba1d007a2d5234a38">chem::Component::apply_if</a> </td>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#ae9efcf2fb203ab7514f81f04d7e4dec2">chem::Component::apply</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>When this function is applied to a <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> sv, the corresponding v.visit(s) is called for each <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> pointer *s owned by the node. </p>
+<p>v is further applied to all children of this node recursively. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a18937a1f6f84a159e77ba83dd34b2e20">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00052">52</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00060">apply_impl()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a04abbd7b2e96d2ea320f88921266f596"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#ae9efcf2fb203ab7514f81f04d7e4dec2">chem::Component::apply</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>When this function is applied to a <a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> sv, the corresponding v.visit(s) is called for each <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> pointer *s owned by the node. </p>
+<p>v is further applied to all children of this node recursively. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#aa4a608ee92aaaa6e0d63278595707474">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00068">68</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00060">apply_impl()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af351fbf0deb48884c27806997f5954fd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd">chem::Component::apply_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1Visitor.html">Visitor</a> &amp;&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -239,11 +340,164 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#ac0ef45069901807e72d478ec59736ee4">chem::Composite</a>.</p>
+<p>When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called, and v is further applied to all children of this node recursively. </p>
+<p>However, the ConditionalVisitor allows the visit() function to be applied only selectively to nodes that conform to specific criteria. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a1cb289fb89fefeda7090a44e038e017a">chem::Composite</a>.</p>
 
 <p>Definition at line <a class="el" href="Component_8cpp_source.html#l00028">28</a> of file <a class="el" href="Component_8cpp_source.html">Component.cpp</a>.</p>
 
-<p>References <a class="el" href="Visitor_8h_source.html#l00025">chem::ConditionalVisitor::visit_if()</a>.</p>
+<p>References <a class="el" href="Visitor_8h_source.html#l00036">chem::Visitor::visit_if()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a97dbbb586bb63e5ea296a20778006c5d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd">chem::Component::apply_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Implements the <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd" title="When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called...">apply_if()</a> method of the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#ab56b1419cbaca60564fa01aacb2c70fd">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00056">56</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00060">apply_impl()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac68ab2a8444e5f9ae4f5cc0b5fb9104d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd">chem::Component::apply_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Implements the <a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd" title="When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called...">apply_if()</a> method of the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a6103789572ae9c0112eedd71a0d4e37f">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00072">72</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00060">apply_impl()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5dcddefb6fd14be8973a35e9787f87ca"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca">chem::Component::apply_impl</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Applies <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
+<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#ab08e78b733c9945fa7e12d146cffa3d8">chem::Compartment</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00060">60</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>Referenced by <a class="el" href="Component_8h_source.html#l00052">apply()</a>, <a class="el" href="Composite_8cpp_source.html#l00039">chem::Composite::apply()</a>, and <a class="el" href="Component_8h_source.html#l00056">apply_if()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6db30c430a0eec9b0891cf3fc635ae1a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca">chem::Component::apply_impl</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Applies <a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node. </p>
+<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a071bedd398a7a5dfc90447309a75f189">chem::Compartment</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00076">76</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7e28efdd01ed9613ebb7fad8e3a24b07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07">chem::Component::apply_impl_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Applies <a class="el" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
+<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a9181097e1954fec5f1dbad889401b451">chem::Compartment</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00064">64</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>Referenced by <a class="el" href="Composite_8cpp_source.html#l00052">chem::Composite::apply_if()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9d22fee87e12e9dbe66ad7fe7e6df130"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07">chem::Component::apply_impl_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node. </p>
+<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a1d46fc8e1d961deb45e22019153d26b3">chem::Compartment</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00080">80</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -261,9 +515,12 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a1cba92a649f230eab8e0cecb39632640">chem::Composite</a>.</p>
+<p>Return the number of <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> objects contained under this node's hieararchy. </p>
+<dl class="section note"><dt>Note:</dt><dd>This is a recursive call, and all nodes under this node are visited. </dd></dl>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00037">37</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a40bba31f79b1ca12b70a748ab6973037">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00125">125</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -281,11 +538,14 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a2c00f5f0be0b7dead8a0a5a53dde1a04">chem::Composite</a>.</p>
+<p>Return the number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> contained under this node's hieararchy. </p>
+<dl class="section note"><dt>Note:</dt><dd>This is a recursive call, and all nodes under this node are visited. </dd></dl>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00036">36</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#adeea8db3d77911119e935afb679eeb9f">chem::Composite</a>.</p>
 
-<p>Referenced by <a class="el" href="VisitorConcrete_8h_source.html#l00021">chem::ConcreteVisitor::visit()</a>, and <a class="el" href="VisitorConcrete_8h_source.html#l00049">chem::CompositeVisitor::visit()</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00121">121</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>Referenced by <a class="el" href="VisitorConcrete_8h_source.html#l00021">chem::ConcreteVisitor::visitImpl()</a>, and <a class="el" href="VisitorConcrete_8h_source.html#l00052">chem::CompositeVisitor::visitImpl()</a>.</p>
 
 </div>
 </div>
@@ -303,11 +563,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classchem_1_1CompartmentCubic.html#aeb15278bbc2c30f7de92ad03e12fbdd5">chem::CompartmentCubic&lt; NDIM &gt;</a>, <a class="el" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">chem::Compartment</a>, <a class="el" href="classchem_1_1Composite.html#a7781095451c19c48996856153c29bf6b">chem::Composite</a>, and <a class="el" href="classchem_1_1CompartmentsSimpleGrid.html#a9d1006f2fd5ab559bc3ff3f98249ea19">chem::CompartmentsSimpleGrid&lt; NDIM &gt;</a>.</p>
+<p>Return a std::string indicating the full name of this node (presumably used mainly for debugging) </p>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00035">35</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Reimplemented in <a class="el" href="classchem_1_1CompartmentCubic.html#aeb15278bbc2c30f7de92ad03e12fbdd5">chem::CompartmentCubic&lt; NDIM &gt;</a>, <a class="el" href="classchem_1_1Compartment.html#a33a683e6aae89013fce7bde417f49ee1">chem::Compartment</a>, <a class="el" href="classchem_1_1Composite.html#aa20f744718bd0dd17f8cf09d296231fb">chem::Composite</a>, and <a class="el" href="classchem_1_1CompartmentsSimpleGrid.html#a9d1006f2fd5ab559bc3ff3f98249ea19">chem::CompartmentsSimpleGrid&lt; NDIM &gt;</a>.</p>
 
-<p>Referenced by <a class="el" href="VisitorConcrete_8h_source.html#l00021">chem::ConcreteVisitor::visit()</a>, <a class="el" href="VisitorConcrete_8h_source.html#l00049">chem::CompositeVisitor::visit()</a>, and <a class="el" href="Visitor_8h_source.html#l00025">chem::ConditionalVisitor::visit_if()</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00117">117</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>Referenced by <a class="el" href="VisitorConcrete_8h_source.html#l00021">chem::ConcreteVisitor::visitImpl()</a>, and <a class="el" href="VisitorConcrete_8h_source.html#l00052">chem::CompositeVisitor::visitImpl()</a>.</p>
 
 </div>
 </div>
@@ -325,9 +587,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00025">25</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. </p>
 
-<p>References <a class="el" href="Component_8h_source.html#l00020">_parent</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00083">83</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00032">_parent</a>.</p>
 
 <p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>.</p>
 
@@ -347,11 +611,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Returns the root node of the hieararchy to which this node belongs to. </p>
+
 <p>Definition at line <a class="el" href="Component_8cpp_source.html#l00017">17</a> of file <a class="el" href="Component_8cpp_source.html">Component.cpp</a>.</p>
 
-<p>References <a class="el" href="Component_8h_source.html#l00025">getParent()</a>, <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, and <a class="el" href="Component_8h_source.html#l00027">isRoot()</a>.</p>
+<p>References <a class="el" href="Component_8h_source.html#l00083">getParent()</a>, <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, and <a class="el" href="Component_8h_source.html#l00090">isRoot()</a>.</p>
 
-<p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, <a class="el" href="Reaction_8cpp_source.html#l00035">chem::ReactionBase::getRoot()</a>, and <a class="el" href="Species_8cpp_source.html#l00035">chem::Species::getRoot()</a>.</p>
+<p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>, <a class="el" href="ReactionBase_8cpp_source.html#l00027">chem::ReactionBase::getRoot()</a>, and <a class="el" href="Species_8cpp_source.html#l00035">chem::Species::getRoot()</a>.</p>
 
 </div>
 </div>
@@ -369,7 +635,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00031">31</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Returns true if this node is a <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> node. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a939b2b81dfb961ebfa0a09243162a9f7">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00100">100</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -387,11 +657,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> pointers) </p>
+
 <p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a260d8b2dc70c2834f5702db4743d18ff">chem::Compartment</a>.</p>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00033">33</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00106">106</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
-<p>Referenced by <a class="el" href="Composite_8h_source.html#l00071">chem::Composite::countReactions()</a>.</p>
+<p>Referenced by <a class="el" href="Composite_8h_source.html#l00126">chem::Composite::countReactions()</a>.</p>
 
 </div>
 </div>
@@ -409,9 +681,12 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00027">27</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Returns true if this node is the root node. </p>
+<p>A root node has no parent, and the corresponding <a class="el" href="classchem_1_1Component.html#a32812270ee52f07ceae2194c56864fd6" title="Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...">getParent()</a> call would return a nullptr. </p>
 
-<p>References <a class="el" href="Component_8h_source.html#l00020">_parent</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00090">90</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00032">_parent</a>.</p>
 
 <p>Referenced by <a class="el" href="Component_8cpp_source.html#l00017">getRoot()</a>.</p>
 
@@ -431,11 +706,13 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Returns true if this node contains non-zero number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+
 <p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a5b31a84f6a592c44ce8235eca96896af">chem::Compartment</a>.</p>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00032">32</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00103">103</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
-<p>Referenced by <a class="el" href="Composite_8h_source.html#l00062">chem::Composite::countSpecies()</a>.</p>
+<p>Referenced by <a class="el" href="Composite_8h_source.html#l00112">chem::Composite::countSpecies()</a>.</p>
 
 </div>
 </div>
@@ -453,9 +730,58 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Returns the number of children of this node. </p>
+<dl class="section note"><dt>Note:</dt><dd><a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> and <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> objects are not counted. </dd></dl>
+
 <p>Reimplemented in <a class="el" href="classchem_1_1Composite.html#a89545dad587539c07acff13398e8ee7a">chem::Composite</a>.</p>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00030">30</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00097">97</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af76701fa683d7378915b5b6ad55bd357"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual size_t <a class="el" href="classchem_1_1Component.html#af76701fa683d7378915b5b6ad55bd357">chem::Component::numberOfReactions</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the number of <a class="el" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> objets being immediately managed by this node (i.e. </p>
+<p>not counting reactions belonging to children nodes, etc. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#a83cbc46fd0bef477a1f3e779b93ca8d6">chem::Compartment</a>, and <a class="el" href="classchem_1_1Composite.html#a67ccb83464dc97ac82f3f1301f252931">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00114">114</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a41d313350ea214ae94d54cb0c6263a9c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual size_t <a class="el" href="classchem_1_1Component.html#a41d313350ea214ae94d54cb0c6263a9c">chem::Component::numberOfSpecies</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the number of <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> being immediately managed by this node (i.e. </p>
+<p>not counting <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> belonging to children nodes, etc. </p>
+
+<p>Reimplemented in <a class="el" href="classchem_1_1Compartment.html#ac203d0d3da7bba141cc766f7281205aa">chem::Compartment</a>, and <a class="el" href="classchem_1_1Composite.html#a9f402bdea37c583b638a2ffdbd0d4bc9">chem::Composite</a>.</p>
+
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00110">110</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -473,9 +799,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Prints information about this node. Useful for debugging. </p>
+
 <p>Reimplemented in <a class="el" href="classchem_1_1CompartmentCubic.html#a2c7c92befc69c7033c34574f469d5fa8">chem::CompartmentCubic&lt; NDIM &gt;</a>, <a class="el" href="classchem_1_1Compartment.html#a4b1309d480039e985a7692030e9bca7b">chem::Compartment</a>, and <a class="el" href="classchem_1_1CompartmentsSimpleGrid.html#a5be8454b952a926dd6a7449ff27a3f67">chem::CompartmentsSimpleGrid&lt; NDIM &gt;</a>.</p>
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00038">38</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00128">128</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 
 </div>
 </div>
@@ -494,9 +822,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00026">26</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>Sets the parent of this node to other. </p>
 
-<p>References <a class="el" href="Component_8h_source.html#l00020">_parent</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00086">86</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>References <a class="el" href="Component_8h_source.html#l00032">_parent</a>.</p>
 
 </div>
 </div>
@@ -512,9 +842,11 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Component_8h_source.html#l00020">20</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+<p>The parent of this object. May be a nullptr if this object has no parent. </p>
 
-<p>Referenced by <a class="el" href="Component_8h_source.html#l00025">getParent()</a>, <a class="el" href="Component_8h_source.html#l00027">isRoot()</a>, and <a class="el" href="Component_8h_source.html#l00026">setParent()</a>.</p>
+<p>Definition at line <a class="el" href="Component_8h_source.html#l00032">32</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
+
+<p>Referenced by <a class="el" href="Component_8h_source.html#l00083">getParent()</a>, <a class="el" href="Component_8h_source.html#l00090">isRoot()</a>, and <a class="el" href="Component_8h_source.html#l00086">setParent()</a>.</p>
 
 </div>
 </div>
@@ -529,7 +861,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1Component.html">Component</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

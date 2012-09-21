@@ -1,3 +1,5 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1SpeciesNamesDB.html" title="SpeciesNamesDB class is used to associate unique integers with character based names of Species..." alt="" coords="6,5,170,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="6,31,109,59"/>
+<area shape="rect" id="node3" href="$classchem_1_1RNodeGillespie.html" title="RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith..." alt="" coords="158,5,312,33"/>
+<area shape="rect" id="node5" href="$classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="168,57,301,85"/>
 </map>

@@ -16,7 +16,7 @@ Inheritance diagram for chem\-:\-:Chem\-N\-R\-M\-Impl\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=188pt]{classchem_1_1ChemNRMImpl__inherit__graph}
+\includegraphics[width=194pt]{classchem_1_1ChemNRMImpl__inherit__graph}
 \end{center}
 \end{figure}
 
@@ -25,7 +25,7 @@ Collaboration diagram for chem\-:\-:Chem\-N\-R\-M\-Impl\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=188pt]{classchem_1_1ChemNRMImpl__coll__graph}
+\includegraphics[width=194pt]{classchem_1_1ChemNRMImpl__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -47,7 +47,7 @@ void \hyperlink{classchem_1_1ChemNRMImpl_abc38c43b16a4ab1aa31505152e4426ed}{rese
 \begin{DoxyCompactList}\small\item\em Sets global time to 0.\-0. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1ChemNRMImpl_ad096a21196bb3e5a978dc3fdb50d8e1b}{sync\-Global\-Time} ()
 \begin{DoxyCompactList}\small\item\em Sets global time variable to \hyperlink{classchem_1_1ChemNRMImpl}{Chem\-N\-R\-M\-Impl}'s global time. \end{DoxyCompactList}\item 
-\hyperlink{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}{boost\-\_\-heap} $\ast$ \hyperlink{classchem_1_1ChemNRMImpl_ae52572d35469dd8569457dbce96af78e}{get\-Heap} ()
+\hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{boost\-\_\-heap} $\ast$ \hyperlink{classchem_1_1ChemNRMImpl_ae52572d35469dd8569457dbce96af78e}{get\-Heap} ()
 \begin{DoxyCompactList}\small\item\em Return a pointer to the heap. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1ChemNRMImpl_afdd66d28d760064d5edc4472b8146a08}{add\-Reaction} (\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$r)
 \begin{DoxyCompactList}\small\item\em Add \hyperlink{classchem_1_1Reaction}{Reaction} $\ast$r to the network. \end{DoxyCompactList}\item 
@@ -73,7 +73,7 @@ std\-::unordered\-\_\-map\\*
 $<$ \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} \\*
 $\ast$, std\-::unique\-\_\-ptr$<$ \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} $>$ $>$ \hyperlink{classchem_1_1ChemNRMImpl_a8eb526f8bc56b8aeeadca537004576db}{\-\_\-map\-\_\-rnodes}
 \begin{DoxyCompactList}\small\item\em The database of \hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M} objects, representing the reaction network. \end{DoxyCompactList}\item 
-\hyperlink{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}{boost\-\_\-heap} \hyperlink{classchem_1_1ChemNRMImpl_af2063c9b768c13ac541886947c567c1f}{\-\_\-heap}
+\hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{boost\-\_\-heap} \hyperlink{classchem_1_1ChemNRMImpl_af2063c9b768c13ac541886947c567c1f}{\-\_\-heap}
 \begin{DoxyCompactList}\small\item\em A priority queue for the N\-R\-M algorithm, containing \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} elements. \end{DoxyCompactList}\item 
 std\-::mt19937 \hyperlink{classchem_1_1ChemNRMImpl_ad0dce1073a3c37dd21c6523a81dd18e6}{\-\_\-eng}
 \begin{DoxyCompactList}\small\item\em Random number generator. \end{DoxyCompactList}\item 
@@ -302,7 +302,7 @@ Definition at line 172 of file Chem\-N\-R\-M\-Impl.\-cpp.
 
 
 
-References \-\_\-heap, \-\_\-t, chem\-::\-Reaction\-Base\-::dependents(), chem\-::\-R\-Node\-N\-R\-M\-::generate\-New\-Rand\-Tau(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Propensity(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Reaction(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Tau(), chem\-::\-R\-Node\-N\-R\-M\-::is\-Passivated(), chem\-::\-R\-Node\-N\-R\-M\-::make\-Step(), chem\-::\-R\-Node\-N\-R\-M\-::re\-Compute\-Propensity(), chem\-::\-R\-Node\-N\-R\-M\-::set\-Tau(), sync\-Global\-Time(), and chem\-::\-R\-Node\-N\-R\-M\-::update\-Heap().
+References \-\_\-heap, \-\_\-t, chem\-::\-Reaction\-Base\-::broadcast\-R\-Species\-Signals(), chem\-::\-Reaction\-Base\-::dependents(), chem\-::\-Reaction\-Base\-::emit\-Signal(), chem\-::\-R\-Node\-N\-R\-M\-::generate\-New\-Rand\-Tau(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Propensity(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Reaction(), chem\-::\-R\-Node\-N\-R\-M\-::get\-Tau(), chem\-::\-R\-Node\-N\-R\-M\-::is\-Passivated(), chem\-::\-R\-Node\-N\-R\-M\-::make\-Step(), chem\-::\-R\-Node\-N\-R\-M\-::re\-Compute\-Propensity(), chem\-::\-R\-Node\-N\-R\-M\-::set\-Tau(), sync\-Global\-Time(), and chem\-::\-R\-Node\-N\-R\-M\-::update\-Heap().
 
 
 

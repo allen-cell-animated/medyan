@@ -1,8 +1,13 @@
 <map id="G" name="G">
-<area shape="rect" id="node5" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="648,80,731,107"/>
-<area shape="rect" id="node29" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="1031,155,1109,181"/>
-<area shape="rect" id="node25" href="$common_8h.html" title="common.h" alt="" coords="1466,304,1544,331"/>
-<area shape="rect" id="node44" href="$utility_8h.html" title="utility.h" alt="" coords="991,304,1049,331"/>
-<area shape="rect" id="node48" href="$Component_8h.html" title="Component.h" alt="" coords="1212,229,1311,256"/>
-<area shape="rect" id="node50" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="844,229,932,256"/>
+<area shape="rect" id="node9" href="$SpeciesContainer_8h.html" title="SpeciesContainer.h" alt="" coords="70,238,207,266"/>
+<area shape="rect" id="node52" href="$ReactionContainer_8h.html" title="ReactionContainer.h" alt="" coords="664,83,805,111"/>
+<area shape="rect" id="node76" href="$Composite_8h.html" title="Composite.h" alt="" coords="1511,238,1607,266"/>
+<area shape="rect" id="node87" href="$ChemSim_8h.html" title="ChemSim.h" alt="" coords="1164,83,1255,111"/>
+<area shape="rect" id="node13" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="1127,315,1205,343"/>
+<area shape="rect" id="node27" href="$common_8h.html" title="common.h" alt="" coords="932,470,1015,498"/>
+<area shape="rect" id="node31" href="$utility_8h.html" title="utility.h" alt="" coords="1040,470,1101,498"/>
+<area shape="rect" id="node35" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="933,393,1021,421"/>
+<area shape="rect" id="node55" href="$ReactionBase_8h.html" title="ReactionBase.h" alt="" coords="637,238,752,266"/>
+<area shape="rect" id="node73" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="732,161,816,189"/>
+<area shape="rect" id="node84" href="$Component_8h.html" title="Component.h" alt="" coords="1668,315,1769,343"/>
 </map>

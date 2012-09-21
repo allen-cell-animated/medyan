@@ -1,3 +1,4 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B &#45;&gt; C." alt="" coords="6,5,114,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B &#45;..." alt="" coords="5,5,150,33"/>
+<area shape="rect" id="node3" href="$classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B &#45;&gt; C, where M is the numbe..." alt="" coords="197,5,363,33"/>
 </map>

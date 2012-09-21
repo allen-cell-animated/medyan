@@ -1,8 +1,8 @@
 <map id="G" name="G">
-<area shape="rect" id="node5" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="751,229,839,256"/>
-<area shape="rect" id="node34" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="975,80,1057,107"/>
-<area shape="rect" id="node25" href="$common_8h.html" title="common.h" alt="" coords="1370,304,1448,331"/>
-<area shape="rect" id="node29" href="$utility_8h.html" title="utility.h" alt="" coords="912,304,971,331"/>
-<area shape="rect" id="node50" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="933,155,1011,181"/>
-<area shape="rect" id="node62" href="$Component_8h.html" title="Component.h" alt="" coords="1017,229,1116,256"/>
+<area shape="rect" id="node5" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="863,315,952,343"/>
+<area shape="rect" id="node34" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="555,83,639,111"/>
+<area shape="rect" id="node25" href="$common_8h.html" title="common.h" alt="" coords="521,393,604,421"/>
+<area shape="rect" id="node29" href="$utility_8h.html" title="utility.h" alt="" coords="940,393,1001,421"/>
+<area shape="rect" id="node36" href="$ReactionBase_8h.html" title="ReactionBase.h" alt="" coords="540,161,655,189"/>
+<area shape="rect" id="node54" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="1108,238,1187,266"/>
 </map>

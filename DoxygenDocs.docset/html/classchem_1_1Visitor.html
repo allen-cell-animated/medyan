@@ -113,11 +113,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">chem::Visitor Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>An abstract interface to traverse those nodes in the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern which fulfil a certain predicate.  
+ <a href="classchem_1_1Visitor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Visitor_8h_source.html">Visitor.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -125,19 +129,31 @@ Inheritance diagram for chem::Visitor:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1Visitor__inherit__graph.png" border="0" usemap="#chem_1_1Visitor_inherit__map" alt="Inheritance graph"/></div>
 <map name="chem_1_1Visitor_inherit__map" id="chem_1_1Visitor_inherit__map">
-<area shape="rect" id="node3" href="classchem_1_1ConcreteVisitor.html" title="chem::ConcreteVisitor" alt="" coords="5,80,147,107"/><area shape="rect" id="node5" href="classchem_1_1FindFirstSpeciesVisitor.html" title="chem::FindFirstSpeciesVisitor" alt="" coords="171,80,353,107"/></map>
+<area shape="rect" id="node3" href="classchem_1_1CompositeVisitor.html" title="chem::CompositeVisitor" alt="" coords="4,83,165,111"/><area shape="rect" id="node5" href="classchem_1_1ConcreteVisitor.html" title="ConcreteVisitor is an example visitor, following the regular Visitor pattern." alt="" coords="191,83,343,111"/><area shape="rect" id="node7" href="classchem_1_1VisitorLambda.html" title="The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each nod..." alt="" coords="367,83,512,111"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1Visitor-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3a148d3144ed2ef25972509a6a594d1a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#a3a148d3144ed2ef25972509a6a594d1a">visit</a> (<a class="el" href="classchem_1_1Component.html">Component</a> *c)=0</td></tr>
+<tr class="memitem:a710015ef735e109c812edbb653d6d598"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#a710015ef735e109c812edbb653d6d598">visit</a> (<a class="el" href="classchem_1_1Component.html">Component</a> *c)</td></tr>
+<tr class="memdesc:a710015ef735e109c812edbb653d6d598"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this visitor, *v, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: v-&gt;visit(c).  <a href="#a710015ef735e109c812edbb653d6d598"></a><br/></td></tr>
+<tr class="memitem:ad02a683bb0cf97d9df381c3efeb90a06"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#ad02a683bb0cf97d9df381c3efeb90a06">visit_if</a> (<a class="el" href="classchem_1_1Component.html">Component</a> *c)</td></tr>
+<tr class="memdesc:ad02a683bb0cf97d9df381c3efeb90a06"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this conditional visitor, *cv, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true.  <a href="#ad02a683bb0cf97d9df381c3efeb90a06"></a><br/></td></tr>
 <tr class="memitem:a1f8b4dc62e90ed58f0b53e906a782ee0"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#a1f8b4dc62e90ed58f0b53e906a782ee0">~Visitor</a> ()</td></tr>
+<tr class="memdesc:a1f8b4dc62e90ed58f0b53e906a782ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <a href="#a1f8b4dc62e90ed58f0b53e906a782ee0"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae058e8ac35f22b03d23ae443d12c71ea"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#ae058e8ac35f22b03d23ae443d12c71ea">visitImpl</a> (<a class="el" href="classchem_1_1Component.html">Component</a> *c)=0</td></tr>
+<tr class="memdesc:ae058e8ac35f22b03d23ae443d12c71ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this visitor, *cv, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c).  <a href="#ae058e8ac35f22b03d23ae443d12c71ea"></a><br/></td></tr>
+<tr class="memitem:a8f11a43266d18d1396236d0c5f3a8ad6"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html#a8f11a43266d18d1396236d0c5f3a8ad6">predImpl</a> (<a class="el" href="classchem_1_1Component.html">Component</a> *c)=0</td></tr>
+<tr class="memdesc:a8f11a43266d18d1396236d0c5f3a8ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> *c satisfies the desired predicate.  <a href="#a8f11a43266d18d1396236d0c5f3a8ad6"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00017">17</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
+<div class="textblock"><p>An abstract interface to traverse those nodes in the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern which fulfil a certain predicate. </p>
+<p>The visitor pattern allows a functor to visit each node of the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern. Concrete classes derived from <a class="el" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> must implement the <a class="el" href="classchem_1_1Visitor.html#a710015ef735e109c812edbb653d6d598" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit(Component *c)</a> method. <a class="el" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a>, v, allows a predicate to be applied at each node, *c, and cv-&gt;visit(c) is called only if that node satisfies the predicate. For example, this can be used to visit only filaments in the hieararchy. </p>
+
+<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00025">25</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a1f8b4dc62e90ed58f0b53e906a782ee0"></a>
 <div class="memitem">
@@ -153,29 +169,109 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00020">20</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
+<p>Virtual destructor. </p>
+
+<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00048">48</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a3a148d3144ed2ef25972509a6a594d1a"></a>
+<a class="anchor" id="a8f11a43266d18d1396236d0c5f3a8ad6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool <a class="el" href="classchem_1_1Visitor.html#a3a148d3144ed2ef25972509a6a594d1a">chem::Visitor::visit</a> </td>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Visitor.html#a8f11a43266d18d1396236d0c5f3a8ad6">chem::Visitor::predImpl</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classchem_1_1Component.html">Component</a> *&#160;</td>
           <td class="paramname"><em>c</em></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
+          <td><code> [protected, pure virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Implemented in <a class="el" href="classchem_1_1FindFirstSpeciesVisitor.html#afe2b8f520e443307a6ba06a24c4b9991">chem::FindFirstSpeciesVisitor</a>, and <a class="el" href="classchem_1_1ConcreteVisitor.html#abb5892cdcf90fef25aafafaf81baa697">chem::ConcreteVisitor</a>.</p>
+<p>Return true if the <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> *c satisfies the desired predicate. </p>
+
+<p>Implemented in <a class="el" href="classchem_1_1VisitorLambda.html#a0cf887a8af038c43db5ad97cb0885118">chem::VisitorLambda</a>, and <a class="el" href="classchem_1_1CompositeVisitor.html#a157e17e7a6b7ed91b47d59aea1cc1268">chem::CompositeVisitor</a>.</p>
+
+<p>Referenced by <a class="el" href="Visitor_8h_source.html#l00036">visit_if()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a710015ef735e109c812edbb653d6d598"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classchem_1_1Visitor.html#a710015ef735e109c812edbb653d6d598">chem::Visitor::visit</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1Component.html">Component</a> *&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>When this visitor, *v, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: v-&gt;visit(c). </p>
+<p>If a false value is returned from this function called, then the further propagation of the tree is terminated. </p>
+
+<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00031">31</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
+
+<p>References <a class="el" href="classchem_1_1Visitor.html#ae058e8ac35f22b03d23ae443d12c71ea">visitImpl()</a>.</p>
 
 <p>Referenced by <a class="el" href="Component_8cpp_source.html#l00024">chem::Component::apply()</a>, and <a class="el" href="Composite_8cpp_source.html#l00015">chem::Composite::apply()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad02a683bb0cf97d9df381c3efeb90a06"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classchem_1_1Visitor.html#ad02a683bb0cf97d9df381c3efeb90a06">chem::Visitor::visit_if</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1Component.html">Component</a> *&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>When this conditional visitor, *cv, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </p>
+<p>If v-&gt;visit(c) returns a false value, then the further propagation of the tree is terminated. </p>
+
+<p>Definition at line <a class="el" href="Visitor_8h_source.html#l00036">36</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
+
+<p>References <a class="el" href="classchem_1_1Visitor.html#a8f11a43266d18d1396236d0c5f3a8ad6">predImpl()</a>, and <a class="el" href="classchem_1_1Visitor.html#ae058e8ac35f22b03d23ae443d12c71ea">visitImpl()</a>.</p>
+
+<p>Referenced by <a class="el" href="Component_8cpp_source.html#l00028">chem::Component::apply_if()</a>, and <a class="el" href="Composite_8cpp_source.html#l00027">chem::Composite::apply_if()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae058e8ac35f22b03d23ae443d12c71ea"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classchem_1_1Visitor.html#ae058e8ac35f22b03d23ae443d12c71ea">chem::Visitor::visitImpl</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classchem_1_1Component.html">Component</a> *&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td><code> [protected, pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>When this visitor, *cv, is propagated through the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> hieararchy, at each <a class="el" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy.">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c). </p>
+<p>If a false value is returned from this function called, then the further propagation of the tree is terminated. </p>
+
+<p>Implemented in <a class="el" href="classchem_1_1VisitorLambda.html#ab44a2f2438782ec3651a1cdbfc8a67ff">chem::VisitorLambda</a>, <a class="el" href="classchem_1_1CompositeVisitor.html#ac3104d5ec0d0628bbcc72f17f69b0396">chem::CompositeVisitor</a>, and <a class="el" href="classchem_1_1ConcreteVisitor.html#a5dfd9a95b1c2b8bf73a643c20c7388bc">chem::ConcreteVisitor</a>.</p>
+
+<p>Referenced by <a class="el" href="Visitor_8h_source.html#l00031">visit()</a>, and <a class="el" href="Visitor_8h_source.html#l00036">visit_if()</a>.</p>
 
 </div>
 </div>
@@ -189,7 +285,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1Visitor.html">Visitor</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:51 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

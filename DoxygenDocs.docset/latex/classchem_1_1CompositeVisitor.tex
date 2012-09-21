@@ -7,93 +7,135 @@
 
 
 
-Inheritance diagram for chem\-:\-:Composite\-Visitor\-:\nopagebreak
+Inheritance diagram for chem\-:\-:Composite\-Visitor\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=194pt]{classchem_1_1CompositeVisitor__inherit__graph}
+\includegraphics[width=200pt]{classchem_1_1CompositeVisitor__inherit__graph}
 \end{center}
 \end{figure}
 
 
-Collaboration diagram for chem\-:\-:Composite\-Visitor\-:\nopagebreak
+Collaboration diagram for chem\-:\-:Composite\-Visitor\-:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=194pt]{classchem_1_1CompositeVisitor__coll__graph}
+\includegraphics[width=200pt]{classchem_1_1CompositeVisitor__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-virtual bool \hyperlink{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}{visit} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+bool \hyperlink{classchem_1_1Visitor_a710015ef735e109c812edbb653d6d598}{visit} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: v-\/$>$visit(c). \end{DoxyCompactList}\item 
+bool \hyperlink{classchem_1_1Visitor_ad02a683bb0cf97d9df381c3efeb90a06}{visit\-\_\-if} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
+\begin{DoxyCompactList}\small\item\em When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
 \item 
-virtual bool \hyperlink{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}{pred} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
-\item 
-virtual bool \hyperlink{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{visit\-\_\-if} (\hyperlink{classchem_1_1Component}{Component} $\ast$c)
-\end{DoxyCompactItemize}
+virtual bool \hyperlink{classchem_1_1CompositeVisitor_ac3104d5ec0d0628bbcc72f17f69b0396}{visit\-Impl} (\hyperlink{classchem_1_1Component}{Component} $\ast$c) override
+\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$cv, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: cv-\/$>$visit(c). \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1CompositeVisitor_a157e17e7a6b7ed91b47d59aea1cc1268}{pred\-Impl} (\hyperlink{classchem_1_1Component}{Component} $\ast$c) override
+\begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classchem_1_1Component}{Component} $\ast$c satisfies the desired predicate. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 
 
-Definition at line 47 of file Visitor\-Concrete.\-h.
+Definition at line 50 of file Visitor\-Concrete.\-h.
 
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!pred@{pred}}
-\index{pred@{pred}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
-\subsubsection[{pred}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::pred} (
+\hypertarget{classchem_1_1CompositeVisitor_a157e17e7a6b7ed91b47d59aea1cc1268}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!pred\-Impl@{pred\-Impl}}
+\index{pred\-Impl@{pred\-Impl}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
+\subsubsection[{pred\-Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::pred\-Impl} (
 \begin{DoxyParamCaption}
 \item[{{\bf Component} $\ast$}]{c}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_a56074a684bd24ada8bd28b861b5c14ac}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, protected, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_a157e17e7a6b7ed91b47d59aea1cc1268}
 
 
-Implements \hyperlink{classchem_1_1ConditionalVisitor_ac35925bee54467373d1f44cccec75aa5}{chem\-::\-Conditional\-Visitor}.
+Return true if the \hyperlink{classchem_1_1Component}{Component} $\ast$c satisfies the desired predicate. 
 
 
 
-Definition at line 54 of file Visitor\-Concrete.\-h.
+Implements \hyperlink{classchem_1_1Visitor_a8f11a43266d18d1396236d0c5f3a8ad6}{chem\-::\-Visitor}.
 
-\hypertarget{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit@{visit}}
+
+
+Definition at line 57 of file Visitor\-Concrete.\-h.
+
+\hypertarget{classchem_1_1Visitor_a710015ef735e109c812edbb653d6d598}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit@{visit}}
 \index{visit@{visit}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
-\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::visit} (
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Visitor\-::visit} (
 \begin{DoxyParamCaption}
 \item[{{\bf Component} $\ast$}]{c}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_a04cfd3a93f0b76387b00a11889150d43}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Visitor_a710015ef735e109c812edbb653d6d598}
 
 
-Implements \hyperlink{classchem_1_1ConditionalVisitor_aff08b8bc4b5c193e1fe60f06cca318b1}{chem\-::\-Conditional\-Visitor}.
+When this visitor, $\ast$v, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: v-\/$>$visit(c). 
+
+If a false value is returned from this function called, then the further propagation of the tree is terminated. 
+
+Definition at line 31 of file Visitor.\-h.
 
 
 
-Definition at line 49 of file Visitor\-Concrete.\-h.
+References chem\-::\-Visitor\-::visit\-Impl().
 
 
 
-References chem\-::\-Component\-::count\-Species(), and chem\-::\-Component\-::get\-Full\-Name().
+Referenced by chem\-::\-Component\-::apply(), and chem\-::\-Composite\-::apply().
 
-\hypertarget{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit\-\_\-if@{visit\-\_\-if}}
+\hypertarget{classchem_1_1Visitor_ad02a683bb0cf97d9df381c3efeb90a06}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit\-\_\-if@{visit\-\_\-if}}
 \index{visit\-\_\-if@{visit\-\_\-if}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
-\subsubsection[{visit\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Conditional\-Visitor\-::visit\-\_\-if} (
+\subsubsection[{visit\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-Visitor\-::visit\-\_\-if} (
 \begin{DoxyParamCaption}
 \item[{{\bf Component} $\ast$}]{c}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1ConditionalVisitor_ac5eca1778f8647f7dc85a00489c3d938}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Visitor_ad02a683bb0cf97d9df381c3efeb90a06}
 
 
-Definition at line 25 of file Visitor.\-h.
+When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
+
+If v-\/$>$visit(c) returns a false value, then the further propagation of the tree is terminated. 
+
+Definition at line 36 of file Visitor.\-h.
 
 
 
-References chem\-::\-Component\-::get\-Full\-Name(), chem\-::\-Conditional\-Visitor\-::pred(), and chem\-::\-Conditional\-Visitor\-::visit().
+References chem\-::\-Visitor\-::pred\-Impl(), and chem\-::\-Visitor\-::visit\-Impl().
 
 
 
 Referenced by chem\-::\-Component\-::apply\-\_\-if(), and chem\-::\-Composite\-::apply\-\_\-if().
+
+\hypertarget{classchem_1_1CompositeVisitor_ac3104d5ec0d0628bbcc72f17f69b0396}{\index{chem\-::\-Composite\-Visitor@{chem\-::\-Composite\-Visitor}!visit\-Impl@{visit\-Impl}}
+\index{visit\-Impl@{visit\-Impl}!chem::CompositeVisitor@{chem\-::\-Composite\-Visitor}}
+\subsubsection[{visit\-Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-Visitor\-::visit\-Impl} (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, protected, virtual\mbox{]}}}}\label{classchem_1_1CompositeVisitor_ac3104d5ec0d0628bbcc72f17f69b0396}
+
+
+When this visitor, $\ast$cv, is propagated through the \hyperlink{classchem_1_1Composite}{Composite} hieararchy, at each \hyperlink{classchem_1_1Component}{Component} node pointer $\ast$c, the following method is called\-: cv-\/$>$visit(c). 
+
+If a false value is returned from this function called, then the further propagation of the tree is terminated. 
+
+Implements \hyperlink{classchem_1_1Visitor_ae058e8ac35f22b03d23ae443d12c71ea}{chem\-::\-Visitor}.
+
+
+
+Definition at line 52 of file Visitor\-Concrete.\-h.
+
+
+
+References chem\-::\-Component\-::count\-Species(), and chem\-::\-Component\-::get\-Full\-Name().
 
 
 

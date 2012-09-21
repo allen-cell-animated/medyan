@@ -1,3 +1,3 @@
 <map id="G" name="G">
-<area shape="rect" id="node2" href="$classchem_1_1Visitor.html" title="chem::Visitor" alt="" coords="31,5,121,32"/>
+<area shape="rect" id="node2" href="$classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica..." alt="" coords="32,6,129,34"/>
 </map>

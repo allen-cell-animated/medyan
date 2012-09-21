@@ -3,16 +3,20 @@
 }
 
 
+\hyperlink{classchem_1_1Composite}{Composite} class is the aggregating class for the \hyperlink{classchem_1_1Composite}{Composite} pattern.  
+
+
+
+
 {\ttfamily \#include $<$Composite.\-h$>$}
 
 
 
-Inheritance diagram for chem\-:\-:Composite\-:
-\nopagebreak
+Inheritance diagram for chem\-:\-:Composite\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=172pt]{classchem_1_1Composite__inherit__graph}
+\includegraphics[width=350pt]{classchem_1_1Composite__inherit__graph}
 \end{center}
 \end{figure}
 
@@ -21,74 +25,93 @@ Collaboration diagram for chem\-:\-:Composite\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=350pt]{classchem_1_1Composite__coll__graph}
+\includegraphics[width=325pt]{classchem_1_1Composite__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classchem_1_1Composite_ae3444220cf51ab3db2616ea4833c4770}{Composite} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Default Constructor does nothing. \end{DoxyCompactList}\item 
 virtual \hyperlink{classchem_1_1Composite_a36a86821952d10911595120d3d26d683}{$\sim$\-Composite} () noexcept
-\item 
-virtual bool \hyperlink{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}{apply} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v)
-\item 
-virtual bool \hyperlink{classchem_1_1Composite_ac0ef45069901807e72d478ec59736ee4}{apply\-\_\-if} (\hyperlink{classchem_1_1ConditionalVisitor}{Conditional\-Visitor} \&v)
-\item 
-virtual bool \hyperlink{classchem_1_1Composite_ae4b190f0f14a61d40f68f4a4a51e9192}{is\-Composite} ()
-\item 
-virtual std\-::string \hyperlink{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{get\-Full\-Name} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Virtual Destructor does nothing. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{apply} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em Implements the \hyperlink{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{apply()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if} (\hyperlink{classchem_1_1Visitor}{Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_a18937a1f6f84a159e77ba83dd34b2e20}{apply} (\hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em Implements the \hyperlink{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{apply()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_ab56b1419cbaca60564fa01aacb2c70fd}{apply\-\_\-if} (\hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_aa4a608ee92aaaa6e0d63278595707474}{apply} (\hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em When this function is applied to a \hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} sv, the corresponding v.\-visit(s) is called for each \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} pointer $\ast$s owned by the node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_a6103789572ae9c0112eedd71a0d4e37f}{apply\-\_\-if} (\hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} \&v) override
+\begin{DoxyCompactList}\small\item\em Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Composite_a939b2b81dfb961ebfa0a09243162a9f7}{is\-Composite} () const override
+\begin{DoxyCompactList}\small\item\em Returns true. \end{DoxyCompactList}\item 
+virtual std\-::string \hyperlink{classchem_1_1Composite_aa20f744718bd0dd17f8cf09d296231fb}{get\-Full\-Name} () const override
+\begin{DoxyCompactList}\small\item\em Returns the full name of this node. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1Composite_a7f0737d480f68cb2e37eb061a1cfac36}{add\-Child} (std\-::unique\-\_\-ptr$<$ \hyperlink{classchem_1_1Component}{Component} $>$ \&\&child)
-\item 
+\begin{DoxyCompactList}\small\item\em Adds a \hyperlink{classchem_1_1Component}{Component} child to this \hyperlink{classchem_1_1Composite}{Composite} node. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1Composite_a1db2418dfbd583f05088fb4695fda677}{remove\-Child} (\hyperlink{classchem_1_1Component}{Component} $\ast$child)
-\item 
+\begin{DoxyCompactList}\small\item\em Remove $\ast$child from this node's children. The child's destructor will be called and the memory will be freed. \end{DoxyCompactList}\item 
 virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a89545dad587539c07acff13398e8ee7a}{number\-Of\-Children} () const 
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a97512e021c76460f0b982d4ff16a91d5}{number\-Of\-Species} () const 
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a0089cc7bf318c99339d098018ede34c7}{number\-Of\-Reactions} () const 
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}{count\-Species} () const 
-\item 
-virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a1cba92a649f230eab8e0cecb39632640}{count\-Reactions} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns the number of immediate children of this node. \end{DoxyCompactList}\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a9f402bdea37c583b638a2ffdbd0d4bc9}{number\-Of\-Species} () const override
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classchem_1_1Species}{Species} being immediately managed by this node (i.\-e. \end{DoxyCompactList}\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Composite_adeea8db3d77911119e935afb679eeb9f}{count\-Species} () const override
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classchem_1_1Species}{Species} being managed by this node and its descendent nodes. \end{DoxyCompactList}\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a67ccb83464dc97ac82f3f1301f252931}{number\-Of\-Reactions} () const override
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} objets being immediately managed by this node (i.\-e. \end{DoxyCompactList}\item 
+virtual size\-\_\-t \hyperlink{classchem_1_1Composite_a40bba31f79b1ca12b70a748ab6973037}{count\-Reactions} () const override
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} objects being managed by this node and its descendent nodes. \end{DoxyCompactList}\item 
 virtual std\-::vector\\*
 $<$ std\-::unique\-\_\-ptr$<$ \hyperlink{classchem_1_1Component}{Component} $>$ $>$ \& \hyperlink{classchem_1_1Composite_af4fdad429dc7d8d5014961bbd18c8970}{children} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Returns a reference to the container of \hyperlink{classchem_1_1Component}{Component} children of this node. \end{DoxyCompactList}\item 
 virtual const std\-::vector\\*
 $<$ std\-::unique\-\_\-ptr$<$ \hyperlink{classchem_1_1Component}{Component} $>$ $>$ \& \hyperlink{classchem_1_1Composite_a9c66ed039e22fdafc90627db067fea4b}{children} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns a const reference to the container of \hyperlink{classchem_1_1Component}{Component} children of this node. \end{DoxyCompactList}\item 
 virtual \hyperlink{classchem_1_1Component}{Component} $\ast$ \hyperlink{classchem_1_1Composite_adf797cd6faed6b5f42848c712fd9eb8a}{children} (size\-\_\-t i)
-\item 
+\begin{DoxyCompactList}\small\item\em Returns a pointer to the i-\/th \hyperlink{classchem_1_1Component}{Component} child of this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Component_a5dcddefb6fd14be8973a35e9787f87ca}{apply\-\_\-impl} (\hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies \hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} v to every Species$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Component_a6db30c430a0eec9b0891cf3fc635ae1a}{apply\-\_\-impl} (\hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies \hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} v to every Reaction\-Base$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Component_a7e28efdd01ed9613ebb7fad8e3a24b07}{apply\-\_\-impl\-\_\-if} (\hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies \hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} v to every Species$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classchem_1_1Component_a9d22fee87e12e9dbe66ad7fe7e6df130}{apply\-\_\-impl\-\_\-if} (\hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies Reaction\-Base\-Visitor v to every Reaction\-Base$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{get\-Parent} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}{set\-Parent} (\hyperlink{classchem_1_1Composite}{Composite} $\ast$other)
-\item 
+\begin{DoxyCompactList}\small\item\em Sets the parent of this node to other. \end{DoxyCompactList}\item 
 bool \hyperlink{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}{is\-Root} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns true if this node is the root node. \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1Composite}{Composite} $\ast$ \hyperlink{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}{get\-Root} ()
-\item 
-virtual bool \hyperlink{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{is\-Composite} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns the root node of the hieararchy to which this node belongs to. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}{is\-Species\-Container} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of \hyperlink{classchem_1_1Species}{Species}. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{is\-Reactions\-Container} () const 
-\item 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of reactions (i.\-e. \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} pointers) \end{DoxyCompactList}\item 
 virtual void \hyperlink{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}{print\-Self} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Prints information about this node. Useful for debugging. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 std\-::vector$<$ std\-::unique\-\_\-ptr\\*
 $<$ \hyperlink{classchem_1_1Component}{Component} $>$ $>$ \hyperlink{classchem_1_1Composite_a80fea5cefad1820315fbef6f8d7adf17}{\-\_\-children}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Child node pointers of this \hyperlink{classchem_1_1Composite}{Composite} node. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
+\hyperlink{classchem_1_1Composite}{Composite} class is the aggregating class for the \hyperlink{classchem_1_1Composite}{Composite} pattern. 
+
+The \hyperlink{classchem_1_1Composite}{Composite} pattern allows building of complex hieararchical objects, with convenient methods for applying a function to all nodes (i.\-e. the \hyperlink{classchem_1_1Visitor}{Visitor} pattern). Each node in the hieararchy may have a parent and may contain several children nodes. A class that is derived from \hyperlink{classchem_1_1Composite}{Composite} can contain children \hyperlink{classchem_1_1Component}{Component} objects. \begin{DoxyNote}{Note}
+\hyperlink{classchem_1_1Composite}{Composite} objects may contain \hyperlink{classchem_1_1Species}{Species} and \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} collections, however, this is treated seperately from the \hyperlink{classchem_1_1Composite}{Composite} pattern (i.\-e. separate methods exist for the corresponding access to elements, changes, etc.) 
+\end{DoxyNote}
 
 
-Definition at line 24 of file Composite.\-h.
+Definition at line 37 of file Composite.\-h.
 
 
 
@@ -102,7 +125,11 @@ Definition at line 24 of file Composite.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1Composite_ae3444220cf51ab3db2616ea4833c4770}
 
 
-Definition at line 29 of file Composite.\-h.
+Default Constructor does nothing. 
+
+
+
+Definition at line 43 of file Composite.\-h.
 
 \hypertarget{classchem_1_1Composite_a36a86821952d10911595120d3d26d683}{\index{chem\-::\-Composite@{chem\-::\-Composite}!$\sim$\-Composite@{$\sim$\-Composite}}
 \index{$\sim$\-Composite@{$\sim$\-Composite}!chem::Composite@{chem\-::\-Composite}}
@@ -113,7 +140,11 @@ Definition at line 29 of file Composite.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a36a86821952d10911595120d3d26d683}
 
 
-Definition at line 30 of file Composite.\-h.
+Virtual Destructor does nothing. 
+
+
+
+Definition at line 46 of file Composite.\-h.
 
 
 
@@ -127,7 +158,19 @@ Definition at line 30 of file Composite.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a7f0737d480f68cb2e37eb061a1cfac36}
 
 
-Definition at line 39 of file Composite.\-h.
+Adds a \hyperlink{classchem_1_1Component}{Component} child to this \hyperlink{classchem_1_1Composite}{Composite} node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & -\/ is a std\-::unique\-\_\-ptr$<$\-Component$>$, hence, this node takes the memory ownership of the corresponding child pointer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+the rvalue semantics -\/ the std\-::unique\-\_\-ptr$<$...$>$ cannot be copied, but only can be moved 
+\end{DoxyNote}
+
+
+Definition at line 83 of file Composite.\-h.
 
 
 
@@ -137,13 +180,17 @@ References \-\_\-children.
 
 Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::initialize().
 
-\hypertarget{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply@{apply}}
+\hypertarget{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply@{apply}}
 \index{apply@{apply}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply} (
 \begin{DoxyParamCaption}
 \item[{{\bf Visitor} \&}]{v}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classchem_1_1Composite_a65464170b82b4531efe620e23e68ea12}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}
+
+
+Implements the \hyperlink{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{apply()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children. 
+
 
 
 Reimplemented from \hyperlink{classchem_1_1Component_ae9efcf2fb203ab7514f81f04d7e4dec2}{chem\-::\-Component}.
@@ -156,16 +203,66 @@ Definition at line 15 of file Composite.\-cpp.
 
 References children(), and chem\-::\-Visitor\-::visit().
 
-\hypertarget{classchem_1_1Composite_ac0ef45069901807e72d478ec59736ee4}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-if@{apply\-\_\-if}}
+\hypertarget{classchem_1_1Composite_a18937a1f6f84a159e77ba83dd34b2e20}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply@{apply}}
+\index{apply@{apply}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a18937a1f6f84a159e77ba83dd34b2e20}
+
+
+Implements the \hyperlink{classchem_1_1Composite_a58123ab346f6621a187bebe456e383ea}{apply()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1Species}{Species}. 
+
+
+
+Reimplemented from \hyperlink{classchem_1_1Component_aea52312b501cefd0fc2a26ff5671d711}{chem\-::\-Component}.
+
+
+
+Definition at line 39 of file Composite.\-cpp.
+
+
+
+References chem\-::\-Component\-::apply\-\_\-impl(), and children().
+
+\hypertarget{classchem_1_1Composite_aa4a608ee92aaaa6e0d63278595707474}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply@{apply}}
+\index{apply@{apply}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_aa4a608ee92aaaa6e0d63278595707474}
+
+
+When this function is applied to a \hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} sv, the corresponding v.\-visit(s) is called for each \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} pointer $\ast$s owned by the node. 
+
+v is further applied to all children of this node recursively. 
+
+Reimplemented from \hyperlink{classchem_1_1Component_a04abbd7b2e96d2ea320f88921266f596}{chem\-::\-Component}.
+
+
+
+Definition at line 64 of file Composite.\-cpp.
+
+
+
+References chem\-::\-Component\-::apply\-\_\-impl(), and children().
+
+\hypertarget{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-if@{apply\-\_\-if}}
 \index{apply\-\_\-if@{apply\-\_\-if}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply\-\_\-if} (
 \begin{DoxyParamCaption}
-\item[{{\bf Conditional\-Visitor} \&}]{v}
+\item[{{\bf Visitor} \&}]{v}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classchem_1_1Composite_ac0ef45069901807e72d478ec59736ee4}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}
 
 
-Reimplemented from \hyperlink{classchem_1_1Component_ac40e9d75a554324ba1d007a2d5234a38}{chem\-::\-Component}.
+Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children. 
+
+
+
+Reimplemented from \hyperlink{classchem_1_1Component_af351fbf0deb48884c27806997f5954fd}{chem\-::\-Component}.
 
 
 
@@ -173,7 +270,137 @@ Definition at line 27 of file Composite.\-cpp.
 
 
 
-References children(), and chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
+References children(), and chem\-::\-Visitor\-::visit\-\_\-if().
+
+\hypertarget{classchem_1_1Composite_ab56b1419cbaca60564fa01aacb2c70fd}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-if@{apply\-\_\-if}}
+\index{apply\-\_\-if@{apply\-\_\-if}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_ab56b1419cbaca60564fa01aacb2c70fd}
+
+
+Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1Species}{Species}. 
+
+
+
+Reimplemented from \hyperlink{classchem_1_1Component_a97dbbb586bb63e5ea296a20778006c5d}{chem\-::\-Component}.
+
+
+
+Definition at line 52 of file Composite.\-cpp.
+
+
+
+References chem\-::\-Component\-::apply\-\_\-impl\-\_\-if(), and children().
+
+\hypertarget{classchem_1_1Composite_a6103789572ae9c0112eedd71a0d4e37f}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-if@{apply\-\_\-if}}
+\index{apply\-\_\-if@{apply\-\_\-if}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf Composite\-::apply\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a6103789572ae9c0112eedd71a0d4e37f}
+
+
+Implements the \hyperlink{classchem_1_1Composite_a1cb289fb89fefeda7090a44e038e017a}{apply\-\_\-if()} method of the \hyperlink{classchem_1_1Component}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}. 
+
+
+
+Reimplemented from \hyperlink{classchem_1_1Component_ac68ab2a8444e5f9ae4f5cc0b5fb9104d}{chem\-::\-Component}.
+
+
+
+Definition at line 77 of file Composite.\-cpp.
+
+
+
+References chem\-::\-Component\-::apply\-\_\-impl\-\_\-if(), and children().
+
+\hypertarget{classchem_1_1Component_a5dcddefb6fd14be8973a35e9787f87ca}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-impl@{apply\-\_\-impl}}
+\index{apply\-\_\-impl@{apply\-\_\-impl}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::apply\-\_\-impl} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a5dcddefb6fd14be8973a35e9787f87ca}
+
+
+Applies \hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} v to every Species$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classchem_1_1Species}{Species}. 
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_ab08e78b733c9945fa7e12d146cffa3d8}{chem\-::\-Compartment}.
+
+
+
+Definition at line 60 of file Component.\-h.
+
+
+
+Referenced by chem\-::\-Component\-::apply(), apply(), and chem\-::\-Component\-::apply\-\_\-if().
+
+\hypertarget{classchem_1_1Component_a6db30c430a0eec9b0891cf3fc635ae1a}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-impl@{apply\-\_\-impl}}
+\index{apply\-\_\-impl@{apply\-\_\-impl}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::apply\-\_\-impl} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a6db30c430a0eec9b0891cf3fc635ae1a}
+
+
+Applies \hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor} v to every Reaction\-Base$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}. 
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_a071bedd398a7a5dfc90447309a75f189}{chem\-::\-Compartment}.
+
+
+
+Definition at line 76 of file Component.\-h.
+
+\hypertarget{classchem_1_1Component_a7e28efdd01ed9613ebb7fad8e3a24b07}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-impl\-\_\-if@{apply\-\_\-impl\-\_\-if}}
+\index{apply\-\_\-impl\-\_\-if@{apply\-\_\-impl\-\_\-if}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-impl\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::apply\-\_\-impl\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a7e28efdd01ed9613ebb7fad8e3a24b07}
+
+
+Applies \hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor} v to every Species$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classchem_1_1Species}{Species}. 
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_a9181097e1954fec5f1dbad889401b451}{chem\-::\-Compartment}.
+
+
+
+Definition at line 64 of file Component.\-h.
+
+
+
+Referenced by apply\-\_\-if().
+
+\hypertarget{classchem_1_1Component_a9d22fee87e12e9dbe66ad7fe7e6df130}{\index{chem\-::\-Composite@{chem\-::\-Composite}!apply\-\_\-impl\-\_\-if@{apply\-\_\-impl\-\_\-if}}
+\index{apply\-\_\-impl\-\_\-if@{apply\-\_\-impl\-\_\-if}!chem::Composite@{chem\-::\-Composite}}
+\subsubsection[{apply\-\_\-impl\-\_\-if}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::apply\-\_\-impl\-\_\-if} (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\-Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a9d22fee87e12e9dbe66ad7fe7e6df130}
+
+
+Applies Reaction\-Base\-Visitor v to every Reaction\-Base$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}. 
+
+Reimplemented in \hyperlink{classchem_1_1Compartment_a1d46fc8e1d961deb45e22019153d26b3}{chem\-::\-Compartment}.
+
+
+
+Definition at line 80 of file Component.\-h.
 
 \hypertarget{classchem_1_1Composite_af4fdad429dc7d8d5014961bbd18c8970}{\index{chem\-::\-Composite@{chem\-::\-Composite}!children@{children}}
 \index{children@{children}!chem::Composite@{chem\-::\-Composite}}
@@ -184,7 +411,11 @@ References children(), and chem\-::\-Conditional\-Visitor\-::visit\-\_\-if().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_af4fdad429dc7d8d5014961bbd18c8970}
 
 
-Definition at line 80 of file Composite.\-h.
+Returns a reference to the container of \hyperlink{classchem_1_1Component}{Component} children of this node. 
+
+
+
+Definition at line 136 of file Composite.\-h.
 
 
 
@@ -203,7 +434,11 @@ Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::add\-Che
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a9c66ed039e22fdafc90627db067fea4b}
 
 
-Definition at line 82 of file Composite.\-h.
+Returns a const reference to the container of \hyperlink{classchem_1_1Component}{Component} children of this node. 
+
+
+
+Definition at line 139 of file Composite.\-h.
 
 
 
@@ -218,45 +453,57 @@ References \-\_\-children.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_adf797cd6faed6b5f42848c712fd9eb8a}
 
 
-Definition at line 84 of file Composite.\-h.
+Returns a pointer to the i-\/th \hyperlink{classchem_1_1Component}{Component} child of this node. 
+
+
+
+Definition at line 142 of file Composite.\-h.
 
 
 
 References \-\_\-children.
 
-\hypertarget{classchem_1_1Composite_a1cba92a649f230eab8e0cecb39632640}{\index{chem\-::\-Composite@{chem\-::\-Composite}!count\-Reactions@{count\-Reactions}}
+\hypertarget{classchem_1_1Composite_a40bba31f79b1ca12b70a748ab6973037}{\index{chem\-::\-Composite@{chem\-::\-Composite}!count\-Reactions@{count\-Reactions}}
 \index{count\-Reactions@{count\-Reactions}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{count\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Composite\-::count\-Reactions} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a1cba92a649f230eab8e0cecb39632640}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a40bba31f79b1ca12b70a748ab6973037}
+
+
+Returns the number of \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} objects being managed by this node and its descendent nodes. 
+
 
 
 Reimplemented from \hyperlink{classchem_1_1Component_ab061b8b7d97db554af402ebb9723dc4c}{chem\-::\-Component}.
 
 
 
-Definition at line 71 of file Composite.\-h.
+Definition at line 126 of file Composite.\-h.
 
 
 
 References children(), chem\-::\-Component\-::is\-Reactions\-Container(), and number\-Of\-Reactions().
 
-\hypertarget{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}{\index{chem\-::\-Composite@{chem\-::\-Composite}!count\-Species@{count\-Species}}
+\hypertarget{classchem_1_1Composite_adeea8db3d77911119e935afb679eeb9f}{\index{chem\-::\-Composite@{chem\-::\-Composite}!count\-Species@{count\-Species}}
 \index{count\-Species@{count\-Species}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{count\-Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Composite\-::count\-Species} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a2c00f5f0be0b7dead8a0a5a53dde1a04}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_adeea8db3d77911119e935afb679eeb9f}
+
+
+Returns the number of \hyperlink{classchem_1_1Species}{Species} being managed by this node and its descendent nodes. 
+
 
 
 Reimplemented from \hyperlink{classchem_1_1Component_a581a3912035ba493a2a24f1516d65ea8}{chem\-::\-Component}.
 
 
 
-Definition at line 62 of file Composite.\-h.
+Definition at line 112 of file Composite.\-h.
 
 
 
@@ -266,13 +513,17 @@ References children(), chem\-::\-Component\-::is\-Species\-Container(), and numb
 
 Referenced by main().
 
-\hypertarget{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}{\index{chem\-::\-Composite@{chem\-::\-Composite}!get\-Full\-Name@{get\-Full\-Name}}
+\hypertarget{classchem_1_1Composite_aa20f744718bd0dd17f8cf09d296231fb}{\index{chem\-::\-Composite@{chem\-::\-Composite}!get\-Full\-Name@{get\-Full\-Name}}
 \index{get\-Full\-Name@{get\-Full\-Name}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{get\-Full\-Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual std\-::string {\bf chem\-::\-Composite\-::get\-Full\-Name} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a7781095451c19c48996856153c29bf6b}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_aa20f744718bd0dd17f8cf09d296231fb}
+
+
+Returns the full name of this node. 
+
 
 
 Reimplemented from \hyperlink{classchem_1_1Component_a1d5884d373fb44fd950d5fe2b0c34e26}{chem\-::\-Component}.
@@ -283,7 +534,7 @@ Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_aeb15278bbc2c30f7de92a
 
 
 
-Definition at line 37 of file Composite.\-h.
+Definition at line 77 of file Composite.\-h.
 
 \hypertarget{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{\index{chem\-::\-Composite@{chem\-::\-Composite}!get\-Parent@{get\-Parent}}
 \index{get\-Parent@{get\-Parent}!chem::Composite@{chem\-::\-Composite}}
@@ -294,7 +545,11 @@ Definition at line 37 of file Composite.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}
 
 
-Definition at line 25 of file Component.\-h.
+Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. 
+
+
+
+Definition at line 83 of file Component.\-h.
 
 
 
@@ -313,6 +568,10 @@ Referenced by chem\-::\-Component\-::get\-Root().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inherited\mbox{]}}}}\label{classchem_1_1Component_a7f1166f8fb4c9526cd1794ec3c2714f5}
 
 
+Returns the root node of the hieararchy to which this node belongs to. 
+
+
+
 Definition at line 17 of file Component.\-cpp.
 
 
@@ -323,27 +582,24 @@ References chem\-::\-Component\-::get\-Parent(), chem\-::\-Component\-::get\-Roo
 
 Referenced by chem\-::\-Component\-::get\-Root(), chem\-::\-Reaction\-Base\-::get\-Root(), and chem\-::\-Species\-::get\-Root().
 
-\hypertarget{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{\index{chem\-::\-Composite@{chem\-::\-Composite}!is\-Composite@{is\-Composite}}
-\index{is\-Composite@{is\-Composite}!chem::Composite@{chem\-::\-Composite}}
-\subsubsection[{is\-Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Component\-::is\-Composite} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}
-
-
-Definition at line 31 of file Component.\-h.
-
-\hypertarget{classchem_1_1Composite_ae4b190f0f14a61d40f68f4a4a51e9192}{\index{chem\-::\-Composite@{chem\-::\-Composite}!is\-Composite@{is\-Composite}}
+\hypertarget{classchem_1_1Composite_a939b2b81dfb961ebfa0a09243162a9f7}{\index{chem\-::\-Composite@{chem\-::\-Composite}!is\-Composite@{is\-Composite}}
 \index{is\-Composite@{is\-Composite}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{is\-Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf chem\-::\-Composite\-::is\-Composite} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_ae4b190f0f14a61d40f68f4a4a51e9192}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a939b2b81dfb961ebfa0a09243162a9f7}
 
 
-Definition at line 35 of file Composite.\-h.
+Returns true. 
+
+
+
+Reimplemented from \hyperlink{classchem_1_1Component_af2c73f75f937d457a55c1e0120833cb8}{chem\-::\-Component}.
+
+
+
+Definition at line 74 of file Composite.\-h.
 
 \hypertarget{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}{\index{chem\-::\-Composite@{chem\-::\-Composite}!is\-Reactions\-Container@{is\-Reactions\-Container}}
 \index{is\-Reactions\-Container@{is\-Reactions\-Container}!chem::Composite@{chem\-::\-Composite}}
@@ -354,11 +610,15 @@ Definition at line 35 of file Composite.\-h.
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a8c79ee4335fadfcef56b14a62b742457}
 
 
+Returns true if this node contains non-\/zero number of reactions (i.\-e. \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} pointers) 
+
+
+
 Reimplemented in \hyperlink{classchem_1_1Compartment_a260d8b2dc70c2834f5702db4743d18ff}{chem\-::\-Compartment}.
 
 
 
-Definition at line 33 of file Component.\-h.
+Definition at line 106 of file Component.\-h.
 
 
 
@@ -373,7 +633,11 @@ Referenced by count\-Reactions().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a75cd13a0d884f82fcddd574de33fbfe6}
 
 
-Definition at line 27 of file Component.\-h.
+Returns true if this node is the root node. 
+
+A root node has no parent, and the corresponding \hyperlink{classchem_1_1Component_a32812270ee52f07ceae2194c56864fd6}{get\-Parent()} call would return a nullptr. 
+
+Definition at line 90 of file Component.\-h.
 
 
 
@@ -392,11 +656,15 @@ Referenced by chem\-::\-Component\-::get\-Root().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a3c0f652fe5b6910f07c046fe0190b7b5}
 
 
+Returns true if this node contains non-\/zero number of \hyperlink{classchem_1_1Species}{Species}. 
+
+
+
 Reimplemented in \hyperlink{classchem_1_1Compartment_a5b31a84f6a592c44ce8235eca96896af}{chem\-::\-Compartment}.
 
 
 
-Definition at line 32 of file Component.\-h.
+Definition at line 103 of file Component.\-h.
 
 
 
@@ -411,11 +679,18 @@ Referenced by count\-Species().
 ) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a89545dad587539c07acff13398e8ee7a}
 
 
+Returns the number of immediate children of this node. 
+
+\begin{DoxyNote}{Note}
+\hyperlink{classchem_1_1Species}{Species} and reactions and not included in this tally 
+\end{DoxyNote}
+
+
 Reimplemented from \hyperlink{classchem_1_1Component_a720ec4ef4aaadfec3e47c31451d28637}{chem\-::\-Component}.
 
 
 
-Definition at line 56 of file Composite.\-h.
+Definition at line 105 of file Composite.\-h.
 
 
 
@@ -425,39 +700,55 @@ References children().
 
 Referenced by chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$\-::print\-Self().
 
-\hypertarget{classchem_1_1Composite_a0089cc7bf318c99339d098018ede34c7}{\index{chem\-::\-Composite@{chem\-::\-Composite}!number\-Of\-Reactions@{number\-Of\-Reactions}}
+\hypertarget{classchem_1_1Composite_a67ccb83464dc97ac82f3f1301f252931}{\index{chem\-::\-Composite@{chem\-::\-Composite}!number\-Of\-Reactions@{number\-Of\-Reactions}}
 \index{number\-Of\-Reactions@{number\-Of\-Reactions}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{number\-Of\-Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Composite\-::number\-Of\-Reactions} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a0089cc7bf318c99339d098018ede34c7}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a67ccb83464dc97ac82f3f1301f252931}
+
+
+Returns the number of \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} objets being immediately managed by this node (i.\-e. 
+
+not counting reactions belonging to children nodes, etc. 
+
+Reimplemented from \hyperlink{classchem_1_1Component_af76701fa683d7378915b5b6ad55bd357}{chem\-::\-Component}.
+
 
 
 Reimplemented in \hyperlink{classchem_1_1Compartment_a83cbc46fd0bef477a1f3e779b93ca8d6}{chem\-::\-Compartment}.
 
 
 
-Definition at line 60 of file Composite.\-h.
+Definition at line 123 of file Composite.\-h.
 
 
 
 Referenced by count\-Reactions().
 
-\hypertarget{classchem_1_1Composite_a97512e021c76460f0b982d4ff16a91d5}{\index{chem\-::\-Composite@{chem\-::\-Composite}!number\-Of\-Species@{number\-Of\-Species}}
+\hypertarget{classchem_1_1Composite_a9f402bdea37c583b638a2ffdbd0d4bc9}{\index{chem\-::\-Composite@{chem\-::\-Composite}!number\-Of\-Species@{number\-Of\-Species}}
 \index{number\-Of\-Species@{number\-Of\-Species}!chem::Composite@{chem\-::\-Composite}}
 \subsubsection[{number\-Of\-Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\-\_\-t {\bf chem\-::\-Composite\-::number\-Of\-Species} (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a97512e021c76460f0b982d4ff16a91d5}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline, override, virtual\mbox{]}}}}\label{classchem_1_1Composite_a9f402bdea37c583b638a2ffdbd0d4bc9}
+
+
+Returns the number of \hyperlink{classchem_1_1Species}{Species} being immediately managed by this node (i.\-e. 
+
+not counting \hyperlink{classchem_1_1Species}{Species} belonging to children nodes, etc. 
+
+Reimplemented from \hyperlink{classchem_1_1Component_a41d313350ea214ae94d54cb0c6263a9c}{chem\-::\-Component}.
+
 
 
 Reimplemented in \hyperlink{classchem_1_1Compartment_ac203d0d3da7bba141cc766f7281205aa}{chem\-::\-Compartment}.
 
 
 
-Definition at line 58 of file Composite.\-h.
+Definition at line 109 of file Composite.\-h.
 
 
 
@@ -472,11 +763,15 @@ Referenced by count\-Species().
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual, inherited\mbox{]}}}}\label{classchem_1_1Component_a778911b6f9505f1d8a39fc39e093974e}
 
 
+Prints information about this node. Useful for debugging. 
+
+
+
 Reimplemented in \hyperlink{classchem_1_1CompartmentCubic_a2c7c92befc69c7033c34574f469d5fa8}{chem\-::\-Compartment\-Cubic$<$ N\-D\-I\-M $>$}, \hyperlink{classchem_1_1Compartment_a4b1309d480039e985a7692030e9bca7b}{chem\-::\-Compartment}, and \hyperlink{classchem_1_1CompartmentsSimpleGrid_a5be8454b952a926dd6a7449ff27a3f67}{chem\-::\-Compartments\-Simple\-Grid$<$ N\-D\-I\-M $>$}.
 
 
 
-Definition at line 38 of file Component.\-h.
+Definition at line 128 of file Component.\-h.
 
 \hypertarget{classchem_1_1Composite_a1db2418dfbd583f05088fb4695fda677}{\index{chem\-::\-Composite@{chem\-::\-Composite}!remove\-Child@{remove\-Child}}
 \index{remove\-Child@{remove\-Child}!chem::Composite@{chem\-::\-Composite}}
@@ -487,7 +782,11 @@ Definition at line 38 of file Component.\-h.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, virtual\mbox{]}}}}\label{classchem_1_1Composite_a1db2418dfbd583f05088fb4695fda677}
 
 
-Definition at line 44 of file Composite.\-h.
+Remove $\ast$child from this node's children. The child's destructor will be called and the memory will be freed. 
+
+
+
+Definition at line 90 of file Composite.\-h.
 
 
 
@@ -502,7 +801,11 @@ References \-\_\-children.
 )\hspace{0.3cm}{\ttfamily  \mbox{[}inline, inherited\mbox{]}}}}\label{classchem_1_1Component_a1f4e4d1566f1d3026f1e2a14fa3dffd9}
 
 
-Definition at line 26 of file Component.\-h.
+Sets the parent of this node to other. 
+
+
+
+Definition at line 86 of file Component.\-h.
 
 
 
@@ -516,7 +819,11 @@ References chem\-::\-Component\-::\-\_\-parent.
 \subsubsection[{\-\_\-children}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$std\-::unique\-\_\-ptr$<${\bf Component}$>$ $>$ {\bf chem\-::\-Composite\-::\-\_\-children}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1Composite_a80fea5cefad1820315fbef6f8d7adf17}
 
 
-Definition at line 26 of file Composite.\-h.
+Child node pointers of this \hyperlink{classchem_1_1Composite}{Composite} node. 
+
+
+
+Definition at line 39 of file Composite.\-h.
 
 
 

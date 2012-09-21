@@ -1,10 +1,15 @@
 <map id="G" name="G">
-<area shape="rect" id="node3" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="1081,304,1159,331"/>
-<area shape="rect" id="node47" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="584,229,667,256"/>
-<area shape="rect" id="node64" href="$System_8h.html" title="System.h" alt="" coords="1048,80,1123,107"/>
-<area shape="rect" id="node19" href="$common_8h.html" title="common.h" alt="" coords="727,453,805,480"/>
-<area shape="rect" id="node23" href="$utility_8h.html" title="utility.h" alt="" coords="1448,453,1507,480"/>
-<area shape="rect" id="node27" href="$Component_8h.html" title="Component.h" alt="" coords="1259,379,1357,405"/>
-<area shape="rect" id="node29" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="995,379,1083,405"/>
-<area shape="rect" id="node69" href="$Compartment_8h.html" title="Compartment.h" alt="" coords="1123,155,1231,181"/>
+<area shape="rect" id="node3" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="1150,470,1228,498"/>
+<area shape="rect" id="node45" href="$Reaction_8h.html" title="Reaction.h" alt="" coords="426,315,510,343"/>
+<area shape="rect" id="node66" href="$System_8h.html" title="System.h" alt="" coords="1106,83,1182,111"/>
+<area shape="rect" id="node19" href="$common_8h.html" title="common.h" alt="" coords="1145,625,1228,653"/>
+<area shape="rect" id="node23" href="$utility_8h.html" title="utility.h" alt="" coords="972,625,1034,653"/>
+<area shape="rect" id="node27" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="922,547,1011,575"/>
+<area shape="rect" id="node47" href="$ReactionBase_8h.html" title="ReactionBase.h" alt="" coords="599,393,714,421"/>
+<area shape="rect" id="node71" href="$Compartment_8h.html" title="Compartment.h" alt="" coords="1041,161,1154,189"/>
+<area shape="rect" id="node76" href="$SpeciesContainer_8h.html" title="SpeciesContainer.h" alt="" coords="388,393,524,421"/>
+<area shape="rect" id="node80" href="$ReactionContainer_8h.html" title="ReactionContainer.h" alt="" coords="585,238,727,266"/>
+<area shape="rect" id="node85" href="$Composite_8h.html" title="Composite.h" alt="" coords="1537,393,1634,421"/>
+<area shape="rect" id="node96" href="$ChemSim_8h.html" title="ChemSim.h" alt="" coords="369,238,460,266"/>
+<area shape="rect" id="node93" href="$Component_8h.html" title="Component.h" alt="" coords="1355,470,1456,498"/>
 </map>

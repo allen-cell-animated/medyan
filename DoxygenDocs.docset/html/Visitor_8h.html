@@ -124,14 +124,14 @@ Include dependency graph for Visitor.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="Visitor_8h__incl.png" border="0" usemap="#CytoSim_2Visitor_8h" alt=""/></div>
 <map name="CytoSim_2Visitor_8h" id="CytoSim_2Visitor_8h">
-<area shape="rect" id="node5" href="Component_8h.html" title="Component.h" alt="" coords="99,80,197,107"/></map>
+<area shape="rect" id="node5" href="Component_8h.html" title="Component.h" alt="" coords="101,83,203,111"/></map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="Visitor_8h__dep__incl.png" border="0" usemap="#CytoSim_2Visitor_8hdep" alt=""/></div>
 <map name="CytoSim_2Visitor_8hdep" id="CytoSim_2Visitor_8hdep">
-<area shape="rect" id="node3" href="Composite_8h.html" title="CytoSim/Composite.h" alt="" coords="221,80,365,107"/><area shape="rect" id="node9" href="VisitorConcrete_8h.html" title="CytoSim/VisitorConcrete.h" alt="" coords="379,155,545,181"/><area shape="rect" id="node5" href="Component_8cpp.html" title="CytoSim/Component.cpp" alt="" coords="5,155,171,181"/><area shape="rect" id="node7" href="Composite_8cpp.html" title="CytoSim/Composite.cpp" alt="" coords="195,155,355,181"/></map>
+<area shape="rect" id="node3" href="Compartment_8cpp.html" title="CytoSim/Compartment.cpp" alt="" coords="5,83,187,111"/><area shape="rect" id="node5" href="Component_8cpp.html" title="CytoSim/Component.cpp" alt="" coords="211,83,380,111"/><area shape="rect" id="node7" href="Composite_8cpp.html" title="CytoSim/Composite.cpp" alt="" coords="404,83,568,111"/><area shape="rect" id="node9" href="VisitorConcrete_8h.html" title="CytoSim/VisitorConcrete.h" alt="" coords="593,83,769,111"/></map>
 </div>
 </div>
 <p><a href="Visitor_8h_source.html">Go to the source code of this file.</a></p>
@@ -139,7 +139,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Visitor.html">chem::Visitor</a></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ConditionalVisitor.html">chem::ConditionalVisitor</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstract interface to traverse those nodes in the <a class="el" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern.">Composite</a> pattern which fulfil a certain predicate.  <a href="classchem_1_1Visitor.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1VisitorLambda.html">chem::VisitorLambda</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classchem_1_1VisitorLambda.html" title="The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each nod...">VisitorLambda</a> allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon.  <a href="classchem_1_1VisitorLambda.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1SpeciesVisitor.html">chem::SpeciesVisitor</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1SpeciesVisitorLambda.html">chem::SpeciesVisitorLambda</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classchem_1_1SpeciesVisitorLambda.html" title="The SpeciesVisitorLambda allows using C++11 lambda expressions to set the action to be performed on e...">SpeciesVisitorLambda</a> allows using C++11 lambda expressions to set the action to be performed on each <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> of the node and its descendent nodes.  <a href="classchem_1_1SpeciesVisitorLambda.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ReactionVisitor.html">chem::ReactionVisitor</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1ReactionVisitorLambda.html">chem::ReactionVisitorLambda</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classchem_1_1ReactionVisitorLambda.html" title="The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on ...">ReactionVisitorLambda</a> allows using C++11 lambda expressions to set the action to be performed on each <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> of the node and its descendent nodes.  <a href="classchem_1_1ReactionVisitorLambda.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacechem"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html">chem</a></td></tr>
@@ -150,7 +158,7 @@ Namespaces</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="Visitor_8h.html">Visitor.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

@@ -74,12 +74,12 @@
               <Path>classchem_1_1Composite.html</Path>
              </Node>
              <Node>
-              <Name>ReactionBase</Name>
-              <Path>classchem_1_1ReactionBase.html</Path>
-             </Node>
-             <Node>
               <Name>Reaction</Name>
               <Path>classchem_1_1Reaction.html</Path>
+             </Node>
+             <Node>
+              <Name>ReactionBase</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
              </Node>
              <Node>
               <Name>ReactionPtrContainerIFace</Name>
@@ -134,16 +134,28 @@
               <Path>classchem_1_1Visitor.html</Path>
              </Node>
              <Node>
-              <Name>ConditionalVisitor</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
+              <Name>VisitorLambda</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+             </Node>
+             <Node>
+              <Name>SpeciesVisitor</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+             </Node>
+             <Node>
+              <Name>SpeciesVisitorLambda</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+             </Node>
+             <Node>
+              <Name>ReactionVisitor</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+             </Node>
+             <Node>
+              <Name>ReactionVisitorLambda</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
              </Node>
              <Node>
               <Name>ConcreteVisitor</Name>
               <Path>classchem_1_1ConcreteVisitor.html</Path>
-             </Node>
-             <Node>
-              <Name>FindFirstSpeciesVisitor</Name>
-              <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
              </Node>
              <Node>
               <Name>CompositeVisitor</Name>
@@ -152,17 +164,12 @@
              <Node>
               <Name>boost_heap</Name>
               <Path>namespacechem.html</Path>
-              <Anchor>ad3c7e19583b71f442e2d969972ed21f9</Anchor>
-             </Node>
-             <Node>
-              <Name>fast_allocator_t</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>a98412a4cd9bafe9f3edd66b3a68327a3</Anchor>
+              <Anchor>aacd1d2bb93e0bb1b1af9bb1fbb5133ca</Anchor>
              </Node>
              <Node>
               <Name>handle_t</Name>
               <Path>namespacechem.html</Path>
-              <Anchor>abf1718e53f56f85003559d20e531a1a4</Anchor>
+              <Anchor>a33be80d87771bff54f5cede2e5d81cd1</Anchor>
              </Node>
              <Node>
               <Name>ReactionEventSignal</Name>
@@ -193,21 +200,6 @@
               <Name>vrsp_iterator</Name>
               <Path>namespacechem.html</Path>
               <Anchor>a9b02b32d43473a3cd87fd30f910cc121</Anchor>
-             </Node>
-             <Node>
-              <Name>allocator_pqnode</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>abe2d133c73c179db82d2cf8266a16e3a</Anchor>
-             </Node>
-             <Node>
-              <Name>allocator_rnodenrm</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>aec019986de5e2ab9597f9633542378ff</Anchor>
-             </Node>
-             <Node>
-              <Name>allocator_rspecies</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>a34e31b7a797e903435a3be4751cd4f42</Anchor>
              </Node>
              <Node>
               <Name>operator==</Name>
@@ -842,6 +834,11 @@
               <Anchor>ae5b08b46ef8cd9a18152a1db3cad65b5</Anchor>
              </Node>
              <Node>
+              <Name>addInternal</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>acf85b3446756f15f2367c3d2aad23401</Anchor>
+             </Node>
+             <Node>
               <Name>addInternalReaction</Name>
               <Path>classchem_1_1Compartment.html</Path>
               <Anchor>a49ba19163dbf404ce1628361b59b595f</Anchor>
@@ -869,12 +866,52 @@
              <Node>
               <Name>apply</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+              <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
              </Node>
              <Node>
               <Name>apply_if</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+              <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>ab08e78b733c9945fa7e12d146cffa3d8</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a071bedd398a7a5dfc90447309a75f189</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a9181097e1954fec5f1dbad889401b451</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a1d46fc8e1d961deb45e22019153d26b3</Anchor>
              </Node>
              <Node>
               <Name>areAllSpeciesUnique</Name>
@@ -934,12 +971,12 @@
              <Node>
               <Name>countReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+              <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
              </Node>
              <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+              <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
              </Node>
              <Node>
               <Name>findSimilarDiffusionReaction</Name>
@@ -993,13 +1030,8 @@
              </Node>
              <Node>
               <Name>isComposite</Name>
-              <Path>classchem_1_1Component.html</Path>
-              <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
-             </Node>
-             <Node>
-              <Name>isComposite</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+              <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
              </Node>
              <Node>
               <Name>isReactionsContainer</Name>
@@ -1188,6 +1220,11 @@
               <Anchor>ae5b08b46ef8cd9a18152a1db3cad65b5</Anchor>
              </Node>
              <Node>
+              <Name>addInternal</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>acf85b3446756f15f2367c3d2aad23401</Anchor>
+             </Node>
+             <Node>
               <Name>addInternalReaction</Name>
               <Path>classchem_1_1Compartment.html</Path>
               <Anchor>a49ba19163dbf404ce1628361b59b595f</Anchor>
@@ -1215,12 +1252,52 @@
              <Node>
               <Name>apply</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+              <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
              </Node>
              <Node>
               <Name>apply_if</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+              <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>ab08e78b733c9945fa7e12d146cffa3d8</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a071bedd398a7a5dfc90447309a75f189</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a9181097e1954fec5f1dbad889401b451</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Compartment.html</Path>
+              <Anchor>a1d46fc8e1d961deb45e22019153d26b3</Anchor>
              </Node>
              <Node>
               <Name>areAllSpeciesUnique</Name>
@@ -1290,12 +1367,12 @@
              <Node>
               <Name>countReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+              <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
              </Node>
              <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+              <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
              </Node>
              <Node>
               <Name>findSimilarDiffusionReaction</Name>
@@ -1349,13 +1426,8 @@
              </Node>
              <Node>
               <Name>isComposite</Name>
-              <Path>classchem_1_1Component.html</Path>
-              <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
-             </Node>
-             <Node>
-              <Name>isComposite</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+              <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
              </Node>
              <Node>
               <Name>isReactionsContainer</Name>
@@ -1566,12 +1638,52 @@
              <Node>
               <Name>apply</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+              <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
              </Node>
              <Node>
               <Name>apply_if</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+              <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
              </Node>
              <Node>
               <Name>children</Name>
@@ -1591,12 +1703,12 @@
              <Node>
               <Name>countReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+              <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
              </Node>
              <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+              <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
              </Node>
              <Node>
               <Name>generateConnections3D</Name>
@@ -1645,13 +1757,8 @@
              </Node>
              <Node>
               <Name>isComposite</Name>
-              <Path>classchem_1_1Component.html</Path>
-              <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
-             </Node>
-             <Node>
-              <Name>isComposite</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+              <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
              </Node>
              <Node>
               <Name>isReactionsContainer</Name>
@@ -1676,12 +1783,12 @@
              <Node>
               <Name>numberOfReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a0089cc7bf318c99339d098018ede34c7</Anchor>
+              <Anchor>a67ccb83464dc97ac82f3f1301f252931</Anchor>
              </Node>
              <Node>
               <Name>numberOfSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a97512e021c76460f0b982d4ff16a91d5</Anchor>
+              <Anchor>a9f402bdea37c583b638a2ffdbd0d4bc9</Anchor>
              </Node>
              <Node>
               <Name>printSelf</Name>
@@ -1735,9 +1842,49 @@
               <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
              </Node>
              <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>aea52312b501cefd0fc2a26ff5671d711</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a04abbd7b2e96d2ea320f88921266f596</Anchor>
+             </Node>
+             <Node>
               <Name>apply_if</Name>
               <Path>classchem_1_1Component.html</Path>
-              <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
+              <Anchor>af351fbf0deb48884c27806997f5954fd</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a97dbbb586bb63e5ea296a20778006c5d</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>ac68ab2a8444e5f9ae4f5cc0b5fb9104d</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
              </Node>
              <Node>
               <Name>countReactions</Name>
@@ -1790,6 +1937,16 @@
               <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
              </Node>
              <Node>
+              <Name>numberOfReactions</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>af76701fa683d7378915b5b6ad55bd357</Anchor>
+             </Node>
+             <Node>
+              <Name>numberOfSpecies</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a41d313350ea214ae94d54cb0c6263a9c</Anchor>
+             </Node>
+             <Node>
               <Name>printSelf</Name>
               <Path>classchem_1_1Component.html</Path>
               <Anchor>a778911b6f9505f1d8a39fc39e093974e</Anchor>
@@ -1828,12 +1985,52 @@
              <Node>
               <Name>apply</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+              <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+             </Node>
+             <Node>
+              <Name>apply</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
              </Node>
              <Node>
               <Name>apply_if</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+              <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_if</Name>
+              <Path>classchem_1_1Composite.html</Path>
+              <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+             </Node>
+             <Node>
+              <Name>apply_impl_if</Name>
+              <Path>classchem_1_1Component.html</Path>
+              <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
              </Node>
              <Node>
               <Name>children</Name>
@@ -1853,17 +2050,17 @@
              <Node>
               <Name>countReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+              <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
              </Node>
              <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+              <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
              </Node>
              <Node>
               <Name>getFullName</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a7781095451c19c48996856153c29bf6b</Anchor>
+              <Anchor>aa20f744718bd0dd17f8cf09d296231fb</Anchor>
              </Node>
              <Node>
               <Name>getParent</Name>
@@ -1877,13 +2074,8 @@
              </Node>
              <Node>
               <Name>isComposite</Name>
-              <Path>classchem_1_1Component.html</Path>
-              <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
-             </Node>
-             <Node>
-              <Name>isComposite</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+              <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
              </Node>
              <Node>
               <Name>isReactionsContainer</Name>
@@ -1908,12 +2100,12 @@
              <Node>
               <Name>numberOfReactions</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a0089cc7bf318c99339d098018ede34c7</Anchor>
+              <Anchor>a67ccb83464dc97ac82f3f1301f252931</Anchor>
              </Node>
              <Node>
               <Name>numberOfSpecies</Name>
               <Path>classchem_1_1Composite.html</Path>
-              <Anchor>a97512e021c76460f0b982d4ff16a91d5</Anchor>
+              <Anchor>a9f402bdea37c583b638a2ffdbd0d4bc9</Anchor>
              </Node>
              <Node>
               <Name>printSelf</Name>
@@ -1942,19 +2134,24 @@
             <Path>classchem_1_1CompositeVisitor.html</Path>
             <Subnodes>
              <Node>
-              <Name>pred</Name>
+              <Name>predImpl</Name>
               <Path>classchem_1_1CompositeVisitor.html</Path>
-              <Anchor>a56074a684bd24ada8bd28b861b5c14ac</Anchor>
+              <Anchor>a157e17e7a6b7ed91b47d59aea1cc1268</Anchor>
              </Node>
              <Node>
               <Name>visit</Name>
-              <Path>classchem_1_1CompositeVisitor.html</Path>
-              <Anchor>a04cfd3a93f0b76387b00a11889150d43</Anchor>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
              </Node>
              <Node>
               <Name>visit_if</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
-              <Anchor>ac5eca1778f8647f7dc85a00489c3d938</Anchor>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1CompositeVisitor.html</Path>
+              <Anchor>ac3104d5ec0d0628bbcc72f17f69b0396</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -1963,56 +2160,24 @@
             <Path>classchem_1_1ConcreteVisitor.html</Path>
             <Subnodes>
              <Node>
-              <Name>visit</Name>
-              <Path>classchem_1_1ConcreteVisitor.html</Path>
-              <Anchor>abb5892cdcf90fef25aafafaf81baa697</Anchor>
-             </Node>
-            </Subnodes>
-           </Node>
-           <Node>
-            <Name>chem::ConditionalVisitor</Name>
-            <Path>classchem_1_1ConditionalVisitor.html</Path>
-            <Subnodes>
-             <Node>
-              <Name>~ConditionalVisitor</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
-              <Anchor>ad4f7c23e000b587469b74455e5c1a8b7</Anchor>
-             </Node>
-             <Node>
-              <Name>pred</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
-              <Anchor>ac35925bee54467373d1f44cccec75aa5</Anchor>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>a8f11a43266d18d1396236d0c5f3a8ad6</Anchor>
              </Node>
              <Node>
               <Name>visit</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
-              <Anchor>aff08b8bc4b5c193e1fe60f06cca318b1</Anchor>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
              </Node>
              <Node>
               <Name>visit_if</Name>
-              <Path>classchem_1_1ConditionalVisitor.html</Path>
-              <Anchor>ac5eca1778f8647f7dc85a00489c3d938</Anchor>
-             </Node>
-            </Subnodes>
-           </Node>
-           <Node>
-            <Name>chem::FindFirstSpeciesVisitor</Name>
-            <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-            <Subnodes>
-             <Node>
-              <Name>FindFirstSpeciesVisitor</Name>
-              <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-              <Anchor>afaec67740a4522c9bd189b70c86f2852</Anchor>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
              </Node>
              <Node>
-              <Name>visit</Name>
-              <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-              <Anchor>afe2b8f520e443307a6ba06a24c4b9991</Anchor>
-             </Node>
-             <Node>
-              <Name>_name</Name>
-              <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-              <Anchor>ae3fce85495fc42ef9a9bfea2117cdc12</Anchor>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1ConcreteVisitor.html</Path>
+              <Anchor>a5dfd9a95b1c2b8bf73a643c20c7388bc</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -2029,16 +2194,6 @@
               <Name>~PQNode</Name>
               <Path>classchem_1_1PQNode.html</Path>
               <Anchor>a12604503b292d71658be54c9952afcbd</Anchor>
-             </Node>
-             <Node>
-              <Name>operator delete</Name>
-              <Path>classchem_1_1PQNode.html</Path>
-              <Anchor>af127d116cdefe86ba41005ef691affc1</Anchor>
-             </Node>
-             <Node>
-              <Name>operator new</Name>
-              <Path>classchem_1_1PQNode.html</Path>
-              <Anchor>a1364ee21435946152266840256b8dd3f</Anchor>
              </Node>
              <Node>
               <Name>operator&lt;</Name>
@@ -2074,7 +2229,12 @@
              <Node>
               <Name>Reaction</Name>
               <Path>classchem_1_1Reaction.html</Path>
-              <Anchor>a708a9cfbd5860423139b64ae7387a2b2</Anchor>
+              <Anchor>af8d2b07836a89ba05c3ba42ff1e1672e</Anchor>
+             </Node>
+             <Node>
+              <Name>Reaction</Name>
+              <Path>classchem_1_1Reaction.html</Path>
+              <Anchor>a267e22a2712987cd6f700f88a841f1ff</Anchor>
              </Node>
              <Node>
               <Name>Reaction</Name>
@@ -2102,6 +2262,16 @@
               <Anchor>a9ce9262242def224e7ed3878e836a5ac</Anchor>
              </Node>
              <Node>
+              <Name>broadcastRSpeciesSignals</Name>
+              <Path>classchem_1_1Reaction.html</Path>
+              <Anchor>a8320a7d024a3dc0e64280ed96ea08730</Anchor>
+             </Node>
+             <Node>
+              <Name>broadcastRSpeciesSignals</Name>
+              <Path>classchem_1_1Reaction.html</Path>
+              <Anchor>afd605803666c03f48ec6db0f2c837fa9</Anchor>
+             </Node>
+             <Node>
               <Name>clone</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a6d8e6fe06e073991fe263393ec418867</Anchor>
@@ -2127,6 +2297,11 @@
               <Anchor>ad0245708cd816ceccf686eebaf06353b</Anchor>
              </Node>
              <Node>
+              <Name>connect</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a47b9d3f66774204a8cf604b6b9ee3047</Anchor>
+             </Node>
+             <Node>
               <Name>containsSpecies</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a35e914ed47c4107c86ef18f0f8ddb9e6</Anchor>
@@ -2140,6 +2315,11 @@
               <Name>dependents</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a9861a6ab27afceaac6697b69dace0328</Anchor>
+             </Node>
+             <Node>
+              <Name>emitSignal</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a10cd8d287497138d981abfd49f2d041e</Anchor>
              </Node>
              <Node>
               <Name>getAffectedReactions</Name>
@@ -2214,7 +2394,7 @@
              <Node>
               <Name>initializeSpecies</Name>
               <Path>classchem_1_1Reaction.html</Path>
-              <Anchor>a663351786385d539a036f27e3b235808</Anchor>
+              <Anchor>a1c045e54c870a3e4cc0fb17b870d16f3</Anchor>
              </Node>
              <Node>
               <Name>is_equal</Name>
@@ -2225,6 +2405,11 @@
               <Name>isPassivated</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a1d26c3641310183d61fd3d2940b6dde2</Anchor>
+             </Node>
+             <Node>
+              <Name>isSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a702c23f24431b5f5a4fa63a7fa257654</Anchor>
              </Node>
              <Node>
               <Name>makeStep</Name>
@@ -2240,16 +2425,6 @@
               <Name>makeStepImpl</Name>
               <Path>classchem_1_1Reaction.html</Path>
               <Anchor>ac1ac05b087d53ff5bcc9e5e00e83bb1d</Anchor>
-             </Node>
-             <Node>
-              <Name>operator delete</Name>
-              <Path>classchem_1_1Reaction.html</Path>
-              <Anchor>a229617078cca01b8b150e93718eb3b7f</Anchor>
-             </Node>
-             <Node>
-              <Name>operator new</Name>
-              <Path>classchem_1_1Reaction.html</Path>
-              <Anchor>a51fb1a27ae6f377d850561db5366a5c1</Anchor>
              </Node>
              <Node>
               <Name>operator=</Name>
@@ -2312,6 +2487,16 @@
               <Anchor>a8457d6c276b11ed0d12a1ff2ef4f9f50</Anchor>
              </Node>
              <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>af6713638dbce3bb2695a813335248128</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a08caa5e07a170da3fd68df56995b46c0</Anchor>
+             </Node>
+             <Node>
               <Name>unregisterDependent</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a9e9465c135b349d44065258bd70a5b6e</Anchor>
@@ -2342,6 +2527,11 @@
               <Anchor>a662547106ad4d617495099e9fd85cc06</Anchor>
              </Node>
              <Node>
+              <Name>_passivated</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a757ed91c018c8fa643472860df309804</Anchor>
+             </Node>
+             <Node>
               <Name>_rate</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a787107879dc2a24b789997bac1eb1634</Anchor>
@@ -2355,6 +2545,11 @@
               <Name>_rspecies</Name>
               <Path>classchem_1_1Reaction.html</Path>
               <Anchor>a42e73865e61bfb5b03a4639b571e5d72</Anchor>
+             </Node>
+             <Node>
+              <Name>_signal</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>adad4289e6bbe5550c0d75a506bdc88ab</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -2393,6 +2588,11 @@
               <Anchor>a62c5d67d8ec0e04982fa497fc24df40b</Anchor>
              </Node>
              <Node>
+              <Name>broadcastRSpeciesSignals</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a2dd4f40f26080c6602c66c662a18ca5c</Anchor>
+             </Node>
+             <Node>
               <Name>clone</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a6d8e6fe06e073991fe263393ec418867</Anchor>
@@ -2413,6 +2613,11 @@
               <Anchor>a76b022d6a033e1baca7319790df408ba</Anchor>
              </Node>
              <Node>
+              <Name>connect</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a47b9d3f66774204a8cf604b6b9ee3047</Anchor>
+             </Node>
+             <Node>
               <Name>containsSpecies</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a35e914ed47c4107c86ef18f0f8ddb9e6</Anchor>
@@ -2426,6 +2631,11 @@
               <Name>dependents</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a9861a6ab27afceaac6697b69dace0328</Anchor>
+             </Node>
+             <Node>
+              <Name>emitSignal</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a10cd8d287497138d981abfd49f2d041e</Anchor>
              </Node>
              <Node>
               <Name>getAffectedReactions</Name>
@@ -2508,6 +2718,11 @@
               <Anchor>a1d26c3641310183d61fd3d2940b6dde2</Anchor>
              </Node>
              <Node>
+              <Name>isSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a702c23f24431b5f5a4fa63a7fa257654</Anchor>
+             </Node>
+             <Node>
               <Name>makeStep</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>acb5575b08ca39fc6dd7a571fb246806b</Anchor>
@@ -2578,6 +2793,16 @@
               <Anchor>a7a43e5ceb710d05bbb8b641b939236b3</Anchor>
              </Node>
              <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>af6713638dbce3bb2695a813335248128</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a08caa5e07a170da3fd68df56995b46c0</Anchor>
+             </Node>
+             <Node>
               <Name>unregisterDependent</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a9e9465c135b349d44065258bd70a5b6e</Anchor>
@@ -2608,6 +2833,11 @@
               <Anchor>a662547106ad4d617495099e9fd85cc06</Anchor>
              </Node>
              <Node>
+              <Name>_passivated</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>a757ed91c018c8fa643472860df309804</Anchor>
+             </Node>
+             <Node>
               <Name>_rate</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>a787107879dc2a24b789997bac1eb1634</Anchor>
@@ -2616,6 +2846,11 @@
               <Name>_rnode</Name>
               <Path>classchem_1_1ReactionBase.html</Path>
               <Anchor>aedaf23c8b9f80598fc68f715309a6aa3</Anchor>
+             </Node>
+             <Node>
+              <Name>_signal</Name>
+              <Path>classchem_1_1ReactionBase.html</Path>
+              <Anchor>adad4289e6bbe5550c0d75a506bdc88ab</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -2663,6 +2898,11 @@
               <Name>ReactionPtrContainerVector</Name>
               <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
               <Anchor>a391bde7e6da95c11780bbf8f509cd9c5</Anchor>
+             </Node>
+             <Node>
+              <Name>add</Name>
+              <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+              <Anchor>a67fbf71e3a038756f3aaf1a3c0576db7</Anchor>
              </Node>
              <Node>
               <Name>addReaction</Name>
@@ -2733,6 +2973,93 @@
               <Name>_reactions</Name>
               <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
               <Anchor>ae23adda121c19c0ab4bae0e5e9b66250</Anchor>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::ReactionVisitor</Name>
+            <Path>classchem_1_1ReactionVisitor.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>~ReactionVisitor</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>a88687e24dc958e7fad4481a19098f6ba</Anchor>
+             </Node>
+             <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>a10dca30ab05ab0cc1cc02fe1e3808a7f</Anchor>
+             </Node>
+             <Node>
+              <Name>visit</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>a42dc6909e63c183bd5d22cb0d3c3e6b4</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>aad37cda5351c260fcfacdff69675d7cb</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>a39b0fd40aa4a78cfcd6760251cffcfb7</Anchor>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::ReactionVisitorLambda</Name>
+            <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>ReactionVisitorLambda</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>afdad2f3f8d738b22d1ff366a88644bd2</Anchor>
+             </Node>
+             <Node>
+              <Name>ReactionVisitorLambda</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a9d24538ed0ba2c5f548497e95eee7caf</Anchor>
+             </Node>
+             <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a3cd8b94f2c2d287c5e8674699ff173d0</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambda</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a1233c864bfa232d198762821ce4e30a8</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambdaPred</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a3efc4e1c0161b6ba1533954c3a07a3a0</Anchor>
+             </Node>
+             <Node>
+              <Name>visit</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>a42dc6909e63c183bd5d22cb0d3c3e6b4</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1ReactionVisitor.html</Path>
+              <Anchor>aad37cda5351c260fcfacdff69675d7cb</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a4e8b7af05565d9910ab2e0c32c9bb5cc</Anchor>
+             </Node>
+             <Node>
+              <Name>_f</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a93b63c7cbfeccb0191babe8c9ea4d626</Anchor>
+             </Node>
+             <Node>
+              <Name>_pred</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+              <Anchor>a35a62c58684664e15a0f13986d94532b</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -2938,16 +3265,6 @@
               <Anchor>a1294bf93224e88f4bb0a64282ef9f950</Anchor>
              </Node>
              <Node>
-              <Name>operator delete</Name>
-              <Path>classchem_1_1RNodeNRM.html</Path>
-              <Anchor>abe32c9de55bd8deb22c2894ae753b708</Anchor>
-             </Node>
-             <Node>
-              <Name>operator new</Name>
-              <Path>classchem_1_1RNodeNRM.html</Path>
-              <Anchor>ae76175a4d99e9eb3389dce6c77c9edb6</Anchor>
-             </Node>
-             <Node>
               <Name>operator=</Name>
               <Path>classchem_1_1RNodeNRM.html</Path>
               <Anchor>aba4753c700f2f6d707e2c94b2c5e5749</Anchor>
@@ -3064,6 +3381,11 @@
               <Anchor>a0b9db54a1407d689be7477e77b4bb1c6</Anchor>
              </Node>
              <Node>
+              <Name>emitSignal</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>afaee31bbc312ca6fa84a9ffc02457611</Anchor>
+             </Node>
+             <Node>
               <Name>endProductReactions</Name>
               <Path>classchem_1_1RSpecies.html</Path>
               <Anchor>a1b3db9e6c2246f6d1b4d98d344ff9e9e</Anchor>
@@ -3094,14 +3416,14 @@
               <Anchor>a74953c2446c0261fc5732a63e3392a15</Anchor>
              </Node>
              <Node>
-              <Name>operator delete</Name>
+              <Name>getUpperLimitForN</Name>
               <Path>classchem_1_1RSpecies.html</Path>
-              <Anchor>a59eeac181b75f878e4804fb2ce57dbb2</Anchor>
+              <Anchor>ad233880e065382e598a95e75d401d9eb</Anchor>
              </Node>
              <Node>
-              <Name>operator new</Name>
+              <Name>isSignaling</Name>
               <Path>classchem_1_1RSpecies.html</Path>
-              <Anchor>a8f8eeb52d60143c6fb7b7f87eee4f55c</Anchor>
+              <Anchor>a652a2d0f305a8ab84305ff1dd1fd41b8</Anchor>
              </Node>
              <Node>
               <Name>operator=</Name>
@@ -3144,6 +3466,21 @@
               <Anchor>a7939d5255e97d125821f657cadb48bc2</Anchor>
              </Node>
              <Node>
+              <Name>setUpperLimitForN</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>a13c47ccb546b64f83ac09734c286fcd2</Anchor>
+             </Node>
+             <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>a0beefdc1ec28646df87b0690a2d66734</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>a3519759c28c5d50108753ebe6c67a537</Anchor>
+             </Node>
+             <Node>
               <Name>up</Name>
               <Path>classchem_1_1RSpecies.html</Path>
               <Anchor>ae721e3c649a12e0a81bc6b77afe23f38</Anchor>
@@ -3164,9 +3501,19 @@
               <Anchor>a60e53ebfe464923452c54322dfd479dc</Anchor>
              </Node>
              <Node>
+              <Name>_signal</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>acd60296c77857284cd935cb6faaf4200</Anchor>
+             </Node>
+             <Node>
               <Name>_species</Name>
               <Path>classchem_1_1RSpecies.html</Path>
               <Anchor>a3a979b9226800417c7aad81a2162fac5</Anchor>
+             </Node>
+             <Node>
+              <Name>_ulim</Name>
+              <Path>classchem_1_1RSpecies.html</Path>
+              <Anchor>a189084cfe75e004f42a6a27b2c1c09ad</Anchor>
              </Node>
              <Node>
               <Name>Species</Name>
@@ -3208,6 +3555,11 @@
               <Name>clone</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>acf0054a3704627698ba91293e8d0d370</Anchor>
+             </Node>
+             <Node>
+              <Name>connect</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
              </Node>
              <Node>
               <Name>countSpecies</Name>
@@ -3255,9 +3607,19 @@
               <Anchor>a438dae186317809effdd040ed38c568b</Anchor>
              </Node>
              <Node>
+              <Name>getUpperLimitForN</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+             </Node>
+             <Node>
               <Name>hasParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a6ddddc5be2b0e4427486f80a891879b3</Anchor>
+             </Node>
+             <Node>
+              <Name>isSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
              </Node>
              <Node>
               <Name>operator=</Name>
@@ -3278,6 +3640,16 @@
               <Name>setParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a50e1e828d0b8a03efc9354e2c00174f5</Anchor>
+             </Node>
+             <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
              </Node>
              <Node>
               <Name>operator!=</Name>
@@ -3341,6 +3713,11 @@
               <Anchor>a7bfdd13273d7328c2f7d275796e57873</Anchor>
              </Node>
              <Node>
+              <Name>connect</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
+             </Node>
+             <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a5e8aedfe4c4b5e08fb0ee672c3d80ace</Anchor>
@@ -3386,9 +3763,19 @@
               <Anchor>a438dae186317809effdd040ed38c568b</Anchor>
              </Node>
              <Node>
+              <Name>getUpperLimitForN</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+             </Node>
+             <Node>
               <Name>hasParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a6ddddc5be2b0e4427486f80a891879b3</Anchor>
+             </Node>
+             <Node>
+              <Name>isSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
              </Node>
              <Node>
               <Name>operator=</Name>
@@ -3409,6 +3796,16 @@
               <Name>setParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a50e1e828d0b8a03efc9354e2c00174f5</Anchor>
+             </Node>
+             <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
              </Node>
              <Node>
               <Name>operator!=</Name>
@@ -3529,6 +3926,11 @@
               <Anchor>a69edbe33378230389a2fb99c4ca2b5ce</Anchor>
              </Node>
              <Node>
+              <Name>connect</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
+             </Node>
+             <Node>
               <Name>countSpecies</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a5e8aedfe4c4b5e08fb0ee672c3d80ace</Anchor>
@@ -3574,9 +3976,19 @@
               <Anchor>a438dae186317809effdd040ed38c568b</Anchor>
              </Node>
              <Node>
+              <Name>getUpperLimitForN</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+             </Node>
+             <Node>
               <Name>hasParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a6ddddc5be2b0e4427486f80a891879b3</Anchor>
+             </Node>
+             <Node>
+              <Name>isSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
              </Node>
              <Node>
               <Name>operator=</Name>
@@ -3597,6 +4009,16 @@
               <Name>setParent</Name>
               <Path>classchem_1_1Species.html</Path>
               <Anchor>a50e1e828d0b8a03efc9354e2c00174f5</Anchor>
+             </Node>
+             <Node>
+              <Name>startSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+             </Node>
+             <Node>
+              <Name>stopSignaling</Name>
+              <Path>classchem_1_1Species.html</Path>
+              <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
              </Node>
              <Node>
               <Name>operator!=</Name>
@@ -3792,14 +4214,96 @@
               <Anchor>a15f69e0753e3da9439cf11a2a3cc935e</Anchor>
              </Node>
              <Node>
-              <Name>swap</Name>
-              <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
-              <Anchor>a0d849ceda52bcfbe5afc95490e85729b</Anchor>
-             </Node>
-             <Node>
               <Name>_species</Name>
               <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
               <Anchor>a6b5c9bcab6f5c481a035b7f1502e60ca</Anchor>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::SpeciesVisitor</Name>
+            <Path>classchem_1_1SpeciesVisitor.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>~SpeciesVisitor</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a2f015f9e4fb18b947b8469c1791ff10c</Anchor>
+             </Node>
+             <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a462938bce8f829791d30248e0121fc45</Anchor>
+             </Node>
+             <Node>
+              <Name>visit</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a53c84c960e858a232036e1e1278fd511</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a26661b4bb928cef9f0033e1ceebbbe05</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>af87d8ec90f4d98fc7455316af3d488b4</Anchor>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::SpeciesVisitorLambda</Name>
+            <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>SpeciesVisitorLambda</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>acaf340efc8aef9f6dacb6d83bef2c91a</Anchor>
+             </Node>
+             <Node>
+              <Name>SpeciesVisitorLambda</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>af7bbf12d29cacdbacd394515e430e4ca</Anchor>
+             </Node>
+             <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>a281b61d7b5cf3e6450264f545a5a6f7b</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambda</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>ab6c1781866c4052fdf7a038129e9d0f8</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambdaPred</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>ac6f2d2c6ac637b7e2ffc034d46233c6a</Anchor>
+             </Node>
+             <Node>
+              <Name>visit</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a53c84c960e858a232036e1e1278fd511</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1SpeciesVisitor.html</Path>
+              <Anchor>a26661b4bb928cef9f0033e1ceebbbe05</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>a97e643417037639c39bf1d25afb5b4bc</Anchor>
+             </Node>
+             <Node>
+              <Name>_f</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>aa025074794557d30f7829599562548ae</Anchor>
+             </Node>
+             <Node>
+              <Name>_pred</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+              <Anchor>af6443dcc25c0775a140c6131ad76b00f</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -3844,9 +4348,85 @@
               <Anchor>a1f8b4dc62e90ed58f0b53e906a782ee0</Anchor>
              </Node>
              <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>a8f11a43266d18d1396236d0c5f3a8ad6</Anchor>
+             </Node>
+             <Node>
               <Name>visit</Name>
               <Path>classchem_1_1Visitor.html</Path>
-              <Anchor>a3a148d3144ed2ef25972509a6a594d1a</Anchor>
+              <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>ae058e8ac35f22b03d23ae443d12c71ea</Anchor>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::VisitorLambda</Name>
+            <Path>classchem_1_1VisitorLambda.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>VisitorLambda</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>a0e0e187a2c9eee7b93e9b561ce410efe</Anchor>
+             </Node>
+             <Node>
+              <Name>_f</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>a7c24d18f9a2d933869cc159b4684c183</Anchor>
+             </Node>
+             <Node>
+              <Name>_pred</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>acd786da86b35bf06ed45c365ce61e272</Anchor>
+             </Node>
+             <Node>
+              <Name>predImpl</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>a0cf887a8af038c43db5ad97cb0885118</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambda</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>ae7f7287222406e428e0ff329692647a8</Anchor>
+             </Node>
+             <Node>
+              <Name>setLambdaPred</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>adfb63d2fc239b7fb011286e1f5e89257</Anchor>
+             </Node>
+             <Node>
+              <Name>visit</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+             </Node>
+             <Node>
+              <Name>visit_if</Name>
+              <Path>classchem_1_1Visitor.html</Path>
+              <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+             </Node>
+             <Node>
+              <Name>visitImpl</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>ab44a2f2438782ec3651a1cdbfc8a67ff</Anchor>
+             </Node>
+             <Node>
+              <Name>_f</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>ab8c78f08d1ec76cb3cf88757b2ab24a0</Anchor>
+             </Node>
+             <Node>
+              <Name>_pred</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
+              <Anchor>a7fec41a9dd33994b84492a895dff012d</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -3913,16 +4493,6 @@
             </Subnodes>
            </Node>
            <Node>
-            <Name>chem::ConditionalVisitor</Name>
-            <Path>classchem_1_1ConditionalVisitor.html</Path>
-            <Subnodes>
-             <Node>
-              <Name>chem::CompositeVisitor</Name>
-              <Path>classchem_1_1CompositeVisitor.html</Path>
-             </Node>
-            </Subnodes>
-           </Node>
-           <Node>
             <Name>chem::PQNode</Name>
             <Path>classchem_1_1PQNode.html</Path>
            </Node>
@@ -3943,6 +4513,16 @@
              <Node>
               <Name>chem::ReactionPtrContainerVector</Name>
               <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>chem::ReactionVisitor</Name>
+            <Path>classchem_1_1ReactionVisitor.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>chem::ReactionVisitorLambda</Name>
+              <Path>classchem_1_1ReactionVisitorLambda.html</Path>
              </Node>
             </Subnodes>
            </Node>
@@ -4003,6 +4583,16 @@
             </Subnodes>
            </Node>
            <Node>
+            <Name>chem::SpeciesVisitor</Name>
+            <Path>classchem_1_1SpeciesVisitor.html</Path>
+            <Subnodes>
+             <Node>
+              <Name>chem::SpeciesVisitorLambda</Name>
+              <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
             <Name>System</Name>
             <Path>classSystem.html</Path>
            </Node>
@@ -4011,12 +4601,16 @@
             <Path>classchem_1_1Visitor.html</Path>
             <Subnodes>
              <Node>
+              <Name>chem::CompositeVisitor</Name>
+              <Path>classchem_1_1CompositeVisitor.html</Path>
+             </Node>
+             <Node>
               <Name>chem::ConcreteVisitor</Name>
               <Path>classchem_1_1ConcreteVisitor.html</Path>
              </Node>
              <Node>
-              <Name>chem::FindFirstSpeciesVisitor</Name>
-              <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
+              <Name>chem::VisitorLambda</Name>
+              <Path>classchem_1_1VisitorLambda.html</Path>
              </Node>
             </Subnodes>
            </Node>
@@ -4113,8 +4707,12 @@
             <Path>functions_func.html</Path>
             <Subnodes>
              <Node>
-              <Name>a</Name>
+              <Name>_</Name>
               <Path>functions_func.html</Path>
+             </Node>
+             <Node>
+              <Name>a</Name>
+              <Path>functions_func_0x61.html</Path>
              </Node>
              <Node>
               <Name>b</Name>
@@ -4215,16 +4813,6 @@
             <Path>ChemNRMImpl_8cpp.html</Path>
             <Subnodes>
              <Node>
-              <Name>allocator_pqnode</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>abe2d133c73c179db82d2cf8266a16e3a</Anchor>
-             </Node>
-             <Node>
-              <Name>allocator_rnodenrm</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>aec019986de5e2ab9597f9633542378ff</Anchor>
-             </Node>
-             <Node>
               <Name>elapsed14</Name>
               <Path>namespacechem.html</Path>
               <Anchor>ac389831014b55592c5e49626f448b287</Anchor>
@@ -4273,17 +4861,12 @@
              <Node>
               <Name>boost_heap</Name>
               <Path>namespacechem.html</Path>
-              <Anchor>ad3c7e19583b71f442e2d969972ed21f9</Anchor>
-             </Node>
-             <Node>
-              <Name>fast_allocator_t</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>a98412a4cd9bafe9f3edd66b3a68327a3</Anchor>
+              <Anchor>aacd1d2bb93e0bb1b1af9bb1fbb5133ca</Anchor>
              </Node>
              <Node>
               <Name>handle_t</Name>
               <Path>namespacechem.html</Path>
-              <Anchor>abf1718e53f56f85003559d20e531a1a4</Anchor>
+              <Anchor>a33be80d87771bff54f5cede2e5d81cd1</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -4327,19 +4910,29 @@
             <Path>common_8h.html</Path>
             <Subnodes>
              <Node>
-              <Name>BOOL_POOL_NSIZE</Name>
+              <Name>REACTION_SIGNALING</Name>
               <Path>common_8h.html</Path>
-              <Anchor>a8584922303a6a83690f6091592285a7f</Anchor>
+              <Anchor>a90ae0a2b8b2561f58e976b84d3b5a755</Anchor>
              </Node>
              <Node>
-              <Name>BOOST_MEM_POOL</Name>
+              <Name>RSPECIES_SIGNALING</Name>
               <Path>common_8h.html</Path>
-              <Anchor>a6181e591120e12507215c5a21ba9b2aa</Anchor>
+              <Anchor>a43feffc25272564f18d1800dc2147078</Anchor>
              </Node>
              <Node>
               <Name>TRACK_DEPENDENTS</Name>
               <Path>common_8h.html</Path>
               <Anchor>ac331c2ee4410c5495c7d06314fdbc888</Anchor>
+             </Node>
+             <Node>
+              <Name>TRACK_UPPER_COPY_N</Name>
+              <Path>common_8h.html</Path>
+              <Anchor>a318b9661d7fcfe101415b83880576138</Anchor>
+             </Node>
+             <Node>
+              <Name>TRACK_ZERO_COPY_N</Name>
+              <Path>common_8h.html</Path>
+              <Anchor>a03fd44bcbf25c32054a4982f84f45259</Anchor>
              </Node>
              <Node>
               <Name>species_copy_t</Name>
@@ -4420,6 +5013,14 @@
            <Node>
             <Name>CytoSim/Reaction.h</Name>
             <Path>Reaction_8h.html</Path>
+           </Node>
+           <Node>
+            <Name>CytoSim/ReactionBase.cpp</Name>
+            <Path>ReactionBase_8cpp.html</Path>
+           </Node>
+           <Node>
+            <Name>CytoSim/ReactionBase.h</Name>
+            <Path>ReactionBase_8h.html</Path>
             <Subnodes>
              <Node>
               <Name>ReactionEventSignal</Name>
@@ -4436,11 +5037,6 @@
             <Name>CytoSim/RSpecies.cpp</Name>
             <Path>RSpecies_8cpp.html</Path>
             <Subnodes>
-             <Node>
-              <Name>allocator_rspecies</Name>
-              <Path>namespacechem.html</Path>
-              <Anchor>a34e31b7a797e903435a3be4751cd4f42</Anchor>
-             </Node>
              <Node>
               <Name>operator&lt;&lt;</Name>
               <Path>RSpecies_8cpp.html</Path>

@@ -1,8 +1,7 @@
 <map id="G" name="G">
-<area shape="rect" id="node11" href="$Component_8h.html" title="Component.h" alt="" coords="1012,155,1111,181"/>
-<area shape="rect" id="node13" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="745,80,823,107"/>
-<area shape="rect" id="node54" href="$Visitor_8h.html" title="Visitor.h" alt="" coords="983,80,1048,107"/>
-<area shape="rect" id="node27" href="$common_8h.html" title="common.h" alt="" coords="1059,229,1137,256"/>
-<area shape="rect" id="node31" href="$utility_8h.html" title="utility.h" alt="" coords="1163,229,1221,256"/>
-<area shape="rect" id="node36" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="593,155,681,181"/>
+<area shape="rect" id="node11" href="$Component_8h.html" title="Component.h" alt="" coords="1137,83,1239,111"/>
+<area shape="rect" id="node13" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="544,83,623,111"/>
+<area shape="rect" id="node27" href="$common_8h.html" title="common.h" alt="" coords="1344,238,1427,266"/>
+<area shape="rect" id="node31" href="$utility_8h.html" title="utility.h" alt="" coords="1452,238,1513,266"/>
+<area shape="rect" id="node35" href="$RSpecies_8h.html" title="RSpecies.h" alt="" coords="539,161,628,189"/>
 </map>

@@ -13,13 +13,13 @@ var annotated =
     [ "chem::Composite", "classchem_1_1Composite.html", "classchem_1_1Composite" ],
     [ "chem::CompositeVisitor", "classchem_1_1CompositeVisitor.html", "classchem_1_1CompositeVisitor" ],
     [ "chem::ConcreteVisitor", "classchem_1_1ConcreteVisitor.html", "classchem_1_1ConcreteVisitor" ],
-    [ "chem::ConditionalVisitor", "classchem_1_1ConditionalVisitor.html", "classchem_1_1ConditionalVisitor" ],
-    [ "chem::FindFirstSpeciesVisitor", "classchem_1_1FindFirstSpeciesVisitor.html", "classchem_1_1FindFirstSpeciesVisitor" ],
     [ "chem::PQNode", "classchem_1_1PQNode.html", "classchem_1_1PQNode" ],
     [ "chem::Reaction< M, N >", "classchem_1_1Reaction.html", "classchem_1_1Reaction" ],
     [ "chem::ReactionBase", "classchem_1_1ReactionBase.html", "classchem_1_1ReactionBase" ],
     [ "chem::ReactionPtrContainerIFace", "classchem_1_1ReactionPtrContainerIFace.html", "classchem_1_1ReactionPtrContainerIFace" ],
     [ "chem::ReactionPtrContainerVector", "classchem_1_1ReactionPtrContainerVector.html", "classchem_1_1ReactionPtrContainerVector" ],
+    [ "chem::ReactionVisitor", "classchem_1_1ReactionVisitor.html", "classchem_1_1ReactionVisitor" ],
+    [ "chem::ReactionVisitorLambda", "classchem_1_1ReactionVisitorLambda.html", "classchem_1_1ReactionVisitorLambda" ],
     [ "chem::RNode", "classchem_1_1RNode.html", "classchem_1_1RNode" ],
     [ "chem::RNodeGillespie", "classchem_1_1RNodeGillespie.html", "classchem_1_1RNodeGillespie" ],
     [ "chem::RNodeNRM", "classchem_1_1RNodeNRM.html", "classchem_1_1RNodeNRM" ],
@@ -32,6 +32,9 @@ var annotated =
     [ "chem::SpeciesNamesDB", "classchem_1_1SpeciesNamesDB.html", "classchem_1_1SpeciesNamesDB" ],
     [ "chem::SpeciesPtrContainerIFace", "classchem_1_1SpeciesPtrContainerIFace.html", "classchem_1_1SpeciesPtrContainerIFace" ],
     [ "chem::SpeciesPtrContainerVector", "classchem_1_1SpeciesPtrContainerVector.html", "classchem_1_1SpeciesPtrContainerVector" ],
+    [ "chem::SpeciesVisitor", "classchem_1_1SpeciesVisitor.html", "classchem_1_1SpeciesVisitor" ],
+    [ "chem::SpeciesVisitorLambda", "classchem_1_1SpeciesVisitorLambda.html", "classchem_1_1SpeciesVisitorLambda" ],
     [ "System", "classSystem.html", "classSystem" ],
-    [ "chem::Visitor", "classchem_1_1Visitor.html", "classchem_1_1Visitor" ]
+    [ "chem::Visitor", "classchem_1_1Visitor.html", "classchem_1_1Visitor" ],
+    [ "chem::VisitorLambda", "classchem_1_1VisitorLambda.html", "classchem_1_1VisitorLambda" ]
 ];

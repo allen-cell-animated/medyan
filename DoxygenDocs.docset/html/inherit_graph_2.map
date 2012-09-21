@@ -1,7 +1,6 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1Component.html" title="chem::Component" alt="" coords="6,31,130,57"/>
-<area shape="rect" id="node3" href="$classchem_1_1Composite.html" title="chem::Composite" alt="" coords="179,5,298,32"/>
-<area shape="rect" id="node5" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="187,56,291,83"/>
-<area shape="rect" id="node7" href="$classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="359,31,487,57"/>
-<area shape="rect" id="node9" href="$classchem_1_1SpeciesDiffusing.html" title="SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig..." alt="" coords="347,81,499,108"/>
+<area shape="rect" id="node1" href="$classchem_1_1ChemSimImpl.html" title="ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics..." alt="" coords="6,57,151,85"/>
+<area shape="rect" id="node3" href="$classchem_1_1ChemGillespieImpl.html" title="ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm." alt="" coords="220,5,393,33"/>
+<area shape="rect" id="node5" href="$classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation." alt="" coords="230,57,383,85"/>
+<area shape="rect" id="node7" href="$classchem_1_1ChemSimpleGillespieImpl.html" title="ChemSimpleGillespieImpl implements the simplest version of the Gillespie algorithm, without caching, etc." alt="" coords="200,109,414,137"/>
 </map>

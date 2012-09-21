@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$classRNode.html" title="RNode" alt="" coords="211,5,273,32"/>
-<area shape="rect" id="node10" href="$classReaction.html" title="Reaction" alt="" coords="144,96,216,123"/>
-<area shape="rect" id="node4" href="$classChemNRMImpl.html" title="ChemNRMImpl" alt="" coords="385,96,495,123"/>
-<area shape="rect" id="node6" href="$classChemSimImpl.html" title="ChemSimImpl" alt="" coords="361,5,460,32"/>
-<area shape="rect" id="node8" href="$classSignalingManager.html" title="SignalingManager manages callbacks for Species and Reactions objects." alt="" coords="485,5,608,32"/>
-<area shape="rect" id="node14" href="$classSpecies.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="103,291,171,317"/>
-</map>

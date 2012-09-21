@@ -150,15 +150,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00036"></a>00036 
 <a name="l00037"></a>00037 <span class="keyword">class </span>PQNode;
 <a name="l00038"></a>00038 <span class="keyword">class </span>RNodeNRM;
-<a name="l00039"></a><a class="code" href="namespacechem.html#a98412a4cd9bafe9f3edd66b3a68327a3">00039</a> <span class="keyword">class </span><a class="code" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a>;
+<a name="l00039"></a><a class="code" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">00039</a> <span class="keyword">class </span><a class="code" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a>;
 <a name="l00040"></a>00040 
 <a name="l00041"></a>00041 <span class="preprocessor">#if defined BOOST_MEM_POOL &amp;&amp; defined BOOST_POOL_MEM_HEAP_ELEMENT</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span><span class="keyword">typedef</span> boost::fast_pool_allocator&lt;PQNode&gt; <a class="code" href="namespacechem.html#a98412a4cd9bafe9f3edd66b3a68327a3">fast_allocator_t</a>;
-<a name="l00043"></a><a class="code" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">00043</a> <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode, boost::heap::allocator&lt;fast_allocator_t&gt;&gt; <a class="code" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a>;
-<a name="l00044"></a><a class="code" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">00044</a> <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode, boost::heap::allocator&lt;fast_allocator_t&gt;&gt;::handle_type <a class="code" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a>;
+<a name="l00042"></a>00042 <span class="preprocessor"></span><span class="keyword">typedef</span> boost::fast_pool_allocator&lt;PQNode&gt; fast_allocator_t;
+<a name="l00043"></a>00043 <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode, boost::heap::allocator&lt;fast_allocator_t&gt;&gt; <a class="code" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a>;
+<a name="l00044"></a>00044 <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode, boost::heap::allocator&lt;fast_allocator_t&gt;&gt;::handle_type <a class="code" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a>;
 <a name="l00045"></a>00045 <span class="preprocessor">#else</span>
-<a name="l00046"></a>00046 <span class="preprocessor"></span><span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode&gt; <a class="code" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a>;
-<a name="l00047"></a>00047 <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode&gt;::handle_type <a class="code" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a>;
+<a name="l00046"></a>00046 <span class="preprocessor"></span><span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode&gt; <a class="code" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a>;
+<a name="l00047"></a><a class="code" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">00047</a> <span class="keyword">typedef</span> boost::heap::pairing_heap&lt;PQNode&gt;::handle_type <a class="code" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a>;
 <a name="l00048"></a>00048 <span class="preprocessor">#endif</span>
 <a name="l00049"></a>00049 <span class="preprocessor"></span>    
 <a name="l00053"></a>00053 
@@ -175,9 +175,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00076"></a>00076 <span class="preprocessor">#ifdef BOOST_MEM_POOL</span>
 <a name="l00077"></a>00077 <span class="preprocessor"></span><span class="preprocessor">#ifdef BOOST_POOL_MEM_PQNODE</span>
 <a name="l00078"></a>00078 <span class="preprocessor"></span>
-<a name="l00079"></a>00079     <span class="keywordtype">void</span>* <a class="code" href="classchem_1_1PQNode.html#a1364ee21435946152266840256b8dd3f" title="Advanced memory management.">operator new</a>(std::size_t size);
+<a name="l00079"></a>00079     <span class="keywordtype">void</span>* operator new(std::size_t size);
 <a name="l00080"></a>00080     
-<a name="l00081"></a>00081     <span class="keywordtype">void</span> <a class="code" href="classchem_1_1PQNode.html#af127d116cdefe86ba41005ef691affc1">operator delete</a>(<span class="keywordtype">void</span>* ptr) noexcept;
+<a name="l00081"></a>00081     <span class="keywordtype">void</span> operator delete(<span class="keywordtype">void</span>* ptr) noexcept;
 <a name="l00082"></a>00082 <span class="preprocessor">#endif</span>
 <a name="l00083"></a>00083 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
 <a name="l00084"></a>00084 <span class="preprocessor"></span><span class="keyword">private</span>: 
@@ -211,7 +211,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00136"></a>00136     
 <a name="l00138"></a><a class="code" href="classchem_1_1RNodeNRM.html#aae070cd16c0acee98250c3d1bccd8fd0">00138</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RNodeNRM.html#aae070cd16c0acee98250c3d1bccd8fd0" title="Sets the tau of the the associated PQNode element. Does not update the heap.">setTau</a>(<span class="keywordtype">double</span> <a class="code" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a>) {(*_handle)._tau=<a class="code" href="common_8h.html#abca55e6a21e0401c42bfb5da79ad3ad5">tau</a>;}
 <a name="l00139"></a>00139     
-<a name="l00141"></a><a class="code" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">00141</a>     <span class="keyword">inline</span> <a class="code" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a>&amp; <a class="code" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7" title="Returns a handle to the associated PQNode element, which can be used to access tau, for example.">getHandle</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19" title="The handle to the associated PQNode element in the heap.">_handle</a>;}
+<a name="l00141"></a><a class="code" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7">00141</a>     <span class="keyword">inline</span> <a class="code" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a>&amp; <a class="code" href="classchem_1_1RNodeNRM.html#af5334e740100ba592f15abfe18b971a7" title="Returns a handle to the associated PQNode element, which can be used to access tau, for example.">getHandle</a>() {<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19" title="The handle to the associated PQNode element in the heap.">_handle</a>;}
 <a name="l00142"></a>00142     
 <a name="l00145"></a><a class="code" href="classchem_1_1RNodeNRM.html#a5894ae93a6ef48f7b0bfa82add5bce5d">00145</a>     <span class="keyword">inline</span> <span class="keywordtype">double</span> <a class="code" href="classchem_1_1RNodeNRM.html#a5894ae93a6ef48f7b0bfa82add5bce5d" title="Return the currently stored propensity, &quot;a&quot;, for this Reaction.">getPropensity</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RNodeNRM.html#ae16aa8e75649d855f4b6eae8b00ed1db" title="The propensity associated with the Reaction. It may be outdated and may need to be recomputed if need...">_a</a>;}
 <a name="l00146"></a>00146     
@@ -234,14 +234,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00177"></a>00177 <span class="preprocessor">#ifdef BOOST_MEM_POOL</span>
 <a name="l00178"></a>00178 <span class="preprocessor"></span><span class="preprocessor">#ifdef BOOST_POOL_MEM_RNODENRM</span>
 <a name="l00179"></a>00179 <span class="preprocessor"></span>
-<a name="l00180"></a>00180     <span class="keywordtype">void</span>* <a class="code" href="classchem_1_1RNodeNRM.html#ae76175a4d99e9eb3389dce6c77c9edb6" title="Advanced memory management.">operator new</a>(std::size_t size);
+<a name="l00180"></a>00180     <span class="keywordtype">void</span>* operator new(std::size_t size);
 <a name="l00181"></a>00181     
-<a name="l00182"></a>00182     <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RNodeNRM.html#abe32c9de55bd8deb22c2894ae753b708">operator delete</a>(<span class="keywordtype">void</span>* ptr) noexcept;
+<a name="l00182"></a>00182     <span class="keywordtype">void</span> operator delete(<span class="keywordtype">void</span>* ptr) noexcept;
 <a name="l00183"></a>00183 <span class="preprocessor">#endif</span>
 <a name="l00184"></a>00184 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
 <a name="l00185"></a>00185 <span class="preprocessor"></span><span class="keyword">private</span>:
 <a name="l00186"></a><a class="code" href="classchem_1_1RNodeNRM.html#acff43a1b27a778b6534bd8010904f821">00186</a>     <a class="code" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation.">ChemNRMImpl</a> &amp;<a class="code" href="classchem_1_1RNodeNRM.html#acff43a1b27a778b6534bd8010904f821" title="A reference to the ChemNRMImpl which containts the heap, random number generators, etc.">_chem_nrm</a>; 
-<a name="l00187"></a><a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">00187</a>     <a class="code" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">handle_t</a> <a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19" title="The handle to the associated PQNode element in the heap.">_handle</a>; 
+<a name="l00187"></a><a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19">00187</a>     <a class="code" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">handle_t</a> <a class="code" href="classchem_1_1RNodeNRM.html#ad124c85b0f1b479cf0c1f4bf75230c19" title="The handle to the associated PQNode element in the heap.">_handle</a>; 
 <a name="l00188"></a><a class="code" href="classchem_1_1RNodeNRM.html#add823fa4b223afe0d750ed731c827d07">00188</a>     <a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *<a class="code" href="classchem_1_1RNodeNRM.html#add823fa4b223afe0d750ed731c827d07" title="The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeNRM...">_react</a>; 
 <a name="l00189"></a><a class="code" href="classchem_1_1RNodeNRM.html#ae16aa8e75649d855f4b6eae8b00ed1db">00189</a>     <span class="keywordtype">double</span> <a class="code" href="classchem_1_1RNodeNRM.html#ae16aa8e75649d855f4b6eae8b00ed1db" title="The propensity associated with the Reaction. It may be outdated and may need to be recomputed if need...">_a</a>; 
 <a name="l00190"></a>00190 };
@@ -270,7 +270,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00227"></a>00227     
 <a name="l00229"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#ad096a21196bb3e5a978dc3fdb50d8e1b">00229</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemNRMImpl.html#ad096a21196bb3e5a978dc3fdb50d8e1b" title="Sets global time variable to ChemNRMImpl&#39;s global time.">syncGlobalTime</a>() {<a class="code" href="common_8cpp.html#aa3ea98c7e5ad42511b3ec7e0e90e61a4">global_time</a>=<a class="code" href="classchem_1_1ChemNRMImpl.html#a1b14f424d72d3c5b0aafe31d7b7c4f82" title="global time">_t</a>;}
 <a name="l00230"></a>00230     
-<a name="l00232"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">00232</a>     <span class="keyword">inline</span> <a class="code" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a>* <a class="code" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e" title="Return a pointer to the heap.">getHeap</a>() {<span class="keywordflow">return</span> &amp;<a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f" title="A priority queue for the NRM algorithm, containing PQNode elements.">_heap</a>;}
+<a name="l00232"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e">00232</a>     <span class="keyword">inline</span> <a class="code" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a>* <a class="code" href="classchem_1_1ChemNRMImpl.html#ae52572d35469dd8569457dbce96af78e" title="Return a pointer to the heap.">getHeap</a>() {<span class="keywordflow">return</span> &amp;<a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f" title="A priority queue for the NRM algorithm, containing PQNode elements.">_heap</a>;}
 <a name="l00233"></a>00233     
 <a name="l00235"></a>00235     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1ChemNRMImpl.html#afdd66d28d760064d5edc4472b8146a08" title="Add Reaction *r to the network.">addReaction</a>(<a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *r);
 <a name="l00236"></a>00236     
@@ -297,7 +297,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00275"></a>00275     <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1ChemNRMImpl.html#a9f17d2b5953fd3ffc8b5337e78021ed2" title="This is a somewhat complex subroutine which implements the main part of the Gibson-Bruck NRM algoritm...">makeStep</a>();
 <a name="l00276"></a>00276 <span class="keyword">private</span>:
 <a name="l00277"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#a8eb526f8bc56b8aeeadca537004576db">00277</a>     std::unordered_map&lt;ReactionBase*, std::unique_ptr&lt;RNodeNRM&gt;&gt; <a class="code" href="classchem_1_1ChemNRMImpl.html#a8eb526f8bc56b8aeeadca537004576db" title="The database of RNodeNRM objects, representing the reaction network.">_map_rnodes</a>; 
-<a name="l00278"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">00278</a>     <a class="code" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">boost_heap</a> <a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f" title="A priority queue for the NRM algorithm, containing PQNode elements.">_heap</a>; 
+<a name="l00278"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f">00278</a>     <a class="code" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">boost_heap</a> <a class="code" href="classchem_1_1ChemNRMImpl.html#af2063c9b768c13ac541886947c567c1f" title="A priority queue for the NRM algorithm, containing PQNode elements.">_heap</a>; 
 <a name="l00279"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#ad0dce1073a3c37dd21c6523a81dd18e6">00279</a>     std::mt19937 <a class="code" href="classchem_1_1ChemNRMImpl.html#ad0dce1073a3c37dd21c6523a81dd18e6" title="Random number generator.">_eng</a>; 
 <a name="l00280"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#ac817f5c731ea5522ea661a9e6c978d6a">00280</a>     std::exponential_distribution&lt;double&gt; <a class="code" href="classchem_1_1ChemNRMImpl.html#ac817f5c731ea5522ea661a9e6c978d6a" title="Adaptor for the exponential distribution.">_exp_distr</a>; 
 <a name="l00281"></a><a class="code" href="classchem_1_1ChemNRMImpl.html#a1b14f424d72d3c5b0aafe31d7b7c4f82">00281</a>     <span class="keywordtype">double</span> <a class="code" href="classchem_1_1ChemNRMImpl.html#a1b14f424d72d3c5b0aafe31d7b7c4f82" title="global time">_t</a>; 
@@ -312,7 +312,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="ChemNRMImpl_8h.html">ChemNRMImpl.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

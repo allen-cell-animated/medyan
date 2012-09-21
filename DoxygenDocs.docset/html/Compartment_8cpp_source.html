@@ -123,76 +123,114 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00007"></a>00007 <span class="comment">//</span>
 <a name="l00008"></a>00008 
 <a name="l00009"></a>00009 <span class="preprocessor">#include &quot;<a class="code" href="Compartment_8h.html">Compartment.h</a>&quot;</span>
-<a name="l00010"></a>00010 
-<a name="l00011"></a>00011 <span class="keyword">namespace </span>chem {
-<a name="l00012"></a>00012 
-<a name="l00013"></a>00013     
-<a name="l00014"></a><a class="code" href="classchem_1_1Compartment.html#ad4ea48f28647873a3219e37bb8403f67">00014</a>     <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; <a class="code" href="classchem_1_1Compartment.html#ad4ea48f28647873a3219e37bb8403f67">Compartment::operator=</a>(<span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a> &amp;other)
-<a name="l00015"></a>00015     {
-<a name="l00016"></a>00016         <span class="comment">//            swap(*this, other);</span>
-<a name="l00017"></a>00017         <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a8778dc6827fe0862905213ae9cffc985">clear</a>();
-<a name="l00018"></a>00018         <a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#a69c4cf656baa9e9f282243a5f51ac178">clear</a>();
-<a name="l00019"></a>00019         <a class="code" href="classchem_1_1Compartment.html#a145204ee8dda5d601c97575152aa5f10">_diffusion_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#a69c4cf656baa9e9f282243a5f51ac178">clear</a>();
-<a name="l00020"></a>00020         other.<a class="code" href="classchem_1_1Compartment.html#ac71edb75c7f4c42bc32324292a77bc6a">cloneSpecies</a>(<span class="keyword">this</span>);
-<a name="l00021"></a>00021         other.<a class="code" href="classchem_1_1Compartment.html#abe2ca1b410efeba3b6ee97209f63dbfb">cloneReactions</a>(<span class="keyword">this</span>);
-<a name="l00022"></a>00022         <a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a> = other.<a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a>;
-<a name="l00023"></a>00023         <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00024"></a>00024         <span class="comment">// Note that _neighbours is not copied</span>
-<a name="l00025"></a>00025     }
-<a name="l00026"></a>00026     
-<a name="l00027"></a><a class="code" href="classchem_1_1Compartment.html#a6ee97cde1d05eb0591fae5ee6df0988c">00027</a>     <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Compartment.html#a6ee97cde1d05eb0591fae5ee6df0988c">Compartment::generateDiffusionReactions</a>()
-<a name="l00028"></a>00028     {
-<a name="l00029"></a>00029         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;sp_this : <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>()) {
-<a name="l00030"></a>00030             <span class="keywordtype">int</span> molecule = sp_this-&gt;getMolecule();
-<a name="l00031"></a>00031             <span class="keywordtype">int</span> diff_rate = <a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a>[molecule];
-<a name="l00032"></a>00032             <span class="keywordflow">if</span>(diff_rate&lt;0) <span class="comment">// Based on a convention that diffusing reactions require positive rates</span>
-<a name="l00033"></a>00033                 <span class="keywordflow">continue</span>;
-<a name="l00034"></a>00034             <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;C : <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>){
-<a name="l00035"></a>00035                 <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *sp_neighbour = C-&gt;_species.findSpeciesByMolecule(molecule);
-<a name="l00036"></a>00036                 <a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *R = <span class="keyword">new</span> <a class="code" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction&lt;1,1&gt;</a>({sp_this.get(),sp_neighbour},diff_rate);
-<a name="l00037"></a>00037                 this-&gt;<a class="code" href="classchem_1_1Compartment.html#ae5b08b46ef8cd9a18152a1db3cad65b5">addDiffusionReactionUnique</a>(std::unique_ptr&lt;ReactionBase&gt;(R));
-<a name="l00038"></a>00038             }
-<a name="l00039"></a>00039         }
-<a name="l00040"></a>00040     }
-<a name="l00041"></a>00041     
-<a name="l00042"></a><a class="code" href="namespacechem.html#a9342b2280a45cc2043074e2a618be723">00042</a>     <span class="keywordtype">bool</span> <a class="code" href="namespacechem.html#a9342b2280a45cc2043074e2a618be723">operator==</a>(<span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; a, <span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; b)
-<a name="l00043"></a>00043     {
-<a name="l00044"></a>00044         <span class="keywordflow">if</span>(a.<a class="code" href="classchem_1_1Compartment.html#ac203d0d3da7bba141cc766f7281205aa">numberOfSpecies</a>()!=b.<a class="code" href="classchem_1_1Compartment.html#ac203d0d3da7bba141cc766f7281205aa">numberOfSpecies</a>() or a.<a class="code" href="classchem_1_1Compartment.html#ab32c292bde8402da30b84cd2cb878382">numberOfInternalReactions</a>()!=b.<a class="code" href="classchem_1_1Compartment.html#ab32c292bde8402da30b84cd2cb878382">numberOfInternalReactions</a>())
-<a name="l00045"></a>00045             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00046"></a>00046         
-<a name="l00047"></a>00047         <span class="keywordflow">if</span>(<span class="keyword">typeid</span>(a)!=<span class="keyword">typeid</span>(b))
-<a name="l00048"></a>00048             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00049"></a>00049         
-<a name="l00050"></a>00050         <span class="keywordtype">bool</span> spec_bool = <span class="keyword">false</span>;
-<a name="l00051"></a>00051         <span class="keyword">auto</span> sit_pair = std::mismatch(a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().begin(),a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().end(),b.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().begin(),
-<a name="l00052"></a>00052                                       [](<span class="keyword">const</span> std::unique_ptr&lt;Species&gt; &amp;A, <span class="keyword">const</span> std::unique_ptr&lt;Species&gt; &amp;B)
-<a name="l00053"></a>00053                                       {
-<a name="l00054"></a>00054                                           <span class="keywordflow">return</span> (*A)==(*B);
-<a name="l00055"></a>00055                                       });
-<a name="l00056"></a>00056         <span class="keywordflow">if</span>(sit_pair.first==a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().end())
-<a name="l00057"></a>00057             spec_bool=<span class="keyword">true</span>;
-<a name="l00058"></a>00058         
-<a name="l00059"></a>00059         
-<a name="l00060"></a>00060         <span class="keywordtype">bool</span> reac_bool = <span class="keyword">false</span>;
-<a name="l00061"></a>00061         <span class="keyword">auto</span> rit_pair = std::mismatch(a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().begin(),a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().end(),b.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().begin(),
-<a name="l00062"></a>00062                                       [](<span class="keyword">const</span> std::unique_ptr&lt;ReactionBase&gt; &amp;A, <span class="keyword">const</span> std::unique_ptr&lt;ReactionBase&gt; &amp;B)
-<a name="l00063"></a>00063                                       {
-<a name="l00064"></a>00064                                           <span class="keywordflow">return</span> (*A)==(*B);
-<a name="l00065"></a>00065                                       });
-<a name="l00066"></a>00066         <span class="keywordflow">if</span>(rit_pair.first==a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().end())
-<a name="l00067"></a>00067             reac_bool=<span class="keyword">true</span>;
-<a name="l00068"></a>00068         
-<a name="l00069"></a>00069         <span class="keywordflow">return</span> spec_bool &amp;&amp; reac_bool;
-<a name="l00070"></a>00070     }
-<a name="l00071"></a>00071 
-<a name="l00072"></a>00072 } <span class="comment">// end of chem</span>
+<a name="l00010"></a>00010 <span class="preprocessor">#include &quot;<a class="code" href="Visitor_8h.html">Visitor.h</a>&quot;</span>
+<a name="l00011"></a>00011 
+<a name="l00012"></a>00012 <span class="keyword">namespace </span>chem {
+<a name="l00013"></a>00013 
+<a name="l00014"></a>00014     
+<a name="l00015"></a><a class="code" href="classchem_1_1Compartment.html#ad4ea48f28647873a3219e37bb8403f67">00015</a>     <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; <a class="code" href="classchem_1_1Compartment.html#ad4ea48f28647873a3219e37bb8403f67">Compartment::operator=</a>(<span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a> &amp;other)
+<a name="l00016"></a>00016     {
+<a name="l00017"></a>00017         <span class="comment">//            swap(*this, other);</span>
+<a name="l00018"></a>00018         <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a8778dc6827fe0862905213ae9cffc985">clear</a>();
+<a name="l00019"></a>00019         <a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#a69c4cf656baa9e9f282243a5f51ac178">clear</a>();
+<a name="l00020"></a>00020         <a class="code" href="classchem_1_1Compartment.html#a145204ee8dda5d601c97575152aa5f10">_diffusion_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#a69c4cf656baa9e9f282243a5f51ac178">clear</a>();
+<a name="l00021"></a>00021         other.<a class="code" href="classchem_1_1Compartment.html#ac71edb75c7f4c42bc32324292a77bc6a">cloneSpecies</a>(<span class="keyword">this</span>);
+<a name="l00022"></a>00022         other.<a class="code" href="classchem_1_1Compartment.html#abe2ca1b410efeba3b6ee97209f63dbfb">cloneReactions</a>(<span class="keyword">this</span>);
+<a name="l00023"></a>00023         <a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a> = other.<a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a>;
+<a name="l00024"></a>00024         <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00025"></a>00025         <span class="comment">// Note that _neighbours is not copied</span>
+<a name="l00026"></a>00026     }
+<a name="l00027"></a>00027     
+<a name="l00028"></a><a class="code" href="classchem_1_1Compartment.html#ab08e78b733c9945fa7e12d146cffa3d8">00028</a>     <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#ab08e78b733c9945fa7e12d146cffa3d8" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">Compartment::apply_impl</a>(<a class="code" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)
+<a name="l00029"></a>00029     {
+<a name="l00030"></a>00030         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s : <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>())
+<a name="l00031"></a>00031         {
+<a name="l00032"></a>00032             v.<a class="code" href="classchem_1_1SpeciesVisitor.html#a53c84c960e858a232036e1e1278fd511" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit</a>(s.get());
+<a name="l00033"></a>00033         }
+<a name="l00034"></a>00034         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00035"></a>00035     }
+<a name="l00036"></a>00036     
+<a name="l00037"></a><a class="code" href="classchem_1_1Compartment.html#a9181097e1954fec5f1dbad889401b451">00037</a>     <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#a9181097e1954fec5f1dbad889401b451" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">Compartment::apply_impl_if</a>(<a class="code" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v)
+<a name="l00038"></a>00038     {
+<a name="l00039"></a>00039         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s : <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>())
+<a name="l00040"></a>00040         {
+<a name="l00041"></a>00041             v.<a class="code" href="classchem_1_1SpeciesVisitor.html#a26661b4bb928cef9f0033e1ceebbbe05" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit_if</a>(s.get());
+<a name="l00042"></a>00042         }
+<a name="l00043"></a>00043         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00044"></a>00044     }
+<a name="l00045"></a>00045     
+<a name="l00046"></a><a class="code" href="classchem_1_1Compartment.html#a071bedd398a7a5dfc90447309a75f189">00046</a>     <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#ab08e78b733c9945fa7e12d146cffa3d8" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">Compartment::apply_impl</a>(<a class="code" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)
+<a name="l00047"></a>00047     {
+<a name="l00048"></a>00048         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>())
+<a name="l00049"></a>00049         {
+<a name="l00050"></a>00050             v.<a class="code" href="classchem_1_1ReactionVisitor.html#a42dc6909e63c183bd5d22cb0d3c3e6b4" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit</a>(r.get());
+<a name="l00051"></a>00051         }
+<a name="l00052"></a>00052         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00053"></a>00053     }
+<a name="l00054"></a>00054     
+<a name="l00055"></a><a class="code" href="classchem_1_1Compartment.html#a1d46fc8e1d961deb45e22019153d26b3">00055</a>     <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Compartment.html#a9181097e1954fec5f1dbad889401b451" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">Compartment::apply_impl_if</a>(<a class="code" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v)
+<a name="l00056"></a>00056     {
+<a name="l00057"></a>00057         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;r : <a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>())
+<a name="l00058"></a>00058         {
+<a name="l00059"></a>00059             v.<a class="code" href="classchem_1_1ReactionVisitor.html#aad37cda5351c260fcfacdff69675d7cb" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit_if</a>(r.get());
+<a name="l00060"></a>00060         }
+<a name="l00061"></a>00061         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00062"></a>00062     }
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064 
+<a name="l00065"></a><a class="code" href="classchem_1_1Compartment.html#a6ee97cde1d05eb0591fae5ee6df0988c">00065</a>     <span class="keywordtype">void</span> <a class="code" href="classchem_1_1Compartment.html#a6ee97cde1d05eb0591fae5ee6df0988c">Compartment::generateDiffusionReactions</a>()
+<a name="l00066"></a>00066     {
+<a name="l00067"></a>00067         <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;sp_this : <a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>()) {
+<a name="l00068"></a>00068             <span class="keywordtype">int</span> molecule = sp_this-&gt;getMolecule();
+<a name="l00069"></a>00069             <span class="keywordtype">int</span> diff_rate = <a class="code" href="classchem_1_1Compartment.html#ac063917817174aa79cafcfa07808c349">_diffusion_rates</a>[molecule];
+<a name="l00070"></a>00070             <span class="keywordflow">if</span>(diff_rate&lt;0) <span class="comment">// Based on a convention that diffusing reactions require positive rates</span>
+<a name="l00071"></a>00071                 <span class="keywordflow">continue</span>;
+<a name="l00072"></a>00072             <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;C : <a class="code" href="classchem_1_1Compartment.html#a14f1e10204ba273e173cd2fa2b9c0b4b">_neighbours</a>){
+<a name="l00073"></a>00073                 <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> *sp_neighbour = C-&gt;_species.findSpeciesByMolecule(molecule);
+<a name="l00074"></a>00074                 <a class="code" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...">ReactionBase</a> *R = <span class="keyword">new</span> <a class="code" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction&lt;1,1&gt;</a>({sp_this.get(),sp_neighbour},diff_rate);
+<a name="l00075"></a>00075                 this-&gt;<a class="code" href="classchem_1_1Compartment.html#ae5b08b46ef8cd9a18152a1db3cad65b5">addDiffusionReactionUnique</a>(std::unique_ptr&lt;ReactionBase&gt;(R));
+<a name="l00076"></a>00076             }
+<a name="l00077"></a>00077         }
+<a name="l00078"></a>00078     }
+<a name="l00079"></a>00079     
+<a name="l00080"></a><a class="code" href="namespacechem.html#a9342b2280a45cc2043074e2a618be723">00080</a>     <span class="keywordtype">bool</span> <a class="code" href="namespacechem.html#a9342b2280a45cc2043074e2a618be723">operator==</a>(<span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; a, <span class="keyword">const</span> <a class="code" href="classchem_1_1Compartment.html">Compartment</a>&amp; b)
+<a name="l00081"></a>00081     {
+<a name="l00082"></a>00082         <span class="keywordflow">if</span>(a.<a class="code" href="classchem_1_1Compartment.html#ac203d0d3da7bba141cc766f7281205aa" title="Returns the number of Species being immediately managed by this node (i.e.">numberOfSpecies</a>()!=b.<a class="code" href="classchem_1_1Compartment.html#ac203d0d3da7bba141cc766f7281205aa" title="Returns the number of Species being immediately managed by this node (i.e.">numberOfSpecies</a>() or a.<a class="code" href="classchem_1_1Compartment.html#ab32c292bde8402da30b84cd2cb878382">numberOfInternalReactions</a>()!=b.<a class="code" href="classchem_1_1Compartment.html#ab32c292bde8402da30b84cd2cb878382">numberOfInternalReactions</a>())
+<a name="l00083"></a>00083             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00084"></a>00084         
+<a name="l00085"></a>00085         <span class="keywordflow">if</span>(<span class="keyword">typeid</span>(a)!=<span class="keyword">typeid</span>(b))
+<a name="l00086"></a>00086             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00087"></a>00087         
+<a name="l00088"></a>00088         <span class="keywordtype">bool</span> spec_bool = <span class="keyword">false</span>;
+<a name="l00089"></a>00089         <span class="keyword">auto</span> sit_pair = std::mismatch(a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().begin(),a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().end(),b.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().begin(),
+<a name="l00090"></a>00090                                       [](<span class="keyword">const</span> std::unique_ptr&lt;Species&gt; &amp;A, <span class="keyword">const</span> std::unique_ptr&lt;Species&gt; &amp;B)
+<a name="l00091"></a>00091                                       {
+<a name="l00092"></a>00092                                           <span class="keywordflow">return</span> (*A)==(*B);
+<a name="l00093"></a>00093                                       });
+<a name="l00094"></a>00094         <span class="keywordflow">if</span>(sit_pair.first==a.<a class="code" href="classchem_1_1Compartment.html#a841023eb400a066b83658324189bb9cc">_species</a>.<a class="code" href="classchem_1_1SpeciesPtrContainerVector.html#a128ea6486465beca7a8ec2d7c240a525">species</a>().end())
+<a name="l00095"></a>00095             spec_bool=<span class="keyword">true</span>;
+<a name="l00096"></a>00096         
+<a name="l00097"></a>00097         
+<a name="l00098"></a>00098         <span class="keywordtype">bool</span> reac_bool = <span class="keyword">false</span>;
+<a name="l00099"></a>00099         <span class="keyword">auto</span> rit_pair = std::mismatch(a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().begin(),a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().end(),b.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().begin(),
+<a name="l00100"></a>00100                                       [](<span class="keyword">const</span> std::unique_ptr&lt;ReactionBase&gt; &amp;A, <span class="keyword">const</span> std::unique_ptr&lt;ReactionBase&gt; &amp;B)
+<a name="l00101"></a>00101                                       {
+<a name="l00102"></a>00102                                           <span class="keywordflow">return</span> (*A)==(*B);
+<a name="l00103"></a>00103                                       });
+<a name="l00104"></a>00104         <span class="keywordflow">if</span>(rit_pair.first==a.<a class="code" href="classchem_1_1Compartment.html#addd7f5958bceecb01323291e8b81137c">_internal_reactions</a>.<a class="code" href="classchem_1_1ReactionPtrContainerVector.html#ad9fcc5dd31d82c7782a58cfec1e21893">reactions</a>().end())
+<a name="l00105"></a>00105             reac_bool=<span class="keyword">true</span>;
+<a name="l00106"></a>00106         
+<a name="l00107"></a>00107         <span class="keywordflow">return</span> spec_bool &amp;&amp; reac_bool;
+<a name="l00108"></a>00108     }
+<a name="l00109"></a>00109 
+<a name="l00110"></a>00110 } <span class="comment">// end of chem</span>
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="Compartment_8cpp.html">Compartment.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

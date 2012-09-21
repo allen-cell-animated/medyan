@@ -8,5 +8,7 @@ var searchData=
   ['speciesnamesdb',['SpeciesNamesDB',['../classchem_1_1SpeciesNamesDB.html',1,'chem']]],
   ['speciesptrcontaineriface',['SpeciesPtrContainerIFace',['../classchem_1_1SpeciesPtrContainerIFace.html',1,'chem']]],
   ['speciesptrcontainervector',['SpeciesPtrContainerVector',['../classchem_1_1SpeciesPtrContainerVector.html',1,'chem']]],
+  ['speciesvisitor',['SpeciesVisitor',['../classchem_1_1SpeciesVisitor.html',1,'chem']]],
+  ['speciesvisitorlambda',['SpeciesVisitorLambda',['../classchem_1_1SpeciesVisitorLambda.html',1,'chem']]],
   ['system',['System',['../classSystem.html',1,'']]]
 ];

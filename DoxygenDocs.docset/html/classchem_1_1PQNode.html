@@ -130,7 +130,7 @@ Collaboration diagram for chem::PQNode:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1PQNode__coll__graph.png" border="0" usemap="#chem_1_1PQNode_coll__map" alt="Collaboration graph"/></div>
 <map name="chem_1_1PQNode_coll__map" id="chem_1_1PQNode_coll__map">
-<area shape="rect" id="node2" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="437,187,565,213"/><area shape="rect" id="node4" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="385,5,484,32"/><area shape="rect" id="node10" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B &#45;&gt; C." alt="" coords="345,96,452,123"/><area shape="rect" id="node6" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation." alt="" coords="539,96,684,123"/><area shape="rect" id="node8" href="classchem_1_1ChemSimImpl.html" title="ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics..." alt="" coords="544,5,680,32"/><area shape="rect" id="node15" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="177,291,292,317"/><area shape="rect" id="node17" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="183,472,287,499"/><area shape="rect" id="node19" href="classchem_1_1Component.html" title="chem::Component" alt="" coords="506,381,629,408"/><area shape="rect" id="node21" href="classchem_1_1Composite.html" title="chem::Composite" alt="" coords="507,472,625,499"/></map>
+<area shape="rect" id="node2" href="classchem_1_1RNodeNRM.html" title="RNodeNRM stands for Reaction Node Next Reaction Method." alt="" coords="123,193,255,221"/><area shape="rect" id="node4" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="199,6,301,34"/><area shape="rect" id="node10" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B &#45;..." alt="" coords="238,99,383,127"/><area shape="rect" id="node6" href="classchem_1_1ChemNRMImpl.html" title="ChemNRMImpl stands for Chemical Next Reaction Method Implementation." alt="" coords="5,99,157,127"/><area shape="rect" id="node8" href="classchem_1_1ChemSimImpl.html" title="ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics..." alt="" coords="9,6,153,34"/><area shape="rect" id="node12" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="475,6,599,34"/><area shape="rect" id="node14" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy." alt="" coords="563,99,692,127"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1PQNode-members.html">List of all members.</a></p>
@@ -143,9 +143,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a12604503b292d71658be54c9952afcbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dtor: we only reassign _rn to null, the actual pointer needs to be deleted somewhere else to avoid memory leaks.  <a href="#a12604503b292d71658be54c9952afcbd"></a><br/></td></tr>
 <tr class="memitem:a0ba52697bcbc5b2c4accb7dece0aff24"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#a0ba52697bcbc5b2c4accb7dece0aff24">operator&lt;</a> (<a class="el" href="classchem_1_1PQNode.html">PQNode</a> const &amp;rhs) const </td></tr>
 <tr class="memdesc:a0ba52697bcbc5b2c4accb7dece0aff24"><td class="mdescLeft">&#160;</td><td class="mdescRight">The PQ heap requires a comparision operator for ordering elements within the heap/.  <a href="#a0ba52697bcbc5b2c4accb7dece0aff24"></a><br/></td></tr>
-<tr class="memitem:a1364ee21435946152266840256b8dd3f"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#a1364ee21435946152266840256b8dd3f">operator new</a> (std::size_t size)</td></tr>
-<tr class="memdesc:a1364ee21435946152266840256b8dd3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advanced memory management.  <a href="#a1364ee21435946152266840256b8dd3f"></a><br/></td></tr>
-<tr class="memitem:af127d116cdefe86ba41005ef691affc1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#af127d116cdefe86ba41005ef691affc1">operator delete</a> (void *ptr) noexcept</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ae0ddd94f908ec800ae02f592e83c630d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classchem_1_1RNodeNRM.html">RNodeNRM</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1PQNode.html#ae0ddd94f908ec800ae02f592e83c630d">_rn</a></td></tr>
@@ -215,46 +212,6 @@ Friends</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="af127d116cdefe86ba41005ef691affc1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void chem::PQNode::operator delete </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>ptr</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00046">46</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1364ee21435946152266840256b8dd3f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void * chem::PQNode::operator new </td>
-          <td>(</td>
-          <td class="paramtype">std::size_t&#160;</td>
-          <td class="paramname"><em>size</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Advanced memory management. </p>
-
-<p>Definition at line <a class="el" href="ChemNRMImpl_8cpp_source.html#l00038">38</a> of file <a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="a0ba52697bcbc5b2c4accb7dece0aff24"></a>
 <div class="memitem">
 <div class="memproto">
@@ -349,9 +306,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>CytoSim/<a class="el" href="ChemNRMImpl_8h_source.html">ChemNRMImpl.h</a></li>
-<li>CytoSim/<a class="el" href="ChemNRMImpl_8cpp_source.html">ChemNRMImpl.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div>
@@ -360,7 +316,7 @@ Friends</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1PQNode.html">PQNode</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

@@ -12,8 +12,6 @@ var classchem_1_1RNodeNRM =
     [ "getTau", "classchem_1_1RNodeNRM.html#a570e4a825862fdf03d10e36fa186ba64", null ],
     [ "isPassivated", "classchem_1_1RNodeNRM.html#ad6445c86ef589c51c8d0957d437f6c3c", null ],
     [ "makeStep", "classchem_1_1RNodeNRM.html#a1294bf93224e88f4bb0a64282ef9f950", null ],
-    [ "operator delete", "classchem_1_1RNodeNRM.html#abe32c9de55bd8deb22c2894ae753b708", null ],
-    [ "operator new", "classchem_1_1RNodeNRM.html#ae76175a4d99e9eb3389dce6c77c9edb6", null ],
     [ "operator=", "classchem_1_1RNodeNRM.html#aba4753c700f2f6d707e2c94b2c5e5749", null ],
     [ "passivateReaction", "classchem_1_1RNodeNRM.html#a1099526d4e797a6d033ad6f60b76dc12", null ],
     [ "printDependents", "classchem_1_1RNodeNRM.html#ad8e5f9557c3ba701596aff928dc5270e", null ],

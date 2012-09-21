@@ -119,7 +119,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 This is the complete list of members for <a class="el" href="classchem_1_1Component.html">chem::Component</a>, including all inherited members.<table>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a5da4c5a0d857620fe3e3cf7d8d06ec26">_parent</a></td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [private]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#ae9efcf2fb203ab7514f81f04d7e4dec2">apply</a>(Visitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [virtual]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#ac40e9d75a554324ba1d007a2d5234a38">apply_if</a>(ConditionalVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#aea52312b501cefd0fc2a26ff5671d711">apply</a>(SpeciesVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a04abbd7b2e96d2ea320f88921266f596">apply</a>(ReactionVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#af351fbf0deb48884c27806997f5954fd">apply_if</a>(Visitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a97dbbb586bb63e5ea296a20778006c5d">apply_if</a>(SpeciesVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#ac68ab2a8444e5f9ae4f5cc0b5fb9104d">apply_if</a>(ReactionVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca">apply_impl</a>(SpeciesVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a6db30c430a0eec9b0891cf3fc635ae1a">apply_impl</a>(ReactionVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07">apply_impl_if</a>(SpeciesVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a9d22fee87e12e9dbe66ad7fe7e6df130">apply_impl_if</a>(ReactionVisitor &amp;v)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a2c7265280625c13151d52a500bcc3095">Component</a>()</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#ab061b8b7d97db554af402ebb9723dc4c">countReactions</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a581a3912035ba493a2a24f1516d65ea8">countSpecies</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
@@ -131,6 +139,8 @@ This is the complete list of members for <a class="el" href="classchem_1_1Compon
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a75cd13a0d884f82fcddd574de33fbfe6">isRoot</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a3c0f652fe5b6910f07c046fe0190b7b5">isSpeciesContainer</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a720ec4ef4aaadfec3e47c31451d28637">numberOfChildren</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#af76701fa683d7378915b5b6ad55bd357">numberOfReactions</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a41d313350ea214ae94d54cb0c6263a9c">numberOfSpecies</a>() const </td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a778911b6f9505f1d8a39fc39e093974e">printSelf</a>()</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a1f4e4d1566f1d3026f1e2a14fa3dffd9">setParent</a>(Composite *other)</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classchem_1_1Component.html#a9a468e72232a30a69d4432d13ac5ffa9">~Component</a>() noexcept</td><td><a class="el" href="classchem_1_1Component.html">chem::Component</a></td><td><code> [inline, virtual]</code></td></tr>
@@ -139,7 +149,7 @@ This is the complete list of members for <a class="el" href="classchem_1_1Compon
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

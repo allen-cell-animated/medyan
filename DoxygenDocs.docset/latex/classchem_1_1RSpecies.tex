@@ -12,8 +12,7 @@
 
 
 
-Collaboration diagram for chem\-:\-:R\-Species\-:
-\nopagebreak
+Collaboration diagram for chem\-:\-:R\-Species\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -33,6 +32,10 @@ Collaboration diagram for chem\-:\-:R\-Species\-:
 \begin{DoxyCompactList}\small\item\em deleted assignment operator -\/ each \hyperlink{classchem_1_1RSpecies}{R\-Species} is uniquely created by the parent \hyperlink{classchem_1_1Species}{Species} \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_a7939d5255e97d125821f657cadb48bc2}{set\-N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} n)
 \begin{DoxyCompactList}\small\item\em Sets the copy number for this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1RSpecies_a13c47ccb546b64f83ac09734c286fcd2}{set\-Upper\-Limit\-For\-N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} ulim)
+\begin{DoxyCompactList}\small\item\em Sets the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1RSpecies_ad233880e065382e598a95e75d401d9eb}{get\-Upper\-Limit\-For\-N} () const 
+\begin{DoxyCompactList}\small\item\em Return the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_ae721e3c649a12e0a81bc6b77afe23f38}{up} ()
 \begin{DoxyCompactList}\small\item\em Increases the copy number by 1. \end{DoxyCompactList}\item 
 void \hyperlink{classchem_1_1RSpecies_a0b9db54a1407d689be7477e77b4bb1c6}{down} ()
@@ -53,8 +56,16 @@ void \hyperlink{classchem_1_1RSpecies_a0c33c29f86ee16b84151bc5f38953076}{passiva
 \item 
 void \hyperlink{classchem_1_1RSpecies_aff8862396958db832848c94135282f1e}{passivate\-Assoc\-Product\-Reactions} ()
 \item 
+void \hyperlink{classchem_1_1RSpecies_a0beefdc1ec28646df87b0690a2d66734}{start\-Signaling} ()
+\begin{DoxyCompactList}\small\item\em Set the signaling behavior of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1RSpecies_a3519759c28c5d50108753ebe6c67a537}{stop\-Signaling} ()
+\begin{DoxyCompactList}\small\item\em Destroy the signal associated with this \hyperlink{classchem_1_1RSpecies}{R\-Species}; all associated slots will be destroyed. \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1RSpecies_a3c875e360f7f53b2ca8bd30f7dbbb7ed}{$\sim$\-R\-Species} ()
 \begin{DoxyCompactList}\small\item\em It is required that all \hyperlink{classchem_1_1Reaction}{Reactions} associated with this \hyperlink{classchem_1_1RSpecies}{R\-Species} are destructed before this \hyperlink{classchem_1_1RSpecies}{R\-Species} is destructed. \end{DoxyCompactList}\item 
+void \hyperlink{classchem_1_1RSpecies_afaee31bbc312ca6fa84a9ffc02457611}{emit\-Signal} (int delta)
+\begin{DoxyCompactList}\small\item\em Broadcasts signal indicating that the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species} has changed This method should usually called by the code which runs the chemical dynamics (i.\-e. \end{DoxyCompactList}\item 
+bool \hyperlink{classchem_1_1RSpecies_a652a2d0f305a8ab84305ff1dd1fd41b8}{is\-Signaling} () const 
+\begin{DoxyCompactList}\small\item\em Return true if this \hyperlink{classchem_1_1RSpecies}{R\-Species} emits signals on copy number change. \end{DoxyCompactList}\item 
 \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1RSpecies_a5a96cf2a67af375c6471dfa5a21990f8}{get\-N} () const 
 \begin{DoxyCompactList}\small\item\em Return the current copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
 \hyperlink{classchem_1_1Species}{Species} \& \hyperlink{classchem_1_1RSpecies_a585ae6da09ba09c824aac7a0fcddd748}{get\-Species} ()
@@ -74,11 +85,7 @@ std\-::vector$<$ \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$ $>
 \hyperlink{namespacechem_a0decff3bb0047ac3a45bc12163f063e4}{vr\-\_\-iterator} \hyperlink{classchem_1_1RSpecies_a1b228d34e6277a15f672247480f4b51a}{end\-Reactant\-Reactions} ()
 \begin{DoxyCompactList}\small\item\em Return std\-::vector$<$\-Reaction\-Base $\ast$$>$\-::iterator, which points to the end of all \hyperlink{classchem_1_1Reaction}{Reactions} where this \hyperlink{classchem_1_1RSpecies}{R\-Species} is involved as a Reactant. \end{DoxyCompactList}\item 
 \hyperlink{namespacechem_a0decff3bb0047ac3a45bc12163f063e4}{vr\-\_\-iterator} \hyperlink{classchem_1_1RSpecies_a1b3db9e6c2246f6d1b4d98d344ff9e9e}{end\-Product\-Reactions} ()
-\begin{DoxyCompactList}\small\item\em Return std\-::vector$<$\-Reaction\-Base $\ast$$>$\-::iterator, which points to the end of all \hyperlink{classchem_1_1Reaction}{Reactions} where this \hyperlink{classchem_1_1RSpecies}{R\-Species} is involved as a Product. \end{DoxyCompactList}\item 
-void $\ast$ \hyperlink{classchem_1_1RSpecies_a8f8eeb52d60143c6fb7b7f87eee4f55c}{operator new} (std\-::size\-\_\-t size)
-\begin{DoxyCompactList}\small\item\em Advanced memory management. \end{DoxyCompactList}\item 
-void \hyperlink{classchem_1_1RSpecies_a59eeac181b75f878e4804fb2ce57dbb2}{operator delete} (void $\ast$ptr) noexcept
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Return std\-::vector$<$\-Reaction\-Base $\ast$$>$\-::iterator, which points to the end of all \hyperlink{classchem_1_1Reaction}{Reactions} where this \hyperlink{classchem_1_1RSpecies}{R\-Species} is involved as a Product. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -91,7 +98,11 @@ std\-::vector$<$ \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$ $>
 \hyperlink{classchem_1_1Species}{Species} \& \hyperlink{classchem_1_1RSpecies_a3a979b9226800417c7aad81a2162fac5}{\-\_\-species}
 \begin{DoxyCompactList}\small\item\em reference to the {\bfseries parent} \hyperlink{classchem_1_1Species}{Species} object \end{DoxyCompactList}\item 
 \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1RSpecies_a60e53ebfe464923452c54322dfd479dc}{\-\_\-n}
-\begin{DoxyCompactList}\small\item\em Current copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Current copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\-\_\-copy\-\_\-t} \hyperlink{classchem_1_1RSpecies_a189084cfe75e004f42a6a27b2c1c09ad}{\-\_\-ulim}
+\begin{DoxyCompactList}\small\item\em Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off. \end{DoxyCompactList}\item 
+\hyperlink{namespacechem_a6cb4144586460e7b7ae0dffdf08eb57c}{R\-Species\-Copy\-N\-Changed\-Signal} $\ast$ \hyperlink{classchem_1_1RSpecies_acd60296c77857284cd935cb6faaf4200}{\-\_\-signal}
+\begin{DoxyCompactList}\small\item\em Can be used to broadcast a signal associated with change of n of. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -134,6 +145,10 @@ Constructors.
 
 Definition at line 76 of file R\-Species.\-h.
 
+
+
+References \-\_\-signal, and \-\_\-ulim.
+
 \hypertarget{classchem_1_1RSpecies_aed7fd68d286fab8190372a4dd98c14e3}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!R\-Species@{R\-Species}}
 \index{R\-Species@{R\-Species}!chem::RSpecies@{chem\-::\-R\-Species}}
 \subsubsection[{R\-Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf chem\-::\-R\-Species\-::\-R\-Species} (
@@ -173,7 +188,7 @@ Definition at line 202 of file R\-Species.\-h.
 
 
 
-References \-\_\-as\-\_\-products, and \-\_\-as\-\_\-reactants.
+References \-\_\-as\-\_\-products, \-\_\-as\-\_\-reactants, and \-\_\-signal.
 
 
 
@@ -301,7 +316,26 @@ Definition at line 128 of file R\-Species.\-h.
 
 
 
-References \-\_\-n, activate\-Assoc\-Product\-Reactions(), and passivate\-Assoc\-Reactant\-Reactions().
+References \-\_\-n, \-\_\-ulim, activate\-Assoc\-Product\-Reactions(), and passivate\-Assoc\-Reactant\-Reactions().
+
+\hypertarget{classchem_1_1RSpecies_afaee31bbc312ca6fa84a9ffc02457611}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!emit\-Signal@{emit\-Signal}}
+\index{emit\-Signal@{emit\-Signal}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{emit\-Signal}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-R\-Species\-::emit\-Signal} (
+\begin{DoxyParamCaption}
+\item[{int}]{delta}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RSpecies_afaee31bbc312ca6fa84a9ffc02457611}
+
+
+Broadcasts signal indicating that the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species} has changed This method should usually called by the code which runs the chemical dynamics (i.\-e. 
+
+Gillespie-\/like algorithm) 
+
+Definition at line 214 of file R\-Species.\-h.
+
+
+
+References is\-Signaling().
 
 \hypertarget{classchem_1_1RSpecies_a1b3db9e6c2246f6d1b4d98d344ff9e9e}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!end\-Product\-Reactions@{end\-Product\-Reactions}}
 \index{end\-Product\-Reactions@{end\-Product\-Reactions}!chem::RSpecies@{chem\-::\-R\-Species}}
@@ -433,31 +467,51 @@ Definition at line 230 of file R\-Species.\-h.
 
 References \-\_\-species.
 
-\hypertarget{classchem_1_1RSpecies_a59eeac181b75f878e4804fb2ce57dbb2}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!operator delete@{operator delete}}
-\index{operator delete@{operator delete}!chem::RSpecies@{chem\-::\-R\-Species}}
-\subsubsection[{operator delete}]{\setlength{\rightskip}{0pt plus 5cm}void chem\-::\-R\-Species\-::operator delete (
+\hypertarget{classchem_1_1RSpecies_ad233880e065382e598a95e75d401d9eb}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}}
+\index{get\-Upper\-Limit\-For\-N@{get\-Upper\-Limit\-For\-N}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{get\-Upper\-Limit\-For\-N}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\-\_\-copy\-\_\-t} {\bf chem\-::\-R\-Species\-::get\-Upper\-Limit\-For\-N} (
 \begin{DoxyParamCaption}
-\item[{void $\ast$}]{ptr}
+{}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1RSpecies_a59eeac181b75f878e4804fb2ce57dbb2}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RSpecies_ad233880e065382e598a95e75d401d9eb}
 
 
-Definition at line 43 of file R\-Species.\-cpp.
+Return the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. 
 
-\hypertarget{classchem_1_1RSpecies_a8f8eeb52d60143c6fb7b7f87eee4f55c}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!operator new@{operator new}}
-\index{operator new@{operator new}!chem::RSpecies@{chem\-::\-R\-Species}}
-\subsubsection[{operator new}]{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ chem\-::\-R\-Species\-::operator new (
+
+
+Definition at line 107 of file R\-Species.\-h.
+
+
+
+References \-\_\-ulim.
+
+
+
+Referenced by chem\-::\-Species\-::get\-Upper\-Limit\-For\-N().
+
+\hypertarget{classchem_1_1RSpecies_a652a2d0f305a8ab84305ff1dd1fd41b8}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!is\-Signaling@{is\-Signaling}}
+\index{is\-Signaling@{is\-Signaling}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{is\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf chem\-::\-R\-Species\-::is\-Signaling} (
 \begin{DoxyParamCaption}
-\item[{std\-::size\-\_\-t}]{size}
+{}
 \end{DoxyParamCaption}
-)}}\label{classchem_1_1RSpecies_a8f8eeb52d60143c6fb7b7f87eee4f55c}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RSpecies_a652a2d0f305a8ab84305ff1dd1fd41b8}
 
 
-Advanced memory management. 
+Return true if this \hyperlink{classchem_1_1RSpecies}{R\-Species} emits signals on copy number change. 
 
 
 
-Definition at line 33 of file R\-Species.\-cpp.
+Definition at line 220 of file R\-Species.\-h.
+
+
+
+References \-\_\-signal.
+
+
+
+Referenced by emit\-Signal(), and chem\-::\-Species\-::is\-Signaling().
 
 \hypertarget{classchem_1_1RSpecies_a2779fcf9c5103251aa87e7b466ba7752}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!operator=@{operator=}}
 \index{operator=@{operator=}!chem::RSpecies@{chem\-::\-R\-Species}}
@@ -599,6 +653,71 @@ References \-\_\-n.
 
 Referenced by chem\-::\-Species\-::set\-N().
 
+\hypertarget{classchem_1_1RSpecies_a13c47ccb546b64f83ac09734c286fcd2}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!set\-Upper\-Limit\-For\-N@{set\-Upper\-Limit\-For\-N}}
+\index{set\-Upper\-Limit\-For\-N@{set\-Upper\-Limit\-For\-N}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{set\-Upper\-Limit\-For\-N}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-R\-Species\-::set\-Upper\-Limit\-For\-N} (
+\begin{DoxyParamCaption}
+\item[{{\bf species\-\_\-copy\-\_\-t}}]{ulim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classchem_1_1RSpecies_a13c47ccb546b64f83ac09734c286fcd2}
+
+
+Sets the upper limit for the copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ulim} & should be a non-\/negative number, but no checking is done in run time \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 104 of file R\-Species.\-h.
+
+
+
+References \-\_\-ulim.
+
+\hypertarget{classchem_1_1RSpecies_a0beefdc1ec28646df87b0690a2d66734}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!start\-Signaling@{start\-Signaling}}
+\index{start\-Signaling@{start\-Signaling}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{start\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-R\-Species\-::start\-Signaling} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1RSpecies_a0beefdc1ec28646df87b0690a2d66734}
+
+
+Set the signaling behavior of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. 
+
+
+
+Definition at line 79 of file R\-Species.\-cpp.
+
+
+
+Referenced by chem\-::\-Species\-::start\-Signaling().
+
+\hypertarget{classchem_1_1RSpecies_a3519759c28c5d50108753ebe6c67a537}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!stop\-Signaling@{stop\-Signaling}}
+\index{stop\-Signaling@{stop\-Signaling}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{stop\-Signaling}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-R\-Species\-::stop\-Signaling} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classchem_1_1RSpecies_a3519759c28c5d50108753ebe6c67a537}
+
+
+Destroy the signal associated with this \hyperlink{classchem_1_1RSpecies}{R\-Species}; all associated slots will be destroyed. 
+
+\begin{DoxyNote}{Note}
+To start signaling again, \hyperlink{classchem_1_1RSpecies_a0beefdc1ec28646df87b0690a2d66734}{start\-Signaling()} needs to be called 
+\end{DoxyNote}
+
+
+Definition at line 83 of file R\-Species.\-cpp.
+
+
+
+Referenced by chem\-::\-Species\-::stop\-Signaling().
+
 \hypertarget{classchem_1_1RSpecies_ae721e3c649a12e0a81bc6b77afe23f38}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!up@{up}}
 \index{up@{up}!chem::RSpecies@{chem\-::\-R\-Species}}
 \subsubsection[{up}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf chem\-::\-R\-Species\-::up} (
@@ -616,7 +735,7 @@ Definition at line 112 of file R\-Species.\-h.
 
 
 
-References \-\_\-n, activate\-Assoc\-Reactant\-Reactions(), and passivate\-Assoc\-Product\-Reactions().
+References \-\_\-n, \-\_\-ulim, activate\-Assoc\-Reactant\-Reactions(), and passivate\-Assoc\-Product\-Reactions().
 
 
 
@@ -658,13 +777,28 @@ Referenced by add\-As\-Reactant(), begin\-Reactant\-Reactions(), end\-Reactant\-
 
 Current copy number of this \hyperlink{classchem_1_1RSpecies}{R\-Species}. 
 
-this \hyperlink{classchem_1_1RSpecies}{R\-Species} (usually when a single step of this \hyperlink{classchem_1_1Reaction}{Reaction} occurs) 
+
 
 Definition at line 64 of file R\-Species.\-h.
 
 
 
 Referenced by down(), get\-N(), set\-N(), and up().
+
+\hypertarget{classchem_1_1RSpecies_acd60296c77857284cd935cb6faaf4200}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!\-\_\-signal@{\-\_\-signal}}
+\index{\-\_\-signal@{\-\_\-signal}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{\-\_\-signal}]{\setlength{\rightskip}{0pt plus 5cm}{\bf R\-Species\-Copy\-N\-Changed\-Signal}$\ast$ {\bf chem\-::\-R\-Species\-::\-\_\-signal}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1RSpecies_acd60296c77857284cd935cb6faaf4200}
+
+
+Can be used to broadcast a signal associated with change of n of. 
+
+this \hyperlink{classchem_1_1RSpecies}{R\-Species} (usually when a single step of this \hyperlink{classchem_1_1Reaction}{Reaction} occurs) 
+
+Definition at line 69 of file R\-Species.\-h.
+
+
+
+Referenced by chem\-::\-Species\-::connect(), is\-Signaling(), R\-Species(), and $\sim$\-R\-Species().
 
 \hypertarget{classchem_1_1RSpecies_a3a979b9226800417c7aad81a2162fac5}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!\-\_\-species@{\-\_\-species}}
 \index{\-\_\-species@{\-\_\-species}!chem::RSpecies@{chem\-::\-R\-Species}}
@@ -680,6 +814,21 @@ Definition at line 63 of file R\-Species.\-h.
 
 
 Referenced by get\-Species().
+
+\hypertarget{classchem_1_1RSpecies_a189084cfe75e004f42a6a27b2c1c09ad}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!\-\_\-ulim@{\-\_\-ulim}}
+\index{\-\_\-ulim@{\-\_\-ulim}!chem::RSpecies@{chem\-::\-R\-Species}}
+\subsubsection[{\-\_\-ulim}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\-\_\-copy\-\_\-t} {\bf chem\-::\-R\-Species\-::\-\_\-ulim}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}\label{classchem_1_1RSpecies_a189084cfe75e004f42a6a27b2c1c09ad}
+
+
+Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off. 
+
+
+
+Definition at line 66 of file R\-Species.\-h.
+
+
+
+Referenced by down(), get\-Upper\-Limit\-For\-N(), R\-Species(), set\-Upper\-Limit\-For\-N(), and up().
 
 \hypertarget{classchem_1_1RSpecies_af22c5fa6d6a8be2cd26b77fc4cbb820f}{\index{chem\-::\-R\-Species@{chem\-::\-R\-Species}!Species@{Species}}
 \index{Species@{Species}!chem::RSpecies@{chem\-::\-R\-Species}}

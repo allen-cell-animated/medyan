@@ -1,3 +1,3 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1ChemSim.html" title="ChemSim is used to manage running a network of chemical reactions." alt="" coords="6,5,119,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects." alt="" coords="5,5,139,33"/>
 </map>

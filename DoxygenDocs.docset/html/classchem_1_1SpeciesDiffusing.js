@@ -6,6 +6,7 @@ var classchem_1_1SpeciesDiffusing =
     [ "SpeciesDiffusing", "classchem_1_1SpeciesDiffusing.html#a560f9bc8c0d7da4a91a969e78917afa4", null ],
     [ "~SpeciesDiffusing", "classchem_1_1SpeciesDiffusing.html#a683ab39a97cef1b68be11c68b476a840", null ],
     [ "clone", "classchem_1_1SpeciesDiffusing.html#a69edbe33378230389a2fb99c4ca2b5ce", null ],
+    [ "connect", "classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68", null ],
     [ "countSpecies", "classchem_1_1Species.html#a5e8aedfe4c4b5e08fb0ee672c3d80ace", null ],
     [ "getFullName", "classchem_1_1SpeciesDiffusing.html#a03eba31a17a3713e8c45cc0952e922bb", null ],
     [ "getMolecule", "classchem_1_1Species.html#a330ef4514a8979a6ea0e6f71ed5cb820", null ],
@@ -15,11 +16,15 @@ var classchem_1_1SpeciesDiffusing =
     [ "getRoot", "classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa", null ],
     [ "getRSpecies", "classchem_1_1Species.html#a1719a8155a69e9a62593d23d4bfc8514", null ],
     [ "getRSpecies", "classchem_1_1Species.html#a438dae186317809effdd040ed38c568b", null ],
+    [ "getUpperLimitForN", "classchem_1_1Species.html#a05fbe0a05f028beb1bb729f19d44a56a", null ],
     [ "hasParent", "classchem_1_1Species.html#a6ddddc5be2b0e4427486f80a891879b3", null ],
+    [ "isSignaling", "classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655", null ],
     [ "operator=", "classchem_1_1SpeciesDiffusing.html#a88592474fe2dd281951e15c6b8ddf201", null ],
     [ "operator=", "classchem_1_1SpeciesDiffusing.html#add1696a25d2174de8078ef509b313890", null ],
     [ "setN", "classchem_1_1Species.html#af10a33a212fdb986fb93613e9c219f7a", null ],
     [ "setParent", "classchem_1_1Species.html#a50e1e828d0b8a03efc9354e2c00174f5", null ],
+    [ "startSignaling", "classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c", null ],
+    [ "stopSignaling", "classchem_1_1Species.html#a9d34195d05f3e35e00dd20892ff7393b", null ],
     [ "operator!=", "classchem_1_1Species.html#aff630d716711fbbab3bc7f598230316b", null ],
     [ "operator==", "classchem_1_1Species.html#a22987c5719b74c50465256ea5b9d80bf", null ]
 ];

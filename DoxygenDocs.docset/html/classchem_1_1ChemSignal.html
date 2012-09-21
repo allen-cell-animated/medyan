@@ -412,7 +412,7 @@ Private Attributes</h2></td></tr>
 
 <p>Destroy signal corresponding to <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> r. </p>
 <p>Should only be used by the <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> class. </p>
-<dl class="section note"><dt>Note:</dt><dd>Other classes should instead call void Reaction::stopSignaling (<a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a> &amp;sm); </dd></dl>
+<dl class="section note"><dt>Note:</dt><dd>Other classes should instead call void <a class="el" href="classchem_1_1ReactionBase.html#a08caa5e07a170da3fd68df56995b46c0" title="Destroy the signal associated with this ReactionBase; all associated slots will be destroyed...">Reaction::stopSignaling</a> (<a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a> &amp;sm); </dd></dl>
 
 <p>Definition at line <a class="el" href="Signaling_8h_source.html#l00157">157</a> of file <a class="el" href="Signaling_8h_source.html">Signaling.h</a>.</p>
 
@@ -437,7 +437,7 @@ Private Attributes</h2></td></tr>
 
 <p>Destroy signal corresponding to <a class="el" href="classchem_1_1Reaction.html" title="Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...">Reaction</a> r. </p>
 <p>Should only be used by the <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> class. </p>
-<dl class="section note"><dt>Note:</dt><dd>Other classes should instead call void RSpecies::stopSignaling (<a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a> &amp;sm); </dd></dl>
+<dl class="section note"><dt>Note:</dt><dd>Other classes should instead call void <a class="el" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537" title="Destroy the signal associated with this RSpecies; all associated slots will be destroyed.">RSpecies::stopSignaling</a> (<a class="el" href="classchem_1_1ChemSignal.html" title="ChemSignal manages callbacks for RSpecies and Reactions objects.">ChemSignal</a> &amp;sm); </dd></dl>
 
 <p>Definition at line <a class="el" href="Signaling_8h_source.html#l00164">164</a> of file <a class="el" href="Signaling_8h_source.html">Signaling.h</a>.</p>
 
@@ -600,7 +600,7 @@ Private Attributes</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1ChemSignal.html">ChemSignal</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:51 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

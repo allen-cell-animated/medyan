@@ -1,8 +1,8 @@
 <map id="G" name="G">
-<area shape="rect" id="node2" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="349,96,453,123"/>
-<area shape="rect" id="node16" href="$classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="432,187,547,213"/>
-<area shape="rect" id="node4" href="$classchem_1_1Component.html" title="chem::Component" alt="" coords="489,5,612,32"/>
-<area shape="rect" id="node6" href="$classchem_1_1Composite.html" title="chem::Composite" alt="" coords="535,96,653,123"/>
-<area shape="rect" id="node21" href="$classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B &#45;&gt; C." alt="" coords="317,381,424,408"/>
-<area shape="rect" id="node23" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="5,277,104,304"/>
+<area shape="rect" id="node2" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="340,101,448,129"/>
+<area shape="rect" id="node4" href="$classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="271,195,389,223"/>
+<area shape="rect" id="node9" href="$classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B &#45;..." alt="" coords="169,101,313,129"/>
+<area shape="rect" id="node11" href="$classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="477,6,601,34"/>
+<area shape="rect" id="node13" href="$classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy." alt="" coords="475,101,604,129"/>
+<area shape="rect" id="node22" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="253,6,355,34"/>
 </map>

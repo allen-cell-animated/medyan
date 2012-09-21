@@ -2,26 +2,6 @@
 <Tokens version="1.0">
   <Token>
     <TokenIdentifier>
-      <Name>allocator_rnodenrm</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>aec019986de5e2ab9597f9633542378ff</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>allocator_pqnode</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>abe2d133c73c179db82d2cf8266a16e3a</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>elapsed14</Name>
       <APILanguage>cpp</APILanguage>
       <Type>data</Type>
@@ -100,23 +80,13 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>fast_allocator_t</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>tdef</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>a98412a4cd9bafe9f3edd66b3a68327a3</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>boost_heap</Name>
       <APILanguage>cpp</APILanguage>
       <Type>tdef</Type>
       <Scope>chem</Scope>
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
-    <Anchor>ad3c7e19583b71f442e2d969972ed21f9</Anchor>
+    <Anchor>aacd1d2bb93e0bb1b1af9bb1fbb5133ca</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -126,7 +96,7 @@
       <Scope>chem</Scope>
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
-    <Anchor>abf1718e53f56f85003559d20e531a1a4</Anchor>
+    <Anchor>a33be80d87771bff54f5cede2e5d81cd1</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -148,21 +118,39 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>BOOST_MEM_POOL</Name>
+      <Name>TRACK_ZERO_COPY_N</Name>
       <APILanguage>unknown</APILanguage>
       <Type>macro</Type>
     </TokenIdentifier>
     <Path>common_8h.html</Path>
-    <Anchor>a6181e591120e12507215c5a21ba9b2aa</Anchor>
+    <Anchor>a03fd44bcbf25c32054a4982f84f45259</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>BOOL_POOL_NSIZE</Name>
+      <Name>TRACK_UPPER_COPY_N</Name>
       <APILanguage>unknown</APILanguage>
       <Type>macro</Type>
     </TokenIdentifier>
     <Path>common_8h.html</Path>
-    <Anchor>a8584922303a6a83690f6091592285a7f</Anchor>
+    <Anchor>a318b9661d7fcfe101415b83880576138</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>RSPECIES_SIGNALING</Name>
+      <APILanguage>unknown</APILanguage>
+      <Type>macro</Type>
+    </TokenIdentifier>
+    <Path>common_8h.html</Path>
+    <Anchor>a43feffc25272564f18d1800dc2147078</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>REACTION_SIGNALING</Name>
+      <APILanguage>unknown</APILanguage>
+      <Type>macro</Type>
+    </TokenIdentifier>
+    <Path>common_8h.html</Path>
+    <Anchor>a90ae0a2b8b2561f58e976b84d3b5a755</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -239,16 +227,6 @@
     <Path>RSpecies_8cpp.html</Path>
     <Anchor>ae56ac1bddb814f1e129ffccfffd67aad</Anchor>
     <Abstract>Print self into an iostream.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>allocator_rspecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>a34e31b7a797e903435a3be4751cd4f42</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -423,23 +401,13 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>fast_allocator_t</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>tdef</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>a98412a4cd9bafe9f3edd66b3a68327a3</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>boost_heap</Name>
       <APILanguage>cpp</APILanguage>
       <Type>tdef</Type>
       <Scope>chem</Scope>
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
-    <Anchor>ad3c7e19583b71f442e2d969972ed21f9</Anchor>
+    <Anchor>aacd1d2bb93e0bb1b1af9bb1fbb5133ca</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -449,7 +417,7 @@
       <Scope>chem</Scope>
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
-    <Anchor>abf1718e53f56f85003559d20e531a1a4</Anchor>
+    <Anchor>a33be80d87771bff54f5cede2e5d81cd1</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -517,26 +485,6 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>allocator_rnodenrm</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>aec019986de5e2ab9597f9633542378ff</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>allocator_pqnode</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>abe2d133c73c179db82d2cf8266a16e3a</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>operator==</Name>
       <APILanguage>cpp</APILanguage>
       <Type>func</Type>
@@ -544,16 +492,6 @@
     </TokenIdentifier>
     <Path>namespacechem.html</Path>
     <Anchor>a9342b2280a45cc2043074e2a618be723</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>allocator_rspecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>func</Type>
-      <Scope>chem</Scope>
-    </TokenIdentifier>
-    <Path>namespacechem.html</Path>
-    <Anchor>a34e31b7a797e903435a3be4751cd4f42</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1188,27 +1126,6 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>operator new</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::PQNode</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1PQNode.html</Path>
-    <Anchor>a1364ee21435946152266840256b8dd3f</Anchor>
-    <Abstract>Advanced memory management.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator delete</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::PQNode</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1PQNode.html</Path>
-    <Anchor>af127d116cdefe86ba41005ef691affc1</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>_rn</Name>
       <APILanguage>cpp</APILanguage>
       <Type>data</Type>
@@ -1468,27 +1385,6 @@
     <Path>classchem_1_1RNodeNRM.html</Path>
     <Anchor>ad8e5f9557c3ba701596aff928dc5270e</Anchor>
     <Abstract>Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependenc...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator new</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::RNodeNRM</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1RNodeNRM.html</Path>
-    <Anchor>ae76175a4d99e9eb3389dce6c77c9edb6</Anchor>
-    <Abstract>Advanced memory management.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator delete</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::RNodeNRM</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1RNodeNRM.html</Path>
-    <Anchor>abe32c9de55bd8deb22c2894ae753b708</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2333,6 +2229,50 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>ab08e78b733c9945fa7e12d146cffa3d8</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a9181097e1954fec5f1dbad889401b451</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a071bedd398a7a5dfc90447309a75f189</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a1d46fc8e1d961deb45e22019153d26b3</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>clearReactions</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -2380,6 +2320,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a5b31a84f6a592c44ce8235eca96896af</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of Species.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2390,6 +2331,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a260d8b2dc70c2834f5702db4743d18ff</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2400,6 +2342,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a33a683e6aae89013fce7bde417f49ee1</Anchor>
+    <Abstract>Returns the full name of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2410,6 +2353,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>ac203d0d3da7bba141cc766f7281205aa</Anchor>
+    <Abstract>Returns the number of Species being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2430,6 +2374,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a83cbc46fd0bef477a1f3e779b93ca8d6</Anchor>
+    <Abstract>Returns the number of ReactionBase objets being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2550,6 +2495,16 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a49ba19163dbf404ce1628361b59b595f</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addInternal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>acf85b3446756f15f2367c3d2aad23401</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2740,6 +2695,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a4b1309d480039e985a7692030e9bca7b</Anchor>
+    <Abstract>Prints information about this node. Useful for debugging.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2749,7 +2705,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+    <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
+    <Abstract>When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called for eac...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2759,7 +2738,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+    <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2769,17 +2771,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isComposite</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+    <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
+    <Abstract>Returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2790,6 +2783,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+    <Abstract>Adds a Component child to this Composite node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2800,6 +2794,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+    <Abstract>Remove *child from this node&amp;#39;s children. The child&amp;#39;s destructor will be called and the memory will be...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2810,6 +2805,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+    <Abstract>Returns the number of immediate children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2819,7 +2815,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+    <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
+    <Abstract>Returns the number of Species being managed by this node and its descendent nodes.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2829,7 +2826,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+    <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
+    <Abstract>Returns the number of ReactionBase objects being managed by this node and its descendent nodes...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2840,6 +2838,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
+    <Abstract>Returns a reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2850,6 +2849,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
+    <Abstract>Returns a const reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2860,6 +2860,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
+    <Abstract>Returns a pointer to the i-th Component child of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2870,6 +2871,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+    <Abstract>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2880,6 +2882,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+    <Abstract>Sets the parent of this node to other.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2890,6 +2893,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+    <Abstract>Returns true if this node is the root node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2900,6 +2904,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+    <Abstract>Returns the root node of the hieararchy to which this node belongs to.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3032,6 +3037,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1CompartmentCubic.html</Path>
     <Anchor>aeb15278bbc2c30f7de92ad03e12fbdd5</Anchor>
+    <Abstract>Returns the full name of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3082,6 +3088,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1CompartmentCubic.html</Path>
     <Anchor>a2c7c92befc69c7033c34574f469d5fa8</Anchor>
+    <Abstract>Prints information about this node. Useful for debugging.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3122,6 +3129,50 @@
     </TokenIdentifier>
     <Path>classchem_1_1CompartmentCubic.html</Path>
     <Anchor>a1acf1d872829b13db779b15c17855975</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>ab08e78b733c9945fa7e12d146cffa3d8</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a071bedd398a7a5dfc90447309a75f189</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a9181097e1954fec5f1dbad889401b451</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>a1d46fc8e1d961deb45e22019153d26b3</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3172,6 +3223,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a5b31a84f6a592c44ce8235eca96896af</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of Species.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3182,6 +3234,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a260d8b2dc70c2834f5702db4743d18ff</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3192,6 +3245,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>ac203d0d3da7bba141cc766f7281205aa</Anchor>
+    <Abstract>Returns the number of Species being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3212,6 +3266,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a83cbc46fd0bef477a1f3e779b93ca8d6</Anchor>
+    <Abstract>Returns the number of ReactionBase objets being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3332,6 +3387,16 @@
     </TokenIdentifier>
     <Path>classchem_1_1Compartment.html</Path>
     <Anchor>a49ba19163dbf404ce1628361b59b595f</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>addInternal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Compartment</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Compartment.html</Path>
+    <Anchor>acf85b3446756f15f2367c3d2aad23401</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3521,7 +3586,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+    <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
+    <Abstract>When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called for eac...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3531,7 +3619,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+    <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3541,17 +3652,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isComposite</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+    <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
+    <Abstract>Returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3562,6 +3664,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+    <Abstract>Adds a Component child to this Composite node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3572,6 +3675,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+    <Abstract>Remove *child from this node&amp;#39;s children. The child&amp;#39;s destructor will be called and the memory will be...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3582,6 +3686,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+    <Abstract>Returns the number of immediate children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3591,7 +3696,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+    <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
+    <Abstract>Returns the number of Species being managed by this node and its descendent nodes.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3601,7 +3707,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+    <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
+    <Abstract>Returns the number of ReactionBase objects being managed by this node and its descendent nodes...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3612,6 +3719,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
+    <Abstract>Returns a reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3622,6 +3730,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
+    <Abstract>Returns a const reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3632,6 +3741,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
+    <Abstract>Returns a pointer to the i-th Component child of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3642,6 +3752,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+    <Abstract>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3652,6 +3763,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+    <Abstract>Sets the parent of this node to other.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3662,6 +3774,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+    <Abstract>Returns true if this node is the root node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3672,6 +3785,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+    <Abstract>Returns the root node of the hieararchy to which this node belongs to.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3794,6 +3908,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1CompartmentsSimpleGrid.html</Path>
     <Anchor>a9d1006f2fd5ab559bc3ff3f98249ea19</Anchor>
+    <Abstract>Returns the full name of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3874,6 +3989,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1CompartmentsSimpleGrid.html</Path>
     <Anchor>a5be8454b952a926dd6a7449ff27a3f67</Anchor>
+    <Abstract>Prints information about this node. Useful for debugging.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3883,7 +3999,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+    <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
+    <Abstract>When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called for eac...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3893,7 +4032,30 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+    <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3903,17 +4065,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isComposite</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+    <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
+    <Abstract>Returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3924,6 +4077,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+    <Abstract>Adds a Component child to this Composite node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3934,6 +4088,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+    <Abstract>Remove *child from this node&amp;#39;s children. The child&amp;#39;s destructor will be called and the memory will be...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3944,6 +4099,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+    <Abstract>Returns the number of immediate children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3953,17 +4109,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a97512e021c76460f0b982d4ff16a91d5</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>numberOfReactions</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Composite</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a0089cc7bf318c99339d098018ede34c7</Anchor>
+    <Anchor>a9f402bdea37c583b638a2ffdbd0d4bc9</Anchor>
+    <Abstract>Returns the number of Species being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3973,7 +4120,19 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+    <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
+    <Abstract>Returns the number of Species being managed by this node and its descendent nodes.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a67ccb83464dc97ac82f3f1301f252931</Anchor>
+    <Abstract>Returns the number of ReactionBase objets being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3983,7 +4142,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+    <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
+    <Abstract>Returns the number of ReactionBase objects being managed by this node and its descendent nodes...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3994,6 +4154,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
+    <Abstract>Returns a reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4004,6 +4165,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
+    <Abstract>Returns a const reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4014,6 +4176,51 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
+    <Abstract>Returns a pointer to the i-th Component child of this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
+    <Abstract>Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4024,6 +4231,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+    <Abstract>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4034,6 +4242,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+    <Abstract>Sets the parent of this node to other.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4044,6 +4253,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+    <Abstract>Returns true if this node is the root node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4054,6 +4264,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+    <Abstract>Returns the root node of the hieararchy to which this node belongs to.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4064,6 +4275,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of Species.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4074,6 +4286,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4113,6 +4326,7 @@
       <Scope>chem::Component</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
+    <Abstract>Component class is the base class for the Composite pattern hieararchy.</Abstract>
     <DeclaredIn>Component.h</DeclaredIn>
   </Token>
   <Token>
@@ -4124,106 +4338,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a2c7265280625c13151d52a500bcc3095</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>apply</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>apply_if</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>ac40e9d75a554324ba1d007a2d5234a38</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getParent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>setParent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isRoot</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getRoot</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>numberOfChildren</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isComposite</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isSpeciesContainer</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isReactionsContainer</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+    <Abstract>Default Constructor; Parent is assigned to nullptr.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4234,6 +4349,227 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a9a468e72232a30a69d4432d13ac5ffa9</Anchor>
+    <Abstract>Virtual Destructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ae9efcf2fb203ab7514f81f04d7e4dec2</Anchor>
+    <Abstract>When this function is applied to a Visitor v, the corresponding v.visit(this) is called, and v is further applied to all children of this node recursively.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>af351fbf0deb48884c27806997f5954fd</Anchor>
+    <Abstract>When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>aea52312b501cefd0fc2a26ff5671d711</Anchor>
+    <Abstract>When this function is applied to a SpeciesVisitor sv, the corresponding v.visit(s) is called for each...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a97dbbb586bb63e5ea296a20778006c5d</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a04abbd7b2e96d2ea320f88921266f596</Anchor>
+    <Abstract>When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called for eac...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>ac68ab2a8444e5f9ae4f5cc0b5fb9104d</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
+    <Abstract>Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+    <Abstract>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+    <Abstract>Sets the parent of this node to other.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+    <Abstract>Returns true if this node is the root node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
+    <Abstract>Returns the root node of the hieararchy to which this node belongs to.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfChildren</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a720ec4ef4aaadfec3e47c31451d28637</Anchor>
+    <Abstract>Returns the number of children of this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isComposite</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+    <Abstract>Returns true if this node is a Composite node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSpeciesContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isReactionsContainer</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a41d313350ea214ae94d54cb0c6263a9c</Anchor>
+    <Abstract>Returns the number of Species being immediately managed by this node (i.e.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>af76701fa683d7378915b5b6ad55bd357</Anchor>
+    <Abstract>Returns the number of ReactionBase objets being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4244,6 +4580,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a1d5884d373fb44fd950d5fe2b0c34e26</Anchor>
+    <Abstract>Return a std::string indicating the full name of this node (presumably used mainly for debugging)...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4254,6 +4591,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a581a3912035ba493a2a24f1516d65ea8</Anchor>
+    <Abstract>Return the number of Species contained under this node&amp;#39;s hieararchy.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4264,6 +4602,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>ab061b8b7d97db554af402ebb9723dc4c</Anchor>
+    <Abstract>Return the number of ReactionBase objects contained under this node&amp;#39;s hieararchy.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4274,6 +4613,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a778911b6f9505f1d8a39fc39e093974e</Anchor>
+    <Abstract>Prints information about this node. Useful for debugging.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4284,6 +4624,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a5da4c5a0d857620fe3e3cf7d8d06ec26</Anchor>
+    <Abstract>The parent of this object. May be a nullptr if this object has no parent.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4293,6 +4634,7 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
+    <Abstract>Composite class is the aggregating class for the Composite pattern.</Abstract>
     <DeclaredIn>Composite.h</DeclaredIn>
   </Token>
   <Token>
@@ -4304,6 +4646,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>ae3444220cf51ab3db2616ea4833c4770</Anchor>
+    <Abstract>Default Constructor does nothing.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4314,6 +4657,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a36a86821952d10911595120d3d26d683</Anchor>
+    <Abstract>Virtual Destructor does nothing.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4323,7 +4667,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a65464170b82b4531efe620e23e68ea12</Anchor>
+    <Anchor>a58123ab346f6621a187bebe456e383ea</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4333,7 +4678,52 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ac0ef45069901807e72d478ec59736ee4</Anchor>
+    <Anchor>a1cb289fb89fefeda7090a44e038e017a</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a18937a1f6f84a159e77ba83dd34b2e20</Anchor>
+    <Abstract>Implements the apply() method of the Component class by recursively applying it to itself and all its...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>ab56b1419cbaca60564fa01aacb2c70fd</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>aa4a608ee92aaaa6e0d63278595707474</Anchor>
+    <Abstract>When this function is applied to a ReactionVisitor sv, the corresponding v.visit(s) is called for eac...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a6103789572ae9c0112eedd71a0d4e37f</Anchor>
+    <Abstract>Implements the apply_if() method of the Component class by recursively applying it to itself and all ...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4343,7 +4733,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>ae4b190f0f14a61d40f68f4a4a51e9192</Anchor>
+    <Anchor>a939b2b81dfb961ebfa0a09243162a9f7</Anchor>
+    <Abstract>Returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4353,7 +4744,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a7781095451c19c48996856153c29bf6b</Anchor>
+    <Anchor>aa20f744718bd0dd17f8cf09d296231fb</Anchor>
+    <Abstract>Returns the full name of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4364,6 +4756,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a7f0737d480f68cb2e37eb061a1cfac36</Anchor>
+    <Abstract>Adds a Component child to this Composite node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4374,6 +4767,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a1db2418dfbd583f05088fb4695fda677</Anchor>
+    <Abstract>Remove *child from this node&amp;#39;s children. The child&amp;#39;s destructor will be called and the memory will be...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4384,6 +4778,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a89545dad587539c07acff13398e8ee7a</Anchor>
+    <Abstract>Returns the number of immediate children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4393,17 +4788,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a97512e021c76460f0b982d4ff16a91d5</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>numberOfReactions</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Composite</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a0089cc7bf318c99339d098018ede34c7</Anchor>
+    <Anchor>a9f402bdea37c583b638a2ffdbd0d4bc9</Anchor>
+    <Abstract>Returns the number of Species being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4413,7 +4799,19 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a2c00f5f0be0b7dead8a0a5a53dde1a04</Anchor>
+    <Anchor>adeea8db3d77911119e935afb679eeb9f</Anchor>
+    <Abstract>Returns the number of Species being managed by this node and its descendent nodes.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>numberOfReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Composite</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Composite.html</Path>
+    <Anchor>a67ccb83464dc97ac82f3f1301f252931</Anchor>
+    <Abstract>Returns the number of ReactionBase objets being immediately managed by this node (i.e.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4423,7 +4821,8 @@
       <Scope>chem::Composite</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
-    <Anchor>a1cba92a649f230eab8e0cecb39632640</Anchor>
+    <Anchor>a40bba31f79b1ca12b70a748ab6973037</Anchor>
+    <Abstract>Returns the number of ReactionBase objects being managed by this node and its descendent nodes...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4434,6 +4833,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>af4fdad429dc7d8d5014961bbd18c8970</Anchor>
+    <Abstract>Returns a reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4444,6 +4844,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a9c66ed039e22fdafc90627db067fea4b</Anchor>
+    <Abstract>Returns a const reference to the container of Component children of this node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4454,6 +4855,51 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>adf797cd6faed6b5f42848c712fd9eb8a</Anchor>
+    <Abstract>Returns a pointer to the i-th Component child of this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a5dcddefb6fd14be8973a35e9787f87ca</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a6db30c430a0eec9b0891cf3fc635ae1a</Anchor>
+    <Abstract>Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a7e28efdd01ed9613ebb7fad8e3a24b07</Anchor>
+    <Abstract>Applies SpeciesVisitor v to every Species* object directly owned by this node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>apply_impl_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Component</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Component.html</Path>
+    <Anchor>a9d22fee87e12e9dbe66ad7fe7e6df130</Anchor>
+    <Abstract>Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4464,6 +4910,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a32812270ee52f07ceae2194c56864fd6</Anchor>
+    <Abstract>Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not ex...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4474,6 +4921,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a1f4e4d1566f1d3026f1e2a14fa3dffd9</Anchor>
+    <Abstract>Sets the parent of this node to other.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4484,6 +4932,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a75cd13a0d884f82fcddd574de33fbfe6</Anchor>
+    <Abstract>Returns true if this node is the root node.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4494,16 +4943,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a7f1166f8fb4c9526cd1794ec3c2714f5</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isComposite</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Component</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Component.html</Path>
-    <Anchor>af2c73f75f937d457a55c1e0120833cb8</Anchor>
+    <Abstract>Returns the root node of the hieararchy to which this node belongs to.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4514,6 +4954,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a3c0f652fe5b6910f07c046fe0190b7b5</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of Species.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4524,6 +4965,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a8c79ee4335fadfcef56b14a62b742457</Anchor>
+    <Abstract>Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4534,6 +4976,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1Component.html</Path>
     <Anchor>a778911b6f9505f1d8a39fc39e093974e</Anchor>
+    <Abstract>Prints information about this node. Useful for debugging.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4544,6 +4987,732 @@
     </TokenIdentifier>
     <Path>classchem_1_1Composite.html</Path>
     <Anchor>a80fea5cefad1820315fbef6f8d7adf17</Anchor>
+    <Abstract>Child node pointers of this Composite node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::Reaction</Name>
+      <APILanguage>c</APILanguage>
+      <Type>tmplt</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Abstract>Reaction&amp;lt;M,N&amp;gt; class represents a concrete chemical reaction, such as A + B -&amp;gt; C, where M is the numbe...</Abstract>
+    <DeclaredIn>Reaction.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Reaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>af8d2b07836a89ba05c3ba42ff1e1672e</Anchor>
+    <Abstract>The main constructor:</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Reaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a267e22a2712987cd6f700f88a841f1ff</Anchor>
+    <Abstract>The main constructor:</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>Reaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a3da1e806c18d90f6f89b1ea2d469c172</Anchor>
+    <Abstract>no copying (including all derived classes)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator=</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>aea2276bdc0b66f5c3d3f890e894de8f9</Anchor>
+    <Abstract>no assignment (including all derived classes)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~Reaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a49e439ac62592b6c9bba5ec9ca6a8825</Anchor>
+    <Abstract>Destructor Tell Rspecies to remove this Reaction from its internal lists if reactions.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>rspecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a541ddbcb6988934f4fba5e16f7520bec</Anchor>
+    <Abstract>Returns a pointer to the first element of std::array&amp;lt;RSpecies*, M+N&amp;gt; The type of the pointer is RSpec...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getAffectedReactions</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a01859a22b800334a2702426ff501ec30</Anchor>
+    <Abstract>Return a list of reactions which rates would be affected if this reaction were to be executed...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>clone</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a6d8e6fe06e073991fe263393ec418867</Anchor>
+    <Abstract>Copy this reaction using SpeciesPtrContainerVector &amp;amp;spcv as a source of analogous Species...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setRate</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a5ed952d7a8e2db636d51dd8252e73f5e</Anchor>
+    <Abstract>Sets the ReactionBase rate to the parameter &amp;quot;rate&amp;quot;.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setRnode</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>ab77397a30302fbbd5eade2b79f6d4ca4</Anchor>
+    <Abstract>Sets the RNode pointer associated with this ReactionBase to rhs.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRate</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a89e6e678c44a872feb31a6e168eb2612</Anchor>
+    <Abstract>Returns the rate associated with this ReactionBase.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRnode</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a8289e8c465a44483d1af33fb558b0d86</Anchor>
+    <Abstract>Returns a pointer to the RNode associated with this ReactionBase.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getM</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a9b4f167efdd3307f0082c1e8e4ec537a</Anchor>
+    <Abstract>Returns the number of reactant RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>ade08c8ab247efe988ebfe271b5876b98</Anchor>
+    <Abstract>Returns the number of product RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>size</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a2d93483578ab0d29a2ec09920e7eeb94</Anchor>
+    <Abstract>Returns the total number of RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>ac972ee8f5bdab93e7973bc207dfeaaac</Anchor>
+    <Abstract>Return the parent Composite object pointer, to which this Reaction belongs to.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>af40a5cd7fb5f4dbbb89242feebd9079e</Anchor>
+    <Abstract>Set the parent Composite object pointer to which this Reaction belongs to.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>hasParent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a6a789a4a17855b1c6184c438e4e40ff8</Anchor>
+    <Abstract>Returns true if this Reaction has a parent Composite object to which it belongs to.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getRoot</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a56fe49f5d0493ddd376bd9cda6e3ea47</Anchor>
+    <Abstract>Get the root parent (i.e. follow the pointers of parentage until the root node in the Composition hie...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getProductOfReactants</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a3a5f011161601e3501dd8752829b12f5</Anchor>
+    <Abstract>Computes the product of the copy number of all reactant RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getProductOfProducts</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>ab8da881092b40a3c3c4f724fa23f7422</Anchor>
+    <Abstract>Computes the product of the copy number of all product RSpecies minus maxium allowed copy number...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isPassivated</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a1d26c3641310183d61fd3d2940b6dde2</Anchor>
+    <Abstract>Return true if the ReactionBase is currently passivated.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>containsSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a35e914ed47c4107c86ef18f0f8ddb9e6</Anchor>
+    <Abstract>Returns true of this Reaction contains Species *s either as a reactant or a product.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a702c23f24431b5f5a4fa63a7fa257654</Anchor>
+    <Abstract>Return true if this RSpecies emits signals on copy number change.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>af6713638dbce3bb2695a813335248128</Anchor>
+    <Abstract>Set the signaling behavior of this ReactionBase.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a08caa5e07a170da3fd68df56995b46c0</Anchor>
+    <Abstract>Destroy the signal associated with this ReactionBase; all associated slots will be destroyed...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>connect</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a47b9d3f66774204a8cf604b6b9ee3047</Anchor>
+    <Abstract>Connect the callback, react_callback to a signal corresponding to ReactionBase *r.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>emitSignal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a10cd8d287497138d981abfd49f2d041e</Anchor>
+    <Abstract>Broadcasts signal indicating that the ReactionBase event has taken place This method is only called b...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>dependents</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a9861a6ab27afceaac6697b69dace0328</Anchor>
+    <Abstract>Return a const reference to the vector of dependent ReactionBases.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStep</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>acb5575b08ca39fc6dd7a571fb246806b</Anchor>
+    <Abstract>Fire the ReactionBase - make a single step, where reactant RSpecies copy numbers are decreased by one...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>computePropensity</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a3e91b5d0c44fcb81bb17d2d0fee7947d</Anchor>
+    <Abstract>Compute the ReactionBase propensity that is needed by a Gillespie like algorithm: rate*reactant_1...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>passivateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a9fe4cf91fcff8c4aea65e759841c28fe</Anchor>
+    <Abstract>Usually is applied to ReactionBase objects with propensity of 0 (e.g.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>activateReactionUnconditional</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a8eb302e62acd94d58f4b8a1301d83a5e</Anchor>
+    <Abstract>Requests that ReactionBase objects that may affect this Reaction to start tracking it...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>activateReaction</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>aeb6c8f208d4c6ed1e0149090647eb035</Anchor>
+    <Abstract>Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printDependents</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a40ffb98cd02f12f0df255a7ee12b3ad9</Anchor>
+    <Abstract>Print the ReactionBases that are affacted by this ReactionBase being fired.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>registerNewDependent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>adfc8792223c8532574d3dc0b96dc25e3</Anchor>
+    <Abstract>Request that the ReactionBase *r adds this ReactionBase to its list of dependents which it affects...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>unregisterDependent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a9e9465c135b349d44065258bd70a5b6e</Anchor>
+    <Abstract>Request that the ReactionBase *r removes this ReactionBase from its list of dependents which it affec...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>initializeSpecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a1c045e54c870a3e4cc0fb17b870d16f3</Anchor>
+    <Abstract>An implementation method used by the constructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getMImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>af3bdc92ce10377c7847855876e6d7875</Anchor>
+    <Abstract>Implementation of getM()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getNImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>ad7170f4e147a955af31831007e9b90e9</Anchor>
+    <Abstract>Implementation of getN()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>sizeImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a8457d6c276b11ed0d12a1ff2ef4f9f50</Anchor>
+    <Abstract>Implementation of size()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>is_equal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a441aebc6e42ecd5e9bbf08a4523ed340</Anchor>
+    <Abstract>Implementation of the operator==(...)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getProductOfReactantsImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a764121bff008343f73d1bc701dafa9a6</Anchor>
+    <Abstract>Implementation of getProductOfReactants()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>computePropensityImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a16c2e5ad0e01e34c5abb6baf7d389841</Anchor>
+    <Abstract>Implementation of computePropensity()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getProductOfProductsImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a1be37929622322dde8fc0efbee50fb36</Anchor>
+    <Abstract>Implementation of getProductOfProducts()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>containsSpeciesImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a1add1afc001452533140c0130ff0e2e3</Anchor>
+    <Abstract>Implementation of containsSpecies()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStepImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>ad7aee2091f1da5b1988605b084f6640a</Anchor>
+    <Abstract>Implementation of makeStep()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>activateReactionUnconditionalImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a9ce9262242def224e7ed3878e836a5ac</Anchor>
+    <Abstract>Implementation of activateReactionUnconditional()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>passivateReactionImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a691c21e0428d9e5894a6903b5997936f</Anchor>
+    <Abstract>Implementation of passivateReaction()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>printToStream</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>aab3ab648fdbcf495df822a4fbdbcae21</Anchor>
+    <Abstract>Print information about this reaction to std::ostream.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>broadcastRSpeciesSignals</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a8320a7d024a3dc0e64280ed96ea08730</Anchor>
+    <Abstract>This method may be called after a makeStep() took place.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>cloneImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a26efcc4b38c615c7d63f3fb1cfae070e</Anchor>
+    <Abstract>Implementation of clone()</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>computePropensityImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>ad0245708cd816ceccf686eebaf06353b</Anchor>
+    <Abstract>(Private) implementation of the computePropensity() method to be elaborated in derived classes...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>makeStepImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>ac1ac05b087d53ff5bcc9e5e00e83bb1d</Anchor>
+    <Abstract>(Private) implementation of the makeStep() method to be elaborated in derived classes.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>broadcastRSpeciesSignals</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>afd605803666c03f48ec6db0f2c837fa9</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_dependents</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a04cda0098d19b2b4a68a6c413c97ed96</Anchor>
+    <Abstract>Pointers to ReactionBase objects that depend on this ReactionBase being executed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_rnode</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>aedaf23c8b9f80598fc68f715309a6aa3</Anchor>
+    <Abstract>A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_parent</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a662547106ad4d617495099e9fd85cc06</Anchor>
+    <Abstract>A pointer to a Composite object to which this Reaction belongs.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_rate</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a787107879dc2a24b789997bac1eb1634</Anchor>
+    <Abstract>the rate for this ReactionBase</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_signal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>adad4289e6bbe5550c0d75a506bdc88ab</Anchor>
+    <Abstract>Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of thi...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_passivated</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a757ed91c018c8fa643472860df309804</Anchor>
+    <Abstract>Indicates whether the ReactionBase is currently passivated.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_rspecies</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::Reaction</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Reaction.html</Path>
+    <Anchor>a42e73865e61bfb5b03a4639b571e5d72</Anchor>
+    <Abstract>An array of RSpecies objects (reactants followed by products)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator==</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>ffunc</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a0285e054f9aa3055e21cefe65c74fd80</Anchor>
+    <Abstract>Returns true if two ReactionBase objects are equal.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator!=</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>ffunc</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a65d0e9651baf3f48044d585e619ccd6f</Anchor>
+    <Abstract>Return true if two ReactionBase are not equal.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>operator&lt;&lt;</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>ffunc</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>aaa825ee7c911e4f932ce39b69960e08a</Anchor>
+    <Abstract>Print self into an iostream.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4554,7 +5723,7 @@
     </TokenIdentifier>
     <Path>classchem_1_1ReactionBase.html</Path>
     <Abstract>ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...</Abstract>
-    <DeclaredIn>Reaction.h</DeclaredIn>
+    <DeclaredIn>ReactionBase.h</DeclaredIn>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4866,6 +6035,71 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a702c23f24431b5f5a4fa63a7fa257654</Anchor>
+    <Abstract>Return true if this RSpecies emits signals on copy number change.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>af6713638dbce3bb2695a813335248128</Anchor>
+    <Abstract>Set the signaling behavior of this ReactionBase.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a08caa5e07a170da3fd68df56995b46c0</Anchor>
+    <Abstract>Destroy the signal associated with this ReactionBase; all associated slots will be destroyed...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>connect</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a47b9d3f66774204a8cf604b6b9ee3047</Anchor>
+    <Abstract>Connect the callback, react_callback to a signal corresponding to ReactionBase *r.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>emitSignal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a10cd8d287497138d981abfd49f2d041e</Anchor>
+    <Abstract>Broadcasts signal indicating that the ReactionBase event has taken place This method is only called b...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>broadcastRSpeciesSignals</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionBase</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionBase.html</Path>
+    <Anchor>a2dd4f40f26080c6602c66c662a18ca5c</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>dependents</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -5084,640 +6318,25 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>operator==</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>ffunc</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a0285e054f9aa3055e21cefe65c74fd80</Anchor>
-    <Abstract>Returns true if two ReactionBase objects are equal.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator!=</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>ffunc</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a65d0e9651baf3f48044d585e619ccd6f</Anchor>
-    <Abstract>Return true if two ReactionBase are not equal.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator&lt;&lt;</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>ffunc</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>aaa825ee7c911e4f932ce39b69960e08a</Anchor>
-    <Abstract>Print self into an iostream.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>chem::Reaction</Name>
-      <APILanguage>c</APILanguage>
-      <Type>tmplt</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Abstract>Reaction&amp;lt;M,N&amp;gt; class represents a concrete chemical reaction, such as A + B -&amp;gt; C, where M is the numbe...</Abstract>
-    <DeclaredIn>Reaction.h</DeclaredIn>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>Reaction</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a708a9cfbd5860423139b64ae7387a2b2</Anchor>
-    <Abstract>The main constructor:</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>Reaction</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a3da1e806c18d90f6f89b1ea2d469c172</Anchor>
-    <Abstract>no copying (including all derived classes)</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator=</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>aea2276bdc0b66f5c3d3f890e894de8f9</Anchor>
-    <Abstract>no assignment (including all derived classes)</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator new</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a51fb1a27ae6f377d850561db5366a5c1</Anchor>
-    <Abstract>Advanced memory management.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator delete</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a229617078cca01b8b150e93718eb3b7f</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>~Reaction</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a49e439ac62592b6c9bba5ec9ca6a8825</Anchor>
-    <Abstract>Destructor Tell Rspecies to remove this Reaction from its internal lists if reactions.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>rspecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a541ddbcb6988934f4fba5e16f7520bec</Anchor>
-    <Abstract>Returns a pointer to the first element of std::array&amp;lt;RSpecies*, M+N&amp;gt; The type of the pointer is RSpec...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getAffectedReactions</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a01859a22b800334a2702426ff501ec30</Anchor>
-    <Abstract>Return a list of reactions which rates would be affected if this reaction were to be executed...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>clone</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a6d8e6fe06e073991fe263393ec418867</Anchor>
-    <Abstract>Copy this reaction using SpeciesPtrContainerVector &amp;amp;spcv as a source of analogous Species...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>setRate</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a5ed952d7a8e2db636d51dd8252e73f5e</Anchor>
-    <Abstract>Sets the ReactionBase rate to the parameter &amp;quot;rate&amp;quot;.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>setRnode</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>ab77397a30302fbbd5eade2b79f6d4ca4</Anchor>
-    <Abstract>Sets the RNode pointer associated with this ReactionBase to rhs.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getRate</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a89e6e678c44a872feb31a6e168eb2612</Anchor>
-    <Abstract>Returns the rate associated with this ReactionBase.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getRnode</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a8289e8c465a44483d1af33fb558b0d86</Anchor>
-    <Abstract>Returns a pointer to the RNode associated with this ReactionBase.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getM</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a9b4f167efdd3307f0082c1e8e4ec537a</Anchor>
-    <Abstract>Returns the number of reactant RSpecies.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getN</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>ade08c8ab247efe988ebfe271b5876b98</Anchor>
-    <Abstract>Returns the number of product RSpecies.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>size</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a2d93483578ab0d29a2ec09920e7eeb94</Anchor>
-    <Abstract>Returns the total number of RSpecies.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getParent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>ac972ee8f5bdab93e7973bc207dfeaaac</Anchor>
-    <Abstract>Return the parent Composite object pointer, to which this Reaction belongs to.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>setParent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>af40a5cd7fb5f4dbbb89242feebd9079e</Anchor>
-    <Abstract>Set the parent Composite object pointer to which this Reaction belongs to.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>hasParent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a6a789a4a17855b1c6184c438e4e40ff8</Anchor>
-    <Abstract>Returns true if this Reaction has a parent Composite object to which it belongs to.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getRoot</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a56fe49f5d0493ddd376bd9cda6e3ea47</Anchor>
-    <Abstract>Get the root parent (i.e. follow the pointers of parentage until the root node in the Composition hie...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getProductOfReactants</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a3a5f011161601e3501dd8752829b12f5</Anchor>
-    <Abstract>Computes the product of the copy number of all reactant RSpecies.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getProductOfProducts</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>ab8da881092b40a3c3c4f724fa23f7422</Anchor>
-    <Abstract>Computes the product of the copy number of all product RSpecies minus maxium allowed copy number...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>isPassivated</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a1d26c3641310183d61fd3d2940b6dde2</Anchor>
-    <Abstract>Return true if the ReactionBase is currently passivated.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>containsSpecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a35e914ed47c4107c86ef18f0f8ddb9e6</Anchor>
-    <Abstract>Returns true of this Reaction contains Species *s either as a reactant or a product.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>dependents</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a9861a6ab27afceaac6697b69dace0328</Anchor>
-    <Abstract>Return a const reference to the vector of dependent ReactionBases.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>makeStep</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>acb5575b08ca39fc6dd7a571fb246806b</Anchor>
-    <Abstract>Fire the ReactionBase - make a single step, where reactant RSpecies copy numbers are decreased by one...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>computePropensity</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a3e91b5d0c44fcb81bb17d2d0fee7947d</Anchor>
-    <Abstract>Compute the ReactionBase propensity that is needed by a Gillespie like algorithm: rate*reactant_1...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>passivateReaction</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a9fe4cf91fcff8c4aea65e759841c28fe</Anchor>
-    <Abstract>Usually is applied to ReactionBase objects with propensity of 0 (e.g.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>activateReactionUnconditional</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a8eb302e62acd94d58f4b8a1301d83a5e</Anchor>
-    <Abstract>Requests that ReactionBase objects that may affect this Reaction to start tracking it...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>activateReaction</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>aeb6c8f208d4c6ed1e0149090647eb035</Anchor>
-    <Abstract>Requests that Reaction objects that may affect this Reaction to start tracking it, which can be used to follow Reaction objects whose propensities change upong firing of some Reaction.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>printDependents</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a40ffb98cd02f12f0df255a7ee12b3ad9</Anchor>
-    <Abstract>Print the ReactionBases that are affacted by this ReactionBase being fired.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>registerNewDependent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>adfc8792223c8532574d3dc0b96dc25e3</Anchor>
-    <Abstract>Request that the ReactionBase *r adds this ReactionBase to its list of dependents which it affects...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>unregisterDependent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a9e9465c135b349d44065258bd70a5b6e</Anchor>
-    <Abstract>Request that the ReactionBase *r removes this ReactionBase from its list of dependents which it affec...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>initializeSpecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a663351786385d539a036f27e3b235808</Anchor>
-    <Abstract>An implementation method used by the constructor.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getMImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>af3bdc92ce10377c7847855876e6d7875</Anchor>
-    <Abstract>Implementation of getM()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getNImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>ad7170f4e147a955af31831007e9b90e9</Anchor>
-    <Abstract>Implementation of getN()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>sizeImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a8457d6c276b11ed0d12a1ff2ef4f9f50</Anchor>
-    <Abstract>Implementation of size()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>is_equal</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a441aebc6e42ecd5e9bbf08a4523ed340</Anchor>
-    <Abstract>Implementation of the operator==(...)</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getProductOfReactantsImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a764121bff008343f73d1bc701dafa9a6</Anchor>
-    <Abstract>Implementation of getProductOfReactants()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>computePropensityImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a16c2e5ad0e01e34c5abb6baf7d389841</Anchor>
-    <Abstract>Implementation of computePropensity()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>getProductOfProductsImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a1be37929622322dde8fc0efbee50fb36</Anchor>
-    <Abstract>Implementation of getProductOfProducts()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>containsSpeciesImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a1add1afc001452533140c0130ff0e2e3</Anchor>
-    <Abstract>Implementation of containsSpecies()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>makeStepImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>ad7aee2091f1da5b1988605b084f6640a</Anchor>
-    <Abstract>Implementation of makeStep()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>activateReactionUnconditionalImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a9ce9262242def224e7ed3878e836a5ac</Anchor>
-    <Abstract>Implementation of activateReactionUnconditional()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>passivateReactionImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a691c21e0428d9e5894a6903b5997936f</Anchor>
-    <Abstract>Implementation of passivateReaction()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>printToStream</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>aab3ab648fdbcf495df822a4fbdbcae21</Anchor>
-    <Abstract>Print information about this reaction to std::ostream.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>cloneImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a26efcc4b38c615c7d63f3fb1cfae070e</Anchor>
-    <Abstract>Implementation of clone()</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>computePropensityImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>ad0245708cd816ceccf686eebaf06353b</Anchor>
-    <Abstract>(Private) implementation of the computePropensity() method to be elaborated in derived classes...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>makeStepImpl</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>ac1ac05b087d53ff5bcc9e5e00e83bb1d</Anchor>
-    <Abstract>(Private) implementation of the makeStep() method to be elaborated in derived classes.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>_dependents</Name>
+      <Name>_signal</Name>
       <APILanguage>cpp</APILanguage>
       <Type>data</Type>
       <Scope>chem::ReactionBase</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a04cda0098d19b2b4a68a6c413c97ed96</Anchor>
-    <Abstract>Pointers to ReactionBase objects that depend on this ReactionBase being executed.</Abstract>
+    <Anchor>adad4289e6bbe5550c0d75a506bdc88ab</Anchor>
+    <Abstract>Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of thi...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>_rnode</Name>
+      <Name>_passivated</Name>
       <APILanguage>cpp</APILanguage>
       <Type>data</Type>
       <Scope>chem::ReactionBase</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>aedaf23c8b9f80598fc68f715309a6aa3</Anchor>
-    <Abstract>A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e...</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>_parent</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>data</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a662547106ad4d617495099e9fd85cc06</Anchor>
-    <Abstract>A pointer to a Composite object to which this Reaction belongs.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>_rate</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>data</Type>
-      <Scope>chem::ReactionBase</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1ReactionBase.html</Path>
-    <Anchor>a787107879dc2a24b789997bac1eb1634</Anchor>
-    <Abstract>the rate for this ReactionBase</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>_rspecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>data</Type>
-      <Scope>chem::Reaction</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1Reaction.html</Path>
-    <Anchor>a42e73865e61bfb5b03a4639b571e5d72</Anchor>
-    <Abstract>An array of RSpecies objects (reactants followed by products)</Abstract>
+    <Anchor>a757ed91c018c8fa643472860df309804</Anchor>
+    <Abstract>Indicates whether the ReactionBase is currently passivated.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5881,6 +6500,16 @@
     </TokenIdentifier>
     <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
     <Anchor>aa1a3aef3ffd5571d00e49fef76e4a923</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>add</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionPtrContainerVector</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionPtrContainerVector.html</Path>
+    <Anchor>a67fbf71e3a038756f3aaf1a3c0576db7</Anchor>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6050,6 +6679,28 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>setUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a13c47ccb546b64f83ac09734c286fcd2</Anchor>
+    <Abstract>Sets the upper limit for the copy number of this RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>getUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>ad233880e065382e598a95e75d401d9eb</Anchor>
+    <Abstract>Return the upper limit for the copy number of this RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>up</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -6152,6 +6803,28 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a0beefdc1ec28646df87b0690a2d66734</Anchor>
+    <Abstract>Set the signaling behavior of this RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a3519759c28c5d50108753ebe6c67a537</Anchor>
+    <Abstract>Destroy the signal associated with this RSpecies; all associated slots will be destroyed.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>~RSpecies</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -6160,6 +6833,28 @@
     <Path>classchem_1_1RSpecies.html</Path>
     <Anchor>a3c875e360f7f53b2ca8bd30f7dbbb7ed</Anchor>
     <Abstract>It is required that all Reactions associated with this RSpecies are destructed before this RSpecies i...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>emitSignal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>afaee31bbc312ca6fa84a9ffc02457611</Anchor>
+    <Abstract>Broadcasts signal indicating that the copy number of this RSpecies has changed This method should usu...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a652a2d0f305a8ab84305ff1dd1fd41b8</Anchor>
+    <Abstract>Return true if this RSpecies emits signals on copy number change.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6273,27 +6968,6 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>operator new</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::RSpecies</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1RSpecies.html</Path>
-    <Anchor>a8f8eeb52d60143c6fb7b7f87eee4f55c</Anchor>
-    <Abstract>Advanced memory management.</Abstract>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>operator delete</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::RSpecies</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1RSpecies.html</Path>
-    <Anchor>a59eeac181b75f878e4804fb2ce57dbb2</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>Species</Name>
       <APILanguage>cpp</APILanguage>
       <Type>data</Type>
@@ -6345,6 +7019,28 @@
     <Path>classchem_1_1RSpecies.html</Path>
     <Anchor>a60e53ebfe464923452c54322dfd479dc</Anchor>
     <Abstract>Current copy number of this RSpecies.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_ulim</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>a189084cfe75e004f42a6a27b2c1c09ad</Anchor>
+    <Abstract>Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_signal</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::RSpecies</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1RSpecies.html</Path>
+    <Anchor>acd60296c77857284cd935cb6faaf4200</Anchor>
+    <Abstract>Can be used to broadcast a signal associated with change of n of.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6780,6 +7476,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>getUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+    <Abstract>Return the upper limit for the copy number of this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getName</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -6799,6 +7506,50 @@
     <Path>classchem_1_1Species.html</Path>
     <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
     <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
+    <Abstract>Return true if this Species emits signals on copy number change.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+    <Abstract>Set the signaling behavior of this Species Gillespie-like simulation algorithm)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
+    <Abstract>Destroy the signal associated with this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>connect</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
+    <Abstract>Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7082,6 +7833,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>getUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+    <Abstract>Return the upper limit for the copy number of this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getName</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -7101,6 +7863,50 @@
     <Path>classchem_1_1Species.html</Path>
     <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
     <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
+    <Abstract>Return true if this Species emits signals on copy number change.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+    <Abstract>Set the signaling behavior of this Species Gillespie-like simulation algorithm)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
+    <Abstract>Destroy the signal associated with this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>connect</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
+    <Abstract>Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7329,6 +8135,17 @@
   </Token>
   <Token>
     <TokenIdentifier>
+      <Name>getUpperLimitForN</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a05fbe0a05f028beb1bb729f19d44a56a</Anchor>
+    <Abstract>Return the upper limit for the copy number of this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
       <Name>getName</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
@@ -7348,6 +8165,50 @@
     <Path>classchem_1_1Species.html</Path>
     <Anchor>a330ef4514a8979a6ea0e6f71ed5cb820</Anchor>
     <Abstract>Return the molecule index associated with this Species&amp;#39; (as int)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>isSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>aa412f592e88600b48e3df591fc4cd655</Anchor>
+    <Abstract>Return true if this Species emits signals on copy number change.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>startSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a2d3d9f6e7c7d9c7bdd87ff5373a7d08c</Anchor>
+    <Abstract>Set the signaling behavior of this Species Gillespie-like simulation algorithm)</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>stopSignaling</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9d34195d05f3e35e00dd20892ff7393b</Anchor>
+    <Abstract>Destroy the signal associated with this Species.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>connect</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Species</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Species.html</Path>
+    <Anchor>a9a582e18e231a65761cb10c14d0a0a68</Anchor>
+    <Abstract>Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7663,16 +8524,6 @@
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>swap</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>ffunc</Type>
-      <Scope>chem::SpeciesPtrContainerVector</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1SpeciesPtrContainerVector.html</Path>
-    <Anchor>a0d849ceda52bcfbe5afc95490e85729b</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
       <Name>chem::SpeciesContainerIFace</Name>
       <APILanguage>c</APILanguage>
       <Type>cl</Type>
@@ -7819,6 +8670,7 @@
       <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Visitor.html</Path>
+    <Abstract>An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -7829,7 +8681,19 @@
       <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1Visitor.html</Path>
-    <Anchor>a3a148d3144ed2ef25972509a6a594d1a</Anchor>
+    <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Visitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&amp;gt;visit(c), if v-&amp;gt;pred(c) returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7840,56 +8704,531 @@
     </TokenIdentifier>
     <Path>classchem_1_1Visitor.html</Path>
     <Anchor>a1f8b4dc62e90ed58f0b53e906a782ee0</Anchor>
+    <Abstract>Virtual destructor.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>chem::ConditionalVisitor</Name>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Visitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>ae058e8ac35f22b03d23ae443d12c71ea</Anchor>
+    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Visitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>a8f11a43266d18d1396236d0c5f3a8ad6</Anchor>
+    <Abstract>Return true if the Component *c satisfies the desired predicate.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::VisitorLambda</Name>
       <APILanguage>c</APILanguage>
       <Type>cl</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::VisitorLambda</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Abstract>The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each nod...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>visit_if</Name>
+      <Name>VisitorLambda</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::VisitorLambda</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
-    <Anchor>ac5eca1778f8647f7dc85a00489c3d938</Anchor>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>a0e0e187a2c9eee7b93e9b561ce410efe</Anchor>
+    <Abstract>Default Constructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_f</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>a7c24d18f9a2d933869cc159b4684c183</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_pred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>acd786da86b35bf06ed45c365ce61e272</Anchor>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>ae7f7287222406e428e0ff329692647a8</Anchor>
+    <Abstract>Sets the action to be perfomed on each node as std::function&amp;lt;bool (Component*)&amp;gt; g.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambdaPred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>adfb63d2fc239b7fb011286e1f5e89257</Anchor>
+    <Abstract>Sets the predicate which checks whether the node should be evaluated as std::function&amp;lt;bool (Component...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
       <Name>visit</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
-    <Anchor>aff08b8bc4b5c193e1fe60f06cca318b1</Anchor>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>pred</Name>
+      <Name>visit_if</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
-    <Anchor>ac35925bee54467373d1f44cccec75aa5</Anchor>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&amp;gt;visit(c), if v-&amp;gt;pred(c) returns true.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>~ConditionalVisitor</Name>
+      <Name>visitImpl</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::VisitorLambda</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
-    <Anchor>ad4f7c23e000b587469b74455e5c1a8b7</Anchor>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>ab44a2f2438782ec3651a1cdbfc8a67ff</Anchor>
+    <Abstract>Implementation of the visit(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>a0cf887a8af038c43db5ad97cb0885118</Anchor>
+    <Abstract>Implementation of the pred(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_f</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>ab8c78f08d1ec76cb3cf88757b2ab24a0</Anchor>
+    <Abstract>The function to be perfomed on each node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_pred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::VisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1VisitorLambda.html</Path>
+    <Anchor>a7fec41a9dd33994b84492a895dff012d</Anchor>
+    <Abstract>The predicate which checks whether the node should be evaluated.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesVisitor</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <DeclaredIn>Visitor.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a53c84c960e858a232036e1e1278fd511</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a26661b4bb928cef9f0033e1ceebbbe05</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~SpeciesVisitor</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a2f015f9e4fb18b947b8469c1791ff10c</Anchor>
+    <Abstract>Virtual destructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>af87d8ec90f4d98fc7455316af3d488b4</Anchor>
+    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a462938bce8f829791d30248e0121fc45</Anchor>
+    <Abstract>Return true if the Species *s satisfies the desired predicate.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::SpeciesVisitorLambda</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Abstract>The SpeciesVisitorLambda allows using C++11 lambda expressions to set the action to be performed on e...</Abstract>
+    <DeclaredIn>Visitor.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>SpeciesVisitorLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>acaf340efc8aef9f6dacb6d83bef2c91a</Anchor>
+    <Abstract>Default Constructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>SpeciesVisitorLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>af7bbf12d29cacdbacd394515e430e4ca</Anchor>
+    <Abstract>Constructor:</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>ab6c1781866c4052fdf7a038129e9d0f8</Anchor>
+    <Abstract>Sets the action to be perfomed on each node as std::function&amp;lt;bool (Component*)&amp;gt; g.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambdaPred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>ac6f2d2c6ac637b7e2ffc034d46233c6a</Anchor>
+    <Abstract>Sets the predicate which checks whether the node should be evaluated as std::function&amp;lt;bool (Component...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a53c84c960e858a232036e1e1278fd511</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitor.html</Path>
+    <Anchor>a26661b4bb928cef9f0033e1ceebbbe05</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>a97e643417037639c39bf1d25afb5b4bc</Anchor>
+    <Abstract>Implementation of the visit(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>a281b61d7b5cf3e6450264f545a5a6f7b</Anchor>
+    <Abstract>Implementation of the pred(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_f</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>aa025074794557d30f7829599562548ae</Anchor>
+    <Abstract>The function to be perfomed on each node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_pred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::SpeciesVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1SpeciesVisitorLambda.html</Path>
+    <Anchor>af6443dcc25c0775a140c6131ad76b00f</Anchor>
+    <Abstract>The predicate which checks whether the Species should be evaluated.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::ReactionVisitor</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <DeclaredIn>Visitor.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>a42dc6909e63c183bd5d22cb0d3c3e6b4</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>aad37cda5351c260fcfacdff69675d7cb</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>~ReactionVisitor</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>a88687e24dc958e7fad4481a19098f6ba</Anchor>
+    <Abstract>Virtual destructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>a39b0fd40aa4a78cfcd6760251cffcfb7</Anchor>
+    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>a10dca30ab05ab0cc1cc02fe1e3808a7f</Anchor>
+    <Abstract>Return true if the Reaction *r satisfies the desired predicate.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>chem::ReactionVisitorLambda</Name>
+      <APILanguage>c</APILanguage>
+      <Type>cl</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Abstract>The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on ...</Abstract>
+    <DeclaredIn>Visitor.h</DeclaredIn>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>ReactionVisitorLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>afdad2f3f8d738b22d1ff366a88644bd2</Anchor>
+    <Abstract>Default Constructor.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>ReactionVisitorLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a9d24538ed0ba2c5f548497e95eee7caf</Anchor>
+    <Abstract>Constructor:</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambda</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a1233c864bfa232d198762821ce4e30a8</Anchor>
+    <Abstract>Sets the action to be perfomed on each node as std::function&amp;lt;bool (Component*)&amp;gt; g.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>setLambdaPred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a3efc4e1c0161b6ba1533954c3a07a3a0</Anchor>
+    <Abstract>Sets the predicate which checks whether the node should be evaluated as std::function&amp;lt;bool (Component...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>a42dc6909e63c183bd5d22cb0d3c3e6b4</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitor.html</Path>
+    <Anchor>aad37cda5351c260fcfacdff69675d7cb</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a4e8b7af05565d9910ab2e0c32c9bb5cc</Anchor>
+    <Abstract>Implementation of the visit(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a3cd8b94f2c2d287c5e8674699ff173d0</Anchor>
+    <Abstract>Implementation of the pred(...) method.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_f</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a93b63c7cbfeccb0191babe8c9ea4d626</Anchor>
+    <Abstract>The function to be perfomed on each node.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>_pred</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>data</Type>
+      <Scope>chem::ReactionVisitorLambda</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1ReactionVisitorLambda.html</Path>
+    <Anchor>a35a62c58684664e15a0f13986d94532b</Anchor>
+    <Abstract>The predicate which checks whether the Reaction should be evaluated.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7899,57 +9238,52 @@
       <Scope>chem::ConcreteVisitor</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1ConcreteVisitor.html</Path>
+    <Abstract>ConcreteVisitor is an example visitor, following the regular Visitor pattern.</Abstract>
     <DeclaredIn>VisitorConcrete.h</DeclaredIn>
   </Token>
   <Token>
     <TokenIdentifier>
       <Name>visit</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Visitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visit_if</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::Visitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&amp;gt;visit(c), if v-&amp;gt;pred(c) returns true.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
       <Scope>chem::ConcreteVisitor</Scope>
     </TokenIdentifier>
     <Path>classchem_1_1ConcreteVisitor.html</Path>
-    <Anchor>abb5892cdcf90fef25aafafaf81baa697</Anchor>
+    <Anchor>a5dfd9a95b1c2b8bf73a643c20c7388bc</Anchor>
+    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
-      <Name>chem::FindFirstSpeciesVisitor</Name>
-      <APILanguage>c</APILanguage>
-      <Type>cl</Type>
-      <Scope>chem::FindFirstSpeciesVisitor</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-    <DeclaredIn>VisitorConcrete.h</DeclaredIn>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>FindFirstSpeciesVisitor</Name>
+      <Name>predImpl</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::FindFirstSpeciesVisitor</Scope>
+      <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-    <Anchor>afaec67740a4522c9bd189b70c86f2852</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>visit</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::FindFirstSpeciesVisitor</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-    <Anchor>afe2b8f520e443307a6ba06a24c4b9991</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>_name</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>data</Type>
-      <Scope>chem::FindFirstSpeciesVisitor</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1FindFirstSpeciesVisitor.html</Path>
-    <Anchor>ae3fce85495fc42ef9a9bfea2117cdc12</Anchor>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>a8f11a43266d18d1396236d0c5f3a8ad6</Anchor>
+    <Abstract>Return true if the Component *c satisfies the desired predicate.</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -7966,29 +9300,43 @@
       <Name>visit</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::CompositeVisitor</Scope>
+      <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1CompositeVisitor.html</Path>
-    <Anchor>a04cfd3a93f0b76387b00a11889150d43</Anchor>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>pred</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>chem::CompositeVisitor</Scope>
-    </TokenIdentifier>
-    <Path>classchem_1_1CompositeVisitor.html</Path>
-    <Anchor>a56074a684bd24ada8bd28b861b5c14ac</Anchor>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>a710015ef735e109c812edbb653d6d598</Anchor>
+    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
       <Name>visit_if</Name>
       <APILanguage>cpp</APILanguage>
       <Type>instm</Type>
-      <Scope>chem::ConditionalVisitor</Scope>
+      <Scope>chem::Visitor</Scope>
     </TokenIdentifier>
-    <Path>classchem_1_1ConditionalVisitor.html</Path>
-    <Anchor>ac5eca1778f8647f7dc85a00489c3d938</Anchor>
+    <Path>classchem_1_1Visitor.html</Path>
+    <Anchor>ad02a683bb0cf97d9df381c3efeb90a06</Anchor>
+    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&amp;gt;visit(c), if v-&amp;gt;pred(c) returns true.</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>visitImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::CompositeVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1CompositeVisitor.html</Path>
+    <Anchor>ac3104d5ec0d0628bbcc72f17f69b0396</Anchor>
+    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+  </Token>
+  <Token>
+    <TokenIdentifier>
+      <Name>predImpl</Name>
+      <APILanguage>cpp</APILanguage>
+      <Type>instm</Type>
+      <Scope>chem::CompositeVisitor</Scope>
+    </TokenIdentifier>
+    <Path>classchem_1_1CompositeVisitor.html</Path>
+    <Anchor>a157e17e7a6b7ed91b47d59aea1cc1268</Anchor>
+    <Abstract>Return true if the Component *c satisfies the desired predicate.</Abstract>
   </Token>
 </Tokens>

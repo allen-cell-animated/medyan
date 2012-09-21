@@ -6,6 +6,7 @@ var classchem_1_1SpeciesBulk =
     [ "SpeciesBulk", "classchem_1_1SpeciesBulk.html#ab53bee8acf46517803bea706ac7d9685", null ],
     [ "~SpeciesBulk", "classchem_1_1SpeciesBulk.html#ae9f7976efc0117e213b1a616e1216d5d", null ],
     [ "clone", "classchem_1_1SpeciesBulk.html#a7bfdd13273d7328c2f7d275796e57873", null ],
+    [ "connect", "classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68", null ],
     [ "countSpecies", "classchem_1_1Species.html#a5e8aedfe4c4b5e08fb0ee672c3d80ace", null ],
     [ "getFullName", "classchem_1_1SpeciesBulk.html#a340d3f16e075352bf1cbab7918f5ca20", null ],
     [ "getMolecule", "classchem_1_1Species.html#a330ef4514a8979a6ea0e6f71ed5cb820", null ],
@@ -15,11 +16,15 @@ var classchem_1_1SpeciesBulk =
     [ "getRoot", "classchem_1_1Species.html#aa5931e2aae4856c1b438691c23ada5aa", null ],
     [ "getRSpecies", "classchem_1_1Species.html#a1719a8155a69e9a62593d23d4bfc8514", null ],
     [ "getRSpecies", "classchem_1_1Species.html#a438dae186317809effdd040ed38c568b", null ],
+    [ "getUpperLimitForN", "classchem_1_1Species.html#a05fbe0a05f028beb1bb729f19d44a56a", null ],
     [ "hasParent", "classchem_1_1Species.html#a6ddddc5be2b0e4427486f80a891879b3", null ],
+    [ "isSignaling", "classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655", null ],
     [ "operator=", "classchem_1_1SpeciesBulk.html#ad0e657ab81d9b37475dbc9235b2f48c4", null ],
     [ "operator=", "classchem_1_1SpeciesBulk.html#a9ffd987e1f885746fcb6f6d5293692f3", null ],
     [ "setN", "classchem_1_1Species.html#af10a33a212fdb986fb93613e9c219f7a", null ],
     [ "setParent", "classchem_1_1Species.html#a50e1e828d0b8a03efc9354e2c00174f5", null ],
+    [ "startSignaling", "classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c", null ],
+    [ "stopSignaling", "classchem_1_1Species.html#a9d34195d05f3e35e00dd20892ff7393b", null ],
     [ "operator!=", "classchem_1_1Species.html#aff630d716711fbbab3bc7f598230316b", null ],
     [ "operator==", "classchem_1_1Species.html#a22987c5719b74c50465256ea5b9d80bf", null ]
 ];

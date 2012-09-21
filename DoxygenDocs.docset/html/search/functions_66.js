@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['findfirstspeciesvisitor',['FindFirstSpeciesVisitor',['../classchem_1_1FindFirstSpeciesVisitor.html#afaec67740a4522c9bd189b70c86f2852',1,'chem::FindFirstSpeciesVisitor']]],
   ['findreaction',['findReaction',['../classchem_1_1ReactionPtrContainerIFace.html#af6aee2019bb43a53ae7795203bb72015',1,'chem::ReactionPtrContainerIFace::findReaction()'],['../classchem_1_1ReactionPtrContainerVector.html#af6c18ccbd1213a5d6b1e9bdc3f92ca18',1,'chem::ReactionPtrContainerVector::findReaction()']]],
   ['findsignal',['findSignal',['../classchem_1_1ChemSignal.html#ac988afbd07af10fb3fc72f688adaef5e',1,'chem::ChemSignal::findSignal(ReactionBase *r) const '],['../classchem_1_1ChemSignal.html#ae10bf98b41aa071c0595c9ae2c320858',1,'chem::ChemSignal::findSignal(RSpecies *s) const ']]],
   ['findsimilardiffusionreaction',['findSimilarDiffusionReaction',['../classchem_1_1Compartment.html#a04dc9273a953c4e5b72b95f7227026a1',1,'chem::Compartment']]],

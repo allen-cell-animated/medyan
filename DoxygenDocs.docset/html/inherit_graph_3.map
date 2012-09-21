@@ -1,4 +1,7 @@
 <map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1ConditionalVisitor.html" title="chem::ConditionalVisitor" alt="" coords="6,5,159,32"/>
-<area shape="rect" id="node3" href="$classchem_1_1CompositeVisitor.html" title="chem::CompositeVisitor" alt="" coords="208,5,360,32"/>
+<area shape="rect" id="node1" href="$classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy." alt="" coords="6,31,136,59"/>
+<area shape="rect" id="node3" href="$classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="184,31,309,59"/>
+<area shape="rect" id="node5" href="$classchem_1_1Compartment.html" title="chem::Compartment" alt="" coords="422,5,564,33"/>
+<area shape="rect" id="node9" href="$classchem_1_1CompartmentsSimpleGrid.html" title="chem::CompartmentsSimpleGrid\&lt; NDIM \&gt;" alt="" coords="357,57,629,85"/>
+<area shape="rect" id="node7" href="$classchem_1_1CompartmentCubic.html" title="chem::CompartmentCubic\&lt; NDIM \&gt;" alt="" coords="678,5,911,33"/>
 </map>

@@ -126,21 +126,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="Reaction_8h_source.html">Reaction.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="ChemSimImpl_8h_source.html">ChemSimImpl.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="ChemRNode_8h_source.html">ChemRNode.h</a>&quot;</code><br/>
-<code>#include &lt;boost/pool/pool.hpp&gt;</code><br/>
-<code>#include &lt;boost/pool/pool_alloc.hpp&gt;</code><br/>
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ChemNRMImpl.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="ChemNRMImpl_8h__incl.png" border="0" usemap="#CytoSim_2ChemNRMImpl_8h" alt=""/></div>
 <map name="CytoSim_2ChemNRMImpl_8h" id="CytoSim_2ChemNRMImpl_8h">
-<area shape="rect" id="node9" href="utility_8h.html" title="utility.h" alt="" coords="1675,304,1733,331"/><area shape="rect" id="node13" href="Reaction_8h.html" title="Reaction.h" alt="" coords="575,80,657,107"/><area shape="rect" id="node69" href="ChemSimImpl_8h.html" title="ChemSimImpl.h" alt="" coords="2015,80,2125,107"/><area shape="rect" id="node71" href="ChemRNode_8h.html" title="ChemRNode.h" alt="" coords="2151,80,2257,107"/><area shape="rect" id="node33" href="common_8h.html" title="common.h" alt="" coords="193,304,271,331"/><area shape="rect" id="node37" href="Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="705,155,783,181"/><area shape="rect" id="node53" href="Component_8h.html" title="Component.h" alt="" coords="995,229,1093,256"/><area shape="rect" id="node55" href="RSpecies_8h.html" title="RSpecies.h" alt="" coords="832,229,920,256"/></map>
+<area shape="rect" id="node9" href="utility_8h.html" title="utility.h" alt="" coords="86,393,148,421"/><area shape="rect" id="node13" href="Reaction_8h.html" title="Reaction.h" alt="" coords="172,83,256,111"/><area shape="rect" id="node71" href="ChemSimImpl_8h.html" title="ChemSimImpl.h" alt="" coords="590,83,705,111"/><area shape="rect" id="node73" href="ChemRNode_8h.html" title="ChemRNode.h" alt="" coords="731,83,840,111"/><area shape="rect" id="node15" href="ReactionBase_8h.html" title="ReactionBase.h" alt="" coords="917,161,1032,189"/><area shape="rect" id="node37" href="common_8h.html" title="common.h" alt="" coords="1214,393,1297,421"/><area shape="rect" id="node41" href="Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="935,238,1013,266"/><area shape="rect" id="node57" href="RSpecies_8h.html" title="RSpecies.h" alt="" coords="822,315,911,343"/></map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="ChemNRMImpl_8h__dep__incl.png" border="0" usemap="#CytoSim_2ChemNRMImpl_8hdep" alt=""/></div>
 <map name="CytoSim_2ChemNRMImpl_8hdep" id="CytoSim_2ChemNRMImpl_8hdep">
-<area shape="rect" id="node3" href="ChemNRMImpl_8cpp.html" title="CytoSim/ChemNRMImpl.cpp" alt="" coords="5,80,192,107"/></map>
+<area shape="rect" id="node3" href="ChemNRMImpl_8cpp.html" title="CytoSim/ChemNRMImpl.cpp" alt="" coords="4,83,195,111"/><area shape="rect" id="node5" href="main_8cpp.html" title="CytoSim/main.cpp" alt="" coords="219,83,348,111"/></map>
 </div>
 </div>
 <p><a href="ChemNRMImpl_8h_source.html">Go to the source code of this file.</a></p>
@@ -164,20 +162,12 @@ Defines</h2></td></tr>
 <tr class="memitem:ad9d458cf298e6ecf4f6b58527b9e5281"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ChemNRMImpl_8h.html#ad9d458cf298e6ecf4f6b58527b9e5281">BOOST_POOL_MEM_HEAP_ELEMENT</a></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a98412a4cd9bafe9f3edd66b3a68327a3"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-boost::fast_pool_allocator<br class="typebreak"/>
-&lt; PQNode &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a98412a4cd9bafe9f3edd66b3a68327a3">chem::fast_allocator_t</a></td></tr>
-<tr class="memitem:ad3c7e19583b71f442e2d969972ed21f9"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+<tr class="memitem:aacd1d2bb93e0bb1b1af9bb1fbb5133ca"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
 boost::heap::pairing_heap<br class="typebreak"/>
-&lt; PQNode, <br class="typebreak"/>
-boost::heap::allocator<br class="typebreak"/>
-&lt; fast_allocator_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#ad3c7e19583b71f442e2d969972ed21f9">chem::boost_heap</a></td></tr>
-<tr class="memitem:abf1718e53f56f85003559d20e531a1a4"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+&lt; PQNode &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#aacd1d2bb93e0bb1b1af9bb1fbb5133ca">chem::boost_heap</a></td></tr>
+<tr class="memitem:a33be80d87771bff54f5cede2e5d81cd1"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
 boost::heap::pairing_heap<br class="typebreak"/>
-&lt; PQNode, <br class="typebreak"/>
-boost::heap::allocator<br class="typebreak"/>
-&lt; fast_allocator_t &gt;<br class="typebreak"/>
- &gt;::handle_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#abf1718e53f56f85003559d20e531a1a4">chem::handle_t</a></td></tr>
+&lt; PQNode &gt;::handle_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechem.html#a33be80d87771bff54f5cede2e5d81cd1">chem::handle_t</a></td></tr>
 </table>
 <hr/><h2>Define Documentation</h2>
 <a class="anchor" id="ad9d458cf298e6ecf4f6b58527b9e5281"></a>
@@ -233,7 +223,7 @@ boost::heap::allocator<br class="typebreak"/>
     <ul>
       <li class="navelem"><a class="el" href="ChemNRMImpl_8h.html">ChemNRMImpl.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

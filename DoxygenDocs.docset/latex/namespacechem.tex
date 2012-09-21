@@ -29,13 +29,13 @@ class \hyperlink{classchem_1_1CompartmentCubic}{Compartment\-Cubic}
 class \hyperlink{classchem_1_1CompartmentsSimpleGrid}{Compartments\-Simple\-Grid}
 \item 
 class \hyperlink{classchem_1_1Component}{Component}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1Component}{Component} class is the base class for the \hyperlink{classchem_1_1Composite}{Composite} pattern hieararchy. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1Composite}{Composite}
-\item 
-class \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}
-\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} class represents an abstract interface for simple chemical Reactions of the form A + B -\/$>$ C. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1Composite}{Composite} class is the aggregating class for the \hyperlink{classchem_1_1Composite}{Composite} pattern. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1Reaction}{Reaction}
 \begin{DoxyCompactList}\small\item\em Reaction$<$\-M,\-N$>$ class represents a concrete chemical reaction, such as A + B -\/$>$ C, where M is the number of reactants and N is the number of products. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} class represents an abstract interface for simple chemical Reactions of the form A + B -\/$>$ C. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1ReactionPtrContainerIFace}{Reaction\-Ptr\-Container\-I\-Face}
 \item 
 class \hyperlink{classchem_1_1ReactionPtrContainerVector}{Reaction\-Ptr\-Container\-Vector}
@@ -61,34 +61,31 @@ class \hyperlink{classchem_1_1SpeciesContainerIFace}{Species\-Container\-I\-Face
 class \hyperlink{classchem_1_1SpeciesContainerVector}{Species\-Container\-Vector}
 \item 
 class \hyperlink{classchem_1_1Visitor}{Visitor}
+\begin{DoxyCompactList}\small\item\em An abstract interface to traverse those nodes in the \hyperlink{classchem_1_1Composite}{Composite} pattern which fulfil a certain predicate. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1VisitorLambda}{Visitor\-Lambda}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classchem_1_1VisitorLambda}{Visitor\-Lambda} allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1SpeciesVisitor}{Species\-Visitor}
 \item 
-class \hyperlink{classchem_1_1ConditionalVisitor}{Conditional\-Visitor}
+class \hyperlink{classchem_1_1SpeciesVisitorLambda}{Species\-Visitor\-Lambda}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classchem_1_1SpeciesVisitorLambda}{Species\-Visitor\-Lambda} allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classchem_1_1Species}{Species} of the node and its descendent nodes. \end{DoxyCompactList}\item 
+class \hyperlink{classchem_1_1ReactionVisitor}{Reaction\-Visitor}
 \item 
+class \hyperlink{classchem_1_1ReactionVisitorLambda}{Reaction\-Visitor\-Lambda}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classchem_1_1ReactionVisitorLambda}{Reaction\-Visitor\-Lambda} allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classchem_1_1Reaction}{Reaction} of the node and its descendent nodes. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1ConcreteVisitor}{Concrete\-Visitor}
-\item 
-class \hyperlink{classchem_1_1FindFirstSpeciesVisitor}{Find\-First\-Species\-Visitor}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classchem_1_1ConcreteVisitor}{Concrete\-Visitor} is an example visitor, following the regular \hyperlink{classchem_1_1Visitor}{Visitor} pattern. \end{DoxyCompactList}\item 
 class \hyperlink{classchem_1_1CompositeVisitor}{Composite\-Visitor}
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
 typedef \\*
-boost\-::fast\-\_\-pool\-\_\-allocator\\*
-$<$ \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} $>$ \hyperlink{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}{fast\-\_\-allocator\-\_\-t}
+boost\-::heap\-::pairing\-\_\-heap\\*
+$<$ \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} $>$ \hyperlink{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{boost\-\_\-heap}
 \item 
 typedef \\*
 boost\-::heap\-::pairing\-\_\-heap\\*
-$<$ \hyperlink{classchem_1_1PQNode}{P\-Q\-Node}, \\*
-boost\-::heap\-::allocator\\*
-$<$ \hyperlink{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}{fast\-\_\-allocator\-\_\-t} $>$ $>$ \hyperlink{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}{boost\-\_\-heap}
-\item 
-typedef \\*
-boost\-::heap\-::pairing\-\_\-heap\\*
-$<$ \hyperlink{classchem_1_1PQNode}{P\-Q\-Node}, \\*
-boost\-::heap\-::allocator\\*
-$<$ \hyperlink{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}{fast\-\_\-allocator\-\_\-t} $>$\\*
- $>$\-::handle\-\_\-type \hyperlink{namespacechem_abf1718e53f56f85003559d20e531a1a4}{handle\-\_\-t}
+$<$ \hyperlink{classchem_1_1PQNode}{P\-Q\-Node} $>$\-::handle\-\_\-type \hyperlink{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{handle\-\_\-t}
 \item 
 typedef \\*
 boost\-::signals2\-::signal$<$ void(\hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} $\ast$)$>$ \hyperlink{namespacechem_a40bfcc5c8ae87e2713c68fae68215991}{Reaction\-Event\-Signal}
@@ -113,13 +110,7 @@ $\ast$, int)$>$ \hyperlink{namespacechem_a6cb4144586460e7b7ae0dffdf08eb57c}{R\-S
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-boost\-::pool \hyperlink{namespacechem_aec019986de5e2ab9597f9633542378ff}{allocator\-\_\-rnodenrm} (sizeof(\hyperlink{classchem_1_1RNodeNRM}{R\-Node\-N\-R\-M}), \hyperlink{common_8h_a8584922303a6a83690f6091592285a7f}{B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E})
-\item 
-boost\-::pool \hyperlink{namespacechem_abe2d133c73c179db82d2cf8266a16e3a}{allocator\-\_\-pqnode} (sizeof(\hyperlink{classchem_1_1PQNode}{P\-Q\-Node}), \hyperlink{common_8h_a8584922303a6a83690f6091592285a7f}{B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E})
-\item 
 bool \hyperlink{namespacechem_a9342b2280a45cc2043074e2a618be723}{operator==} (const \hyperlink{classchem_1_1Compartment}{Compartment} \&a, const \hyperlink{classchem_1_1Compartment}{Compartment} \&b)
-\item 
-boost\-::pool \hyperlink{namespacechem_a34e31b7a797e903435a3be4751cd4f42}{allocator\-\_\-rspecies} (sizeof(\hyperlink{classchem_1_1RSpecies}{R\-Species}), \hyperlink{common_8h_a8584922303a6a83690f6091592285a7f}{B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E})
 \end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
@@ -137,26 +128,19 @@ long long int \hyperlink{namespacechem_a06af82e2b66ef7327fc568000f4a7279}{elapse
 
 
 \subsection{Typedef Documentation}
-\hypertarget{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}{\index{chem@{chem}!boost\-\_\-heap@{boost\-\_\-heap}}
+\hypertarget{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}{\index{chem@{chem}!boost\-\_\-heap@{boost\-\_\-heap}}
 \index{boost\-\_\-heap@{boost\-\_\-heap}!chem@{chem}}
-\subsubsection[{boost\-\_\-heap}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\-::heap\-::pairing\-\_\-heap$<${\bf P\-Q\-Node}, boost\-::heap\-::allocator$<${\bf fast\-\_\-allocator\-\_\-t}$>$ $>$ {\bf chem\-::boost\-\_\-heap}}}\label{namespacechem_ad3c7e19583b71f442e2d969972ed21f9}
-
-
-Definition at line 43 of file Chem\-N\-R\-M\-Impl.\-h.
-
-\hypertarget{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}{\index{chem@{chem}!fast\-\_\-allocator\-\_\-t@{fast\-\_\-allocator\-\_\-t}}
-\index{fast\-\_\-allocator\-\_\-t@{fast\-\_\-allocator\-\_\-t}!chem@{chem}}
-\subsubsection[{fast\-\_\-allocator\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\-::fast\-\_\-pool\-\_\-allocator$<${\bf P\-Q\-Node}$>$ {\bf chem\-::fast\-\_\-allocator\-\_\-t}}}\label{namespacechem_a98412a4cd9bafe9f3edd66b3a68327a3}
+\subsubsection[{boost\-\_\-heap}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\-::heap\-::pairing\-\_\-heap$<${\bf P\-Q\-Node}$>$ {\bf chem\-::boost\-\_\-heap}}}\label{namespacechem_aacd1d2bb93e0bb1b1af9bb1fbb5133ca}
 
 
 Definition at line 39 of file Chem\-N\-R\-M\-Impl.\-h.
 
-\hypertarget{namespacechem_abf1718e53f56f85003559d20e531a1a4}{\index{chem@{chem}!handle\-\_\-t@{handle\-\_\-t}}
+\hypertarget{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}{\index{chem@{chem}!handle\-\_\-t@{handle\-\_\-t}}
 \index{handle\-\_\-t@{handle\-\_\-t}!chem@{chem}}
-\subsubsection[{handle\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\-::heap\-::pairing\-\_\-heap$<${\bf P\-Q\-Node}, boost\-::heap\-::allocator$<${\bf fast\-\_\-allocator\-\_\-t}$>$ $>$\-::handle\-\_\-type {\bf chem\-::handle\-\_\-t}}}\label{namespacechem_abf1718e53f56f85003559d20e531a1a4}
+\subsubsection[{handle\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\-::heap\-::pairing\-\_\-heap$<${\bf P\-Q\-Node}$>$\-::handle\-\_\-type {\bf chem\-::handle\-\_\-t}}}\label{namespacechem_a33be80d87771bff54f5cede2e5d81cd1}
 
 
-Definition at line 44 of file Chem\-N\-R\-M\-Impl.\-h.
+Definition at line 47 of file Chem\-N\-R\-M\-Impl.\-h.
 
 \hypertarget{namespacechem_a40bfcc5c8ae87e2713c68fae68215991}{\index{chem@{chem}!Reaction\-Event\-Signal@{Reaction\-Event\-Signal}}
 \index{Reaction\-Event\-Signal@{Reaction\-Event\-Signal}!chem@{chem}}
@@ -167,7 +151,7 @@ This is a \hyperlink{classchem_1_1ReactionBase}{Reaction\-Base} signal object th
 
 This is a \hyperlink{classchem_1_1Reaction}{Reaction} signal object that will be called by \hyperlink{classchem_1_1ChemSignal}{Chem\-Signal}, usually when requested by the reaction simulation algorithm. 
 
-Definition at line 32 of file Reaction.\-h.
+Definition at line 34 of file Reaction\-Base.\-h.
 
 \hypertarget{namespacechem_a6cb4144586460e7b7ae0dffdf08eb57c}{\index{chem@{chem}!R\-Species\-Copy\-N\-Changed\-Signal@{R\-Species\-Copy\-N\-Changed\-Signal}}
 \index{R\-Species\-Copy\-N\-Changed\-Signal@{R\-Species\-Copy\-N\-Changed\-Signal}!chem@{chem}}
@@ -219,30 +203,6 @@ Definition at line 40 of file R\-Species.\-h.
 
 
 \subsection{Function Documentation}
-\hypertarget{namespacechem_abe2d133c73c179db82d2cf8266a16e3a}{\index{chem@{chem}!allocator\-\_\-pqnode@{allocator\-\_\-pqnode}}
-\index{allocator\-\_\-pqnode@{allocator\-\_\-pqnode}!chem@{chem}}
-\subsubsection[{allocator\-\_\-pqnode}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::pool {\bf chem\-::allocator\-\_\-pqnode} (
-\begin{DoxyParamCaption}
-\item[{sizeof(P\-Q\-Node)}]{, }
-\item[{{\bf B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E}}]{}
-\end{DoxyParamCaption}
-)}}\label{namespacechem_abe2d133c73c179db82d2cf8266a16e3a}
-\hypertarget{namespacechem_aec019986de5e2ab9597f9633542378ff}{\index{chem@{chem}!allocator\-\_\-rnodenrm@{allocator\-\_\-rnodenrm}}
-\index{allocator\-\_\-rnodenrm@{allocator\-\_\-rnodenrm}!chem@{chem}}
-\subsubsection[{allocator\-\_\-rnodenrm}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::pool {\bf chem\-::allocator\-\_\-rnodenrm} (
-\begin{DoxyParamCaption}
-\item[{sizeof(R\-Node\-N\-R\-M)}]{, }
-\item[{{\bf B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E}}]{}
-\end{DoxyParamCaption}
-)}}\label{namespacechem_aec019986de5e2ab9597f9633542378ff}
-\hypertarget{namespacechem_a34e31b7a797e903435a3be4751cd4f42}{\index{chem@{chem}!allocator\-\_\-rspecies@{allocator\-\_\-rspecies}}
-\index{allocator\-\_\-rspecies@{allocator\-\_\-rspecies}!chem@{chem}}
-\subsubsection[{allocator\-\_\-rspecies}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::pool {\bf chem\-::allocator\-\_\-rspecies} (
-\begin{DoxyParamCaption}
-\item[{sizeof(R\-Species)}]{, }
-\item[{{\bf B\-O\-O\-L\-\_\-\-P\-O\-O\-L\-\_\-\-N\-S\-I\-Z\-E}}]{}
-\end{DoxyParamCaption}
-)}}\label{namespacechem_a34e31b7a797e903435a3be4751cd4f42}
 \hypertarget{namespacechem_a9342b2280a45cc2043074e2a618be723}{\index{chem@{chem}!operator==@{operator==}}
 \index{operator==@{operator==}!chem@{chem}}
 \subsubsection[{operator==}]{\setlength{\rightskip}{0pt plus 5cm}bool chem\-::operator== (
@@ -253,7 +213,7 @@ Definition at line 40 of file R\-Species.\-h.
 )}}\label{namespacechem_a9342b2280a45cc2043074e2a618be723}
 Two \hyperlink{classchem_1_1Compartment}{Compartment} objects are equal if each contains analogous \hyperlink{classchem_1_1Species}{Species} and \hyperlink{classchem_1_1Reaction}{Reaction} objects, in the same order 
 
-Definition at line 42 of file Compartment.\-cpp.
+Definition at line 80 of file Compartment.\-cpp.
 
 
 

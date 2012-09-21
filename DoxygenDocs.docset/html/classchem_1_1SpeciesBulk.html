@@ -129,14 +129,14 @@ Inheritance diagram for chem::SpeciesBulk:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1SpeciesBulk__inherit__graph.png" border="0" usemap="#chem_1_1SpeciesBulk_inherit__map" alt="Inheritance graph"/></div>
 <map name="chem_1_1SpeciesBulk_inherit__map" id="chem_1_1SpeciesBulk_inherit__map">
-<area shape="rect" id="node2" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="17,80,121,107"/><area shape="rect" id="node4" href="classchem_1_1Component.html" title="chem::Component" alt="" coords="7,5,131,32"/></map>
+<area shape="rect" id="node2" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="18,6,125,34"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for chem::SpeciesBulk:</div>
 <div class="dyncontent">
 <div class="center"><img src="classchem_1_1SpeciesBulk__coll__graph.png" border="0" usemap="#chem_1_1SpeciesBulk_coll__map" alt="Collaboration graph"/></div>
 <map name="chem_1_1SpeciesBulk_coll__map" id="chem_1_1SpeciesBulk_coll__map">
-<area shape="rect" id="node2" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="349,96,453,123"/><area shape="rect" id="node16" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="432,187,547,213"/><area shape="rect" id="node4" href="classchem_1_1Component.html" title="chem::Component" alt="" coords="489,5,612,32"/><area shape="rect" id="node6" href="classchem_1_1Composite.html" title="chem::Composite" alt="" coords="535,96,653,123"/><area shape="rect" id="node21" href="classchem_1_1Reaction.html" title="Reaction class represents simple chemical reactions of the form A + B &#45;&gt; C." alt="" coords="317,381,424,408"/><area shape="rect" id="node23" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="5,277,104,304"/></map>
+<area shape="rect" id="node2" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="340,101,448,129"/><area shape="rect" id="node4" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ..." alt="" coords="271,195,389,223"/><area shape="rect" id="node9" href="classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B &#45;..." alt="" coords="169,101,313,129"/><area shape="rect" id="node11" href="classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="477,6,601,34"/><area shape="rect" id="node13" href="classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy." alt="" coords="475,101,604,129"/><area shape="rect" id="node22" href="classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="253,6,355,34"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classchem_1_1SpeciesBulk-members.html">List of all members.</a></p>
@@ -172,10 +172,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:af10a33a212fdb986fb93613e9c219f7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the copy number for this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#af10a33a212fdb986fb93613e9c219f7a"></a><br/></td></tr>
 <tr class="memitem:af7c9f51060b84169b428a7796dad6dca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#af7c9f51060b84169b428a7796dad6dca">getN</a> () const </td></tr>
 <tr class="memdesc:af7c9f51060b84169b428a7796dad6dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current copy number of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#af7c9f51060b84169b428a7796dad6dca"></a><br/></td></tr>
+<tr class="memitem:a05fbe0a05f028beb1bb729f19d44a56a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a05fbe0a05f028beb1bb729f19d44a56a">getUpperLimitForN</a> () const </td></tr>
+<tr class="memdesc:a05fbe0a05f028beb1bb729f19d44a56a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the upper limit for the copy number of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#a05fbe0a05f028beb1bb729f19d44a56a"></a><br/></td></tr>
 <tr class="memitem:aa32c8f7fb344c68539a927c6a7f916c7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#aa32c8f7fb344c68539a927c6a7f916c7">getName</a> () const </td></tr>
 <tr class="memdesc:aa32c8f7fb344c68539a927c6a7f916c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>' name.  <a href="#aa32c8f7fb344c68539a927c6a7f916c7"></a><br/></td></tr>
 <tr class="memitem:a330ef4514a8979a6ea0e6f71ed5cb820"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a330ef4514a8979a6ea0e6f71ed5cb820">getMolecule</a> () const </td></tr>
 <tr class="memdesc:a330ef4514a8979a6ea0e6f71ed5cb820"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the molecule index associated with this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>' (as int)  <a href="#a330ef4514a8979a6ea0e6f71ed5cb820"></a><br/></td></tr>
+<tr class="memitem:aa412f592e88600b48e3df591fc4cd655"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655">isSignaling</a> () const </td></tr>
+<tr class="memdesc:aa412f592e88600b48e3df591fc4cd655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> emits signals on copy number change.  <a href="#aa412f592e88600b48e3df591fc4cd655"></a><br/></td></tr>
+<tr class="memitem:a2d3d9f6e7c7d9c7bdd87ff5373a7d08c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c">startSignaling</a> ()</td></tr>
+<tr class="memdesc:a2d3d9f6e7c7d9c7bdd87ff5373a7d08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the signaling behavior of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> Gillespie-like simulation algorithm)  <a href="#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c"></a><br/></td></tr>
+<tr class="memitem:a9d34195d05f3e35e00dd20892ff7393b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a9d34195d05f3e35e00dd20892ff7393b">stopSignaling</a> ()</td></tr>
+<tr class="memdesc:a9d34195d05f3e35e00dd20892ff7393b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the signal associated with this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>.  <a href="#a9d34195d05f3e35e00dd20892ff7393b"></a><br/></td></tr>
+<tr class="memitem:a9a582e18e231a65761cb10c14d0a0a68"><td class="memItemLeft" align="right" valign="top">boost::signals2::connection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68">connect</a> (std::function&lt; void(<a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> *, int)&gt; const &amp;RSpecies_callback, int priority=5)</td></tr>
+<tr class="memdesc:a9a582e18e231a65761cb10c14d0a0a68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect the callback, rspecies_callback to a signal corresponding to <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> *s.  <a href="#a9a582e18e231a65761cb10c14d0a0a68"></a><br/></td></tr>
 <tr class="memitem:a5e8aedfe4c4b5e08fb0ee672c3d80ace"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchem_1_1Species.html#a5e8aedfe4c4b5e08fb0ee672c3d80ace">countSpecies</a> () const </td></tr>
 <tr><td colspan="2"><h2><a name="friends"></a>
 Friends</h2></td></tr>
@@ -340,6 +350,47 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a9a582e18e231a65761cb10c14d0a0a68"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boost::signals2::connection <a class="el" href="classchem_1_1Species.html#a9a582e18e231a65761cb10c14d0a0a68">chem::Species::connect</a> </td>
+          <td>(</td>
+          <td class="paramtype">std::function&lt; void(<a class="el" href="classchem_1_1RSpecies.html">RSpecies</a> *, int)&gt; const &amp;&#160;</td>
+          <td class="paramname"><em>RSpecies_callback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>priority</em> = <code>5</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Connect the callback, rspecies_callback to a signal corresponding to <a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> *s. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">std::function&lt;void</td><td>(<a class="el" href="classchem_1_1RSpecies.html" title="RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...">RSpecies</a> *, int)&gt; const &amp;RSpecies_callback - a function object to be called (a slot) </td></tr>
+    <tr><td class="paramname">int</td><td>priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns:</dt><dd>a connection object which can be used to later disconnect this particular slot or temporarily block it </dd></dl>
+
+<p>Definition at line <a class="el" href="Species_8cpp_source.html#l00027">27</a> of file <a class="el" href="Species_8cpp_source.html">Species.cpp</a>.</p>
+
+<p>References <a class="el" href="Species_8h_source.html#l00117">chem::Species::_rspecies</a>, <a class="el" href="RSpecies_8h_source.html#l00069">chem::RSpecies::_signal</a>, <a class="el" href="Species_8h_source.html#l00235">chem::Species::isSignaling()</a>, and <a class="el" href="Species_8h_source.html#l00239">chem::Species::startSignaling()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a5e8aedfe4c4b5e08fb0ee672c3d80ace"></a>
 <div class="memitem">
 <div class="memproto">
@@ -402,7 +453,7 @@ Friends</h2></td></tr>
 
 <p>References <a class="el" href="Species_8h_source.html#l00116">chem::Species::_molecule</a>.</p>
 
-<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00156">chem::Compartment::addSpecies()</a>, <a class="el" href="Compartment_8h_source.html#l00133">chem::Compartment::addSpeciesUnique()</a>, and <a class="el" href="Compartment_8h_source.html#l00183">chem::Compartment::setDiffusionRate()</a>.</p>
+<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00170">chem::Compartment::addSpecies()</a>, <a class="el" href="Compartment_8h_source.html#l00147">chem::Compartment::addSpeciesUnique()</a>, and <a class="el" href="Compartment_8h_source.html#l00205">chem::Compartment::setDiffusionRate()</a>.</p>
 
 </div>
 </div>
@@ -543,6 +594,30 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a05fbe0a05f028beb1bb729f19d44a56a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="el" href="classchem_1_1Species.html#a05fbe0a05f028beb1bb729f19d44a56a">chem::Species::getUpperLimitForN</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline, inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return the upper limit for the copy number of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+
+<p>Definition at line <a class="el" href="Species_8h_source.html#l00224">224</a> of file <a class="el" href="Species_8h_source.html">Species.h</a>.</p>
+
+<p>References <a class="el" href="Species_8h_source.html#l00117">chem::Species::_rspecies</a>, and <a class="el" href="RSpecies_8h_source.html#l00107">chem::RSpecies::getUpperLimitForN()</a>.</p>
+
+<p>Referenced by <a class="el" href="Species_8h_source.html#l00172">chem::Species::operator=()</a>, and <a class="el" href="Species_8h_source.html#l00145">chem::Species::Species()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a6ddddc5be2b0e4427486f80a891879b3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -562,6 +637,30 @@ Friends</h2></td></tr>
 <p>References <a class="el" href="Species_8h_source.html#l00118">chem::Species::_parent</a>.</p>
 
 <p>Referenced by <a class="el" href="Species_8cpp_source.html#l00035">chem::Species::getRoot()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa412f592e88600b48e3df591fc4cd655"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classchem_1_1Species.html#aa412f592e88600b48e3df591fc4cd655">chem::Species::isSignaling</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline, inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return true if this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> emits signals on copy number change. </p>
+
+<p>Definition at line <a class="el" href="Species_8h_source.html#l00235">235</a> of file <a class="el" href="Species_8h_source.html">Species.h</a>.</p>
+
+<p>References <a class="el" href="Species_8h_source.html#l00117">chem::Species::_rspecies</a>, and <a class="el" href="RSpecies_8h_source.html#l00220">chem::RSpecies::isSignaling()</a>.</p>
+
+<p>Referenced by <a class="el" href="Species_8cpp_source.html#l00027">chem::Species::connect()</a>.</p>
 
 </div>
 </div>
@@ -662,7 +761,54 @@ Friends</h2></td></tr>
 
 <p>References <a class="el" href="Species_8h_source.html#l00118">chem::Species::_parent</a>.</p>
 
-<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00156">chem::Compartment::addSpecies()</a>, and <a class="el" href="Compartment_8h_source.html#l00133">chem::Compartment::addSpeciesUnique()</a>.</p>
+<p>Referenced by <a class="el" href="Compartment_8h_source.html#l00170">chem::Compartment::addSpecies()</a>, and <a class="el" href="Compartment_8h_source.html#l00147">chem::Compartment::addSpeciesUnique()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2d3d9f6e7c7d9c7bdd87ff5373a7d08c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classchem_1_1Species.html#a2d3d9f6e7c7d9c7bdd87ff5373a7d08c">chem::Species::startSignaling</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline, inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the signaling behavior of this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a> Gillespie-like simulation algorithm) </p>
+
+<p>Definition at line <a class="el" href="Species_8h_source.html#l00239">239</a> of file <a class="el" href="Species_8h_source.html">Species.h</a>.</p>
+
+<p>References <a class="el" href="Species_8h_source.html#l00117">chem::Species::_rspecies</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00079">chem::RSpecies::startSignaling()</a>.</p>
+
+<p>Referenced by <a class="el" href="Species_8cpp_source.html#l00027">chem::Species::connect()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9d34195d05f3e35e00dd20892ff7393b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classchem_1_1Species.html#a9d34195d05f3e35e00dd20892ff7393b">chem::Species::stopSignaling</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline, inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Destroy the signal associated with this <a class="el" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>. </p>
+<dl class="section note"><dt>Note:</dt><dd>To start signaling again, makeSignaling(...) needs to be called </dd></dl>
+
+<p>Definition at line <a class="el" href="Species_8h_source.html#l00243">243</a> of file <a class="el" href="Species_8h_source.html">Species.h</a>.</p>
+
+<p>References <a class="el" href="Species_8h_source.html#l00117">chem::Species::_rspecies</a>, and <a class="el" href="RSpecies_8cpp_source.html#l00083">chem::RSpecies::stopSignaling()</a>.</p>
 
 </div>
 </div>
@@ -741,7 +887,7 @@ Friends</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacechem.html">chem</a>      </li>
       <li class="navelem"><a class="el" href="classchem_1_1SpeciesBulk.html">SpeciesBulk</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:54 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:51 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

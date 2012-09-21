@@ -128,11 +128,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00012"></a>00012 
 <a name="l00013"></a>00013 <span class="keyword">using namespace </span>chem;
 <a name="l00014"></a>00014     
-<a name="l00015"></a><a class="code" href="classchem_1_1Composite.html#a65464170b82b4531efe620e23e68ea12">00015</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a65464170b82b4531efe620e23e68ea12">Composite::apply</a> (<a class="code" href="classchem_1_1Visitor.html">Visitor</a> &amp;v) {
-<a name="l00016"></a>00016     <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1Visitor.html#a3a148d3144ed2ef25972509a6a594d1a">visit</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
+<a name="l00015"></a><a class="code" href="classchem_1_1Composite.html#a58123ab346f6621a187bebe456e383ea">00015</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a58123ab346f6621a187bebe456e383ea" title="Implements the apply() method of the Component class by recursively applying it to itself and all its...">Composite::apply</a> (<a class="code" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> &amp;v) {
+<a name="l00016"></a>00016     <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1Visitor.html#a710015ef735e109c812edbb653d6d598" title="When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...">visit</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
 <a name="l00017"></a>00017     <span class="keywordflow">if</span>(!res_self)
 <a name="l00018"></a>00018         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00019"></a>00019     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a>()) {
+<a name="l00019"></a>00019     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
 <a name="l00020"></a>00020         <span class="keywordtype">bool</span> res_child = c-&gt;apply(v);
 <a name="l00021"></a>00021         <span class="keywordflow">if</span>(!res_child)
 <a name="l00022"></a>00022             <span class="keywordflow">return</span> <span class="keyword">false</span>;
@@ -140,24 +140,74 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00024"></a>00024     <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00025"></a>00025 }
 <a name="l00026"></a>00026 
-<a name="l00027"></a><a class="code" href="classchem_1_1Composite.html#ac0ef45069901807e72d478ec59736ee4">00027</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#ac0ef45069901807e72d478ec59736ee4">Composite::apply_if</a> (<a class="code" href="classchem_1_1ConditionalVisitor.html">ConditionalVisitor</a> &amp;v) {
-<a name="l00028"></a>00028     <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1ConditionalVisitor.html#ac5eca1778f8647f7dc85a00489c3d938">visit_if</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
+<a name="l00027"></a><a class="code" href="classchem_1_1Composite.html#a1cb289fb89fefeda7090a44e038e017a">00027</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a1cb289fb89fefeda7090a44e038e017a" title="Implements the apply_if() method of the Component class by recursively applying it to itself and all ...">Composite::apply_if</a> (<a class="code" href="classchem_1_1Visitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predica...">Visitor</a> &amp;v) {
+<a name="l00028"></a>00028     <span class="keywordtype">bool</span> res_self = v.<a class="code" href="classchem_1_1Visitor.html#ad02a683bb0cf97d9df381c3efeb90a06" title="When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true.">visit_if</a>(<span class="keyword">this</span>); <span class="comment">//pre-order</span>
 <a name="l00029"></a>00029     <span class="keywordflow">if</span>(!res_self)
 <a name="l00030"></a>00030         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00031"></a>00031     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970">children</a>()) {
+<a name="l00031"></a>00031     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
 <a name="l00032"></a>00032         <span class="keywordtype">bool</span> res_child = c-&gt;apply_if(v);
 <a name="l00033"></a>00033         <span class="keywordflow">if</span>(!res_child)
 <a name="l00034"></a>00034             <span class="keywordflow">return</span> <span class="keyword">false</span>;
 <a name="l00035"></a>00035     }
 <a name="l00036"></a>00036     <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00037"></a>00037 }
+<a name="l00038"></a>00038 
+<a name="l00039"></a><a class="code" href="classchem_1_1Composite.html#a18937a1f6f84a159e77ba83dd34b2e20">00039</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a58123ab346f6621a187bebe456e383ea" title="Implements the apply() method of the Component class by recursively applying it to itself and all its...">Composite::apply</a> (<a class="code" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v) {
+<a name="l00040"></a>00040     <span class="keywordtype">bool</span> res_self = <a class="code" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">apply_impl</a>(v); <span class="comment">//pre-order</span>
+<a name="l00041"></a>00041     <span class="keywordflow">if</span>(!res_self)
+<a name="l00042"></a>00042         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00043"></a>00043     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
+<a name="l00044"></a>00044         <span class="keywordtype">bool</span> res_child = c-&gt;apply(v);
+<a name="l00045"></a>00045         <span class="keywordflow">if</span>(!res_child)
+<a name="l00046"></a>00046             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00047"></a>00047     }
+<a name="l00048"></a>00048     <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00049"></a>00049 }
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 
+<a name="l00052"></a><a class="code" href="classchem_1_1Composite.html#ab56b1419cbaca60564fa01aacb2c70fd">00052</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a1cb289fb89fefeda7090a44e038e017a" title="Implements the apply_if() method of the Component class by recursively applying it to itself and all ...">Composite::apply_if</a> (<a class="code" href="classchem_1_1SpeciesVisitor.html">SpeciesVisitor</a> &amp;v) {
+<a name="l00053"></a>00053     <span class="keywordtype">bool</span> res_self = <a class="code" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">apply_impl_if</a>(v); <span class="comment">//pre-order</span>
+<a name="l00054"></a>00054     <span class="keywordflow">if</span>(!res_self)
+<a name="l00055"></a>00055         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00056"></a>00056     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
+<a name="l00057"></a>00057         <span class="keywordtype">bool</span> res_child = c-&gt;apply_if(v);
+<a name="l00058"></a>00058         <span class="keywordflow">if</span>(!res_child)
+<a name="l00059"></a>00059             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00060"></a>00060     }
+<a name="l00061"></a>00061     <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00062"></a>00062 }
+<a name="l00063"></a>00063 
+<a name="l00064"></a><a class="code" href="classchem_1_1Composite.html#aa4a608ee92aaaa6e0d63278595707474">00064</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a58123ab346f6621a187bebe456e383ea" title="Implements the apply() method of the Component class by recursively applying it to itself and all its...">Composite::apply</a> (<a class="code" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v) {
+<a name="l00065"></a>00065     <span class="keywordtype">bool</span> res_self = <a class="code" href="classchem_1_1Component.html#a5dcddefb6fd14be8973a35e9787f87ca" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">apply_impl</a>(v); <span class="comment">//pre-order</span>
+<a name="l00066"></a>00066     <span class="keywordflow">if</span>(!res_self)
+<a name="l00067"></a>00067         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00068"></a>00068     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
+<a name="l00069"></a>00069         <span class="keywordtype">bool</span> res_child = c-&gt;apply(v);
+<a name="l00070"></a>00070         <span class="keywordflow">if</span>(!res_child)
+<a name="l00071"></a>00071             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00072"></a>00072     }
+<a name="l00073"></a>00073     <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00074"></a>00074 }
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076 
+<a name="l00077"></a><a class="code" href="classchem_1_1Composite.html#a6103789572ae9c0112eedd71a0d4e37f">00077</a> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1Composite.html#a1cb289fb89fefeda7090a44e038e017a" title="Implements the apply_if() method of the Component class by recursively applying it to itself and all ...">Composite::apply_if</a> (<a class="code" href="classchem_1_1ReactionVisitor.html">ReactionVisitor</a> &amp;v) {
+<a name="l00078"></a>00078     <span class="keywordtype">bool</span> res_self = <a class="code" href="classchem_1_1Component.html#a7e28efdd01ed9613ebb7fad8e3a24b07" title="Applies SpeciesVisitor v to every Species* object directly owned by this node.">apply_impl_if</a>(v); <span class="comment">//pre-order</span>
+<a name="l00079"></a>00079     <span class="keywordflow">if</span>(!res_self)
+<a name="l00080"></a>00080         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00081"></a>00081     <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;c : <a class="code" href="classchem_1_1Composite.html#af4fdad429dc7d8d5014961bbd18c8970" title="Returns a reference to the container of Component children of this node.">children</a>()) {
+<a name="l00082"></a>00082         <span class="keywordtype">bool</span> res_child = c-&gt;apply_if(v);
+<a name="l00083"></a>00083         <span class="keywordflow">if</span>(!res_child)
+<a name="l00084"></a>00084             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00085"></a>00085     }
+<a name="l00086"></a>00086     <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00087"></a>00087 }
 </pre></div></div><!-- contents -->
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="Composite_8cpp.html">Composite.cpp</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>

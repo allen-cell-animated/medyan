@@ -165,10 +165,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00063"></a><a class="code" href="classchem_1_1RSpecies.html#a3a979b9226800417c7aad81a2162fac5">00063</a>         <a class="code" href="classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions...">Species</a>&amp; <a class="code" href="classchem_1_1RSpecies.html#a3a979b9226800417c7aad81a2162fac5" title="reference to the parent Species object">_species</a>; 
 <a name="l00064"></a><a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc">00064</a>         <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc" title="Current copy number of this RSpecies.">_n</a>; 
 <a name="l00065"></a>00065 <span class="preprocessor">#ifdef TRACK_UPPER_COPY_N</span>
-<a name="l00066"></a>00066 <span class="preprocessor"></span>        <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> _ulim; 
+<a name="l00066"></a><a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad">00066</a> <span class="preprocessor"></span>        <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a>; 
 <a name="l00067"></a>00067 <span class="preprocessor">#endif</span>
 <a name="l00068"></a>00068 <span class="preprocessor"></span><span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>        <a class="code" href="namespacechem.html#a6cb4144586460e7b7ae0dffdf08eb57c" title="This is a RSpecies signal object that can be used to signal when the copy number changes.">RSpeciesCopyNChangedSignal</a> *_signal; 
+<a name="l00069"></a><a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200">00069</a> <span class="preprocessor"></span>        <a class="code" href="namespacechem.html#a6cb4144586460e7b7ae0dffdf08eb57c" title="This is a RSpecies signal object that can be used to signal when the copy number changes.">RSpeciesCopyNChangedSignal</a> *<a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>; 
 <a name="l00070"></a>00070 <span class="preprocessor">#endif                                              ///&lt; this RSpecies (usually when a single step of this Reaction occurs)</span>
 <a name="l00071"></a>00071 <span class="preprocessor"></span>        
 <a name="l00072"></a>00072     <span class="keyword">public</span>:
@@ -176,10 +176,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00077"></a>00077         <a class="code" href="classchem_1_1RSpecies.html#a3a979b9226800417c7aad81a2162fac5" title="reference to the parent Species object">_species</a>(parent), <a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc" title="Current copy number of this RSpecies.">_n</a>(n)
 <a name="l00078"></a>00078         {
 <a name="l00079"></a>00079 <span class="preprocessor">#ifdef TRACK_UPPER_COPY_N</span>
-<a name="l00080"></a>00080 <span class="preprocessor"></span>            _ulim = ulim;
+<a name="l00080"></a>00080 <span class="preprocessor"></span>            <a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a> = ulim;
 <a name="l00081"></a>00081 <span class="preprocessor">#endif</span>
 <a name="l00082"></a>00082 <span class="preprocessor"></span><span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
-<a name="l00083"></a>00083 <span class="preprocessor"></span>            _signal=<span class="keyword">nullptr</span>;
+<a name="l00083"></a>00083 <span class="preprocessor"></span>            <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>=<span class="keyword">nullptr</span>;
 <a name="l00084"></a>00084 <span class="preprocessor">#endif</span>
 <a name="l00085"></a>00085 <span class="preprocessor"></span>        }
 <a name="l00086"></a>00086         
@@ -194,9 +194,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00101"></a>00101 <span class="preprocessor">#ifdef TRACK_UPPER_COPY_N        </span>
 <a name="l00102"></a>00102 <span class="preprocessor"></span>
 <a name="l00103"></a>00103 
-<a name="l00104"></a>00104         <span class="keywordtype">void</span> setUpperLimitForN(<a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> ulim) {_ulim=ulim;}
+<a name="l00104"></a><a class="code" href="classchem_1_1RSpecies.html#a13c47ccb546b64f83ac09734c286fcd2">00104</a>         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a13c47ccb546b64f83ac09734c286fcd2" title="Sets the upper limit for the copy number of this RSpecies.">setUpperLimitForN</a>(<a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> ulim) {<a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a>=ulim;}
 <a name="l00105"></a>00105         
-<a name="l00107"></a>00107         <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> getUpperLimitForN()<span class="keyword"> const </span>{<span class="keywordflow">return</span> _ulim;}
+<a name="l00107"></a><a class="code" href="classchem_1_1RSpecies.html#ad233880e065382e598a95e75d401d9eb">00107</a>         <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="code" href="classchem_1_1RSpecies.html#ad233880e065382e598a95e75d401d9eb" title="Return the upper limit for the copy number of this RSpecies.">getUpperLimitForN</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a>;}
 <a name="l00108"></a>00108 <span class="preprocessor">#endif</span>
 <a name="l00109"></a>00109 <span class="preprocessor"></span>        
 <a name="l00112"></a><a class="code" href="classchem_1_1RSpecies.html#ae721e3c649a12e0a81bc6b77afe23f38">00112</a>         <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#ae721e3c649a12e0a81bc6b77afe23f38" title="Increases the copy number by 1.">up</a>() {
@@ -207,7 +207,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00117"></a>00117                 <a class="code" href="classchem_1_1RSpecies.html#a1589cd0e045a084a32dff4a02612d4a3">activateAssocReactantReactions</a>();
 <a name="l00118"></a>00118 <span class="preprocessor">    #endif</span>
 <a name="l00119"></a>00119 <span class="preprocessor"></span><span class="preprocessor">    #ifdef TRACK_UPPER_COPY_N</span>
-<a name="l00120"></a>00120 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc" title="Current copy number of this RSpecies.">_n</a>==_ulim)
+<a name="l00120"></a>00120 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc" title="Current copy number of this RSpecies.">_n</a>==<a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a>)
 <a name="l00121"></a>00121                 <a class="code" href="classchem_1_1RSpecies.html#aff8862396958db832848c94135282f1e">passivateAssocProductReactions</a>();
 <a name="l00122"></a>00122 <span class="preprocessor">    #endif</span>
 <a name="l00123"></a>00123 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
@@ -224,7 +224,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00136"></a>00136                 <a class="code" href="classchem_1_1RSpecies.html#a0c33c29f86ee16b84151bc5f38953076">passivateAssocReactantReactions</a>();
 <a name="l00137"></a>00137 <span class="preprocessor">    #endif</span>
 <a name="l00138"></a>00138 <span class="preprocessor"></span><span class="preprocessor">    #ifdef TRACK_UPPER_COPY_N</span>
-<a name="l00139"></a>00139 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(prev_n == _ulim)
+<a name="l00139"></a>00139 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(prev_n == <a class="code" href="classchem_1_1RSpecies.html#a189084cfe75e004f42a6a27b2c1c09ad" title="Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off.">_ulim</a>)
 <a name="l00140"></a>00140                 <a class="code" href="classchem_1_1RSpecies.html#ab275b0c9fb9352abe35a3bd68f3917fb">activateAssocProductReactions</a>();
 <a name="l00141"></a>00141 <span class="preprocessor">    #endif</span>
 <a name="l00142"></a>00142 <span class="preprocessor"></span><span class="preprocessor">#else</span>
@@ -268,9 +268,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00189"></a>00189                
 <a name="l00190"></a>00190 <span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
 <a name="l00191"></a>00191 <span class="preprocessor"></span>
-<a name="l00192"></a>00192         <span class="keywordtype">void</span> startSignaling();
+<a name="l00192"></a>00192         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a0beefdc1ec28646df87b0690a2d66734" title="Set the signaling behavior of this RSpecies.">startSignaling</a>();
 <a name="l00193"></a>00193         
-<a name="l00196"></a>00196         <span class="keywordtype">void</span> stopSignaling();
+<a name="l00196"></a>00196         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a3519759c28c5d50108753ebe6c67a537" title="Destroy the signal associated with this RSpecies; all associated slots will be destroyed.">stopSignaling</a>();
 <a name="l00197"></a>00197 <span class="preprocessor">#endif</span>
 <a name="l00198"></a>00198 <span class="preprocessor"></span>        
 <a name="l00199"></a>00199     <span class="keyword">public</span>:
@@ -278,20 +278,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00203"></a>00203             assert((<a class="code" href="classchem_1_1RSpecies.html#a7ffda464bbe610c372cac83e6e735023" title="Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call...">_as_reactants</a>.empty() and <a class="code" href="classchem_1_1RSpecies.html#ad4d3712865ed15fd9b581810ffe1b0e7" title="a vector of Reactions where this RSpecies is a Product">_as_products</a>.empty()) &amp;&amp; <span class="stringliteral">&quot;Major bug: RSpecies should not contain Reactions when being destroyed.&quot;</span>);<span class="comment">//Should not throw an exception from a destructor - that would be undefined behavior</span>
 <a name="l00204"></a>00204 <span class="comment">//            std::cout &lt;&lt; &quot;Destructor ~RSpecies() called on ptr=&quot; &lt;&lt; this &lt;&lt; std::endl;</span>
 <a name="l00205"></a>00205 <span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
-<a name="l00206"></a>00206 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(_signal!=<span class="keyword">nullptr</span>)
-<a name="l00207"></a>00207                 <span class="keyword">delete</span> _signal;
+<a name="l00206"></a>00206 <span class="preprocessor"></span>            <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>!=<span class="keyword">nullptr</span>)
+<a name="l00207"></a>00207                 <span class="keyword">delete</span> <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>;
 <a name="l00208"></a>00208 <span class="preprocessor">#endif</span>
 <a name="l00209"></a>00209 <span class="preprocessor"></span>        }
 <a name="l00210"></a>00210         
 <a name="l00211"></a>00211 <span class="preprocessor">#ifdef RSPECIES_SIGNALING</span>
 <a name="l00212"></a>00212 <span class="preprocessor"></span>
 <a name="l00213"></a>00213 
-<a name="l00214"></a>00214         <span class="keyword">inline</span> <span class="keywordtype">void</span> emitSignal(<span class="keywordtype">int</span> delta) {
-<a name="l00215"></a>00215             <span class="keywordflow">if</span>(isSignaling())
+<a name="l00214"></a><a class="code" href="classchem_1_1RSpecies.html#afaee31bbc312ca6fa84a9ffc02457611">00214</a>         <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#afaee31bbc312ca6fa84a9ffc02457611" title="Broadcasts signal indicating that the copy number of this RSpecies has changed This method should usu...">emitSignal</a>(<span class="keywordtype">int</span> delta) {
+<a name="l00215"></a>00215             <span class="keywordflow">if</span>(<a class="code" href="classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8" title="Return true if this RSpecies emits signals on copy number change.">isSignaling</a>())
 <a name="l00216"></a>00216                 (*_signal)(<span class="keyword">this</span>, delta);
 <a name="l00217"></a>00217         }
 <a name="l00218"></a>00218         
-<a name="l00220"></a>00220         <span class="keyword">inline</span> <span class="keywordtype">bool</span> isSignaling()<span class="keyword"> const </span>{<span class="keywordflow">return</span> _signal!=<span class="keyword">nullptr</span>;}
+<a name="l00220"></a><a class="code" href="classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8">00220</a>         <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classchem_1_1RSpecies.html#a652a2d0f305a8ab84305ff1dd1fd41b8" title="Return true if this RSpecies emits signals on copy number change.">isSignaling</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RSpecies.html#acd60296c77857284cd935cb6faaf4200" title="Can be used to broadcast a signal associated with change of n of.">_signal</a>!=<span class="keyword">nullptr</span>;}
 <a name="l00221"></a>00221 <span class="preprocessor">#endif</span>
 <a name="l00222"></a>00222 <span class="preprocessor"></span>        
 <a name="l00224"></a><a class="code" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8">00224</a>         <span class="keyword">inline</span> <a class="code" href="common_8h.html#a3503f321fd36304ee274141275cca586">species_copy_t</a> <a class="code" href="classchem_1_1RSpecies.html#a5a96cf2a67af375c6471dfa5a21990f8" title="Return the current copy number of this RSpecies.">getN</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> <a class="code" href="classchem_1_1RSpecies.html#a60e53ebfe464923452c54322dfd479dc" title="Current copy number of this RSpecies.">_n</a>;}
@@ -319,9 +319,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00261"></a>00261 
 <a name="l00262"></a>00262 <span class="preprocessor">#ifdef BOOST_MEM_POOL</span>
 <a name="l00263"></a>00263 <span class="preprocessor"></span>
-<a name="l00264"></a>00264         <span class="keywordtype">void</span>* <a class="code" href="classchem_1_1RSpecies.html#a8f8eeb52d60143c6fb7b7f87eee4f55c" title="Advanced memory management.">operator new</a>(std::size_t size);
+<a name="l00264"></a>00264         <span class="keywordtype">void</span>* operator new(std::size_t size);
 <a name="l00265"></a>00265         
-<a name="l00266"></a>00266         <span class="keywordtype">void</span> <a class="code" href="classchem_1_1RSpecies.html#a59eeac181b75f878e4804fb2ce57dbb2">operator delete</a>(<span class="keywordtype">void</span>* ptr) noexcept;
+<a name="l00266"></a>00266         <span class="keywordtype">void</span> operator delete(<span class="keywordtype">void</span>* ptr) noexcept;
 <a name="l00267"></a>00267 <span class="preprocessor">#endif</span>
 <a name="l00268"></a>00268 <span class="preprocessor"></span>    };
 <a name="l00269"></a>00269     
@@ -336,7 +336,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="RSpecies_8h.html">RSpecies.h</a>      </li>
 
-    <li class="footer">Generated on Mon Sep 17 2012 08:48:53 for CytoSim by
+    <li class="footer">Generated on Thu Sep 20 2012 22:48:50 for CytoSim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.0 </li>
    </ul>
