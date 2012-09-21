@@ -17,10 +17,10 @@
 #include "Signaling.h"
 
 #include "Composite.h"
-#include "VisitorConcrete.h"
 
 #include "CompartmentContainer.h"
 
+#include "Visitor.h"
 
 using namespace std;
 using namespace chem;

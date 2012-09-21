@@ -143,7 +143,6 @@
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
-		F7A1DC0F157AF3AD004C738D /* VisitorConcrete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisitorConcrete.h; sourceTree = "<group>"; };
 		F7A77DAC15ACAC5700076046 /* example_composite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_composite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A77DAE15ACACA300076046 /* example_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example_composite.cpp; sourceTree = "<group>"; };
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
@@ -290,7 +289,6 @@
 				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
 				F7A1DC0D157AD36A004C738D /* Visitor.h */,
-				F7A1DC0F157AF3AD004C738D /* VisitorConcrete.h */,
 			);
 			path = CytoSim;
 			sourceTree = "<group>";
