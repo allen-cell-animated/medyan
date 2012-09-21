@@ -19,66 +19,95 @@
 #include "Composite.h"
 #include "VisitorConcrete.h"
 
+#include "CompartmentContainer.h"
+
+
 using namespace std;
 using namespace chem;
 
 int main(int argc, const char * argv[])
 {
-    auto C = make_unique<Composite>();
-    cout << C->getFullName() << endl;
-    C->pushBackSpeciesUnique(make_unique<SpeciesBulk>("G-Actin",42));
-    C->pushBackSpecies<SpeciesBulk>("Profilin",31);
     
-    auto a1 = C->species(0);
-    auto a2 = C->species(1);
+    CompartmentCubic<3> CC1;
+    vector<float> sides{100.0,100.0,100.0};
+    CC1.setSides(sides.begin());
+    vector<float> coords{12.3,1.2,22.1};
+    CC1.setCoords(coords.begin());
+    CC1.printSelf();
+    cout << endl << endl;
     
-    cout << *a1 << "\n" << *a2 << endl;
+    const int NDIM =3;
+    const int NGRID = 4;
+    CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
+    Compartment &Cproto = ccv.getProtoCompartment();
+    Species *M1 = Cproto.addSpecies("Myosin",1U);
+    Cproto.setDiffusionRate(M1,2000);
+    Species *M2 = Cproto.addSpecies("Fascin",6U);
+    Cproto.setDiffusionRate(M2,2000);
+    ReactionBase *RM1M2 = Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
+    ReactionBase *RM2M1 = Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
+    ccv.initialize();
+    //ccv.printSelf();
+    cout << "Num of Species: " << ccv.countSpecies() << endl;
+    cout << "Num of Reactions: " << ccv.countReactions() << endl;
     
-    for(auto &s: C->species()){
-        cout << s->getFullName() << s->getN() << endl; 
-        cout << &s << endl;
-    }
+    int counter;
+
+    VisitorLambda vl1;
+    vl1.setLambda([&counter](Component *c){
+        //c->printSelf();
+        ++counter;
+        return true;});
     
-    cout << "\n\n\n";
+    ccv.apply(vl1);
+    cout << "VisitorLambda: visited " << counter << " nodes" << endl;
     
-    auto D = make_unique<Composite>();
-    D->pushBackSpecies<SpeciesBulk>("ATP",3300);
-    C->addChild(std::move(D));
+    counter=0;
+    VisitorLambda cvl1;
+    cvl1.setLambda([&counter](Component *c)
+    {
+        counter+=c->numberOfSpecies();
+        return true;
+    });
+    ccv.apply_if(cvl1);
+    cout << "ConditionalVisitorLambda: counted " << counter << " Species" << endl;
+
     
-    Composite *F = C->getRoot();
-    F->pushBackSpecies<SpeciesBulk>("Arp2/3",22);
+    counter=0;
+    SpeciesVisitorLambda svl1;
+    svl1.setLambda( [&counter](Species *s){
+        if(counter==23)
+            cout << "Visiting Species: i=" << counter << ", " << s << ", Parent ptr=" << s->getParent() << endl;
+        ++counter;
+        return true;
+    });
+    ccv.apply(svl1);
     
-    
-//    auto pf = make_unique<ProtoFilament>("FA"); //F-Actin
-//    pf->growPlusEnd(10);
-//    C->addChild(std::move(pf));
-    
-    for(auto &s: F->species()){
-        cout << s->getFullName() << s->getN() << endl; 
-        cout << &s << endl;
-    }
-    
-    cout << "F has " << F->countSpecies() << " species" << endl;
-    
-    cout << "F is of class Component? " << boolalpha << isSame<Component>(*F) << endl; 
-    cout << "F is of class Composite? " << boolalpha << isSame<Composite>(*F) << endl; 
-    cout << "F is of class Composite? " << boolalpha << isSame<Species>(*F) << endl; 
-    
-    ConcreteVisitor cv;
-    F->apply(cv);
-    
-    FindFirstSpeciesVisitor ffsv("Arp2/3");
-    F->apply(ffsv);
-    
-    CompositeVisitor comp_vis;
-    F->apply_if(comp_vis);
-    //    ConcreteConditionalVisitor ccv([](Component *c){return c->hasChildren() ? true : false;});
-    
-    cout << "\n";
-    
-//    ProtoFilamentVisitor pf_vis;
-//    F->apply_if(pf_vis);
-    
+    cout << endl;
+
+    counter=0;
+    svl1.setLambdaPred([](Species *s){return s->getN()==6;});
+    svl1.setLambda( [&counter](Species *s){
+        if(counter%10==0){
+            cout << "Visiting Species: i=" << counter << ", " << s << ", Parent ptr=" << s->getParent() << ", " << *s << endl;
+        }
+        ++counter;
+        return true;
+    });
+    ccv.apply_if(svl1);
+
+    counter=0;
+    ReactionVisitorLambda rvl1;
+    rvl1.setLambdaPred([](ReactionBase *r){return r->getRate()<50.0;});
+    rvl1.setLambda( [&counter](ReactionBase *r){
+        if(counter%1==0){
+            cout << "Visiting Reaction: i=" << counter << ", " << r << ", Parent ptr=" << r->getParent() << ",\n" << *r;
+        }
+        ++counter;
+        return true;
+    });
+    ccv.apply_if(rvl1);
+
     
     cout << "Main exited..." << endl;
     return 0;

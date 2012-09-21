@@ -25,7 +25,7 @@ namespace chem {
         return v.visit(this);
     }
     
-    bool Component::apply_if (ConditionalVisitor &v) {
+    bool Component::apply_if (Visitor &v) {
         return v.visit_if(this);
     }
 

@@ -15,43 +15,46 @@
 
 namespace chem {
 
-    
+/// ConcreteVisitor is an example visitor, following the regular Visitor pattern
 class ConcreteVisitor : public Visitor {
-public:
-    virtual bool visit(Component *c) {
+protected:
+    virtual bool visitImpl(Component *c) override {
         std::cout << "Visiting, " << c->getFullName() << ", which has " 
         << c->countSpecies() << ", Species overall. " << std::endl;
         return true;
     }
 };
 
-
-class FindFirstSpeciesVisitor : public Visitor {
-private: 
-    std::string _name;
-public:
-    FindFirstSpeciesVisitor(const std::string &name) : _name(name) {}
-    virtual bool visit(Component *c) {
-        Composite *C = dynamic_cast<Composite*>(c);
-        for(auto &s : C->species()){
-            std::cout << "Visiting Species:" << "\n" << (*s) << std::endl;
-            if(s->getName() == _name){
-                std::cout << "Found Species " << (*s) << std::endl;
-                return false;
-            }
-        }
-        return true;
-    }
-};
+///// FindFirstSpeciesVisitor is an example visitor, which is propagated through the
+///// Composite hierarchy until the first Composite node is found which contains Species
+///// with a certain name
+//class FindFirstSpeciesVisitor : public Visitor {
+//private: 
+//    std::string _name;
+//public:
+//    FindFirstSpeciesVisitor(const std::string &name) : _name(name) {}
+//protected:
+//    virtual bool visitImpl(Component *c) override {
+//        Composite *C = dynamic_cast<Composite*>(c);
+//        for(auto &s : C->species()){
+//            std::cout << "Visiting Species:" << "\n" << (*s) << std::endl;
+//            if(s->getName() == _name){
+//                std::cout << "Found Species " << (*s) << std::endl;
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+//};
     
-class CompositeVisitor : public ConditionalVisitor {
-public:
-    virtual bool visit(Component *c) {
+class CompositeVisitor : public Visitor {
+protected:
+    virtual bool visitImpl(Component *c) override {
         std::cout << "Visiting, " << c->getFullName() << ", which has " 
         << c->countSpecies() << ", Species overall. " << std::endl;
         return true;
     }
-    virtual bool pred(Component *c) {
+    virtual bool predImpl(Component *c) override {
         return isSame<Composite>(*c);
     }
 

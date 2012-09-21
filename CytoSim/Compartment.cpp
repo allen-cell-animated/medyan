@@ -7,6 +7,7 @@
 //
 
 #include "Compartment.h"
+#include "Visitor.h"
 
 namespace chem {
 
@@ -24,6 +25,43 @@ namespace chem {
         // Note that _neighbours is not copied
     }
     
+    bool Compartment::apply_impl(SpeciesVisitor &v)
+    {
+        for(auto &s : _species.species())
+        {
+            v.visit(s.get());
+        }
+        return true;
+    }
+    
+    bool Compartment::apply_impl_if(SpeciesVisitor &v)
+    {
+        for(auto &s : _species.species())
+        {
+            v.visit_if(s.get());
+        }
+        return true;
+    }
+    
+    bool Compartment::apply_impl(ReactionVisitor &v)
+    {
+        for(auto &r : _internal_reactions.reactions())
+        {
+            v.visit(r.get());
+        }
+        return true;
+    }
+    
+    bool Compartment::apply_impl_if(ReactionVisitor &v)
+    {
+        for(auto &r : _internal_reactions.reactions())
+        {
+            v.visit_if(r.get());
+        }
+        return true;
+    }
+
+
     void Compartment::generateDiffusionReactions()
     {
         for(auto &sp_this : _species.species()) {
