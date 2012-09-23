@@ -96,6 +96,10 @@ namespace chem {
         /// Return a std::string indicating the full name of this node (presumably used mainly for debugging)
         virtual std::string getFullName() const {return "Component";};
         
+        /// Return the total number of nodes contained under this node's hieararchy
+        /// @note This is a recursive call, and all nodes under this node are visited.
+        virtual size_t countDescendents() const {return 0;}
+
         /// Return the number of Species contained under this node's hieararchy
         /// @note This is a recursive call, and all nodes under this node are visited.
         virtual size_t countSpecies() const {return 0;}

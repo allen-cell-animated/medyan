@@ -1,8 +1,11 @@
 Goals for Sep 2012
 --------
 Composite:
-x. Document all composite objects
-x. Write tests for composites
+x. Document component/composite (DONE)
+x. Write tests for composites (DONE)
+x. Write tests for visitors
+x. Document compartment and related classes
+x. Write tests for compartment and related classes
 x. Implement an iterator for composites
 
 Reactions:

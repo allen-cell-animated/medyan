@@ -95,6 +95,16 @@ public:
     /// belonging to children nodes, etc.
     virtual size_t numberOfSpecies () const override {return 0;}
 
+    /// Return the total number of nodes contained under this node's hieararchy
+    /// @note This is a recursive call, and all nodes under this node are visited.
+    virtual size_t countDescendents() const override {
+        size_t sum = numberOfChildren();
+        for (auto &c : children())
+            sum+=c->numberOfChildren();
+        return sum;
+    }
+
+    
     /// Returns the number of Species being managed by this node and its descendent nodes
     virtual size_t countSpecies() const override {
         size_t sum = 0;
