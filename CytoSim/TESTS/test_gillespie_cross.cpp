@@ -33,8 +33,6 @@ using namespace boost::accumulators;
 using namespace std;
 using namespace chem;
 
-
-
 vector<double> A1_A8_Network (int method)
 {
     const long long int N_SAMPLE_POINTS=pow(10,5);
@@ -163,6 +161,8 @@ TEST(GillespieCrossTest, A1_A8_Network) {
     }
     
 }
+
+
 
 #endif
 

@@ -11,7 +11,6 @@
 		F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */; };
 		F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */; };
 		F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F701749F15DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp */; };
-		F703AFD9160CAF73006C1AC6 /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F703AFD0160CAEA5006C1AC6 /* test_visitor.cpp */; };
 		F7123D8315752172008F64D1 /* example_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7123D701575211E008F64D1 /* example_misc.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71EAF1915B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
@@ -23,7 +22,6 @@
 		F737B381160961B1001722DD /* ReactionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F737B37E160961B1001722DD /* ReactionBase.h */; };
 		F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
 		F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
-		F7531BAD160E37E70015418A /* test_species_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7531BAC160E37E70015418A /* test_species_container.cpp */; };
 		F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
 		F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
 		F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F76148D015F79CE800587017 /* CompartmentContainer.h */; };
@@ -41,6 +39,16 @@
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
+		F7A8EEA3193F891600A52210 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7A8EEA2193F891600A52210 /* gtest.framework */; };
+		F7A8EEAD193F8C4900A52210 /* test_gillespie_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */; };
+		F7A8EEAE193F91A600A52210 /* test_species_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7531BAC160E37E70015418A /* test_species_container.cpp */; };
+		F7A8EEAF193F91A600A52210 /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F703AFD0160CAEA5006C1AC6 /* test_visitor.cpp */; };
+		F7A8EEB0193F91A600A52210 /* test_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F703AFCD160C8E7A006C1AC6 /* test_composite.cpp */; };
+		F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E973D1565A79A002BDF16 /* test_species.cpp */; };
+		F7A8EEB2193F91A600A52210 /* test_reactions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E97411565B01A002BDF16 /* test_reactions.cpp */; };
+		F7A8EEB3193F91A600A52210 /* test_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7672B5915B1B278000D412B /* test_gillespie.cpp */; };
+		F7A8EEB4193F91A600A52210 /* test_nrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7DB0B2215D81A55009A8650 /* test_nrm.cpp */; };
+		F7A8EEB5193F91A600A52210 /* test_simple_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */; };
 		F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F7B99A6E15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */; };
 		F7B99A6F15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */; };
@@ -144,6 +152,7 @@
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
 		F7A77DAC15ACAC5700076046 /* example_composite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_composite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A77DAE15ACACA300076046 /* example_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example_composite.cpp; sourceTree = "<group>"; };
+		F7A8EEA2193F891600A52210 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = "../googletest-read-only/gtest.framework"; sourceTree = "<group>"; };
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
 		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeciesContainer.cpp; sourceTree = "<group>"; };
@@ -195,6 +204,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7A8EEA3193F891600A52210 /* gtest.framework in Frameworks */,
 				F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,6 +239,7 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
+				F7A8EEA2193F891600A52210 /* gtest.framework */,
 				F763ED091548FFC70069DA61 /* CytoSim */,
 				F763ED071548FFC70069DA61 /* Products */,
 			);
@@ -520,8 +531,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F703AFD9160CAF73006C1AC6 /* test_visitor.cpp in Sources */,
-				F7531BAD160E37E70015418A /* test_species_container.cpp in Sources */,
+				F7A8EEAE193F91A600A52210 /* test_species_container.cpp in Sources */,
+				F7A8EEAF193F91A600A52210 /* test_visitor.cpp in Sources */,
+				F7A8EEB0193F91A600A52210 /* test_composite.cpp in Sources */,
+				F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */,
+				F7A8EEB2193F91A600A52210 /* test_reactions.cpp in Sources */,
+				F7A8EEB3193F91A600A52210 /* test_gillespie.cpp in Sources */,
+				F7A8EEB4193F91A600A52210 /* test_nrm.cpp in Sources */,
+				F7A8EEB5193F91A600A52210 /* test_simple_gillespie.cpp in Sources */,
+				F7A8EEAD193F8C4900A52210 /* test_gillespie_cross.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,12 +632,18 @@
 		F763ED111548FFC70069DA61 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = "-std=c++11";
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+				);
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -629,13 +653,19 @@
 		F763ED121548FFC70069DA61 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = "-std=c++11";
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+				);
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -645,8 +675,10 @@
 		F771ADBD15655CD70010B123 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
@@ -657,8 +689,10 @@
 		F771ADBE15655CD70010B123 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				OTHER_CFLAGS = "-std=c++11";
@@ -699,17 +733,22 @@
 		F7C7A0F115FFBA3D00DF9838 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/jameskomianos/Code/googletest-read-only",
+				);
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
+					"/Users/jameskomianos/Code/googletest-read-only/include",
 					/usr/local/include,
-					"/usr/local/gcc47/gtest-1.6.0/include",
-					/Users/papoian/Dropbox/codes/CytoSim/CytoSim,
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"/Users/jameskomianos/Code/googletest-read-only/",
 					"/usr/local/lib/**",
-					"/usr/local/gcc47/gtest-1.6.0/lib/.libs/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
@@ -725,18 +764,23 @@
 		F7C7A0F215FFBA3D00DF9838 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/jameskomianos/Code/googletest-read-only",
+				);
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_VERSION = com.apple.compilers.llvm.gcc47;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
+					"/Users/jameskomianos/Code/googletest-read-only/include",
 					/usr/local/include,
-					"/usr/local/gcc47/gtest-1.6.0/include",
-					/Users/papoian/Dropbox/codes/CytoSim/CytoSim,
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"/Users/jameskomianos/Code/googletest-read-only/",
 					"/usr/local/lib/**",
-					"/usr/local/gcc47/gtest-1.6.0/lib/.libs/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
 				OTHER_LDFLAGS = (
