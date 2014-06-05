@@ -296,24 +296,24 @@ namespace chem {
     };
 
     template <size_t NDIM>
-    class CompartmentCubic : public Compartment {
+    class CompartmentNDim : public Compartment {
     private:
         std::array<float, NDIM> _coords;
         std::array<float, NDIM> _sides;
     public:
-        CompartmentCubic() : Compartment() {};
+        CompartmentNDim() : Compartment() {};
 
-        CompartmentCubic(const CompartmentCubic &other) : Compartment(other), _sides(other._sides) {}
+        CompartmentNDim(const CompartmentNDim &other) : Compartment(other), _sides(other._sides) {}
         
-        CompartmentCubic& operator=(const CompartmentCubic &other) {
+        CompartmentNDim& operator=(const CompartmentNDim &other) {
             this->Compartment::operator=(other);
             _sides=other._sides;
         }
         
-        virtual ~CompartmentCubic() noexcept {
+        virtual ~CompartmentNDim() noexcept {
         }
 
-        virtual std::string getFullName() const {return "CompartmentCubic<"+std::to_string(NDIM)+">";};
+        virtual std::string getFullName() const {return "CompartmentNDim<"+std::to_string(NDIM)+">";};
         
         void setSideLength(size_t i, float value) {_sides[i]=value;}
         

@@ -140,7 +140,7 @@ int main(int argc, const char * argv[])
     cout << "Testing equality operator:" << endl;
     cout << boolalpha << ((*C1)==(*C4)) << endl;
     
-    CompartmentCubic<3> CC1;
+    CompartmentNDim<3> CC1;
     vector<float> sides{100.0,100.0,100.0};
     CC1.setSides(sides.begin());
     vector<float> coords{12.3,1.2,22.1};

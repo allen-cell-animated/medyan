@@ -28,7 +28,7 @@ using namespace chem;
 int main(int argc, const char * argv[])
 {
     
-    CompartmentCubic<3> CC1;
+    CompartmentNDim<3> CC1;
     vector<float> sides{100.0,100.0,100.0};
     CC1.setSides(sides.begin());
     vector<float> coords{12.3,1.2,22.1};

@@ -2,8 +2,8 @@ Goals for June 2014
 --------
 
 Compartment:
-1. Make a general nD compartment
-2. Make a general nD compartment grid (container)
+1. Make a general nD compartment (DONE)
+2. Make a general nD compartment grid (container) (DONE)
 3. Tests for compartments
 
 
@@ -20,11 +20,11 @@ Reactions needed: (seperate tests for each reaction!)
 2. Somehow implement retrograde flow
 2. Write tests and documentation for filopodial simulations
 
-Composite:
-x. Write tests for visitors
+Testing/Documentation:
+x. Write tests for visitors (use example_composite)
 x. Document compartment and related classes
 x. Write tests for compartment and related classes
-x. Implement an iterator for composites
+x. Document reactionContainer, tests
 
 
 --------

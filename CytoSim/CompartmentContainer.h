@@ -18,7 +18,7 @@ namespace chem {
     template <size_t NDIM>
     class CompartmentsSimpleGrid : public Composite {
     private:
-        Compartment _prototype_compartment;
+        CompartmentNDim<NDIM> _prototype_compartment;
         std::vector<size_t> _grid;
         bool _is_initialized;
     public:
@@ -39,6 +39,10 @@ namespace chem {
                 length*=x;
             }
             
+            //TODO
+            //Initialize coords and sizes here!!!!
+            
+            
             for(size_t i=0; i<length; ++i)
             {
                 addChild(std::unique_ptr<Component>(new Compartment()));
@@ -46,8 +50,7 @@ namespace chem {
             
             _is_initialized=true;
 
-            if(NDIM==3)
-                generateConnections3D();
+            generateConnections();
             
             for(auto &c : children())
             {
@@ -101,7 +104,7 @@ namespace chem {
         Compartment& getProtoCompartment() {return _prototype_compartment;}
         const Compartment& getProtoCompartment() const {return _prototype_compartment;}
         
-        void generateConnections3D();
+        void generateConnections();
         
         virtual void addChemSimReactions(ChemSim &chem)
         {
