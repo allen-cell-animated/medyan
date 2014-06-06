@@ -28,7 +28,7 @@ using namespace chem;
 int main(int argc, const char * argv[])
 {
     
-    CompartmentNDim<3> CC1;
+    CompartmentSpatial<3> CC1;
     vector<float> sides{100.0,100.0,100.0};
     CC1.setSides(sides.begin());
     vector<float> coords{12.3,1.2,22.1};
@@ -38,12 +38,14 @@ int main(int argc, const char * argv[])
     
     const int NDIM =3;
     const int NGRID = 4;
-    CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
-    Compartment &Cproto = ccv.getProtoCompartment();
+    CompartmentGrid<NDIM> ccv{NGRID, NGRID, NGRID};
+    CompartmentSpatial<NDIM> &Cproto = ccv.getProtoCompartment();
     Species *M1 = Cproto.addSpecies("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
     Species *M2 = Cproto.addSpecies("Fascin",6U);
     Cproto.setDiffusionRate(M2,2000);
+    Cproto.setSides(sides.begin());
+    
     ReactionBase *RM1M2 = Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
     ReactionBase *RM2M1 = Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
     ccv.initialize();

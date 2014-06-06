@@ -1,12 +1,6 @@
 Goals for June 2014
 --------
 
-Compartment:
-1. Make a general nD compartment (DONE)
-2. Make a general nD compartment grid (container) (DONE)
-3. Tests for compartments
-
-
 Filopodia:
 Reactions needed: (seperate tests for each reaction!)
     -Polymerization/Depolymerization at barbed end
@@ -22,8 +16,6 @@ Reactions needed: (seperate tests for each reaction!)
 
 Testing/Documentation:
 x. Write tests for visitors (use example_composite)
-x. Document compartment and related classes
-x. Write tests for compartment and related classes
 x. Document reactionContainer, tests
 
 

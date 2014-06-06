@@ -140,7 +140,7 @@ int main(int argc, const char * argv[])
     cout << "Testing equality operator:" << endl;
     cout << boolalpha << ((*C1)==(*C4)) << endl;
     
-    CompartmentNDim<3> CC1;
+    CompartmentSpatial<3> CC1;
     vector<float> sides{100.0,100.0,100.0};
     CC1.setSides(sides.begin());
     vector<float> coords{12.3,1.2,22.1};
@@ -151,15 +151,18 @@ int main(int argc, const char * argv[])
     auto chk_ccv_1 = chrono::high_resolution_clock::now();
     const int NDIM =3;
     const int NGRID = 50;
-    CompartmentsSimpleGrid<NDIM> ccv{NGRID, NGRID, NGRID};
-    Compartment &Cproto = ccv.getProtoCompartment();
+    CompartmentGrid<NDIM> ccv{NGRID, NGRID, NGRID};
+    CompartmentSpatial<NDIM> &Cproto = ccv.getProtoCompartment();
     Species *M1 = Cproto.addSpecies("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
     Species *M2 = Cproto.addSpecies("Fascin",6U);
     Cproto.setDiffusionRate(M2,2000);
+    Cproto.setSides(sides.begin());
+    
     ReactionBase *RM1M2 = Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
     ReactionBase *RM2M1 = Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
     ccv.initialize();
+    
     //ccv.printSelf();
     cout << "Num of Species: " << ccv.countSpecies() << endl;
     cout << "Num of Reactions: " << ccv.countReactions() << endl;
@@ -206,7 +209,7 @@ int main(int argc, const char * argv[])
     
     auto chk_ccv_2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_ccv(chk_ccv_2-chk_ccv_1); // duration in seconds
-    cout << "Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
+    cout << "Main Total Elapsed for CompartmentGrid<NDIM>...: dt=" << elapsed_ccv.count() << endl;
     
     cout << "Size of RSpecies: " << sizeof(M1->getRSpecies()) << endl;
     cout << "Size of ReactionBase: " << sizeof(*RM1M2) << endl;

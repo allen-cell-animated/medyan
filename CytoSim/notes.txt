@@ -9,7 +9,7 @@ Num of Species: 250000
 Num of Reactions: 1720000
 
 Main Elapsed for ChemNRMImpl::run(...): dt=72.9795
-Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=87.1045
+Main Total Elapsed for CompartmentGrid<NDIM>...: dt=87.1045
 
 %%%% After introducing boost::pool; signaling is turned on for Reactions and off for Species %%%%
 NUM_OF_STEP = pow(10,7);
@@ -17,7 +17,7 @@ Num of Species: 250000
 Num of Reactions: 1720000
 
 Main Elapsed for ChemNRMImpl::run(...): dt=61.8113
-Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=72.5796
+Main Total Elapsed for CompartmentGrid<NDIM>...: dt=72.5796
 
 
 %%%% After reworking Reactions to a hieararchy; signaling is turned off %%%%
@@ -26,7 +26,7 @@ Num of Species: 250000
 Num of Reactions: 1720000
 
 Main Elapsed for ChemNRMImpl::run(...): dt=55.3242
-Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=65.3534
+Main Total Elapsed for CompartmentGrid<NDIM>...: dt=65.3534
 
 
 %%%% As above, but on MacbBook Pro Retina %%%%
@@ -35,7 +35,7 @@ Num of Species: 250000
 Num of Reactions: 1720000
 
 Main Elapsed for ChemNRMImpl::run(...): dt=41.94436
-Main Total Elapsed for CompartmentsSimpleGrid<NDIM>...: dt=49.1104
+Main Total Elapsed for CompartmentGrid<NDIM>...: dt=49.1104
 
 ##############################################################
 

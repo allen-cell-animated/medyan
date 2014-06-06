@@ -14,7 +14,6 @@ namespace chem {
     
     Compartment& Compartment::operator=(const Compartment &other)
     {
-        //            swap(*this, other);
         _species.clear();
         _internal_reactions.clear();
         _diffusion_reactions.clear();
