@@ -37,11 +37,10 @@
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
+		F7A202D8194271C7005A9B5C /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7A202D7194271C7005A9B5C /* gtest.framework */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
-		F7A8EEA3193F891600A52210 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7A8EEA2193F891600A52210 /* gtest.framework */; };
 		F7A8EEAD193F8C4900A52210 /* test_gillespie_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */; };
-		F7A8EEAE193F91A600A52210 /* test_species_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7531BAC160E37E70015418A /* test_species_container.cpp */; };
 		F7A8EEAF193F91A600A52210 /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F703AFD0160CAEA5006C1AC6 /* test_visitor.cpp */; };
 		F7A8EEB0193F91A600A52210 /* test_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F703AFCD160C8E7A006C1AC6 /* test_composite.cpp */; };
 		F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71E973D1565A79A002BDF16 /* test_species.cpp */; };
@@ -127,7 +126,6 @@
 		F737B37E160961B1001722DD /* ReactionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionBase.h; sourceTree = "<group>"; };
 		F7382CCD156BE2DA0022F97B /* RSpecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSpecies.h; sourceTree = "<group>"; };
 		F7382CCF156BE2F00022F97B /* RSpecies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RSpecies.cpp; sourceTree = "<group>"; };
-		F7531BAC160E37E70015418A /* test_species_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species_container.cpp; sourceTree = "<group>"; };
 		F76148CF15F79CE800587017 /* CompartmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentContainer.cpp; sourceTree = "<group>"; };
 		F76148D015F79CE800587017 /* CompartmentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompartmentContainer.h; sourceTree = "<group>"; };
 		F763ED061548FFC70069DA61 /* CytoSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoSim; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,9 +148,9 @@
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
+		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7A77DAC15ACAC5700076046 /* example_composite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_composite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A77DAE15ACACA300076046 /* example_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example_composite.cpp; sourceTree = "<group>"; };
-		F7A8EEA2193F891600A52210 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = "../googletest-read-only/gtest.framework"; sourceTree = "<group>"; };
 		F7A924DA155BECD000AB05FA /* ChemSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSim.cpp; sourceTree = "<group>"; };
 		F7AA4EFD1554B38B0069F7A1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeciesContainer.cpp; sourceTree = "<group>"; };
@@ -204,7 +202,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7A8EEA3193F891600A52210 /* gtest.framework in Frameworks */,
+				F7A202D8194271C7005A9B5C /* gtest.framework in Frameworks */,
 				F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -223,7 +221,6 @@
 		F71E973C1565A783002BDF16 /* TESTS */ = {
 			isa = PBXGroup;
 			children = (
-				F7531BAC160E37E70015418A /* test_species_container.cpp */,
 				F703AFD0160CAEA5006C1AC6 /* test_visitor.cpp */,
 				F703AFCD160C8E7A006C1AC6 /* test_composite.cpp */,
 				F71E973D1565A79A002BDF16 /* test_species.cpp */,
@@ -239,7 +236,7 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
-				F7A8EEA2193F891600A52210 /* gtest.framework */,
+				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED091548FFC70069DA61 /* CytoSim */,
 				F763ED071548FFC70069DA61 /* Products */,
 			);
@@ -531,7 +528,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7A8EEAE193F91A600A52210 /* test_species_container.cpp in Sources */,
 				F7A8EEAF193F91A600A52210 /* test_visitor.cpp in Sources */,
 				F7A8EEB0193F91A600A52210 /* test_composite.cpp in Sources */,
 				F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */,
@@ -604,7 +600,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -624,7 +620,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -737,17 +733,17 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/jameskomianos/Code/googletest-read-only",
+					/Users/jameskomianos/Code/googletest,
 				);
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/jameskomianos/Code/googletest-read-only/include",
+					/Users/jameskomianos/Code/googletest,
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/jameskomianos/Code/googletest-read-only/",
+					/Users/jameskomianos/Code/googletest,
 					"/usr/local/lib/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
@@ -768,18 +764,18 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/jameskomianos/Code/googletest-read-only",
+					/Users/jameskomianos/Code/googletest,
 				);
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/jameskomianos/Code/googletest-read-only/include",
+					/Users/jameskomianos/Code/googletest,
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/jameskomianos/Code/googletest-read-only/",
+					/Users/jameskomianos/Code/googletest,
 					"/usr/local/lib/**",
 				);
 				OTHER_CFLAGS = "-std=c++11";
