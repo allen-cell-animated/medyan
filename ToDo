@@ -15,6 +15,7 @@ Reactions needed: (seperate tests for each reaction!)
 2. Write tests and documentation for filopodial simulations
 
 Testing/Documentation:
+x. Write tests for compartment and compartment container
 x. Write tests for visitors (use example_composite)
 x. Document reactionContainer, tests
 

@@ -101,10 +101,6 @@ namespace chem {
                 CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
                 C->generateDiffusionReactions();
             }
-            
-            
-//           std::cout << "CompartmentGrid(CTOR): length=" << length << std::endl;
-            
         }
         
         /// Get compartment from the grid
