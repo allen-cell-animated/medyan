@@ -92,6 +92,9 @@ TEST(CompartmentContainerTest, Main) {
 
     ccv.initialize();
     
+    EXPECT_EQ(g.countSpecies(), 250000);
+    EXPECT_EQ(g.countReactions(), 1720000);
+    
     CompartmentSpatial<3> *C1 = ccv.getCompartment(10U,10U,10U);
     
     EXPECT_EQ(6, C1->numberOfNeighbours());
