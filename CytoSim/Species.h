@@ -368,6 +368,96 @@ namespace chem {
         /// Default destructor
         ~SpeciesDiffusing () noexcept {};
     };
+    
+    /// SpeciesFilament should be used for species that can be in a filament. These species can not move
+    /// cross-compartment.
+    class SpeciesFilament : public Species {
+    public:
+        /// Default constructor
+        SpeciesFilament()  : Species() {}
+        
+        /// The main constructor
+        /// @param name - Example, "G-Actin" or "Arp2/3"
+        /// @param n - copy number
+        SpeciesFilament (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+            :  Species(name, n, ulim) {};
+        
+        /// Copy constructor
+        SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
+        
+        /// Move constructor
+        SpeciesFilament (SpeciesFilament &&rhs) noexcept : Species(std::move(rhs)) {
+        }
+        
+        /// Regular Assignment
+        SpeciesFilament& operator=(const SpeciesFilament& rhs)  {
+            Species::operator=(rhs);
+            return *this;
+        }
+        
+        /// Move assignment
+        SpeciesFilament& operator=(SpeciesFilament&& rhs)
+        {
+            Species::operator=(std::move(rhs));
+            return *this;
+        }
+        
+        virtual SpeciesFilament* clone() {
+            return new SpeciesFilament(*this);
+        }
+        
+        /// Return the full name of this Species in a std::string format (e.g. "Actin{Filament}"
+        virtual std::string getFullName() const {return getName() + "{Filament}";}
+        
+        /// Default destructor
+        ~SpeciesFilament () noexcept {};
+    };
+    
+    /// SpeciesBound should be used for species that can be bound to a filament.
+    /// These species can not move cross-compartment.
+    class SpeciesBound : public Species {
+    public:
+        /// Default constructor
+        SpeciesBound()  : Species() {}
+        
+        /// The main constructor
+        /// @param name - Example, "G-Actin" or "Arp2/3"
+        /// @param n - copy number
+        SpeciesBound (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+        :  Species(name, n, ulim) {};
+        
+        /// Copy constructor
+        SpeciesBound (const SpeciesBound &rhs)  : Species(rhs) {}
+        
+        /// Move constructor
+        SpeciesBound (SpeciesBound &&rhs) noexcept : Species(std::move(rhs)) {
+        }
+        
+        /// Regular Assignment
+        SpeciesBound& operator=(const SpeciesBound& rhs)  {
+            Species::operator=(rhs);
+            return *this;
+        }
+        
+        /// Move assignment
+        SpeciesBound& operator=(SpeciesBound&& rhs)
+        {
+            Species::operator=(std::move(rhs));
+            return *this;
+        }
+        
+        virtual SpeciesBound* clone() {
+            return new SpeciesBound(*this);
+        }
+        
+        /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
+        virtual std::string getFullName() const {return getName() + "{Bound}";}
+        
+        /// Default destructor
+        ~SpeciesBound () noexcept {};
+    };
+  
+    
 } // end of chem namespace 
 
 /// Print self into an iostream

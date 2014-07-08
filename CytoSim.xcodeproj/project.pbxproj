@@ -37,6 +37,14 @@
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
+		F784E48C196C3E28003C84A8 /* Filament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* Filament.cpp */; };
+		F784E48D196C3E28003C84A8 /* Filament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* Filament.cpp */; };
+		F784E48E196C3E28003C84A8 /* Filament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* Filament.cpp */; };
+		F784E48F196C3E28003C84A8 /* Filament.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E48B196C3E28003C84A8 /* Filament.h */; };
+		F784E492196C6448003C84A8 /* FilamentController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E490196C6448003C84A8 /* FilamentController.cpp */; };
+		F784E493196C6448003C84A8 /* FilamentController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E490196C6448003C84A8 /* FilamentController.cpp */; };
+		F784E494196C6448003C84A8 /* FilamentController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E490196C6448003C84A8 /* FilamentController.cpp */; };
+		F784E495196C6448003C84A8 /* FilamentController.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E491196C6448003C84A8 /* FilamentController.h */; };
 		F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7981A68194604F100A7E22C /* test_compartments.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
@@ -147,6 +155,10 @@
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
+		F784E48A196C3E28003C84A8 /* Filament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filament.cpp; sourceTree = "<group>"; };
+		F784E48B196C3E28003C84A8 /* Filament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filament.h; sourceTree = "<group>"; };
+		F784E490196C6448003C84A8 /* FilamentController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentController.cpp; sourceTree = "<group>"; };
+		F784E491196C6448003C84A8 /* FilamentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentController.h; sourceTree = "<group>"; };
 		F7981A68194604F100A7E22C /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
@@ -291,6 +303,10 @@
 				F7382CCD156BE2DA0022F97B /* RSpecies.h */,
 				F763ED1F1548FFED0069DA61 /* Species.cpp */,
 				F763ED201548FFED0069DA61 /* Species.h */,
+				F784E48A196C3E28003C84A8 /* Filament.cpp */,
+				F784E48B196C3E28003C84A8 /* Filament.h */,
+				F784E490196C6448003C84A8 /* FilamentController.cpp */,
+				F784E491196C6448003C84A8 /* FilamentController.h */,
 				F7B99A6C15EFBBE7004A245A /* SpeciesContainer.cpp */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F763ED211548FFED0069DA61 /* System.cpp */,
@@ -321,9 +337,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F784E48F196C3E28003C84A8 /* Filament.h in Headers */,
 				F7B99A7015EFBBE8004A245A /* SpeciesContainer.h in Headers */,
 				F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */,
 				F737B381160961B1001722DD /* ReactionBase.h in Headers */,
+				F784E495196C6448003C84A8 /* FilamentController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,7 +456,7 @@
 		F763ECFD1548FFC70069DA61 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "University of Maryland";
 			};
 			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "CytoSim" */;
@@ -476,12 +494,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F784E48C196C3E28003C84A8 /* Filament.cpp in Sources */,
 				F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */,
 				F763ED241548FFED0069DA61 /* main.cpp in Sources */,
 				F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */,
 				F763ED291548FFED0069DA61 /* Species.cpp in Sources */,
 				F763ED2A1548FFED0069DA61 /* System.cpp in Sources */,
 				F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */,
+				F784E492196C6448003C84A8 /* FilamentController.cpp in Sources */,
 				F7A924DB155BECD000AB05FA /* ChemSim.cpp in Sources */,
 				F7382CD0156BE2F00022F97B /* RSpecies.cpp in Sources */,
 				F7F3681E1575C743006727F7 /* Composite.cpp in Sources */,
@@ -506,12 +526,14 @@
 				F771ADC615655DBA0010B123 /* Species.cpp in Sources */,
 				F771ADC715655DBA0010B123 /* System.cpp in Sources */,
 				F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */,
+				F784E494196C6448003C84A8 /* FilamentController.cpp in Sources */,
 				F7F3681F1575C743006727F7 /* Composite.cpp in Sources */,
 				F7346A8B1578206500326E09 /* Component.cpp in Sources */,
 				F71EAF1A15B224210072EE4E /* common.cpp in Sources */,
 				F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
 				F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7B99A6F15EFBBE8004A245A /* SpeciesContainer.cpp in Sources */,
+				F784E48E196C3E28003C84A8 /* Filament.cpp in Sources */,
 				F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */,
 				F737B380160961B1001722DD /* ReactionBase.cpp in Sources */,
 			);
@@ -531,9 +553,11 @@
 			files = (
 				F7A8EEAF193F91A600A52210 /* test_visitor.cpp in Sources */,
 				F7A8EEB0193F91A600A52210 /* test_composite.cpp in Sources */,
+				F784E493196C6448003C84A8 /* FilamentController.cpp in Sources */,
 				F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */,
 				F7A8EEB2193F91A600A52210 /* test_reactions.cpp in Sources */,
 				F7A8EEB3193F91A600A52210 /* test_gillespie.cpp in Sources */,
+				F784E48D196C3E28003C84A8 /* Filament.cpp in Sources */,
 				F7A8EEB4193F91A600A52210 /* test_nrm.cpp in Sources */,
 				F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */,
 				F7A8EEB5193F91A600A52210 /* test_simple_gillespie.cpp in Sources */,
@@ -586,7 +610,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -612,7 +635,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;

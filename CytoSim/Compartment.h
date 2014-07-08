@@ -85,7 +85,7 @@ namespace chem {
         {
             _species.species().clear();
         }
-        
+
         /// Remove diffusion reactions between this compartment and its neighbors
         virtual void clearNeighbouringReactions()
         {
@@ -135,6 +135,9 @@ namespace chem {
         Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
         Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
         Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
+        
+        ///Remove species from this compartment
+        size_t removeSpecies(Species* species) {return _species.removeSpecies(species);}
         
         /// Finds a similar internal reaction, see ReactionBase function
         ReactionBase* findSimilarInternalReaction (const ReactionBase &r)
@@ -188,6 +191,27 @@ namespace chem {
             return sp;
         }
         
+        /// Add a filament species to this compartment
+        /// @param args - any number of SpeciesDiffusing objects
+        template<typename ...Args>
+        Species* addSpeciesFilament(Args&& ...args)
+        {
+            Species *sp = _species.addSpecies<SpeciesFilament>(std::forward<Args>(args)...);
+            sp->setParent(this);
+            return sp;
+        }
+        
+        /// Add a bound species to this compartment
+        /// @param args - any number of SpeciesDiffusing objects
+        template<typename ...Args>
+        Species* addSpeciesBound(Args&& ...args)
+        {
+            Species *sp = _species.addSpecies<SpeciesBound>(std::forward<Args>(args)...);
+            sp->setParent(this);
+            return sp;
+        }
+        
+
         /// Add an internal reaction to this compartment
         template<unsigned short M, unsigned short N, typename ...Args>
         ReactionBase* addInternalReaction (Args&& ...args)

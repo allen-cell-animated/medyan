@@ -73,9 +73,8 @@ int main(int argc, const char * argv[])
     
     
     ReactionBase *r1 = C1->addInternal<Reaction,1,1>({profilin,actin}, 10.0);
-    ReactionBase *r2 = C1->addInternal<Reaction,1,1>({actin,profilin}, 10.0);
-    
-    ReactionBase *r3 = C1->addInternalReaction<2,1>(vector<Species*>{actin,profilin,arp23}, 10.0);
+    C1->addInternal<Reaction,1,1>({actin,profilin}, 10.0);
+    C1->addInternalReaction<2,1>(vector<Species*>{actin,profilin,arp23}, 10.0);
     
     C1->printReactions();
     cout << "Are all Species unique? " << std::boolalpha << C1->areAllSpeciesUnique() << endl;
@@ -160,7 +159,7 @@ int main(int argc, const char * argv[])
     Cproto.setSides(sides.begin());
     
     ReactionBase *RM1M2 = Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
-    ReactionBase *RM2M1 = Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
+    Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
     ccv.initialize();
     
     //ccv.printSelf();
