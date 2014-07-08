@@ -75,55 +75,6 @@ namespace  chem {
             return _reactions.back().get();
         }
         
-        ///Add a ReactionPolymerizationCapping to this reaction container
-        template<typename ...Args>
-        ReactionBase* addPolymerizationCappingReaction(Args&& ...args)
-        {
-            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionPolymerizationCapping( std::forward<Args>(args)...) ));
-            return _reactions.back().get();
-        }
-        
-        ///Add a ReactionDepolymerizationCapping to this reaction container
-        template<typename ...Args>
-        ReactionBase* addDepolymerizationCappingReaction(Args&& ...args)
-        {
-            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionDepolymerizationCapping( std::forward<Args>(args)...) ));
-            return _reactions.back().get();
-        }
-        
-        ///Add a ReactionPolymerization to this reaction container
-        template<typename ...Args>
-        ReactionBase* addPolymerizationReaction(Args&& ...args)
-        {
-            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionPolymerization( std::forward<Args>(args)...) ));
-            return _reactions.back().get();
-        }
-        
-        ///Add a ReactionDepolymerization to this reaction container
-        template<typename ...Args>
-        ReactionBase* addDepolymerizationReaction(Args&& ...args)
-        {
-            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionDepolymerization( std::forward<Args>(args)...) ));
-            return _reactions.back().get();
-        }
-        
-//        ///Add a ReactionBinding to this reaction container
-//        template<typename ...Args>
-//        ReactionBase* addBindingReaction(Args&& ...args)
-//        {
-//            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionBinding( std::forward<Args>(args)...) ));
-//            return _reactions.back().get();
-//        }
-//        
-//        ///Add a ReactionUnbinding to this reaction container
-//        template<typename ...Args>
-//        ReactionBase* addUnbindingReaction(Args&& ...args)
-//        {
-//            _reactions.push_back(std::unique_ptr<ReactionBase>( new ReactionUnbinding( std::forward<Args>(args)...) ));
-//            return _reactions.back().get();
-//        }
-        
-        
         ///Add a general reaction class to this container
         template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
         ReactionBase* add(std::initializer_list<Species*> species, float rate)
