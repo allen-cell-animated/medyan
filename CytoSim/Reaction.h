@@ -10,6 +10,7 @@
 #define CytoSim_Experimenting_Reaction_h
 
 #include "ReactionBase.h"
+#include "ChemSim.h"
 
 namespace chem {
 

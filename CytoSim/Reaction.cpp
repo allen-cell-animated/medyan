@@ -125,5 +125,9 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
     template void Reaction<2,2>::passivateReactionImpl();
     template Reaction<2,2>* Reaction<2,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     
+    template void Reaction<2,0>::activateReactionUnconditionalImpl();
+    template void Reaction<2,0>::passivateReactionImpl();
+    template Reaction<2,0>* Reaction<2,0>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+    
     
 } // end of namespace

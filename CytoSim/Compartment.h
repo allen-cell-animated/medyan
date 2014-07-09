@@ -132,6 +132,7 @@ namespace chem {
         
         /// Species finder functions
         Species* findSpeciesByName(const std::string &name) {return _species.findSpeciesByName(name);};
+        Species* findSpeciesDiffusingByName(const std::string &name) {return _species.findSpeciesDiffusingByName(name);};
         Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
         Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
         Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
@@ -154,6 +155,10 @@ namespace chem {
         /// Remove all diffusion reactions that have a given species
         /// @param s - species whose reactions should be removed
         virtual void removeDiffusionReactions (Species* s) {_diffusion_reactions.removeReactions(s);}
+        
+        /// Remove all internal reactions that have a given species
+        /// @param s - species whose reactions should be removed
+        virtual void removeInternalReactions (Species* s) {_internal_reactions.removeReactions(s);}
         
         /// Add a unique species pointer to this compartment
         Species* addSpeciesUnique (std::unique_ptr<Species> &&species, float diff_rate = -1.0)
@@ -194,9 +199,10 @@ namespace chem {
         /// Add a filament species to this compartment
         /// @param args - any number of SpeciesDiffusing objects
         template<typename ...Args>
-        Species* addSpeciesFilament(Args&& ...args)
+        SpeciesFilament* addSpeciesFilament(Args&& ...args)
         {
-            Species *sp = _species.addSpecies<SpeciesFilament>(std::forward<Args>(args)...);
+            SpeciesFilament *sp =
+                static_cast<SpeciesFilament*>(_species.addSpecies<SpeciesFilament>(std::forward<Args>(args)...));
             sp->setParent(this);
             return sp;
         }
@@ -204,9 +210,10 @@ namespace chem {
         /// Add a bound species to this compartment
         /// @param args - any number of SpeciesDiffusing objects
         template<typename ...Args>
-        Species* addSpeciesBound(Args&& ...args)
+        SpeciesBound* addSpeciesBound(Args&& ...args)
         {
-            Species *sp = _species.addSpecies<SpeciesBound>(std::forward<Args>(args)...);
+            SpeciesBound *sp =
+                static_cast<SpeciesBound*>(_species.addSpecies<SpeciesBound>(std::forward<Args>(args)...));
             sp->setParent(this);
             return sp;
         }

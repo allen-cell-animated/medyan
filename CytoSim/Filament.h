@@ -10,9 +10,7 @@
 #define __CytoSim__Filament__
 
 #include <iostream>
-#include <vector>
-#include <list>
-#include "Compartment.h"
+#include "CompartmentContainer.h"
 
 
 namespace chem {
@@ -40,10 +38,17 @@ namespace chem {
         {
             for(auto &s : _species) {
                 _compartment->removeSpecies(s);
+                _compartment->removeInternalReactions(s);
                 s->~Species();
                 delete s;
             }
         };
+        
+        ///Add a species to this filamentElement
+        virtual void addSpecies(SpeciesType* s) {
+            _species.push_back(s);
+        }
+        
         
         ///Look up a species given a name
         virtual SpeciesType* species(std::string name)
@@ -70,7 +75,7 @@ namespace chem {
         
     public:
         ///Constructor takes any number of species
-        Monomer(std::initializer_list<SpeciesFilament*> species, Compartment* c) :
+        Monomer(std::vector<SpeciesFilament*> species, Compartment* c) :
             FilamentElement<SpeciesFilament>(c)
         {
             for(auto &s: species){FilamentElement<SpeciesFilament>::_species.push_back(s);}
@@ -95,7 +100,7 @@ namespace chem {
         
     public:
         ///Constructor takes any number of species
-        Bound(std::initializer_list<SpeciesBound*> species, Compartment* c) :
+        Bound(std::vector<SpeciesBound*> species, Compartment* c) :
             FilamentElement<SpeciesBound>(c)
         {
             for(auto &s: species) {FilamentElement<SpeciesBound>::_species.push_back(s);}
@@ -123,9 +128,10 @@ namespace chem {
     class SubFilament : public Component {
         
     protected:
-        std::vector<Monomer> _monomers; ///< list of monomers in this sub filament
-        std::vector<Bound> _bounds; ///< list of bound species in this sub filament
+        std::vector<std::unique_ptr<Monomer>> _monomers; ///< list of monomers in this sub filament
+        std::vector<std::unique_ptr<Bound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this subfilament is in
+        short _length; ///< length of this subfilament
         
     public:
         ///Default constructor, sets compartment
@@ -138,27 +144,61 @@ namespace chem {
             _bounds.clear();
         }
         
+        ///get filament compartment
+        Compartment* compartment() {return _compartment;}
+        
         ///Add a monomer to this subfilament
-        virtual void addMonomer(Monomer& monomer) {_monomers.push_back(monomer);}
+        virtual void addMonomer(Monomer* monomer) {
+            _monomers.emplace_back(std::unique_ptr<Monomer>(monomer));
+            _length++;
+        }
         
         ///Add a bound to this subfilament
-        virtual void addBound(Bound& bound) {_bounds.push_back(bound);}
+        virtual void addBound(Bound* bound) {_bounds.emplace_back(std::unique_ptr<Bound>(bound));}
         
         ///Get monomer at an index
         ///@note no check on index
-        virtual Monomer& monomer(int index) {return _monomers[index];}
+        virtual Monomer* monomer(int index) {return _monomers[index].get();}
         
         ///Get bound at an index
         ///@note no check on index
-        virtual Bound& bound(int index) {return _bounds[index];}
+        virtual Bound* bound(int index) {return _bounds[index].get();}
+        
+        ///Get end monomer
+        ///@note monomer list must not be empty
+        virtual Monomer* backMonomer() {return _monomers[_length - 1].get();}
+        
+        ///Get end monomer
+        ///@note bounds list must not be empty
+        virtual Bound* backBound() {return _bounds[_length - 1].get();}
+        
+        ///Get front monomer
+        ///@note monomer list must not be empty
+        virtual Monomer* frontMonomer() {return _monomers[0].get();}
+        
+        ///Get end monomer
+        ///@note bounds list must not be empty
+        virtual Bound* frontBound() {return _bounds[0].get();}
+        
+        ///Get species at specified index (monomer)
+        virtual SpeciesFilament* getMonomerSpecies(int index, std::string name) {
+            
+            return monomer(index)->species(name);
+        }
+        
+        ///Get species at specified index (bound)
+        virtual SpeciesBound* getBoundSpecies(int index, std::string name) {
+            
+            return bound(index)->species(name);
+        }
         
         ///Print subfilament
         virtual void printSubFilament()
         {
             std::cout << "Composition of SubFilament: " << std::endl;
-            for (auto &m : _monomers) m.print();
+            for (auto &m : _monomers) m->print();
             std::cout << "Bounds of SubFilament: " <<std::endl;
-            for (auto &b : _bounds) b.print();
+            for (auto &b : _bounds) b->print();
         }
     };
     
@@ -169,14 +209,16 @@ namespace chem {
     class Filament : public Composite{
         
     public:
-        ///Default constructor, creates one subfilament
-        Filament(Compartment* c_start)
-        {
-            addChild(std::unique_ptr<Component>(new SubFilament(c_start)));
-        }
+        ///Default constructor, does nothing
+        Filament() {};
         
         ///Default destructor, removes all subfilaments implicitly
         ~Filament() {}
+        
+        ///Add a subfilament
+        virtual void addSubFilament(SubFilament* s) {
+            addChild(std::unique_ptr<Component>(s));
+        }
         
         ///Get front subfilament
         ///@note -  no check on the number of children
@@ -184,6 +226,17 @@ namespace chem {
         {
             return static_cast<SubFilament*>(children(numberOfChildren() - 1));
             
+        }
+        
+        ///Print entire filament
+        virtual void printFilament() {
+            
+            int index = 0;
+            for (auto &c : children()) {
+                std::cout << "SubFilament " << index++ << ":" <<std::endl;
+                static_cast<SubFilament*>(c.get())->printSubFilament();
+                std::cout<< std::endl;
+            }
         }
         
     };

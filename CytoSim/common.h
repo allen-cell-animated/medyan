@@ -21,6 +21,7 @@
 
 typedef unsigned short species_copy_t;
 const species_copy_t max_ulim = 32;
+const float monomer_size = 2.7;
 extern double global_time;
 
 inline double tau() {return global_time;}

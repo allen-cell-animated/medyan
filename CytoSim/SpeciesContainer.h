@@ -38,6 +38,10 @@ namespace  chem {
         /// @note The first match is returned.
         virtual Species* findSpeciesByName(const std::string &name) const = 0;
         
+        /// Return a pointer to SpeciesDiffusing which has a name matching the argument.
+        /// @note The first match is returned.
+        virtual Species* findSpeciesDiffusingByName(const std::string &name) const = 0;
+        
         /// Return a pointer to Species having specified index in the container 
         virtual Species* findSpeciesByIndex (size_t index) const = 0;
         
@@ -156,6 +160,20 @@ namespace  chem {
                                            {
                                                return element->getName()==name ? true : false;
                                            });
+            if(child_iter!=_species.end())
+                return child_iter->get();
+            else
+                return nullptr;
+        }
+        
+        /// Return a pointer to SpeciesDiffusing which has a name matching the argument. Otherwise, return a nullptr.
+        /// @note The first match is returned.
+        virtual Species* findSpeciesDiffusingByName(const std::string &name) const {
+            auto child_iter = std::find_if(_species.begin(),_species.end(),
+                                           [&name](const std::unique_ptr<Species> &element)
+                            {
+                            return (element->getName()==name && dynamic_cast<SpeciesDiffusing*>(element.get())) ? true : false;
+                            });
             if(child_iter!=_species.end())
                 return child_iter->get();
             else
