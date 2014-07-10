@@ -107,6 +107,8 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
     template void Reaction<1,2>::operator delete(void* ptr);
     template void* Reaction<2,2>::operator new(size_t size);
     template void Reaction<2,2>::operator delete(void* ptr);
+    template void* Reaction<2,0>::operator new(size_t size);
+    template void Reaction<2,0>::operator delete(void* ptr);
 #endif
     
     template void Reaction<1,1>::activateReactionUnconditionalImpl();

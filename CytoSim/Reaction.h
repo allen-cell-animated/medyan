@@ -212,7 +212,7 @@ template <unsigned short M, unsigned short N>
             for (auto sit = send; sit!=_rspecies.cend(); ++sit)
             {
                 os << (*sit)->getFullName() << "{" << (*sit)->getN() << "}";
-                if(i<((N-M)-1))
+                if(i<=(N-M))
                     os << " + ";
                 ++i;
             }

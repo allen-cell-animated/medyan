@@ -21,6 +21,10 @@ ChemSim::ChemSim(ChemSimImpl *csi)
 void ChemSim::addReaction(ReactionBase *r){
     _pimpl->addReaction(r);
 }
+    
+void ChemSim::addAndActivateReaction(ReactionBase* r){
+    _pimpl->addAndActivateReaction(r);
+}
 
 void ChemSim::removeReaction(ReactionBase *r){
     _pimpl->removeReaction(r); 

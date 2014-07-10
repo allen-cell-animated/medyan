@@ -44,7 +44,7 @@
 //#include "ChemSim.h"
 //#include "Composite.h"
 //#include "SpeciesContainer.h"
-#include "FilamentController.h"
+#include "FilamentControllerImpl.h"
 
 using namespace std;
 using namespace chem;
@@ -52,12 +52,12 @@ using namespace chem;
 int main(int argc, const char * argv[])
 {
     const int NDIM = 1;
-    const int NGRID = 50;
+    const int NGRID = 1000;
     CompartmentGrid<NDIM> ccv{NGRID};
     CompartmentSpatial<NDIM> &Cproto = ccv.getProtoCompartment();
     
     ///Add diffusing species
-    Species *M1 = Cproto.addSpecies("Actin",100U);
+    Species *M1 = Cproto.addSpecies("Actin",1000U);
     Cproto.setDiffusionRate(M1,2000);
 
     ///Set side length
@@ -67,19 +67,19 @@ int main(int argc, const char * argv[])
     ///init grid
     ccv.initialize();
     
-    ///Init filament controller and initializer
-    FilamentInitializer<1>* initializer = new ActinBasicInitializer<1>();
-    static_cast<ActinBasicInitializer<1>*>(initializer)->setReactionRates();
-    
-    FilamentController<1>* controller = new FilamentControllerBasic<1>(&ccv, initializer);
-    auto filaments = controller->initialize(16, 5);
-    
-    ///Init chemsim
+    ///Create chemsim and init
     ChemNRMImpl chem_sim_impl;
     ChemSim chem(&chem_sim_impl);
-    
     ccv.addChemSimReactions(chem);
     chem.initialize();
+    
+    ///Init filament initializer
+    FilopodiaInitializer<1> initializer{chem};
+    initializer.setReactionRates();
+    
+    //Init filament controller
+    FilamentControllerBasic<1> controller{&ccv, &initializer};
+    auto filaments = controller.initialize(16, 20);
     
     for(int step = 0; step < 10; step++) {
         
@@ -87,10 +87,15 @@ int main(int argc, const char * argv[])
         chem.run(100);
         
         ///Print filaments
-        for(auto it = filaments->begin(); it != filaments->end(); it++)
+        int index = 0;
+        for(auto it = filaments->begin(); it != filaments->end(); it++) {
+            std::cout << (*it).get() <<std::endl;
+            std::cout << "FILAMENT " << index++ << std::endl;
             (*it)->printFilament();
+        }
     }
     
+    std::cout << "Done!" <<std::endl;
     
 }
 

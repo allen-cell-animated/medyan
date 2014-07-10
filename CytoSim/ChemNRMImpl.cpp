@@ -260,6 +260,11 @@ void ChemNRMImpl::addReaction(ReactionBase *r) {
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
+    
+void ChemNRMImpl::addAndActivateReaction(ReactionBase* r) {
+    ChemNRMImpl::addReaction(r);
+    r->activateReaction();
+}
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
     _map_rnodes.erase(r);

@@ -105,6 +105,12 @@ namespace chem {
             _reactions.push_back(r);
     }
     
+    /// Simultaneously add and activate a reaction in the chemical network
+    void ChemSimpleGillespieImpl::addAndActivateReaction(ReactionBase* r) {
+        //no dependencies, just add reaction
+        ChemSimpleGillespieImpl::addReaction(r);
+    }
+    
     void ChemSimpleGillespieImpl::removeReaction(ReactionBase *r) {
         std::vector<ReactionBase*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
         if(vit!=_reactions.end())

@@ -193,6 +193,11 @@ namespace chem {
         ++_n_reacts;
     }
     
+    void ChemGillespieImpl::addAndActivateReaction(ReactionBase* r) {
+        ChemGillespieImpl::addReaction(r);
+        r->activateReaction();
+    }
+    
     void ChemGillespieImpl::removeReaction(ReactionBase *r) {
         _map_rnodes.erase(r);
         --_n_reacts;

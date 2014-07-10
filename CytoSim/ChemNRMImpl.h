@@ -234,6 +234,9 @@ public:
     /// Add Reaction *r to the network
     virtual void addReaction(ReactionBase *r);
     
+    /// Simultaneously add and initialize a reaction in the network
+    virtual void addAndActivateReaction(ReactionBase* r);
+    
     /// Remove Reaction *r from the network
     virtual void removeReaction(ReactionBase *r);
     

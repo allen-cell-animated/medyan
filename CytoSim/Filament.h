@@ -58,11 +58,12 @@ namespace chem {
             return nullptr;
         }
         
-        ///Print this filament element
+        ///Print a species in this filament element
         virtual void print()
         {
             for (SpeciesType* &s : _species)
-                if(s->getN() == 1) std::cout << s->getName().at(0) << ":";
+                if(s->getN() == 1) std::cout << s->getName().at(0);
+            
         }
         
         ///Check if this filament element is valid. Involves checking copy numbers
@@ -131,7 +132,7 @@ namespace chem {
         std::vector<std::unique_ptr<Monomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<Bound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this subfilament is in
-        short _length; ///< length of this subfilament
+        short _length = 0; ///< length of this subfilament
         
     public:
         ///Default constructor, sets compartment
@@ -196,9 +197,15 @@ namespace chem {
         virtual void printSubFilament()
         {
             std::cout << "Composition of SubFilament: " << std::endl;
-            for (auto &m : _monomers) m->print();
-            std::cout << "Bounds of SubFilament: " <<std::endl;
-            for (auto &b : _bounds) b->print();
+            for (auto &m : _monomers){
+                m->print();
+                std::cout << ":";
+            }
+            std::cout << std::endl << "Bounds of SubFilament: " <<std::endl;
+            for (auto &b : _bounds) {
+                b->print();
+                std::cout << ":";
+            }
         }
     };
     
@@ -227,6 +234,9 @@ namespace chem {
             return static_cast<SubFilament*>(children(numberOfChildren() - 1));
             
         }
+        
+        ///number of subfilaments in this filament
+        virtual int numSubFilaments() {return numberOfChildren();}
         
         ///Print entire filament
         virtual void printFilament() {

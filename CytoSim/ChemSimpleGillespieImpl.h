@@ -56,6 +56,9 @@ namespace chem {
         /// Add ReactionBase *r to the network
         virtual void addReaction(ReactionBase *r);
         
+        /// Simultaneously add and activate a reaction in the chemical network
+        virtual void addAndActivateReaction(ReactionBase* r);
+        
         /// Remove ReactionBase *r from the network
         virtual void removeReaction(ReactionBase *r);
         
