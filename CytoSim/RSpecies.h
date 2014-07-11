@@ -155,21 +155,27 @@ namespace chem {
         // \internal This method is called by the Reaction class during destruction
         // of the Reaction where this RSpecies is involved as a Reactant
         void removeAsReactant(const ReactionBase *r) {
-            auto rxit = std::find(_as_reactants.begin(),_as_reactants.end(),r);
-            if(rxit!=_as_products.end()){
-                _as_reactants.erase(rxit);
-            }
             
+            if(!_as_reactants.empty()) {
+                auto rxit = std::find(_as_reactants.begin(),_as_reactants.end(),r);
+                if(rxit!=_as_products.end()){
+                    _as_reactants.erase(rxit);
+                }
+            }
         }
         // \internal This method is called by the Reaction class during destruction
         // of the Reaction where this RSpecies is involved as a Product
         void removeAsProduct(const ReactionBase *r) {
-            auto rxit = std::find(_as_products.begin(),_as_products.end(),r);
-            if(rxit!=_as_products.end()){
-                _as_products.erase(rxit);
+            
+            if (!_as_products.empty()) {
+                auto rxit = std::find(_as_products.begin(),_as_products.end(),r);
+                if(rxit!=_as_products.end()){
+                    _as_products.erase(rxit);
+                }
             }
-        }  
-        
+            
+        }
+    
         /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction) where this RSpecies is involved as a 
         /// Reactant. Usually, the Reaction was first passivated, for example if the RSpecies copy number of 
         /// one of the reactants dropeed to zero. This attempt may not succeed if there are still other

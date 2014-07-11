@@ -43,7 +43,13 @@ namespace chem {
         
         ///Initializer, based on the given simulation
         ///@param length - starting length of the SubFilament initialized
-        virtual SubFilament* createSubFilament(Filament* parentFilament, int length, int maxlength, Compartment* c) = 0;
+        ///@param maxlength - length of entire reactive filament
+        ///@param species - list of species to initialize in filament
+        virtual SubFilament* createSubFilament(Filament* parentFilament,
+                                               Compartment* c,
+                                               std::vector<std::string>* species,
+                                               int length,
+                                               int maxlength) = 0;
         
         ///Connect two filaments, back to front
         virtual void connect(SubFilament* s1, SubFilament* s2) = 0;
@@ -78,7 +84,7 @@ namespace chem {
         virtual std::unordered_set<std::unique_ptr<Filament>>* initialize(int numFilaments, int length) = 0;
         
         ///Extend the front of a filament
-        virtual void extendFrontOfFilament(Filament *f) = 0;
+        virtual void extendFrontOfFilament(Filament *f, std::vector<std::string>* species) = 0;
         
 //        ///Retract the front of a filament
 //        virtual void retractFrontOfFilament(Filament *f) = 0;
@@ -96,14 +102,17 @@ namespace chem {
         //members
         FilamentController<NDIM>* _controller;
         Filament* _filament;
+        std::vector<std::string>* _species;
         
         ///Constructor, sets members
-        FilamentExtensionCallback(FilamentController<NDIM>* controller, Filament* filament) :
-            _controller(controller), _filament(filament) {};
+        FilamentExtensionCallback(FilamentController<NDIM>* controller,
+                                  Filament* filament,
+                                  std::vector<std::string>* species) :
+            _controller(controller), _filament(filament), _species(species) {};
         
         ///Callback
         void operator() (ReactionBase *r){
-            _controller->extendFrontOfFilament(_filament);
+            _controller->extendFrontOfFilament(_filament, _species);
         }
     };
     

@@ -36,7 +36,7 @@ namespace chem {
         ///Default destructor, removes species from compartment
         ~FilamentElement ()
         {
-            for(auto &s : _species) {
+            for(auto& s : _species) {
                 _compartment->removeSpecies(s);
                 _compartment->removeInternalReactions(s);
                 s->~Species();
@@ -241,11 +241,12 @@ namespace chem {
         ///Print entire filament
         virtual void printFilament() {
             
+            std::cout<<std::endl;
             int index = 0;
             for (auto &c : children()) {
                 std::cout << "SubFilament " << index++ << ":" <<std::endl;
                 static_cast<SubFilament*>(c.get())->printSubFilament();
-                std::cout<< std::endl;
+                std::cout<< std::endl<<std::endl;
             }
         }
         

@@ -58,7 +58,13 @@ int main(int argc, const char * argv[])
     
     ///Add diffusing species
     Species *M1 = Cproto.addSpecies("Actin",1000U);
+    Species *M2 = Cproto.addSpecies("Capping",0U);
+    Species *M3 = Cproto.addSpecies("X-Formin",1000U);
+    Species *M4 = Cproto.addSpecies("Myosin", 100U);
     Cproto.setDiffusionRate(M1,2000);
+    Cproto.setDiffusionRate(M2,2000);
+    Cproto.setDiffusionRate(M3,2000);
+    Cproto.setDiffusionRate(M4,2000);
 
     ///Set side length
     vector<float> sides{100.0};
@@ -75,7 +81,6 @@ int main(int argc, const char * argv[])
     
     ///Init filament initializer
     FilopodiaInitializer<1> initializer{chem};
-    initializer.setReactionRates();
     
     //Init filament controller
     FilamentControllerBasic<1> controller{&ccv, &initializer};
@@ -92,6 +97,7 @@ int main(int argc, const char * argv[])
             std::cout << (*it).get() <<std::endl;
             std::cout << "FILAMENT " << index++ << std::endl;
             (*it)->printFilament();
+            std::cout << std::endl;
         }
     }
     

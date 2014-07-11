@@ -23,9 +23,9 @@ namespace chem {
     /// Capping polymerization of (+) end
     /// Capping depolymerization of (+) end
     
-    /// Anti-capping polymerization of (+) end
-    /// Anti-capping depolymerization of (+) end
-    /// increased rate of actin polymerization with anti-capped (+) end
+    /// formin polymerization of (+) end
+    /// formin depolymerization of (+) end
+    /// increased rate of actin polymerization with formin (+) end
     
     /// Motor binding to filament
     /// Motor movement (right or left) on filament
@@ -36,9 +36,28 @@ namespace chem {
         
     private:
         ///REACTION RATES
-        float _k_on_plus = 0;
-        float _k_off_plus = 0;
-        float _k_off_minus = 0;
+        //basic
+        float _k_on_plus = 21.0;
+        float _k_off_plus = 1.4;
+        float _k_off_minus = 1.4;
+        
+        //capping
+        float _k_capping_on_plus = 50.0;
+        float _k_capping_off_plus = 0.06;
+        
+        //formin
+        float _k_formin_on_plus = 10.0;
+        float _k_formin_off_plus = 1.4;
+        float _k_accel_on_plus = 100.0;
+        
+        //motors
+        float _k_binding = 19.0;
+        float _k_unbinding = 10.0;
+        float _k_forward_step = 50.0;
+        float _k_backward_step = 5.0;
+        float _k_load = 20.0;
+        float _k_unload = 10.0;
+        
         
     public:
         
@@ -48,15 +67,26 @@ namespace chem {
         ///Destructor, does nothing
         ~FilopodiaInitializer() {};
         
-        ///Set reaction rates for this subfilament
-        virtual void setReactionRates(float kOnPlus = 21.0,
-                                      float kOffPlus = 1.4,
-                                      float kOffMinus = 1.4)
-        {
-            _k_on_plus = kOnPlus;
-            _k_off_plus = kOffPlus;
-            _k_off_minus = kOffMinus;
-        }
+//        ///Set reaction rates for this subfilament
+//        virtual void setReactionRates(float kOnPlus = 21.0,
+//                                      float kOffPlus = 1.4,
+//                                      float kOffMinus = 1.4
+//                                      float kCappingOnPlus = 50.0
+//                                      float kCappingOffPlus = 0.06
+//                                      float kForminOnPlus = 10.0
+//                                      float kForminOffPlus = 1.4
+//                                      float kAccelOnPlus = 100.0)
+//        {
+//            _k_on_plus = kOnPlus;
+//            _k_off_plus = kOffPlus;
+//            _k_off_minus = kOffMinus;
+//            _k_capping_on_plus = kCappingOnPlus;
+//            _k_capping_off_plus = kCappingOffPlus;
+//            _k_formin_on_plus = kForminOnPlus;
+//            _k_formin_off_plus = 0;
+//            _k_accel_on_plus = 0;
+//            
+//        }
         
         ///Connect two filaments, back to front
         ///For this impl, only add a polymerization reaction between them
@@ -65,10 +95,12 @@ namespace chem {
         ///Initializer, based on the given simulation
         ///@param length - starting length of the filament initialized
         ///@param maxlength - length of entire reactive filament
+        ///@param species - list of species to initialize in filament
         virtual SubFilament* createSubFilament(Filament* parentFilament,
+                                               Compartment* c,
+                                               std::vector<std::string>* species,
                                                int length,
-                                               int maxlength,
-                                               Compartment* c);
+                                               int maxlength);
         
     };
     
@@ -90,7 +122,7 @@ namespace chem {
         virtual std::unordered_set<std::unique_ptr<Filament>>* initialize(int numFilaments, int length);
         
         ///Extend the front of a filament
-        virtual void extendFrontOfFilament(Filament *f);
+        virtual void extendFrontOfFilament(Filament *f, std::vector<std::string>* species);
         
     };
 

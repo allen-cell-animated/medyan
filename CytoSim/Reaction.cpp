@@ -109,6 +109,12 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
     template void Reaction<2,2>::operator delete(void* ptr);
     template void* Reaction<2,0>::operator new(size_t size);
     template void Reaction<2,0>::operator delete(void* ptr);
+    template void* Reaction<1,3>::operator new(size_t size);
+    template void Reaction<1,3>::operator delete(void* ptr);
+    template void* Reaction<2,3>::operator new(size_t size);
+    template void Reaction<2,3>::operator delete(void* ptr);
+    template void* Reaction<3,2>::operator new(size_t size);
+    template void Reaction<3,2>::operator delete(void* ptr);
 #endif
     
     template void Reaction<1,1>::activateReactionUnconditionalImpl();
@@ -131,5 +137,16 @@ void Reaction<M,N>::operator delete(void* ptr) noexcept
     template void Reaction<2,0>::passivateReactionImpl();
     template Reaction<2,0>* Reaction<2,0>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     
+    template void Reaction<1,3>::activateReactionUnconditionalImpl();
+    template void Reaction<1,3>::passivateReactionImpl();
+    template Reaction<1,3>* Reaction<1,3>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+    
+    template void Reaction<2,3>::activateReactionUnconditionalImpl();
+    template void Reaction<2,3>::passivateReactionImpl();
+    template Reaction<2,3>* Reaction<2,3>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+    
+    template void Reaction<3,2>::activateReactionUnconditionalImpl();
+    template void Reaction<3,2>::passivateReactionImpl();
+    template Reaction<3,2>* Reaction<3,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
     
 } // end of namespace
