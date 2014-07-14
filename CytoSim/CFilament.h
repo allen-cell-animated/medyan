@@ -36,12 +36,10 @@ namespace chem {
         ///Default destructor, removes species from compartment
         ~CFilamentElement ()
         {
-            for(auto& s : _species) {
-                _compartment->removeSpecies(s);
-                _compartment->removeInternalReactions(s);
-                s->~Species();
-                delete s;
-            }
+//            for(auto& s : _species) {
+//                //_compartment->removeInternalReactions(s);
+//                //_compartment->removeSpecies(s);
+//            }
         };
         
         ///Add a species to this CFilamentElement
@@ -132,13 +130,14 @@ namespace chem {
         std::vector<std::unique_ptr<Monomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<Bound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this CSubFilament is in
-        short _length = 0; ///< length of this CSubFilament
+        short _full_length = 0; ///< length of this CSubFilament
+        short _length = 0; 
         
     public:
         ///Default constructor, sets compartment
         CSubFilament(Compartment* c) : _compartment(c) {}
         
-        ///Default destructor, implicitly removes monomers and bounds
+        ///Default destructor, explicitly removes monomers and bounds
         ~CSubFilament()
         {
             _monomers.clear();
@@ -151,7 +150,7 @@ namespace chem {
         ///Add a monomer to this CSubFilament
         virtual void addMonomer(Monomer* monomer) {
             _monomers.emplace_back(std::unique_ptr<Monomer>(monomer));
-            _length++;
+            _full_length++;
         }
         
         ///Add a bound to this CSubFilament
@@ -165,20 +164,11 @@ namespace chem {
         ///@note no check on index
         virtual Bound* bound(int index) {return _bounds[index].get();}
         
-        ///Get end monomer
-        ///@note monomer list must not be empty
-        virtual Monomer* backMonomer() {return _monomers[_length - 1].get();}
-        
-        ///Get end monomer
-        ///@note bounds list must not be empty
-        virtual Bound* backBound() {return _bounds[_length - 1].get();}
-        
-        ///Get front monomer
-        ///@note monomer list must not be empty
+        ///Get back or front monomer/bound
+        ///@note monomer/bound list must not be empty
+        virtual Monomer* backMonomer() {return _monomers[_full_length - 1].get();}
+        virtual Bound* backBound() {return _bounds[_full_length - 1].get();}
         virtual Monomer* frontMonomer() {return _monomers[0].get();}
-        
-        ///Get end monomer
-        ///@note bounds list must not be empty
         virtual Bound* frontBound() {return _bounds[0].get();}
         
         ///Get species at specified index (monomer)
@@ -192,6 +182,18 @@ namespace chem {
             
             return bound(index)->species(name);
         }
+        
+        ///Get the current length
+        virtual short length() {return _length;}
+        ///Increase length
+        virtual void increaseLength() {if(_length != _full_length) _length++;}
+        ///Decrease length
+        virtual void decreaseLength() {if(_length != 0) _length--;}
+        ///see if the subfilament is at maxlength
+        virtual bool atMaxLength() {return _length == _full_length;}
+        ///set the length of this subfilament
+        virtual void setLength(int length) {_length = length;}
+        
         
         ///Print CSubFilament
         virtual void printCSubFilament()
@@ -214,6 +216,9 @@ namespace chem {
     /*! The CFilament class is used to hold CSubFilaments (children of CFilament).
      */
     class CFilament : public Composite{
+    
+    private:
+        int _length = 0; ///Length of filament
         
     public:
         ///Default constructor, does nothing
@@ -231,17 +236,55 @@ namespace chem {
         ///@note -  no check on the number of children
         virtual CSubFilament* getFrontCSubFilament()
         {
-            return static_cast<CSubFilament*>(children(numberOfChildren() - 1));
+            CSubFilament* front = nullptr;
+            int childIndex = numberOfChildren() - 1;
             
+            while(childIndex >= 0) {
+                front = static_cast<CSubFilament*>(children(childIndex));
+                
+                if (front->length() != 0) return front;
+                else {
+                    if((childIndex - 1) >= 0) {
+                        CSubFilament* second =
+                            static_cast<CSubFilament*>(children(childIndex - 1));
+                        if (second->atMaxLength())
+                            return front;
+                    }
+                }
+                childIndex--;
+            }
+            return front;
         }
         
         ///number of subfilaments in this filament
         virtual int numCSubFilaments() {return numberOfChildren();}
         
+        ///Increase length of filament
+        virtual void increaseLength() {
+            getFrontCSubFilament()->increaseLength();
+            _length++;
+        }
+        ///Decrease length of filament
+        virtual void decreaseLength() {
+            getFrontCSubFilament()->decreaseLength();
+            _length--;
+        }
+        
+        ///Set the length of this filament
+        ///@note should only be used when the filament has EXACTLY ONE sub filament
+        virtual void setLength(int length) {
+            getFrontCSubFilament()->setLength(length);
+            _length = length;
+        }
+        
+        ///get length of filament
+        virtual int length() {return _length;}
+        
         ///Print entire filament
         virtual void printCFilament() {
             
             std::cout<<std::endl;
+            std::cout << "Length = " << _length <<std::endl;
             int index = 0;
             for (auto &c : children()) {
                 std::cout << "CSubFilament " << index++ << ":" <<std::endl;
@@ -253,6 +296,55 @@ namespace chem {
     };
     
 
+    /// Membrane class updates polymerization rates based on the Brownian-Ratchet model
+    
+    /*! The Membrane class will update all polymerization reaction rates based on
+     *  the given configuration of filament ends and a membrane. The calculation is:
+     *
+     *
+     *  1) The effective polymerization rate of a filament is equal to the "bare" rate,
+     *     denoted as k0, times the probability of the gap between the filament and the
+     *     membrane opening. The relation between the loading force and the rate is:
+     *
+     *                      k_n + = k+ * exp(-f_n * monomer size / k * T)
+     *
+     *     where f_n is the current force on the nth filament.
+     *
+     *  2) To compute the forces f_n, we must calculate the probability of finding the
+     *     nth filament below the membrane (which we denote as a height of h = max_n(h_n))
+     *
+     *             p_n ~ integral from h-h_n to infinity ( exp(-z^2 / sigma^2) dz )
+     *
+     *     where sigma is the average membrane fluctuation amplitude, which we assume
+     *     to be constant.
+     *
+     *  3) Then, the forces are computed as f_n = (p_n / p) * f, where the total force f
+     *     is constant, and p is the normalization factor.
+     *
+     */
+    
+    class Membrane {
+        
+    private:
+        std::vector<ReactionBase*> _poly_reactions; ///<vector of reactions to update
+        
+        int _h_membrane = 0; ///<height of the membrane
+        
+        
+        
+        
+        
+        
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }; //namespace chem
 

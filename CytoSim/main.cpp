@@ -83,22 +83,16 @@ int main(int argc, const char * argv[])
     FilopodiaInitializer<1> initializer{chem};
     
     //Init filament controller
-    CFilamentControllerBasic<1> controller{&ccv, &initializer};
-    auto filaments = controller.initialize(16, 20);
+    CFilamentControllerFilopodia<1> controller{&ccv, &initializer};
+    controller.initialize(16, 20);
     
-    for(int step = 0; step < 10; step++) {
+    for(int step = 0; step < 1; step++) {
         
         ///Run 100 steps
         chem.run(100);
         
-        ///Print filaments
-        int index = 0;
-        for(auto it = filaments->begin(); it != filaments->end(); it++) {
-            std::cout << (*it).get() <<std::endl;
-            std::cout << "FILAMENT " << index++ << std::endl;
-            (*it)->printCFilament();
-            std::cout << std::endl;
-        }
+        controller.printFilaments();
+       
     }
     
     std::cout << "Done!" <<std::endl;

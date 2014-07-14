@@ -69,6 +69,8 @@ namespace chem {
         CompartmentGrid<NDIM>* _grid; ///<compartment grid for updating
         CFilamentInitializer<NDIM>* _initializer; ///<initializer, could be any implementation
         
+        std::unordered_set<std::unique_ptr<CFilament>>* _filaments;///< filaments that this is controlling
+        
     public:
         
         ///constructor and destructor
@@ -78,10 +80,14 @@ namespace chem {
             _initializer->setCFilamentController(this);
         }
         
-        virtual ~CFilamentController() {}
+        ///delete filaments
+        virtual ~CFilamentController()
+        {
+            delete _filaments;
+        }
         
         ///Initialize all CFilaments and reactions, return set of CFilaments
-        virtual std::unordered_set<std::unique_ptr<CFilament>>* initialize(int numFilaments, int length) = 0;
+        virtual void initialize(int numFilaments, int length) = 0;
         
         ///Extend the front of a CFilament
         virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species) = 0;
@@ -92,10 +98,21 @@ namespace chem {
 //        ///Retract the back of a CFilament
 //        virtual void retractBackOfCFilament(CFilament *f) = 0;
         
+        ///Print filaments
+        virtual void printFilaments() {
+            int index = 0;
+            for(auto it = _filaments->begin(); it != _filaments->end(); it++) {
+                std::cout << "FILAMENT " << index++ << std::endl;
+                (*it)->printCFilament();
+                std::cout << std::endl;
+            }
+        }
+        
     };
     
     ///CFilament REACTION CALLBACKS
     
+    ///Extension callback
     template<size_t NDIM>
     struct CFilamentExtensionCallback {
         
@@ -115,6 +132,41 @@ namespace chem {
             _controller->extendFrontOfCFilament(_filament, _species);
         }
     };
+    
+    ///General polymerization callback
+    template<size_t NDIM>
+    struct CFilamentPolyCallback {
+        
+        //members
+        CFilament* _filament;
+        
+        CFilamentPolyCallback(CFilament* filament) : _filament(filament) {};
+        
+        //Callback
+        void operator() (ReactionBase *r){
+            _filament->increaseLength();
+        }
+        
+    };
+    
+    ///General depolymerization callback
+    template<size_t NDIM>
+    struct CFilamentDepolyCallback {
+        
+        //members
+        CFilament* _filament;
+        
+        CFilamentDepolyCallback(CFilament* filament) : _filament(filament) {};
+        
+        //Callback
+        void operator() (ReactionBase *r){
+            _filament->decreaseLength();
+        }
+        
+    };
+    
+    
+    
     
 } //end namespace chem
 

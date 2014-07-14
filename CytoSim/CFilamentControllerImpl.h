@@ -105,21 +105,25 @@ namespace chem {
     };
     
     
-    /// CFilamentControllerBasic is a basic implementation for updating filaments
+    /// CFilamentControllerFilopodia is a basic implementation for updating filaments
     template <size_t NDIM>
-    class CFilamentControllerBasic : public CFilamentController<NDIM> {
+    class CFilamentControllerFilopodia : public CFilamentController<NDIM> {
+        
+    private:
+        Membrane* _membrane;
+        
         
     public:
         
         ///Constructor, calls base class
-        CFilamentControllerBasic(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
+        CFilamentControllerFilopodia(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
         : CFilamentController<NDIM>::CFilamentController(grid, initializer) {};
         
         ///Default destructor, does nothing
-        ~CFilamentControllerBasic() {}
+        ~CFilamentControllerFilopodia() {}
         
         //Initialize a number of filaments
-        virtual std::unordered_set<std::unique_ptr<CFilament>>* initialize(int numFilaments, int length);
+        virtual void initialize(int numFilaments, int length);
         
         ///Extend the front of a filament
         virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species);
