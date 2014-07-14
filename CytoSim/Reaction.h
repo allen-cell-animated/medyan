@@ -60,7 +60,7 @@ template <unsigned short M, unsigned short N>
         void operator delete(void* ptr) noexcept;
 #endif
         /// Destructor
-        /// Tell Rspecies to remove this Reaction from its internal lists if reactions
+        /// Tell Rspecies to remove this Reaction from its internal lists of reactions
         virtual ~Reaction() noexcept
         {
         for(auto i=0U; i<M; ++i)
@@ -242,14 +242,6 @@ template <unsigned short M, unsigned short N>
         /// Implementation of  clone()
         virtual Reaction<M,N>* cloneImpl(const SpeciesPtrContainerVector &spcv) override;
     };
-
-
-    
-    
-    
-    
-    
-    
     
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline float Reaction<1,1>::computePropensityImpl() const

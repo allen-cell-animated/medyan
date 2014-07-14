@@ -1,12 +1,12 @@
 //
-//  FilamentControllerImpl.cpp
+//  CFilamentControllerImpl.cpp
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "FilamentControllerImpl.h"
+#include "CFilamentControllerImpl.h"
 
 namespace chem {
 
@@ -14,14 +14,14 @@ namespace chem {
     ///@param length - starting length of the filament initialized
     ///@param maxlength - length of entire reactive filament
     template <size_t NDIM>
-    SubFilament* FilopodiaInitializer<NDIM>::createSubFilament(Filament* parentFilament,
+    CSubFilament* FilopodiaInitializer<NDIM>::createCSubFilament(CFilament* parentFilament,
                                                                Compartment* c,
                                                                std::vector<std::string>* species,
                                                                int length,
                                                                int maxlength)
     {
-        SubFilament* subf = new SubFilament(c);
-        parentFilament->addSubFilament(subf);
+        CSubFilament* subf = new CSubFilament(c);
+        parentFilament->addCSubFilament(subf);
         
         ///Add monomers
         for (int index = 0; index < maxlength; index++)
@@ -58,7 +58,7 @@ namespace chem {
                 
             }
 
-            if(index == 0 && (parentFilament->numSubFilaments() == 1)) back->setN(1);
+            if(index == 0 && (parentFilament->numCSubFilaments() == 1)) back->setN(1);
             
             ///add to subfilament
             subf->addMonomer(new Monomer({actin, capping, formin, back, front}, c));
@@ -88,12 +88,12 @@ namespace chem {
                                                   _k_on_plus);
                 
                 boost::signals2::shared_connection_block
-                rcb(r->connect(FilamentExtensionCallback<NDIM>(FilamentInitializer<NDIM>::_controller,
+                rcb(r->connect(CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
                                                                parentFilament,
                                                                new std::vector<std::string>{"Actin"}),
                                                                false));
             }
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
         }
         
         /// add basic depolymerization reactions (+)
@@ -107,7 +107,7 @@ namespace chem {
                                               actinDiffusing},
                                               _k_off_plus);
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
         }
         
         Species* cappingDiffusing = c->findSpeciesDiffusingByName("Capping");
@@ -127,8 +127,8 @@ namespace chem {
                                               cappingDiffusing},
                                               _k_capping_off_plus);
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
         }
         
         Species* forminDiffusing = c->findSpeciesDiffusingByName("X-Formin");
@@ -148,8 +148,8 @@ namespace chem {
                                               forminDiffusing},
                                                _k_formin_off_plus);
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
         }
         
         ///add accelerated polymerization of actin with anti-cappped end
@@ -172,12 +172,12 @@ namespace chem {
                                                   _k_accel_on_plus);
             
                 boost::signals2::shared_connection_block
-                rcb(r->connect(FilamentExtensionCallback<NDIM>(FilamentInitializer<NDIM>::_controller,
+                rcb(r->connect(CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
                                                                parentFilament,
                                                                new std::vector<std::string>{"Actin","X-Formin"}),
                                                                false));
             }
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(r);
         }
         
         
@@ -211,11 +211,11 @@ namespace chem {
                                               _k_unload);
             
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rBinding);
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnbinding);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rBinding);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnbinding);
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rLoading);
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnloading);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rLoading);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnloading);
 
             //add motor stepping
             ReactionBase *rMForwardStep;
@@ -229,7 +229,7 @@ namespace chem {
                                                   subf->getBoundSpecies(index, "Empty")},
                                                   _k_forward_step);
                 
-                FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
+                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
             }
             if (index != 0) {
                 rMBackwardStep =
@@ -239,7 +239,7 @@ namespace chem {
                                                   subf->getBoundSpecies(index, "Empty")},
                                                   _k_forward_step);
                 
-                FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
+                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
             }
             
             ReactionBase *rMA3ForwardStep;
@@ -252,7 +252,7 @@ namespace chem {
                                                   subf->getBoundSpecies(index, "Empty")},
                                                   _k_forward_step);
                 
-                FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
+                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
             }
             if (index != 0) {
                 rMA3BackwardStep =
@@ -262,7 +262,7 @@ namespace chem {
                                                   subf->getBoundSpecies(index, "Empty")},
                                                   _k_forward_step);
                 
-                FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
+                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
             }
             
             ReactionBase *rMA3Unbinding =
@@ -272,7 +272,7 @@ namespace chem {
                                               actinDiffusing},
                                               _k_unbinding);
             
-            FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3Unbinding);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3Unbinding);
         }
         
         ///clean up and return
@@ -280,10 +280,10 @@ namespace chem {
         return subf;
     }
     
-    ///Connect two filaments, back to front
+    ///Connect two CFilaments, back to front
     ///For this impl, only add a polymerization reaction between them
     template<size_t NDIM>
-    void FilopodiaInitializer<NDIM>::connect (SubFilament* s1, SubFilament* s2)
+    void FilopodiaInitializer<NDIM>::connect (CSubFilament* s1, CSubFilament* s2)
     {
         //get all species
         Compartment* c1 = s1->compartment();
@@ -350,35 +350,35 @@ namespace chem {
                                            _k_backward_step);
         
         ///Reinit chemsim
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rAccelPoly);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rAccelPoly);
         
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
 
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
-        FilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
+        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
     };
 
     
     
     //specializations
-    template void FilopodiaInitializer<1>::connect (SubFilament* s1, SubFilament* s2);
-    template void FilopodiaInitializer<2>::connect (SubFilament* s1, SubFilament* s2);
-    template void FilopodiaInitializer<3>::connect (SubFilament* s1, SubFilament* s2);
+    template void FilopodiaInitializer<1>::connect (CSubFilament* s1, CSubFilament* s2);
+    template void FilopodiaInitializer<2>::connect (CSubFilament* s1, CSubFilament* s2);
+    template void FilopodiaInitializer<3>::connect (CSubFilament* s1, CSubFilament* s2);
     
-    template SubFilament* FilopodiaInitializer<1>::createSubFilament(Filament* parentFilament,
+    template CSubFilament* FilopodiaInitializer<1>::createCSubFilament(CFilament* parentFilament,
                                                                      Compartment* c,
                                                                      std::vector<std::string>* species,
                                                                      int length,
                                                                      int maxlength);
-    template SubFilament* FilopodiaInitializer<2>::createSubFilament(Filament* parentFilament,
+    template CSubFilament* FilopodiaInitializer<2>::createCSubFilament(CFilament* parentFilament,
                                                                      Compartment* c,
                                                                      std::vector<std::string>* species,
                                                                      int length,
                                                                      int maxlength);
-    template SubFilament* FilopodiaInitializer<3>::createSubFilament(Filament* parentFilament,
+    template CSubFilament* FilopodiaInitializer<3>::createCSubFilament(CFilament* parentFilament,
                                                                      Compartment* c,
                                                                      std::vector<std::string>* species,
                                                                      int length,
@@ -387,12 +387,12 @@ namespace chem {
 
     //Initialize a number of filaments
     template <size_t NDIM>
-    std::unordered_set<std::unique_ptr<Filament>>* FilamentControllerBasic<NDIM>::initialize(int numFilaments, int length)
+    std::unordered_set<std::unique_ptr<CFilament>>* CFilamentControllerBasic<NDIM>::initialize(int numFilaments, int length)
     {
         CompartmentSpatial<NDIM>* c_start;
         ///Starting compartment for 1D, all filaments start in compartment 0
         if (NDIM == 1) {
-            c_start = FilamentController<NDIM>::_grid->getCompartment(0);
+            c_start = CFilamentController<NDIM>::_grid->getCompartment(0);
         }
         else {
             std::cout << "Multiple dimensional implementation not done. Exiting." << std::endl;
@@ -402,13 +402,13 @@ namespace chem {
         int maxLength = int(c_start->sides()[0] / monomer_size);
         
         ///set of filaments
-        auto filaments = new std::unordered_set<std::unique_ptr<Filament>>() ;
+        auto filaments = new std::unordered_set<std::unique_ptr<CFilament>>() ;
         
         ///initialize each filament
         for(int index = 0; index < numFilaments; index++) {
             
-            Filament* f = new Filament();
-            FilamentController<NDIM>::_initializer->createSubFilament(f, c_start,
+            CFilament* f = new CFilament();
+            CFilamentController<NDIM>::_initializer->createCSubFilament(f, c_start,
                             new std::vector<std::string>{"Actin"}, length, maxLength);
             
             filaments->emplace(f);
@@ -419,38 +419,38 @@ namespace chem {
 
     ///Extend the front of a filament
     template <size_t NDIM>
-    void FilamentControllerBasic<NDIM>::extendFrontOfFilament(Filament *f, std::vector<std::string>* species)
+    void CFilamentControllerBasic<NDIM>::extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species)
     {
         ///Find next compartment (1D for now)
-        Compartment* cCurrent = f->getFrontSubFilament()->compartment();
+        Compartment* cCurrent = f->getFrontCSubFilament()->compartment();
         Compartment* cNext = cCurrent->neighbours().back();
         
-        SubFilament* s1 = f->getFrontSubFilament();
+        CSubFilament* s1 = f->getFrontCSubFilament();
         
         ///maxlen, for now
         int maxLength = int(static_cast<CompartmentSpatial<NDIM>*>(cCurrent)->sides()[0] / monomer_size);
         
         ///Initialize new subfilament and connect it
-        SubFilament* s2 = FilamentController<NDIM>::_initializer->createSubFilament(f, cNext, species, 1, maxLength);
-        FilamentController<NDIM>::_initializer->connect(s1,s2);
+        CSubFilament* s2 = CFilamentController<NDIM>::_initializer->createCSubFilament(f, cNext, species, 1, maxLength);
+        CFilamentController<NDIM>::_initializer->connect(s1,s2);
         
     }
 
     
     //Specializations
     
-    template std::unordered_set<std::unique_ptr<Filament>>*
-        FilamentControllerBasic<1>::initialize(int numFilaments, int length);
-    template std::unordered_set<std::unique_ptr<Filament>>*
-        FilamentControllerBasic<2>::initialize(int numFilaments, int length);
-    template std::unordered_set<std::unique_ptr<Filament>>*
-        FilamentControllerBasic<3>::initialize(int numFilaments, int length);
+    template std::unordered_set<std::unique_ptr<CFilament>>*
+        CFilamentControllerBasic<1>::initialize(int numFilaments, int length);
+    template std::unordered_set<std::unique_ptr<CFilament>>*
+        CFilamentControllerBasic<2>::initialize(int numFilaments, int length);
+    template std::unordered_set<std::unique_ptr<CFilament>>*
+        CFilamentControllerBasic<3>::initialize(int numFilaments, int length);
     
-    template void FilamentControllerBasic<1>::extendFrontOfFilament(Filament *f,
+    template void CFilamentControllerBasic<1>::extendFrontOfCFilament(CFilament *f,
                                                                     std::vector<std::string>* species);
-    template void FilamentControllerBasic<2>::extendFrontOfFilament(Filament *f,
+    template void CFilamentControllerBasic<2>::extendFrontOfCFilament(CFilament *f,
                                                                     std::vector<std::string>* species);
-    template void FilamentControllerBasic<3>::extendFrontOfFilament(Filament *f,
+    template void CFilamentControllerBasic<3>::extendFrontOfCFilament(CFilament *f,
                                                                     std::vector<std::string>* species);
     
 }; //end namespace chem

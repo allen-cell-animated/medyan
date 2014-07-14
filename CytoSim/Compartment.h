@@ -59,8 +59,8 @@ namespace chem {
         //Destructor
         virtual ~Compartment() noexcept
         {
-            clearReactions();
             clearNeighbouringReactions();
+            clearReactions();
             clearSpecies();
             removeFromNeighboursList();
         }
@@ -94,6 +94,7 @@ namespace chem {
                 for(auto &n : _neighbours)
                 {
                     n->removeDiffusionReactions(s.get());
+                    n->removeInternalReactions(s.get());
                 }
             }
         }

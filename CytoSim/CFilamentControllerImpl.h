@@ -1,16 +1,16 @@
 //
-//  FilamentControllerImpl.h
+//  CFilamentControllerImpl.h
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __CytoSim__FilamentControllerImpl__
-#define __CytoSim__FilamentControllerImpl__
+#ifndef __CytoSim__CFilamentControllerImpl__
+#define __CytoSim__CFilamentControllerImpl__
 
 #include <iostream>
-#include "FilamentController.h"
+#include "CFilamentController.h"
 
 namespace chem {
     
@@ -32,7 +32,7 @@ namespace chem {
     /// Motor loading and unloading
     
     template<size_t NDIM>
-    class FilopodiaInitializer : public FilamentInitializer<NDIM> {
+    class FilopodiaInitializer : public CFilamentInitializer<NDIM> {
         
     private:
         ///REACTION RATES
@@ -62,7 +62,7 @@ namespace chem {
     public:
         
         ///Constructor, does nothing
-        FilopodiaInitializer(ChemSim &chem) : FilamentInitializer<NDIM>(chem) {};
+        FilopodiaInitializer(ChemSim &chem) : CFilamentInitializer<NDIM>(chem) {};
         
         ///Destructor, does nothing
         ~FilopodiaInitializer() {};
@@ -90,13 +90,13 @@ namespace chem {
         
         ///Connect two filaments, back to front
         ///For this impl, only add a polymerization reaction between them
-        virtual void connect (SubFilament* s1, SubFilament* s2);
+        virtual void connect (CSubFilament* s1, CSubFilament* s2);
         
         ///Initializer, based on the given simulation
         ///@param length - starting length of the filament initialized
         ///@param maxlength - length of entire reactive filament
         ///@param species - list of species to initialize in filament
-        virtual SubFilament* createSubFilament(Filament* parentFilament,
+        virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
                                                Compartment* c,
                                                std::vector<std::string>* species,
                                                int length,
@@ -105,24 +105,24 @@ namespace chem {
     };
     
     
-    /// FilamentControllerBasic is a basic implementation for updating filaments
+    /// CFilamentControllerBasic is a basic implementation for updating filaments
     template <size_t NDIM>
-    class FilamentControllerBasic : public FilamentController<NDIM> {
+    class CFilamentControllerBasic : public CFilamentController<NDIM> {
         
     public:
         
         ///Constructor, calls base class
-        FilamentControllerBasic(CompartmentGrid<NDIM>* grid, FilamentInitializer<NDIM>* initializer)
-        : FilamentController<NDIM>::FilamentController(grid, initializer) {};
+        CFilamentControllerBasic(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
+        : CFilamentController<NDIM>::CFilamentController(grid, initializer) {};
         
         ///Default destructor, does nothing
-        ~FilamentControllerBasic() {}
+        ~CFilamentControllerBasic() {}
         
         //Initialize a number of filaments
-        virtual std::unordered_set<std::unique_ptr<Filament>>* initialize(int numFilaments, int length);
+        virtual std::unordered_set<std::unique_ptr<CFilament>>* initialize(int numFilaments, int length);
         
         ///Extend the front of a filament
-        virtual void extendFrontOfFilament(Filament *f, std::vector<std::string>* species);
+        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species);
         
     };
 
@@ -130,4 +130,4 @@ namespace chem {
 }; //end namespace chem
 
 
-#endif /* defined(__CytoSim__FilamentControllerImpl__) */
+#endif /* defined(__CytoSim__CFilamentControllerImpl__) */

@@ -58,8 +58,8 @@ namespace chem {
         friend Species;
         /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call        
     private: //Variables
-        std::vector<ReactionBase *> _as_reactants; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
-        std::vector<ReactionBase *> _as_products; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
+        std::vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
+        std::vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
         Species& _species; ///< reference to the **parent** Species object
         species_copy_t _n; ///< Current copy number of this RSpecies
 #ifdef TRACK_UPPER_COPY_N

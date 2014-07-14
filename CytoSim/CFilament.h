@@ -1,13 +1,13 @@
 //
-//  Filament.h
+//  CFilament.h
 //  CytoSim
 //
 //  Created by James Komianos on 7/8/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __CytoSim__Filament__
-#define __CytoSim__Filament__
+#ifndef __CytoSim__CFilament__
+#define __CytoSim__CFilament__
 
 #include <iostream>
 #include "CompartmentContainer.h"
@@ -15,15 +15,15 @@
 
 namespace chem {
     
-    /// FilamentElement class represents a container template for all species that could be contained in a
+    /// CFilamentElement class represents a container template for all species that could be contained in a
     /// particular filament element at a given position.
     /*!
-     *  FilamentElement provides a container to hold all species that are possibly held at a given
+     *  CFilamentElement provides a container to hold all species that are possibly held at a given
      *  filament position. The species are held in an standard array. Functions to lookup species
      *  as well as a filament element checker are provided.
      */
     template <class SpeciesType>
-    class FilamentElement {
+    class CFilamentElement {
         
     protected:
         std::vector<SpeciesType*> _species; ///< array of species in this element
@@ -31,10 +31,10 @@ namespace chem {
         
     public:
         ///Constructor does nothing
-        FilamentElement(Compartment* c) : _compartment(c) {};
+        CFilamentElement(Compartment* c) : _compartment(c) {};
         
         ///Default destructor, removes species from compartment
-        ~FilamentElement ()
+        ~CFilamentElement ()
         {
             for(auto& s : _species) {
                 _compartment->removeSpecies(s);
@@ -44,7 +44,7 @@ namespace chem {
             }
         };
         
-        ///Add a species to this filamentElement
+        ///Add a species to this CFilamentElement
         virtual void addSpecies(SpeciesType* s) {
             _species.push_back(s);
         }
@@ -70,16 +70,16 @@ namespace chem {
         virtual bool checkSpecies(int sum) = 0;
     };
     
-    ///Monomer class is an implementation of the abstract class FilamentElement for a monomer in filament
-    class Monomer : public FilamentElement<SpeciesFilament>
+    ///Monomer class is an implementation of the abstract class CFilamentElement for a monomer in filament
+    class Monomer : public CFilamentElement<SpeciesFilament>
     {
         
     public:
         ///Constructor takes any number of species
         Monomer(std::vector<SpeciesFilament*> species, Compartment* c) :
-            FilamentElement<SpeciesFilament>(c)
+            CFilamentElement<SpeciesFilament>(c)
         {
-            for(auto &s: species){FilamentElement<SpeciesFilament>::_species.push_back(s);}
+            for(auto &s: species){CFilamentElement<SpeciesFilament>::_species.push_back(s);}
         }
         
         ///Default destructor, does nothing
@@ -89,22 +89,22 @@ namespace chem {
         virtual bool checkSpecies(int sum)
         {
             int currentSum = 0;
-            for(auto &s : FilamentElement<SpeciesFilament>::_species) {currentSum += s->getN();}
+            for(auto &s : CFilamentElement<SpeciesFilament>::_species) {currentSum += s->getN();}
             return currentSum = sum;
         }
         
     };
     
-    ///Bound class is an implementation of the abstract class FilamentElement for a monomer in filament
-    class Bound : public FilamentElement<SpeciesBound>
+    ///Bound class is an implementation of the abstract class CFilamentElement for a monomer in filament
+    class Bound : public CFilamentElement<SpeciesBound>
     {
         
     public:
         ///Constructor takes any number of species
         Bound(std::vector<SpeciesBound*> species, Compartment* c) :
-            FilamentElement<SpeciesBound>(c)
+            CFilamentElement<SpeciesBound>(c)
         {
-            for(auto &s: species) {FilamentElement<SpeciesBound>::_species.push_back(s);}
+            for(auto &s: species) {CFilamentElement<SpeciesBound>::_species.push_back(s);}
         }
         
         ///Default destructor, does nothing
@@ -114,32 +114,32 @@ namespace chem {
         virtual bool checkSpecies(int sum)
         {
             int currentSum = 0;
-            for(auto &s : FilamentElement<SpeciesBound>::_species) {currentSum += s->getN();}
+            for(auto &s : CFilamentElement<SpeciesBound>::_species) {currentSum += s->getN();}
             return currentSum = sum;
         }
     };
     
     
-    /// SubFilament class holds all Monomers and Bounds
+    /// CSubFilament class holds all Monomers and Bounds
     /*! 
-     *  The SubFilamentClass is an template class that has lists of the monomers and bounds that it contains.
+     *  The CSubFilamentClass is an template class that has lists of the monomers and bounds that it contains.
      *  it has functionality to print the current composition.
-     *  Accessing a particular species in the subfilament is possible as well.
+     *  Accessing a particular species in the CSubFilament is possible as well.
      */
-    class SubFilament : public Component {
+    class CSubFilament : public Component {
         
     protected:
         std::vector<std::unique_ptr<Monomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<Bound>> _bounds; ///< list of bound species in this sub filament
-        Compartment* _compartment; ///< compartment this subfilament is in
-        short _length = 0; ///< length of this subfilament
+        Compartment* _compartment; ///< compartment this CSubFilament is in
+        short _length = 0; ///< length of this CSubFilament
         
     public:
         ///Default constructor, sets compartment
-        SubFilament(Compartment* c) : _compartment(c) {}
+        CSubFilament(Compartment* c) : _compartment(c) {}
         
         ///Default destructor, implicitly removes monomers and bounds
-        ~SubFilament()
+        ~CSubFilament()
         {
             _monomers.clear();
             _bounds.clear();
@@ -148,13 +148,13 @@ namespace chem {
         ///get filament compartment
         Compartment* compartment() {return _compartment;}
         
-        ///Add a monomer to this subfilament
+        ///Add a monomer to this CSubFilament
         virtual void addMonomer(Monomer* monomer) {
             _monomers.emplace_back(std::unique_ptr<Monomer>(monomer));
             _length++;
         }
         
-        ///Add a bound to this subfilament
+        ///Add a bound to this CSubFilament
         virtual void addBound(Bound* bound) {_bounds.emplace_back(std::unique_ptr<Bound>(bound));}
         
         ///Get monomer at an index
@@ -193,15 +193,15 @@ namespace chem {
             return bound(index)->species(name);
         }
         
-        ///Print subfilament
-        virtual void printSubFilament()
+        ///Print CSubFilament
+        virtual void printCSubFilament()
         {
-            std::cout << "Composition of SubFilament: " << std::endl;
+            std::cout << "Composition of CSubFilament: " << std::endl;
             for (auto &m : _monomers){
                 m->print();
                 std::cout << ":";
             }
-            std::cout << std::endl << "Bounds of SubFilament: " <<std::endl;
+            std::cout << std::endl << "Bounds of CSubFilament: " <<std::endl;
             for (auto &b : _bounds) {
                 b->print();
                 std::cout << ":";
@@ -210,42 +210,42 @@ namespace chem {
     };
     
     
-    /// Filament class holds sub filaments
-    /*! The Filament class is used to hold subfilaments (children of filament).
+    /// CFilament class holds sub CFilaments
+    /*! The CFilament class is used to hold CSubFilaments (children of CFilament).
      */
-    class Filament : public Composite{
+    class CFilament : public Composite{
         
     public:
         ///Default constructor, does nothing
-        Filament() {};
+        CFilament() {};
         
-        ///Default destructor, removes all subfilaments implicitly
-        ~Filament() {}
+        ///Default destructor, removes all Csubfilaments implicitly
+        ~CFilament() {}
         
-        ///Add a subfilament
-        virtual void addSubFilament(SubFilament* s) {
+        ///Add a Csubfilament
+        virtual void addCSubFilament(CSubFilament* s) {
             addChild(std::unique_ptr<Component>(s));
         }
         
         ///Get front subfilament
         ///@note -  no check on the number of children
-        virtual SubFilament* getFrontSubFilament()
+        virtual CSubFilament* getFrontCSubFilament()
         {
-            return static_cast<SubFilament*>(children(numberOfChildren() - 1));
+            return static_cast<CSubFilament*>(children(numberOfChildren() - 1));
             
         }
         
         ///number of subfilaments in this filament
-        virtual int numSubFilaments() {return numberOfChildren();}
+        virtual int numCSubFilaments() {return numberOfChildren();}
         
         ///Print entire filament
-        virtual void printFilament() {
+        virtual void printCFilament() {
             
             std::cout<<std::endl;
             int index = 0;
             for (auto &c : children()) {
-                std::cout << "SubFilament " << index++ << ":" <<std::endl;
-                static_cast<SubFilament*>(c.get())->printSubFilament();
+                std::cout << "CSubFilament " << index++ << ":" <<std::endl;
+                static_cast<CSubFilament*>(c.get())->printCSubFilament();
                 std::cout<< std::endl<<std::endl;
             }
         }
@@ -263,4 +263,4 @@ namespace chem {
 
 
 
-#endif /* defined(__CytoSim__Filament__) */
+#endif /* defined(__CytoSim__CFilament__) */

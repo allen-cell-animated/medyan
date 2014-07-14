@@ -44,7 +44,7 @@
 //#include "ChemSim.h"
 //#include "Composite.h"
 //#include "SpeciesContainer.h"
-#include "FilamentControllerImpl.h"
+#include "CFilamentControllerImpl.h"
 
 using namespace std;
 using namespace chem;
@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
     FilopodiaInitializer<1> initializer{chem};
     
     //Init filament controller
-    FilamentControllerBasic<1> controller{&ccv, &initializer};
+    CFilamentControllerBasic<1> controller{&ccv, &initializer};
     auto filaments = controller.initialize(16, 20);
     
     for(int step = 0; step < 10; step++) {
@@ -96,7 +96,7 @@ int main(int argc, const char * argv[])
         for(auto it = filaments->begin(); it != filaments->end(); it++) {
             std::cout << (*it).get() <<std::endl;
             std::cout << "FILAMENT " << index++ << std::endl;
-            (*it)->printFilament();
+            (*it)->printCFilament();
             std::cout << std::endl;
         }
     }
