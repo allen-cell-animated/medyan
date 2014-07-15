@@ -20,10 +20,17 @@
 #include <cstdint>
 
 typedef unsigned short species_copy_t;
-const species_copy_t max_ulim = 32;
-const float monomer_size = 2.7;
+const species_copy_t max_ulim = 10000;
+const float monomer_size = 2.7; //in nm
 extern double global_time;
 
+const double boltzmann_const = 1.3806503 * pow(10, -23); // in J/K
+const double temp = 300.0; // in K
+
+const double kT = 4.1; //in pN * nm
+
 inline double tau() {return global_time;}
+
+
 
 #endif

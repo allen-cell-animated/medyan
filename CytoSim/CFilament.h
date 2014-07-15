@@ -68,22 +68,22 @@ namespace chem {
         virtual bool checkSpecies(int sum) = 0;
     };
     
-    ///Monomer class is an implementation of the abstract class CFilamentElement for a monomer in filament
-    class Monomer : public CFilamentElement<SpeciesFilament>
+    ///CMonomer class is an implementation of the abstract class CFilamentElement for a CMonomer in filament
+    class CMonomer : public CFilamentElement<SpeciesFilament>
     {
         
     public:
         ///Constructor takes any number of species
-        Monomer(std::vector<SpeciesFilament*> species, Compartment* c) :
+        CMonomer(std::vector<SpeciesFilament*> species, Compartment* c) :
             CFilamentElement<SpeciesFilament>(c)
         {
             for(auto &s: species){CFilamentElement<SpeciesFilament>::_species.push_back(s);}
         }
         
         ///Default destructor, does nothing
-        ~Monomer () {}
+        ~CMonomer () {}
         
-        ///Check if this monomer is valid.
+        ///Check if this CMonomer is valid.
         virtual bool checkSpecies(int sum)
         {
             int currentSum = 0;
@@ -93,22 +93,22 @@ namespace chem {
         
     };
     
-    ///Bound class is an implementation of the abstract class CFilamentElement for a monomer in filament
-    class Bound : public CFilamentElement<SpeciesBound>
+    ///CBound class is an implementation of the abstract class CFilamentElement for a CBound on a filament
+    class CBound : public CFilamentElement<SpeciesBound>
     {
         
     public:
         ///Constructor takes any number of species
-        Bound(std::vector<SpeciesBound*> species, Compartment* c) :
+        CBound(std::vector<SpeciesBound*> species, Compartment* c) :
             CFilamentElement<SpeciesBound>(c)
         {
             for(auto &s: species) {CFilamentElement<SpeciesBound>::_species.push_back(s);}
         }
         
         ///Default destructor, does nothing
-        ~Bound () {}
+        ~CBound () {}
         
-        ///Check if this monomer is valid.
+        ///Check if this CBound is valid.
         virtual bool checkSpecies(int sum)
         {
             int currentSum = 0;
@@ -127,8 +127,8 @@ namespace chem {
     class CSubFilament : public Component {
         
     protected:
-        std::vector<std::unique_ptr<Monomer>> _monomers; ///< list of monomers in this sub filament
-        std::vector<std::unique_ptr<Bound>> _bounds; ///< list of bound species in this sub filament
+        std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this sub filament
+        std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this CSubFilament is in
         short _full_length = 0; ///< length of this CSubFilament
         short _length = 0; 
@@ -148,39 +148,39 @@ namespace chem {
         Compartment* compartment() {return _compartment;}
         
         ///Add a monomer to this CSubFilament
-        virtual void addMonomer(Monomer* monomer) {
-            _monomers.emplace_back(std::unique_ptr<Monomer>(monomer));
+        virtual void addCMonomer(CMonomer* monomer) {
+            _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));
             _full_length++;
         }
         
         ///Add a bound to this CSubFilament
-        virtual void addBound(Bound* bound) {_bounds.emplace_back(std::unique_ptr<Bound>(bound));}
+        virtual void addCBound(CBound* bound) {_bounds.emplace_back(std::unique_ptr<CBound>(bound));}
         
         ///Get monomer at an index
         ///@note no check on index
-        virtual Monomer* monomer(int index) {return _monomers[index].get();}
+        virtual CMonomer* getCMonomer(int index) {return _monomers[index].get();}
         
         ///Get bound at an index
         ///@note no check on index
-        virtual Bound* bound(int index) {return _bounds[index].get();}
+        virtual CBound* getCBound(int index) {return _bounds[index].get();}
         
         ///Get back or front monomer/bound
         ///@note monomer/bound list must not be empty
-        virtual Monomer* backMonomer() {return _monomers[_full_length - 1].get();}
-        virtual Bound* backBound() {return _bounds[_full_length - 1].get();}
-        virtual Monomer* frontMonomer() {return _monomers[0].get();}
-        virtual Bound* frontBound() {return _bounds[0].get();}
+        virtual CMonomer* backCMonomer() {return _monomers[_length - 1].get();}
+        virtual CBound* backCBound() {return _bounds[_length - 1].get();}
+        virtual CMonomer* frontCMonomer() {return _monomers[0].get();}
+        virtual CBound* frontCBound() {return _bounds[0].get();}
         
         ///Get species at specified index (monomer)
-        virtual SpeciesFilament* getMonomerSpecies(int index, std::string name) {
+        virtual SpeciesFilament* getSpeciesFilament(int index, std::string name) {
             
-            return monomer(index)->species(name);
+            return getCMonomer(index)->species(name);
         }
         
         ///Get species at specified index (bound)
-        virtual SpeciesBound* getBoundSpecies(int index, std::string name) {
+        virtual SpeciesBound* getSpeciesBound(int index, std::string name) {
             
-            return bound(index)->species(name);
+            return getCBound(index)->species(name);
         }
         
         ///Get the current length
@@ -296,62 +296,8 @@ namespace chem {
     };
     
 
-    /// Membrane class updates polymerization rates based on the Brownian-Ratchet model
-    
-    /*! The Membrane class will update all polymerization reaction rates based on
-     *  the given configuration of filament ends and a membrane. The calculation is:
-     *
-     *
-     *  1) The effective polymerization rate of a filament is equal to the "bare" rate,
-     *     denoted as k0, times the probability of the gap between the filament and the
-     *     membrane opening. The relation between the loading force and the rate is:
-     *
-     *                      k_n + = k+ * exp(-f_n * monomer size / k * T)
-     *
-     *     where f_n is the current force on the nth filament.
-     *
-     *  2) To compute the forces f_n, we must calculate the probability of finding the
-     *     nth filament below the membrane (which we denote as a height of h = max_n(h_n))
-     *
-     *             p_n ~ integral from h-h_n to infinity ( exp(-z^2 / sigma^2) dz )
-     *
-     *     where sigma is the average membrane fluctuation amplitude, which we assume
-     *     to be constant.
-     *
-     *  3) Then, the forces are computed as f_n = (p_n / p) * f, where the total force f
-     *     is constant, and p is the normalization factor.
-     *
-     */
-    
-    class Membrane {
-        
-    private:
-        std::vector<ReactionBase*> _poly_reactions; ///<vector of reactions to update
-        
-        int _h_membrane = 0; ///<height of the membrane
-        
-        
-        
-        
-        
-        
-    };
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }; //namespace chem
-
-
-
-
-
 
 
 

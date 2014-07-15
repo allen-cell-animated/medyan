@@ -276,6 +276,6 @@ template <unsigned short M, unsigned short N>
             _rspecies[1]->emitSignal(+1);
     }
 #endif
-
+    
 } // end of namespace
 #endif

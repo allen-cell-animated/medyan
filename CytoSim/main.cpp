@@ -44,7 +44,8 @@
 //#include "ChemSim.h"
 //#include "Composite.h"
 //#include "SpeciesContainer.h"
-#include "CFilamentControllerImpl.h"
+#include "CFilopodiaController.h"
+#include "CMembrane.h"
 
 using namespace std;
 using namespace chem;
@@ -52,15 +53,15 @@ using namespace chem;
 int main(int argc, const char * argv[])
 {
     const int NDIM = 1;
-    const int NGRID = 1000;
+    const int NGRID = 5;
     CompartmentGrid<NDIM> ccv{NGRID};
     CompartmentSpatial<NDIM> &Cproto = ccv.getProtoCompartment();
     
     ///Add diffusing species
-    Species *M1 = Cproto.addSpecies("Actin",1000U);
+    Species *M1 = Cproto.addSpecies("Actin",10U);
     Species *M2 = Cproto.addSpecies("Capping",0U);
-    Species *M3 = Cproto.addSpecies("X-Formin",1000U);
-    Species *M4 = Cproto.addSpecies("Myosin", 100U);
+    Species *M3 = Cproto.addSpecies("X-Formin",5U);
+    Species *M4 = Cproto.addSpecies("Myosin", 5U);
     Cproto.setDiffusionRate(M1,2000);
     Cproto.setDiffusionRate(M2,2000);
     Cproto.setDiffusionRate(M3,2000);
@@ -79,17 +80,21 @@ int main(int argc, const char * argv[])
     ccv.addChemSimReactions(chem);
     chem.initialize();
     
+    CMembrane mem;
+    
     ///Init filament initializer
-    FilopodiaInitializer<1> initializer{chem};
+    FilopodiaInitializer<1> initializer{chem, mem};
     
     //Init filament controller
     CFilamentControllerFilopodia<1> controller{&ccv, &initializer};
     controller.initialize(16, 20);
     
+    //chem.printReactions();
+    
     for(int step = 0; step < 1; step++) {
         
         ///Run 100 steps
-        chem.run(100);
+        chem.run(10000);
         
         controller.printFilaments();
        

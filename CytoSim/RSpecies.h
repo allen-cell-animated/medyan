@@ -240,11 +240,11 @@ namespace chem {
                 
         /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Reactant
-        inline std::vector<ReactionBase *> ReactantReactions(){return _as_reactants;}
+        inline std::vector<ReactionBase *>& ReactantReactions(){return _as_reactants;}
         
         /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
         /// is involved as a Product
-        inline std::vector<ReactionBase *> ProductReactions(){return _as_products;}
+        inline std::vector<ReactionBase *>& ProductReactions(){return _as_products;}
         
         /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
         /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant

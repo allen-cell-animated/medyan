@@ -58,6 +58,7 @@ namespace chem {
         RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
         Composite *_parent; ///< A pointer to a Composite object to which this Reaction belongs
         float _rate; ///< the rate for this ReactionBase
+        float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
         ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
@@ -109,6 +110,9 @@ namespace chem {
         
         /// Returns the rate associated with this ReactionBase.
         float getRate() const {return _rate;}
+        
+        /// Returns the bare rate associated with this ReacitonBase
+        float getBareRate() const {return _rate_bare;}
         
         /// Returns a pointer to the RNode associated with this ReactionBase.
         RNode* getRnode() const {return _rnode;}

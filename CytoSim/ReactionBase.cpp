@@ -14,7 +14,7 @@ using namespace std;
 namespace chem {
     
     ReactionBase::ReactionBase (float rate) :
-    _rnode(nullptr), _rate(rate), _parent(nullptr)
+    _rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate)
     {
 #ifdef REACTION_SIGNALING
         _signal=nullptr;

@@ -12,7 +12,10 @@
 #include <iostream>
 #include "CFilamentController.h"
 
+
 namespace chem {
+    
+    class CMembrane;
     
     /// FilopodiaInitializer is a basic implementation of the Initializer class that only involves the following:
     
@@ -35,6 +38,8 @@ namespace chem {
     class FilopodiaInitializer : public CFilamentInitializer<NDIM> {
         
     private:
+        CMembrane& _membrane;
+        
         ///REACTION RATES
         //basic
         float _k_on_plus = 21.0;
@@ -58,35 +63,17 @@ namespace chem {
         float _k_load = 20.0;
         float _k_unload = 10.0;
         
-        
     public:
         
         ///Constructor, does nothing
-        FilopodiaInitializer(ChemSim &chem) : CFilamentInitializer<NDIM>(chem) {};
+        FilopodiaInitializer(ChemSim &chem, CMembrane &membrane) :
+            CFilamentInitializer<NDIM>(chem), _membrane(membrane){};
         
         ///Destructor, does nothing
         ~FilopodiaInitializer() {};
         
-//        ///Set reaction rates for this subfilament
-//        virtual void setReactionRates(float kOnPlus = 21.0,
-//                                      float kOffPlus = 1.4,
-//                                      float kOffMinus = 1.4
-//                                      float kCappingOnPlus = 50.0
-//                                      float kCappingOffPlus = 0.06
-//                                      float kForminOnPlus = 10.0
-//                                      float kForminOffPlus = 1.4
-//                                      float kAccelOnPlus = 100.0)
-//        {
-//            _k_on_plus = kOnPlus;
-//            _k_off_plus = kOffPlus;
-//            _k_off_minus = kOffMinus;
-//            _k_capping_on_plus = kCappingOnPlus;
-//            _k_capping_off_plus = kCappingOffPlus;
-//            _k_formin_on_plus = kForminOnPlus;
-//            _k_formin_off_plus = 0;
-//            _k_accel_on_plus = 0;
-//            
-//        }
+        ///Find the current polymerization reactions associated with this CFilament
+        virtual std::vector<ReactionBase*>* findPolymerizationReactions(CFilament* f);
         
         ///Connect two filaments, back to front
         ///For this impl, only add a polymerization reaction between them
@@ -102,19 +89,18 @@ namespace chem {
                                                int length,
                                                int maxlength);
         
+        ///Update filaments based on a reaction
+        ///In this implementation, update polymerization rates based on membrane
+        virtual void update(CFilament* f, ReactionBase* r);
+       
     };
     
     
-    /// CFilamentControllerFilopodia is a basic implementation for updating filaments
+    /// CFilamentControllerFilopodia is a basic implementation for updating filopodia filaments
     template <size_t NDIM>
     class CFilamentControllerFilopodia : public CFilamentController<NDIM> {
-        
-    private:
-        Membrane* _membrane;
-        
-        
+ 
     public:
-        
         ///Constructor, calls base class
         CFilamentControllerFilopodia(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
         : CFilamentController<NDIM>::CFilamentController(grid, initializer) {};
@@ -127,9 +113,9 @@ namespace chem {
         
         ///Extend the front of a filament
         virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species);
-        
     };
-
+    
+    
     
 }; //end namespace chem
 
