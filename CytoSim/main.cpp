@@ -44,7 +44,7 @@
 //#include "ChemSim.h"
 //#include "Composite.h"
 //#include "SpeciesContainer.h"
-#include "CFilopodiaController.h"
+#include "FilopodiaController.h"
 #include "CMembrane.h"
 
 using namespace std;
@@ -86,20 +86,30 @@ int main(int argc, const char * argv[])
     FilopodiaInitializer<1> initializer{chem, mem};
     
     //Init filament controller
-    CFilamentControllerFilopodia<1> controller{&ccv, &initializer};
-    controller.initialize(16, 20);
+    FilopodiaController<1> controller{&ccv, &initializer};
+    controller.initialize(16, 40);
     
     //chem.printReactions();
     
     for(int step = 0; step < 1; step++) {
         
         ///Run 100 steps
-        chem.run(10000);
+        auto chk1 = chrono::high_resolution_clock::now();
+        chem.run(1000);
+        auto chk2 = chrono::high_resolution_clock::now();
         
         controller.printFilaments();
+        
+        chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
+        //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
+        
+        cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
        
     }
     
+    
+    
+    cout << "tau=" << tau() <<endl;
     std::cout << "Done!" <<std::endl;
     
 }

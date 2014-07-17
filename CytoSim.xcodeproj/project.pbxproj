@@ -15,10 +15,14 @@
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71EAF1915B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F71EAF1A15B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
-		F72BB385196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* CFilopodiaController.cpp */; };
-		F72BB386196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* CFilopodiaController.cpp */; };
-		F72BB387196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* CFilopodiaController.cpp */; };
-		F72BB388196F14B800D0DBEF /* CFilopodiaController.h in Headers */ = {isa = PBXBuildFile; fileRef = F72BB384196F14B800D0DBEF /* CFilopodiaController.h */; };
+		F72BB385196F14B800D0DBEF /* FilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* FilopodiaController.cpp */; };
+		F72BB386196F14B800D0DBEF /* FilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* FilopodiaController.cpp */; };
+		F72BB387196F14B800D0DBEF /* FilopodiaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BB383196F14B800D0DBEF /* FilopodiaController.cpp */; };
+		F72BB388196F14B800D0DBEF /* FilopodiaController.h in Headers */ = {isa = PBXBuildFile; fileRef = F72BB384196F14B800D0DBEF /* FilopodiaController.h */; };
+		F72EC63019782604007DA75F /* CFilamentImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72EC62E19782604007DA75F /* CFilamentImpl.cpp */; };
+		F72EC63119782604007DA75F /* CFilamentImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72EC62E19782604007DA75F /* CFilamentImpl.cpp */; };
+		F72EC63219782604007DA75F /* CFilamentImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72EC62E19782604007DA75F /* CFilamentImpl.cpp */; };
+		F72EC63319782604007DA75F /* CFilamentImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F72EC62F19782604007DA75F /* CFilamentImpl.h */; };
 		F7346A8A1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F737B37F160961B1001722DD /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
@@ -41,9 +45,6 @@
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
-		F784E48C196C3E28003C84A8 /* CFilament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* CFilament.cpp */; };
-		F784E48D196C3E28003C84A8 /* CFilament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* CFilament.cpp */; };
-		F784E48E196C3E28003C84A8 /* CFilament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F784E48A196C3E28003C84A8 /* CFilament.cpp */; };
 		F784E48F196C3E28003C84A8 /* CFilament.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E48B196C3E28003C84A8 /* CFilament.h */; };
 		F784E495196C6448003C84A8 /* CFilamentController.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E491196C6448003C84A8 /* CFilamentController.h */; };
 		F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7981A68194604F100A7E22C /* test_compartments.cpp */; };
@@ -131,8 +132,10 @@
 		F71E973D1565A79A002BDF16 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
 		F71E97411565B01A002BDF16 /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
 		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
-		F72BB383196F14B800D0DBEF /* CFilopodiaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFilopodiaController.cpp; sourceTree = "<group>"; };
-		F72BB384196F14B800D0DBEF /* CFilopodiaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilopodiaController.h; sourceTree = "<group>"; };
+		F72BB383196F14B800D0DBEF /* FilopodiaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilopodiaController.cpp; sourceTree = "<group>"; };
+		F72BB384196F14B800D0DBEF /* FilopodiaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilopodiaController.h; sourceTree = "<group>"; };
+		F72EC62E19782604007DA75F /* CFilamentImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFilamentImpl.cpp; sourceTree = "<group>"; };
+		F72EC62F19782604007DA75F /* CFilamentImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilamentImpl.h; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
 		F737B37D160961B1001722DD /* ReactionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionBase.cpp; sourceTree = "<group>"; };
@@ -160,7 +163,6 @@
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
-		F784E48A196C3E28003C84A8 /* CFilament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFilament.cpp; sourceTree = "<group>"; };
 		F784E48B196C3E28003C84A8 /* CFilament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilament.h; sourceTree = "<group>"; };
 		F784E491196C6448003C84A8 /* CFilamentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilamentController.h; sourceTree = "<group>"; };
 		F7981A68194604F100A7E22C /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
@@ -310,10 +312,11 @@
 				F763ED201548FFED0069DA61 /* Species.h */,
 				F7D75C3719756EF600324C41 /* CMembrane.cpp */,
 				F7D75C3819756EF600324C41 /* CMembrane.h */,
-				F784E48A196C3E28003C84A8 /* CFilament.cpp */,
 				F784E48B196C3E28003C84A8 /* CFilament.h */,
-				F72BB383196F14B800D0DBEF /* CFilopodiaController.cpp */,
-				F72BB384196F14B800D0DBEF /* CFilopodiaController.h */,
+				F72EC62E19782604007DA75F /* CFilamentImpl.cpp */,
+				F72EC62F19782604007DA75F /* CFilamentImpl.h */,
+				F72BB383196F14B800D0DBEF /* FilopodiaController.cpp */,
+				F72BB384196F14B800D0DBEF /* FilopodiaController.h */,
 				F784E491196C6448003C84A8 /* CFilamentController.h */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F763ED211548FFED0069DA61 /* System.cpp */,
@@ -346,10 +349,11 @@
 			files = (
 				F784E48F196C3E28003C84A8 /* CFilament.h in Headers */,
 				F7B99A7015EFBBE8004A245A /* SpeciesContainer.h in Headers */,
+				F72EC63319782604007DA75F /* CFilamentImpl.h in Headers */,
 				F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */,
 				F7D75C3C19756EF600324C41 /* CMembrane.h in Headers */,
 				F737B381160961B1001722DD /* ReactionBase.h in Headers */,
-				F72BB388196F14B800D0DBEF /* CFilopodiaController.h in Headers */,
+				F72BB388196F14B800D0DBEF /* FilopodiaController.h in Headers */,
 				F784E495196C6448003C84A8 /* CFilamentController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,9 +507,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F784E48C196C3E28003C84A8 /* CFilament.cpp in Sources */,
 				F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */,
-				F72BB385196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */,
+				F72BB385196F14B800D0DBEF /* FilopodiaController.cpp in Sources */,
 				F763ED241548FFED0069DA61 /* main.cpp in Sources */,
 				F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */,
 				F763ED291548FFED0069DA61 /* Species.cpp in Sources */,
@@ -518,6 +521,7 @@
 				F7346A8A1578206500326E09 /* Component.cpp in Sources */,
 				F71EAF1915B224210072EE4E /* common.cpp in Sources */,
 				F7013D8115D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
+				F72EC63019782604007DA75F /* CFilamentImpl.cpp in Sources */,
 				F70174A015DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */,
 				F737B37F160961B1001722DD /* ReactionBase.cpp in Sources */,
@@ -533,6 +537,7 @@
 				F771ADC115655DBA0010B123 /* Compartment.cpp in Sources */,
 				F771ADC415655DBA0010B123 /* Reaction.cpp in Sources */,
 				F771ADC615655DBA0010B123 /* Species.cpp in Sources */,
+				F72EC63219782604007DA75F /* CFilamentImpl.cpp in Sources */,
 				F771ADC715655DBA0010B123 /* System.cpp in Sources */,
 				F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */,
 				F7F3681F1575C743006727F7 /* Composite.cpp in Sources */,
@@ -541,8 +546,7 @@
 				F71EAF1A15B224210072EE4E /* common.cpp in Sources */,
 				F7013D8215D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */,
 				F70174A115DD0C7C00AAA2AD /* ChemSimpleGillespieImpl.cpp in Sources */,
-				F784E48E196C3E28003C84A8 /* CFilament.cpp in Sources */,
-				F72BB387196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */,
+				F72BB387196F14B800D0DBEF /* FilopodiaController.cpp in Sources */,
 				F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */,
 				F737B380160961B1001722DD /* ReactionBase.cpp in Sources */,
 			);
@@ -565,11 +569,11 @@
 				F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */,
 				F7A8EEB2193F91A600A52210 /* test_reactions.cpp in Sources */,
 				F7A8EEB3193F91A600A52210 /* test_gillespie.cpp in Sources */,
-				F784E48D196C3E28003C84A8 /* CFilament.cpp in Sources */,
 				F7A8EEB4193F91A600A52210 /* test_nrm.cpp in Sources */,
 				F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */,
+				F72EC63119782604007DA75F /* CFilamentImpl.cpp in Sources */,
 				F7D75C3A19756EF600324C41 /* CMembrane.cpp in Sources */,
-				F72BB386196F14B800D0DBEF /* CFilopodiaController.cpp in Sources */,
+				F72BB386196F14B800D0DBEF /* FilopodiaController.cpp in Sources */,
 				F7A8EEB5193F91A600A52210 /* test_simple_gillespie.cpp in Sources */,
 				F7A8EEAD193F8C4900A52210 /* test_gillespie_cross.cpp in Sources */,
 			);

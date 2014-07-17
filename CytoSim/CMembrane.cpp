@@ -59,6 +59,9 @@ namespace chem {
         auto pValues = std::vector<double>();
         double sumP = 0;
         
+        std::cout<< _poly_reactions.size() << std::endl;
+        
+        
         //Set up integration function
         _F.function = &gaussian;
         _F.params = &_sigma;

@@ -22,11 +22,9 @@ namespace chem {
      *  filament position. The species are held in an standard array. Functions to lookup species
      *  as well as a filament element checker are provided.
      */
-    template <class SpeciesType>
     class CFilamentElement {
         
     protected:
-        std::vector<SpeciesType*> _species; ///< array of species in this element
         Compartment* _compartment; ///< compartment that this filament element is in
         
     public:
@@ -41,80 +39,36 @@ namespace chem {
 //                //_compartment->removeSpecies(s);
 //            }
         };
-        
-        ///Add a species to this CFilamentElement
-        virtual void addSpecies(SpeciesType* s) {
-            _species.push_back(s);
-        }
-        
-        
-        ///Look up a species given a name
-        virtual SpeciesType* species(std::string name)
-        {
-            for (SpeciesType* &s : _species)
-                if(s->getName() == name) return s;
-            return nullptr;
-        }
-        
+
         ///Print a species in this filament element
-        virtual void print()
-        {
-            for (SpeciesType* &s : _species)
-                if(s->getN() == 1) std::cout << s->getName().at(0);
-            
-        }
-        
+        virtual void print() = 0;
+
         ///Check if this filament element is valid. Involves checking copy numbers
         virtual bool checkSpecies(int sum) = 0;
     };
     
     ///CMonomer class is an implementation of the abstract class CFilamentElement for a CMonomer in filament
-    class CMonomer : public CFilamentElement<SpeciesFilament>
+    class CMonomer : public CFilamentElement
     {
         
     public:
         ///Constructor takes any number of species
-        CMonomer(std::vector<SpeciesFilament*> species, Compartment* c) :
-            CFilamentElement<SpeciesFilament>(c)
-        {
-            for(auto &s: species){CFilamentElement<SpeciesFilament>::_species.push_back(s);}
-        }
+        CMonomer(Compartment* c) : CFilamentElement(c){}
         
         ///Default destructor, does nothing
         ~CMonomer () {}
-        
-        ///Check if this CMonomer is valid.
-        virtual bool checkSpecies(int sum)
-        {
-            int currentSum = 0;
-            for(auto &s : CFilamentElement<SpeciesFilament>::_species) {currentSum += s->getN();}
-            return currentSum = sum;
-        }
-        
     };
     
     ///CBound class is an implementation of the abstract class CFilamentElement for a CBound on a filament
-    class CBound : public CFilamentElement<SpeciesBound>
+    class CBound : public CFilamentElement
     {
         
     public:
         ///Constructor takes any number of species
-        CBound(std::vector<SpeciesBound*> species, Compartment* c) :
-            CFilamentElement<SpeciesBound>(c)
-        {
-            for(auto &s: species) {CFilamentElement<SpeciesBound>::_species.push_back(s);}
-        }
+        CBound(Compartment* c) : CFilamentElement(c){}
         
         ///Default destructor, does nothing
         ~CBound () {}
-        
-        ///Check if this CBound is valid.
-        virtual bool checkSpecies(int sum)
-        {
-            int currentSum = 0;
-            for(auto &s : CFilamentElement<SpeciesBound>::_species) {currentSum += s->getN();}
-            return currentSum = sum;
-        }
     };
     
     
@@ -130,7 +84,7 @@ namespace chem {
         std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this CSubFilament is in
-        short _full_length = 0; ///< length of this CSubFilament
+        short _max_length = 0; ///< length of this CSubFilament
         short _length = 0; 
         
     public:
@@ -150,7 +104,7 @@ namespace chem {
         ///Add a monomer to this CSubFilament
         virtual void addCMonomer(CMonomer* monomer) {
             _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));
-            _full_length++;
+            _max_length++;
         }
         
         ///Add a bound to this CSubFilament
@@ -171,29 +125,16 @@ namespace chem {
         virtual CMonomer* frontCMonomer() {return _monomers[0].get();}
         virtual CBound* frontCBound() {return _bounds[0].get();}
         
-        ///Get species at specified index (monomer)
-        virtual SpeciesFilament* getSpeciesFilament(int index, std::string name) {
-            
-            return getCMonomer(index)->species(name);
-        }
-        
-        ///Get species at specified index (bound)
-        virtual SpeciesBound* getSpeciesBound(int index, std::string name) {
-            
-            return getCBound(index)->species(name);
-        }
-        
         ///Get the current length
         virtual short length() {return _length;}
         ///Increase length
-        virtual void increaseLength() {if(_length != _full_length) _length++;}
+        virtual void increaseLength() {if(_length != _max_length) _length++;}
         ///Decrease length
         virtual void decreaseLength() {if(_length != 0) _length--;}
         ///see if the subfilament is at maxlength
-        virtual bool atMaxLength() {return _length == _full_length;}
+        virtual bool atMaxLength() {return _length == _max_length;}
         ///set the length of this subfilament
         virtual void setLength(int length) {_length = length;}
-        
         
         ///Print CSubFilament
         virtual void printCSubFilament()
@@ -271,9 +212,8 @@ namespace chem {
         }
         
         ///Set the length of this filament
-        ///@note should only be used when the filament has EXACTLY ONE sub filament
+        ///@note should only be used when initializing filament
         virtual void setLength(int length) {
-            getFrontCSubFilament()->setLength(length);
             _length = length;
         }
         
