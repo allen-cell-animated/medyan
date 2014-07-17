@@ -487,7 +487,8 @@ namespace chem {
             cStart = CFilamentController<NDIM>::_grid->getCompartment(0);
         }
         else {
-            std::cout << "Multiple dimensional implementation not optional for Filopodia (yet). Exiting." << std::endl;
+            std::cout << "Multiple dimensional implementation \
+                    not optional for Filopodia (yet). Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         ///maxlen, for now
@@ -503,16 +504,20 @@ namespace chem {
             int numSubFilaments = length / (maxLength + 1) + 1;
             
             for(int si = 0; si < numSubFilaments; si++) {
+                int setLength; ///length to intialize subfilament to
                 
-                int setLength =
-                    (si == numSubFilaments - 1 ? length - (maxLength * (numSubFilaments - 1)) : maxLength);
+                if (si == numSubFilaments - 1)
+                    setLength = length - (maxLength * (numSubFilaments - 1));
+                else
+                    setLength = maxLength;
                 
                 CSubFilament* currentSubFilament =
                     CFilamentController<NDIM>::_initializer->createCSubFilament(f, cNext,
                              new std::vector<std::string>{"Actin"}, setLength, maxLength);
                 
                 if(lastSubFilament != nullptr)
-                    CFilamentController<NDIM>::_initializer->connect(lastSubFilament, currentSubFilament);
+                    CFilamentController<NDIM>::_initializer->
+                                        connect(lastSubFilament, currentSubFilament);
                     
                 lastSubFilament = currentSubFilament;
                 cNext = cNext->neighbours().back();
@@ -525,7 +530,8 @@ namespace chem {
 
     ///Extend the front of a filament
     template <size_t NDIM>
-    void FilopodiaController<NDIM>::extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species)
+    void FilopodiaController<NDIM>::extendFrontOfCFilament(CFilament *f,
+                                                           std::vector<std::string>* species)
     {
         ///Find next compartment (1D for now)
         Compartment* cCurrent = f->getFrontCSubFilament()->compartment();
@@ -534,11 +540,12 @@ namespace chem {
         CSubFilament* s1 = f->getFrontCSubFilament();
         
         ///maxlen, for now
-        int maxLength = int(static_cast<CompartmentSpatial<NDIM>*>(cCurrent)->sides()[0] / monomer_size);
+        int sideLength = static_cast<CompartmentSpatial<NDIM>*>(cCurrent)->sides()[0];
+        int maxLength = int(sideLength / monomer_size);
         
         ///Initialize new subfilament and connect it
         CSubFilament* s2 = CFilamentController<NDIM>::_initializer->
-                                        createCSubFilament(f, cNext, species, 1, maxLength);
+                            createCSubFilament(f, cNext, species, 1, maxLength);
         CFilamentController<NDIM>::_initializer->connect(s1,s2);
         
         ///Increase length
@@ -553,12 +560,15 @@ namespace chem {
     template void FilopodiaController<2>::initialize(int numFilaments, int length);
     template void FilopodiaController<3>::initialize(int numFilaments, int length);
     
-    template void FilopodiaController<1>::extendFrontOfCFilament(CFilament *f,
-                                                                 std::vector<std::string>* species);
-    template void FilopodiaController<2>::extendFrontOfCFilament(CFilament *f,
-                                                                 std::vector<std::string>* species);
-    template void FilopodiaController<3>::extendFrontOfCFilament(CFilament *f,
-                                                                 std::vector<std::string>* species);
+    template void
+        FilopodiaController<1>::extendFrontOfCFilament(CFilament *f,
+                                                       std::vector<std::string>* species);
+    template void
+        FilopodiaController<2>::extendFrontOfCFilament(CFilament *f,
+                                                       std::vector<std::string>* species);
+    template void
+        FilopodiaController<3>::extendFrontOfCFilament(CFilament *f,
+                                                       std::vector<std::string>* species);
     
 }; //end namespace chem
 
