@@ -62,10 +62,10 @@ int main(int argc, const char * argv[])
     Species *M2 = Cproto.addSpecies("Capping",0U);
     Species *M3 = Cproto.addSpecies("X-Formin",5U);
     Species *M4 = Cproto.addSpecies("Myosin", 5U);
-    Cproto.setDiffusionRate(M1,2000);
-    Cproto.setDiffusionRate(M2,2000);
-    Cproto.setDiffusionRate(M3,2000);
-    Cproto.setDiffusionRate(M4,2000);
+//    Cproto.setDiffusionRate(M1,2000);
+//    Cproto.setDiffusionRate(M2,2000);
+//    Cproto.setDiffusionRate(M3,2000);
+//    Cproto.setDiffusionRate(M4,2000);
 
     ///Set side length
     vector<float> sides{100.0};
@@ -78,7 +78,6 @@ int main(int argc, const char * argv[])
     ChemNRMImpl chem_sim_impl;
     ChemSim chem(&chem_sim_impl);
     ccv.addChemSimReactions(chem);
-    chem.initialize();
     
     CMembrane mem;
     
@@ -88,6 +87,8 @@ int main(int argc, const char * argv[])
     //Init filament controller
     FilopodiaController<1> controller{&ccv, &initializer};
     controller.initialize(16, 40);
+    
+    chem.initialize();
     
     //chem.printReactions();
     

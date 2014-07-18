@@ -65,6 +65,9 @@ namespace chem {
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
         bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
+        bool _is_poly_reaction = false; ///<polymerization identifier
+        
+        
         
     public:
         /// The main constructor:
@@ -100,6 +103,12 @@ namespace chem {
         /// to iterate over RSpecies* if necessary (also by relying on getM() and size() to determine
         /// the iteration limits). The corresponding std::array<RSpecies*> is defined by the derived classes.
         virtual RSpecies** rspecies() = 0;
+        
+        /// Set this ReactionBase as a polymerization reaction
+        void setAsPolymerizationReaction() { _is_poly_reaction = true;}
+        
+        /// Check if this ReactionBase is a polymerization reaction
+        bool isPolymerizationReaction() {return _is_poly_reaction;}
         
         /// Sets the ReactionBase rate to the parameter "rate"
         void setRate(float rate) {_rate=rate;}

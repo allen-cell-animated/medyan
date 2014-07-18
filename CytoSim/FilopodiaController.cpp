@@ -83,29 +83,16 @@ namespace chem {
     {
         auto polyReactions = new std::vector<ReactionBase*>();
         ///go to the front subfilament, front monomer
-        CMonomerBasic* frontCMonomer =
-            static_cast<CMonomerBasic*>(f->getFrontCSubFilament()->frontCMonomer());
+        CMonomer* frontCMonomer = f->getFrontCSubFilament()->frontCMonomer();
         
-        ///find all reactions associated with front polymerization
-        Species* front = frontCMonomer->getFront();
-        auto reactions = front->getRSpecies().ReactantReactions();
-        
-        for(auto it = reactions.begin(); it != reactions.end(); it++)
-            if(dynamic_cast<Reaction<2,3>*>(*it) ||
-               dynamic_cast<Reaction<2,1>*>(*it) ||
-               dynamic_cast<Reaction<2,0>*>(*it))
-                polyReactions->push_back(*it);
-        
-        ///find all reactions associated with formin polymerization
-        Species* formin = frontCMonomer->getFormin();
-        reactions = formin->getRSpecies().ReactantReactions();
+        ///find all reactions associated with this active end polymerization
+        Species* end = frontCMonomer->getActiveEndSpecies();
+        auto reactions = end->getRSpecies().ReactantReactions();
         
         for(auto it = reactions.begin(); it != reactions.end(); it++)
-            if(dynamic_cast<Reaction<2,3>*>(*it) ||
-               dynamic_cast<Reaction<2,0>*>(*it))
+            if((*it)->isPolymerizationReaction())
                 polyReactions->push_back(*it);
-        
-        
+  
         return polyReactions;
     };
     
@@ -219,7 +206,7 @@ namespace chem {
         
         ///Loop through all spots in subfilament
         for (int index = 0; index < maxlength; index++) {
-            
+        
             ///Monomer and bounds at current index
             CBoundBasic *b1 = static_cast<CBoundBasic*>(subf->getCBound(index));
             CBoundBasic *b2 = static_cast<CBoundBasic*>(subf->getCBound(index+1));
@@ -234,30 +221,24 @@ namespace chem {
                 rPoly = c->addInternal<Reaction,2,3>({m1->getFront(), actinDiffusing, m2->getActin(),
                                                   m2->getFront(), b2->getEmpty()}, _k_on_plus);
                 boost::signals2::shared_connection_block rcb1(rPoly->connect(polyCallback,false));
-  
+                
                 /// add basic depolymerization reactions (+)
                 rDepoly = c->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
                     m1->getFront(), actinDiffusing}, _k_off_plus);
                 
                 boost::signals2::shared_connection_block rcb2(rDepoly->connect(depolyCallback,false));
                 
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
-                
-
+                CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
             }
             ///extension callback
             else {
                 rPoly = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
                 
                 boost::signals2::shared_connection_block rcb(rPoly->connect(extensionCallback,false));
-                
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
             }
             
-            if (index == length - 1)
-                _membrane.addReaction(parentFilament, rPoly);
-        
+            rPoly->setAsPolymerizationReaction();
+            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
         
             ///add capping polymerization and depolymerization reactions (+)
             rPoly = c->addInternal<Reaction,2,1>({cappingDiffusing, m1->getFront(),
@@ -266,11 +247,9 @@ namespace chem {
             rDepoly = c->addInternal<Reaction,1,2>({m1->getCapping(), m1->getFront(),
                                               cappingDiffusing}, _k_capping_off_plus);
             
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
-            
-            if (index == length - 1)
-                _membrane.addReaction(parentFilament, rPoly);
+            rPoly->setAsPolymerizationReaction();
+            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
         
             ///add formin polymerization and depolymerization reactions (+)
             
@@ -280,10 +259,10 @@ namespace chem {
             rDepoly = c->addInternal<Reaction,1,2>({m1->getFormin(), m1->getFront(),
                                                 forminDiffusing}, _k_formin_off_plus);
             
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
-        
-        
+            rPoly->setAsPolymerizationReaction();
+            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
+            
             ///add accelerated polymerization of actin with anti-cappped end
             if (index < maxlength - 1) {
                 rPoly = c->addInternal<Reaction,2,3>({actinDiffusing, m1->getFormin(), m2->getActin(),
@@ -298,79 +277,78 @@ namespace chem {
             
                 boost::signals2::shared_connection_block rcb(rPoly->connect(extensionForminCallback,false));
             }
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
             
-            if (index == length - 1)
-                _membrane.addReaction(parentFilament, rPoly);
+            rPoly->setAsPolymerizationReaction();
+            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
         
-            ///add motor binding and unbinding, loading and unloading
-            
-            ReactionBase *rBinding =
-                c->addInternal<Reaction,2,1>({myosinDiffusing, b1->getEmpty(),
-                                              b1->getMyosin()}, _k_binding);
-            
-            ReactionBase *rUnbinding =
-                c->addInternal<Reaction,1,2>({b1->getMyosin(), b1->getEmpty(),
-                                              myosinDiffusing}, _k_unbinding);
-            
-            ReactionBase *rLoading =
-                c->addInternal<Reaction,2,1>({actinDiffusing, b1->getMyosin(),
-                                              b1->getMyosinActin()}, _k_load);
-            
-            ReactionBase *rUnloading =
-                c->addInternal<Reaction,1,2>({b1->getMyosinActin(), b1->getMyosin(),
-                                              actinDiffusing}, _k_unload);
-            
-            
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rBinding);
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnbinding);
-            
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rLoading);
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnloading);
-
-            //add motor stepping
-            ReactionBase *rMForwardStep;
-            ReactionBase *rMBackwardStep;
-            
-            if (index < maxlength - 1) {
-                rMForwardStep =
-                    c->addInternal<Reaction,2,2>({b1->getMyosin(), b2->getEmpty(),
-                                                  b2->getMyosin(), b1->getEmpty()},
-                                                 _k_forward_step);
-                rMBackwardStep =
-                    c->addInternal<Reaction,2,2>({b2->getMyosin(), b1->getEmpty(),
-                                                  b1->getMyosin(), b2->getEmpty()},
-                                                 _k_forward_step);
-                
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
-            }
-            
-            ReactionBase *rMA3ForwardStep;
-            ReactionBase *rMA3BackwardStep;
-            
-            if (index < maxlength - 1) {
-                rMA3ForwardStep =
-                    c->addInternal<Reaction,2,2>({b1->getMyosinActin(), b2->getEmpty(),
-                                                  b2->getMyosinActin(), b1->getEmpty()},
-                                                 _k_forward_step);
-                
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
-
-                rMA3BackwardStep =
-                    c->addInternal<Reaction,2,2>({b2->getMyosinActin(), b1->getEmpty(),
-                                                  b1->getMyosinActin(), b2->getEmpty()},
-                                                  _k_forward_step);
-                
-                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
-            }
-            
-            ReactionBase *rMA3Unbinding =
-                c->addInternal<Reaction,1,3>({b1->getMyosinActin(), myosinDiffusing,
-                                              b1->getEmpty(), actinDiffusing},
-                                              _k_unbinding);
-            
-            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3Unbinding);
+//            ///add motor binding and unbinding, loading and unloading
+//            
+//            ReactionBase *rBinding =
+//                c->addInternal<Reaction,2,1>({myosinDiffusing, b1->getEmpty(),
+//                                              b1->getMyosin()}, _k_binding);
+//            
+//            ReactionBase *rUnbinding =
+//                c->addInternal<Reaction,1,2>({b1->getMyosin(), b1->getEmpty(),
+//                                              myosinDiffusing}, _k_unbinding);
+//            
+//            ReactionBase *rLoading =
+//                c->addInternal<Reaction,2,1>({actinDiffusing, b1->getMyosin(),
+//                                              b1->getMyosinActin()}, _k_load);
+//            
+//            ReactionBase *rUnloading =
+//                c->addInternal<Reaction,1,2>({b1->getMyosinActin(), b1->getMyosin(),
+//                                              actinDiffusing}, _k_unload);
+//            
+//            
+//            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rBinding);
+//            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnbinding);
+//            
+//            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rLoading);
+//            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rUnloading);
+//
+//            //add motor stepping
+//            ReactionBase *rMForwardStep;
+//            ReactionBase *rMBackwardStep;
+//            
+//            if (index < maxlength - 1) {
+//                rMForwardStep =
+//                    c->addInternal<Reaction,2,2>({b1->getMyosin(), b2->getEmpty(),
+//                                                  b2->getMyosin(), b1->getEmpty()},
+//                                                 _k_forward_step);
+//                rMBackwardStep =
+//                    c->addInternal<Reaction,2,2>({b2->getMyosin(), b1->getEmpty(),
+//                                                  b1->getMyosin(), b2->getEmpty()},
+//                                                 _k_forward_step);
+//                
+//                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
+//                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
+//            }
+//            
+//            ReactionBase *rMA3ForwardStep;
+//            ReactionBase *rMA3BackwardStep;
+//            
+//            if (index < maxlength - 1) {
+//                rMA3ForwardStep =
+//                    c->addInternal<Reaction,2,2>({b1->getMyosinActin(), b2->getEmpty(),
+//                                                  b2->getMyosinActin(), b1->getEmpty()},
+//                                                 _k_forward_step);
+//                
+//                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
+//
+//                rMA3BackwardStep =
+//                    c->addInternal<Reaction,2,2>({b2->getMyosinActin(), b1->getEmpty(),
+//                                                  b1->getMyosinActin(), b2->getEmpty()},
+//                                                  _k_forward_step);
+//                
+//                CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
+//            }
+//            
+//            ReactionBase *rMA3Unbinding =
+//                c->addInternal<Reaction,1,3>({b1->getMyosinActin(), myosinDiffusing,
+//                                              b1->getEmpty(), actinDiffusing},
+//                                              _k_unbinding);
+//            
+//            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3Unbinding);
         }
         ///clean up and return
         delete species;
@@ -389,67 +367,69 @@ namespace chem {
         CFilament* parentFilament = static_cast<CFilament*>(s1->getParent());
         
         ///Monomer and bounds at current index
-        CBoundBasic *b1 = static_cast<CBoundBasic*>(s1->backCBound());
-        CBoundBasic *b2 = static_cast<CBoundBasic*>(s2->frontCBound());
+        CBoundBasic *b1 = static_cast<CBoundBasic*>(s1->frontCBound());
+        CBoundBasic *b2 = static_cast<CBoundBasic*>(s2->backCBound());
         
-        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(s1->frontCMonomer());
-        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(s2->backCMonomer());
+        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(s1->backCMonomer());
+        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(s2->frontCMonomer());
         
         Species* actinDiffusing1 = c1->findSpeciesDiffusingByName("Actin");
         Species* actinDiffusing2 = c2->findSpeciesDiffusingByName("Actin");
         
-        ///Add reactions 
+        
+        CFilamentPolyCallback<NDIM> polyCallback =
+            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+                                                                parentFilament);
+        CFilamentDepolyCallback<NDIM> depolyCallback =
+            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+                                                                parentFilament);
+        
+        ///Add reactions
         ReactionBase* rAccelPoly =
             c1->addInternal<Reaction,2,3>({actinDiffusing1, m1->getFormin(), m2->getActin(),
                                            m2->getFormin(), b2->getEmpty()}, _k_accel_on_plus);
         boost::signals2::shared_connection_block
-        rcb1(rAccelPoly->connect(CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
-                                                             parentFilament),
-                                                             false));
+        rcb1(rAccelPoly->connect(polyCallback, false));
         
         ReactionBase* rPoly =
             c1->addInternal<Reaction,2,3>({actinDiffusing1, m1->getFront(), m2->getActin(),
                                            m2->getFront(), b2->getEmpty()}, _k_on_plus);
         boost::signals2::shared_connection_block
-        rcb2(rPoly->connect(CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
-                                                        parentFilament),
-                                                        false));
+        rcb2(rPoly->connect(polyCallback, false));
         
         ReactionBase* rDepoly =
             c2->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
                                            m1->getFront(), actinDiffusing2}, _k_off_plus);
         boost::signals2::shared_connection_block
-        rcb3(rDepoly->connect(CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
-                                                            parentFilament),
-                                                            false));
+        rcb3(rDepoly->connect(depolyCallback, false));
 
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rAccelPoly);
+        CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
+        CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
+        CFilamentInitializer<NDIM>::_chem.addReaction(rAccelPoly);
 
-        ReactionBase* rMForwardStep =
-            c1->addInternal<Reaction,2,2>({b1->getMyosin(), b2->getEmpty(),
-                                           b2->getMyosin(), b1->getEmpty()}, _k_forward_step);
-        
-        ReactionBase* rMBackwardStep =
-            c2->addInternal<Reaction,2,2>({b2->getMyosin(), b1->getEmpty(),
-                                           b1->getMyosin(), b2->getEmpty()}, _k_backward_step);
-        
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
-        
-        ReactionBase* rMA3ForwardStep =
-            c1->addInternal<Reaction,2,2>({b1->getMyosinActin(), b2->getEmpty(),
-                                           b2->getMyosinActin(), b1->getMyosinActin()},
-                                           _k_forward_step);
-        
-        ReactionBase* rMA3BackwardStep =
-            c2->addInternal<Reaction,2,2>({b2->getMyosinActin(), b1->getEmpty(),
-                                           b1->getMyosinActin(), b2->getEmpty()},
-                                           _k_backward_step);
-        
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
-        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
+//        ReactionBase* rMForwardStep =
+//            c1->addInternal<Reaction,2,2>({b1->getMyosin(), b2->getEmpty(),
+//                                           b2->getMyosin(), b1->getEmpty()}, _k_forward_step);
+//        
+//        ReactionBase* rMBackwardStep =
+//            c2->addInternal<Reaction,2,2>({b2->getMyosin(), b1->getEmpty(),
+//                                           b1->getMyosin(), b2->getEmpty()}, _k_backward_step);
+//        
+//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
+//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
+//        
+//        ReactionBase* rMA3ForwardStep =
+//            c1->addInternal<Reaction,2,2>({b1->getMyosinActin(), b2->getEmpty(),
+//                                           b2->getMyosinActin(), b1->getMyosinActin()},
+//                                           _k_forward_step);
+//        
+//        ReactionBase* rMA3BackwardStep =
+//            c2->addInternal<Reaction,2,2>({b2->getMyosinActin(), b1->getEmpty(),
+//                                           b1->getMyosinActin(), b2->getEmpty()},
+//                                           _k_backward_step);
+//        
+//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
+//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
     };
     
     //specializations
@@ -522,9 +502,10 @@ namespace chem {
                 lastSubFilament = currentSubFilament;
                 cNext = cNext->neighbours().back();
             }
-            
-            CFilamentController<NDIM>::_filaments.emplace(f);
             f->setLength(length);
+            CFilamentController<NDIM>::_filaments.emplace(f);
+            CFilamentController<NDIM>::update(f, nullptr);
+            
         }
     }
 

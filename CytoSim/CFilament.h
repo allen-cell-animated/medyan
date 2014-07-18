@@ -57,6 +57,12 @@ namespace chem {
         
         ///Default destructor, does nothing
         ~CMonomer () {}
+        
+        ///Get active filament species from this CMonomer
+        virtual Species* getActiveFilamentSpecies() = 0;
+        ///Get active end species from this CMonomer
+        virtual Species* getActiveEndSpecies() = 0;
+        
     };
     
     ///CBound class is an implementation of the abstract class CFilamentElement for a CBound on a filament
@@ -120,10 +126,10 @@ namespace chem {
         
         ///Get back or front monomer/bound
         ///@note monomer/bound list must not be empty
-        virtual CMonomer* backCMonomer() {return _monomers[_length - 1].get();}
-        virtual CBound* backCBound() {return _bounds[_length - 1].get();}
-        virtual CMonomer* frontCMonomer() {return _monomers[0].get();}
-        virtual CBound* frontCBound() {return _bounds[0].get();}
+        virtual CMonomer* backCMonomer() {return _monomers[0].get();}
+        virtual CBound* backCBound() {return _bounds[0].get();}
+        virtual CMonomer* frontCMonomer() {return _monomers[_length - 1].get();}
+        virtual CBound* frontCBound() {return _bounds[_length - 1].get();}
         
         ///Get the current length
         virtual short length() {return _length;}

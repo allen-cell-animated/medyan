@@ -32,13 +32,10 @@ namespace chem {
         
         for(auto it = rxns->begin(); it != rxns->end(); it++)
             CMembrane::addReaction(f, (*it));
-        
         //clean up
         delete rxns;
     }
-    
-    
-    
+
     ///Updates the height of the membrane based on the filaments.
     ///@note see class documentation for definition of membrane height
     void CMembrane::updateHeight() {
@@ -58,8 +55,6 @@ namespace chem {
         auto fValues = std::vector<double>();
         auto pValues = std::vector<double>();
         double sumP = 0;
-        
-        std::cout<< _poly_reactions.size() << std::endl;
         
         
         //Set up integration function
