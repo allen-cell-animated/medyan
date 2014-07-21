@@ -17,6 +17,8 @@
 	<string>CytoSim.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>3ED0D028-651B-440C-A4C3-143115162C5B</key>
+		<string>../../../../Dropbox/Research/CytoMech/CytoMech</string>
 		<key>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</key>
 		<string>../..</string>
 	</dict>
@@ -28,6 +30,14 @@
 	<string>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3ED0D028-651B-440C-A4C3-143115162C5B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CytoMech</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
