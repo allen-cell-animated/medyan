@@ -79,7 +79,7 @@ namespace chem {
     ///Find the current polymerization reactions associated with this CFilament
     template<size_t NDIM>
     std::vector<ReactionBase*>*
-        FilopodiaInitializer<NDIM>::findPolymerizationReactions(CFilament* f)
+        SimpleInitializer<NDIM>::findPolymerizationReactions(CFilament* f)
     {
         auto polyReactions = new std::vector<ReactionBase*>();
         ///go to the front subfilament, front monomer
@@ -98,36 +98,36 @@ namespace chem {
     
     //Specializations
     template std::vector<ReactionBase*>*
-        FilopodiaInitializer<1>::findPolymerizationReactions(CFilament* f);
+        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
     template std::vector<ReactionBase*>*
-        FilopodiaInitializer<2>::findPolymerizationReactions(CFilament* f);
+        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
     template std::vector<ReactionBase*>*
-        FilopodiaInitializer<3>::findPolymerizationReactions(CFilament* f);
+        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
     
     
     ///Update filaments based on a reaction
     ///In this implementation, update polymerization rates based on membrane
     template<size_t NDIM>
-    void FilopodiaInitializer<NDIM>::update(CFilament* f, ReactionBase* r)
+    void SimpleInitializer<NDIM>::update(CFilament* f, ReactionBase* r)
     {
         //update associated filament reactions
         _membrane.updateFilamentReactions(f,
-                FilopodiaInitializer<NDIM>::findPolymerizationReactions(f));
+                SimpleInitializer<NDIM>::findPolymerizationReactions(f));
         
         //recalculate rates
         _membrane.updateHeight();
         _membrane.updateRates();
     }
 
-    template void FilopodiaInitializer<1>::update(CFilament* f, ReactionBase* r);
-    template void FilopodiaInitializer<2>::update(CFilament* f, ReactionBase* r);
-    template void FilopodiaInitializer<3>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<1>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<2>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
 
     ///Initializer, based on the given simulation
     ///@param length - starting length of the filament initialized
     ///@param maxlength - length of entire reactive filament
     template <size_t NDIM>
-    CSubFilament* FilopodiaInitializer<NDIM>::createCSubFilament(CFilament* parentFilament,
+    CSubFilament* SimpleInitializer<NDIM>::createCSubFilament(CFilament* parentFilament,
                                                                Compartment* c,
                                                                std::vector<std::string>* species,
                                                                int length,
@@ -358,7 +358,7 @@ namespace chem {
     ///Connect two CFilaments, back to front
     ///For this impl, only add a polymerization reaction between them
     template<size_t NDIM>
-    void FilopodiaInitializer<NDIM>::connect (CSubFilament* s1, CSubFilament* s2)
+    void SimpleInitializer<NDIM>::connect (CSubFilament* s1, CSubFilament* s2)
     {
         //get all species
         Compartment* c1 = s1->compartment();
@@ -433,24 +433,24 @@ namespace chem {
     };
     
     //specializations
-    template void FilopodiaInitializer<1>::connect (CSubFilament* s1, CSubFilament* s2);
-    template void FilopodiaInitializer<2>::connect (CSubFilament* s1, CSubFilament* s2);
-    template void FilopodiaInitializer<3>::connect (CSubFilament* s1, CSubFilament* s2);
+    template void SimpleInitializer<1>::connect (CSubFilament* s1, CSubFilament* s2);
+    template void SimpleInitializer<2>::connect (CSubFilament* s1, CSubFilament* s2);
+    template void SimpleInitializer<3>::connect (CSubFilament* s1, CSubFilament* s2);
     
     template CSubFilament*
-        FilopodiaInitializer<1>::createCSubFilament(CFilament* parentFilament,
+        SimpleInitializer<1>::createCSubFilament(CFilament* parentFilament,
                                                     Compartment* c,
                                                     std::vector<std::string>* species,
                                                     int length,
                                                     int maxlength);
     template CSubFilament*
-        FilopodiaInitializer<2>::createCSubFilament(CFilament* parentFilament,
+        SimpleInitializer<2>::createCSubFilament(CFilament* parentFilament,
                                                     Compartment* c,
                                                     std::vector<std::string>* species,
                                                     int length,
                                                     int maxlength);
     template CSubFilament*
-        FilopodiaInitializer<3>::createCSubFilament(CFilament* parentFilament,
+        SimpleInitializer<3>::createCSubFilament(CFilament* parentFilament,
                                                     Compartment* c,
                                                     std::vector<std::string>* species,
                                                     int length,

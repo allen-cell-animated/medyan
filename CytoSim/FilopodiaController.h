@@ -18,7 +18,7 @@ namespace chem {
     
     class CMembrane;
     
-    /// FilopodiaInitializer is a basic implementation of the Initializer class that only involves the following:
+    /// SimpleInitializer is a basic implementation of the Initializer class that only involves the following:
     
     /// Actin polymerization of (+) end
     /// Actin depolymerization of (+) end
@@ -36,7 +36,7 @@ namespace chem {
     /// Motor loading and unloading
     
     template<size_t NDIM>
-    class FilopodiaInitializer : public CFilamentInitializer<NDIM> {
+    class SimpleInitializer : public CFilamentInitializer<NDIM> {
         
     private:
         CMembrane& _membrane;
@@ -67,11 +67,11 @@ namespace chem {
     public:
         
         ///Constructor, does nothing
-        FilopodiaInitializer(ChemSim &chem, CMembrane &membrane) :
+        SimpleInitializer(ChemSim &chem, CMembrane &membrane) :
             CFilamentInitializer<NDIM>(chem), _membrane(membrane){};
         
         ///Destructor, does nothing
-        ~FilopodiaInitializer() {};
+        ~SimpleInitializer() {};
         
         ///Find the current polymerization reactions associated with this CFilament
         virtual std::vector<ReactionBase*>* findPolymerizationReactions(CFilament* f);
