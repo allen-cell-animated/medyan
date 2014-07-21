@@ -61,6 +61,7 @@ public:
     int getSystemSize(); //Return a number of beads;
     double getSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
     
+    std::vector<Network*> getNetwork() {return _pNetworkVector;}
     
     
     // Mechanical interfaces:

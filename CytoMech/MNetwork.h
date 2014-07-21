@@ -40,6 +40,8 @@ public:
     void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2); //!< Add a ghost motor connectind two CG segments (4 beads), providing a stretching constant, and positions on each segment.
     void AddNewMotorGhosts(std::vector<std::vector<Cylinder* > > v, double k, double position1, double position2); //Add many motors. Input: vector of vectors(cyl1, cyl2), pair connected by a motor. 
     
+    
+    FilamentDB* getFilamentDB() {return _pfdb;}
 private:
     
     System* _pS;

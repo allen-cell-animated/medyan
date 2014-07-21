@@ -69,7 +69,7 @@ namespace chem {
     class FilamentController {
 
     protected:
-        CompartmentGrid<NDIM>* _grid; ///<compartment grid for updating
+        CompartmentGrid<NDIM> * _grid; ///<compartment grid
         CFilamentInitializer<NDIM>* _initializer; ///<initializer, could be any implementation
         
         std::unordered_set<std::unique_ptr<CFilament>> _filaments;///< filaments that this is controlling
@@ -85,6 +85,12 @@ namespace chem {
         
         ///delete filaments
         virtual ~FilamentController(){}
+        
+        ///set the chemical system
+        virtual void setSystem(CSystem* system) {
+            _system = system;
+        }
+        
         
         ///Initialize all CFilaments and reactions, return set of CFilaments
         virtual void initialize(int numFilaments, int length) = 0;
