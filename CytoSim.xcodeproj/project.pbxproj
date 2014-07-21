@@ -44,30 +44,30 @@
 		F771ADC415655DBA0010B123 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F771ADC715655DBA0010B123 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* System.cpp */; };
-		F773858B197D95A800110E84 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738563197D95A800110E84 /* main.cpp */; };
-		F773858C197D95A800110E84 /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738564197D95A800110E84 /* MathFunctions.cpp */; };
-		F773858D197D95A800110E84 /* MBead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738566197D95A800110E84 /* MBead.cpp */; };
-		F773858E197D95A800110E84 /* MCGsolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738569197D95A800110E84 /* MCGsolver.cpp */; };
-		F773858F197D95A800110E84 /* MComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773856B197D95A800110E84 /* MComponent.cpp */; };
-		F7738590197D95A800110E84 /* MComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773856D197D95A800110E84 /* MComposite.cpp */; };
-		F7738591197D95A800110E84 /* MCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773856F197D95A800110E84 /* MCylinder.cpp */; };
-		F7738592197D95A800110E84 /* MExclVol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738572197D95A800110E84 /* MExclVol.cpp */; };
-		F7738593197D95A800110E84 /* MFilament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738574197D95A800110E84 /* MFilament.cpp */; };
-		F7738594197D95A800110E84 /* MFilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738576197D95A800110E84 /* MFilamentBending.cpp */; };
-		F7738595197D95A800110E84 /* MFilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738578197D95A800110E84 /* MFilamentStretching.cpp */; };
-		F7738596197D95A800110E84 /* MFilamentTwisting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738579197D95A800110E84 /* MFilamentTwisting.cpp */; };
-		F7738597197D95A800110E84 /* MLinker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773857A197D95A800110E84 /* MLinker.cpp */; };
-		F7738598197D95A800110E84 /* MLinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773857D197D95A800110E84 /* MLinkerStretching.cpp */; };
-		F7738599197D95A800110E84 /* MMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F773857E197D95A800110E84 /* MMotorGhost.cpp */; };
-		F773859A197D95A800110E84 /* MMotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738581197D95A800110E84 /* MMotorGhostStretching.cpp */; };
-		F773859B197D95A800110E84 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738582197D95A800110E84 /* MNetwork.cpp */; };
-		F773859C197D95A800110E84 /* MSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738584197D95A800110E84 /* MSystem.cpp */; };
-		F773859D197D95A800110E84 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738587197D95A800110E84 /* MVolRepulsionEnergy.cpp */; };
-		F773859E197D95A800110E84 /* MVolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738588197D95A800110E84 /* MVolRepulsionForce.cpp */; };
-		F773859F197D95A800110E84 /* MVolumInter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7738589197D95A800110E84 /* MVolumInter.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F784E48F196C3E28003C84A8 /* CFilament.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E48B196C3E28003C84A8 /* CFilament.h */; };
 		F784E495196C6448003C84A8 /* FilamentController.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E491196C6448003C84A8 /* FilamentController.h */; };
+		F7954C4C197D98BE00074A12 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C4B197D98BE00074A12 /* main.cpp */; };
+		F7954C94197D99FC00074A12 /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C6D197D99FC00074A12 /* MathFunctions.cpp */; };
+		F7954C95197D99FC00074A12 /* MBead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C6F197D99FC00074A12 /* MBead.cpp */; };
+		F7954C96197D99FC00074A12 /* MCGsolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C72197D99FC00074A12 /* MCGsolver.cpp */; };
+		F7954C97197D99FC00074A12 /* MComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C74197D99FC00074A12 /* MComponent.cpp */; };
+		F7954C98197D99FC00074A12 /* MComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C76197D99FC00074A12 /* MComposite.cpp */; };
+		F7954C99197D99FC00074A12 /* MCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C78197D99FC00074A12 /* MCylinder.cpp */; };
+		F7954C9A197D99FC00074A12 /* MExclVol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C7B197D99FC00074A12 /* MExclVol.cpp */; };
+		F7954C9B197D99FC00074A12 /* MFilament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C7D197D99FC00074A12 /* MFilament.cpp */; };
+		F7954C9C197D99FC00074A12 /* MFilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C7F197D99FC00074A12 /* MFilamentBending.cpp */; };
+		F7954C9D197D99FC00074A12 /* MFilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C81197D99FC00074A12 /* MFilamentStretching.cpp */; };
+		F7954C9E197D99FC00074A12 /* MFilamentTwisting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C82197D99FC00074A12 /* MFilamentTwisting.cpp */; };
+		F7954C9F197D99FC00074A12 /* MLinker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C83197D99FC00074A12 /* MLinker.cpp */; };
+		F7954CA0197D99FC00074A12 /* MLinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C86197D99FC00074A12 /* MLinkerStretching.cpp */; };
+		F7954CA1197D99FC00074A12 /* MMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C87197D99FC00074A12 /* MMotorGhost.cpp */; };
+		F7954CA2197D99FC00074A12 /* MMotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */; };
+		F7954CA3197D99FC00074A12 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8B197D99FC00074A12 /* MNetwork.cpp */; };
+		F7954CA4197D99FC00074A12 /* MSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8D197D99FC00074A12 /* MSystem.cpp */; };
+		F7954CA5197D99FC00074A12 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */; };
+		F7954CA6197D99FC00074A12 /* MVolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */; };
+		F7954CA7197D99FC00074A12 /* MVolumInter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C92197D99FC00074A12 /* MVolumInter.cpp */; };
 		F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7981A68194604F100A7E22C /* test_compartments.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A77DAF15ACACA300076046 /* example_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A77DAE15ACACA300076046 /* example_composite.cpp */; };
@@ -111,7 +111,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		F7738556197D957B00110E84 /* CopyFiles */ = {
+		F7954C47197D98BE00074A12 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F7954C61197D99BA00074A12 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -190,52 +199,53 @@
 		F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
 		F7672B5D15B1CE9A000D412B /* ChemRNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemRNode.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7738558197D957B00110E84 /* CytoMech */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoMech; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7738562197D95A800110E84 /* CytoMech.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = CytoMech.1; sourceTree = "<group>"; };
-		F7738563197D95A800110E84 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		F7738564197D95A800110E84 /* MathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathFunctions.cpp; sourceTree = "<group>"; };
-		F7738565197D95A800110E84 /* MathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathFunctions.h; sourceTree = "<group>"; };
-		F7738566197D95A800110E84 /* MBead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MBead.cpp; sourceTree = "<group>"; };
-		F7738567197D95A800110E84 /* MBead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBead.h; sourceTree = "<group>"; };
-		F7738568197D95A800110E84 /* MBeadDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBeadDB.h; sourceTree = "<group>"; };
-		F7738569197D95A800110E84 /* MCGsolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCGsolver.cpp; sourceTree = "<group>"; };
-		F773856A197D95A800110E84 /* Mcommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mcommon.h; sourceTree = "<group>"; };
-		F773856B197D95A800110E84 /* MComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MComponent.cpp; sourceTree = "<group>"; };
-		F773856C197D95A800110E84 /* MComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MComponent.h; sourceTree = "<group>"; };
-		F773856D197D95A800110E84 /* MComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MComposite.cpp; sourceTree = "<group>"; };
-		F773856E197D95A800110E84 /* MComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MComposite.h; sourceTree = "<group>"; };
-		F773856F197D95A800110E84 /* MCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCylinder.cpp; sourceTree = "<group>"; };
-		F7738570197D95A800110E84 /* MCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCylinder.h; sourceTree = "<group>"; };
-		F7738571197D95A800110E84 /* MCylinderDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCylinderDB.h; sourceTree = "<group>"; };
-		F7738572197D95A800110E84 /* MExclVol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MExclVol.cpp; sourceTree = "<group>"; };
-		F7738573197D95A800110E84 /* MExclVol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MExclVol.h; sourceTree = "<group>"; };
-		F7738574197D95A800110E84 /* MFilament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilament.cpp; sourceTree = "<group>"; };
-		F7738575197D95A800110E84 /* MFilament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFilament.h; sourceTree = "<group>"; };
-		F7738576197D95A800110E84 /* MFilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentBending.cpp; sourceTree = "<group>"; };
-		F7738577197D95A800110E84 /* MFilamentDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFilamentDB.h; sourceTree = "<group>"; };
-		F7738578197D95A800110E84 /* MFilamentStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentStretching.cpp; sourceTree = "<group>"; };
-		F7738579197D95A800110E84 /* MFilamentTwisting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentTwisting.cpp; sourceTree = "<group>"; };
-		F773857A197D95A800110E84 /* MLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinker.cpp; sourceTree = "<group>"; };
-		F773857B197D95A800110E84 /* MLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLinker.h; sourceTree = "<group>"; };
-		F773857C197D95A800110E84 /* MLinkerDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLinkerDB.h; sourceTree = "<group>"; };
-		F773857D197D95A800110E84 /* MLinkerStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinkerStretching.cpp; sourceTree = "<group>"; };
-		F773857E197D95A800110E84 /* MMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhost.cpp; sourceTree = "<group>"; };
-		F773857F197D95A800110E84 /* MMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhost.h; sourceTree = "<group>"; };
-		F7738580197D95A800110E84 /* MMotorGhostDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhostDB.h; sourceTree = "<group>"; };
-		F7738581197D95A800110E84 /* MMotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostStretching.cpp; sourceTree = "<group>"; };
-		F7738582197D95A800110E84 /* MNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MNetwork.cpp; sourceTree = "<group>"; };
-		F7738583197D95A800110E84 /* MNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MNetwork.h; sourceTree = "<group>"; };
-		F7738584197D95A800110E84 /* MSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSystem.cpp; sourceTree = "<group>"; };
-		F7738585197D95A800110E84 /* MSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSystem.h; sourceTree = "<group>"; };
-		F7738587197D95A800110E84 /* MVolRepulsionEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionEnergy.cpp; sourceTree = "<group>"; };
-		F7738588197D95A800110E84 /* MVolRepulsionForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionForce.cpp; sourceTree = "<group>"; };
-		F7738589197D95A800110E84 /* MVolumInter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolumInter.cpp; sourceTree = "<group>"; };
-		F773858A197D95A800110E84 /* MVolumInter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVolumInter.h; sourceTree = "<group>"; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F784E48B196C3E28003C84A8 /* CFilament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilament.h; sourceTree = "<group>"; };
 		F784E491196C6448003C84A8 /* FilamentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentController.h; sourceTree = "<group>"; };
+		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7954C4B197D98BE00074A12 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F7954C63197D99BA00074A12 /* CytoMech */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoMech; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7954C6D197D99FC00074A12 /* MathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathFunctions.cpp; sourceTree = "<group>"; };
+		F7954C6E197D99FC00074A12 /* MathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathFunctions.h; sourceTree = "<group>"; };
+		F7954C6F197D99FC00074A12 /* MBead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MBead.cpp; sourceTree = "<group>"; };
+		F7954C70197D99FC00074A12 /* MBead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBead.h; sourceTree = "<group>"; };
+		F7954C71197D99FC00074A12 /* MBeadDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBeadDB.h; sourceTree = "<group>"; };
+		F7954C72197D99FC00074A12 /* MCGsolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCGsolver.cpp; sourceTree = "<group>"; };
+		F7954C73197D99FC00074A12 /* Mcommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mcommon.h; sourceTree = "<group>"; };
+		F7954C74197D99FC00074A12 /* MComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MComponent.cpp; sourceTree = "<group>"; };
+		F7954C75197D99FC00074A12 /* MComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MComponent.h; sourceTree = "<group>"; };
+		F7954C76197D99FC00074A12 /* MComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MComposite.cpp; sourceTree = "<group>"; };
+		F7954C77197D99FC00074A12 /* MComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MComposite.h; sourceTree = "<group>"; };
+		F7954C78197D99FC00074A12 /* MCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCylinder.cpp; sourceTree = "<group>"; };
+		F7954C79197D99FC00074A12 /* MCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCylinder.h; sourceTree = "<group>"; };
+		F7954C7A197D99FC00074A12 /* MCylinderDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCylinderDB.h; sourceTree = "<group>"; };
+		F7954C7B197D99FC00074A12 /* MExclVol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MExclVol.cpp; sourceTree = "<group>"; };
+		F7954C7C197D99FC00074A12 /* MExclVol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MExclVol.h; sourceTree = "<group>"; };
+		F7954C7D197D99FC00074A12 /* MFilament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilament.cpp; sourceTree = "<group>"; };
+		F7954C7E197D99FC00074A12 /* MFilament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFilament.h; sourceTree = "<group>"; };
+		F7954C7F197D99FC00074A12 /* MFilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentBending.cpp; sourceTree = "<group>"; };
+		F7954C80197D99FC00074A12 /* MFilamentDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFilamentDB.h; sourceTree = "<group>"; };
+		F7954C81197D99FC00074A12 /* MFilamentStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentStretching.cpp; sourceTree = "<group>"; };
+		F7954C82197D99FC00074A12 /* MFilamentTwisting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentTwisting.cpp; sourceTree = "<group>"; };
+		F7954C83197D99FC00074A12 /* MLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinker.cpp; sourceTree = "<group>"; };
+		F7954C84197D99FC00074A12 /* MLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLinker.h; sourceTree = "<group>"; };
+		F7954C85197D99FC00074A12 /* MLinkerDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLinkerDB.h; sourceTree = "<group>"; };
+		F7954C86197D99FC00074A12 /* MLinkerStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinkerStretching.cpp; sourceTree = "<group>"; };
+		F7954C87197D99FC00074A12 /* MMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhost.cpp; sourceTree = "<group>"; };
+		F7954C88197D99FC00074A12 /* MMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhost.h; sourceTree = "<group>"; };
+		F7954C89197D99FC00074A12 /* MMotorGhostDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhostDB.h; sourceTree = "<group>"; };
+		F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostStretching.cpp; sourceTree = "<group>"; };
+		F7954C8B197D99FC00074A12 /* MNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MNetwork.cpp; sourceTree = "<group>"; };
+		F7954C8C197D99FC00074A12 /* MNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MNetwork.h; sourceTree = "<group>"; };
+		F7954C8D197D99FC00074A12 /* MSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSystem.cpp; sourceTree = "<group>"; };
+		F7954C8E197D99FC00074A12 /* MSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSystem.h; sourceTree = "<group>"; };
+		F7954C8F197D99FC00074A12 /* MVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVolRepulsion.h; sourceTree = "<group>"; };
+		F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionEnergy.cpp; sourceTree = "<group>"; };
+		F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionForce.cpp; sourceTree = "<group>"; };
+		F7954C92197D99FC00074A12 /* MVolumInter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolumInter.cpp; sourceTree = "<group>"; };
+		F7954C93197D99FC00074A12 /* MVolumInter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVolumInter.h; sourceTree = "<group>"; };
 		F7981A68194604F100A7E22C /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
 		F7A1DC0D157AD36A004C738D /* Visitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
@@ -281,7 +291,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F7738555197D957B00110E84 /* Frameworks */ = {
+		F7954C46197D98BE00074A12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7954C60197D99BA00074A12 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -336,8 +353,9 @@
 			children = (
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED091548FFC70069DA61 /* CytoSim */,
+				F7954C4A197D98BE00074A12 /* Cyto */,
 				F763ED071548FFC70069DA61 /* Products */,
-				F7738561197D95A800110E84 /* CytoMech */,
+				F7954C6C197D99FC00074A12 /* CytoMech */,
 			);
 			sourceTree = "<group>";
 		};
@@ -350,7 +368,8 @@
 				F7E3DB621579A03C002EAF2C /* example_kostya */,
 				F7A77DAC15ACAC5700076046 /* example_composite */,
 				F7C7A0F315FFBA3D00DF9838 /* TestSuite */,
-				F7738558197D957B00110E84 /* CytoMech */,
+				F7954C49197D98BE00074A12 /* Cyto */,
+				F7954C63197D99BA00074A12 /* CytoMech */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -410,52 +429,58 @@
 			path = CytoSim;
 			sourceTree = "<group>";
 		};
-		F7738561197D95A800110E84 /* CytoMech */ = {
+		F7954C4A197D98BE00074A12 /* Cyto */ = {
 			isa = PBXGroup;
 			children = (
-				F7738562197D95A800110E84 /* CytoMech.1 */,
-				F7738563197D95A800110E84 /* main.cpp */,
-				F7738564197D95A800110E84 /* MathFunctions.cpp */,
-				F7738565197D95A800110E84 /* MathFunctions.h */,
-				F7738566197D95A800110E84 /* MBead.cpp */,
-				F7738567197D95A800110E84 /* MBead.h */,
-				F7738568197D95A800110E84 /* MBeadDB.h */,
-				F7738569197D95A800110E84 /* MCGsolver.cpp */,
-				F773856A197D95A800110E84 /* Mcommon.h */,
-				F773856B197D95A800110E84 /* MComponent.cpp */,
-				F773856C197D95A800110E84 /* MComponent.h */,
-				F773856D197D95A800110E84 /* MComposite.cpp */,
-				F773856E197D95A800110E84 /* MComposite.h */,
-				F773856F197D95A800110E84 /* MCylinder.cpp */,
-				F7738570197D95A800110E84 /* MCylinder.h */,
-				F7738571197D95A800110E84 /* MCylinderDB.h */,
-				F7738572197D95A800110E84 /* MExclVol.cpp */,
-				F7738573197D95A800110E84 /* MExclVol.h */,
-				F7738574197D95A800110E84 /* MFilament.cpp */,
-				F7738575197D95A800110E84 /* MFilament.h */,
-				F7738576197D95A800110E84 /* MFilamentBending.cpp */,
-				F7738577197D95A800110E84 /* MFilamentDB.h */,
-				F7738578197D95A800110E84 /* MFilamentStretching.cpp */,
-				F7738579197D95A800110E84 /* MFilamentTwisting.cpp */,
-				F773857A197D95A800110E84 /* MLinker.cpp */,
-				F773857B197D95A800110E84 /* MLinker.h */,
-				F773857C197D95A800110E84 /* MLinkerDB.h */,
-				F773857D197D95A800110E84 /* MLinkerStretching.cpp */,
-				F773857E197D95A800110E84 /* MMotorGhost.cpp */,
-				F773857F197D95A800110E84 /* MMotorGhost.h */,
-				F7738580197D95A800110E84 /* MMotorGhostDB.h */,
-				F7738581197D95A800110E84 /* MMotorGhostStretching.cpp */,
-				F7738582197D95A800110E84 /* MNetwork.cpp */,
-				F7738583197D95A800110E84 /* MNetwork.h */,
-				F7738584197D95A800110E84 /* MSystem.cpp */,
-				F7738585197D95A800110E84 /* MSystem.h */,
-				F7738587197D95A800110E84 /* MVolRepulsionEnergy.cpp */,
-				F7738588197D95A800110E84 /* MVolRepulsionForce.cpp */,
-				F7738589197D95A800110E84 /* MVolumInter.cpp */,
-				F773858A197D95A800110E84 /* MVolumInter.h */,
+				F7954C4B197D98BE00074A12 /* main.cpp */,
 			);
-			name = CytoMech;
-			path = ../../Dropbox/Research/CytoMech/CytoMech/CytoMech;
+			path = Cyto;
+			sourceTree = "<group>";
+		};
+		F7954C6C197D99FC00074A12 /* CytoMech */ = {
+			isa = PBXGroup;
+			children = (
+				F7954C6D197D99FC00074A12 /* MathFunctions.cpp */,
+				F7954C6E197D99FC00074A12 /* MathFunctions.h */,
+				F7954C6F197D99FC00074A12 /* MBead.cpp */,
+				F7954C70197D99FC00074A12 /* MBead.h */,
+				F7954C71197D99FC00074A12 /* MBeadDB.h */,
+				F7954C72197D99FC00074A12 /* MCGsolver.cpp */,
+				F7954C73197D99FC00074A12 /* Mcommon.h */,
+				F7954C74197D99FC00074A12 /* MComponent.cpp */,
+				F7954C75197D99FC00074A12 /* MComponent.h */,
+				F7954C76197D99FC00074A12 /* MComposite.cpp */,
+				F7954C77197D99FC00074A12 /* MComposite.h */,
+				F7954C78197D99FC00074A12 /* MCylinder.cpp */,
+				F7954C79197D99FC00074A12 /* MCylinder.h */,
+				F7954C7A197D99FC00074A12 /* MCylinderDB.h */,
+				F7954C7B197D99FC00074A12 /* MExclVol.cpp */,
+				F7954C7C197D99FC00074A12 /* MExclVol.h */,
+				F7954C7D197D99FC00074A12 /* MFilament.cpp */,
+				F7954C7E197D99FC00074A12 /* MFilament.h */,
+				F7954C7F197D99FC00074A12 /* MFilamentBending.cpp */,
+				F7954C80197D99FC00074A12 /* MFilamentDB.h */,
+				F7954C81197D99FC00074A12 /* MFilamentStretching.cpp */,
+				F7954C82197D99FC00074A12 /* MFilamentTwisting.cpp */,
+				F7954C83197D99FC00074A12 /* MLinker.cpp */,
+				F7954C84197D99FC00074A12 /* MLinker.h */,
+				F7954C85197D99FC00074A12 /* MLinkerDB.h */,
+				F7954C86197D99FC00074A12 /* MLinkerStretching.cpp */,
+				F7954C87197D99FC00074A12 /* MMotorGhost.cpp */,
+				F7954C88197D99FC00074A12 /* MMotorGhost.h */,
+				F7954C89197D99FC00074A12 /* MMotorGhostDB.h */,
+				F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */,
+				F7954C8B197D99FC00074A12 /* MNetwork.cpp */,
+				F7954C8C197D99FC00074A12 /* MNetwork.h */,
+				F7954C8D197D99FC00074A12 /* MSystem.cpp */,
+				F7954C8E197D99FC00074A12 /* MSystem.h */,
+				F7954C8F197D99FC00074A12 /* MVolRepulsion.h */,
+				F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */,
+				F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */,
+				F7954C92197D99FC00074A12 /* MVolumInter.cpp */,
+				F7954C93197D99FC00074A12 /* MVolumInter.h */,
+			);
+			path = CytoMech;
 			sourceTree = "<group>";
 		};
 		F7A20C8F1566023100113920 /* EXAMPLES */ = {
@@ -540,13 +565,30 @@
 			productReference = F771ADBB15655CD70010B123 /* libcyto.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F7738557197D957B00110E84 /* CytoMech */ = {
+		F7954C48197D98BE00074A12 /* Cyto */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F773855E197D957B00110E84 /* Build configuration list for PBXNativeTarget "CytoMech" */;
+			buildConfigurationList = F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "Cyto" */;
 			buildPhases = (
-				F7738554197D957B00110E84 /* Sources */,
-				F7738555197D957B00110E84 /* Frameworks */,
-				F7738556197D957B00110E84 /* CopyFiles */,
+				F7954C45197D98BE00074A12 /* Sources */,
+				F7954C46197D98BE00074A12 /* Frameworks */,
+				F7954C47197D98BE00074A12 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Cyto;
+			productName = Cyto;
+			productReference = F7954C49197D98BE00074A12 /* Cyto */;
+			productType = "com.apple.product-type.tool";
+		};
+		F7954C62197D99BA00074A12 /* CytoMech */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7954C69197D99BA00074A12 /* Build configuration list for PBXNativeTarget "CytoMech" */;
+			buildPhases = (
+				F7954C5F197D99BA00074A12 /* Sources */,
+				F7954C60197D99BA00074A12 /* Frameworks */,
+				F7954C61197D99BA00074A12 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -554,7 +596,7 @@
 			);
 			name = CytoMech;
 			productName = CytoMech;
-			productReference = F7738558197D957B00110E84 /* CytoMech */;
+			productReference = F7954C63197D99BA00074A12 /* CytoMech */;
 			productType = "com.apple.product-type.tool";
 		};
 		F7A77DA315ACAC5700076046 /* example_composite */ = {
@@ -635,7 +677,8 @@
 				F7123D7215752161008F64D1 /* example_misc */,
 				F7E3DB591579A03C002EAF2C /* example_kostya */,
 				F7A77DA315ACAC5700076046 /* example_composite */,
-				F7738557197D957B00110E84 /* CytoMech */,
+				F7954C48197D98BE00074A12 /* Cyto */,
+				F7954C62197D99BA00074A12 /* CytoMech */,
 			);
 		};
 /* End PBXProject section */
@@ -698,31 +741,38 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F7738554197D957B00110E84 /* Sources */ = {
+		F7954C45197D98BE00074A12 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7738595197D95A800110E84 /* MFilamentStretching.cpp in Sources */,
-				F773858B197D95A800110E84 /* main.cpp in Sources */,
-				F773859C197D95A800110E84 /* MSystem.cpp in Sources */,
-				F773859E197D95A800110E84 /* MVolRepulsionForce.cpp in Sources */,
-				F7738599197D95A800110E84 /* MMotorGhost.cpp in Sources */,
-				F773858E197D95A800110E84 /* MCGsolver.cpp in Sources */,
-				F7738597197D95A800110E84 /* MLinker.cpp in Sources */,
-				F7738593197D95A800110E84 /* MFilament.cpp in Sources */,
-				F7738592197D95A800110E84 /* MExclVol.cpp in Sources */,
-				F773859F197D95A800110E84 /* MVolumInter.cpp in Sources */,
-				F773859D197D95A800110E84 /* MVolRepulsionEnergy.cpp in Sources */,
-				F773859B197D95A800110E84 /* MNetwork.cpp in Sources */,
-				F773858C197D95A800110E84 /* MathFunctions.cpp in Sources */,
-				F7738598197D95A800110E84 /* MLinkerStretching.cpp in Sources */,
-				F7738594197D95A800110E84 /* MFilamentBending.cpp in Sources */,
-				F773858D197D95A800110E84 /* MBead.cpp in Sources */,
-				F7738591197D95A800110E84 /* MCylinder.cpp in Sources */,
-				F7738590197D95A800110E84 /* MComposite.cpp in Sources */,
-				F7738596197D95A800110E84 /* MFilamentTwisting.cpp in Sources */,
-				F773858F197D95A800110E84 /* MComponent.cpp in Sources */,
-				F773859A197D95A800110E84 /* MMotorGhostStretching.cpp in Sources */,
+				F7954C4C197D98BE00074A12 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7954C5F197D99BA00074A12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7954CA3197D99FC00074A12 /* MNetwork.cpp in Sources */,
+				F7954C9B197D99FC00074A12 /* MFilament.cpp in Sources */,
+				F7954CA0197D99FC00074A12 /* MLinkerStretching.cpp in Sources */,
+				F7954C96197D99FC00074A12 /* MCGsolver.cpp in Sources */,
+				F7954CA4197D99FC00074A12 /* MSystem.cpp in Sources */,
+				F7954C9F197D99FC00074A12 /* MLinker.cpp in Sources */,
+				F7954C99197D99FC00074A12 /* MCylinder.cpp in Sources */,
+				F7954C9C197D99FC00074A12 /* MFilamentBending.cpp in Sources */,
+				F7954CA1197D99FC00074A12 /* MMotorGhost.cpp in Sources */,
+				F7954CA5197D99FC00074A12 /* MVolRepulsionEnergy.cpp in Sources */,
+				F7954CA2197D99FC00074A12 /* MMotorGhostStretching.cpp in Sources */,
+				F7954C94197D99FC00074A12 /* MathFunctions.cpp in Sources */,
+				F7954CA7197D99FC00074A12 /* MVolumInter.cpp in Sources */,
+				F7954C95197D99FC00074A12 /* MBead.cpp in Sources */,
+				F7954C97197D99FC00074A12 /* MComponent.cpp in Sources */,
+				F7954C9E197D99FC00074A12 /* MFilamentTwisting.cpp in Sources */,
+				F7954C98197D99FC00074A12 /* MComposite.cpp in Sources */,
+				F7954CA6197D99FC00074A12 /* MVolRepulsionForce.cpp in Sources */,
+				F7954C9D197D99FC00074A12 /* MFilamentStretching.cpp in Sources */,
+				F7954C9A197D99FC00074A12 /* MExclVol.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -922,7 +972,60 @@
 			};
 			name = Release;
 		};
-		F773855F197D957B00110E84 /* Debug */ = {
+		F7954C50197D98BE00074A12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F7954C51197D98BE00074A12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F7954C6A197D99BA00074A12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -951,7 +1054,7 @@
 			};
 			name = Debug;
 		};
-		F7738560197D957B00110E84 /* Release */ = {
+		F7954C6B197D99BA00074A12 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1139,11 +1242,19 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F773855E197D957B00110E84 /* Build configuration list for PBXNativeTarget "CytoMech" */ = {
+		F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "Cyto" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F773855F197D957B00110E84 /* Debug */,
-				F7738560197D957B00110E84 /* Release */,
+				F7954C50197D98BE00074A12 /* Debug */,
+				F7954C51197D98BE00074A12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F7954C69197D99BA00074A12 /* Build configuration list for PBXNativeTarget "CytoMech" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7954C6A197D99BA00074A12 /* Debug */,
+				F7954C6B197D99BA00074A12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
