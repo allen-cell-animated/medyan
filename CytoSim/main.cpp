@@ -35,15 +35,10 @@
 #include <numeric>
 #include <chrono>
 
-
-//#include "Species.h"
-//#include "Reaction.h"
 #include "ChemNRMImpl.h"
 #include "ChemGillespieImpl.h"
 #include "ChemSimpleGillespieImpl.h"
-//#include "ChemSim.h"
-//#include "Composite.h"
-//#include "SpeciesContainer.h"
+
 #include "FilopodiaController.h"
 #include "CMembrane.h"
 
@@ -82,7 +77,7 @@ int main(int argc, const char * argv[])
     CMembrane mem;
     
     ///Init filament initializer
-    FilopodiaInitializer<1> initializer{chem, mem};
+    SimpleInitializer<1> initializer{chem, mem};
     
     //Init filament controller
     FilopodiaController<1> controller{&ccv, &initializer};

@@ -1,13 +1,13 @@
 //
-//  CFilamentController.h
+//  FilamentController.h
 //  CytoSim
 //
 //  Created by James Komianos on 7/8/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __CytoSim__CFilamentController__
-#define __CytoSim__CFilamentController__
+#ifndef __CytoSim__FilamentController__
+#define __CytoSim__FilamentController__
 
 #include <iostream>
 #include "CFilament.h"
@@ -17,7 +17,7 @@ namespace chem {
     
     //Forward declaration
     template<size_t NDIM>
-    class CFilamentController;
+    class FilamentController;
     
     /// CFilamentInitailizer class is used for initailizing a Csubfilament in a compartment
     /*!
@@ -29,7 +29,7 @@ namespace chem {
     class CFilamentInitializer {
         
     protected:
-        CFilamentController<NDIM>* _controller; ///< ptr to controller
+        FilamentController<NDIM>* _controller; ///< ptr to controller
         ChemSim &_chem; ///<ptr to chem sim object
         
     public:
@@ -38,7 +38,7 @@ namespace chem {
         virtual ~CFilamentInitializer() {};
         
         ///Set the CFilament controller
-        virtual void setCFilamentController (CFilamentController<NDIM>* controller)
+        virtual void setFilamentController (FilamentController<NDIM>* controller)
         { CFilamentInitializer<NDIM>::_controller = controller;}
         
         ///Initializer, based on the given simulation
@@ -59,14 +59,14 @@ namespace chem {
     };
     
     
-    /// CFilamentController class is an abstract class for the updating of CFilaments
+    /// FilamentController class is an abstract class for the updating of CFilaments
     /*!
-     *  CFilamentController is an abstract class that provides methods to control the updating of
+     *  FilamentController is an abstract class that provides methods to control the updating of
      *  CFilaments after reactions occur. This includes setting up reactions, updating species
      *  and compartments, and creating new Csubfilaments.
      */
     template<size_t NDIM>
-    class CFilamentController {
+    class FilamentController {
 
     protected:
         CompartmentGrid<NDIM>* _grid; ///<compartment grid for updating
@@ -77,14 +77,14 @@ namespace chem {
     public:
         
         ///constructor and destructor
-        CFilamentController(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
+        FilamentController(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
         : _grid(grid), _initializer(initializer)
         {
-            _initializer->setCFilamentController(this);
+            _initializer->setFilamentController(this);
         }
         
         ///delete filaments
-        virtual ~CFilamentController(){}
+        virtual ~FilamentController(){}
         
         ///Initialize all CFilaments and reactions, return set of CFilaments
         virtual void initialize(int numFilaments, int length) = 0;
@@ -113,4 +113,4 @@ namespace chem {
     
 } //end namespace chem
 
-#endif /* defined(__CytoSim__CFilamentController__) */
+#endif /* defined(__CytoSim__FilamentController__) */

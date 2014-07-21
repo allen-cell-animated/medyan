@@ -1,5 +1,5 @@
 //
-//  CFilamentControllerImpl.h
+//  FilamentControllerImpl.h
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
@@ -10,7 +10,7 @@
 #define __CytoSim__FilopodiaController__
 
 #include <iostream>
-#include "CFilamentController.h"
+#include "FilamentController.h"
 #include "CFilamentImpl.h"
 
 
@@ -99,12 +99,12 @@ namespace chem {
     
     /// FilopodiaController is a basic implementation for updating filopodia filaments
     template <size_t NDIM>
-    class FilopodiaController : public CFilamentController<NDIM> {
+    class FilopodiaController : public FilamentController<NDIM> {
  
     public:
         ///Constructor, calls base class
         FilopodiaController(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
-        : CFilamentController<NDIM>::CFilamentController(grid, initializer) {};
+        : FilamentController<NDIM>::FilamentController(grid, initializer) {};
         
         ///Default destructor, does nothing
         ~FilopodiaController() {}

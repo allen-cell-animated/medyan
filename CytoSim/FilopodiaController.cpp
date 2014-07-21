@@ -1,5 +1,5 @@
 //
-//  CFilamentControllerImpl.cpp
+//  FilamentControllerImpl.cpp
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
@@ -18,12 +18,12 @@ namespace chem {
     struct CFilamentExtensionCallback {
         
         //members
-        CFilamentController<NDIM>* _controller;
+        FilamentController<NDIM>* _controller;
         CFilament* _filament;
         std::vector<std::string>* _species;
         
         ///Constructor, sets members
-        CFilamentExtensionCallback(CFilamentController<NDIM>* controller,
+        CFilamentExtensionCallback(FilamentController<NDIM>* controller,
                                    CFilament* filament,
                                    std::vector<std::string>* species) :
         _controller(controller), _filament(filament), _species(species) {};
@@ -40,10 +40,10 @@ namespace chem {
     struct CFilamentPolyCallback {
         
         //members
-        CFilamentController<NDIM> *_controller;
+        FilamentController<NDIM> *_controller;
         CFilament* _filament;
         
-        CFilamentPolyCallback(CFilamentController<NDIM>* controller,
+        CFilamentPolyCallback(FilamentController<NDIM>* controller,
                               CFilament* filament) :
         _controller(controller), _filament(filament) {};
         
@@ -60,10 +60,10 @@ namespace chem {
     struct CFilamentDepolyCallback {
         
         //members
-        CFilamentController<NDIM> *_controller;
+        FilamentController<NDIM> *_controller;
         CFilament* _filament;
         
-        CFilamentDepolyCallback(CFilamentController<NDIM>* controller,
+        CFilamentDepolyCallback(FilamentController<NDIM>* controller,
                                 CFilament* filament) :
         _controller(controller), _filament(filament) {};
         
@@ -201,14 +201,14 @@ namespace chem {
         Species* actinDiffusing = c->findSpeciesDiffusingByName("Actin");
         Species* cappingDiffusing = c->findSpeciesDiffusingByName("Capping");
         Species* forminDiffusing = c->findSpeciesDiffusingByName("X-Formin");
-        Species* myosinDiffusing = c->findSpeciesDiffusingByName("Myosin");
+        //Species* myosinDiffusing = c->findSpeciesDiffusingByName("Myosin");
         
         
         ///Loop through all spots in subfilament
         for (int index = 0; index < maxlength; index++) {
         
             ///Monomer and bounds at current index
-            CBoundBasic *b1 = static_cast<CBoundBasic*>(subf->getCBound(index));
+            //CBoundBasic *b1 = static_cast<CBoundBasic*>(subf->getCBound(index));
             CBoundBasic *b2 = static_cast<CBoundBasic*>(subf->getCBound(index+1));
             
             CMonomerBasic *m1 = static_cast<CMonomerBasic*>(subf->getCMonomer(index));
@@ -367,7 +367,7 @@ namespace chem {
         CFilament* parentFilament = static_cast<CFilament*>(s1->getParent());
         
         ///Monomer and bounds at current index
-        CBoundBasic *b1 = static_cast<CBoundBasic*>(s1->frontCBound());
+        //CBoundBasic *b1 = static_cast<CBoundBasic*>(s1->frontCBound());
         CBoundBasic *b2 = static_cast<CBoundBasic*>(s2->backCBound());
         
         CMonomerBasic *m1 = static_cast<CMonomerBasic*>(s1->backCMonomer());
@@ -464,7 +464,7 @@ namespace chem {
         CompartmentSpatial<NDIM>* cStart;
         ///Starting compartment for 1D, all filaments start in compartment 0
         if (NDIM == 1) {
-            cStart = CFilamentController<NDIM>::_grid->getCompartment(0);
+            cStart = FilamentController<NDIM>::_grid->getCompartment(0);
         }
         else {
             std::cout << "Multiple dimensional implementation \
@@ -492,19 +492,19 @@ namespace chem {
                     setLength = maxLength;
                 
                 CSubFilament* currentSubFilament =
-                    CFilamentController<NDIM>::_initializer->createCSubFilament(f, cNext,
+                    FilamentController<NDIM>::_initializer->createCSubFilament(f, cNext,
                              new std::vector<std::string>{"Actin"}, setLength, maxLength);
                 
                 if(lastSubFilament != nullptr)
-                    CFilamentController<NDIM>::_initializer->
+                    FilamentController<NDIM>::_initializer->
                                         connect(lastSubFilament, currentSubFilament);
                     
                 lastSubFilament = currentSubFilament;
                 cNext = cNext->neighbours().back();
             }
             f->setLength(length);
-            CFilamentController<NDIM>::_filaments.emplace(f);
-            CFilamentController<NDIM>::update(f, nullptr);
+            FilamentController<NDIM>::_filaments.emplace(f);
+            FilamentController<NDIM>::update(f, nullptr);
             
         }
     }
@@ -525,9 +525,9 @@ namespace chem {
         int maxLength = int(sideLength / monomer_size);
         
         ///Initialize new subfilament and connect it
-        CSubFilament* s2 = CFilamentController<NDIM>::_initializer->
+        CSubFilament* s2 = FilamentController<NDIM>::_initializer->
                             createCSubFilament(f, cNext, species, 1, maxLength);
-        CFilamentController<NDIM>::_initializer->connect(s1,s2);
+        FilamentController<NDIM>::_initializer->connect(s1,s2);
         
         ///Increase length
         f->increaseLength();
