@@ -10,71 +10,6 @@
 #include "CMembrane.h"
 
 namespace chem {
-
-    ///REACTION CALLBACKS
-    
-    ///Extension callback
-    template<size_t NDIM>
-    struct CFilamentExtensionCallback {
-        
-        //members
-        CSystem<NDIM>* _csystem;
-        CFilament* _filament;
-        std::vector<std::string>* _species;
-        
-        ///Constructor, sets members
-        CFilamentExtensionCallback(CSystem<NDIM>* csystem,
-                                   CFilament* filament,
-                                   std::vector<std::string>* species) :
-        _csystem(csystem), _filament(filament), _species(species) {};
-        
-        ///Callback
-        void operator() (ReactionBase *r){
-            _csystem->extendFrontOfCFilament(_filament, _species);
-            _csystem->update(_filament, r);
-        }
-    };
-    
-    ///General polymerization callback
-    template<size_t NDIM>
-    struct CFilamentPolyCallback {
-        
-        //members
-        CSystem<NDIM> *_csystem;
-        CFilament* _filament;
-        
-        CFilamentPolyCallback(CSystem<NDIM>* csystem,
-                              CFilament* filament) :
-        _csystem(csystem), _filament(filament) {};
-        
-        //Callback
-        void operator() (ReactionBase *r){
-            _filament->increaseLength();
-            _csystem->update(_filament, r);
-        }
-        
-    };
-    
-    ///General depolymerization callback
-    template<size_t NDIM>
-    struct CFilamentDepolyCallback {
-        
-        //members
-        CSystem<NDIM> *_csystem;
-        CFilament* _filament;
-        
-        CFilamentDepolyCallback(CSystem<NDIM>* csystem,
-                                CFilament* filament) :
-        _csystem(csystem), _filament(filament) {};
-        
-        //Callback
-        void operator() (ReactionBase *r){
-            _filament->decreaseLength();
-            _csystem->update(_filament, r);
-        }
-        
-    };
-    
     
     ///Find the current polymerization reactions associated with this CFilament
     template<size_t NDIM>
@@ -458,7 +393,7 @@ namespace chem {
 
     //Initialize a number of filaments
     template <size_t NDIM>
-    void FilopodiaCSystem<NDIM>::initialize(int numFilaments, int length)
+    CFilament* FilopodiaCSystem<NDIM>::initializeCFilament(int length)
     {
         CompartmentSpatial<NDIM>* cStart;
         ///Starting compartment for 1D, all filaments start in compartment 0
@@ -471,41 +406,43 @@ namespace chem {
             exit(EXIT_FAILURE);
         }
         ///maxlen, for now
-        int maxLength = int(cStart->sides()[0] / monomer_size);
+        int maxUnits = 20 / monomer_size;
+        int numUnits = length / monomer_size;
         
         ///initialize each filament
-        for(int fi = 0; fi < numFilaments; fi++) {
+        CFilament* f = new CFilament();
+        Compartment* cNext = cStart;
+        CSubFilament* lastSubFilament = nullptr;
+        
+        int numSubFilaments = (numUnits - 1) / maxUnits + 1;
+        
+        for(int si = 0; si < numSubFilaments; si++) {
+            int setLength; ///length to intialize subfilament to
             
-            CFilament* f = new CFilament();
-            Compartment* cNext = cStart;
-            CSubFilament* lastSubFilament = nullptr;
+            if (si == numSubFilaments - 1) 
+                setLength = numUnits - (maxUnits * (numSubFilaments - 1));
+            else
+                setLength = maxUnits;
             
-            int numSubFilaments = length / (maxLength + 1) + 1;
+            CSubFilament* currentSubFilament =
+                CSystem<NDIM>::_initializer->createCSubFilament(f, cNext,
+                         new std::vector<std::string>{"Actin"}, setLength, maxUnits);
             
-            for(int si = 0; si < numSubFilaments; si++) {
-                int setLength; ///length to intialize subfilament to
+            if(lastSubFilament != nullptr)
+                CSystem<NDIM>::_initializer->
+                                    connect(lastSubFilament, currentSubFilament);
                 
-                if (si == numSubFilaments - 1)
-                    setLength = length - (maxLength * (numSubFilaments - 1));
-                else
-                    setLength = maxLength;
-                
-                CSubFilament* currentSubFilament =
-                    CSystem<NDIM>::_initializer->createCSubFilament(f, cNext,
-                             new std::vector<std::string>{"Actin"}, setLength, maxLength);
-                
-                if(lastSubFilament != nullptr)
-                    CSystem<NDIM>::_initializer->
-                                        connect(lastSubFilament, currentSubFilament);
-                    
-                lastSubFilament = currentSubFilament;
+            lastSubFilament = currentSubFilament;
+
+            if(si * maxUnits >= cStart->sides()[0])
                 cNext = cNext->neighbours().back();
-            }
-            f->setLength(length);
-            CSystem<NDIM>::_filaments.emplace(f);
-            CSystem<NDIM>::update(f, nullptr);
-            
         }
+        
+        f->setLength(length);
+        CSystem<NDIM>::_filaments.push_back(f);
+        CSystem<NDIM>::update(f, nullptr);
+            
+        return f;
     }
 
     ///Extend the front of a filament
@@ -532,13 +469,22 @@ namespace chem {
         f->increaseLength();
         
     }
+    
+//    ///perform one step of retrograde flow
+//    template <size_t NDIM>
+//    void FilopodiaCSystem<NDIM>::retrogradeFlow()
+//    {
+//        ///loop through all filaments, push species back 
+//        
+//    }
+    
 
     
     //Specializations
     
-    template void FilopodiaCSystem<1>::initialize(int numFilaments, int length);
-    template void FilopodiaCSystem<2>::initialize(int numFilaments, int length);
-    template void FilopodiaCSystem<3>::initialize(int numFilaments, int length);
+    template CFilament* FilopodiaCSystem<1>::initializeCFilament(int length);
+    template CFilament* FilopodiaCSystem<2>::initializeCFilament(int length);
+    template CFilament* FilopodiaCSystem<3>::initializeCFilament(int length);
     
     template void
         FilopodiaCSystem<1>::extendFrontOfCFilament(CFilament *f,

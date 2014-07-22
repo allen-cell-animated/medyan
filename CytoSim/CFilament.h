@@ -12,6 +12,8 @@
 #include <iostream>
 #include "CompartmentContainer.h"
 
+class Filament;
+
 
 namespace chem {
     
@@ -45,6 +47,10 @@ namespace chem {
 
         ///Check if this filament element is valid. Involves checking copy numbers
         virtual bool checkSpecies(int sum) = 0;
+        
+        ///move all species (and associated reactions) in this element to another compartment
+        virtual void moveToCompartment(Compartment *c) = 0;
+        
     };
     
     ///CMonomer class is an implementation of the abstract class CFilamentElement for a CMonomer in filament
@@ -145,6 +151,8 @@ namespace chem {
         ///Print CSubFilament
         virtual void printCSubFilament()
         {
+            std::cout << "Compartment:" << _compartment << std::endl;
+            
             std::cout << "Composition of CSubFilament: " << std::endl;
             for (auto &m : _monomers){
                 m->print();
@@ -158,13 +166,13 @@ namespace chem {
         }
     };
     
-    
     /// CFilament class holds sub CFilaments
     /*! The CFilament class is used to hold CSubFilaments (children of CFilament).
      */
     class CFilament : public Composite{
     
     private:
+        Filament* _mFilament;
         int _length = 0; ///Length of filament
         
     public:
@@ -173,6 +181,12 @@ namespace chem {
         
         ///Default destructor, removes all Csubfilaments implicitly
         ~CFilament() {}
+        
+        ///Set mFilament ptr
+        virtual void setMFilament(Filament* mFilament)
+        {
+            _mFilament = mFilament;
+        }
         
         ///Add a Csubfilament
         virtual void addCSubFilament(CSubFilament* s) {
@@ -229,7 +243,6 @@ namespace chem {
         ///Print entire filament
         virtual void printCFilament() {
             
-            std::cout<<std::endl;
             std::cout << "Length = " << _length <<std::endl;
             int index = 0;
             for (auto &c : children()) {

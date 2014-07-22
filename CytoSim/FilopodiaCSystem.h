@@ -110,10 +110,15 @@ namespace chem {
         ~FilopodiaCSystem() {}
         
         //Initialize a number of filaments
-        virtual void initialize(int numFilaments, int length);
+        virtual CFilament* initializeCFilament(int length);
         
         ///Extend the front of a filament
         virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species);
+        
+//        ///Perform one step of retrograde flow for this system
+//        virtual void retrogradeFlow();
+        
+        
     };
     
     

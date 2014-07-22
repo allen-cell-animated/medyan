@@ -139,6 +139,23 @@ namespace chem {
             return static_cast<CompartmentSpatial<NDIM>*>(children()[index].get());
         }
         
+        /// Get the compartment given a set of coordinates
+        CompartmentSpatial<NDIM>* getCompartment(const std::vector<float> &coords) const
+        {
+            if(not _is_initialized)
+                throw std::runtime_error("CompartmentGrid::getCompartment(): initialize() needs to be called first");
+            
+            size_t index = 0;
+            size_t i = NDIM-1;
+            for(auto x: coords)
+            {
+                index+=(x / getProtoCompartment().sides()[index])*std::pow(_grid[i],i);
+                --i;
+            }
+            return static_cast<CompartmentSpatial<NDIM>*>(children()[index].get());
+        }
+        
+        
         /// Get the protocompartment from this grid, in order to configure and then initialize
         CompartmentSpatial<NDIM>& getProtoCompartment() {return _prototype_compartment;}
         const CompartmentSpatial<NDIM>& getProtoCompartment() const {return _prototype_compartment;}

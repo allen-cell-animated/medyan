@@ -14,8 +14,10 @@
 #include <deque>
 #include "Mcommon.h"
 #include "MComposite.h"
+#include "CFilament.h"
 #include <math.h>
 
+using namespace chem;
 
 class Filament : public MComposite
 {
@@ -28,6 +30,7 @@ private:
     Cylinder* _pLastCylinder;
     System* _pSystem;
     Network* _pNetwork;
+    CFilament* _cFilament;
 
 ///!These are private interfaces to calculate forces and Energy within the filament:
     
@@ -67,6 +70,11 @@ public:
     
     void DeleteBead(Bead*);
     
+    ///Set cFilament ptr
+    virtual void setCFilament(CFilament* cFilament)
+    {
+        _cFilament = cFilament;
+    }
     
     
     

@@ -1,6 +1,6 @@
 //
-//  main.cpp
-//  CytoSim-Experimenting
+//  CytoSim.cpp
+//  CytoSim
 //
 //  Created by Garegin Papoian on 4/19/12.
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
     
     //Init filament controller
     FilopodiaCSystem<1> csystem{&ccv, &initializer};
-    csystem.initialize(16, 40);
+    csystem.initializeCFilament(40);
     
     chem.initialize();
     
