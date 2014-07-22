@@ -39,7 +39,7 @@
 #include "ChemGillespieImpl.h"
 #include "ChemSimpleGillespieImpl.h"
 
-#include "FilopodiaController.h"
+#include "FilopodiaCSystem.h"
 #include "CMembrane.h"
 
 using namespace std;
@@ -80,8 +80,8 @@ int main(int argc, const char * argv[])
     SimpleInitializer<1> initializer{chem, mem};
     
     //Init filament controller
-    FilopodiaController<1> controller{&ccv, &initializer};
-    controller.initialize(16, 40);
+    FilopodiaCSystem<1> csystem{&ccv, &initializer};
+    csystem.initialize(16, 40);
     
     chem.initialize();
     
@@ -94,7 +94,7 @@ int main(int argc, const char * argv[])
         chem.run(1000);
         auto chk2 = chrono::high_resolution_clock::now();
         
-        controller.printFilaments();
+        csystem.printFilaments();
         
         chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
         //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();

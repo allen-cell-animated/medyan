@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F7123D7215752161008F64D1"
-               BuildableName = "example_misc"
-               BlueprintName = "example_misc"
-               ReferencedContainer = "container:CytoSim.xcodeproj">
+               BlueprintIdentifier = "F7A77DA315ACAC5700076046"
+               BuildableName = "example_composite"
+               BlueprintName = "example_composite"
+               ReferencedContainer = "container:Cyto.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F7123D7215752161008F64D1"
-            BuildableName = "example_misc"
-            BlueprintName = "example_misc"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            BlueprintIdentifier = "F7A77DA315ACAC5700076046"
+            BuildableName = "example_composite"
+            BlueprintName = "example_composite"
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -51,10 +51,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F7123D7215752161008F64D1"
-            BuildableName = "example_misc"
-            BlueprintName = "example_misc"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            BlueprintIdentifier = "F7A77DA315ACAC5700076046"
+            BuildableName = "example_composite"
+            BlueprintName = "example_composite"
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -69,10 +69,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F7123D7215752161008F64D1"
-            BuildableName = "example_misc"
-            BlueprintName = "example_misc"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            BlueprintIdentifier = "F7A77DA315ACAC5700076046"
+            BuildableName = "example_composite"
+            BlueprintName = "example_composite"
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

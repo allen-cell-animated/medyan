@@ -2,7 +2,7 @@
 //  CSystem.h
 //  CytoSim
 //
-//  Created by James Komianos on 7/21/14.
+//  Created by James Komianos on 7/8/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
@@ -10,63 +10,83 @@
 #define __CytoSim__CSystem__
 
 #include <iostream>
-#include "CompartmentContainer.h"
-#include "CSystem.h"
-
+#include "CFilament.h"
+#include "ChemSim.h"
 
 namespace chem {
-
-    template <size_t NDIM>
-    class CSystem {
-        
-//    private:
-//        CompartmentGrid<NDIM>* _grid;
-//        CSystem<NDIM>* _controller;
-//        
-//    public:
-//        CSystem(CSystem<NDIM> *controller) : _controller(controller)
-//        {
-//            
-//            _controller->setSystem(this);
-//        }
-//        
-//        ~CSystem()
-//        {
-//            delete _controller;
-//            delete _grid;
-//        }
-//        
-//        void getCSystem() {return _controller;}
-//        void getCompartmentGrid() {return _grid;}
-//        
-//        
+    
+    //Forward declaration
+    template<size_t NDIM>
+    class CSystem;
+    
+    /// CFilamentInitailizer class is used for initailizing a Csubfilament in a compartment
+    /*!
+     *  CFilamentInitializer is an abstract class used for initailizing a subfilament, including its
+     *  associated species and reactions. SubFilaments can be initialized by constructing
+     *  this object and calling its initializer.
+     */
+    template<size_t NDIM>
+    class CFilamentInitializer {
         
     protected:
+        CSystem<NDIM>* _csystem; ///< ptr to controller
+        ChemSim &_chem; ///<ptr to chem sim object
+        
+    public:
+        ///Constructor, destructor
+        CFilamentInitializer(ChemSim &chem) : _chem(chem) {}
+        virtual ~CFilamentInitializer() {};
+        
+        ///Set the CFilament controller
+        virtual void setCSystem (CSystem<NDIM>* csystem) {_csystem = csystem;}
+        
+        ///Initializer, based on the given simulation
+        ///@param length - starting length of the CSubFilament initialized
+        ///@param maxlength - length of entire reactive CFilament
+        ///@param species - list of species to initialize in CFilament
+        virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
+                                               Compartment* c,
+                                               std::vector<std::string>* species,
+                                               int length,
+                                               int maxlength) = 0;
+        
+        ///Connect two CFilaments, back to front
+        virtual void connect(CSubFilament* s1, CSubFilament* s2) = 0;
+        
+        //Update based on a given reaction occuring
+        virtual void update(CFilament* f, ReactionBase* r) = 0;
+    };
+    
+    
+    /// CSystem class is an abstract class for the updating of CFilaments
+    /*!
+     *  CSystem is an abstract class that provides methods to control the updating of
+     *  CFilaments after reactions occur. This includes setting up reactions, updating species
+     *  and compartments, and creating new Csubfilaments.
+     */
+    template<size_t NDIM>
+    class CSystem {
+
+    protected:
+        CompartmentGrid<NDIM> * _grid; ///<compartment grid
         CFilamentInitializer<NDIM>* _initializer; ///<initializer, could be any implementation
-        CompartmentGrid<NDIM>* _grid;
         
         std::unordered_set<std::unique_ptr<CFilament>> _filaments;///< filaments that this is controlling
         
     public:
         
         ///constructor and destructor
-        CSystem() {}
+        CSystem(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
+        : _grid(grid), _initializer(initializer) {}
         
         ///delete filaments
         virtual ~CSystem(){}
         
-        virtual setInitializer(CFilamentInitializer<NDIM>* initializer)
-        {
-            _initializer = initializer;
-        }
+        ///Initialize all CFilaments and reactions, return set of CFilaments
+        virtual void initialize(int numFilaments, int length) = 0;
         
-        virtual initializeGrid(std::initializer_list<size_t> gridSize)
-        {
-            _grid = new CompartmentGrid<NDIM>(gridSize);
-        }
-        
-        
-        
+        ///Extend the front of a CFilament
+        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species) = 0;
         
         ///Update based on a given reaction occuring
         void update(CFilament* f, ReactionBase* r) {
@@ -87,7 +107,6 @@ namespace chem {
         
     };
     
-};
-
+} //end namespace chem
 
 #endif /* defined(__CytoSim__CSystem__) */

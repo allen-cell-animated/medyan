@@ -1,12 +1,12 @@
 //
-//  FilamentControllerImpl.cpp
+//  FilopodiaCSystem.cpp
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "FilopodiaController.h"
+#include "FilopodiaCSystem.h"
 #include "CMembrane.h"
 
 namespace chem {
@@ -18,20 +18,20 @@ namespace chem {
     struct CFilamentExtensionCallback {
         
         //members
-        FilamentController<NDIM>* _controller;
+        CSystem<NDIM>* _csystem;
         CFilament* _filament;
         std::vector<std::string>* _species;
         
         ///Constructor, sets members
-        CFilamentExtensionCallback(FilamentController<NDIM>* controller,
+        CFilamentExtensionCallback(CSystem<NDIM>* csystem,
                                    CFilament* filament,
                                    std::vector<std::string>* species) :
-        _controller(controller), _filament(filament), _species(species) {};
+        _csystem(csystem), _filament(filament), _species(species) {};
         
         ///Callback
         void operator() (ReactionBase *r){
-            _controller->extendFrontOfCFilament(_filament, _species);
-            _controller->update(_filament, r);
+            _csystem->extendFrontOfCFilament(_filament, _species);
+            _csystem->update(_filament, r);
         }
     };
     
@@ -40,17 +40,17 @@ namespace chem {
     struct CFilamentPolyCallback {
         
         //members
-        FilamentController<NDIM> *_controller;
+        CSystem<NDIM> *_csystem;
         CFilament* _filament;
         
-        CFilamentPolyCallback(FilamentController<NDIM>* controller,
+        CFilamentPolyCallback(CSystem<NDIM>* csystem,
                               CFilament* filament) :
-        _controller(controller), _filament(filament) {};
+        _csystem(csystem), _filament(filament) {};
         
         //Callback
         void operator() (ReactionBase *r){
             _filament->increaseLength();
-            _controller->update(_filament, r);
+            _csystem->update(_filament, r);
         }
         
     };
@@ -60,17 +60,17 @@ namespace chem {
     struct CFilamentDepolyCallback {
         
         //members
-        FilamentController<NDIM> *_controller;
+        CSystem<NDIM> *_csystem;
         CFilament* _filament;
         
-        CFilamentDepolyCallback(FilamentController<NDIM>* controller,
+        CFilamentDepolyCallback(CSystem<NDIM>* csystem,
                                 CFilament* filament) :
-        _controller(controller), _filament(filament) {};
+        _csystem(csystem), _filament(filament) {};
         
         //Callback
         void operator() (ReactionBase *r){
             _filament->decreaseLength();
-            _controller->update(_filament, r);
+            _csystem->update(_filament, r);
         }
         
     };
@@ -96,14 +96,6 @@ namespace chem {
         return polyReactions;
     };
     
-    //Specializations
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
-    
     
     ///Update filaments based on a reaction
     ///In this implementation, update polymerization rates based on membrane
@@ -118,10 +110,6 @@ namespace chem {
         _membrane.updateHeight();
         _membrane.updateRates();
     }
-
-    template void SimpleInitializer<1>::update(CFilament* f, ReactionBase* r);
-    template void SimpleInitializer<2>::update(CFilament* f, ReactionBase* r);
-    template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
 
     ///Initializer, based on the given simulation
     ///@param length - starting length of the filament initialized
@@ -181,18 +169,18 @@ namespace chem {
         
         ///Callbacks needed
         CFilamentDepolyCallback<NDIM> depolyCallback =
-        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,parentFilament);
+        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,parentFilament);
         
         CFilamentPolyCallback<NDIM> polyCallback =
-        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller, parentFilament);
+        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
         
         CFilamentExtensionCallback<NDIM> extensionCallback =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
                                          parentFilament,
                                          new std::vector<std::string>{"Actin"});
         
         CFilamentExtensionCallback<NDIM> extensionForminCallback =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
                                          parentFilament,
                                          new std::vector<std::string>{"Actin", "Formin"});
         
@@ -378,10 +366,10 @@ namespace chem {
         
         
         CFilamentPolyCallback<NDIM> polyCallback =
-            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
                                                                 parentFilament);
         CFilamentDepolyCallback<NDIM> depolyCallback =
-            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_controller,
+            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
                                                                 parentFilament);
         
         ///Add reactions
@@ -433,6 +421,17 @@ namespace chem {
     };
     
     //specializations
+    template std::vector<ReactionBase*>*
+        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*>*
+        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*>*
+        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
+    
+    template void SimpleInitializer<1>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<2>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
+    
     template void SimpleInitializer<1>::connect (CSubFilament* s1, CSubFilament* s2);
     template void SimpleInitializer<2>::connect (CSubFilament* s1, CSubFilament* s2);
     template void SimpleInitializer<3>::connect (CSubFilament* s1, CSubFilament* s2);
@@ -459,12 +458,12 @@ namespace chem {
 
     //Initialize a number of filaments
     template <size_t NDIM>
-    void FilopodiaController<NDIM>::initialize(int numFilaments, int length)
+    void FilopodiaCSystem<NDIM>::initialize(int numFilaments, int length)
     {
         CompartmentSpatial<NDIM>* cStart;
         ///Starting compartment for 1D, all filaments start in compartment 0
         if (NDIM == 1) {
-            cStart = FilamentController<NDIM>::_grid->getCompartment(0);
+            cStart = CSystem<NDIM>::_grid->getCompartment(0);
         }
         else {
             std::cout << "Multiple dimensional implementation \
@@ -492,26 +491,26 @@ namespace chem {
                     setLength = maxLength;
                 
                 CSubFilament* currentSubFilament =
-                    FilamentController<NDIM>::_initializer->createCSubFilament(f, cNext,
+                    CSystem<NDIM>::_initializer->createCSubFilament(f, cNext,
                              new std::vector<std::string>{"Actin"}, setLength, maxLength);
                 
                 if(lastSubFilament != nullptr)
-                    FilamentController<NDIM>::_initializer->
+                    CSystem<NDIM>::_initializer->
                                         connect(lastSubFilament, currentSubFilament);
                     
                 lastSubFilament = currentSubFilament;
                 cNext = cNext->neighbours().back();
             }
             f->setLength(length);
-            FilamentController<NDIM>::_filaments.emplace(f);
-            FilamentController<NDIM>::update(f, nullptr);
+            CSystem<NDIM>::_filaments.emplace(f);
+            CSystem<NDIM>::update(f, nullptr);
             
         }
     }
 
     ///Extend the front of a filament
     template <size_t NDIM>
-    void FilopodiaController<NDIM>::extendFrontOfCFilament(CFilament *f,
+    void FilopodiaCSystem<NDIM>::extendFrontOfCFilament(CFilament *f,
                                                            std::vector<std::string>* species)
     {
         ///Find next compartment (1D for now)
@@ -525,9 +524,9 @@ namespace chem {
         int maxLength = int(sideLength / monomer_size);
         
         ///Initialize new subfilament and connect it
-        CSubFilament* s2 = FilamentController<NDIM>::_initializer->
+        CSubFilament* s2 = CSystem<NDIM>::_initializer->
                             createCSubFilament(f, cNext, species, 1, maxLength);
-        FilamentController<NDIM>::_initializer->connect(s1,s2);
+        CSystem<NDIM>::_initializer->connect(s1,s2);
         
         ///Increase length
         f->increaseLength();
@@ -537,18 +536,18 @@ namespace chem {
     
     //Specializations
     
-    template void FilopodiaController<1>::initialize(int numFilaments, int length);
-    template void FilopodiaController<2>::initialize(int numFilaments, int length);
-    template void FilopodiaController<3>::initialize(int numFilaments, int length);
+    template void FilopodiaCSystem<1>::initialize(int numFilaments, int length);
+    template void FilopodiaCSystem<2>::initialize(int numFilaments, int length);
+    template void FilopodiaCSystem<3>::initialize(int numFilaments, int length);
     
     template void
-        FilopodiaController<1>::extendFrontOfCFilament(CFilament *f,
+        FilopodiaCSystem<1>::extendFrontOfCFilament(CFilament *f,
                                                        std::vector<std::string>* species);
     template void
-        FilopodiaController<2>::extendFrontOfCFilament(CFilament *f,
+        FilopodiaCSystem<2>::extendFrontOfCFilament(CFilament *f,
                                                        std::vector<std::string>* species);
     template void
-        FilopodiaController<3>::extendFrontOfCFilament(CFilament *f,
+        FilopodiaCSystem<3>::extendFrontOfCFilament(CFilament *f,
                                                        std::vector<std::string>* species);
     
 }; //end namespace chem

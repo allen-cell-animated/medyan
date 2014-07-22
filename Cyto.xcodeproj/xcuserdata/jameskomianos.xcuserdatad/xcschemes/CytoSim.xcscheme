@@ -17,7 +17,7 @@
                BlueprintIdentifier = "F763ED051548FFC70069DA61"
                BuildableName = "CytoSim"
                BlueprintName = "CytoSim"
-               ReferencedContainer = "container:CytoSim.xcodeproj">
+               ReferencedContainer = "container:Cyto.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
             BlueprintIdentifier = "F763ED051548FFC70069DA61"
             BuildableName = "CytoSim"
             BlueprintName = "CytoSim"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -54,7 +54,7 @@
             BlueprintIdentifier = "F763ED051548FFC70069DA61"
             BuildableName = "CytoSim"
             BlueprintName = "CytoSim"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "F763ED051548FFC70069DA61"
             BuildableName = "CytoSim"
             BlueprintName = "CytoSim"
-            ReferencedContainer = "container:CytoSim.xcodeproj">
+            ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

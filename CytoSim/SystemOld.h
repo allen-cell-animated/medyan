@@ -14,7 +14,7 @@
 #include "Species.h"
 #include "Compartment.h"
 
-class System {
+class SystemOld {
 public:
     void setName (const std::string &name) {_name=name;}
     std::string getName () const {return _name;}

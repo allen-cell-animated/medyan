@@ -1,16 +1,16 @@
 //
-//  FilamentControllerImpl.h
+//  FilopodiaCSystem.h
 //  CytoSim
 //
 //  Created by James Komianos on 7/10/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __CytoSim__FilopodiaController__
-#define __CytoSim__FilopodiaController__
+#ifndef __CytoSim__FilopodiaCSystem__
+#define __CytoSim__FilopodiaCSystem__
 
 #include <iostream>
-#include "FilamentController.h"
+#include "CSystem.h"
 #include "CFilamentImpl.h"
 
 
@@ -97,17 +97,17 @@ namespace chem {
     };
     
     
-    /// FilopodiaController is a basic implementation for updating filopodia filaments
+    /// FilopodiaCSystem is a basic implementation for updating filopodia filaments
     template <size_t NDIM>
-    class FilopodiaController : public FilamentController<NDIM> {
+    class FilopodiaCSystem : public CSystem<NDIM> {
  
     public:
         ///Constructor, calls base class
-        FilopodiaController(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
-        : FilamentController<NDIM>::FilamentController(grid, initializer) {};
+        FilopodiaCSystem(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
+        : CSystem<NDIM>::CSystem(grid, initializer) {};
         
         ///Default destructor, does nothing
-        ~FilopodiaController() {}
+        ~FilopodiaCSystem() {}
         
         //Initialize a number of filaments
         virtual void initialize(int numFilaments, int length);
@@ -121,4 +121,4 @@ namespace chem {
 }; //end namespace chem
 
 
-#endif /* defined(__CytoSim__FilopodiaController__) */
+#endif /* defined(__CytoSim__FilopodiaCSystem__) */
