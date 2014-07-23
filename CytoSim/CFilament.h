@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "CompartmentContainer.h"
+#include "Mcommon.h"
 
 class Filament;
 
@@ -86,7 +87,7 @@ namespace chem {
     
     /// CSubFilament class holds all Monomers and Bounds
     /*! 
-     *  The CSubFilamentClass is an template class that has lists of the monomers and bounds that it contains.
+     *  The CSubFilament Class is an template class that has lists of the monomers and bounds that it contains.
      *  it has functionality to print the current composition.
      *  Accessing a particular species in the CSubFilament is possible as well.
      */
@@ -96,8 +97,8 @@ namespace chem {
         std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
         Compartment* _compartment; ///< compartment this CSubFilament is in
-        short _max_length = 0; ///< length of this CSubFilament
-        short _length = 0; 
+        short _length = 0;
+        const short _max_length = L / monomer_size;
         
     public:
         ///Default constructor, sets compartment
@@ -116,7 +117,6 @@ namespace chem {
         ///Add a monomer to this CSubFilament
         virtual void addCMonomer(CMonomer* monomer) {
             _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));
-            _max_length++;
         }
         
         ///Add a bound to this CSubFilament
@@ -173,6 +173,7 @@ namespace chem {
     
     private:
         Filament* _mFilament;
+        int _num_compartments = 1; ///number of compartments this filament spans
         int _length = 0; ///Length of filament
         
     public:
@@ -193,7 +194,7 @@ namespace chem {
             addChild(std::unique_ptr<Component>(s));
         }
         
-        ///Get front subfilament
+        ///Get front subfilament conditionally (first occupied subfilament)
         ///@note -  no check on the number of children
         virtual CSubFilament* getFrontCSubFilament()
         {
@@ -205,16 +206,20 @@ namespace chem {
                 
                 if (front->length() != 0) return front;
                 else {
-                    if((childIndex - 1) >= 0) {
-                        CSubFilament* second =
-                            static_cast<CSubFilament*>(children(childIndex - 1));
-                        if (second->atMaxLength())
-                            return front;
-                    }
+                    if((childIndex - 1) >= 0) 
+                        front = static_cast<CSubFilament*>(children(childIndex - 1));
+                    
                 }
                 childIndex--;
             }
             return front;
+        }
+        
+        ///Get front subfilament unconditionally (could be empty)
+        ///@note -  no check on the number of children
+        virtual CSubFilament* getFrontCSubFilamentUnconditional()
+        {
+            return static_cast<CSubFilament*>(children(numberOfChildren() - 1));
         }
         
         ///number of subfilaments in this filament
@@ -222,12 +227,12 @@ namespace chem {
         
         ///Increase length of filament
         virtual void increaseLength() {
-            getFrontCSubFilament()->increaseLength();
+            getFrontCSubFilamentUnconditional()->increaseLength();
             _length++;
         }
         ///Decrease length of filament
         virtual void decreaseLength() {
-            getFrontCSubFilament()->decreaseLength();
+            getFrontCSubFilamentUnconditional()->decreaseLength();
             _length--;
         }
         
@@ -239,6 +244,12 @@ namespace chem {
         
         ///get length of filament
         virtual int length() {return _length;}
+        
+        ///increase the number of compartments
+        virtual void increaseNumCompartments() {_num_compartments++;}
+
+        ///Get the number of compartments this filament spans
+        virtual int numCompartments() {return _num_compartments;}
         
         ///Print entire filament
         virtual void printCFilament() {

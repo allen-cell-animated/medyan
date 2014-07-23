@@ -47,43 +47,23 @@ using namespace chem;
 
 int main(int argc, const char * argv[])
 {
-    const int NDIM = 1;
-    const int NGRID = 5;
-    CompartmentGrid<NDIM> ccv{NGRID};
-    CompartmentSpatial<NDIM> &Cproto = ccv.getProtoCompartment();
-    
-    ///Add diffusing species
-    Species *M1 = Cproto.addSpecies("Actin",10U);
-    Species *M2 = Cproto.addSpecies("Capping",0U);
-    Species *M3 = Cproto.addSpecies("X-Formin",5U);
-    Species *M4 = Cproto.addSpecies("Myosin", 5U);
-//    Cproto.setDiffusionRate(M1,2000);
-//    Cproto.setDiffusionRate(M2,2000);
-//    Cproto.setDiffusionRate(M3,2000);
-//    Cproto.setDiffusionRate(M4,2000);
-
-    ///Set side length
-    vector<float> sides{100.0};
-    Cproto.setSides(sides.begin());
-    
-    ///init grid
-    ccv.initialize();
-    
     ///Create chemsim and init
     ChemNRMImpl chem_sim_impl;
     ChemSim chem(&chem_sim_impl);
-    ccv.addChemSimReactions(chem);
-    
+
     CMembrane mem;
     
     ///Init filament initializer
     SimpleInitializer<1> initializer{chem, mem};
     
     //Init filament controller
-    FilopodiaCSystem<1> csystem{&ccv, &initializer};
-    csystem.initializeCFilament(40);
+    FilopodiaCSystem<1> csystem{&initializer};
     
-    chem.initialize();
+    
+    for(int i = 0; i < 1; i++)
+        csystem.initializeCFilament(81);
+    
+    //csystem.printFilaments();
     
     //chem.printReactions();
     
@@ -91,7 +71,7 @@ int main(int argc, const char * argv[])
         
         ///Run 100 steps
         auto chk1 = chrono::high_resolution_clock::now();
-        chem.run(1000);
+        chem.run(100000);
         auto chk2 = chrono::high_resolution_clock::now();
         
         csystem.printFilaments();

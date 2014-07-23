@@ -33,51 +33,16 @@ public:
     
     virtual void initialize(std::vector<std::vector<std::vector<double> > >& v)
     {
-        //int maxCompSize;
-        size_t NGRID = 5;
-        CompartmentGrid<NDIM>* grid;
-        
-        switch (NDIM) {
-            case 1:
-                grid = new CompartmentGrid<NDIM>({NGRID});
-                break;
-            case 2:
-                grid = new CompartmentGrid<NDIM>({NGRID,NGRID});
-                break;
-            default:
-                grid = new CompartmentGrid<NDIM>({NGRID,NGRID,NGRID});
-        }
-        
-        
-        CompartmentSpatial<NDIM> &Cproto = grid->getProtoCompartment();
-        
-        Species *M1 = Cproto.addSpecies("Actin",10U);
-        Species *M2 = Cproto.addSpecies("Capping",0U);
-        Species *M3 = Cproto.addSpecies("X-Formin",5U);
-        Species *M4 = Cproto.addSpecies("Myosin", 5U);
-        Cproto.setDiffusionRate(M1,2000);
-        Cproto.setDiffusionRate(M2,2000);
-        Cproto.setDiffusionRate(M3,2000);
-        Cproto.setDiffusionRate(M4,2000);
-
-        ///Set side length
-        std::vector<float> sides{100.0};
-        Cproto.setSides(sides.begin());
-        
-        ///init grid
-        grid->initialize();
-        
-        ///Create chemsim and init
+        ///Create chemsim, membrane
         ChemNRMImpl chem_sim_impl;
         ChemSim chem(&chem_sim_impl);
-        grid->addChemSimReactions(chem);
         
         CMembrane mem;
         
         ///Init filament initializer
         SimpleInitializer<1> initializer{chem, mem};
 
-        _cSystem = new FilopodiaCSystem<NDIM>(grid,&initializer);
+        _cSystem = new FilopodiaCSystem<NDIM>(&initializer);
         _mSystem = new System();
         _mSystem->AddNewFilaments(v,0);
         

@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_TEST
+//#define DO_THIS_TEST
 
 #ifdef DO_THIS_TEST
 
@@ -92,8 +92,8 @@ TEST(CompartmentContainerTest, Main) {
 
     ccv.initialize();
     
-    EXPECT_EQ(g.countSpecies(), 250000);
-    EXPECT_EQ(g.countReactions(), 1720000);
+    EXPECT_EQ(ccv.countSpecies(), 250000);
+    EXPECT_EQ(ccv.countReactions(), 1720000);
     
     CompartmentSpatial<3> *C1 = ccv.getCompartment(10U,10U,10U);
     

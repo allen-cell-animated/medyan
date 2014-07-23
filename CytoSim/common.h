@@ -29,6 +29,8 @@ const double temp = 300.0; // in K
 
 const double kT = 4.1; //in pN * nm
 
+const int NGRID = 5; //size of compartment grid
+
 inline double tau() {return global_time;}
 
 

@@ -40,6 +40,9 @@ namespace chem {
         ///Set the CFilament controller
         virtual void setCSystem (CSystem<NDIM>* csystem) {_csystem = csystem;}
         
+        ///Initialize proto compartment based on this implementation
+        virtual void initializeProtoCompartment(CompartmentSpatial<NDIM>& Cproto) = 0;
+        
         ///Initializer, based on the given simulation
         ///@param length - starting length of the CSubFilament initialized
         ///@param maxlength - length of entire reactive CFilament
@@ -47,14 +50,16 @@ namespace chem {
         virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
                                                Compartment* c,
                                                std::vector<std::string>* species,
-                                               int length,
-                                               int maxlength) = 0;
+                                               int length) = 0;
         
         ///Connect two CFilaments, back to front
         virtual void connect(CSubFilament* s1, CSubFilament* s2) = 0;
         
         //Update based on a given reaction occuring
         virtual void update(CFilament* f, ReactionBase* r) = 0;
+        
+        ///get this chemsim engine
+        ChemSim& getChemSim() {return _chem;}
     };
     
     
@@ -68,16 +73,43 @@ namespace chem {
     class CSystem {
 
     protected:
-        CompartmentGrid<NDIM> * _grid; ///<compartment grid
+        CompartmentGrid<NDIM>* _grid; ///<compartment grid
         CFilamentInitializer<NDIM>* _initializer; ///<initializer, could be any implementation
         
-        std::vector<CFilament*> _filaments;///< filaments that this is controlling
+        std::vector<std::unique_ptr<CFilament>> _filaments;///< filaments that this is controlling
         
     public:
         
         ///constructor and destructor
-        CSystem(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
-        : _grid(grid), _initializer(initializer) {}
+        CSystem(CFilamentInitializer<NDIM>* initializer) : _initializer(initializer)
+        {
+            
+            ///Set up grid
+            if(NDIM ==1)
+                _grid = new CompartmentGrid<NDIM>({NGRID});
+            
+            else if(NDIM == 2)
+                _grid = new CompartmentGrid<NDIM>({NGRID,NGRID});
+            
+            else
+                _grid = new CompartmentGrid<NDIM>({NGRID,NGRID,NGRID});
+            
+            
+            _initializer->setCSystem(this);
+            
+            ///init protocompartment
+            CompartmentSpatial<NDIM> &Cproto = _grid->getProtoCompartment();
+            _initializer->initializeProtoCompartment(Cproto);
+
+            ///init grid
+            _grid->initialize();
+            
+            ///Init chemsim
+            ChemSim& chem = _initializer->getChemSim();
+            _grid->addChemSimReactions(chem);
+            chem.initialize();
+
+        }
         
         ///delete filaments
         virtual ~CSystem(){}
@@ -126,6 +158,7 @@ namespace chem {
         ///Callback
         void operator() (ReactionBase *r){
             _csystem->extendFrontOfCFilament(_filament, _species);
+            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
     };
@@ -145,6 +178,7 @@ namespace chem {
         //Callback
         void operator() (ReactionBase *r){
             _filament->increaseLength();
+            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
         
@@ -165,6 +199,7 @@ namespace chem {
         //Callback
         void operator() (ReactionBase *r){
             _filament->decreaseLength();
+            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
         

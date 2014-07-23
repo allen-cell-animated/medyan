@@ -12,6 +12,7 @@
 #include <iostream>
 #include "CSystem.h"
 #include "CFilamentImpl.h"
+#include "Mcommon.h"
 
 
 namespace chem {
@@ -64,6 +65,13 @@ namespace chem {
         float _k_load = 20.0;
         float _k_unload = 10.0;
         
+        //Diffusion rate
+        float _diffusion_rate = 2000.0;
+        
+        ///Compartment properties
+        float _side_length = 100.0;
+        
+        
     public:
         
         ///Constructor, does nothing
@@ -76,6 +84,10 @@ namespace chem {
         ///Find the current polymerization reactions associated with this CFilament
         virtual std::vector<ReactionBase*>* findPolymerizationReactions(CFilament* f);
         
+        
+        ///Initialize proto compartment based on this implementation
+        virtual void initializeProtoCompartment(CompartmentSpatial<NDIM>& Cproto);
+
         ///Connect two filaments, back to front
         ///For this impl, only add a polymerization reaction between them
         virtual void connect (CSubFilament* s1, CSubFilament* s2);
@@ -87,8 +99,7 @@ namespace chem {
         virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
                                                Compartment* c,
                                                std::vector<std::string>* species,
-                                               int length,
-                                               int maxlength);
+                                               int length);
         
         ///Update filaments based on a reaction
         ///In this implementation, update polymerization rates based on membrane
@@ -103,8 +114,8 @@ namespace chem {
  
     public:
         ///Constructor, calls base class
-        FilopodiaCSystem(CompartmentGrid<NDIM>* grid, CFilamentInitializer<NDIM>* initializer)
-        : CSystem<NDIM>::CSystem(grid, initializer) {};
+        FilopodiaCSystem(CFilamentInitializer<NDIM>* initializer)
+        : CSystem<NDIM>::CSystem(initializer) {};
         
         ///Default destructor, does nothing
         ~FilopodiaCSystem() {}

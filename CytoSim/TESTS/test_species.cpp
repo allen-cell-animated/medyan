@@ -9,7 +9,7 @@
 // Note: This test omits many functions of Species that interact with Reaction objects. 
 //        Separate tests weill cover those methods.
 
-#define DO_THIS_TEST
+//#define DO_THIS_TEST
 
 #ifdef DO_THIS_TEST
 

@@ -456,8 +456,8 @@
 				F72BB384196F14B800D0DBEF /* FilopodiaCSystem.h */,
 				F784E491196C6448003C84A8 /* CSystem.h */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
-				F763ED211548FFED0069DA61 /* SystemOld.cpp */,
 				F7E432D015FEDD3200C8EA50 /* Signaling.h */,
+				F763ED211548FFED0069DA61 /* SystemOld.cpp */,
 				F763ED221548FFED0069DA61 /* SystemOld.h */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
@@ -1023,8 +1023,13 @@
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-std=c++11",
+					"-lgsl",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_system",
 					"-lgsl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1040,8 +1045,13 @@
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-std=c++11",
+					"-lgsl",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_system",
 					"-lgsl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

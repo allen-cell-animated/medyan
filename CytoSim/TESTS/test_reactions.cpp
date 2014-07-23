@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_TEST
+#define DO_THIS_REACTION_TEST
 
-#ifdef DO_THIS_TEST
+#ifdef DO_THIS_REACTION_TEST
 
 #include <iostream>
 
