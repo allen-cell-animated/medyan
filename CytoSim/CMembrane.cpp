@@ -25,15 +25,13 @@ namespace chem {
     
     ///Update a filament's associated polymerization reactions
     ///@note deallocates the input rxns vector
-    void CMembrane::updateFilamentReactions(CFilament* f, std::vector<ReactionBase*>* rxns)
+    void CMembrane::updateFilamentReactions(CFilament* f, std::vector<ReactionBase*> rxns)
     {
         ///Erase old rxns, add new ones
         _poly_reactions.erase(f);
         
-        for(auto it = rxns->begin(); it != rxns->end(); it++)
+        for(auto it = rxns.begin(); it != rxns.end(); it++)
             CMembrane::addReaction(f, (*it));
-        //clean up
-        delete rxns;
     }
 
     ///Updates the height of the membrane based on the filaments.

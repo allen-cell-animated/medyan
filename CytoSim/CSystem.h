@@ -49,11 +49,12 @@ namespace chem {
         ///@param species - list of species to initialize in CFilament
         virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
                                                Compartment* c,
-                                               std::vector<std::string>* species,
+                                               std::vector<std::string> species,
                                                int length) = 0;
         
-        ///Connect two CFilaments, back to front
-        virtual void connect(CSubFilament* s1, CSubFilament* s2) = 0;
+        ///Remove a CSubFilament, based onthe given simulation
+        virtual void removeCSubFilament(
+        
         
         //Update based on a given reaction occuring
         virtual void update(CFilament* f, ReactionBase* r) = 0;
@@ -118,7 +119,10 @@ namespace chem {
         virtual CFilament* initializeCFilament(int length) = 0;
         
         ///Extend the front of a CFilament
-        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species) = 0;
+        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string> species) = 0;
+        
+        ///Retract the front of a CFilament
+        virtual void retractFrontOfCFilament(CFilament *f) = 0;
         
         ///Update based on a given reaction occuring
         void update(CFilament* f, ReactionBase* r) {
@@ -147,21 +151,41 @@ namespace chem {
         //members
         CSystem<NDIM>* _csystem;
         CFilament* _filament;
-        std::vector<std::string>* _species;
+        std::vector<std::string> _species;
         
         ///Constructor, sets members
         CFilamentExtensionCallback(CSystem<NDIM>* csystem,
                                    CFilament* filament,
-                                   std::vector<std::string>* species) :
+                                   std::vector<std::string> species) :
         _csystem(csystem), _filament(filament), _species(species) {};
         
         ///Callback
         void operator() (ReactionBase *r){
             _csystem->extendFrontOfCFilament(_filament, _species);
-            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
     };
+    
+    ///Retraction callback
+    template<size_t NDIM>
+    struct CFilamentRetractionCallback {
+        
+        //members
+        CSystem<NDIM>* _csystem;
+        CFilament* _filament;
+        
+        ///Constructor, sets members
+        CFilamentRetractionCallback(CSystem<NDIM>* csystem,
+                                   CFilament* filament) :
+        _csystem(csystem), _filament(filament) {};
+        
+        ///Callback
+        void operator() (ReactionBase *r){
+            _csystem->retractFrontOfCFilament(_filament);
+            _csystem->update(_filament, r);
+        }
+    };
+    
     
     ///General polymerization callback
     template<size_t NDIM>
@@ -178,7 +202,6 @@ namespace chem {
         //Callback
         void operator() (ReactionBase *r){
             _filament->increaseLength();
-            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
         
@@ -199,7 +222,6 @@ namespace chem {
         //Callback
         void operator() (ReactionBase *r){
             _filament->decreaseLength();
-            _filament->printCFilament();
             _csystem->update(_filament, r);
         }
         

@@ -82,15 +82,11 @@ namespace chem {
         ~SimpleInitializer() {};
         
         ///Find the current polymerization reactions associated with this CFilament
-        virtual std::vector<ReactionBase*>* findPolymerizationReactions(CFilament* f);
+        virtual std::vector<ReactionBase*> findPolymerizationReactions(CFilament* f);
         
         
         ///Initialize proto compartment based on this implementation
         virtual void initializeProtoCompartment(CompartmentSpatial<NDIM>& Cproto);
-
-        ///Connect two filaments, back to front
-        ///For this impl, only add a polymerization reaction between them
-        virtual void connect (CSubFilament* s1, CSubFilament* s2);
         
         ///Initializer, based on the given simulation
         ///@param length - starting length of the filament initialized
@@ -98,7 +94,7 @@ namespace chem {
         ///@param species - list of species to initialize in filament
         virtual CSubFilament* createCSubFilament(CFilament* parentFilament,
                                                Compartment* c,
-                                               std::vector<std::string>* species,
+                                               std::vector<std::string> species,
                                                int length);
         
         ///Update filaments based on a reaction
@@ -124,10 +120,13 @@ namespace chem {
         virtual CFilament* initializeCFilament(int length);
         
         ///Extend the front of a filament
-        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string>* species);
+        virtual void extendFrontOfCFilament(CFilament *f, std::vector<std::string> species);
         
-//        ///Perform one step of retrograde flow for this system
-//        virtual void retrogradeFlow();
+        ///Retract the front of a CFilament
+        virtual void retractFrontOfCFilament(CFilament *f);
+
+        ///Perform one step of retrograde flow for this system
+        virtual void retrogradeFlow();
         
         
     };

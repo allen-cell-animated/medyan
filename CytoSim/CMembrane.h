@@ -74,7 +74,7 @@ namespace chem {
         
         ///Update a filament's associated polymerization reactions
         ///@note deallocates the input rxns vector
-        virtual void updateFilamentReactions(CFilament* f, std::vector<ReactionBase*>* rxns);
+        virtual void updateFilamentReactions(CFilament* f, std::vector<ReactionBase*> rxns);
 
         ///Updates the height of the membrane based on the filaments.
         ///@note see class documentation for definition of membrane height

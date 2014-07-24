@@ -243,12 +243,6 @@ namespace  chem {
 
     };
     
-
-    
-    
-    
-    
-    
     /// An abstract interface for a container of Species objects
     class SpeciesContainerIFace {
     public:

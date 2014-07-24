@@ -314,9 +314,9 @@ namespace chem {
         /// This is usually requested when the ReactionBase propensity drops to zero (i.e. via passivateReactionBase()).
         void unregisterDependent(ReactionBase *r);
         
-        
-        ///Replace a given species with a new one. Registers and unregisters new dependents accordingly
-        virtual void replaceRSpecies(RSpecies* oldRSpecies, RSpecies* newRSpecies) = 0;
+//        
+//        ///Replace a given species with a new one. Registers and unregisters new dependents accordingly
+//        virtual void replaceRSpecies(RSpecies* oldRSpecies, RSpecies* newRSpecies) = 0;
         
         virtual void printToStream(std::ostream& os) const = 0;
         

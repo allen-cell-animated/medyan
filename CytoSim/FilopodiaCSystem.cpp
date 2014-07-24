@@ -13,10 +13,10 @@ namespace chem {
     
     ///Find the current polymerization reactions associated with this CFilament
     template<size_t NDIM>
-    std::vector<ReactionBase*>*
+    std::vector<ReactionBase*>
         SimpleInitializer<NDIM>::findPolymerizationReactions(CFilament* f)
     {
-        auto polyReactions = new std::vector<ReactionBase*>();
+        std::vector<ReactionBase*> polyReactions;
         ///go to the front subfilament, front monomer
         CMonomer* frontCMonomer = f->getFrontCSubFilament()->frontCMonomer();
         
@@ -26,9 +26,9 @@ namespace chem {
         
         for(auto it = reactions.begin(); it != reactions.end(); it++)
             if((*it)->isPolymerizationReaction())
-                polyReactions->push_back(*it);
+                polyReactions.push_back(*it);
   
-        return polyReactions;
+        return std::vector<ReactionBase*>(polyReactions.begin(), polyReactions.end());
     };
     
     
@@ -51,14 +51,10 @@ namespace chem {
     template <size_t NDIM>
     void SimpleInitializer<NDIM>::initializeProtoCompartment(CompartmentSpatial<NDIM>& Cproto)
     {
-        Species *M1 = Cproto.addSpecies("Actin",10U);
-        Species *M2 = Cproto.addSpecies("Capping",0U);
-        Species *M3 = Cproto.addSpecies("X-Formin",5U);
-        Species *M4 = Cproto.addSpecies("Myosin", 5U);
-//        Cproto.setDiffusionRate(M1,_diffusion_rate);
-//        Cproto.setDiffusionRate(M2,_diffusion_rate);
-//        Cproto.setDiffusionRate(M3,_diffusion_rate);
-//        Cproto.setDiffusionRate(M4,_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("Actin",10U),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("Capping",0U),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("X-Formin",0U),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("Myosin", 5U),_diffusion_rate);
         
         ///Set side length
         std::vector<float> sides{_side_length};
@@ -72,7 +68,7 @@ namespace chem {
     template <size_t NDIM>
     CSubFilament* SimpleInitializer<NDIM>::createCSubFilament(CFilament* parentFilament,
                                                                Compartment* c,
-                                                               std::vector<std::string>* species,
+                                                               std::vector<std::string> species,
                                                                int length)
     {
         int maxlength = L / monomer_size;
@@ -88,20 +84,16 @@ namespace chem {
             SpeciesBound *empty, *myosin, *ma;
             
             //polymer species
-            actin = c->addSpeciesFilament("Actin", 0, 1);
-            capping = c->addSpeciesFilament("Capping", 0, 1);
-            formin = c->addSpeciesFilament("X-Formin", 0, 1);
+            actin = c->addSpeciesFilament("Actin",0,1);
+            capping = c->addSpeciesFilament("Capping",0,1);
+            formin = c->addSpeciesFilament("X-Formin",0,1);
             
             ///front and back
-            back = c->addSpeciesFilament("Back", 0, 1);
-            front = c->addSpeciesFilament("Front", 0, 1);
-            
+            back = c->addSpeciesFilament("Back",0,1); front = c->addSpeciesFilament("Front",0,1);
             ///bound species
-            myosin = c->addSpeciesBound("Myosin", 0, 1);
-            ma = c->addSpeciesBound("A-MyosinActin", 0, 1);
-            
+            myosin = c->addSpeciesBound("Myosin",0,1); ma = c->addSpeciesBound("A-MyosinActin",0,1);
             //empty
-            empty = c->addSpeciesBound("Empty", 0, 1);
+            empty = c->addSpeciesBound("Empty",0,1);
             
             //Set initial species
             if(index < length) {
@@ -109,7 +101,7 @@ namespace chem {
                 empty->setN(1);
             }
             if((index == length - 1) && (length != maxlength)) {
-                if (std::find(species->begin(), species->end(), "X-Formin") != species->end())
+                if (std::find(species.begin(), species.end(), "X-Formin") != species.end())
                     formin->setN(1);
                 else front->setN(1);
             }
@@ -122,21 +114,26 @@ namespace chem {
         }
         
         ///Callbacks needed
-        CFilamentDepolyCallback<NDIM> depolyCallback =
-        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,parentFilament);
         
-        CFilamentPolyCallback<NDIM> polyCallback =
-        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        auto polyCallback =
+            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                        parentFilament);
         
-        CFilamentExtensionCallback<NDIM> extensionCallback =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-                                         parentFilament,
-                                         new std::vector<std::string>{"Actin"});
+        auto depolyCallback =
+            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                          parentFilament);
         
-        CFilamentExtensionCallback<NDIM> extensionForminCallback =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-                                         parentFilament,
-                                         new std::vector<std::string>{"Actin", "Formin"});
+        auto extensionCallback =
+            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                             parentFilament, {"Actin"});
+        
+        auto extensionCallback2 =
+            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                             parentFilament, {"Actin", "Formin"});
+        
+        auto retractionCallback =
+            CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                              parentFilament);
         
         
         //Look up diffusing species in this compartment
@@ -145,8 +142,9 @@ namespace chem {
         Species* forminDiffusing = c->findSpeciesDiffusingByName("X-Formin");
         //Species* myosinDiffusing = c->findSpeciesDiffusingByName("Myosin");
         
+        ReactionBase *rPoly, *rDepoly;
         
-        ///Loop through all spots in subfilament
+        ///Loop through all spots in subfilament, add poly reactions
         for (int index = 0; index < maxlength; index++) {
         
             ///Monomer and bounds at current index
@@ -156,30 +154,19 @@ namespace chem {
             CMonomerBasic *m1 = static_cast<CMonomerBasic*>(subf->getCMonomer(index));
             CMonomerBasic *m2 = static_cast<CMonomerBasic*>(subf->getCMonomer(index+1));
             
-            ReactionBase *rPoly, *rDepoly;
-            if (index < maxlength - 1) {
-                
+            ///extension callback
+            if (index == maxlength - 1){
+                rPoly = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
+                boost::signals2::shared_connection_block
+                    rcb1(rPoly->connect(extensionCallback,false));
+            }
+            ///Typical case
+            else {
                 ///Add basic polymerization reactions
                 rPoly = c->addInternal<Reaction,2,3>({m1->getFront(), actinDiffusing, m2->getActin(),
-                                                  m2->getFront(), b2->getEmpty()}, _k_on_plus);
+                                                      m2->getFront(), b2->getEmpty()}, _k_on_plus);
                 boost::signals2::shared_connection_block
                     rcb1(rPoly->connect(polyCallback,false));
-                
-                /// add basic depolymerization reactions
-                rDepoly = c->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
-                    m1->getFront(), actinDiffusing}, _k_off_plus);
-                
-                boost::signals2::shared_connection_block
-                    rcb2(rDepoly->connect(depolyCallback,false));
-                
-                CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
-            }
-            ///extension callback
-            else {
-                rPoly = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
-                
-                boost::signals2::shared_connection_block
-                    rcb(rPoly->connect(extensionCallback,false));
             }
             
             rPoly->setAsPolymerizationReaction();
@@ -187,30 +174,31 @@ namespace chem {
         
             ///add capping polymerization and depolymerization reactions (+)
             rPoly = c->addInternal<Reaction,2,1>({cappingDiffusing, m1->getFront(),
-                                              m1->getCapping()}, _k_capping_on_plus);
+                                                  m1->getCapping()}, _k_capping_on_plus);
             
             rDepoly = c->addInternal<Reaction,1,2>({m1->getCapping(), m1->getFront(),
-                                              cappingDiffusing}, _k_capping_off_plus);
+                                                    cappingDiffusing}, _k_capping_off_plus);
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
         
             ///add formin polymerization and depolymerization reactions (+)
             
             rPoly = c->addInternal<Reaction,2,1>({forminDiffusing, m1->getFront(),
-                                                m1->getFormin()}, _k_formin_on_plus);
+                                                  m1->getFormin()}, _k_formin_on_plus);
             
             rDepoly = c->addInternal<Reaction,1,2>({m1->getFormin(), m1->getFront(),
-                                                forminDiffusing}, _k_formin_off_plus);
+                                                    forminDiffusing}, _k_formin_off_plus);
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
             
             ///add accelerated polymerization of actin with anti-cappped end
             if (index < maxlength - 1) {
-                rPoly = c->addInternal<Reaction,2,3>({actinDiffusing, m1->getFormin(), m2->getActin(),
+                rPoly =
+                    c->addInternal<Reaction,2,3>({actinDiffusing, m1->getFormin(), m2->getActin(),
                                                   m2->getFormin(), b2->getEmpty()}, _k_accel_on_plus);
                 
                 boost::signals2::shared_connection_block
@@ -222,11 +210,11 @@ namespace chem {
                                                   _k_accel_on_plus);
             
                 boost::signals2::shared_connection_block
-                    rcb(rPoly->connect(extensionForminCallback,false));
+                    rcb(rPoly->connect(extensionCallback2,false));
             }
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rPoly);
         
 //            ///add motor binding and unbinding, loading and unloading
 //            
@@ -297,125 +285,40 @@ namespace chem {
 //            
 //            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3Unbinding);
         }
+        
+        ///loop through all spots in subfilament, add depoly reactions
+        for (int index = maxlength - 1; index >= 0; index--) {
+            
+            ///Monomer and bounds at current index
+            //CBoundBasic *b1 = static_cast<CBoundBasic*>(subf->getCBound(index-1));
+            CBoundBasic *b2 = static_cast<CBoundBasic*>(subf->getCBound(index));
+            
+            CMonomerBasic *m1 = static_cast<CMonomerBasic*>(subf->getCMonomer(index-1));
+            CMonomerBasic *m2 = static_cast<CMonomerBasic*>(subf->getCMonomer(index));
+        
+            ///Retraction callback
+            if(index == 0) {
+                rDepoly = c->addInternal<Reaction,3,0>({m2->getFront(), m2->getActin(), b2->getEmpty()},
+                                                        _k_off_plus);
+                boost::signals2::shared_connection_block
+                    rcb(rDepoly->connect(retractionCallback,false));
+            }
+            
+            ///Typical case
+            else {
+                /// add basic depolymerization reactions
+                rDepoly = c->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
+                                                        m1->getFront(), actinDiffusing}, _k_off_plus);
+                boost::signals2::shared_connection_block
+                    rcb(rDepoly->connect(depolyCallback,false));
+            }
+            
+            CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rDepoly);
+            
+        }
         ///clean up and return
-        //delete species;
         return subf;
     }
-    
-    ///Connect two CFilaments, back to front
-    ///For this impl, only add a polymerization reaction between them
-    template<size_t NDIM>
-    void SimpleInitializer<NDIM>::connect (CSubFilament* s1, CSubFilament* s2)
-    {
-        //get all species
-        Compartment* c1 = s1->compartment();
-        Compartment* c2 = s2->compartment();
-        
-        CFilament* parentFilament = static_cast<CFilament*>(s1->getParent());
-        
-        ///Monomer and bounds at current index
-        //CBoundBasic *b1 = static_cast<CBoundBasic*>(s1->frontCBound());
-        CBoundBasic *b2 = static_cast<CBoundBasic*>(s2->backCBound());
-        
-        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(s1->frontCMonomer());
-        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(s2->backCMonomer());
-        
-        Species* actinDiffusing1 = c1->findSpeciesDiffusingByName("Actin");
-        Species* actinDiffusing2 = c2->findSpeciesDiffusingByName("Actin");
-        
-        
-        CFilamentPolyCallback<NDIM> polyCallback =
-            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-                                                                parentFilament);
-        CFilamentDepolyCallback<NDIM> depolyCallback =
-            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-                                                                parentFilament);
-        
-        
-        ///Add reactions
-        ReactionBase* rAccelPoly =
-            c1->addInternal<Reaction,2,3>({actinDiffusing1, m1->getFormin(), m2->getActin(),
-                                           m2->getFormin(), b2->getEmpty()}, _k_accel_on_plus);
-        boost::signals2::shared_connection_block
-            rcb1(rAccelPoly->connect(polyCallback, false));
-        
-        ReactionBase* rPoly =
-            c1->addInternal<Reaction,2,3>({actinDiffusing1, m1->getFront(), m2->getActin(),
-                                           m2->getFront(), b2->getEmpty()}, _k_on_plus);
-        boost::signals2::shared_connection_block
-            rcb2(rPoly->connect(polyCallback, false));
-        
-        ReactionBase* rDepoly =
-            c2->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
-                                           m1->getFront(), actinDiffusing2}, _k_off_plus);
-        boost::signals2::shared_connection_block
-            rcb3(rDepoly->connect(depolyCallback, false));
-
-        CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
-        CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
-        CFilamentInitializer<NDIM>::_chem.addReaction(rAccelPoly);
-
-//        ReactionBase* rMForwardStep =
-//            c1->addInternal<Reaction,2,2>({b1->getMyosin(), b2->getEmpty(),
-//                                           b2->getMyosin(), b1->getEmpty()}, _k_forward_step);
-//        
-//        ReactionBase* rMBackwardStep =
-//            c2->addInternal<Reaction,2,2>({b2->getMyosin(), b1->getEmpty(),
-//                                           b1->getMyosin(), b2->getEmpty()}, _k_backward_step);
-//        
-//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMForwardStep);
-//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMBackwardStep);
-//        
-//        ReactionBase* rMA3ForwardStep =
-//            c1->addInternal<Reaction,2,2>({b1->getMyosinActin(), b2->getEmpty(),
-//                                           b2->getMyosinActin(), b1->getMyosinActin()},
-//                                           _k_forward_step);
-//        
-//        ReactionBase* rMA3BackwardStep =
-//            c2->addInternal<Reaction,2,2>({b2->getMyosinActin(), b1->getEmpty(),
-//                                           b1->getMyosinActin(), b2->getEmpty()},
-//                                           _k_backward_step);
-//        
-//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3ForwardStep);
-//        CFilamentInitializer<NDIM>::_chem.addAndActivateReaction(rMA3BackwardStep);
-    };
-    
-    //specializations
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>*
-        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
-    
-    template void SimpleInitializer<1>::initializeProtoCompartment(CompartmentSpatial<1>& Cproto);
-    template void SimpleInitializer<2>::initializeProtoCompartment(CompartmentSpatial<2>& Cproto);
-    template void SimpleInitializer<3>::initializeProtoCompartment(CompartmentSpatial<3>& Cproto);
-    
-    template void SimpleInitializer<1>::update(CFilament* f, ReactionBase* r);
-    template void SimpleInitializer<2>::update(CFilament* f, ReactionBase* r);
-    template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
-    
-    template void SimpleInitializer<1>::connect (CSubFilament* s1, CSubFilament* s2);
-    template void SimpleInitializer<2>::connect (CSubFilament* s1, CSubFilament* s2);
-    template void SimpleInitializer<3>::connect (CSubFilament* s1, CSubFilament* s2);
-    
-    template CSubFilament*
-        SimpleInitializer<1>::createCSubFilament(CFilament* parentFilament,
-                                                    Compartment* c,
-                                                    std::vector<std::string>* species,
-                                                    int length);
-    template CSubFilament*
-        SimpleInitializer<2>::createCSubFilament(CFilament* parentFilament,
-                                                    Compartment* c,
-                                                    std::vector<std::string>* species,
-                                                    int length);
-    template CSubFilament*
-        SimpleInitializer<3>::createCSubFilament(CFilament* parentFilament,
-                                                    Compartment* c,
-                                                    std::vector<std::string>* species,
-                                                    int length);
-    
 
     //Initialize a number of filaments
     template <size_t NDIM>
@@ -439,7 +342,6 @@ namespace chem {
         ///initialize each filament
         CFilament* f = new CFilament();
         Compartment* cNext = cStart;
-        CSubFilament* lastSubFilament = nullptr;
         
         int numSubFilaments = (numUnits - 1) / maxUnits + 1;
         int ci = 1;
@@ -452,22 +354,15 @@ namespace chem {
                 setLength = maxUnits;
             
             CSubFilament* currentSubFilament =
-                CSystem<NDIM>::_initializer->createCSubFilament(f, cNext,
-                         new std::vector<std::string>{"Actin"}, setLength);
+                CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, {"Actin"}, setLength);
             currentSubFilament->setLength(setLength);
             
-            if(lastSubFilament != nullptr)
-                CSystem<NDIM>::_initializer->
-                                    connect(lastSubFilament, currentSubFilament);
-                
-            lastSubFilament = currentSubFilament;
             
             if(si * L >= cStart->sides()[0] * ci) {
                 cNext = cNext->neighbours().back();
                 ci++;
             }
         }
-        
         f->setLength(numUnits);
         CSystem<NDIM>::_filaments.emplace_back(f);
         CSystem<NDIM>::update(f, nullptr);
@@ -478,7 +373,7 @@ namespace chem {
     ///Extend the front of a filament
     template <size_t NDIM>
     void FilopodiaCSystem<NDIM>::extendFrontOfCFilament(CFilament *f,
-                                                        std::vector<std::string>* species)
+                                                        std::vector<std::string> species)
     {
         ///Find next compartment (1D for now)
         CSubFilament* s1 = f->getFrontCSubFilament();
@@ -488,48 +383,118 @@ namespace chem {
         float compartmentLength = CSystem<NDIM>::_grid->getProtoCompartment().sides()[0];
         
         if(f->length() * monomer_size >= f->numCompartments() * compartmentLength) {
+            
+            if(cCurrent->neighbours().size() == 1 && cCurrent != CSystem<NDIM>::_grid->getCompartment(0)) {
+                std::cout << "A Filament has reached the end of the grid. Exiting." << std::endl;
+                std::cout << std::endl;
+                CSystem<NDIM>::printFilaments();
+                exit(EXIT_SUCCESS);
+            }
+            
             cNext = cCurrent->neighbours().back();
             f->increaseNumCompartments();
         }
         else cNext = cCurrent;
         
-        ///Initialize new subfilament and connect it
-        CSubFilament* s2 = CSystem<NDIM>::_initializer->
-                            createCSubFilament(f, cNext, species, 1);
+        ///Initialize new subfilament
+        CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, species, 1);
         
         ///Increase length
         f->increaseLength();
         
+    }
+    
+    ///Retract the front of a CFilament
+    template <size_t NDIM>
+    void FilopodiaCSystem<NDIM>::retractFrontOfCFilament(CFilament *f)
+    {
+        ///Decrease length
+        f->decreaseLength();
         
-        CSystem<NDIM>::_initializer->connect(s1,s2);
+        ///remove front sub filament
+        f->removeCSubFilament(f->getFrontCSubFilament());
+        
+        ///if num sub filaments has dropped to zero, remove filament from system
+        if(f->numCSubFilaments() == 0) {
+            auto fUnique = static_cast<std::unique_ptr<CFilament>>(f);
+            auto it = std::find(CSystem<NDIM>::_filaments.begin(),
+                                CSystem<NDIM>::_filaments.end(), fUnique);
+            CSystem<NDIM>::_filaments.erase(it);
+            return;
+        }
+        
+        ///Set the new front subfilament to have a front
+        static_cast<CMonomerBasic*>(f->getFrontCSubFilament()->
+                                    frontCMonomer())->getFront()->setN(1);
+    }
+  
+    
+    ///perform one step of retrograde flow
+    template <size_t NDIM>
+    void FilopodiaCSystem<NDIM>::retrogradeFlow()
+    {
+//        ///loop through all filaments, push species back
+//        for(auto &fUnique : CSystem<NDIM>::_filaments) {
+//            CFilament* f = fUnique.get();
+//            
+//            ///set front monomer and
+//            static_cast<CMonomerBasic*>(f->getFrontCSubFilament()->
+//                                    frontCMonomer())->getFront()->setN(1);
+//        
+//        }
         
     }
     
-//    ///perform one step of retrograde flow
-//    template <size_t NDIM>
-//    void FilopodiaCSystem<NDIM>::retrogradeFlow()
-//    {
-//        ///loop through all filaments, push species back 
-//        
-//    }
+    //Specializations
+    template std::vector<ReactionBase*>
+        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*>
+        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*>
+        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
     
-
+    template void SimpleInitializer<1>::initializeProtoCompartment(CompartmentSpatial<1>& Cproto);
+    template void SimpleInitializer<2>::initializeProtoCompartment(CompartmentSpatial<2>& Cproto);
+    template void SimpleInitializer<3>::initializeProtoCompartment(CompartmentSpatial<3>& Cproto);
+    
+    template void SimpleInitializer<1>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<2>::update(CFilament* f, ReactionBase* r);
+    template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
+    
+    template CSubFilament*
+    SimpleInitializer<1>::createCSubFilament(CFilament* parentFilament,
+                                             Compartment* c,
+                                             std::vector<std::string> species,
+                                             int length);
+    template CSubFilament*
+    SimpleInitializer<2>::createCSubFilament(CFilament* parentFilament,
+                                             Compartment* c,
+                                             std::vector<std::string> species,
+                                             int length);
+    template CSubFilament*
+    SimpleInitializer<3>::createCSubFilament(CFilament* parentFilament,
+                                             Compartment* c,
+                                             std::vector<std::string> species,
+                                             int length);
     
     //Specializations
-    
     template CFilament* FilopodiaCSystem<1>::initializeCFilament(int length);
     template CFilament* FilopodiaCSystem<2>::initializeCFilament(int length);
     template CFilament* FilopodiaCSystem<3>::initializeCFilament(int length);
     
     template void
         FilopodiaCSystem<1>::extendFrontOfCFilament(CFilament *f,
-                                                       std::vector<std::string>* species);
+                                                    std::vector<std::string> species);
     template void
         FilopodiaCSystem<2>::extendFrontOfCFilament(CFilament *f,
-                                                       std::vector<std::string>* species);
+                                                    std::vector<std::string> species);
     template void
         FilopodiaCSystem<3>::extendFrontOfCFilament(CFilament *f,
-                                                       std::vector<std::string>* species);
+                                                    std::vector<std::string> species);
+    
+    template void FilopodiaCSystem<1>::retractFrontOfCFilament(CFilament* f);
+    template void FilopodiaCSystem<2>::retractFrontOfCFilament(CFilament* f);
+    template void FilopodiaCSystem<3>::retractFrontOfCFilament(CFilament* f);
     
 }; //end namespace chem
 

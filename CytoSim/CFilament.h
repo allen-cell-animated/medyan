@@ -184,40 +184,17 @@ namespace chem {
         ~CFilament() {}
         
         ///Set mFilament ptr
-        virtual void setMFilament(Filament* mFilament)
-        {
-            _mFilament = mFilament;
-        }
+        virtual void setMFilament(Filament* mFilament) { _mFilament = mFilament; }
         
-        ///Add a Csubfilament
-        virtual void addCSubFilament(CSubFilament* s) {
-            addChild(std::unique_ptr<Component>(s));
-        }
+        ///Add a CSubFilament
+        virtual void addCSubFilament(CSubFilament* s) { addChild(std::unique_ptr<Component>(s)); }
         
-        ///Get front subfilament conditionally (first occupied subfilament)
-        ///@note -  no check on the number of children
-        virtual CSubFilament* getFrontCSubFilament()
-        {
-            CSubFilament* front = nullptr;
-            int childIndex = numberOfChildren() - 1;
-            
-            while(childIndex >= 0) {
-                front = static_cast<CSubFilament*>(children(childIndex));
-                
-                if (front->length() != 0) return front;
-                else {
-                    if((childIndex - 1) >= 0) 
-                        front = static_cast<CSubFilament*>(children(childIndex - 1));
-                    
-                }
-                childIndex--;
-            }
-            return front;
-        }
+        ///Remove a CSubFilament
+        virtual void removeCSubFilament(CSubFilament* s) { removeChild(s); }
         
         ///Get front subfilament unconditionally (could be empty)
         ///@note -  no check on the number of children
-        virtual CSubFilament* getFrontCSubFilamentUnconditional()
+        virtual CSubFilament* getFrontCSubFilament()
         {
             return static_cast<CSubFilament*>(children(numberOfChildren() - 1));
         }
@@ -227,12 +204,12 @@ namespace chem {
         
         ///Increase length of filament
         virtual void increaseLength() {
-            getFrontCSubFilamentUnconditional()->increaseLength();
+            getFrontCSubFilament()->increaseLength();
             _length++;
         }
         ///Decrease length of filament
         virtual void decreaseLength() {
-            getFrontCSubFilamentUnconditional()->decreaseLength();
+            getFrontCSubFilament()->decreaseLength();
             _length--;
         }
         

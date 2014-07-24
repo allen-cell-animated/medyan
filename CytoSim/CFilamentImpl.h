@@ -23,6 +23,7 @@ namespace chem {
         SpeciesFilament* _end_species[4]; ///<array of "end" species (front, back, formin, capping)
         
     public:
+        ///Constructor, initializes species container
         CMonomerBasic(std::vector<SpeciesFilament*> species, Compartment* c) : CMonomer(c)
         {
             ///Initialize member array of species
@@ -47,6 +48,21 @@ namespace chem {
                 
                 else {}
             }
+        }
+        ///Destructor, removes all species and associated reactions from compartment
+        ~CMonomerBasic()
+        {
+            for (auto &s : _filament_species)
+            {
+                _compartment->removeInternalReactions(s);
+                _compartment->removeSpecies(s);
+            }
+            
+            for(auto &s : _end_species)
+            {
+                _compartment->removeInternalReactions(s);
+                _compartment->removeSpecies(s);
+            } 
         }
         
         ///Look up a species given a name
@@ -80,34 +96,8 @@ namespace chem {
         }
         
         ///move all species (and associated reactions) in this element to another compartment
-        virtual void moveToCompartment(Compartment *c) {
-            
-//            for(auto &s: _filament_species) {
-//                
-//                ///Add to new compartment
-//                _compartment->removeSpecies(s);
-//                c->addSpecies(s);
-//                
-//                ///Get reactant reactions
-//                auto reactions = end->getRSpecies().ReactantReactions();
-//                
-//                for(auto &r: reactions) {
-//                    ///move these to new compartment, remove from old
-//                    //_compartment->
-//                }
-//                
-//                
-//            }
-//            
-//            for(auto &s: _end_species) {
-//                
-//                
-//                
-//            }
-            
-            
+        virtual void moveToCompartment(Compartment *c) { 
         }
-        
         
         ///Find active filament species
         ///@note return null if none
@@ -124,10 +114,6 @@ namespace chem {
                 if(s->getN() == 1) return s;
             return nullptr;
         }
-        
-        
-        
-        
     };
         
     ///Basic bound consisting of myosin, myosin-actin, and a virtual empty species
@@ -158,6 +144,16 @@ namespace chem {
             }
         }
         
+        ///Destructor, removes all species and associated reactions from compartment
+        ~CBoundBasic()
+        {
+            for (auto &s : _species)
+            {
+                _compartment->removeInternalReactions(s);
+                _compartment->removeSpecies(s);
+            }
+        }
+        
         ///Look up a species given a name
         virtual SpeciesBound* getEmpty() {return _species[0];}
         
@@ -181,9 +177,7 @@ namespace chem {
             for (auto &s : _species)
                 if(s->getN() == 1) std::cout << s->getName().at(0);
         }
-        
-        
-        
+
         virtual void moveToCompartment(Compartment* c) {}
     };
     

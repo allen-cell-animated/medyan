@@ -60,10 +60,10 @@ int main(int argc, const char * argv[])
     FilopodiaCSystem<1> csystem{&initializer};
     
     
-    for(int i = 0; i < 1; i++)
-        csystem.initializeCFilament(81);
+    for(int i = 0; i < 16; i++)
+        csystem.initializeCFilament(81.0);
     
-    //csystem.printFilaments();
+    csystem.printFilaments();
     
     //chem.printReactions();
     
@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
         
         ///Run 100 steps
         auto chk1 = chrono::high_resolution_clock::now();
-        chem.run(100000);
+        chem.run(1000000);
         auto chk2 = chrono::high_resolution_clock::now();
         
         csystem.printFilaments();
