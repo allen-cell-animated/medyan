@@ -26,9 +26,6 @@ namespace chem {
         /// Add Reaction *r to the chemical network which needs to be simulated
         virtual void addReaction(ReactionBase *r) = 0;
         
-        /// Simultaneously add and activate a reaction in the chemical network
-        virtual void addAndActivateReaction(ReactionBase* r) = 0;
-        
         /// Remove Reaction *r from the simulated chemical network 
         virtual void removeReaction(ReactionBase *r) = 0;
         

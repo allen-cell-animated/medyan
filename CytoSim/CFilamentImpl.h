@@ -65,7 +65,7 @@ namespace chem {
             } 
         }
         
-        ///Look up a species given a name
+        ///Get a species
         virtual SpeciesFilament* getActin() {return _filament_species[0];}
         
         virtual SpeciesFilament* getFront() {return _end_species[0];}
@@ -75,6 +75,28 @@ namespace chem {
         virtual SpeciesFilament* getFormin() {return _end_species[2];}
         
         virtual SpeciesFilament* getCapping() {return _end_species[3];}
+        
+        ///Look up species by name
+        virtual Species* getSpeciesByName(std::string& name)
+        {
+            if(name == "Actin")
+                return _filament_species[0];
+            
+            else if(name == "Front")
+                return _end_species[0];
+            
+            else if(name == "Back")
+                return _end_species[1];
+            
+            else if(name == "X-Formin")
+                return _end_species[2];
+            
+            else if(name == "Capping")
+                return _end_species[3];
+            
+            else {return nullptr;}
+        }
+        
         
         ///Check if this monomer is valid
         virtual bool checkSpecies(int sum)
@@ -170,6 +192,20 @@ namespace chem {
             return currentSum = sum;
         }
         
+        ///Look up species by name
+        virtual Species* getSpeciesByName(std::string& name)
+        {
+            if(name == "Empty")
+                return _species[0];
+            
+            else if(name == "Myosin")
+                return _species[1];
+            
+            else if(name == "A-MyosinActin")
+                return _species[2];
+            
+            else {return nullptr;}
+        }
         
         ///Print a species in this filament element
         virtual void print()

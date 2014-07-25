@@ -54,9 +54,6 @@ public:
     /// Add Reaction *r to the chemical network which needs to be simulated
     void addReaction(ReactionBase *r);
     
-    /// Simultaneously add and activate a reaction in the chemical network
-    void addAndActivateReaction(ReactionBase* r);
-    
     /// Remove Reaction *r from the simulated chemical network 
     void removeReaction(ReactionBase *r);
     

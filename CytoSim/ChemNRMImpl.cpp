@@ -198,6 +198,7 @@ bool ChemNRMImpl::makeStep()
 //    rn->printSelf();
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
+    
     for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
@@ -259,11 +260,6 @@ bool ChemNRMImpl::makeStep()
 void ChemNRMImpl::addReaction(ReactionBase *r) {
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
-}
-    
-void ChemNRMImpl::addAndActivateReaction(ReactionBase* r) {
-    ChemNRMImpl::addReaction(r);
-    r->activateReaction();
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {

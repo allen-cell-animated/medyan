@@ -82,7 +82,11 @@ template <unsigned short M, unsigned short N>
             std::unordered_set<ReactionBase*> rxns;
             for(auto s : _rspecies){
                 //                std::cout << "std::vector<ReactionBase*> getAffectedReactions(): " << *s << std::endl;
-                rxns.insert(s->beginReactantReactions(),s->endReactantReactions());
+                
+                for(auto it = s->beginReactantReactions(); it != s->endReactantReactions(); it++) {
+                    ReactionBase* r = (*it);
+                    if (!r->isPassivated()) rxns.insert(r);
+                }
             }
             //        std::sort(rxns.begin(),rxns.end());
             //        rxns.erase(std::unique(rxns.begin(),rxns.end()), rxns.end());

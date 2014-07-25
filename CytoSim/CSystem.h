@@ -52,11 +52,10 @@ namespace chem {
                                                std::vector<std::string> species,
                                                int length) = 0;
         
-        ///Remove a CSubFilament, based onthe given simulation
-        virtual void removeCSubFilament(
+        ///Remove a CSubFilament, based on the given simulation
+        virtual void removeCSubFilament(CFilament* parentFilament) = 0;
         
-        
-        //Update based on a given reaction occuring
+        ///Update based on a given reaction occuring
         virtual void update(CFilament* f, ReactionBase* r) = 0;
         
         ///get this chemsim engine
@@ -115,7 +114,7 @@ namespace chem {
         ///delete filaments
         virtual ~CSystem(){}
         
-        ///Initialize all CFilaments and reactions, return set of CFilaments
+        ///Initialize a CFilament
         virtual CFilament* initializeCFilament(int length) = 0;
         
         ///Extend the front of a CFilament
@@ -128,8 +127,6 @@ namespace chem {
         void update(CFilament* f, ReactionBase* r) {
             _initializer->update(f, r);
         }
-        
-        ///Get filament
         
         ///Print filaments
         virtual void printFilaments() {

@@ -97,6 +97,9 @@ namespace chem {
                                                std::vector<std::string> species,
                                                int length);
         
+        ///Remove a CSubFilament, based on the given simulation
+        virtual void removeCSubFilament(CFilament* parentFilament);
+        
         ///Update filaments based on a reaction
         ///In this implementation, update polymerization rates based on membrane
         virtual void update(CFilament* f, ReactionBase* r);
@@ -127,8 +130,6 @@ namespace chem {
 
         ///Perform one step of retrograde flow for this system
         virtual void retrogradeFlow();
-        
-        
     };
     
     

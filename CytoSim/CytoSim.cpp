@@ -63,28 +63,24 @@ int main(int argc, const char * argv[])
     for(int i = 0; i < 16; i++)
         csystem.initializeCFilament(81.0);
     
-    csystem.printFilaments();
+    //csystem.printFilaments();
     
     //chem.printReactions();
     
-    for(int step = 0; step < 1; step++) {
+    for(int step = 0; step < 100; step++) {
         
         ///Run 100 steps
         auto chk1 = chrono::high_resolution_clock::now();
-        chem.run(1000000);
+        chem.run(80000);
         auto chk2 = chrono::high_resolution_clock::now();
         
-        csystem.printFilaments();
+        //csystem.retrogradeFlow();
         
         chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
         //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
-        
-        cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
        
     }
-    
-    
-    
+    csystem.printFilaments();
     cout << "tau=" << tau() <<endl;
     std::cout << "Done!" <<std::endl;
     

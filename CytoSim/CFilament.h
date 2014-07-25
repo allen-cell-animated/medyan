@@ -49,6 +49,9 @@ namespace chem {
         ///Check if this filament element is valid. Involves checking copy numbers
         virtual bool checkSpecies(int sum) = 0;
         
+        ///Get species by name
+        virtual Species* getSpeciesByName(std::string& name) = 0;
+        
         ///move all species (and associated reactions) in this element to another compartment
         virtual void moveToCompartment(Compartment *c) = 0;
         
@@ -96,6 +99,7 @@ namespace chem {
     protected:
         std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this sub filament
         std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
+        std::vector<ReactionBase*> _reactions;///< list of reactions associated with this subfilament
         Compartment* _compartment; ///< compartment this CSubFilament is in
         short _length = 0;
         const short _max_length = L / monomer_size;
@@ -133,18 +137,47 @@ namespace chem {
         ///Get back or front monomer/bound
         ///@note monomer/bound list must not be empty
         virtual CMonomer* backCMonomer() {return _monomers[0].get();}
+        
         virtual CBound* backCBound() {return _bounds[0].get();}
+        
         virtual CMonomer* frontCMonomer() {return _monomers[_length - 1].get();}
+        
         virtual CBound* frontCBound() {return _bounds[_length - 1].get();}
         
+        
+        ///Add a filament reaction to this subfilament
+        virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
+        
+        ///Get list of reactions associated with this subfilament
+        virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
+        
+        ///Update all reactions associated with this subfilament
+        virtual void updateReactions()
+        {
+            ///loop through all reactions, passivate/activate
+            auto reactions = getReactions();
+            
+            for(auto &r : reactions) {
+                
+                if(r->getProductOfReactants() == 0)
+                    r->passivateReaction();
+                else
+                    r->activateReaction();
+            }
+        }
+
         ///Get the current length
         virtual short length() {return _length;}
+        
         ///Increase length
         virtual void increaseLength() {if(_length != _max_length) _length++;}
+        
         ///Decrease length
         virtual void decreaseLength() {if(_length != 0) _length--;}
+        
         ///see if the subfilament is at maxlength
         virtual bool atMaxLength() {return _length == _max_length;}
+        
         ///set the length of this subfilament
         virtual void setLength(int length) {_length = length;}
         
@@ -228,9 +261,17 @@ namespace chem {
         ///Get the number of compartments this filament spans
         virtual int numCompartments() {return _num_compartments;}
         
+        ///Update all reactions associated with subfilament children
+        virtual void updateReactions()
+        {
+            for(auto &c : children())
+                static_cast<CSubFilament*>(c.get())->updateReactions();
+        }
+
         ///Print entire filament
         virtual void printCFilament() {
             
+            std::cout << "Filament ptr:" << this << std::endl;
             std::cout << "Length = " << _length <<std::endl;
             int index = 0;
             for (auto &c : children()) {
