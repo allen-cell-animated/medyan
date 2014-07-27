@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
         chem.run(80000);
         auto chk2 = chrono::high_resolution_clock::now();
         
-        //csystem.retrogradeFlow();
+        csystem.retrogradeFlow();
         
         chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
         //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();

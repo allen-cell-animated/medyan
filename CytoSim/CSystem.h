@@ -94,7 +94,7 @@ namespace chem {
             else
                 _grid = new CompartmentGrid<NDIM>({NGRID,NGRID,NGRID});
             
-            
+            ///Set system
             _initializer->setCSystem(this);
             
             ///init protocompartment

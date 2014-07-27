@@ -19,7 +19,9 @@ namespace chem {
         std::vector<ReactionBase*> polyReactions;
         
         ///go to the front subfilament, front monomer
-        CMonomer* frontCMonomer = f->getFrontCSubFilament()->frontCMonomer();
+        int currentIndex = f->lengthFrontSubFilament() - 1;
+        
+        CMonomer* frontCMonomer = f->getFrontCSubFilament()-> getCMonomer(currentIndex);
         
         ///find all reactions associated with this active end polymerization
         Species* end = frontCMonomer->getActiveEndSpecies();
@@ -73,7 +75,7 @@ namespace chem {
                                                                std::vector<std::string> species,
                                                                int length)
     {
-        int maxlength = L / monomer_size;
+        int maxlength = parentFilament->maxLengthSubFilament();
         
         CSubFilament* subf = new CSubFilament(c);
         parentFilament->addCSubFilament(subf);
@@ -116,17 +118,16 @@ namespace chem {
         }
         
         ///Callbacks needed
-        
         auto polyCallback =
-            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
         auto depolyCallback =
-            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
         auto extensionCallback =
-            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin"});
+        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin"});
         auto extensionCallback2 =
-            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin", "Formin"});
+        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin", "Formin"});
         auto retractionCallback =
-            CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
         
         
         //Look up diffusing species in this compartment
@@ -330,13 +331,17 @@ namespace chem {
     {
         ///Set the new front subfilament to have an end species
         CSubFilament* frontSubFilament = parentFilament->getFrontCSubFilament();
+
+        ///get end species (if there is one)
         std::string endName;
+        auto endSpecies = frontSubFilament->
+                          backCMonomer()->getActiveEndSpecies();
         
-        if(frontSubFilament->length() == 0)
-            endName = "Front";
-        else
-            endName = frontSubFilament->getCMonomer(0)->
-                        getActiveEndSpecies()->getName();
+        ///Assign end name from previous subfilament
+        if(endSpecies != nullptr)
+            endName= frontSubFilament->backCMonomer()->
+                              getActiveEndSpecies()->getName();
+        else endName = "Front";
         
         ///remove front sub filament
         parentFilament->removeCSubFilament(frontSubFilament);
@@ -350,7 +355,9 @@ namespace chem {
     template <size_t NDIM>
     CFilament* FilopodiaCSystem<NDIM>::initializeCFilament(int length)
     {
+        CFilament* f = new CFilament();
         CompartmentSpatial<NDIM>* cStart;
+        
         ///Starting compartment for 1D, all filaments start in compartment 0
         if (NDIM == 1) {
             cStart = CSystem<NDIM>::_grid->getCompartment(0);
@@ -361,16 +368,16 @@ namespace chem {
             exit(EXIT_FAILURE);
         }
         
-        ///maxlen, for now
-        int maxUnits = L / monomer_size;
+        ///number of units to initialize in this filament
         int numUnits = length / monomer_size;
+        int maxUnits = f->maxLengthSubFilament();
         
         ///initialize each filament
-        CFilament* f = new CFilament();
         Compartment* cNext = cStart;
         
         int numSubFilaments = (numUnits - 1) / maxUnits + 1;
         int ci = 1;
+        
         for(int si = 0; si < numSubFilaments; si++) {
             int setLength; ///length to intialize subfilament to
             
@@ -379,13 +386,14 @@ namespace chem {
             else
                 setLength = maxUnits;
             
-            CSubFilament* currentSubFilament =
-                CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, {"Actin"}, setLength);
-            currentSubFilament->setLength(setLength);
+            ///create a subfilament
+            CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, {"Actin"}, setLength);
             
-            
-            if(si * L >= cStart->sides()[0] * ci) {
+            ///move to next compartment if needed
+            if(float(si * maxUnits) * monomer_size >= cStart->sides()[0] * float(ci)) {
+                
                 cNext = cNext->neighbours().back();
+                f->increaseNumCompartments();
                 ci++;
             }
         }
@@ -402,8 +410,8 @@ namespace chem {
                                                         std::vector<std::string> species)
     {
         ///Find next compartment (1D for now)
-        CSubFilament* s1 = f->getFrontCSubFilament();
-        Compartment* cCurrent = s1->compartment();
+        CSubFilament* s = f->getFrontCSubFilament();
+        Compartment* cCurrent = s->compartment();
         Compartment* cNext;
         
         float compartmentLength = CSystem<NDIM>::_grid->getProtoCompartment().sides()[0];
@@ -439,21 +447,23 @@ namespace chem {
         ///if num sub filaments is one, remove filament from system
         if(f->numCSubFilaments() == 1) {
            
-            auto child_iter = std::find_if(CSystem<NDIM>::_filaments.begin(),CSystem<NDIM>::_filaments.end(),
-                                           [f](const std::unique_ptr<CFilament> &element)
-                                           {
-                                               return element.get()==f ? true : false;
-                                           });
-            if(child_iter!=CSystem<NDIM>::_filaments.end())
-                CSystem<NDIM>::_filaments.erase(child_iter);
-            
             return;
+            
+//            auto child_iter = std::find_if(CSystem<NDIM>::_filaments.begin(),CSystem<NDIM>::_filaments.end(),
+//                                           [f](const std::unique_ptr<CFilament> &element)
+//                                           {
+//                                               return element.get()==f ? true : false;
+//                                           });
+//            if(child_iter!=CSystem<NDIM>::_filaments.end())
+//                CSystem<NDIM>::_filaments.erase(child_iter);
+//            return;
         }
-        ///Decrease length
-        f->decreaseLength();
         
         ///Remove subfilament
         CSystem<NDIM>::_initializer->removeCSubFilament(f);
+        
+        ///Decrease length
+        f->decreaseLength();
     }
   
     
@@ -461,36 +471,41 @@ namespace chem {
     template <size_t NDIM>
     void FilopodiaCSystem<NDIM>::retrogradeFlow()
     {
+        
         ///loop through all filaments, push species back
-        for(auto &fUnique : CSystem<NDIM>::_filaments) {
-            CFilament* f = fUnique.get();
+        for(auto it = CSystem<NDIM>::_filaments.begin();
+                 it != CSystem<NDIM>::_filaments.end(); it++) {
             
+            CFilament* f = (*it).get();
             CSubFilament* s = f->getFrontCSubFilament();
+            
             ///retract if needed
-            if (s->length() == 1)
+            if (f->lengthFrontSubFilament() == 1)
                 retractFrontOfCFilament(f);
             
             else {
+                int currentIndex = f->lengthFrontSubFilament() - 1;
+                
                 ///get end species name
                 Species* endSpecies =
-                    s->frontCMonomer()->getActiveEndSpecies();
+                    s->getCMonomer(currentIndex)->getActiveEndSpecies();
             
                 std::string endName = endSpecies->getName();
                 
                 //decrease copy numbers
                 endSpecies->getRSpecies().down();
-                s->frontCMonomer()->
+                s->getCMonomer(currentIndex)->
                     getActiveFilamentSpecies()->getRSpecies().down();
+                
+                ///set copy number of new end
+                s->getCMonomer(currentIndex - 1)->
+                    getSpeciesByName(endName)->getRSpecies().up();
                 
                 ///decrease length
                 f->decreaseLength();
-                
-                ///set copy number of new end
-                s->frontCMonomer()->
-                    getSpeciesByName(endName)->getRSpecies().up();
             }
+            
         }
-        
     }
     
     //Specializations

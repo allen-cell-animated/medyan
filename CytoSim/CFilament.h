@@ -101,8 +101,6 @@ namespace chem {
         std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
         std::vector<ReactionBase*> _reactions;///< list of reactions associated with this subfilament
         Compartment* _compartment; ///< compartment this CSubFilament is in
-        short _length = 0;
-        const short _max_length = L / monomer_size;
         
     public:
         ///Default constructor, sets compartment
@@ -140,10 +138,9 @@ namespace chem {
         
         virtual CBound* backCBound() {return _bounds[0].get();}
         
-        virtual CMonomer* frontCMonomer() {return _monomers[_length - 1].get();}
+        virtual CMonomer* frontCMonomer() {return _monomers.back().get();}
         
-        virtual CBound* frontCBound() {return _bounds[_length - 1].get();}
-        
+        virtual CBound* frontCBound() {return _bounds.back().get();}
         
         ///Add a filament reaction to this subfilament
         virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
@@ -165,21 +162,6 @@ namespace chem {
                     r->activateReaction();
             }
         }
-
-        ///Get the current length
-        virtual short length() {return _length;}
-        
-        ///Increase length
-        virtual void increaseLength() {if(_length != _max_length) _length++;}
-        
-        ///Decrease length
-        virtual void decreaseLength() {if(_length != 0) _length--;}
-        
-        ///see if the subfilament is at maxlength
-        virtual bool atMaxLength() {return _length == _max_length;}
-        
-        ///set the length of this subfilament
-        virtual void setLength(int length) {_length = length;}
         
         ///Print CSubFilament
         virtual void printCSubFilament()
@@ -202,12 +184,15 @@ namespace chem {
     /// CFilament class holds sub CFilaments
     /*! The CFilament class is used to hold CSubFilaments (children of CFilament).
      */
-    class CFilament : public Composite{
+    class CFilament : public Composite {
     
     private:
         Filament* _mFilament;
         int _num_compartments = 1; ///number of compartments this filament spans
         int _length = 0; ///Length of filament
+
+        short _length_front_subfilament = 0; ///< length of front subfilament
+        const short _max_length_subfilament = L / monomer_size; ///<max length of a subfilament
         
     public:
         ///Default constructor, does nothing
@@ -237,23 +222,48 @@ namespace chem {
         
         ///Increase length of filament
         virtual void increaseLength() {
-            getFrontCSubFilament()->increaseLength();
+            
+            if(_length_front_subfilament == _max_length_subfilament)
+                _length_front_subfilament = 1;
+            else
+                _length_front_subfilament++;
+            
             _length++;
         }
         ///Decrease length of filament
         virtual void decreaseLength() {
-            getFrontCSubFilament()->decreaseLength();
+            
+            if(_length_front_subfilament == 1)
+                _length_front_subfilament = _max_length_subfilament;
+            else
+                _length_front_subfilament--;
+            
             _length--;
         }
         
         ///Set the length of this filament
         ///@note should only be used when initializing filament
         virtual void setLength(int length) {
+            
+            int setSubLength = length % _max_length_subfilament;
+            
+            if (setSubLength == 0)
+                _length_front_subfilament = _max_length_subfilament;
+            else
+                _length_front_subfilament = setSubLength;
+            
             _length = length;
+        
         }
         
         ///get length of filament
         virtual int length() {return _length;}
+        
+        ///get length of front subfilament
+        virtual int lengthFrontSubFilament() {return _length_front_subfilament;}
+        
+        ///get max length of subfilament
+        virtual int maxLengthSubFilament() {return _max_length_subfilament;}
         
         ///increase the number of compartments
         virtual void increaseNumCompartments() {_num_compartments++;}
