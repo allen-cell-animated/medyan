@@ -41,6 +41,9 @@ namespace chem {
         ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
         std::vector<Compartment*> _neighbours; ///< Neighbors of the compartment
         std::unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
+        
+        short _num_sub_filaments = 0; ///< number of subfilaments in this compartment
+        bool _activated = false; ///< the compartment is activated for diffusion
     public:
         ///Default constructor
         Compartment() : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(), _diffusion_rates() {}
@@ -72,6 +75,29 @@ namespace chem {
         /// Applies ReactionVisitor v to every ReactionBase* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain ReactionBase.
         virtual bool apply_impl(ReactionVisitor &v) override;
+        
+        ///Activate a compartment
+        virtual void activate() {_activated = true;}
+        
+        ///Deactivate a compartment
+        virtual void deactivate() {_activated = false;}
+        
+        ///Check if compartment is activated
+        virtual bool isActivated() {return _activated;}
+        
+        ///Add a sub filament to this compartment
+        virtual void addSubFilament()
+        {
+            if(_num_sub_filaments == 0) activate();
+            _num_sub_filaments++;
+        }
+        
+        ///remove a sub filament from this compartment
+        virtual void removeSubFilament()
+        {
+            if(_num_sub_filaments == 1) deactivate();
+            _num_sub_filaments--;
+        }
         
         /// Removes all reactions from this compartment, diffusing and internal
         virtual void clearReactions()
@@ -205,6 +231,7 @@ namespace chem {
             SpeciesFilament *sp =
                 static_cast<SpeciesFilament*>(_species.addSpecies<SpeciesFilament>(std::forward<Args>(args)...));
             sp->setParent(this);
+            _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
             return sp;
         }
         
@@ -216,6 +243,7 @@ namespace chem {
             SpeciesBound *sp =
                 static_cast<SpeciesBound*>(_species.addSpecies<SpeciesBound>(std::forward<Args>(args)...));
             sp->setParent(this);
+            _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
             return sp;
         }
         
@@ -336,8 +364,12 @@ namespace chem {
             return C;
         }
         
+        /// Generate diffusion reactions between this compartment and another
+        ///@return - a vector of reactionbases that was just added 
+        std::vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
+
         /// Generate all diffusion reactions for this compartment and its neighbors
-        void generateDiffusionReactions();
+        void generateAllDiffusionReactions();
         
         /// Gives the number of neighbors to this compartment
         size_t numberOfNeighbours() const {return _neighbours.size();}

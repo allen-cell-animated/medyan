@@ -62,8 +62,8 @@ TEST(CompartmentTest, SpeciesAndReactions){
     
     C1->addNeighbour(C2);
     C2->addNeighbour(C1);
-    C1->generateDiffusionReactions();
-    C2->generateDiffusionReactions();
+    C1->generateAllDiffusionReactions();
+    C2->generateAllDiffusionReactions();
     
     EXPECT_EQ(3, C1->numberOfSpecies());
     EXPECT_EQ(3, C2->numberOfSpecies());

@@ -152,9 +152,7 @@ namespace chem {
         virtual void updateReactions()
         {
             ///loop through all reactions, passivate/activate
-            auto reactions = getReactions();
-            
-            for(auto &r : reactions) {
+            for(auto &r : _reactions) {
                 
                 if(r->getProductOfReactants() == 0)
                     r->passivateReaction();

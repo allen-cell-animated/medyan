@@ -369,7 +369,7 @@ namespace chem {
         ~SpeciesDiffusing () noexcept {};
     };
     
-    /// SpeciesFilament should be used for species that can be in a filament. These species can not move
+        /// SpeciesFilament should be used for species that can be in a filament. These species can not move
     /// cross-compartment.
     class SpeciesFilament : public Species {
     public:

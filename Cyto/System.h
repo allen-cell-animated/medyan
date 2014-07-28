@@ -43,6 +43,8 @@ public:
         SimpleInitializer<1> initializer{chem, mem};
 
         _cSystem = new FilopodiaCSystem<NDIM>(&initializer);
+        _cSystem->grid()->activateAll();
+        
         _mSystem = new System();
         _mSystem->AddNewFilaments(v,0);
         
@@ -60,6 +62,9 @@ public:
             i++;
             
         }
+        
+        ///init chemsim
+        
     }
     
     virtual void print() {

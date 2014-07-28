@@ -42,19 +42,32 @@ namespace chem {
         return true;
     }
 
-
-    void Compartment::generateDiffusionReactions()
+    std::vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
     {
+        std::vector<ReactionBase*> rxns;
+        
         for(auto &sp_this : _species.species()) {
             int molecule = sp_this->getMolecule();
             int diff_rate = _diffusion_rates[molecule];
             if(diff_rate<0) // Based on a convention that diffusing reactions require positive rates
                 continue;
-            for(auto &C : _neighbours){
+        
+            if(C->isActivated()) {
                 Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
                 ReactionBase *R = new Reaction<1,1>({sp_this.get(),sp_neighbour},diff_rate);
                 this->addDiffusionReactionUnique(std::unique_ptr<ReactionBase>(R));
+                rxns.push_back(R);
             }
+        }
+        return std::vector<ReactionBase*>(rxns.begin(), rxns.end());
+    }
+    
+    
+    void Compartment::generateAllDiffusionReactions()
+    {
+        if(_activated) {
+            for (auto &C: _neighbours)
+                generateDiffusionReactions(C);
         }
     }
     

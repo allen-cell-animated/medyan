@@ -100,15 +100,28 @@ namespace chem {
             ///init protocompartment
             CompartmentSpatial<NDIM> &Cproto = _grid->getProtoCompartment();
             _initializer->initializeProtoCompartment(Cproto);
-
+            
             ///init grid
             _grid->initialize();
+        }
+        
+        ///Init chemistry in grid (including adding diffusion reactions, updating filament reactions)
+        void initChem()
+        {
+            ///Generate diffusion reactions
+            _grid->generateDiffusionReactions();
             
             ///Init chemsim
             ChemSim& chem = _initializer->getChemSim();
             _grid->addChemSimReactions(chem);
+            
             chem.initialize();
-
+            
+            ///loop through filaments, passivate/activate reactions
+            for (auto &f : _filaments)
+                f->updateReactions();
+            
+            //chem.printReactions();
         }
         
         ///delete filaments
@@ -136,7 +149,11 @@ namespace chem {
                 (*it)->printCFilament();
                 std::cout << std::endl;
             }
-        } 
+        }
+        
+        ///get grid
+        virtual CompartmentGrid<NDIM>* grid() {return _grid;}
+        
     };
     
     ///REACTION CALLBACKS
@@ -159,6 +176,7 @@ namespace chem {
         ///Callback
         void operator() (ReactionBase *r){
             _csystem->extendFrontOfCFilament(_filament, _species);
+            _filament->getFrontCSubFilament()->updateReactions();
             _csystem->update(_filament, r);
         }
     };

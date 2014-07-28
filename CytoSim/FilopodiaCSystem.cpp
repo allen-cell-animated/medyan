@@ -39,7 +39,7 @@ namespace chem {
     void SimpleInitializer<NDIM>::update(CFilament* f, ReactionBase* r)
     {
         
-        //update associated filament reactions
+        //update associated filament polymerization reactions
         _membrane.updateFilamentReactions(f,
                 SimpleInitializer<NDIM>::findPolymerizationReactions(f));
         
@@ -53,10 +53,11 @@ namespace chem {
     template <size_t NDIM>
     void SimpleInitializer<NDIM>::initializeProtoCompartment(CompartmentSpatial<NDIM>& Cproto)
     {
-        Cproto.setDiffusionRate(Cproto.addSpecies("Actin",10U),_diffusion_rate);
-        Cproto.setDiffusionRate(Cproto.addSpecies("Capping",5U),_diffusion_rate);
-        Cproto.setDiffusionRate(Cproto.addSpecies("X-Formin",5U),_diffusion_rate);
-        Cproto.setDiffusionRate(Cproto.addSpecies("Myosin", 0U),_diffusion_rate);
+        ///Add species
+        Cproto.setDiffusionRate(Cproto.addSpecies("Actin", 10),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("Capping", 5),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("X-Formin", 5),_diffusion_rate);
+        Cproto.setDiffusionRate(Cproto.addSpecies("Myosin", 0),_diffusion_rate);
         
         ///Set side length
         std::vector<float> sides{_side_length};
@@ -86,20 +87,20 @@ namespace chem {
             SpeciesBound *empty, *myosin, *ma;
             
             //polymer species
-            actin = c->addSpeciesFilament("Actin",0,1);
-            capping = c->addSpeciesFilament("Capping",0,1);
-            formin = c->addSpeciesFilament("X-Formin",0,1);
+            actin = c->addSpeciesFilament("Actin", 0, 1);
+            capping = c->addSpeciesFilament("Capping", 0, 1);
+            formin = c->addSpeciesFilament("X-Formin", 0, 1);
             
             ///front and back
-            back = c->addSpeciesFilament("Back",0,1);
-            front = c->addSpeciesFilament("Front",0,1);
+            back = c->addSpeciesFilament("Back", 0, 1);
+            front = c->addSpeciesFilament("Front", 0, 1);
             
             ///bound species
-            myosin = c->addSpeciesBound("Myosin",0,1);
-            ma = c->addSpeciesBound("A-MyosinActin",0,1);
+            myosin = c->addSpeciesBound("Myosin", 0, 1);
+            ma = c->addSpeciesBound("A-MyosinActin", 0, 1);
             
             //empty
-            empty = c->addSpeciesBound("Empty",0,1);
+            empty = c->addSpeciesBound("Empty", 0, 1);
             
             //Set initial species
             if(index < length) {
@@ -170,7 +171,6 @@ namespace chem {
             }
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
             subf->addReaction(rPoly);
         
             ///add capping polymerization and depolymerization reactions (+)
@@ -181,8 +181,6 @@ namespace chem {
                                                     cappingDiffusing}, _k_capping_off_plus);
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
             subf->addReaction(rPoly);
             subf->addReaction(rDepoly);
         
@@ -195,8 +193,6 @@ namespace chem {
                                                     forminDiffusing}, _k_formin_off_plus);
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
-            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
             subf->addReaction(rPoly);
             subf->addReaction(rDepoly);
             
@@ -219,7 +215,6 @@ namespace chem {
             }
             
             rPoly->setAsPolymerizationReaction();
-            CFilamentInitializer<NDIM>::_chem.addReaction(rPoly);
             subf->addReaction(rPoly);
         
 //            ///add motor binding and unbinding, loading and unloading
@@ -318,13 +313,8 @@ namespace chem {
                 boost::signals2::shared_connection_block
                     rcb(rDepoly->connect(depolyCallback,false));
             }
-            
-            CFilamentInitializer<NDIM>::_chem.addReaction(rDepoly);
             subf->addReaction(rDepoly);
-            
         }
-        ///Update reactions
-        subf->updateReactions();
         
         ///clean up and return
         return subf;
@@ -383,6 +373,10 @@ namespace chem {
         int ci = 1;
         
         for(int si = 0; si < numSubFilaments; si++) {
+            
+            ///Add sub filament to compartment
+            cNext->addSubFilament();
+            
             int setLength; ///length to intialize subfilament to
             
             if (si == numSubFilaments - 1) 
@@ -414,8 +408,7 @@ namespace chem {
                                                         std::vector<std::string> species)
     {
         ///Find next compartment (1D for now)
-        CSubFilament* s = f->getFrontCSubFilament();
-        Compartment* cCurrent = s->compartment();
+        Compartment* cCurrent = f->getFrontCSubFilament()->compartment();
         Compartment* cNext;
         
         float compartmentLength = CSystem<NDIM>::_grid->getProtoCompartment().sides()[0];
@@ -433,14 +426,54 @@ namespace chem {
             
             cNext = cCurrent->neighbours().back();
             f->increaseNumCompartments();
+            
+            ///activate the new compartment if needed
+            if(!cNext->isActivated()) {
+                
+                cNext->addSubFilament();
+                
+                ///generate diffusion reactions
+                for(auto &neighbor : cNext->neighbours()) {
+                    
+                    auto diffusionReactions = cNext->generateDiffusionReactions(neighbor);
+                    
+                    for(auto &r : diffusionReactions) {
+                        CSystem<NDIM>::_initializer->getChemSim().addReaction(r);
+                        r->activateReaction();
+                    }
+                    
+                    diffusionReactions = neighbor->generateDiffusionReactions(cNext);
+                    
+                    for(auto &r : diffusionReactions) {
+                        CSystem<NDIM>::_initializer->getChemSim().addReaction(r);
+                        r->activateReaction();
+                    }
+                }
+                
+//                ///move half of diffusing species to the new compartment
+//                for(auto &sp_this : cNext->species.species()) {
+//                    int molecule = sp_this->getMolecule();
+//                    int diff_rate = _diffusion_rates[molecule];
+//                    if(diff_rate<0) // Based on a convention that diffusing reactions require positive rates
+//                        continue;
+//                }
+            }   
         }
-        else cNext = cCurrent;
+        
+        else {
+            cCurrent->addSubFilament();
+            cNext = cCurrent;
+        }
         
         ///Initialize new subfilament
-        CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, species, 1);
+        CSubFilament* s = CSystem<NDIM>::_initializer->createCSubFilament(f, cNext, species, 1);
         
         ///Increase length
         f->increaseLength();
+        
+        ///Add all new reactions
+        for(auto &r : s->getReactions())
+            CSystem<NDIM>::_initializer->getChemSim().addReaction(r);
         
     }
     
@@ -448,6 +481,12 @@ namespace chem {
     template <size_t NDIM>
     void FilopodiaCSystem<NDIM>::retractFrontOfCFilament(CFilament *f)
     {
+        ///remove subfilament from compartment
+        CSubFilament* s = f->getFrontCSubFilament();
+        Compartment* c = s->compartment();
+
+        c->removeSubFilament();
+    
         ///if num sub filaments is one, remove filament from system
         if(f->numCSubFilaments() == 1) {
            

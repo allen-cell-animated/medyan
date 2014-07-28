@@ -171,6 +171,7 @@ double ChemNRMImpl::generateTau(double a){
 
 bool ChemNRMImpl::makeStep()
 {
+    
 //    cout << "[ChemNRMImpl::_makeStep(): Starting..." << endl;
 //    std::chrono::time_point<std::chrono::system_clock> chk1, chk2, chk3, chk4, chk5, chk6;
 

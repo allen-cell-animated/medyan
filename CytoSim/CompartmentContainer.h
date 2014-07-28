@@ -95,11 +95,24 @@ namespace chem {
                 CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
                 *C = _prototype_compartment;
             }
+        }
+        
+        ///Activate all compartments
+        void activateAll()
+        {
+            for (auto &c : children())
+                static_cast<Compartment*>(c.get())->activate();
             
+        }
+        
+        ///Generate all diffusion reactions for this compartment grid
+        ///@note - only compartments that are activated will generate diffusion reactions with one another
+        void generateDiffusionReactions()
+        {
             for(auto &c : children())
             {
                 CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
-                C->generateDiffusionReactions();
+                C->generateAllDiffusionReactions();
             }
         }
         
