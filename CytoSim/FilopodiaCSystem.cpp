@@ -496,10 +496,12 @@ namespace chem {
                 
                 //decrease copy numbers
                 endSpecies->getRSpecies().down();
-                s->getCMonomer(currentIndex)->getActiveFilamentSpecies()->getRSpecies().down();
+                s->getCMonomer(currentIndex)->
+                    getActiveFilamentSpecies()->getRSpecies().down();
                 
                 ///set copy number of new end
-                s->getCMonomer(currentIndex - 1)->getSpeciesByName(endName)->getRSpecies().up();
+                s->getCMonomer(currentIndex - 1)->
+                    getSpeciesByName(endName)->getRSpecies().up();
                 
                 ///decrease length
                 f->decreaseLength();
