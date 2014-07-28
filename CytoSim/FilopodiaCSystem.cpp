@@ -18,10 +18,8 @@ namespace chem {
     {
         std::vector<ReactionBase*> polyReactions;
         
-        ///go to the front subfilament, front monomer
-        int currentIndex = f->lengthFrontSubFilament() - 1;
-        
-        CMonomer* frontCMonomer = f->getFrontCSubFilament()-> getCMonomer(currentIndex);
+        ///go to the front subfilament, front monomer;
+        CMonomer* frontCMonomer = f->getLeadingCMonomer();
         
         ///find all reactions associated with this active end polymerization
         Species* end = frontCMonomer->getActiveEndSpecies();
@@ -93,9 +91,13 @@ namespace chem {
             formin = c->addSpeciesFilament("X-Formin",0,1);
             
             ///front and back
-            back = c->addSpeciesFilament("Back",0,1); front = c->addSpeciesFilament("Front",0,1);
+            back = c->addSpeciesFilament("Back",0,1);
+            front = c->addSpeciesFilament("Front",0,1);
+            
             ///bound species
-            myosin = c->addSpeciesBound("Myosin",0,1); ma = c->addSpeciesBound("A-MyosinActin",0,1);
+            myosin = c->addSpeciesBound("Myosin",0,1);
+            ma = c->addSpeciesBound("A-MyosinActin",0,1);
+            
             //empty
             empty = c->addSpeciesBound("Empty",0,1);
             
@@ -119,15 +121,19 @@ namespace chem {
         
         ///Callbacks needed
         auto polyCallback =
-        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+            CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        
         auto depolyCallback =
-        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+            CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        
         auto extensionCallback =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin"});
+            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                             parentFilament, {"Actin"});
         auto extensionCallback2 =
-        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament, {"Actin", "Formin"});
+            CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
+                                             parentFilament, {"Actin", "Formin"});
         auto retractionCallback =
-        CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+            CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
         
         
         //Look up diffusing species in this compartment
@@ -334,13 +340,11 @@ namespace chem {
 
         ///get end species (if there is one)
         std::string endName;
-        auto endSpecies = frontSubFilament->
-                          backCMonomer()->getActiveEndSpecies();
+        auto endSpecies = frontSubFilament->backCMonomer()->getActiveEndSpecies();
         
         ///Assign end name from previous subfilament
         if(endSpecies != nullptr)
-            endName= frontSubFilament->backCMonomer()->
-                              getActiveEndSpecies()->getName();
+            endName= endSpecies->getName();
         else endName = "Front";
         
         ///remove front sub filament
@@ -487,19 +491,15 @@ namespace chem {
                 int currentIndex = f->lengthFrontSubFilament() - 1;
                 
                 ///get end species name
-                Species* endSpecies =
-                    s->getCMonomer(currentIndex)->getActiveEndSpecies();
-            
+                Species* endSpecies = s->getCMonomer(currentIndex)->getActiveEndSpecies();
                 std::string endName = endSpecies->getName();
                 
                 //decrease copy numbers
                 endSpecies->getRSpecies().down();
-                s->getCMonomer(currentIndex)->
-                    getActiveFilamentSpecies()->getRSpecies().down();
+                s->getCMonomer(currentIndex)->getActiveFilamentSpecies()->getRSpecies().down();
                 
                 ///set copy number of new end
-                s->getCMonomer(currentIndex - 1)->
-                    getSpeciesByName(endName)->getRSpecies().up();
+                s->getCMonomer(currentIndex - 1)->getSpeciesByName(endName)->getRSpecies().up();
                 
                 ///decrease length
                 f->decreaseLength();
@@ -509,12 +509,9 @@ namespace chem {
     }
     
     //Specializations
-    template std::vector<ReactionBase*>
-        SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>
-        SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
-    template std::vector<ReactionBase*>
-        SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*> SimpleInitializer<1>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*> SimpleInitializer<2>::findPolymerizationReactions(CFilament* f);
+    template std::vector<ReactionBase*> SimpleInitializer<3>::findPolymerizationReactions(CFilament* f);
     
     template void SimpleInitializer<1>::initializeProtoCompartment(CompartmentSpatial<1>& Cproto);
     template void SimpleInitializer<2>::initializeProtoCompartment(CompartmentSpatial<2>& Cproto);
@@ -525,20 +522,11 @@ namespace chem {
     template void SimpleInitializer<3>::update(CFilament* f, ReactionBase* r);
     
     template CSubFilament*
-    SimpleInitializer<1>::createCSubFilament(CFilament* parentFilament,
-                                             Compartment* c,
-                                             std::vector<std::string> species,
-                                             int length);
+    SimpleInitializer<1>::createCSubFilament(CFilament* parentFilament, Compartment* c, std::vector<std::string> species, int length);
     template CSubFilament*
-    SimpleInitializer<2>::createCSubFilament(CFilament* parentFilament,
-                                             Compartment* c,
-                                             std::vector<std::string> species,
-                                             int length);
+    SimpleInitializer<2>::createCSubFilament(CFilament* parentFilament, Compartment* c, std::vector<std::string> species, int length);
     template CSubFilament*
-    SimpleInitializer<3>::createCSubFilament(CFilament* parentFilament,
-                                             Compartment* c,
-                                             std::vector<std::string> species,
-                                             int length);
+    SimpleInitializer<3>::createCSubFilament(CFilament* parentFilament, Compartment* c, std::vector<std::string> species, int length);
     
     
     template void SimpleInitializer<1>::removeCSubFilament(CFilament* parentFilament);
@@ -551,15 +539,9 @@ namespace chem {
     template CFilament* FilopodiaCSystem<2>::initializeCFilament(int length);
     template CFilament* FilopodiaCSystem<3>::initializeCFilament(int length);
     
-    template void
-        FilopodiaCSystem<1>::extendFrontOfCFilament(CFilament *f,
-                                                    std::vector<std::string> species);
-    template void
-        FilopodiaCSystem<2>::extendFrontOfCFilament(CFilament *f,
-                                                    std::vector<std::string> species);
-    template void
-        FilopodiaCSystem<3>::extendFrontOfCFilament(CFilament *f,
-                                                    std::vector<std::string> species);
+    template void FilopodiaCSystem<1>::extendFrontOfCFilament(CFilament *f, std::vector<std::string> species);
+    template void FilopodiaCSystem<2>::extendFrontOfCFilament(CFilament *f, std::vector<std::string> species);
+    template void FilopodiaCSystem<3>::extendFrontOfCFilament(CFilament *f, std::vector<std::string> species);
     
     template void FilopodiaCSystem<1>::retractFrontOfCFilament(CFilament* f);
     template void FilopodiaCSystem<2>::retractFrontOfCFilament(CFilament* f);

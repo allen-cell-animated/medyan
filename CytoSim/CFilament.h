@@ -217,6 +217,12 @@ namespace chem {
             return static_cast<CSubFilament*>(children(numberOfChildren() - 1));
         }
         
+        ///Get leading monomer of this filament
+        virtual CMonomer* getLeadingCMonomer()
+        {
+            return getFrontCSubFilament()->getCMonomer(_length_front_subfilament - 1);
+        }
+        
         ///number of subfilaments in this filament
         virtual int numCSubFilaments() {return numberOfChildren();}
         
