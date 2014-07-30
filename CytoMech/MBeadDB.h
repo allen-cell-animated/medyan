@@ -15,7 +15,11 @@
 #include "MBead.h"
 #include "MComposite.h"
 
-/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
+///Key to access instance of BeadDB
+class BeadDBKey {friend class Cylinder; friend class Filament; BeadDBKey(); ~BeadDBKey(); };
+
+
+/*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
  */
 
 
@@ -25,14 +29,20 @@ class BeadDB: private std::list<Bead*>
     
 public:
     
-    //  BeadDB();
-    //  ~BeadDB();
-    
     using bdb::size;
     using bdb::begin;
     using bdb::end;
     using bdb::erase;
     using bdb::remove;
+    
+    /// Copying is not allowed
+    BeadDB(const BeadDB &rhs) = delete;
+    
+    /// Assignment is not allowed
+    BeadDB& operator=(BeadDB &rhs) = delete;
+    
+    /// get the instance of this singleton
+    static BeadDB* Instance(BeadDBKey k);
     
     // create a new bead with no ccordinates and
     Bead* CreateBead() {
@@ -60,8 +70,10 @@ public:
         remove(pb);
         
     }
-    
 private:
+    static BeadDB* _instance;
+    BeadDB() {};
+    
 };
 
 

@@ -30,7 +30,6 @@ private:
     Cylinder* _pLastCylinder;
     System* _pSystem;
     Network* _pNetwork;
-    CFilament* _cFilament;
 
 ///!These are private interfaces to calculate forces and Energy within the filament:
     
@@ -69,13 +68,6 @@ public:
     void PolymerizeBack(std::vector<double> coordonates );
     
     void DeleteBead(Bead*);
-    
-    ///Set cFilament ptr
-    virtual void setCFilament(CFilament* cFilament)
-    {
-        _cFilament = cFilament;
-    }
-    
     
     
     //just for example, will rewrite this function, so it not returns anything

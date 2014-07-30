@@ -15,6 +15,10 @@
 #include "Mcommon.h"
 #include "MFilament.h"
 
+///Key to access instance of FilamentDB
+class FilamentDBKey {friend class System; FilamentDBKey(); ~FilamentDBKey(); };
+
+
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
  */
 
@@ -24,12 +28,11 @@ class FilamentDB: private std::list<Filament*>
     
 public:
     
-    //  FilamentDB();
-    //  ~FilamentDB();
-    
     using fdb::size;
     using fdb::begin;
     using fdb::end;
+    
+    FilamentDB* Instance(FilamentDBKey k);
     
     Filament* CreateFilament(System* s, Network* n, std::vector<std::vector<double> > v) {
         
@@ -52,10 +55,15 @@ public:
             std::cout<<"long filament created"<<std::endl;
             return pf;}
     }
-    
-    
-    
+
     void RemoveFilament(Filament* f) {};
+    
+private:
+    static FilamentDB* _instance;
+    FilamentDB() {};
+    
+    
+    
 };
 
 

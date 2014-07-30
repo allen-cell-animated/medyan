@@ -42,7 +42,6 @@ namespace chem {
         std::vector<Compartment*> _neighbours; ///< Neighbors of the compartment
         std::unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
         
-        short _num_sub_filaments = 0; ///< number of subfilaments in this compartment
         bool _activated = false; ///< the compartment is activated for diffusion
     public:
         ///Default constructor
@@ -84,20 +83,6 @@ namespace chem {
         
         ///Check if compartment is activated
         virtual bool isActivated() {return _activated;}
-        
-        ///Add a sub filament to this compartment
-        virtual void addSubFilament()
-        {
-            if(_num_sub_filaments == 0) activate();
-            _num_sub_filaments++;
-        }
-        
-        ///remove a sub filament from this compartment
-        virtual void removeSubFilament()
-        {
-            if(_num_sub_filaments == 1) deactivate();
-            _num_sub_filaments--;
-        }
         
         /// Removes all reactions from this compartment, diffusing and internal
         virtual void clearReactions()

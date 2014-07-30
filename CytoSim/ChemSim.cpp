@@ -13,24 +13,26 @@
 
 namespace chem {
     
-ChemSim::ChemSim(ChemSimImpl *csi)
+ChemSimImpl* ChemSim::_pimpl = 0;
+    
+void ChemSim::setInstance(ChemSimInitKey k, ChemSimImpl *csi)
 {
     _pimpl=csi;
 }
 
-void ChemSim::addReaction(ReactionBase *r){
+void ChemSim::addReaction(ChemSimReactionKey k, ReactionBase *r){
     _pimpl->addReaction(r);
 }
     
-void ChemSim::removeReaction(ReactionBase *r){
+void ChemSim::removeReaction(ChemSimReactionKey k, ReactionBase *r){
     _pimpl->removeReaction(r); 
 }
 
-bool ChemSim::run(int steps){
+bool ChemSim::run(ChemSimRunKey k, int steps){
     return _pimpl->run(steps);
 }
 
-void ChemSim::initialize() {
+void ChemSim::initialize(ChemSimInitKey k) {
     return _pimpl->initialize();
 }
 

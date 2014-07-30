@@ -13,20 +13,12 @@ using namespace std;
 
 System::System()
 {
-    _pbdb = new BeadDB();                                 //Create a bead database upon initialization of a system;
-    _pcdb = new CylinderDB();                               //Create a cylinder database similar to a bead database. It is a basic object, so created aindepended on network creation;
-	_pNetworkVector.push_back(AddNewNetwork());            //Create a Network (potentially can be more than one) upon initialization of a system;
+   	_pNetworkVector.push_back(AddNewNetwork());            //Create a Network (potentially can be more than one) upon initialization of a system;
 	
 }
 //~System() {delete _pbdb, _pfdb;}
 
-// Interfaces for creation of a bead:
-Bead* System::AddNewBead(vector<double> v) {return _pbdb->CreateBead(v);} // Call BeadDB.CreateBead with coordinates v.
 
-Bead* System::AddNewBead() {return _pbdb->CreateBead();}      //dummy interface;
-
-// Interface to create a Cylinder withe firs bead pb.
-Cylinder* System::AddNewCylinder(Filament* pf, Bead* pb){ return _pcdb->CreateCylinder(pf, pb);}
 
 //void System::AddNewFilament(vector<double> v) { _pfilamentVector.push_back( _pfdb->CreateFilament(this, v));}
 
@@ -35,21 +27,21 @@ Cylinder* System::AddNewCylinder(Filament* pf, Bead* pb){ return _pcdb->CreateCy
 
 void System::AddNewFilaments(vector<vector<vector<double> > > v, int i) {
     
-    _pNetworkVector[i]->AddNewFilaments(v);
+    FilamentDB::Instance()->CreateFilament(this, _pNetworkVector[0], v);
     
 }
 
 /// Interfaces for creation of Linkers (vector with pointers to pairs of beads/one pair of beads, and in what network (i) to create ):
 void System::AddNewLinkers(std::vector<std::vector<Cylinder *> > v, double streatchConst, int i){
     
-    _pNetworkVector[i]->AddNewLinkers(v, streatchConst);
+    LinkerDB::Instance()->CreateLinker(this, _pNetworkVector[0], v, streatchConst);
     
 }
 
-void System::AddNewLinker(Cylinder* pc1, Cylinder* pc2, double streatchConst, int i){
-    
-    _pNetworkVector[i]->AddNewLinker(pc1, pc2, streatchConst);
-}
+//void System::AddNewLinker(Cylinder* pc1, Cylinder* pc2, double streatchConst, int i){
+//
+//    _pNetworkVector[i]->AddNewLinker(pc1, pc2, streatchConst);
+//}
 
 /// Interfaces to create a Ghost (no actual structuaral beads, only a force field between beads on filaments) (object that contains a vector with 4 beads, mechanical constants and methods for energy and force calculations):
 void System::AddNewMotorGost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2, int i){

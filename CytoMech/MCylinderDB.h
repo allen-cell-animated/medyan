@@ -16,6 +16,10 @@
 #include "MCylinder.h"
 #include "MComposite.h"
 
+///Key to access instance of CylinderDB
+class CylinderDBKey {friend class Filament; CylinderDBKey(); ~CylinderDBKey(); };
+
+
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
  */
 
@@ -26,14 +30,18 @@ class CylinderDB: private std::list<Cylinder*>
     
 public:
     
-    //  CylinderDB();
-    //  ~CylinderDB();
-    
     using cdb::size;
     using cdb::begin;
     using cdb::end;
     using cdb::erase;
     using cdb::remove;
+    
+    /// Copying is not allowed
+    CylinderDB(const CylinderDB &rhs) = delete;
+    
+    /// Assignment is not allowed
+    CylinderDB& operator=(CylinderDB &rhs) = delete;
+    
     
     // create new empty cylinder
     Cylinder* CreateCylinder(Filament* pf, Bead* pb) {
@@ -53,6 +61,9 @@ public:
     }
     
 private:
+    
+    static CylinderDB* _instance;
+    CylinderDB() {};
 };
 
 

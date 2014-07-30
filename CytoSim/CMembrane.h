@@ -9,7 +9,7 @@
 #ifndef __CytoSim__CMembrane__
 #define __CytoSim__CMembrane__
 
-#include "CFilament.h"
+#include "CCylinder.h"
 #include <math.h>
 #include <gsl/gsl_integration.h>
 #include <iostream>
