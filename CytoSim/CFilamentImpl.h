@@ -19,7 +19,7 @@ namespace chem {
     class CMonomerBasic : public CMonomer {
         
     private:
-        SpeciesFilament* _filament_species[1]; ///array of filament species (just actin for now)
+        SpeciesFilament* _filament_species[1]; ///<array of filament species (just actin for now)
         SpeciesFilament* _end_species[4]; ///<array of "end" species (front, back, formin, capping)
         
     public:
