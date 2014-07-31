@@ -10,13 +10,12 @@
 
 namespace chem {
 
-    template <size_t NDIM>
-    void CompartmentGrid<NDIM>::generateConnections()
+    void CompartmentGrid::generateConnections()
     {
-        std::array<float, NDIM> sides = _prototype_compartment.sides();
+        std::vector<float> sides = _prototype_compartment.sides();
         
         //Three dimensional
-        if (NDIM == 3) {
+        if (_nDim == 3) {
             
             for(size_t i=0U; i<_grid[0]; ++i) {
         
@@ -24,7 +23,7 @@ namespace chem {
                     
                     for(size_t k=0U; k<_grid[2]; ++k)
                     {
-                        CompartmentSpatial<NDIM> *target = this->getCompartment(i,j,k);
+                        Compartment *target = this->getCompartment(i,j,k);
                         std::vector<float> coords{i * sides[0], j * sides[1], k * sides[2]};
                         target->setCoords(coords.begin());
                         
@@ -33,7 +32,7 @@ namespace chem {
                             int iprime = i+ii;
                             if(iprime<0 or iprime==int(_grid[0]))
                                 continue;
-                            CompartmentSpatial<NDIM> *neighbor = this->getCompartment(size_t(iprime),j,k);
+                            Compartment *neighbor = this->getCompartment(size_t(iprime),j,k);
                             target->addNeighbour(neighbor);
                         }
                         for(int jj: {-1,1})
@@ -41,7 +40,7 @@ namespace chem {
                             int jprime = j+jj;
                             if(jprime<0 or jprime==int(_grid[1]))
                                 continue;
-                            CompartmentSpatial<NDIM> *neighbor = this->getCompartment(i,size_t(jprime),k);
+                            Compartment *neighbor = this->getCompartment(i,size_t(jprime),k);
                             target->addNeighbour(neighbor);
                         }
                         for(int kk: {-1,1})
@@ -49,7 +48,7 @@ namespace chem {
                             int kprime = k+kk;
                             if(kprime<0 or kprime==int(_grid[2]))
                                 continue;
-                            CompartmentSpatial<NDIM> *neighbor = this->getCompartment(i,j,size_t(kprime));
+                            Compartment *neighbor = this->getCompartment(i,j,size_t(kprime));
                             target->addNeighbour(neighbor);
                         }
                     }
@@ -58,13 +57,13 @@ namespace chem {
         }
         
         //Two dimensional
-        else if (NDIM == 2) {
+        else if (_nDim == 2) {
             
             for(size_t i=0U; i<_grid[0]; ++i) {
                 
                 for(size_t j=0U; j<_grid[1]; ++j) {
                     
-                    CompartmentSpatial<NDIM> *target = this->getCompartment(i,j);
+                    Compartment *target = this->getCompartment(i,j);
                     std::vector<float> coords{i * sides[0], j * sides[1]};
                     target->setCoords(coords.begin());
                     
@@ -73,7 +72,7 @@ namespace chem {
                         int iprime = i+ii;
                         if(iprime<0 or iprime==int(_grid[0]))
                             continue;
-                        CompartmentSpatial<NDIM> *neighbor = this->getCompartment(size_t(iprime),j);
+                        Compartment *neighbor = this->getCompartment(size_t(iprime),j);
                         target->addNeighbour(neighbor);
                     }
                     for(int jj: {-1,1})
@@ -81,7 +80,7 @@ namespace chem {
                         int jprime = j+jj;
                         if(jprime<0 or jprime==int(_grid[1]))
                             continue;
-                        CompartmentSpatial<NDIM> *neighbor = this->getCompartment(i,size_t(jprime));
+                        Compartment *neighbor = this->getCompartment(i,size_t(jprime));
                         target->addNeighbour(neighbor);
                     }
                 }
@@ -92,7 +91,7 @@ namespace chem {
         else {
             for(size_t i=0U; i<_grid[0]; ++i) {
             
-                CompartmentSpatial<NDIM> *target = this->getCompartment(i);
+                Compartment *target = this->getCompartment(i);
                 std::vector<float> coords{i * sides[0]};
                 target->setCoords(coords.begin());
                 
@@ -101,16 +100,12 @@ namespace chem {
                     int iprime = i+ii;
                     if(iprime<0 or iprime==int(_grid[0]))
                         continue;
-                    CompartmentSpatial<NDIM> *neighbor = this->getCompartment(size_t(iprime));
+                    Compartment *neighbor = this->getCompartment(size_t(iprime));
                     target->addNeighbour(neighbor);
                 }
             }
         }
     
     }
-    
-    template void CompartmentGrid<3>::generateConnections();
-    template void CompartmentGrid<2>::generateConnections();
-    template void CompartmentGrid<1>::generateConnections();
-    
+
 } // end of chem

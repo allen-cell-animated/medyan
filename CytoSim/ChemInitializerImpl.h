@@ -11,8 +11,10 @@
 
 #include <iostream>
 #include <vector>
+#include "MFilament.h"
 
 namespace chem {
+    class CompartmentGrid;
     class Compartment;
     class CCylinder;
     
@@ -22,9 +24,12 @@ namespace chem {
      *  Specific initializers should inherit from ChemInitializerImpl. A user will then attach the corresponding 
      *  initializer to ChemInitializer via the initializer base class, ChemInitializerImpl.
      */
-    public ChemInitializerImpl {
+    class ChemInitializerImpl {
         
     public:
+        ///Initialize the compartment grid, based on the given simulation
+        virtual void initializeGrid(CompartmentGrid *grid) = 0;
+        
         ///Initializer, based on the given simulation
         ///@param length - starting length of the CCylinder initialized
         ///@param species - list of species to initialize in CCylinder
@@ -35,6 +40,83 @@ namespace chem {
 
     };
     
-}; //end namespace chem
+    
+    ///REACTION CALLBACKS
+    
+    ///Extension callback
+    template<size_t NDIM>
+    struct FilamentExtensionCallback {
+        
+        //members
+        Filament* _filament;
+        std::vector<std::string> _species;
+        
+        ///Constructor, sets members
+        FilamentExtensionCallback(Filament* filament,
+                                  std::vector<std::string> species) :
+        _filament(filament), _species(species) {};
+        
+        ///Callback
+        void operator() (ReactionBase *r){
+            
+            //_filament->
+        }
+    };
+    
+    ///Retraction callback
+    template<size_t NDIM>
+    struct FilamentRetractionCallback {
+        
+        //members
+        Filament* _filament;
+        
+        ///Constructor, sets members
+        FilamentRetractionCallback(Filament* filament) :
+        _filament(filament) {};
+        
+        ///Callback
+        void operator() (ReactionBase *r){
+            //_filament->
+        }
+    };
+    
+    
+    ///General polymerization callback
+    template<size_t NDIM>
+    struct FilamentPolyCallback {
+        
+        //members
+        Filament* _filament;
+        
+        FilamentPolyCallback(Filament* filament) :
+        _filament(filament) {};
+        
+        //Callback
+        void operator() (ReactionBase *r){
+            //_filament->
+        }
+        
+    };
+    
+    ///General depolymerization callback
+    template<size_t NDIM>
+    struct FilamentDepolyCallback {
+        
+        //members
+        Filament* _filament;
+        
+        FilamentDepolyCallback(Filament* filament) :
+        _filament(filament) {};
+        
+        //Callback
+        void operator() (ReactionBase *r){
+            //_filament->
+        }
+        
+    };
+
+    
+    
+} //end namespace chem
 
 #endif /* defined(__Cyto__ChemInitializerImpl__) */

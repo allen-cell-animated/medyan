@@ -18,10 +18,15 @@ namespace chem {
         _pimpl=cii;
     }
     
+    void ChemInitializer::initializeGrid(ChemInitializerGridKey k, CompartmentGrid* grid)
+    {
+        _pimpl->initializeGrid(grid);
+    }
+
     CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Compartment* c, std::vector<std::string> species, int length)
 
     {
-        _pimpl->createCCylinder(c, species, length);
+        return _pimpl->createCCylinder(c, species, length);
     }
     
     void ChemInitializer::removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder)

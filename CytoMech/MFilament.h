@@ -14,7 +14,6 @@
 #include <deque>
 #include "Mcommon.h"
 #include "MComposite.h"
-#include "CFilament.h"
 #include <math.h>
 
 using namespace chem;

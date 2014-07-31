@@ -16,24 +16,19 @@ namespace chem {
     
     ///Forward declarations
     class ChemInitializerImpl;
-
+    class CompartmentGrid;
     class Compartment;
     class CCylinder;
+    class ReactionBase;
     
     ///Key for initialization of ChemInitializer
-    class ChemInitializerInitKey { friend class ChemController;
-                                    ChemInitializerInitKey(){}
-                                    ~ChemInitializerInitKey(){} };
+    class ChemInitializerInitKey { friend class ChemController; ChemInitializerInitKey(){} ~ChemInitializerInitKey(){} };
     
     ///Key for the initialization of grid
-    class ChemInitializerGridKey { friend class ChemController;
-                                    ChemInitializerGridKey(){}
-                                    ~ChemInitializerGridKey(){} };
+    class ChemInitializerGridKey { friend class ChemController; ChemInitializerGridKey(){} ~ChemInitializerGridKey(){} };
     
     ///Key for the creation and destruction of CCylinders
-    class ChemInitializerCylinderKey { friend class Cylinder;
-                                        ChemInitializerCylinderKey(){}
-                                        ~ChemInitializerCylinderKey(){} };
+    class ChemInitializerCylinderKey { friend class Filament; ChemInitializerCylinderKey(){} ~ChemInitializerCylinderKey(){} };
     
     /// ChemInitializer class is used for initailizing chemical reactions based on a specific system
     /*!
@@ -46,18 +41,21 @@ namespace chem {
         
     public:
         ///Set the chemInitializer instance
-        void setInstance(ChemInitializerInitKey k, ChemInitializerImpl *cii);
+        static void setInstance(ChemInitializerInitKey k, ChemInitializerImpl *cii);
+        
+        ///Initialize the compartment grid, based on the given simulation
+        static void initializeGrid(ChemInitializerGridKey k, CompartmentGrid *grid);
         
         ///Initializer, based on the given simulation
         ///@param length - starting length of the CCylinderinitialized
         ///@param species - list of species to initialize in CCylinder
-        CCylinder* createCCylinder(ChemInitializerCylinderKey k,
+        static CCylinder* createCCylinder(ChemInitializerCylinderKey k,
                                    Compartment* c,
                                    std::vector<std::string> species,
                                    int length);
         
         ///Remove a CCylinder, based on the given simulation
-        void removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder);
+        static void removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder);
         
         
     private:
@@ -65,84 +63,6 @@ namespace chem {
         ChemInitializer() {};
 
     };
-    
-    ///REACTION CALLBACKS
-    
-    ///Extension callback
-    template<size_t NDIM>
-    struct FilamentExtensionCallback {
-        
-        //members
-        Filament* _filament;
-        std::vector<std::string> _species;
-        
-        ///Constructor, sets members
-        CFilamentExtensionCallback(Filament* filament,
-                                   std::vector<std::string> species) :
-       _filament(filament), _species(species) {};
-        
-        ///Callback
-        void operator() (ReactionBase *r){
-            
-            _filament->
-        }
-    };
-    
-    ///Retraction callback
-    template<size_t NDIM>
-    struct FilamentRetractionCallback {
-        
-        //members
-        Filament* _filament;
-        
-        ///Constructor, sets members
-        CFilamentRetractionCallback(Filament* filament) :
-        _filament(filament) {};
-        
-        ///Callback
-        void operator() (ReactionBase *r){
-            _filament->
-        }
-    };
-    
-    
-    ///General polymerization callback
-    template<size_t NDIM>
-    struct FilamentPolyCallback {
-        
-        //members
-        CFilament* _filament;
-        
-        CFilamentPolyCallback(CFilament* filament) :
-        _filament(filament) {};
-        
-        //Callback
-        void operator() (ReactionBase *r){
-           _filament->
-        }
-        
-    };
-    
-    ///General depolymerization callback
-    template<size_t NDIM>
-    struct FilamentDepolyCallback {
-        
-        //members
-        CFilament* _filament;
-        
-        CFilamentDepolyCallback(CSystem<NDIM>* csystem,
-                                CFilament* filament) :
-        _filament(filament) {};
-        
-        //Callback
-        void operator() (ReactionBase *r){
-            _filament->
-        }
-        
-    };
-
-    
-    
     
     
 }; //end namespace chem

@@ -39,7 +39,6 @@
 #include "ChemGillespieImpl.h"
 #include "ChemSimpleGillespieImpl.h"
 
-#include "FilopodiaCSystem.h"
 #include "CMembrane.h"
 
 using namespace std;

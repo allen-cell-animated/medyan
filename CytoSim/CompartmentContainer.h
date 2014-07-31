@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "Compartment.h"
-#include "ChemSim.h"
 
 namespace chem {
 
@@ -30,8 +29,8 @@ namespace chem {
      *  An example of such is below:
      *
      *  @code
-     *  CompartmentGrid<3> g{50,50,50};
-     *  CompartmentSpatial<3> &Cproto = g.getProtoCompartment();
+     *  CompartmentGrid g{50,50,50};
+     *  Compartment &Cproto = g.getProtoCompartment();
      *  Species *M1 = Cproto.addSpecies("Myosin",1U);
      *  Cproto.setDiffusionRate(M1,2000);
      *  Species *M2 = Cproto.addSpecies("Fascin",6U);
@@ -49,23 +48,24 @@ namespace chem {
      *  be initialized to the same side length. The protocomparment must be set up BEFORE initalize()
      *  is called.
      */
-    
-    template <size_t NDIM>
     class CompartmentGrid : public Composite {
     private:
-        CompartmentSpatial<NDIM> _prototype_compartment; ///< prototype compartment, to be configured before initialization
+        Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
         std::vector<size_t> _grid; ///< size of this grid in all dimensions, in units of compartments
         bool _is_initialized; /// grid is initalized or not
+        
+        const short _nDim; ///Dimensions of grid
     public:
         
         ///Default constructor
-        CompartmentGrid(std::initializer_list<size_t> grid) : _grid(grid), _is_initialized(false)
+        CompartmentGrid(std::initializer_list<size_t> grid) : _nDim(grid.size()), _prototype_compartment(grid.size()),
+                                                              _grid(grid), _is_initialized(false)
         {
-            assert(_grid.size()==NDIM);
+            assert(0 < _nDim && _nDim <= 3);
         }
         
         /// Get name of this compartment grid
-        virtual std::string getFullName() const {return std::string("CompartmentGrid<")+std::to_string(NDIM)+">";};
+        virtual std::string getFullName() const {return std::string("CompartmentGrid<")+std::to_string(_nDim)+">";};
         
         /// Initialize the compartment, which copies all species and reactions of the protocompartment into the
         /// compartments in the grid. Also generates neighboring connections for all compartments as well as
@@ -83,7 +83,7 @@ namespace chem {
             
             for(size_t i=0; i<length; ++i)
             {
-                addChild(std::unique_ptr<Component>(new CompartmentSpatial<NDIM>()));
+                addChild(std::unique_ptr<Component>(new Compartment(_nDim)));
             }
             
             _is_initialized=true;
@@ -92,7 +92,7 @@ namespace chem {
             
             for(auto &c : children())
             {
-                CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
+                Compartment *C = static_cast<Compartment*>(c.get());
                 *C = _prototype_compartment;
             }
         }
@@ -111,7 +111,7 @@ namespace chem {
         {
             for(auto &c : children())
             {
-                CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
+                Compartment *C = static_cast<Compartment*>(c.get());
                 C->generateAllDiffusionReactions();
             }
         }
@@ -119,71 +119,71 @@ namespace chem {
         /// Get compartment from the grid
         /// @param - args, the indices in n-dimensions of the compartment
         template<typename ...Args>
-        CompartmentSpatial<NDIM>* getCompartment(Args&& ...args)
+        Compartment* getCompartment(Args&& ...args)
         {
             if(not _is_initialized)
                 throw std::runtime_error("CompartmentGrid::getCompartment(): initialize() needs to be called first");
 
             size_t index = 0;
-            size_t i = NDIM-1;
+            size_t i = _nDim-1;
             for(auto x: {args...})
             {
                 index+=x*std::pow(_grid[i],i);
                 --i;
             }
             //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-            return static_cast<CompartmentSpatial<NDIM>*>(children()[index].get());
+            return static_cast<Compartment*>(children()[index].get());
         }
         
         /// Alternate getter from the grid
-        CompartmentSpatial<NDIM>* getCompartment(const std::vector<size_t> &indices) const
+        Compartment* getCompartment(const std::vector<size_t> &indices) const
         {
             if(not _is_initialized)
                 throw std::runtime_error("CompartmentGrid::getCompartment(): initialize() needs to be called first");
             
             size_t index = 0;
-            size_t i = NDIM-1;
+            size_t i = _nDim-1;
             for(auto x: indices)
             {
                 index+=x*std::pow(_grid[i],i);
                 --i;
             }
             //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-            return static_cast<CompartmentSpatial<NDIM>*>(children()[index].get());
+            return static_cast<Compartment*>(children()[index].get());
         }
         
         /// Get the compartment given a set of coordinates
-        CompartmentSpatial<NDIM>* getCompartment(const std::vector<float> &coords) const
+        Compartment* getCompartment(const std::vector<float> &coords) const
         {
             if(not _is_initialized)
                 throw std::runtime_error("CompartmentGrid::getCompartment(): initialize() needs to be called first");
             
             size_t index = 0;
-            size_t i = NDIM-1;
+            size_t i = _nDim-1;
             for(auto x: coords)
             {
-                index+=(x / getProtoCompartment().sides()[index])*std::pow(_grid[i],i);
+                index+=(x / getProtoCompartment().sides()[index]) * std::pow(_grid[i],i);
                 --i;
             }
-            return static_cast<CompartmentSpatial<NDIM>*>(children()[index].get());
+            return static_cast<Compartment*>(children()[index].get());
         }
         
         
         /// Get the protocompartment from this grid, in order to configure and then initialize
-        CompartmentSpatial<NDIM>& getProtoCompartment() {return _prototype_compartment;}
-        const CompartmentSpatial<NDIM>& getProtoCompartment() const {return _prototype_compartment;}
+        Compartment& getProtoCompartment() {return _prototype_compartment;}
+        const Compartment& getProtoCompartment() const {return _prototype_compartment;}
         
         /// Generate neighbors and spatial coordinates for all compartments in grid
         void generateConnections();
         
         /// Add reactions to all compartments in the grid
         /// @param - chem, a ChemSim object that controls the reaction algorithm
-        virtual void addChemSimReactions(ChemSim &chem)
+        virtual void addChemSimReactions()
         {
             for(auto &c : children())
             {
-                CompartmentSpatial<NDIM> *C = static_cast<CompartmentSpatial<NDIM>*>(c.get());
-                C->addChemSimReactions(chem);
+                Compartment*C = static_cast<Compartment*>(c.get());
+                C->addChemSimReactions();
             }
         }
         

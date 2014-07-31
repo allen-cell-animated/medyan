@@ -19,7 +19,10 @@
 
 namespace chem {
     
-    /// Compartment class is a simple compartment for holding species and reactions
+    class ChemSimReactionKey;
+    
+    
+    /// Compartment class is a compartment for holding species and reactions
     
     /*! The Compartment class is a container for species, internal reactions, and diffusion
      *  reactions that can occur. A compartment object keeps track of the above while also
@@ -28,7 +31,7 @@ namespace chem {
      *
      *  Compartment initialization looks like the following:
      *  @code
-     *  Compartment *C1 = new Compartment;
+     *  Compartment *C1 = new Compartment(3);
      *  Species *A = C1->addSpecies("A",99U);
      *  C1->setDiffusionRate(A,2000);
      *  @endcode
@@ -36,6 +39,7 @@ namespace chem {
     
     class Compartment : public Composite {
     protected:
+        ///Reaction-diffusion components
         SpeciesPtrContainerVector _species;  ///< Container with all species in this compartment
         ReactionPtrContainerVector _internal_reactions; ///< Container with all internal reactions in compartment
         ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
@@ -43,16 +47,27 @@ namespace chem {
         std::unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
         
         bool _activated = false; ///< the compartment is activated for diffusion
+        
+        ///Spatial components
+        std::vector<float> _coords; ///< spatial coordinates of this compartment
+        std::vector<float> _sides;  ///< side lengths of this compartment
+        const short _nDim; ///<Number of dimensions
+        
     public:
-        ///Default constructor
-        Compartment() : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(), _diffusion_rates() {}
+        ///Default constructor, only takes in number of dimensions
+        Compartment(int NDIM) : _nDim(NDIM), _species(), _internal_reactions(), _diffusion_reactions(),
+                                _neighbours(), _diffusion_rates() {}
         
         ///Constructor which essentially clones another compartment
-        Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(), _diffusion_rates()
+        Compartment(const Compartment &C) : _nDim(C._nDim), _species(), _internal_reactions(), _diffusion_reactions(),
+                                            _neighbours(), _diffusion_rates()
         {
             C.cloneSpecies(this);
             C.cloneReactions(this);
             _diffusion_rates = C._diffusion_rates;
+
+            //set side length
+            _sides = C._sides;
         }
         
         //Assignment operator
@@ -66,7 +81,7 @@ namespace chem {
             clearSpecies();
             removeFromNeighboursList();
         }
-
+        
         /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
         /// This method needs to be overriden by descendent classes that contain Species.
         virtual bool apply_impl(SpeciesVisitor &v) override;
@@ -344,7 +359,7 @@ namespace chem {
         /// @note - this does not clone the neighbors, just reactions and species
         virtual Compartment* clone()
         {
-            Compartment *C = new Compartment();
+            Compartment *C = new Compartment(_nDim);
             cloneSpeciesReactions(C);
             return C;
         }
@@ -377,12 +392,12 @@ namespace chem {
         
         /// Adds the reactions of this compartment to the ChemSim object
         /// @param - chem, a ChemSim object that runs the reaction-diffusion algorithm
-        virtual void addChemSimReactions(ChemSim &chem)
+        virtual void addChemSimReactions()
         {
             for(auto &r1 : _internal_reactions.reactions())
-                chem.addReaction(r1.get());
+                ChemSim::addReaction(ChemSimReactionKey(), r1.get());
             for(auto &r2 : _diffusion_reactions.reactions())
-                chem.addReaction(r2.get());
+                ChemSim::addReaction(ChemSimReactionKey(), r2.get());
         }
         
         /// Print properties of this compartment
@@ -393,85 +408,32 @@ namespace chem {
             printSpecies();
             std::cout << "Reactions:" << std::endl;
             printReactions();
-        }
-    };
-
-    /// CompartmentSpatial class inherits Compartment traits, with added spatial components
-    
-    /*!
-     *  The CompartmentSpatial class has the same funtionality as the more general Compartment
-     *  class, but keeps track of its spatial coordinates as well as the size of the compartment.
-     *  The number of dimensions is specified at the construction of the object
-     *  Initialization of this compartment is similar to the Compartment class:
-     *
-     *  @code
-     *  CompartmentSpatial<3> *C1 = new Compartment;
-     *  Species *A = C1->addSpecies("A",99U);
-     *  C1->setDiffusionRate(A,2000);
-     *  @endcode
-     */
-    template <size_t NDIM>
-    class CompartmentSpatial : public Compartment {
-    private:
-        std::array<float, NDIM> _coords; ///< spatial coordinates of this compartment
-        std::array<float, NDIM> _sides;  ///< side lengths of this compartment
-    public:
-        /// Default constructor, call superclass constructor
-        CompartmentSpatial() : Compartment() {};
-        
-        /// Alternate constructor, using another compartment
-        CompartmentSpatial(const CompartmentSpatial &other) : Compartment(other), _sides(other._sides) {}
-        
-        /// Assignment operator, using Compartment assignment and also assigning side lengths
-        /// @note - coordinates are not assigned
-        CompartmentSpatial& operator=(const CompartmentSpatial &other) {
-            this->Compartment::operator=(other);
-            _sides = other._sides;
-            return *this;
-        }
-        
-        /// Destructor
-        virtual ~CompartmentSpatial() noexcept {
-        }
-        
-        /// Get the name of this compartment
-        virtual std::string getFullName() const {return "CompartmentSpatial<"+std::to_string(NDIM)+">";};
-        
-        /// Set the side lengths of this compartment
-        void setSideLength(size_t i, float value) {_sides[i]=value;}
-        
-        /// Set the coordinates of this compartment
-        void setCoord(size_t i, float value) {_coords[i]=value;}
-
-        /// Alternative setSides
-        template <class input_iter>
-        void setSides(input_iter input_it)
-        {
-            std::copy_n(input_it,NDIM,_sides.begin());
-        }
-        /// Alternative setCoords
-        template <class input_iter>
-        void setCoords(input_iter input_it)
-        {
-            std::copy_n(input_it,NDIM,_coords.begin());
-        }
-
-        /// Prints compartment properties, uses superclass function and prints coords, sides
-        virtual void printSelf()
-        {
-            Compartment::printSelf();
             std::cout << "Coords: ";
             for(auto &x : _coords) std::cout << x << " ";
-            std::cout << "\nSide: ";
+            std::cout << "Sides: ";
             for(auto &y : _sides) std::cout << y << " ";
         }
         
+        /// setSides
+        template <class input_iter>
+        void setSides(input_iter input_it)
+        {
+            std::copy_n(input_it,_nDim,_sides.begin());
+        }
+        /// setCoords
+        template <class input_iter>
+        void setCoords(input_iter input_it)
+        {
+            std::copy_n(input_it,_nDim,_coords.begin());
+        }
+
         /// Coordinate getter
-        std::array<float, NDIM>& coords() {return _coords;}
-        const std::array<float, NDIM>& coords() const {return _coords;}
+        std::vector<float>& coords() {return _coords;}
+        const std::vector<float>& coords() const {return _coords;}
         /// Sides getter
-        std::array<float, NDIM>& sides() {return _sides;}
-        const std::array<float, NDIM>& sides() const {return _sides;}        
+        std::vector<float>& sides() {return _sides;}
+        const std::vector<float>& sides() const {return _sides;}
+
     };
 
 }// end of chem

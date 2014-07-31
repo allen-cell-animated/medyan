@@ -13,8 +13,7 @@
 #include <list>
 #include <vector>
 #include "Mcommon.h"
-#include "MCylinder.h"
-#include "MComposite.h"
+#include "Cylinder.h"
 
 ///Key to access instance of CylinderDB
 class CylinderDBKey {friend class Filament; CylinderDBKey(); ~CylinderDBKey(); };

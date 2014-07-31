@@ -36,7 +36,7 @@ void ChemSim::initialize(ChemSimInitKey k) {
     return _pimpl->initialize();
 }
 
-void ChemSim::printReactions() const {
+void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
 

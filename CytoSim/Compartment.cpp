@@ -20,6 +20,7 @@ namespace chem {
         other.cloneSpecies(this);
         other.cloneReactions(this);
         _diffusion_rates = other._diffusion_rates;
+        _sides = other._sides;
         return *this;
         // Note that _neighbours is not copied
     }

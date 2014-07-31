@@ -13,35 +13,32 @@
 #include "Mcommon.h"
 #include "MComposite.h"
 
-class Cylinder : public MComposite
+class MCylinder
 {
 
 private:
-    Filament* _pFilament; //< Pointer to filament where this cilinder belongs;
     Bead* _pFirst;  //< Pointer to the first bead, associated with this cylinder ;
     Bead* _pSecond; //< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
-    
-    int _positionFilament; // position on filament (1st, 2nd, ... etc);
     
     
 // Mechanical constants:
     double _eqLenght;   //< Lenght of unstertched cylinder;
     double _eqAngle;   //< Equilibrium value for angale in bending potential. For interaction between this cylinder and PREVIOUS;
     double _eqAngleTwist;
-    double _kStretch;  //< Local stretching constatn, describes axial stretching of a single cylinder;
+    double _kStretch;  //< Local stretching constant, describes axial stretching of a single cylinder;
     double _kBend;  //< Local bending constant, which describes bendinig interaction between current and PREVIOUS cylinders;
     double _kTwist;
     
     bool _ifLast;
 
-    std::vector<Cylinder*> _NeighbourList;
+    std::vector<MCylinder*> _NeighbourList;
 
 public:
     
 //    Cylinder();
 //    Cylinder(Filament* pf, Bead* firstBead, double L, double theta, double ks, double kb, double kt);
-    Cylinder(Filament* pf, Bead* firstBead);
-    virtual ~Cylinder() {}
+    MCylinder(Filament* pf, Bead* firstBead);
+    virtual ~MCylinder() {}
     
     bool IfLast();
     void SetLast(bool);

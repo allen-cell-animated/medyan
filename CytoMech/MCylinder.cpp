@@ -10,7 +10,7 @@
 #include "MBead.h"
 
 
-Cylinder::Cylinder(Filament* pf, Bead* pb){
+MCylinder::MCylinder(Filament* pf, Bead* pb){
     
     _eqLenght = L;
     _eqAngle = teta;
@@ -30,30 +30,30 @@ Cylinder::Cylinder(Filament* pf, Bead* pb){
     _NeighbourList.assign (0, NULL);
 }
 
-bool Cylinder::IfLast(){
+bool MCylinder::IfLast(){
     if (_ifLast) return true;
     
     return false;
 }
 
-void Cylinder::SetLast(bool b){ _ifLast = b;}
+void MCylinder::SetLast(bool b){ _ifLast = b;}
 
-void Cylinder::SetSecondBead(Bead *pb) {_pSecond = pb;}
+void MCylinder::SetSecondBead(Bead *pb) {_pSecond = pb;}
 
-Bead* Cylinder::GetFirstBead() { return _pFirst;}
-Bead* Cylinder::GetSecondBead() { return _pSecond;}
+Bead* MCylinder::GetFirstBead() { return _pFirst;}
+Bead* MCylinder::GetSecondBead() { return _pSecond;}
 
-void Cylinder::SetEqLength(double l) {_eqLenght = l;}
-double Cylinder::GetEqLength() {return _eqLenght;}
+void MCylinder::SetEqLength(double l) {_eqLenght = l;}
+double MCylinder::GetEqLength() {return _eqLenght;}
 
-void Cylinder::SetAngle(double alpha) {_eqAngle = alpha;}
-double Cylinder::GetAngle() {return _eqAngle;}
+void MCylinder::SetAngle(double alpha) {_eqAngle = alpha;}
+double MCylinder::GetAngle() {return _eqAngle;}
 
-void Cylinder::SetStretchingConst(double k) {_kStretch = k;}
-double Cylinder::GetStretchingConst() {return _kStretch;}
+void MCylinder::SetStretchingConst(double k) {_kStretch = k;}
+double MCylinder::GetStretchingConst() {return _kStretch;}
 
-void Cylinder::SetBendingConst(double k) {_kBend = k;}
-double Cylinder::GetBendingConst() {return _kBend;}
+void MCylinder::SetBendingConst(double k) {_kBend = k;}
+double MCylinder::GetBendingConst() {return _kBend;}
 
-void Cylinder::SetTwistingConst(double k) {_kTwist = k;}
-double Cylinder::GetTwistingConst() {return _kTwist;}
+void MCylinder::SetTwistingConst(double k) {_kTwist = k;}
+double MCylinder::GetTwistingConst() {return _kTwist;}

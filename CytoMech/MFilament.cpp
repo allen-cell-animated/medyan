@@ -46,8 +46,12 @@ Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, in
     vector<vector<double> > tmpBeadsCoord = StraightFilamentProjection(position, numBeads); //this function calculate coordinates for all beads on the line separated by a segment length.
    
     Bead* b0 = _pSystem->AddNewBead(tmpBeadsCoord[0]);
-    Cylinder* c0 = _pSystem->AddNewCylinder(this, b0);
-    _pLastCylinder = c0;
+    Cylinder* mc0 = _pSystem->AddNewCylinder(this, b0);
+    _pLastCylinder = mc0;
+    
+    cc0 = 
+    
+    C0  = new Cylinder(mc0, cc0);
     
     for (int i = 1; i<numBeads; i++) {
         

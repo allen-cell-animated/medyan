@@ -10,11 +10,10 @@
 #define __CytoSim__CCylinder__
 
 #include <iostream>
-#include "CompartmentContainer.h"
+#include "Compartment.h"
+#include "CFilamentElement.h"
 
 namespace chem {
-    class CMonomer;
-    class CBound;
     
     /// CCylinder class holds all Monomers and Bounds
     /*! 
@@ -59,16 +58,6 @@ namespace chem {
         ///Get bound at an index
         ///@note no check on index
         virtual CBound* getCBound(int index) {return _bounds[index].get();}
-        
-        ///Get back or front monomer/bound
-        ///@note monomer/bound list must not be empty
-        virtual CMonomer* backCMonomer() {return _monomers[0].get();}
-        
-        virtual CBound* backCBound() {return _bounds[0].get();}
-        
-        virtual CMonomer* frontCMonomer() {return _monomers.back().get();}
-        
-        virtual CBound* frontCBound() {return _bounds.back().get();}
         
         ///Add a filament reaction to this subfilament
         virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
