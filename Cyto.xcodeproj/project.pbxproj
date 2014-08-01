@@ -54,7 +54,6 @@
 		F771ADC115655DBA0010B123 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
 		F771ADC415655DBA0010B123 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F771ADC615655DBA0010B123 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
-		F771ADC715655DBA0010B123 /* SystemOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* SystemOld.cpp */; };
 		F775C6BA15576A8D008A9C87 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F784E48F196C3E28003C84A8 /* CCylinder.h in Headers */ = {isa = PBXBuildFile; fileRef = F784E48B196C3E28003C84A8 /* CCylinder.h */; };
 		F7954C4C197D98BE00074A12 /* Cyto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C4B197D98BE00074A12 /* Cyto.cpp */; };
@@ -91,7 +90,6 @@
 		F7954CB2197D9CC000074A12 /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
 		F7954CB3197D9CC000074A12 /* RSpecies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7382CCF156BE2F00022F97B /* RSpecies.cpp */; };
 		F7954CB4197D9CC000074A12 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
-		F7954CB8197D9CC000074A12 /* SystemOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED211548FFED0069DA61 /* SystemOld.cpp */; };
 		F7954CB9197D9CC000074A12 /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C6D197D99FC00074A12 /* MathFunctions.cpp */; };
 		F7954CBA197D9CC000074A12 /* MBead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C6F197D99FC00074A12 /* MBead.cpp */; };
 		F7954CBB197D9CC000074A12 /* MCGsolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C72197D99FC00074A12 /* MCGsolver.cpp */; };
@@ -246,7 +244,6 @@
 		F763ED1C1548FFED0069DA61 /* Reaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reaction.h; sourceTree = "<group>"; };
 		F763ED1F1548FFED0069DA61 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
 		F763ED201548FFED0069DA61 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
-		F763ED211548FFED0069DA61 /* SystemOld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemOld.cpp; sourceTree = "<group>"; };
 		F763ED221548FFED0069DA61 /* SystemOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemOld.h; sourceTree = "<group>"; };
 		F7672B5915B1B278000D412B /* test_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie.cpp; sourceTree = "<group>"; };
 		F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
@@ -449,6 +446,8 @@
 				F735847719894BB40026E1B6 /* ChemInitializerImpl.h */,
 				F71EAF1815B224210072EE4E /* common.cpp */,
 				F763ED131548FFED0069DA61 /* common.h */,
+				F784E48B196C3E28003C84A8 /* CCylinder.h */,
+				F72EC62F19782604007DA75F /* CFilamentElement.h */,
 				F763ED141548FFED0069DA61 /* Compartment.cpp */,
 				F763ED151548FFED0069DA61 /* Compartment.h */,
 				F76148CF15F79CE800587017 /* CompartmentContainer.cpp */,
@@ -469,15 +468,12 @@
 				F7382CCD156BE2DA0022F97B /* RSpecies.h */,
 				F763ED1F1548FFED0069DA61 /* Species.cpp */,
 				F763ED201548FFED0069DA61 /* Species.h */,
-				F7D75C3719756EF600324C41 /* CMembrane.cpp */,
-				F7D75C3819756EF600324C41 /* CMembrane.h */,
-				F784E48B196C3E28003C84A8 /* CCylinder.h */,
-				F72EC62F19782604007DA75F /* CFilamentElement.h */,
-				F72BB383196F14B800D0DBEF /* FilopodiaCSystem.cpp */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F7E432D015FEDD3200C8EA50 /* Signaling.h */,
-				F763ED211548FFED0069DA61 /* SystemOld.cpp */,
 				F763ED221548FFED0069DA61 /* SystemOld.h */,
+				F72BB383196F14B800D0DBEF /* FilopodiaCSystem.cpp */,
+				F7D75C3719756EF600324C41 /* CMembrane.cpp */,
+				F7D75C3819756EF600324C41 /* CMembrane.h */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
@@ -792,7 +788,6 @@
 				F771ADC415655DBA0010B123 /* Reaction.cpp in Sources */,
 				F771ADC615655DBA0010B123 /* Species.cpp in Sources */,
 				F7358484198967230026E1B6 /* SimpleInitializerImpl.cpp in Sources */,
-				F771ADC715655DBA0010B123 /* SystemOld.cpp in Sources */,
 				F7382CD1156BE2F00022F97B /* RSpecies.cpp in Sources */,
 				F7F3681F1575C743006727F7 /* Composite.cpp in Sources */,
 				F7346A8B1578206500326E09 /* Component.cpp in Sources */,
@@ -827,7 +822,6 @@
 				F7954CB3197D9CC000074A12 /* RSpecies.cpp in Sources */,
 				F7954CB4197D9CC000074A12 /* Species.cpp in Sources */,
 				F735849A198990E60026E1B6 /* ChemController.cpp in Sources */,
-				F7954CB8197D9CC000074A12 /* SystemOld.cpp in Sources */,
 				F735848A198982AB0026E1B6 /* MCylinderDB.cpp in Sources */,
 				F7954CB9197D9CC000074A12 /* MathFunctions.cpp in Sources */,
 				F7954CBA197D9CC000074A12 /* MBead.cpp in Sources */,

@@ -62,34 +62,30 @@ namespace chem {
     ///Basic monomer consisting of actin, formin, capping, and a virtual front/back
     class CMonomerBasic : public CMonomer {
         
-    private:
-        SpeciesFilament* _filament_species[1]; ///<array of filament species (just actin for now)
-        SpeciesFilament* _end_species[4]; ///<array of "end" species (front, back, formin, capping)
-        
     public:
         ///Constructor, initializes species container
-        CMonomerBasic(std::vector<SpeciesFilament*> species, Compartment* c);
+        CMonomerBasic(Compartment* c);
         
-        ///Destructor, removes all species and associated reactions from compartment
+        ///Destructor
         ~CMonomerBasic();
         
         ///Get a species
-        virtual SpeciesFilament* getActin() {return _filament_species[0];}
+        virtual SpeciesFilament* getActin() {return _species[0];}
         
-        virtual SpeciesFilament* getFront() {return _end_species[0];}
+        virtual SpeciesFilament* getFront() {return _species[0];}
         
-        virtual SpeciesFilament* getBack() {return _end_species[1];}
+        virtual SpeciesFilament* getBack() {return _species[1];}
         
-        virtual SpeciesFilament* getFormin() {return _end_species[2];}
+        virtual SpeciesFilament* getFormin() {return _species[2];}
         
-        virtual SpeciesFilament* getCapping() {return _end_species[3];}
+        virtual SpeciesFilament* getCapping() {return _species[3];}
         
         ///Look up species by name
         virtual Species* getSpeciesByName(std::string& name);
         
         
         ///Check if this monomer is valid
-        virtual bool checkSpecies(int sum)
+        bool checkSpecies(int sum)
         {
             return true;
             //            int currentSum = 0;
@@ -101,44 +97,42 @@ namespace chem {
         ///Print a species in this filament element
         virtual void print();
         
-        ///move all species (and associated reactions) in this element to another compartment
-        virtual void moveToCompartment(Compartment *c) {
-        }
-        
         ///Find active filament species
         ///@note return null if none
-        virtual Species* getActiveFilamentSpecies();
+        virtual SpeciesFilament* getActiveFilamentSpecies();
         
         ///Find active end species
         ///@note return null if none
-        virtual Species* getActiveEndSpecies();
+        virtual SpeciesFilament* getActiveEndSpecies();
     };
     
     ///Basic bound consisting of myosin, myosin-actin, and a virtual empty species
     class CBoundBasic : public CBound {
         
-    private:
-        SpeciesBound* _species[1]; ///<array of contained species
-        
     public:
-        CBoundBasic(std::vector<SpeciesBound*> species, Compartment* c);
+        CBoundBasic(Compartment* c);
         
-        ///Destructor, removes all species and associated reactions from compartment
+        ///Destructor
         ~CBoundBasic();
         
         ///Look up a species given a name
         virtual SpeciesBound* getEmpty() {return _species[0];}
         
-        ///Check if this monomer is valid
-        virtual bool checkSpecies(int sum);
-        
         ///Look up species by name
         virtual Species* getSpeciesByName(std::string& name);
         
+        ///Check if this monomer is valid
+        bool checkSpecies(int sum)
+        {
+            return true;
+            //        int currentSum = 0;
+            //        for(auto &s : _species)
+            //            currentSum += s->getN();
+            //        return currentSum = sum;
+        }
+        
         ///Print a species in this filament element
         virtual void print();
-        
-        virtual void moveToCompartment(Compartment* c) {}
     };
 
     

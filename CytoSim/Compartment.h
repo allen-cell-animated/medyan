@@ -187,6 +187,12 @@ namespace chem {
         /// @param s - species whose reactions should be removed
         virtual void removeInternalReactions (Species* s) {_internal_reactions.removeReactions(s);}
         
+        /// Remove a diffusion reaction
+        virtual void removeDiffusionReaction(ReactionBase *r) {_diffusion_reactions.removeReaction(r);}
+        
+        /// Remove an internal reaction
+        virtual void removeInternalReaction(ReactionBase *r) {_internal_reactions.removeReaction(r);}
+        
         /// Add a unique species pointer to this compartment
         Species* addSpeciesUnique (std::unique_ptr<Species> &&species, float diff_rate = -1.0)
         {
@@ -373,6 +379,19 @@ namespace chem {
         
         /// Gives the number of neighbors to this compartment
         size_t numberOfNeighbours() const {return _neighbours.size();}
+        
+        
+        ///Get the species container vector
+        SpeciesPtrContainerVector& speciesContainer() {return _species;}
+        const SpeciesPtrContainerVector& speciesContainer() const {return _species;}
+        
+        ///Get the internal reaction container vector
+        ReactionPtrContainerVector& internalReactionContainer() {return _internal_reactions;}
+        const ReactionPtrContainerVector& internalReactionContainer() const {return _internal_reactions;}
+        
+        ///Get the diffusion reaction container vector
+        ReactionPtrContainerVector& diffusionReactionContainer() {return _diffusion_reactions;}
+        const ReactionPtrContainerVector& diffusionReactionContainer() const {return _diffusion_reactions;}
         
         /// Get the vector list of neighbors to this compartment
         std::vector<Compartment*>& neighbours() {return _neighbours;}

@@ -50,6 +50,9 @@ namespace chem {
      *  std::string x = SpeciesNamesDB::Instance()->intToString(2); // then x should be "Arp2/3"
      *  @endcode
      *
+     * SpeciesNamesDB also has a function to generate a unique name given a string seed. This is particularly
+     * useful for when a filament species needs a unique name, say with the seed "Actin"
+     *
      */  
     class SpeciesNamesDB {
     private: 
@@ -58,6 +61,7 @@ namespace chem {
     private: 
         std::unordered_map<std::string,int> _map_string_int;
         std::vector<std::string> _vec_int_string;
+        unsigned long _num = 0; ///<used to generate unique names
     public:
         /// returns the unique instance of the singleton, which can be used to access the names DB
         static SpeciesNamesDB* Instance();
@@ -81,7 +85,18 @@ namespace chem {
             else
                 return mit->second;
         }
-        
+
+        ///Generate a unique name based on a seed name (just adds integer value to end of string)
+        std::string generateUniqueName(std::string name) {
+            
+            std::string uniqueName = name + std::to_string(_num);
+            
+            if(_map_string_int.find(uniqueName) != _map_string_int.end())
+                return uniqueName;
+            else
+                return name + std::to_string(++_num);
+        }
+
         /// Clear the contents of the database
         void clear() {
             _map_string_int.clear();

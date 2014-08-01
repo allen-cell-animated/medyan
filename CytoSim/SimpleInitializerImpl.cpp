@@ -27,7 +27,7 @@ namespace chem {
         std::vector<float> sides{100.0, 100.0, 100.0};
         cProto.setSides(sides.begin());
         
-        
+        ///initialize
         grid->initialize();
         grid->activateAll();
         grid->generateDiffusionReactions();
@@ -45,35 +45,24 @@ namespace chem {
         ///Add monomers
         for (int index = 0; index < maxlength; index++)
         {
-            ///Add species we want
-            SpeciesFilament *actin, *capping, *formin, *back, *front; SpeciesBound *empty;
-            
-            //polymer species
-            actin = c->addSpeciesFilament("Actin", 0, 1);
-            capping = c->addSpeciesFilament("Capping", 0, 1); formin = c->addSpeciesFilament("X-Formin", 0, 1);
-            
-            ///front and back
-            back = c->addSpeciesFilament("Back", 0, 1); front = c->addSpeciesFilament("Front", 0, 1);
-            
-            //empty
-            empty = c->addSpeciesBound("Empty", 0, 1);
+            ///add to cylinder
+            CMonomerBasic* m = new CMonomerBasic(c); cylinder->addCMonomer(m);
+            CBoundBasic* b = new CBoundBasic(c); cylinder->addCBound(b);
             
             //Set initial species
             if(index < length) {
-                actin->setN(1);
-                empty->setN(1);
+                m->getActin()->setN(1);
+                b->getEmpty()->setN(1);
             }
+            
             if((index == length - 1) && (length != maxlength)) {
                 if (std::find(species.begin(), species.end(), "X-Formin") != species.end())
-                    formin->setN(1);
-                else front->setN(1);
+                    m->getFormin()->setN(1);
+                else m->getFront()->setN(1);
             }
             
-            if(index == 0 && (parentFilament->numCSubFilaments() == 1)) back->setN(1);
-            
-            ///add to subfilament
-            cylinder->addCMonomer(new CMonomerBasic({actin, front, back, formin, capping}, c));
-            cylinder->addCBound(new CBoundBasic({empty}, c));
+            if(index == 0 && (parentFilament->numCSubFilaments() == 1)) m->getBack()->setN(1);
+
         }
         
 //        ///Callbacks needed
@@ -231,126 +220,58 @@ namespace chem {
     } 
         
     ///Constructor, initializes species container
-    CMonomerBasic::CMonomerBasic(std::vector<SpeciesFilament*> species, Compartment* c) : CMonomer(c)
+    CMonomerBasic::CMonomerBasic(Compartment* c)
     {
         ///Initialize member array of species
-        for(auto &s : species) {
-            std::string name = s->getName();
-            
-            ///Set up array
-            if(name == "Actin")
-                _filament_species[0] = s;
-            
-            else if(name == "Front")
-                _end_species[0] = s;
-            
-            else if(name == "Back")
-                _end_species[1] = s;
-            
-            else if(name == "X-Formin")
-                _end_species[2] = s;
-            
-            else if(name == "Capping")
-                _end_species[3] = s;
-            
-            else {}
-        }
-    }
-    ///Destructor, removes all species and associated reactions from compartment
-    CMonomerBasic::~CMonomerBasic()
-    {
-        for (auto &s : _filament_species)
-        {
-            _compartment->removeInternalReactions(s);
-            _compartment->removeSpecies(s);
-        }
+        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Actin"), 0, 1));
+        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Front"), 0, 1));
+        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Back"), 0, 1));
+        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Capping"), 0, 1));
+        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Formin"), 0, 1));
         
-        for(auto &s : _end_species)
-        {
-            _compartment->removeInternalReactions(s);
-            _compartment->removeSpecies(s);
-        }
     }
     
     ///Look up species by name
     Species* CMonomerBasic::getSpeciesByName(std::string& name)
     {
-        if(name == "Actin")
-            return _filament_species[0];
+        for (auto &s : _species)
+            if(s->getName() == name) return s;
         
-        else if(name == "Front")
-            return _end_species[0];
-        
-        else if(name == "Back")
-            return _end_species[1];
-        
-        else if(name == "X-Formin")
-            return _end_species[2];
-        
-        else if(name == "Capping")
-            return _end_species[3];
-        
-        else {return nullptr;}
+        return nullptr;
     }
     
     ///Find active filament species
     ///@note return null if none
-    Species* CMonomerBasic::getActiveFilamentSpecies() {
-        for (auto &s : _filament_species)
-            if(s->getN() == 1) return s;
+    SpeciesFilament* CMonomerBasic::getActiveFilamentSpecies() {
+        
+        auto itEnd = _species.begin() + 1;
+        
+        for (auto it = _species.begin(); it != itEnd; it++)
+            if((*it)->getN() == 1) return (*it);
         return nullptr;
     }
     
     ///Find active end species
     ///@note return null if none
-    Species* CMonomerBasic::getActiveEndSpecies() {
-        for (auto &s : _end_species)
-            if(s->getN() == 1) return s;
+    SpeciesFilament* CMonomerBasic::getActiveEndSpecies() {
+    
+        for (auto it = _species.begin() + 1; it != _species.end(); it++)
+            if((*it)->getN() == 1) return (*it);
         return nullptr;
     }
     
-    CBoundBasic::CBoundBasic(std::vector<SpeciesBound*> species, Compartment* c) : CBound(c)
+    CBoundBasic::CBoundBasic(Compartment* c)
     {
         ///Initialize member array of species
-        for(auto &s : species) {
-            std::string name = s->getName();
-            
-            ///Set up array
-            if(name == "Empty")
-                _species[0] = s;
-            
-            else {}
-            
-        }
+        _species.push_back(c->addSpeciesBound("Empty", 0, 1));
     }
-    
-    ///Destructor, removes all species and associated reactions from compartment
-    CBoundBasic::~CBoundBasic()
-    {
-        for (auto &s : _species)
-        {
-            _compartment->removeInternalReactions(s);
-            _compartment->removeSpecies(s);
-        }
-    }
-    
-    ///Check if this monomer is valid
-    bool CBoundBasic::checkSpecies(int sum)
-    {
-        int currentSum = 0;
-        for(auto &s : _species)
-            currentSum += s->getN();
-        return currentSum = sum;
-    }
-    
     
     ///Look up species by name
     Species* CBoundBasic::getSpeciesByName(std::string& name)
     {
-        if(name == "Empty")
-            return _species[0];
-
-        else {return nullptr;}
+        for (auto &s : _species)
+            if(s->getName() == name) return s;
+        return nullptr;
     }
     
     ///Print a species in this filament element

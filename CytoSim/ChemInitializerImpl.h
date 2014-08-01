@@ -14,6 +14,7 @@
 #include "MFilament.h"
 
 namespace chem {
+    class ReactionBase;
     class CompartmentGrid;
     class Compartment;
     class CCylinder;

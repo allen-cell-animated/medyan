@@ -24,29 +24,69 @@ namespace chem {
     class CCylinder : public Component {
         
     protected:
-        std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this sub filament
-        std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this sub filament
-        std::vector<ReactionBase*> _reactions;///< list of reactions associated with this subfilament
-        Compartment* _compartment; ///< compartment this CCylinder is in
+        std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder
+        std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this ccylinder
+        std::vector<ReactionBase*> _reactions;///< list of reactions associated with ccylinder
+        Compartment* _compartment; ///< compartment this ccylinder is in
         
     public:
         ///Default constructor, sets compartment
         CCylinder(Compartment* c) : _compartment(c) {}
         
-        ///Default destructor, explicitly removes monomers and bounds
+        
+        /// Copy constructor
+        /// @note This constructor will create a new ccylinder with different species and reactions
+        /// within the compartment that is chosen as a parameter to the constructor. The copied and
+        /// original ccylinders will not share reactions or species, but will be copied into a new compartment.
+        CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
+        {
+            ///copy all monomers, bounds
+            for(auto &m : rhs._monomers)
+                _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
+            for(auto &b : rhs._bounds)
+                _bounds.push_back(std::unique_ptr<CBound>(b->clone(c)));
+            
+            ///copy all reactions
+            for(auto &r: rhs._reactions) {
+                auto rClone = std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer()));
+                ReactionBase *R = _compartment->addInternalReactionUnique(rClone);
+                _reactions.push_back(R);
+            }
+        }
+        
+        /// Assignment is not allowed
+        CCylinder& operator=(CCylinder &rhs) = delete;
+        
+        ///Default destructor, explicitly removes monomers and bounds (including their species, rxns)
         ~CCylinder()
         {
+            ///Remove all reactions
+            for(auto &r: _reactions)
+                _compartment->removeInternalReaction(r);
+            
+            ///Remove all species
+            for(auto &m: _monomers)
+                for(auto &s : m->species())
+                    _compartment->removeSpecies(s);
+
+            for(auto &b : _bounds)
+                for(auto &s : b->species())
+                    _compartment->removeSpecies(s);
+            
             _monomers.clear();
             _bounds.clear();
+        }
+        
+        ///Clone, calls copy constructor
+        virtual CCylinder* clone(Compartment* c) {
+            return new CCylinder(*this, c);
         }
         
         ///get filament compartment
         Compartment* compartment() {return _compartment;}
         
         ///Add a monomer to this CCylinder
-        virtual void addCMonomer(CMonomer* monomer) {
-            _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));
-        }
+        virtual void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));}
         
         ///Add a bound to this CCylinder
         virtual void addCBound(CBound* bound) {_bounds.emplace_back(std::unique_ptr<CBound>(bound));}
@@ -64,7 +104,7 @@ namespace chem {
         
         ///Get list of reactions associated with this subfilament
         virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
-        
+         
         ///Update all reactions associated with this subfilament
         virtual void updateReactions()
         {
