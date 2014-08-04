@@ -88,9 +88,7 @@ namespace chem {
 
         ///Generate a unique name based on a seed name (just adds integer value to end of string)
         std::string generateUniqueName(std::string name) {
-            
             std::string uniqueName = name + std::to_string(_num);
-            
             if(_map_string_int.find(uniqueName) != _map_string_int.end())
                 return uniqueName;
             else
