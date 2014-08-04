@@ -27,7 +27,7 @@ private:
     
 public:
     ///Constructor and destructor
-    Cylinder(Filament* pf, Bead* firstBead);
+    Cylinder(Filament* pf, Bead* firstBead, bool extension = false);
     ~Cylinder();
     
     ///get mCylinder
@@ -35,6 +35,9 @@ public:
     
     ///get cCylinder
     CCylinder* getCCylinder() {return _cCylinder;}
+    
+    bool IfLast();
+    void SetLast(bool);
     
 };
 

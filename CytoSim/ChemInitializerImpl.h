@@ -34,7 +34,7 @@ namespace chem {
         ///Initializer, based on the given simulation
         ///@param length - starting length of the CCylinder initialized
         ///@param species - list of species to initialize in CCylinder
-        virtual CCylinder* createCCylinder(Compartment* c, std::vector<std::string> species, int length) = 0;
+        virtual CCylinder* createCCylinder(Compartment* c, CCylinder* lastCCylinder, bool extension) = 0;
         
         ///Remove a CCylinder, based on the given simulation
         virtual void removeCCylinder(CCylinder *cylinder) = 0;
@@ -45,17 +45,13 @@ namespace chem {
     ///REACTION CALLBACKS
     
     ///Extension callback
-    template<size_t NDIM>
     struct FilamentExtensionCallback {
         
         //members
         Filament* _filament;
-        std::vector<std::string> _species;
         
         ///Constructor, sets members
-        FilamentExtensionCallback(Filament* filament,
-                                  std::vector<std::string> species) :
-        _filament(filament), _species(species) {};
+        FilamentExtensionCallback(Filament* filament) : _filament(filament){};
         
         ///Callback
         void operator() (ReactionBase *r){
@@ -65,15 +61,13 @@ namespace chem {
     };
     
     ///Retraction callback
-    template<size_t NDIM>
     struct FilamentRetractionCallback {
         
         //members
         Filament* _filament;
         
         ///Constructor, sets members
-        FilamentRetractionCallback(Filament* filament) :
-        _filament(filament) {};
+        FilamentRetractionCallback(Filament* filament) : _filament(filament) {};
         
         ///Callback
         void operator() (ReactionBase *r){
@@ -83,14 +77,12 @@ namespace chem {
     
     
     ///General polymerization callback
-    template<size_t NDIM>
     struct FilamentPolyCallback {
         
         //members
         Filament* _filament;
         
-        FilamentPolyCallback(Filament* filament) :
-        _filament(filament) {};
+        FilamentPolyCallback(Filament* filament) : _filament(filament) {};
         
         //Callback
         void operator() (ReactionBase *r){
@@ -100,14 +92,12 @@ namespace chem {
     };
     
     ///General depolymerization callback
-    template<size_t NDIM>
     struct FilamentDepolyCallback {
         
         //members
         Filament* _filament;
         
-        FilamentDepolyCallback(Filament* filament) :
-        _filament(filament) {};
+        FilamentDepolyCallback(Filament* filament) : _filament(filament) {};
         
         //Callback
         void operator() (ReactionBase *r){

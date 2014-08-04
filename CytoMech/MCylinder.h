@@ -29,7 +29,7 @@ private:
     double _kBend;  //< Local bending constant, which describes bendinig interaction between current and PREVIOUS cylinders;
     double _kTwist;
     
-    bool _ifLast;
+
 
     std::vector<MCylinder*> _NeighbourList;
 
@@ -40,8 +40,7 @@ public:
     MCylinder(Filament* pf, Bead* firstBead);
     virtual ~MCylinder() {}
     
-    bool IfLast();
-    void SetLast(bool);
+   
     void SetSecondBead(Bead *pb);
     
     Bead* GetFirstBead();
@@ -62,7 +61,7 @@ public:
     void SetTwistingConst(double k);
     double GetTwistingConst();
     
-    void DeleteBead(Bead*) {std::cout<<"not implemented"<<std::endl;}
+//  void DeleteBead(Bead*) {std::cout<<"not implemented"<<std::endl;}
     
     
 };

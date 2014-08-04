@@ -10,7 +10,6 @@
 #define __Cyto__ChemInitializer__
 
 #include <iostream>
-#include <vector>
 
 namespace chem {
     
@@ -22,13 +21,13 @@ namespace chem {
     class ReactionBase;
     
     ///Key for initialization of ChemInitializer
-    class ChemInitializerInitKey { friend class ChemController; ChemInitializerInitKey(){} ~ChemInitializerInitKey(){} };
+    class ChemInitializerInitKey { friend class CController; ChemInitializerInitKey(){}; ~ChemInitializerInitKey(){}; };
     
     ///Key for the initialization of grid
-    class ChemInitializerGridKey { friend class ChemController; ChemInitializerGridKey(){} ~ChemInitializerGridKey(){} };
+    class ChemInitializerGridKey { friend class CController; ChemInitializerGridKey(){}; ~ChemInitializerGridKey(){}; };
     
     ///Key for the creation and destruction of CCylinders
-    class ChemInitializerCylinderKey { friend class Filament; ChemInitializerCylinderKey(){} ~ChemInitializerCylinderKey(){} };
+    class ChemInitializerCylinderKey { friend class Filament; ChemInitializerCylinderKey(){}; ~ChemInitializerCylinderKey(){}; };
     
     /// ChemInitializer class is used for initailizing chemical reactions based on a specific system
     /*!
@@ -47,12 +46,11 @@ namespace chem {
         static void initializeGrid(ChemInitializerGridKey k, CompartmentGrid *grid);
         
         ///Initializer, based on the given simulation
-        ///@param length - starting length of the CCylinderinitialized
+        ///@param length - starting length of the CCylinder initialized
         ///@param species - list of species to initialize in CCylinder
         static CCylinder* createCCylinder(ChemInitializerCylinderKey k,
                                    Compartment* c,
-                                   std::vector<std::string> species,
-                                   int length);
+                                   CCylinder* lastCCylinder, bool extension = false);
         
         ///Remove a CCylinder, based on the given simulation
         static void removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder);

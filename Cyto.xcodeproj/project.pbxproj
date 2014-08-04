@@ -37,7 +37,7 @@
 		F7358491198987C60026E1B6 /* MLinkerDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735848F198987C60026E1B6 /* MLinkerDB.cpp */; };
 		F7358493198988EF0026E1B6 /* MMotorGhostDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358492198988EF0026E1B6 /* MMotorGhostDB.cpp */; };
 		F7358494198988EF0026E1B6 /* MMotorGhostDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358492198988EF0026E1B6 /* MMotorGhostDB.cpp */; };
-		F735849A198990E60026E1B6 /* ChemController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* ChemController.cpp */; };
+		F735849A198990E60026E1B6 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F737B37F160961B1001722DD /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
 		F737B380160961B1001722DD /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F737B37D160961B1001722DD /* ReactionBase.cpp */; };
 		F737B381160961B1001722DD /* ReactionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F737B37E160961B1001722DD /* ReactionBase.h */; };
@@ -49,6 +49,7 @@
 		F763ED231548FFED0069DA61 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
 		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F763ED291548FFED0069DA61 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
+		F76C690C198FEC6800760D20 /* MController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C690A198FEC6800760D20 /* MController.cpp */; };
 		F771ADBF15655DBA0010B123 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F771ADC015655DBA0010B123 /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F771ADC115655DBA0010B123 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
@@ -72,8 +73,7 @@
 		F7954CA0197D99FC00074A12 /* MLinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C86197D99FC00074A12 /* MLinkerStretching.cpp */; };
 		F7954CA1197D99FC00074A12 /* MMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C87197D99FC00074A12 /* MMotorGhost.cpp */; };
 		F7954CA2197D99FC00074A12 /* MMotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */; };
-		F7954CA3197D99FC00074A12 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8B197D99FC00074A12 /* MNetwork.cpp */; };
-		F7954CA4197D99FC00074A12 /* MSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8D197D99FC00074A12 /* MSystem.cpp */; };
+		F7954CA4197D99FC00074A12 /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8D197D99FC00074A12 /* SubSystem.cpp */; };
 		F7954CA5197D99FC00074A12 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */; };
 		F7954CA6197D99FC00074A12 /* MVolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */; };
 		F7954CA7197D99FC00074A12 /* MVolumInter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C92197D99FC00074A12 /* MVolumInter.cpp */; };
@@ -105,8 +105,7 @@
 		F7954CC5197D9CC000074A12 /* MLinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C86197D99FC00074A12 /* MLinkerStretching.cpp */; };
 		F7954CC6197D9CC000074A12 /* MMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C87197D99FC00074A12 /* MMotorGhost.cpp */; };
 		F7954CC7197D9CC000074A12 /* MMotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */; };
-		F7954CC8197D9CC000074A12 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8B197D99FC00074A12 /* MNetwork.cpp */; };
-		F7954CC9197D9CC000074A12 /* MSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8D197D99FC00074A12 /* MSystem.cpp */; };
+		F7954CC9197D9CC000074A12 /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C8D197D99FC00074A12 /* SubSystem.cpp */; };
 		F7954CCA197D9CC000074A12 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */; };
 		F7954CCB197D9CC000074A12 /* MVolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */; };
 		F7954CCC197D9CC000074A12 /* MVolumInter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7954C92197D99FC00074A12 /* MVolumInter.cpp */; };
@@ -126,7 +125,6 @@
 		F7A94247198AB05400086614 /* Cylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A94245198AB05400086614 /* Cylinder.cpp */; };
 		F7B99A7015EFBBE8004A245A /* SpeciesContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */; };
 		F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
-		F7D75C3C19756EF600324C41 /* CMembrane.h in Headers */ = {isa = PBXBuildFile; fileRef = F7D75C3819756EF600324C41 /* CMembrane.h */; };
 		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7E3DB641579A0F9002EAF2C /* example_kostya.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7E3DB5715799F85002EAF2C /* example_kostya.cpp */; };
 		F7F3681E1575C743006727F7 /* Composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7F3681D1575C743006727F7 /* Composite.cpp */; };
@@ -212,7 +210,6 @@
 		F71E973D1565A79A002BDF16 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
 		F71E97411565B01A002BDF16 /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
 		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
-		F72BB383196F14B800D0DBEF /* FilopodiaCSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilopodiaCSystem.cpp; sourceTree = "<group>"; };
 		F72EC62F19782604007DA75F /* CFilamentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilamentElement.h; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
@@ -226,8 +223,8 @@
 		F735848C198986580026E1B6 /* MFilamentDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MFilamentDB.cpp; sourceTree = "<group>"; };
 		F735848F198987C60026E1B6 /* MLinkerDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinkerDB.cpp; sourceTree = "<group>"; };
 		F7358492198988EF0026E1B6 /* MMotorGhostDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostDB.cpp; sourceTree = "<group>"; };
-		F7358498198990E60026E1B6 /* ChemController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemController.cpp; sourceTree = "<group>"; };
-		F7358499198990E60026E1B6 /* ChemController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemController.h; sourceTree = "<group>"; };
+		F7358498198990E60026E1B6 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
+		F7358499198990E60026E1B6 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		F737B37D160961B1001722DD /* ReactionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionBase.cpp; sourceTree = "<group>"; };
 		F737B37E160961B1001722DD /* ReactionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionBase.h; sourceTree = "<group>"; };
 		F7382CCD156BE2DA0022F97B /* RSpecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSpecies.h; sourceTree = "<group>"; };
@@ -244,10 +241,11 @@
 		F763ED1C1548FFED0069DA61 /* Reaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reaction.h; sourceTree = "<group>"; };
 		F763ED1F1548FFED0069DA61 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
 		F763ED201548FFED0069DA61 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
-		F763ED221548FFED0069DA61 /* SystemOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemOld.h; sourceTree = "<group>"; };
 		F7672B5915B1B278000D412B /* test_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie.cpp; sourceTree = "<group>"; };
 		F7672B5C15B1B4F1000D412B /* ChemSimImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
 		F7672B5D15B1CE9A000D412B /* ChemRNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemRNode.h; sourceTree = "<group>"; };
+		F76C690A198FEC6800760D20 /* MController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MController.cpp; sourceTree = "<group>"; };
+		F76C690B198FEC6800760D20 /* MController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MController.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
@@ -286,10 +284,8 @@
 		F7954C88197D99FC00074A12 /* MMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhost.h; sourceTree = "<group>"; };
 		F7954C89197D99FC00074A12 /* MMotorGhostDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhostDB.h; sourceTree = "<group>"; };
 		F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostStretching.cpp; sourceTree = "<group>"; };
-		F7954C8B197D99FC00074A12 /* MNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MNetwork.cpp; sourceTree = "<group>"; };
-		F7954C8C197D99FC00074A12 /* MNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MNetwork.h; sourceTree = "<group>"; };
-		F7954C8D197D99FC00074A12 /* MSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSystem.cpp; sourceTree = "<group>"; };
-		F7954C8E197D99FC00074A12 /* MSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSystem.h; sourceTree = "<group>"; };
+		F7954C8D197D99FC00074A12 /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubSystem.cpp; sourceTree = "<group>"; };
+		F7954C8E197D99FC00074A12 /* SubSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubSystem.h; sourceTree = "<group>"; };
 		F7954C8F197D99FC00074A12 /* MVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVolRepulsion.h; sourceTree = "<group>"; };
 		F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionEnergy.cpp; sourceTree = "<group>"; };
 		F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionForce.cpp; sourceTree = "<group>"; };
@@ -310,8 +306,6 @@
 		F7BCA5B615F17EC800D690E4 /* ReactionContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactionContainer.h; sourceTree = "<group>"; };
 		F7BDDE83155231CE0053817E /* ChemSim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSim.h; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* CytoSim-TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "CytoSim-TestSuite"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7D75C3719756EF600324C41 /* CMembrane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CMembrane.cpp; sourceTree = "<group>"; };
-		F7D75C3819756EF600324C41 /* CMembrane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMembrane.h; sourceTree = "<group>"; };
 		F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
 		F7DB0B2215D81A55009A8650 /* test_nrm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
 		F7E3DB5715799F85002EAF2C /* example_kostya.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_kostya.cpp; sourceTree = "<group>"; };
@@ -470,10 +464,6 @@
 				F763ED201548FFED0069DA61 /* Species.h */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F7E432D015FEDD3200C8EA50 /* Signaling.h */,
-				F763ED221548FFED0069DA61 /* SystemOld.h */,
-				F72BB383196F14B800D0DBEF /* FilopodiaCSystem.cpp */,
-				F7D75C3719756EF600324C41 /* CMembrane.cpp */,
-				F7D75C3819756EF600324C41 /* CMembrane.h */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
@@ -485,10 +475,12 @@
 		F7954C4A197D98BE00074A12 /* Cyto */ = {
 			isa = PBXGroup;
 			children = (
+				F76C690A198FEC6800760D20 /* MController.cpp */,
+				F76C690B198FEC6800760D20 /* MController.h */,
 				F7A94245198AB05400086614 /* Cylinder.cpp */,
 				F7A94246198AB05400086614 /* Cylinder.h */,
-				F7358498198990E60026E1B6 /* ChemController.cpp */,
-				F7358499198990E60026E1B6 /* ChemController.h */,
+				F7358498198990E60026E1B6 /* CController.cpp */,
+				F7358499198990E60026E1B6 /* CController.h */,
 				F7954C4B197D98BE00074A12 /* Cyto.cpp */,
 			);
 			path = Cyto;
@@ -532,10 +524,8 @@
 				F7954C89197D99FC00074A12 /* MMotorGhostDB.h */,
 				F7358492198988EF0026E1B6 /* MMotorGhostDB.cpp */,
 				F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */,
-				F7954C8B197D99FC00074A12 /* MNetwork.cpp */,
-				F7954C8C197D99FC00074A12 /* MNetwork.h */,
-				F7954C8D197D99FC00074A12 /* MSystem.cpp */,
-				F7954C8E197D99FC00074A12 /* MSystem.h */,
+				F7954C8D197D99FC00074A12 /* SubSystem.cpp */,
+				F7954C8E197D99FC00074A12 /* SubSystem.h */,
 				F7954C8F197D99FC00074A12 /* MVolRepulsion.h */,
 				F7954C90197D99FC00074A12 /* MVolRepulsionEnergy.cpp */,
 				F7954C91197D99FC00074A12 /* MVolRepulsionForce.cpp */,
@@ -570,7 +560,6 @@
 				F72EC63319782604007DA75F /* CFilamentElement.h in Headers */,
 				F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */,
 				F73584751989435F0026E1B6 /* ChemInitializer.h in Headers */,
-				F7D75C3C19756EF600324C41 /* CMembrane.h in Headers */,
 				F737B381160961B1001722DD /* ReactionBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -817,11 +806,12 @@
 				F7954CAF197D9CC000074A12 /* Component.cpp in Sources */,
 				F7358487198980DC0026E1B6 /* MBeadDB.cpp in Sources */,
 				F7954CB0197D9CC000074A12 /* Composite.cpp in Sources */,
+				F76C690C198FEC6800760D20 /* MController.cpp in Sources */,
 				F7954CB1197D9CC000074A12 /* Reaction.cpp in Sources */,
 				F7954CB2197D9CC000074A12 /* ReactionBase.cpp in Sources */,
 				F7954CB3197D9CC000074A12 /* RSpecies.cpp in Sources */,
 				F7954CB4197D9CC000074A12 /* Species.cpp in Sources */,
-				F735849A198990E60026E1B6 /* ChemController.cpp in Sources */,
+				F735849A198990E60026E1B6 /* CController.cpp in Sources */,
 				F735848A198982AB0026E1B6 /* MCylinderDB.cpp in Sources */,
 				F7954CB9197D9CC000074A12 /* MathFunctions.cpp in Sources */,
 				F7954CBA197D9CC000074A12 /* MBead.cpp in Sources */,
@@ -840,8 +830,7 @@
 				F7954CC5197D9CC000074A12 /* MLinkerStretching.cpp in Sources */,
 				F7954CC6197D9CC000074A12 /* MMotorGhost.cpp in Sources */,
 				F7954CC7197D9CC000074A12 /* MMotorGhostStretching.cpp in Sources */,
-				F7954CC8197D9CC000074A12 /* MNetwork.cpp in Sources */,
-				F7954CC9197D9CC000074A12 /* MSystem.cpp in Sources */,
+				F7954CC9197D9CC000074A12 /* SubSystem.cpp in Sources */,
 				F7954CCA197D9CC000074A12 /* MVolRepulsionEnergy.cpp in Sources */,
 				F7954CCB197D9CC000074A12 /* MVolRepulsionForce.cpp in Sources */,
 				F7954CCC197D9CC000074A12 /* MVolumInter.cpp in Sources */,
@@ -854,13 +843,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7954CA3197D99FC00074A12 /* MNetwork.cpp in Sources */,
 				F7358494198988EF0026E1B6 /* MMotorGhostDB.cpp in Sources */,
 				F7358488198980DC0026E1B6 /* MBeadDB.cpp in Sources */,
 				F7954C9B197D99FC00074A12 /* MFilament.cpp in Sources */,
 				F7954CA0197D99FC00074A12 /* MLinkerStretching.cpp in Sources */,
 				F7954C96197D99FC00074A12 /* MCGsolver.cpp in Sources */,
-				F7954CA4197D99FC00074A12 /* MSystem.cpp in Sources */,
+				F7954CA4197D99FC00074A12 /* SubSystem.cpp in Sources */,
 				F7954C9F197D99FC00074A12 /* MLinker.cpp in Sources */,
 				F7954C99197D99FC00074A12 /* MCylinder.cpp in Sources */,
 				F7954C9C197D99FC00074A12 /* MFilamentBending.cpp in Sources */,

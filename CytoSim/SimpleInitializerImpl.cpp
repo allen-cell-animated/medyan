@@ -20,8 +20,6 @@ namespace chem {
         
         ///Add species
         cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
-        cProto.setDiffusionRate(cProto.addSpecies("Capping", 5),_diffusion_rate);
-        cProto.setDiffusionRate(cProto.addSpecies("X-Formin", 5),_diffusion_rate);
         
         ///Set side length
         std::vector<float> sides{100.0, 100.0, 100.0};
@@ -36,65 +34,65 @@ namespace chem {
     }
     
     ///Initializer, inits a cylinder to have actin, virtual back/front, and formin/capping caps.
-    CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, std::vector<std::string> species, int length)
+    CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* lastCCylinder, bool extension)
     {
+        
+        ///maxlength is same length as mcylinder
         int maxlength = L / monomer_size;
+        
+        ///Set length
+        int length;
+        if(extension) length = 1; else length = maxlength;
         
         CCylinder* cylinder = new CCylinder(c);
         
+        ///remove front from last ccylinder
+        if(lastCCylinder != nullptr && !extension) {
+            auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
+            if(front != nullptr) front->setN(0);
+        }
+        else if(extension) {
+            auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
+            front->getRSpecies().down();
+        }
+
         ///Add monomers
         for (int index = 0; index < maxlength; index++)
         {
             ///add to cylinder
             CMonomerBasic* m = new CMonomerBasic(c); cylinder->addCMonomer(m);
-            CBoundBasic* b = new CBoundBasic(c); cylinder->addCBound(b);
             
             //Set initial species
             if(index < length) {
                 m->getActin()->setN(1);
-                b->getEmpty()->setN(1);
             }
             
-            if((index == length - 1) && (length != maxlength)) {
-                if (std::find(species.begin(), species.end(), "X-Formin") != species.end())
-                    m->getFormin()->setN(1);
-                else m->getFront()->setN(1);
+            if(index == length - 1) {
+                m->getFront()->setN(1);
             }
             
-            if(index == 0 && (parentFilament->numCSubFilaments() == 1)) m->getBack()->setN(1);
+            if(index == 0 && lastCCylinder == nullptr) m->getBack()->setN(1);
 
         }
+        Filament* parentFilament = nullptr;
         
-//        ///Callbacks needed
-//        auto polyCallback =
-//        CFilamentPolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
-//        
-//        auto depolyCallback =
-//        CFilamentDepolyCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
-//        
-//        auto extensionCallback =
-//        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-//                                         parentFilament, {"Actin"});
-//        auto extensionCallback2 =
-//        CFilamentExtensionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem,
-//                                         parentFilament, {"Actin", "Formin"});
-//        auto retractionCallback =
-//        CFilamentRetractionCallback<NDIM>(CFilamentInitializer<NDIM>::_csystem, parentFilament);
+        ///Callbacks needed
+        auto polyCallback = FilamentPolyCallback(parentFilament);
+        auto depolyCallback = FilamentDepolyCallback(parentFilament);
+        
+        auto extensionCallback = FilamentExtensionCallback(parentFilament);
+        auto retractionCallback = FilamentRetractionCallback(parentFilament);
         
         
         //Look up diffusing species in this compartment
         Species* actinDiffusing = c->findSpeciesDiffusingByName("Actin");
-        Species* cappingDiffusing = c->findSpeciesDiffusingByName("Capping");
-        Species* forminDiffusing = c->findSpeciesDiffusingByName("X-Formin");
         
         ReactionBase *rPoly, *rDepoly;
         
         ///Loop through all spots in cylinder, add poly reactions
         for (int index = 0; index < maxlength; index++) {
             
-            ///Monomer and bounds at current index
-            CBoundBasic *b2 = static_cast<CBoundBasic*>(cylinder->getCBound(index+1));
-            
+            ///Monomer and bounds at current index     
             CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
             CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index+1));
             
@@ -107,73 +105,27 @@ namespace chem {
             ///Typical case
             else {
                 ///Add basic polymerization reactions
-                rPoly = c->addInternal<Reaction,2,3>({m1->getFront(), actinDiffusing, m2->getActin(),
-                    m2->getFront(), b2->getEmpty()}, _k_on_plus);
+                rPoly = c->addInternal<Reaction,2,2>({m1->getFront(), actinDiffusing,
+                                                      m2->getActin(), m2->getFront()}, _k_on_plus);
                 boost::signals2::shared_connection_block
                 rcb1(rPoly->connect(polyCallback,false));
             }
             
             rPoly->setAsPolymerizationReaction();
             cylinder->addReaction(rPoly);
-            
-            ///add capping polymerization and depolymerization reactions (+)
-            rPoly = c->addInternal<Reaction,2,1>({cappingDiffusing, m1->getFront(),
-                m1->getCapping()}, _k_capping_on_plus);
-            
-            rDepoly = c->addInternal<Reaction,1,2>({m1->getCapping(), m1->getFront(),
-                cappingDiffusing}, _k_capping_off_plus);
-            
-            rPoly->setAsPolymerizationReaction();
-            cylinder->addReaction(rPoly);
-            cylinder->addReaction(rDepoly);
-            
-            ///add formin polymerization and depolymerization reactions (+)
-            
-            rPoly = c->addInternal<Reaction,2,1>({forminDiffusing, m1->getFront(),
-                m1->getFormin()}, _k_formin_on_plus);
-            
-            rDepoly = c->addInternal<Reaction,1,2>({m1->getFormin(), m1->getFront(),
-                forminDiffusing}, _k_formin_off_plus);
-            
-            rPoly->setAsPolymerizationReaction();
-            cylinder->addReaction(rPoly);
-            cylinder->addReaction(rDepoly);
-            
-            ///add accelerated polymerization of actin with anti-cappped end
-            if (index < maxlength - 1) {
-                rPoly =
-                c->addInternal<Reaction,2,3>({actinDiffusing, m1->getFormin(), m2->getActin(),
-                    m2->getFormin(), b2->getEmpty()}, _k_accel_on_plus);
-                
-                boost::signals2::shared_connection_block
-                rcb(rPoly->connect(polyCallback, false));
-            }
-            ///extension callback
-            else {
-                rPoly = c->addInternal<Reaction,2,0>({m1->getFormin(), actinDiffusing},
-                                                     _k_accel_on_plus);
-                
-                boost::signals2::shared_connection_block
-                rcb(rPoly->connect(extensionCallback2,false));
-            }
-            
-            rPoly->setAsPolymerizationReaction();
-            cylinder->addReaction(rPoly);
-        
         }
+        
         ///loop through all spots in subfilament, add depoly reactions
         for (int index = maxlength - 1; index >= 0; index--) {
             
             ///Monomer and bounds at current index
-            //CBoundBasic *b1 = static_cast<CBoundBasic*>(subf->getCBound(index-1));
-            CBoundBasic *b2 = static_cast<CBoundBasic*>(cylinder->getCBound(index));
             
             CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
             CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
             
             ///Retraction callback
             if(index == 0) {
-                rDepoly = c->addInternal<Reaction,3,0>({m2->getFront(), m2->getActin(), b2->getEmpty()},
+                rDepoly = c->addInternal<Reaction,2,0>({m2->getFront(), m2->getActin()},
                                                        _k_off_plus);
                 boost::signals2::shared_connection_block
                 rcb(rDepoly->connect(retractionCallback,false));
@@ -182,8 +134,8 @@ namespace chem {
             ///Typical case
             else {
                 /// add basic depolymerization reactions
-                rDepoly = c->addInternal<Reaction,3,2>({m2->getFront(), m2->getActin(), b2->getEmpty(),
-                    m1->getFront(), actinDiffusing}, _k_off_plus);
+                rDepoly = c->addInternal<Reaction,2,2>({m2->getFront(), m2->getActin(),
+                                                        m1->getFront(), actinDiffusing}, _k_off_plus);
                 boost::signals2::shared_connection_block
                 rcb(rDepoly->connect(depolyCallback,false));
             }
@@ -226,16 +178,15 @@ namespace chem {
         _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Actin"), 0, 1));
         _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Front"), 0, 1));
         _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Back"), 0, 1));
-        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Capping"), 0, 1));
-        _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Formin"), 0, 1));
         
     }
     
     ///Look up species by name
     Species* CMonomerBasic::getSpeciesByName(std::string& name)
     {
-        for (auto &s : _species)
-            if(s->getName() == name) return s;
+        for (auto &s : _species) {
+            if(name.find(s->getName()) != std::string::npos) return s;
+        }
         
         return nullptr;
     }
@@ -259,6 +210,14 @@ namespace chem {
             if((*it)->getN() == 1) return (*it);
         return nullptr;
     }
+    
+    ///Print a species in this filament element
+    void CMonomerBasic::print()
+    {
+        for (auto &s : _species)
+            if(s->getN() == 1) std::cout << s->getName().at(0);
+    }
+    
     
     CBoundBasic::CBoundBasic(Compartment* c)
     {

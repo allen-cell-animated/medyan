@@ -32,15 +32,6 @@ namespace chem {
         float _k_off_plus = 1.4;
         float _k_off_minus = 1.4;
         
-        //capping
-        float _k_capping_on_plus = 50.0;
-        float _k_capping_off_plus = 0.06;
-        
-        //formin
-        float _k_formin_on_plus = 10.0;
-        float _k_formin_off_plus = 1.4;
-        float _k_accel_on_plus = 100.0;
-        
         //Diffusion rate
         float _diffusion_rate = 2000.0;
         
@@ -52,7 +43,7 @@ namespace chem {
         ///Initializer
         ///@param length - starting length of the CCylinder initialized
         ///@param species - list of species to initialize in CCylinder
-        virtual CCylinder* createCCylinder(Compartment* c, std::vector<std::string> species, int length);
+        virtual CCylinder* createCCylinder(Compartment* c, CCylinder* lastCCylinder, bool extension);
         
         ///Remove a CCylinder
         virtual void removeCCylinder(CCylinder *cylinder);
@@ -66,8 +57,29 @@ namespace chem {
         ///Constructor, initializes species container
         CMonomerBasic(Compartment* c);
         
+        ///Copy constructor, calls base class
+        CMonomerBasic(const CMonomerBasic &rhs, Compartment* c) : CMonomer(rhs, c) {};
+        
         ///Destructor
-        ~CMonomerBasic();
+        ~CMonomerBasic() {};
+        
+        /// Move constructor
+        CMonomerBasic (CMonomerBasic &&rhs) noexcept : CMonomer(std::move(rhs)) {
+        }
+        
+        /// Regular Assignment
+        CMonomerBasic& operator=(const CMonomerBasic& rhs) = delete;
+        
+        /// Move assignment
+        CMonomerBasic& operator=(CMonomerBasic&& rhs)
+        {
+            CMonomer::operator=(std::move(rhs));
+            return *this;
+        }
+        
+        virtual CMonomerBasic* clone(Compartment* c) {
+            return new CMonomerBasic(*this, c);
+        }
         
         ///Get a species
         virtual SpeciesFilament* getActin() {return _species[0];}
@@ -76,9 +88,6 @@ namespace chem {
         
         virtual SpeciesFilament* getBack() {return _species[1];}
         
-        virtual SpeciesFilament* getFormin() {return _species[2];}
-        
-        virtual SpeciesFilament* getCapping() {return _species[3];}
         
         ///Look up species by name
         virtual Species* getSpeciesByName(std::string& name);
@@ -110,11 +119,34 @@ namespace chem {
     class CBoundBasic : public CBound {
         
     public:
+        ///Constructor, initializes species container
         CBoundBasic(Compartment* c);
         
-        ///Destructor
-        ~CBoundBasic();
+        ///Copy constructor, calls base class
+        CBoundBasic(const CBoundBasic &rhs, Compartment* c) : CBound(rhs, c) {};
         
+        ///Destructor
+        ~CBoundBasic() {};
+        
+        
+        /// Move constructor
+        CBoundBasic (CBoundBasic &&rhs) noexcept : CBound(std::move(rhs)) {
+        }
+        
+        /// Regular Assignment
+        CBoundBasic& operator=(const CBoundBasic& rhs) = delete;
+        
+        /// Move assignment
+        CBoundBasic& operator=(CBoundBasic&& rhs)
+        {
+            CBound::operator=(std::move(rhs));
+            return *this;
+        }
+        
+        virtual CBoundBasic* clone(Compartment* c) {
+            return new CBoundBasic(*this, c);
+        }
+
         ///Look up a species given a name
         virtual SpeciesBound* getEmpty() {return _species[0];}
         

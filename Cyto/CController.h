@@ -1,13 +1,13 @@
 //
-//  ChemController.h
+//  CController.h
 //  Cyto
 //
 //  Created by James Komianos on 7/30/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __Cyto__ChemController__
-#define __Cyto__ChemController__
+#ifndef __Cyto__CController__
+#define __Cyto__CController__
 
 #include <iostream>
 #include "ChemSim.h"
@@ -21,7 +21,7 @@
 namespace chem {
 
 
-    ///ChemController class is used to intialize, control, and run the chemical components of a simulation
+    ///CController class is used to intialize, control, and run the chemical components of a simulation
     
     /*!
      *  ChemController is a class used by the SubSystem class to instantiate, control, and run the chemical
@@ -32,7 +32,7 @@ namespace chem {
      *  The controller initializes all chemical singletons used, including ChemSim and ChemInitializer,
      *  to the correct implementations, given that they are implemented.
      */
-    class ChemController {
+    class CController {
        
         ///Initialize the chemical system. MUST BE CALLED BEFORE RUN!
         
@@ -119,4 +119,4 @@ namespace chem {
 
 
 
-#endif /* defined(__Cyto__ChemController__) */
+#endif /* defined(__Cyto__CController__) */

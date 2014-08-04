@@ -60,7 +60,7 @@ namespace chem {
             for(auto &s: rhs._species) {
                 SpeciesFilament* sNew = s->clone();
                 c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-                _species.push_back(sNew)
+                _species.push_back(sNew);
             }
         }
         
@@ -80,7 +80,7 @@ namespace chem {
         virtual ~CMonomer () {}
         
         ///Clone, calls copy constructor
-        virtual CMonomer* clone(Compartment* c) { return new CMonomer(*this, c); }
+        virtual CMonomer* clone(Compartment* c) = 0;
         
         ///Get the vector of species
         std::vector<SpeciesFilament*>& species() {return _species;}
@@ -90,6 +90,7 @@ namespace chem {
         
         ///Get active end species from this CMonomer
         virtual SpeciesFilament* getActiveEndSpecies() = 0;
+
         
     };
     
@@ -111,7 +112,7 @@ namespace chem {
             for(auto &s: rhs._species) {
                 SpeciesBound* sNew = s->clone();
                 c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-                _species.push_back(sNew)
+                _species.push_back(sNew);
             }
         }
         
@@ -130,7 +131,7 @@ namespace chem {
         virtual ~CBound () {}
         
         ///Clone, calls copy constructor
-        virtual CBound* clone(Compartment* c) { return new CBound(*this, c); }
+        virtual CBound* clone(Compartment* c) = 0;
         
         ///Get the vector of species
         std::vector<SpeciesBound*>& species() {return _species;}

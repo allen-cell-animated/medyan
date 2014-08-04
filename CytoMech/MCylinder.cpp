@@ -30,13 +30,6 @@ MCylinder::MCylinder(Filament* pf, Bead* pb){
     _NeighbourList.assign (0, NULL);
 }
 
-bool MCylinder::IfLast(){
-    if (_ifLast) return true;
-    
-    return false;
-}
-
-void MCylinder::SetLast(bool b){ _ifLast = b;}
 
 void MCylinder::SetSecondBead(Bead *pb) {_pSecond = pb;}
 

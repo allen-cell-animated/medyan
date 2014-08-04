@@ -19,13 +19,13 @@ namespace chem {
     class CompartmentGrid;
 
     ///Key for initialization of ChemSim
-    class ChemSimInitKey { friend class ChemController; ChemSimInitKey(){} ~ChemSimInitKey() {} };
+    class ChemSimInitKey { friend class CController; ChemSimInitKey(){} ~ChemSimInitKey() {} };
 
     ///Key for adding and removing reactions
     class ChemSimReactionKey {friend class CCylinder; friend class Compartment; ChemSimReactionKey(){}; ~ChemSimReactionKey(){}; };
         
     ///Key for running the ChemSim
-    class ChemSimRunKey {friend class ChemController; ChemSimRunKey(){} ~ChemSimRunKey() {} };
+    class ChemSimRunKey {friend class CController; ChemSimRunKey(){} ~ChemSimRunKey() {} };
         
         
     /// ChemSim is used to manage running a network of chemical reactions.

@@ -14,6 +14,8 @@
 #include <deque>
 #include "Mcommon.h"
 #include "MComposite.h"
+#include "MBeadDB.h"
+#include "MCylinderDB.h"
 #include <math.h>
 
 using namespace chem;
@@ -67,6 +69,8 @@ public:
     void PolymerizeBack(std::vector<double> coordonates );
     
     void DeleteBead(Bead*);
+    
+    Cylinder* getLastCylinder() {return _pLastCylinder;}
     
     
     //just for example, will rewrite this function, so it not returns anything

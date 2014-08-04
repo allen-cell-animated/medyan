@@ -14,6 +14,7 @@
 #include "CFilamentElement.h"
 
 namespace chem {
+    class ChemSimReactionKey;
     
     /// CCylinder class holds all Monomers and Bounds
     /*! 
@@ -48,8 +49,7 @@ namespace chem {
             
             ///copy all reactions
             for(auto &r: rhs._reactions) {
-                auto rClone = std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer()));
-                ReactionBase *R = _compartment->addInternalReactionUnique(rClone);
+                ReactionBase *R = _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer())));
                 _reactions.push_back(R);
             }
         }
@@ -99,13 +99,20 @@ namespace chem {
         ///@note no check on index
         virtual CBound* getCBound(int index) {return _bounds[index].get();}
         
-        ///Add a filament reaction to this subfilament
+        ///Add a filament reaction to this CCylinder
         virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
         
-        ///Get list of reactions associated with this subfilament
+        ///Get list of reactions associated with this CCylinder
         virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
-         
-        ///Update all reactions associated with this subfilament
+        
+        ///Add all reactions associated with this CCylinder
+        virtual void addReactions()
+        {
+            for (auto &r: _reactions)
+                ChemSim::addReaction(ChemSimReactionKey(), r);
+        }
+        
+        ///Update all reactions associated with this CCylinder
         virtual void updateReactions()
         {
             ///loop through all reactions, passivate/activate

@@ -26,8 +26,8 @@ Filament::Filament(System* ps, Network* pn ,vector<double> position, vector<doub
     _pNetwork = pn;
 	
     
-    Bead* b1 = _pSystem->AddNewBead(position);
-    Cylinder* c1 = _pSystem->AddNewCylinder(this, b1);
+    Bead* b1 = BeadDB::Instance()->AddNewBead(position);
+    Cylinder* c1 = CylinderDB::Instance()->AddNewCylinder(this, b1);
     _pLastCylinder = c1;
    
 
@@ -45,13 +45,10 @@ Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, in
     
     vector<vector<double> > tmpBeadsCoord = StraightFilamentProjection(position, numBeads); //this function calculate coordinates for all beads on the line separated by a segment length.
    
-    Bead* b0 = _pSystem->AddNewBead(tmpBeadsCoord[0]);
-    Cylinder* mc0 = _pSystem->AddNewCylinder(this, b0);
-    _pLastCylinder = mc0;
-    
-    cc0 = 
-    
-    C0  = new Cylinder(mc0, cc0);
+    Bead* b0 = BeadDB::Instance(BeadDBKey())->AddNewBead(tmpBeadsCoord[0]);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->AddNewCylinder(this, b0);
+    _pLastCylinder = c0;
+   
     
     for (int i = 1; i<numBeads; i++) {
         
@@ -62,9 +59,9 @@ Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, in
 
 void Filament::PolymerizeFront(vector<double> coordinates) {
     
-    Bead* b = _pSystem->AddNewBead(coordinates);
-    Cylinder* c = _pSystem->AddNewCylinder(this, b);
-    _pLastCylinder->SetSecondBead(b);
+    Bead* b = BeadDB::Instance(BeadDBKey())->AddNewBead(coordinates);
+    Cylinder* c = CylinderDB::Instance(CylinderDBKey())->AddNewCylinder(this, b);
+    _pLastCylinder->getMCylinder()->SetSecondBead(b);
     _pLastCylinder->SetLast(false);
     
     _pCylinderVector.push_back(_pLastCylinder);
@@ -75,9 +72,9 @@ void Filament::PolymerizeFront(vector<double> coordinates) {
 
 void Filament::PolymerizeBack(vector<double> coordinates) {
     
-    Bead* b = _pSystem->AddNewBead(coordinates);
-    Cylinder* c = _pSystem->AddNewCylinder(this, b);
-    c->SetSecondBead(_pCylinderVector[0]->GetFirstBead());
+    Bead* b = BeadDB::Instance(BeadDBKey())->AddNewBead(coordinates);
+    Cylinder* c = CylinderDB::Instance(CylinderDBKey())->AddNewCylinder(this, b);
+    c->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
     c->SetLast(false);
     _pCylinderVector.push_front(c);
 
@@ -89,11 +86,11 @@ void Filament::PolymerizeFront() {
     
     else{
         
-        auto tau = TwoPointDirection(_pCylinderVector[_pCylinderVector.size()-2]->GetFirstBead()->coordinate, _pCylinderVector[_pCylinderVector.size()-2]->GetSecondBead()->coordinate);
+        auto tau = TwoPointDirection(_pCylinderVector[_pCylinderVector.size()-2]->getMCylinder()->GetFirstBead()->coordinate, _pCylinderVector[_pCylinderVector.size()-2]->getMCylinder()->GetSecondBead()->coordinate);
         
-        Bead* b = _pSystem->AddNewBead( NextPointProjection(_pCylinderVector[_pCylinderVector.size()-1]->GetSecondBead()->coordinate, L, tau) );
-        Cylinder* c = _pSystem->AddNewCylinder(this, b);
-        _pLastCylinder->SetSecondBead(b);
+        Bead* b = BeadDB::Instance(BeadDBKey())->AddNewBead( NextPointProjection(_pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate, L, tau) );
+        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->AddNewCylinder(this, b, false);
+        _pLastCylinder->getMCylinder()->SetSecondBead(b);
         _pLastCylinder->SetLast(false);
         _pCylinderVector.push_back(_pLastCylinder);
         _pLastCylinder = c;
@@ -108,11 +105,11 @@ void Filament::PolymerizeBack() {
     
     else{
         
-        auto tau = TwoPointDirection(_pCylinderVector[0]->GetFirstBead()->coordinate, _pCylinderVector[0]->GetFirstBead()->coordinate);
+        auto tau = TwoPointDirection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate);
         
-        Bead* b = _pSystem->AddNewBead( NextPointProjection(_pCylinderVector[0]->GetFirstBead()->coordinate, L, tau) );
-        Cylinder* c = _pSystem->AddNewCylinder(this, b);
-        c->SetSecondBead(_pCylinderVector[0]->GetFirstBead());
+        Bead* b = BeadDB::Instance( NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, L, tau) );
+        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->AddNewCylinder(this, b, false);
+        c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
         c->SetLast(false);
         _pCylinderVector.push_front(c);
         
