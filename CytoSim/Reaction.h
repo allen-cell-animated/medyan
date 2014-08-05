@@ -12,8 +12,6 @@
 #include "ReactionBase.h"
 #include "ChemSim.h"
 
-namespace chem {
-
 /// Reaction<M,N> class represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N is the number of products.
 
 /*! Reaction<M,N> encodes a chemical reaction between M reactants and N products. It follows the ReactionBase interface, where 
@@ -304,6 +302,5 @@ template <unsigned short M, unsigned short N>
             _rspecies[1]->emitSignal(+1);
     }
 #endif
-    
-} // end of namespace
+
 #endif

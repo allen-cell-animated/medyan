@@ -9,34 +9,31 @@
 #ifndef CytoSim_ChemSimImpl_h
 #define CytoSim_ChemSimImpl_h
 
-namespace chem {
+class ReactionBase;
+
+/// ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics.  
+
+/*! Specific stochastic kinetics algorithm classes should inherit from ChemSimImpl. A user will 
+ *  then attach the corresponding algorithm to ChemSim via the algoritm's base class ChemSimImpl.
+ */
+class ChemSimImpl {
+public:
+    virtual ~ChemSimImpl() {};
     
-    class ReactionBase;
+    /// After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to invoking run() 
+    virtual void initialize() = 0;
     
-    /// ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics.  
+    /// Add Reaction *r to the chemical network which needs to be simulated
+    virtual void addReaction(ReactionBase *r) = 0;
     
-    /*! Specific stochastic kinetics algorithm classes should inherit from ChemSimImpl. A user will 
-     *  then attach the corresponding algorithm to ChemSim via the algoritm's base class ChemSimImpl.
-     */
-    class ChemSimImpl {
-    public:
-        virtual ~ChemSimImpl() {};
-        
-        /// After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to invoking run() 
-        virtual void initialize() = 0;
-        
-        /// Add Reaction *r to the chemical network which needs to be simulated
-        virtual void addReaction(ReactionBase *r) = 0;
-        
-        /// Remove Reaction *r from the simulated chemical network 
-        virtual void removeReaction(ReactionBase *r) = 0;
-        
-        /// Run the chemical dynamics for a specific number of steps
-        virtual bool run(int steps) = 0;
-        
-        /// Mainly used for debugging: print chemical reactions in the network at this moment
-        virtual void printReactions() const = 0;
-    };
-} // end of namespace
+    /// Remove Reaction *r from the simulated chemical network 
+    virtual void removeReaction(ReactionBase *r) = 0;
+    
+    /// Run the chemical dynamics for a specific number of steps
+    virtual bool run(int steps) = 0;
+    
+    /// Mainly used for debugging: print chemical reactions in the network at this moment
+    virtual void printReactions() const = 0;
+};
 
 #endif

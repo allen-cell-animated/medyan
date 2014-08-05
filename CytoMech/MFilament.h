@@ -14,11 +14,10 @@
 #include <deque>
 #include "Mcommon.h"
 #include "MComposite.h"
-#include "MBeadDB.h"
-#include "MCylinderDB.h"
 #include <math.h>
 
-using namespace chem;
+class CylinderDBKey;
+class BeadDBKey;
 
 class Filament : public MComposite
 {

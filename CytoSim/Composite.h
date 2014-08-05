@@ -17,13 +17,11 @@
 #include "Component.h"
 #include "Species.h"
 
-namespace chem {
+class Visitor;
+class SpeciesVisitor;
+class ReactionVisitor;
 
-    class Visitor;
-    class SpeciesVisitor;
-    class ReactionVisitor;
 
-    
 /// Composite class is the aggregating class for the Composite pattern
 
 /*! The Composite pattern allows building of complex hieararchical objects, with convenient
@@ -140,5 +138,4 @@ public:
     
 };
        
-} // end of chem
 #endif

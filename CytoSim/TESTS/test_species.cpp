@@ -19,7 +19,6 @@
 #include "SpeciesContainer.h"
 
 using namespace std;
-using namespace chem;
 
 TEST(SpeciesNamesDBTest, All) {
     SpeciesNamesDB::Instance()->clear();

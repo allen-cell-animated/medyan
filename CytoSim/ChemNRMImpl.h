@@ -32,8 +32,6 @@
 #define BOOST_POOL_MEM_RNODENRM
 #define BOOST_POOL_MEM_HEAP_ELEMENT
 
-namespace chem {
-
 class PQNode;
 class RNodeNRM;
 class ChemNRMImpl;
@@ -282,5 +280,4 @@ private:
     size_t _n_reacts; ///< number of reactions in the network
 };
     
-} // end of namespace
 #endif

@@ -14,16 +14,23 @@
 #include "CCylinder.h"
 #include "Composite.h"
 
-using namespace chem;
+class Filament;
+
+///Cylinder class is a wrapper for a mechanical cylinder and chemical cylinder
+/*!
+ * Cylinder class is used to create a chemical and mechanical cylinder when needed.
+ * It contains a constructor as well as getters for mcylinder and ccylinders.
+ */
 
 class Cylinder : public Composite {
     
 private:
-    MCylinder* _mCylinder; ///< ptr to mcylinder
-    CCylinder* _cCylinder; ///< ptr to ccylinder
+    std::unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
+    std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
     
     Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
     int _positionFilament; // position on filament (1st, 2nd, ... etc);
+    bool _ifLast;
     
 public:
     ///Constructor and destructor
@@ -31,10 +38,13 @@ public:
     ~Cylinder();
     
     ///get mCylinder
-    MCylinder* getMCylinder() {return _mCylinder;}
+    MCylinder* getMCylinder() {return _mCylinder.get();}
     
     ///get cCylinder
-    CCylinder* getCCylinder() {return _cCylinder;}
+    CCylinder* getCCylinder() {return _cCylinder.get();}
+    
+    ///get parent filament
+    Filament* getFilament() {return _pFilament;}
     
     bool IfLast();
     void SetLast(bool);

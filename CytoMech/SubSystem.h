@@ -19,7 +19,7 @@
 #include "MFilamentDB.h"
 #include "Mcommon.h"
 
-class SubmSystem
+class SubSystem
 {
     
     /*! This is the main class which handel all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.

@@ -18,7 +18,6 @@
 #include "Composite.h"
 
 using namespace std;
-using namespace chem;
 
 TEST(VisitorTest, Simple) {
 }

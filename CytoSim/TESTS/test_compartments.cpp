@@ -15,7 +15,6 @@
 #include "CompartmentContainer.h"
 
 using namespace std;
-using namespace chem;
 
 //Testing neighbor capabilities
 TEST(CompartmentTest, Neighbors) {

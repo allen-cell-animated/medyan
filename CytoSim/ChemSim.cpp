@@ -10,13 +10,12 @@
 #include "ChemSim.h"
 #include "ChemSimImpl.h"
 #include "utility.h"
-
-namespace chem {
     
 ChemSimImpl* ChemSim::_pimpl = 0;
     
 void ChemSim::setInstance(ChemSimInitKey k, ChemSimImpl *csi)
 {
+    if (_pimpl != 0) delete _pimpl;
     _pimpl=csi;
 }
 
@@ -39,5 +38,3 @@ void ChemSim::initialize(ChemSimInitKey k) {
 void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
-
-} // end of namespace

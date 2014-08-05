@@ -12,32 +12,29 @@
 #include "Reaction.h"
 #include "Composite.h"
 
+SpeciesNamesDB* SpeciesNamesDB::_instance = 0;
 
-namespace chem {
-
-    SpeciesNamesDB* SpeciesNamesDB::_instance = 0;
-
-    SpeciesNamesDB* SpeciesNamesDB::Instance() {
-        if(_instance==0)
-            _instance = new SpeciesNamesDB;
-        return _instance;
-    }
+SpeciesNamesDB* SpeciesNamesDB::Instance() {
+    if(_instance==0)
+        _instance = new SpeciesNamesDB;
+    return _instance;
+}
 
 #ifdef RSPECIES_SIGNALING
-    boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
-    {
-        if (!isSignaling())
-            startSignaling(); 
-        return _rspecies->_signal->connect(priority, RSpecies_callback);
-    }
+boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
+{
+    if (!isSignaling())
+        startSignaling(); 
+    return _rspecies->_signal->connect(priority, RSpecies_callback);
+}
 #endif
-    
-    Composite* Species::getRoot()
-    {
-        if(hasParent())
-           return this->getParent()->getRoot();
-        return nullptr;
-    }
+
+Composite* Species::getRoot()
+{
+    if(hasParent())
+       return this->getParent()->getRoot();
+    return nullptr;
+}
 
 
     
@@ -56,11 +53,9 @@ namespace chem {
 //std::string getTypeAsString (SType T) {
 //    return vec_type_name[static_cast<int>(T)];
 //}
-    
-} // end of namespace chem
 
 /// Print self into an iostream
-std::ostream& operator<<(std::ostream& os, const chem::Species& s){
+std::ostream& operator<<(std::ostream& os, const Species& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;
 }

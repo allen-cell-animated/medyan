@@ -8,10 +8,14 @@
 
 #include "Cylinder.h"
 
-Cylinder::Cylinder(Filament* pf, Bead* firstBead, bool extension = false) {
+Cylinder::Cylinder(Filament* pf, Bead* firstBead, bool extension) {
     
-    _mCylinder = new MCylinder(pf, firstBead);
-    _cCylinder = ChemInitializer::createCCylinder(, pf->getLastCylinder()->getCCylinder(), extension);
+    _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead));
+    _cCylinder = std::unique_ptr<CCylinder>(
+                   ChemInitializer::createCCylinder(, pf->getLastCylinder()->getCCylinder(), extension));
+    
+    _mCylinder->setCylinder(this);
+    _cCylinder->setCylinder(this);
     
 }
 

@@ -18,13 +18,11 @@
 //struct RSpeciesPoolTag { };
 
 /// Print self into an iostream
-std::ostream& operator<<(std::ostream& os, const chem::RSpecies& s){
+std::ostream& operator<<(std::ostream& os, const RSpecies& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;
 }
 
-namespace chem {
-    
 using namespace std;
 
 #ifdef BOOST_MEM_POOL
@@ -87,4 +85,3 @@ void RSpecies::stopSignaling () {
 }
 #endif // of RSPECIES_SIGNALING
     
-}

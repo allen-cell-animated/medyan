@@ -25,8 +25,6 @@ class CylinderDB;
 void FletcherRievesMethod(System* ps);
 void PolakRibiereMethod(System* ps);
 
-namespace chem {};
-
 /// Some constants for potentials. Maybe not the best place for them, can be moved to other places;
 const double L = 20.0;
 const double teta = 180.0;

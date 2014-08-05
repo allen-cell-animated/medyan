@@ -12,6 +12,7 @@
 #include <iostream>
 #include "Mcommon.h"
 #include "MComposite.h"
+class Cylinder;
 
 class MCylinder
 {
@@ -20,6 +21,7 @@ private:
     Bead* _pFirst;  //< Pointer to the first bead, associated with this cylinder ;
     Bead* _pSecond; //< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
+    Cylinder* _pCylinder;
     
 // Mechanical constants:
     double _eqLenght;   //< Lenght of unstertched cylinder;
@@ -29,7 +31,7 @@ private:
     double _kBend;  //< Local bending constant, which describes bendinig interaction between current and PREVIOUS cylinders;
     double _kTwist;
     
-
+    
 
     std::vector<MCylinder*> _NeighbourList;
 
@@ -40,7 +42,10 @@ public:
     MCylinder(Filament* pf, Bead* firstBead);
     virtual ~MCylinder() {}
     
-   
+    
+    void setCylinder(Cylinder* c) {_pCylinder = c;}
+    Cylinder* getCylinder() {return _pCylinder;}
+    
     void SetSecondBead(Bead *pb);
     
     Bead* GetFirstBead();

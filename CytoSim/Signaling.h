@@ -19,8 +19,6 @@
 #include <boost/signals2/shared_connection_block.hpp>
 #include "utility.h"
 
-namespace chem {
-
 class RSpecies;
 class ReactionBase;
 
@@ -167,5 +165,4 @@ public:
     }
 };
 
-} //end of namespace 
 #endif

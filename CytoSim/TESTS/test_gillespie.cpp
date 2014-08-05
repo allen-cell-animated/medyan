@@ -29,7 +29,6 @@ using namespace boost::accumulators;
 #include "ChemSim.h"
 
 using namespace std;
-using namespace chem;
 
 #ifdef TRACK_DEPENDENTS // the cached Gillespie algorithm fundamentally depends on the ability to track dependents
 

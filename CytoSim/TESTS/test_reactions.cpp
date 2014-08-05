@@ -19,7 +19,6 @@
 #include "Reaction.h"
 
 using namespace std;
-using namespace chem;
 
 void rspecies_callback (RSpecies *r, int delta){
     r->getSpecies().setN(33);

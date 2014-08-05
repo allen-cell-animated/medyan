@@ -42,7 +42,6 @@
 #include "CMembrane.h"
 
 using namespace std;
-using namespace chem;
 
 int main(int argc, const char * argv[])
 {

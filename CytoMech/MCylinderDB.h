@@ -42,10 +42,13 @@ public:
     CylinderDB& operator=(CylinderDB &rhs) = delete;
     
     
+    /// get the instance of this singleton
+    static CylinderDB* Instance(CylinderDBKey k);
+    
     // create new empty cylinder
-    Cylinder* CreateCylinder(Filament* pf, Bead* pb) {
+    Cylinder* CreateCylinder(Filament* pf, Bead* pb, bool extension = false) {
         
-        Cylinder* c = new Cylinder(pf, pb);
+        Cylinder* c = new Cylinder(pf, pb, extension);
         push_back(c);
         return c ;}
     

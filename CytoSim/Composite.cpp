@@ -10,7 +10,6 @@
 #include "Composite.h"
 #include "Visitor.h"
 
-using namespace chem;
     
 
 bool Composite::apply (Visitor &v) {

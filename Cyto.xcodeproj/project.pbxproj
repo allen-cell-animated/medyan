@@ -50,6 +50,7 @@
 		F763ED271548FFED0069DA61 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1B1548FFED0069DA61 /* Reaction.cpp */; };
 		F763ED291548FFED0069DA61 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED1F1548FFED0069DA61 /* Species.cpp */; };
 		F76C690C198FEC6800760D20 /* MController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C690A198FEC6800760D20 /* MController.cpp */; };
+		F76C691319916CC300760D20 /* GController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C691119916CC300760D20 /* GController.cpp */; };
 		F771ADBF15655DBA0010B123 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */; };
 		F771ADC015655DBA0010B123 /* ChemSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A924DA155BECD000AB05FA /* ChemSim.cpp */; };
 		F771ADC115655DBA0010B123 /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F763ED141548FFED0069DA61 /* Compartment.cpp */; };
@@ -246,6 +247,9 @@
 		F7672B5D15B1CE9A000D412B /* ChemRNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemRNode.h; sourceTree = "<group>"; };
 		F76C690A198FEC6800760D20 /* MController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MController.cpp; sourceTree = "<group>"; };
 		F76C690B198FEC6800760D20 /* MController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MController.h; sourceTree = "<group>"; };
+		F76C690E19914AFD00760D20 /* ForceField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForceField.h; path = CytoMech/ForceField.h; sourceTree = SOURCE_ROOT; };
+		F76C691119916CC300760D20 /* GController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GController.cpp; sourceTree = "<group>"; };
+		F76C691219916CC300760D20 /* GController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GController.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F775C6B715576A66008A9C87 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F775C6B915576A8D008A9C87 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
@@ -477,6 +481,8 @@
 			children = (
 				F76C690A198FEC6800760D20 /* MController.cpp */,
 				F76C690B198FEC6800760D20 /* MController.h */,
+				F76C691119916CC300760D20 /* GController.cpp */,
+				F76C691219916CC300760D20 /* GController.h */,
 				F7A94245198AB05400086614 /* Cylinder.cpp */,
 				F7A94246198AB05400086614 /* Cylinder.h */,
 				F7358498198990E60026E1B6 /* CController.cpp */,
@@ -524,6 +530,7 @@
 				F7954C89197D99FC00074A12 /* MMotorGhostDB.h */,
 				F7358492198988EF0026E1B6 /* MMotorGhostDB.cpp */,
 				F7954C8A197D99FC00074A12 /* MMotorGhostStretching.cpp */,
+				F76C690E19914AFD00760D20 /* ForceField.h */,
 				F7954C8D197D99FC00074A12 /* SubSystem.cpp */,
 				F7954C8E197D99FC00074A12 /* SubSystem.h */,
 				F7954C8F197D99FC00074A12 /* MVolRepulsion.h */,
@@ -828,6 +835,7 @@
 				F73584721989435F0026E1B6 /* ChemInitializer.cpp in Sources */,
 				F7954CC4197D9CC000074A12 /* MLinker.cpp in Sources */,
 				F7954CC5197D9CC000074A12 /* MLinkerStretching.cpp in Sources */,
+				F76C691319916CC300760D20 /* GController.cpp in Sources */,
 				F7954CC6197D9CC000074A12 /* MMotorGhost.cpp in Sources */,
 				F7954CC7197D9CC000074A12 /* MMotorGhostStretching.cpp in Sources */,
 				F7954CC9197D9CC000074A12 /* SubSystem.cpp in Sources */,

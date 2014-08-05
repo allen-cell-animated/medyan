@@ -20,7 +20,6 @@ using namespace std;
 
 #include "ChemNRMImpl.h"
 
-namespace chem {
 
 #ifdef BOOST_MEM_POOL
     
@@ -274,5 +273,3 @@ void ChemNRMImpl::printReactions() const {
         rn->printSelf();
     }
 }
-
-} // end of namespace

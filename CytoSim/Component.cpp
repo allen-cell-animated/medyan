@@ -12,16 +12,13 @@
 #include "Composite.h"
 #include "Visitor.h"
 
-namespace chem {
-    
-    Composite* Component::getRoot() {
-        if(isRoot())
-            return static_cast<Composite*>(this);
-        else
-            return getParent()->getRoot();
-    }
-    
-    bool Component::apply (Visitor &v) {
-        return v.visit(this);
-    }
-}// end of chem
+Composite* Component::getRoot() {
+    if(isRoot())
+        return static_cast<Composite*>(this);
+    else
+        return getParent()->getRoot();
+}
+
+bool Component::apply (Visitor &v) {
+    return v.visit(this);
+}

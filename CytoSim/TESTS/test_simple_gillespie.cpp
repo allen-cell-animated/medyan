@@ -30,7 +30,6 @@ using namespace boost::accumulators;
 #include "ChemSim.h"
 
 using namespace std;
-using namespace chem;
 
 TEST(ChemSimpleGillespieTest, SimpleStoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);

@@ -31,7 +31,6 @@ using namespace boost::accumulators;
 #include "ChemSim.h"
 
 using namespace std;
-using namespace chem;
 
 vector<double> A1_A8_Network (int method)
 {
