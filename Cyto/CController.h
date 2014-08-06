@@ -73,7 +73,7 @@ class CController {
         ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
         
         ///initialize grid ...
-        //ChemInitializer::initializeGrid(g);
+        ChemInitializer::initializeGrid(ChemInitializerGridKey());
 
         ///initialize chemsim
         ChemSim::initialize(ChemSimInitKey());

@@ -13,21 +13,27 @@ void SimpleInitializerImpl::initializeGrid() {
     
     CompartmentGridKey k;
     
-    CompartmentGrid::setInstance(k, {NGRID, NGRID, NGRID});
-    
     Compartment& cProto = CompartmentGrid::Instance(k)->getProtoCompartment();
     
     ///Add species
     cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
     
-    ///Set side length
-    std::vector<float> sides{100.0, 100.0, 100.0};
-    cProto.setSides(sides.begin());
+    ///initialize all compartments with species
+    for(auto &c : CompartmentGrid::Instance(k)->children())
+    {
+        Compartment *C = static_cast<Compartment*>(c.get());
+        *C = cProto;
+    }
     
-    ///initialize
-    CompartmentGrid::Instance(k)->initialize();
+    ///activate all compartments for diffusion
     CompartmentGrid::Instance(k)->activateAll();
-    CompartmentGrid::Instance(k)->generateDiffusionReactions();
+    
+    ///Generate all diffusion reactions
+    for(auto &c : CompartmentGrid::Instance(k)->children())
+    {
+        Compartment *C = static_cast<Compartment*>(c.get());
+        C->generateAllDiffusionReactions();
+    }
     
     CompartmentGrid::Instance(k)->addChemSimReactions();
 }

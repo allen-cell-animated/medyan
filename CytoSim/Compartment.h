@@ -46,26 +46,18 @@ protected:
     
     bool _activated = false; ///< the compartment is activated for diffusion
     
-    ///Spatial components
-    std::vector<float> _coords; ///< spatial coordinates of this compartment
-    std::vector<float> _sides;  ///< side lengths of this compartment
-    const short _nDim; ///<Number of dimensions
-    
 public:
     ///Default constructor, only takes in number of dimensions
-    Compartment(int NDIM) : _nDim(NDIM), _species(), _internal_reactions(), _diffusion_reactions(),
-                            _neighbours(), _diffusion_rates() {}
+    Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
+                    _neighbours(), _diffusion_rates() {}
     
     ///Constructor which essentially clones another compartment
-    Compartment(const Compartment &C) : _nDim(C._nDim), _species(), _internal_reactions(), _diffusion_reactions(),
+    Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(),
                                         _neighbours(), _diffusion_rates()
     {
         C.cloneSpecies(this);
         C.cloneReactions(this);
         _diffusion_rates = C._diffusion_rates;
-
-        //set side length
-        _sides = C._sides;
     }
     
     //Assignment operator
@@ -363,7 +355,7 @@ public:
     /// @note - this does not clone the neighbors, just reactions and species
     virtual Compartment* clone()
     {
-        Compartment *C = new Compartment(_nDim);
+        Compartment *C = new Compartment();
         cloneSpeciesReactions(C);
         return C;
     }
@@ -425,31 +417,7 @@ public:
         printSpecies();
         std::cout << "Reactions:" << std::endl;
         printReactions();
-        std::cout << "Coords: ";
-        for(auto &x : _coords) std::cout << x << " ";
-        std::cout << "Sides: ";
-        for(auto &y : _sides) std::cout << y << " ";
     }
-    
-    /// setSides
-    template <class input_iter>
-    void setSides(input_iter input_it)
-    {
-        std::copy_n(input_it,_nDim,_sides.begin());
-    }
-    /// setCoords
-    template <class input_iter>
-    void setCoords(input_iter input_it)
-    {
-        std::copy_n(input_it,_nDim,_coords.begin());
-    }
-
-    /// Coordinate getter
-    std::vector<float>& coords() {return _coords;}
-    const std::vector<float>& coords() const {return _coords;}
-    /// Sides getter
-    std::vector<float>& sides() {return _sides;}
-    const std::vector<float>& sides() const {return _sides;}
 
 };
 #endif
