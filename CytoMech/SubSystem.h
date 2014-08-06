@@ -28,9 +28,8 @@ class SubSystem
     
 public:
 		
-            // Interfaces to add new objects:
-    
-    
+    // Interfaces to add new objects:
+
     void AddNewFilaments(std::vector<std::vector<std::vector<double> > > v);    //!< Add new Filaments. v - coordinates of the first and last bead in the filament.
     void AddNewLinkers(std::vector<std::vector<Cylinder* > > v, double stretchConst);   //!< Add a linker conecting two beads Bead*[0] and Bead*[1] and providing a stretching spring constant(coubling to twisting will be implemented later).
     void AddNewLinker(Cylinder* pc1, Cylinder* pc2, double stretchConst);

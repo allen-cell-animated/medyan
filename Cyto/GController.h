@@ -27,11 +27,11 @@ class Boundary;
 class GController {
     
 private:
-    int _nDim; ///< number of dimensions in system
-    std::vector<int> _grid; ///< grid dimensionality
-    std::vector<float> _sideLength; ///< side lengths of a compartment
+    static int _nDim; ///< number of dimensions in system
+    static std::vector<int> _grid; ///< grid dimensionality
+    static std::vector<float> _sideLength; ///< side lengths of a compartment
     
-    Boundary* _b; ///< boundary of the system
+    std::vector<Boundary> _boundaries; ///< boundary of the system
     
     ///Generate all neighbors lists for each compartment
     void generateConnections();
@@ -42,7 +42,7 @@ public:
     ///@param nDim - the number of dimensions in this system
     ///@param grid - the number of compartments in each dimension
     ///@param systemSize - the actual size of the system in each dimension
-    void initialize(int nDim, std::vector<int> grid, std::vector<float> systemSize) {
+    void initializeGrid(int nDim, std::vector<int> grid, std::vector<float> systemSize) {
         
         _nDim = nDim;
         _grid = grid;
@@ -61,12 +61,26 @@ public:
         generateConnections();
     }
     
+    void initializeBoundaries(int nDim, std::vector<float> systemSize, std::string boundaryName) {
+        
+        
+        if(boundaryName == "Cubic")
+            _boundaries.push_back(BoundaryCubic(nDim, systemSize));
+        
+        else if(boundaryName == "Cylindrical")
+            _boundaries.push
+        
+        
+        
+        
+    }
+    
     
     
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
     template<typename ...Args>
-    Compartment* getCompartment(Args&& ...args)
+    static Compartment* getCompartment(Args&& ...args)
     {
         size_t index = 0;
         size_t i = _nDim-1;
@@ -80,7 +94,7 @@ public:
     }
     
     /// Alternate getter from the grid
-    Compartment* getCompartment(const std::vector<size_t> &indices) const
+    static Compartment* getCompartment(const std::vector<size_t> &indices)
     {
         size_t index = 0;
         size_t i = _nDim-1;
@@ -94,7 +108,7 @@ public:
     }
     
     /// Get the compartment given a set of coordinates
-    Compartment* getCompartment(const std::vector<float> &coords) const
+    static Compartment* getCompartment(const std::vector<float> &coords)
     {
         size_t index = 0;
         size_t i = _nDim-1;

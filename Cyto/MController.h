@@ -50,7 +50,7 @@ public:
     }
     
     ///Reset the forces of all objects
-    static void ResetForces() {
+    void ResetForces() {
         
         ///implement this
     }
@@ -65,7 +65,7 @@ public:
     
     
     ///Run minimization on the system using the chosen algorithm
-    void run(System* ps, std::string solver) {
+   void run(System* ps, std::string solver) {
      
         if(solver == "FletcherRieves")
             FletcherRievesMethod(ps);

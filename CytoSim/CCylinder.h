@@ -50,7 +50,8 @@ public:
         
         ///copy all reactions
         for(auto &r: rhs._reactions) {
-            ReactionBase *R = _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer())));
+            ReactionBase *R = _compartment->addInternalReactionUnique(
+                                std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer())));
             _reactions.push_back(R);
         }
     }
@@ -113,7 +114,7 @@ public:
     virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
     
     ///Add all reactions associated with this CCylinder
-    virtual void addReactions()
+    virtual void addChemSimReactions()
     {
         for (auto &r: _reactions)
             ChemSim::addReaction(ChemSimReactionKey(), r);

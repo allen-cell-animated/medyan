@@ -31,6 +31,8 @@
  */
 class CController {
    
+public:
+    
     ///Initialize the chemical system. MUST BE CALLED BEFORE RUN!
     
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
@@ -80,7 +82,7 @@ class CController {
     }
     
     ///Run a number of chemical steps
-    static bool run(int steps) { return ChemSim::run(ChemSimRunKey(), steps); }
+    bool run(int steps) { return ChemSim::run(ChemSimRunKey(), steps); }
 };
     
 

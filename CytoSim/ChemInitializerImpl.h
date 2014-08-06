@@ -56,7 +56,6 @@ struct FilamentExtensionCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        
         _filament->PolymerizeFront();
     }
 };

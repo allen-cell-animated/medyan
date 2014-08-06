@@ -87,10 +87,10 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* las
     
     ///Callbacks needed
     auto polyCallback = FilamentPolyCallback(parentFilament);
-    auto depolyCallback = FilamentDepolyCallback(parentFilament);
-    
+//    auto depolyCallback = FilamentDepolyCallback(parentFilament);
+//    
     auto extensionCallback = FilamentExtensionCallback(parentFilament);
-    auto retractionCallback = FilamentRetractionCallback(parentFilament);
+//    auto retractionCallback = FilamentRetractionCallback(parentFilament);
     
     
     //Look up diffusing species in this compartment
@@ -124,32 +124,35 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* las
         cylinder->addReaction(rPoly);
     }
     
-    ///loop through all spots in subfilament, add depoly reactions
-    for (int index = maxlength - 1; index >= 0; index--) {
-        
-        ///Monomer and bounds at current index
-        
-        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
-        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
-        
-        ///Retraction callback
-        if(index == 0) {
-            rDepoly = c->addInternal<Reaction,2,0>({m2->getFront(), m2->getActin()},
-                                                   _k_off_plus);
-            boost::signals2::shared_connection_block
-            rcb(rDepoly->connect(retractionCallback,false));
-        }
-        
-        ///Typical case
-        else {
-            /// add basic depolymerization reactions
-            rDepoly = c->addInternal<Reaction,2,2>({m2->getFront(), m2->getActin(),
-                                                    m1->getFront(), actinDiffusing}, _k_off_plus);
-            boost::signals2::shared_connection_block
-            rcb(rDepoly->connect(depolyCallback,false));
-        }
-        cylinder->addReaction(rDepoly);
-    }
+//    ///loop through all spots in subfilament, add depoly reactions
+//    for (int index = maxlength - 1; index >= 0; index--) {
+//        
+//        ///Monomer and bounds at current index
+//        
+//        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
+//        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
+//        
+//        ///Retraction callback
+//        if(index == 0) {
+//            rDepoly = c->addInternal<Reaction,2,0>({m2->getFront(), m2->getActin()},
+//                                                   _k_off_plus);
+//            boost::signals2::shared_connection_block
+//            rcb(rDepoly->connect(retractionCallback,false));
+//        }
+//        
+//        ///Typical case
+//        else {
+//            /// add basic depolymerization reactions
+//            rDepoly = c->addInternal<Reaction,2,2>({m2->getFront(), m2->getActin(),
+//                                                    m1->getFront(), actinDiffusing}, _k_off_plus);
+//            boost::signals2::shared_connection_block
+//            rcb(rDepoly->connect(depolyCallback,false));
+//        }
+//        cylinder->addReaction(rDepoly);
+//    }
+    
+    cylinder->addChemSimReactions();
+    cylinder->updateReactions();
     
     ///clean up and return
     return cylinder;
@@ -158,26 +161,6 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* las
 ///Remove a cylinder. in this impl, set the front of the new front cylinder
 void SimpleInitializerImpl::removeCCylinder(CCylinder* cylinder)
 {
-    
-//        ///Set the new front subfilament to have an end species
-//        CSubFilament* frontSubFilament = parentFilament->getFrontCSubFilament();
-//        
-//        ///get end species (if there is one)
-//        std::string endName;
-//        auto endSpecies = frontSubFilament->backCMonomer()->getActiveEndSpecies();
-//        
-//        ///Assign end name from previous subfilament
-//        if(endSpecies != nullptr)
-//            endName= endSpecies->getName();
-//        else endName = "Front";
-//        
-//        ///remove front sub filament
-//        parentFilament->removeCSubFilament(frontSubFilament);
-//        
-//        ///Set new end of new front subfilament
-//        parentFilament->getFrontCSubFilament()->frontCMonomer()
-//        ->getSpeciesByName(endName)->getRSpecies().up();
-    
 } 
     
 ///Constructor, initializes species container

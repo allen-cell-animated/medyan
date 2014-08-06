@@ -29,7 +29,7 @@ class ChemSimReactionKey;
  *
  *  Compartment initialization looks like the following:
  *  @code
- *  Compartment *C1 = new Compartment(3);
+ *  Compartment *C1 = new Compartment();
  *  Species *A = C1->addSpecies("A",99U);
  *  C1->setDiffusionRate(A,2000);
  *  @endcode
