@@ -51,7 +51,7 @@ Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, in
     for (int i = 1; i<numBeads; i++) {
         
         PolymerizeFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
-        }
+    }
     
 }
 
@@ -111,7 +111,7 @@ void Filament::PolymerizeBack() {
         
         Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(
                     NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, L, tau) );
-        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, true);
+        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, false, true);
         c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
         c->SetLast(false);
         _pCylinderVector.push_front(c);

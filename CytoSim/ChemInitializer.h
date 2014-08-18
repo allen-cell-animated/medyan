@@ -15,6 +15,7 @@
 class ChemInitializerImpl;
 class CompartmentGrid;
 class Compartment;
+class Filament;
 class CCylinder;
 
 ///Key for initialization of ChemInitializer
@@ -24,7 +25,8 @@ class ChemInitializerInitKey { friend class CController; ChemInitializerInitKey(
 class ChemInitializerGridKey { friend class CController; ChemInitializerGridKey(){}; ~ChemInitializerGridKey(){}; };
 
 ///Key for the creation and destruction of CCylinders
-class ChemInitializerCylinderKey { friend class Filament; ChemInitializerCylinderKey(){}; ~ChemInitializerCylinderKey(){}; };
+class ChemInitializerCylinderKey { friend class Filament; friend class Cylinder;
+                                   ChemInitializerCylinderKey(){}; ~ChemInitializerCylinderKey(){}; };
 
 /// ChemInitializer class is used for initailizing chemical reactions based on a specific system
 /*!
@@ -45,12 +47,12 @@ public:
     ///Initializer, based on the given simulation
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
-    static CCylinder* createCCylinder(ChemInitializerCylinderKey k,
-                               Compartment* c,
-                               CCylinder* lastCCylinder, bool extension = false);
+    static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
+                                      Compartment* c, bool extensionFront, bool extensionBack);
     
     ///Remove a CCylinder, based on the given simulation
-    static void removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder);
+    static void removeCCylinder(ChemInitializerCylinderKey k, Filament* pf,
+                                     bool retractionFront, bool retractionBack);
     
     
 private:

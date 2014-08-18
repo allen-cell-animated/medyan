@@ -10,7 +10,6 @@
 
 void GController::generateConnections()
 {
-    std::vector<float> sides = CompartmentGrid::getProtoCompartment().sides();
     
     //Three dimensional
     if (_nDim == 3) {

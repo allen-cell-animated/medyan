@@ -23,13 +23,15 @@ void ChemInitializer::initializeGrid(ChemInitializerGridKey k)
     _pimpl->initializeGrid();
 }
 
-CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Compartment* c, CCylinder* lastCCylinder, bool extension)
+CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,
+                                                                          bool extensionFront, bool extensionBack)
 
 {
-    return _pimpl->createCCylinder(c, lastCCylinder, extension);
+    return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack);
 }
 
-void ChemInitializer::removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder)
+void ChemInitializer::removeCCylinder(ChemInitializerCylinderKey k, CCylinder *cylinder,
+                                                                    bool retractionFront, bool retractionBack)
 {
-    _pimpl->removeCCylinder(cylinder);
+    _pimpl->removeCCylinder(cylinder, retractionFront, retractionBack);
 }

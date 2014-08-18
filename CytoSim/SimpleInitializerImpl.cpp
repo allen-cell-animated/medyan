@@ -8,7 +8,7 @@
 
 #include "SimpleInitializerImpl.h"
     
-///Initialize the compartment grid (3D in this implementation)
+///Initialize the compartment grid
 void SimpleInitializerImpl::initializeGrid() {
     
     CompartmentGridKey k;
@@ -38,90 +38,141 @@ void SimpleInitializerImpl::initializeGrid() {
     CompartmentGrid::Instance(k)->addChemSimReactions();
 }
 
-///Initializer, inits a cylinder to have actin, virtual back/front, and formin/capping caps.
-CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* lastCCylinder, bool extension)
+///Initializer, inits a cylinder to have actin, and virtual back/front.
+CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
+                                                  bool extensionFront, bool extensionBack)
 {
+    CCylinder* cylinder = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
     int maxlength = L / monomer_size;
     
-    ///Set length
-    int length;
-    if(extension) length = 1; else length = maxlength;
-    
-    CCylinder* cylinder = new CCylinder(c);
-    
-    ///remove front from last ccylinder
-    if(lastCCylinder != nullptr) {
-        auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
-        if(front != nullptr) front->setN(0);
+    ///add to cylinder
+    for (int index = 0; index < maxlength; index++) {
+        CMonomerBasic* m = new CMonomerBasic(c);
+        cylinder->addCMonomer(m);
     }
     
-    ///extension
-    if(extension) {
-        auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
-        front->getRSpecies().down();
-        length = 1;
+    ///get last ccylinder
+    CCylinder* lastCCylinder;
+    
+    if(extensionFront || !extensionBack)
+        lastCCylinder = pf->getLastCylinder()->getCCylinder();
+    else
+        lastCCylinder = nullptr;
+ 
+    ///extension of front
+    if(extensionFront) {
+        
+        auto m1 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
+        auto m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
+        
+        SpeciesFilament* front;
+        
+        ///remove front from last ccylinder, add to current
+        front = m1->getFront(); front->getRSpecies().down();
+        
+        front = m2->getFront(); front->getRSpecies().up();
+        
+        auto actin = m2->getActin();
+        actin->getRSpecies().up();
     }
-    else length = maxlength;
 
-    ///Add monomers
-    for (int index = 0; index < maxlength; index++)
-    {
-        ///add to cylinder
-        CMonomerBasic* m = new CMonomerBasic(c); cylinder->addCMonomer(m);
+    ///extension of back
+    else if(extensionBack) {
         
-        //Set initial species
-        if(index < length) {
-            m->getActin()->setN(1);
-        }
+        auto m2 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
+        auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
         
-        if(index == length - 1) {
-            m->getFront()->setN(1);
-        }
+        SpeciesFilament* back;
         
-        if(index == 0 && lastCCylinder == nullptr) m->getBack()->setN(1);
-
+        back = m1->getBack(); back->getRSpecies().down();
+        
+        back = m2->getBack(); back->getRSpecies().up();
+        
+        auto actin = m2->getActin();
+        actin->getRSpecies().up();
     }
-    Filament* parentFilament = lastCCylinder->getCylinder()->getFilament();
+
+    ///Base case, initialization
+    else {
+        
+        ///remove front from last ccylinder, if not null
+        if(lastCCylinder != nullptr) {
+            auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
+            front->getRSpecies().down();
+        }
+        ///if first ccylinder, set back
+        else {
+            auto back = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0))->getBack();
+            back->getRSpecies().up();
+            
+        }
+        ///Set as full
+        for(int index = 0; index < maxlength; index++) {
+            
+            auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
+            m1->getActin()->getRSpecies().up();
+            
+            if (index == maxlength - 1) m1->getFront()->getRSpecies().up();
+        }
+    }
     
     ///Callbacks needed
-    auto polyCallback = FilamentPolyCallback(parentFilament);
+    auto polyCallback = FilamentPolyCallback(pf);
 //    auto depolyCallback = FilamentDepolyCallback(parentFilament);
 //    
-    auto extensionCallback = FilamentExtensionCallback(parentFilament);
+    auto extensionFrontCallback = FilamentExtensionFrontCallback(pf);
+    auto extensionBackCallback = FilamentExtensionBackCallback(pf);
+
 //    auto retractionCallback = FilamentRetractionCallback(parentFilament);
     
     
     //Look up diffusing species in this compartment
     Species* actinDiffusing = c->findSpeciesDiffusingByName("Actin");
     
-    ReactionBase *rPoly, *rDepoly;
+    ReactionBase *rPolyPlus, *rPolyMinus;
     
     ///Loop through all spots in cylinder, add poly reactions
     for (int index = 0; index < maxlength; index++) {
         
-        ///Monomer and bounds at current index     
+        ///Monomer and bounds at current index
+        CMonomerBasic *m0 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
         CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
         CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index+1));
         
-        ///extension callback
-        if (index == maxlength - 1){
-            rPoly = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
+        ///Plus end polymerization
+        if (index == maxlength - 1) {
+            rPolyPlus = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
             boost::signals2::shared_connection_block
-            rcb1(rPoly->connect(extensionCallback,false));
+                rcb1(rPolyPlus->connect(extensionFrontCallback,false));
         }
-        ///Typical case
         else {
             ///Add basic polymerization reactions
-            rPoly = c->addInternal<Reaction,2,2>({m1->getFront(), actinDiffusing,
-                                                  m2->getActin(), m2->getFront()}, _k_on_plus);
+            rPolyPlus = c->addInternal<Reaction,2,2>({m1->getFront(), actinDiffusing,
+                m2->getActin(), m2->getFront()}, _k_on_plus);
             boost::signals2::shared_connection_block
-            rcb1(rPoly->connect(polyCallback,false));
+            rcb1(rPolyPlus->connect(polyCallback,false));
+        }
+
+        ///Minus end polymerization
+        if(index == 0) {
+            rPolyMinus = c->addInternal<Reaction,2,0>({m1->getBack(), actinDiffusing},_k_on_minus);
+            boost::signals2::shared_connection_block
+                rcb1(rPolyMinus->connect(extensionBackCallback,false));
+        }
+        else {
+            ///Add basic polymerization reactions
+            rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinDiffusing,
+                                                m0->getActin(), m0->getBack()}, _k_on_plus);
+            boost::signals2::shared_connection_block
+                rcb2(rPolyMinus->connect(polyCallback,false));
+            
         }
         
-        rPoly->setAsPolymerizationReaction();
-        cylinder->addReaction(rPoly);
+        rPolyPlus->setAsPolymerizationReaction();
+        cylinder->addReaction(rPolyPlus);
+        cylinder->addReaction(rPolyMinus);
     }
     
 //    ///loop through all spots in subfilament, add depoly reactions
@@ -159,17 +210,23 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Compartment* c, CCylinder* las
 }
 
 ///Remove a cylinder. in this impl, set the front of the new front cylinder
-void SimpleInitializerImpl::removeCCylinder(CCylinder* cylinder)
+void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack)
 {
+    
+    
+    
+    
 } 
     
 ///Constructor, initializes species container
 CMonomerBasic::CMonomerBasic(Compartment* c)
 {
     ///Initialize member array of species
-    _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Actin"), 0, 1));
-    _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Front"), 0, 1));
-    _species.push_back(c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("Back"), 0, 1));
+    std::vector<std::string> species = {"Actin", "Front", "Back"};
+    
+    for(auto &s : species)
+        _species.push_back(c->addSpeciesFilament(
+            SpeciesNamesDB::Instance()->generateUniqueName(s), 0, 1));
     
 }
 

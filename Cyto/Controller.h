@@ -33,7 +33,7 @@ public:
     void initialize() {
         
         ///Call all controllers to initialize
-        _gController.initialize(1, {10,10,10}, {1000.0,1000.0,1000.0});
+        _gController.initializeGrid(1, {10,10,10}, {1000.0,1000.0,1000.0});
         _cController.initialize("NRM", "Simple");
         _mController.initialize({""});
         

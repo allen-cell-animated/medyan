@@ -35,10 +35,10 @@ public:
     ///Initializer, based on the given simulation
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
-    virtual CCylinder* createCCylinder(Compartment* c, CCylinder* lastCCylinder, bool extension) = 0;
+    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack) = 0;
     
     ///Remove a CCylinder, based on the given simulation
-    virtual void removeCCylinder(CCylinder *cylinder) = 0;
+    virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack) = 0;
 
 };
 
@@ -46,7 +46,7 @@ public:
 ///REACTION CALLBACKS
 
 ///Extension callback
-struct FilamentExtensionCallback {
+struct FilamentExtensionFrontCallback {
     
     //members
     Filament* _filament;
@@ -57,6 +57,21 @@ struct FilamentExtensionCallback {
     ///Callback
     void operator() (ReactionBase *r){
         _filament->PolymerizeFront();
+    }
+};
+
+///Extension callback
+struct FilamentExtensionBackCallback {
+    
+    //members
+    Filament* _filament;
+    
+    ///Constructor, sets members
+    FilamentExtensionCallback(Filament* filament) : _filament(filament){};
+    
+    ///Callback
+    void operator() (ReactionBase *r){
+        _filament->PolymerizeBack();
     }
 };
 

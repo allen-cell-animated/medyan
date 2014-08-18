@@ -20,4 +20,4 @@ public:
 };
 
 
-#endif /* defined(__Cyto__BoundaryManager__) */
+#endif /* defined(__Cyto__Boundary__) */
