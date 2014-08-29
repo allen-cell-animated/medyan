@@ -84,7 +84,7 @@ public:
     /// compartments in the grid. Also generates neighboring connections for all compartments as well as
     /// initializes spatial coordinates of all compartments.
     /// @note - _prototype_compartment must be configured before this is called
-    void initialize()
+    void initialize(int length)
     {
         if(_is_initialized)
             throw std::runtime_error("CompartmentGrid::initialize() should be called only once");

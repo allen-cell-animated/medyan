@@ -13,6 +13,7 @@
 #include "MCylinder.h"
 #include "CCylinder.h"
 #include "Composite.h"
+#include "ChemInitializer.h"
 
 class Filament;
 
@@ -25,6 +26,7 @@ class Filament;
 class Cylinder : public Composite {
     
 private:
+    
     std::unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
     std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
     

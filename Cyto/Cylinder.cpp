@@ -18,7 +18,7 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, bool extensionFront, bool exte
     Compartment* c = GController::getCompartment(0.0,0.0,0.0);
     
     _cCylinder = std::unique_ptr<CCylinder>(
-        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, c, extensionFront, extensionBack));
+        ChemInitializer::createCCylinder(ChemInitializerCylinderKey() , pf, c, extensionFront, extensionBack));
     
     _mCylinder->setCylinder(this);
     _cCylinder->setCylinder(this);

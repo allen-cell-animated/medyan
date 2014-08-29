@@ -32,6 +32,8 @@ protected:
     
     Cylinder* _pCylinder;
     
+    
+    
 public:
     ///Default constructor, sets compartment
     CCylinder(Compartment* c) : _compartment(c) {}

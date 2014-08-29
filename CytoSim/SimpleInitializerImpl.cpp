@@ -71,7 +71,6 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         
         ///remove front from last ccylinder, add to current
         front = m1->getFront(); front->getRSpecies().down();
-        
         front = m2->getFront(); front->getRSpecies().up();
         
         auto actin = m2->getActin();
@@ -86,8 +85,8 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         
         SpeciesFilament* back;
         
+        ///remove back from last cylinder, add to current
         back = m1->getBack(); back->getRSpecies().down();
-        
         back = m2->getBack(); back->getRSpecies().up();
         
         auto actin = m2->getActin();
@@ -211,11 +210,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
 ///Remove a cylinder. in this impl, set the front of the new front cylinder
 void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack)
-{
-    
-    
-    
-    
+{   
 } 
     
 ///Constructor, initializes species container
