@@ -17,6 +17,8 @@
 #include "Composite.h"
 #include "ChemSim.h"
 
+class Bead;
+class BoundaryElement;
 class ChemSimReactionKey;
 
 
@@ -44,6 +46,9 @@ protected:
     std::vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     std::unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
     
+    std::vector<Bead*> _beads; ///<vector of beads that are in this compartment
+    std::vector<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
+
     bool _activated = false; ///< the compartment is activated for diffusion
     
 public:
@@ -273,6 +278,33 @@ public:
         r->setParent(this);
         return r;
     }
+    
+    
+    ///Add a bead to this compartment
+    void addBead(Bead* b) {_beads.push_back(b);}
+    
+    ///Remove a bead from this compartment
+    ///@note does nothing if bead is not in compartment already
+    void removeBead(Bead* b) {
+        auto it = std::find(_beads.begin(), _beads.end(), b);
+        if(it != _beads.end()) _beads.erase(it);
+    }
+    
+    ///get the beads in this compartment
+    std::vector<Bead*>& getBeads() {return _beads;}
+    
+    ///Add a boundary element to this compartment
+    void addBoundaryElement(BoundaryElement* be) {_boundaryElements.push_back(be);}
+    
+    ///Remove a boundary element from this compartment
+    ///@note does nothing if boundary element is not in compartment
+    void removeBoundaryElement(BoundaryElement* be) {
+        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        if(it != _boundaryElements.end()) _boundaryElements.erase(it);
+    }
+    
+    ///get the boundary elements in this compartment
+    std::vector<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

@@ -10,13 +10,32 @@
 #define __Cyto__Boundary__
 
 #include <iostream>
-class Bead;
+#include "BoundarySurface.h"
 
+///Boundary type enumeration
+enum class BoundaryType {Cube, Cylinder, Sphere};
+
+
+///Boundary class is to store all boundary surfaces that are in the system
+/*!
+ *  The boundary class stores all boundary surfaces in the given shape. Its constructors can create
+ *  basic boundary shapes (for now). Eventually will be extended to more complex surfaces.
+ */
 class Boundary {
-
-public:
     
-    virtual double ComputeDistance(Bead* b) = 0;
+protected:
+    std::vector<std::unique_ptr<BoundarySurface>> _boundarySurfaces;
+    ///<vector of boundary surfaces (could be different implementations)
+    BoundaryType _type; ///<Boundary type of this boundary
+    short _nDim; ///<Dimensionality of this boundary
+    
+public:
+    ///not much for now
+    
+    ///Constructor and destructor
+    Boundary(int nDim, BoundaryType type) : _nDim(nDim), _type(type) {};
+    ~Boundary() {};
+
 };
 
 

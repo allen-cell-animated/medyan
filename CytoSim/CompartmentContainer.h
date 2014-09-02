@@ -12,7 +12,7 @@
 #include <iostream>
 #include "Compartment.h"
 
-///Key to access instance of BeadDB
+///Key to access instance of CompartmentGrid
 class CompartmentGridKey {friend class SubSystem;
                           friend class SimpleInitializerImpl;
                           friend class GController;

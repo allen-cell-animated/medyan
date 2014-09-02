@@ -15,7 +15,6 @@
 
 class Boundary;
 
-
 /// GController class is used to control the geometry of the grid, as well as the geometry of entire system
 /*!
  *
@@ -27,11 +26,9 @@ class Boundary;
 class GController {
     
 private:
-    static int _nDim; ///< number of dimensions in system
+    static short _nDim; ///< number of dimensions in system
     static std::vector<int> _grid; ///< grid dimensionality
     static std::vector<float> _sideLength; ///< side lengths of a compartment
-    
-    std::vector<Boundary> _boundaries; ///< boundary of the system
     
     ///Generate all neighbors lists for each compartment
     void generateConnections();
@@ -43,6 +40,9 @@ public:
     ///@param grid - the number of compartments in each dimension
     ///@param systemSize - the actual size of the system in each dimension
     void initializeGrid(int nDim, std::vector<int> grid, std::vector<float> systemSize) {
+        
+        //make sure dimensions are same as system and grid dimensions
+        assert(nDim == grid.size() && nDim == systemSize.size());
         
         _nDim = nDim;
         _grid = grid;
@@ -61,22 +61,6 @@ public:
         generateConnections();
     }
     
-    void initializeBoundaries(int nDim, std::vector<float> systemSize, std::string boundaryName) {
-        
-        
-        if(boundaryName == "Cubic")
-            _boundaries.push_back(BoundaryCubic(nDim, systemSize));
-        
-        else if(boundaryName == "Cylindrical")
-            _boundaries.push
-        
-        
-        
-        
-    }
-    
-    
-    
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
     template<typename ...Args>
@@ -90,7 +74,7 @@ public:
             --i;
         }
         //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children()[index].get());
+        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
     
     /// Alternate getter from the grid
@@ -104,7 +88,7 @@ public:
             --i;
         }
         //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children()[index].get());
+        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
     
     /// Get the compartment given a set of coordinates
@@ -117,9 +101,21 @@ public:
             index+=int(x / _sideLength[index]) * std::pow(_grid[i],i);
             --i;
         }
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children()[index].get());
+        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
  
+    ///Get the dimensions of the system
+    static std::vector<float> getDimensions() {
+        
+        std::vector<float> dimensions;
+        
+        for(int i = 0; i < _nDim; i++)
+            dimensions.push_back(_grid[i] * _sideLength[i]);
+        
+        return std::vector<float>(dimensions.begin(), dimensions.end());
+    }
+    
+    
 };
 
 
