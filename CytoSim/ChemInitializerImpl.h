@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include "MFilament.h"
+#include "CompartmentContainer.h"
 
 class ReactionBase;
 class CompartmentGrid;
@@ -40,6 +41,7 @@ public:
     ///Remove a CCylinder, based on the given simulation
     virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack) = 0;
 
+    CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
 
 

@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include "CompartmentContainer.h"
+#include "MathFunctions.h"
 
 class Boundary;
 

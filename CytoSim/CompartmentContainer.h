@@ -14,9 +14,9 @@
 
 ///Key to access instance of CompartmentGrid
 class CompartmentGridKey {friend class SubSystem;
-                          friend class SimpleInitializerImpl;
+                          friend class ChemInitializerImpl;
                           friend class GController;
-                          CompartmentGridKey(){} ~CompartmentGridKey(){} };
+                          CompartmentGridKey(){} public: ~CompartmentGridKey(){} };
 
 
 /// CompartmentGrid class is a simple n-dimensional grid of CompartmentSpatial objects (singleton)

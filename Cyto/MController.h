@@ -33,7 +33,6 @@ public:
     ///@param forceFields - a list of forcefields to be added
     void initialize (std::initializer_list<std::string> forceFields)
     {
-        
         for(auto &f : forceFields) {
             ///implement this
         }

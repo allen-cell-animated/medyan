@@ -10,6 +10,7 @@
 #define __Cyto__BoundarySurface__
 
 #include "BoundaryElement.h"
+#include "BoundaryElementDB.h"
 #include <iostream>
 
 /// BoundarySurface class is a boundary shape that holds boundary elements
@@ -32,6 +33,9 @@ public:
     ///Default constructor and destructor
     BoundarySurface(int nDim) : _nDim(nDim) {};
     ~BoundarySurface() {};
+    
+    ///Access for all implementations of BoundarySurface to the DB key
+    BoundaryElementDBKey BEDBKey() {return BoundaryElementDBKey();}
     
 };
 

@@ -14,15 +14,18 @@
 #include <list>
 #include "Mcommon.h"
 #include "MComponent.h"
+#include "BoundaryElement.h"
+#include "MathFunctions.h"
 
+using namespace mathfunc;
 
 class Bead : public MComponent
 {
 public:
     
     ///The basic and simplest mecanical class. Contains information about a bead and some mecanical constant needed to calculate interactions. Constants are local and related to a bond between i(curent) and i-1 bead.
+    Bead (std::vector<double> v);
     
-    Bead (std::vector<double> v): coordinate(v), _parent(NULL), force(3, 0), forceAux(3, 0) {}
     Bead(): coordinate (3, 0), _parent(NULL), force(3, 0), forceAux(3, 0) {}
 //    virtual ~Bead();
     
@@ -43,9 +46,38 @@ public:
     
     void SetParent(MComposite* pc) {_parent = pc;}
     
+    ///Set and getcompartment
+    Compartment* getCompartment() {return _compartment;}
+    
+    ///Set the current compartment that this boundary element is in
+    void setCompartment() {
+        
+        ///remove from old compartment
+        _compartment->removeBead(this);
+        
+        ///Add to new compartment
+        _compartment = GController::getCompartment(coordinate); _compartment->addBead(this);
+    }
+    
+    ///Alternate set compartment when compartment is known
+    void setCompartment(Compartment* c) {
+        
+        ///remove from old compartment
+        _compartment->removeBead(this);
+        
+        ///add to new compartment
+        _compartment = c; _compartment->addBead(this);
+    }
+    
+    ///update the boundary elements that interact with this bead
+    void updateBoundaryElements();
+
+    
 private:
     
-    MComposite *_parent; /// A pointer to a parent class (Filament, linker, motor)
+    MComposite *_parent; ///< A pointer to a parent class (Filament, linker, motor)
+    Compartment* _compartment; ///< ptr to the compartment that this bead is in
+    std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
 };
 
 

@@ -11,31 +11,29 @@
 ///Initialize the compartment grid
 void SimpleInitializerImpl::initializeGrid() {
     
-    CompartmentGridKey k;
-    
-    Compartment& cProto = CompartmentGrid::Instance(k)->getProtoCompartment();
+    Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
     ///Add species
     cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
     
     ///initialize all compartments with species
-    for(auto &c : CompartmentGrid::Instance(k)->children())
+    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
     {
         Compartment *C = static_cast<Compartment*>(c.get());
         *C = cProto;
     }
     
     ///activate all compartments for diffusion
-    CompartmentGrid::Instance(k)->activateAll();
+    CompartmentGrid::Instance(compartmentGridKey())->activateAll();
     
     ///Generate all diffusion reactions
-    for(auto &c : CompartmentGrid::Instance(k)->children())
+    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
     {
         Compartment *C = static_cast<Compartment*>(c.get());
         C->generateAllDiffusionReactions();
     }
     
-    CompartmentGrid::Instance(k)->addChemSimReactions();
+    CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
 }
 
 ///Initializer, inits a cylinder to have actin, and virtual back/front.

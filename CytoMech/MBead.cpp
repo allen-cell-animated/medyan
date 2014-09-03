@@ -7,3 +7,43 @@
 //
 
 #include "MBead.h"
+
+Bead::Bead (std::vector<double> v): coordinate(v), _parent(NULL), force(3, 0), forceAux(3, 0)
+{
+    ///Find compartment, add this bead
+    _compartment = GController::getCompartment(v);
+    _compartment->addBead(this);
+    
+    ///Add to list of boundary elements in compartment
+    for (auto &be : _compartment->getBoundaryElements()) {
+        ///If within cutoff, add bead to this boundary element interaction list
+        if(TwoPointDistance(be->coords(), coordinate) <= BOUNDARY_INTERACTION_CUTOFF) {
+            _boundaryElements.push_back(be);
+            be->addBead(this);
+        }
+    }
+}
+
+
+
+void Bead::updateBoundaryElements() {
+    
+    
+    ///First, update this bead's list
+    for(auto it = _boundaryElements.begin(); it != _boundaryElements.end(); it++) {
+        auto be = (*it);
+        if (TwoPointDistance(be->coords(), coordinate) > BOUNDARY_INTERACTION_CUTOFF) {
+            _boundaryElements.erase(it);
+            be->removeBead(this);
+        }
+    }
+    
+    ///Check compartment, add any new interacting boundary elements
+    for(auto &be : _compartment->getBoundaryElements()) {
+        if(TwoPointDistance(be->coords(), coordinate) <= BOUNDARY_INTERACTION_CUTOFF) {
+            _boundaryElements.push_back(be);
+            be->addBead(this);
+        }
+    }
+    
+}

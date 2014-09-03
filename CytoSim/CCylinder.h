@@ -31,9 +31,7 @@ protected:
     Compartment* _compartment; ///< compartment this ccylinder is in
     
     Cylinder* _pCylinder;
-    
-    
-    
+
 public:
     ///Default constructor, sets compartment
     CCylinder(Compartment* c) : _compartment(c) {}
@@ -91,27 +89,23 @@ public:
     
     ///set parent cylinder
     void setCylinder(Cylinder* c) {_pCylinder = c;}
-    
     ///get parent cylinder
     Cylinder* getCylinder() {return _pCylinder;}
     
     ///Add a monomer to this CCylinder
     virtual void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));}
-    
     ///Add a bound to this CCylinder
     virtual void addCBound(CBound* bound) {_bounds.emplace_back(std::unique_ptr<CBound>(bound));}
     
     ///Get monomer at an index
     ///@note no check on index
     virtual CMonomer* getCMonomer(int index) {return _monomers[index].get();}
-    
     ///Get bound at an index
     ///@note no check on index
     virtual CBound* getCBound(int index) {return _bounds[index].get();}
     
     ///Add a filament reaction to this CCylinder
     virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
-    
     ///Get list of reactions associated with this CCylinder
     virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
     

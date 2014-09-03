@@ -22,7 +22,9 @@ private:
 public:
     
     ///Constructor, creates boundary elements
-    BasicPlane(int nDim, std::vector<std::vector<double>> points, short orientation);
+    ///@note - points must be in order of LL, LR, UR, UL
+    ///@param numDivisions - number of divisions per side for boundary elements
+    BasicPlane(std::vector<std::vector<double>> points, std::vector<int> numDivisions, short orientation);
 
 };
 

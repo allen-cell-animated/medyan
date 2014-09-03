@@ -13,7 +13,7 @@
 #include <iostream>
 
 ///Key to access instance of BoundaryElementDB
-class BoundaryElementDBKey {friend class BoundarySurface; BoundaryElementDBKey(); ~BoundaryElementDBKey();};
+class BoundaryElementDBKey {friend class BoundarySurface; BoundaryElementDBKey(); public: ~BoundaryElementDBKey();};
 
 
 /*! An Object Data Base singleton structure will be used as a container for all main objects: Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
@@ -41,24 +41,24 @@ public:
     static BoundaryElementDB* Instance(BoundaryElementDBKey k);
     
     /// create a new bead
-    BoundaryElement* CreateTriangleBoundaryElement(std::vector<float>& coords, float size) {
+    BoundaryElement* CreateTriangleBoundaryElement(std::vector<double> coords, float size) {
         
-        BoundaryElement* b = new TriangleBoundaryElement(coords, size);
-        push_back(b);
-        return b ;
+        //BoundaryElement* b = new TriangleBoundaryElement(coords, size);
+        //push_back(b);
+        //return b ;
+        return nullptr;
     }
     
     /// create a new bead
-    BoundaryElement* CreateSquareBoundaryElement(std::vector<float>& coords, float size) {
+    BoundaryElement* CreateSquareBoundaryElement(std::vector<double> coords, std::vector<float> size, short orientation) {
         
-        BoundaryElement* b = new SquareBoundaryElement(coords, size);
+        BoundaryElement* b = new SquareBoundaryElement(coords, size, orientation);
         push_back(b);
         return b ;
     }
     
     // Remove bead
     void RemoveBoundaryElement(BoundaryElement* pb){
-        ///Still todo: remove from cylinder lists as well as compartment list
         
         remove(pb);
         delete pb;

@@ -10,6 +10,7 @@
 #define __Cyto__BoundaryImpl__
 
 #include "Boundary.h"
+#include "BoundarySurfaceImpl.h"
 #include <vector>
 #include <iostream>
 
@@ -18,12 +19,12 @@
 class BoundaryCubic: public Boundary {
     
 public:
-    
     ///Default constructor, this will create a cube with given corners
     ///@param points - 8 corners of cube, in the following order:
     /// lower plane - front left, front right, back right, back left
     /// upper plane - front left, front right, back right, back left
-    BoundaryCubic(int nDim, std::vector<std::vector<double>> points);
+    ///@param numDivisions - number of divisions for each plane (into square boundary elements
+    BoundaryCubic(int nDim, std::vector<std::vector<double>> points, std::vector<int> numDivisions);
 };
 
 ///Cylindrical boundary implementation
