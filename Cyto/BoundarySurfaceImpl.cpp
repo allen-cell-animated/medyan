@@ -45,7 +45,7 @@ _points(points), _orientation(orientation), BoundarySurface(3) {
         }
     }
     
-    ///CASE 1: in XZ plane
+    ///CASE 2: in XZ plane
     if(_orientation == 1) {
         
         ///coordinates of boundary element to add
@@ -67,7 +67,7 @@ _points(points), _orientation(orientation), BoundarySurface(3) {
         }
     }
     
-    ///CASE 1: in YZ plane
+    ///CASE 3: in YZ plane
     if(_orientation == 0) {
         
         ///coordinates of boundary element to add
