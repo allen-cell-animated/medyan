@@ -18,20 +18,29 @@
 //#define BOOL_POOL_NSIZE 65536
 
 #include <cstdint>
+#include <vector>
 
+///species constants
 typedef unsigned short species_copy_t;
 const species_copy_t max_ulim = 10000;
 const float monomer_size = 2.7; //in nm
 extern double global_time;
 
+///Physical constants
 const double boltzmann_const = 1.3806503 * pow(10, -23); // in J/K
 const double temp = 300.0; // in K
 
 const double kT = 4.1; //in pN * nm
 
-const int NGRID = 5; //size of compartment grid
-
 inline double tau() {return global_time;}
+
+///Geometrical constants
+const std::vector<int> GRID{50,50,50};
+const std::vector<float> COMPARTMENT_SIZE{100.0,100.0,100.0};
+const short NDIM = 3;
+
+
+
 
 
 

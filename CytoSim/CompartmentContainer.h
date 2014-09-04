@@ -16,6 +16,9 @@
 class CompartmentGridKey {friend class SubSystem;
                           friend class ChemInitializerImpl;
                           friend class GController;
+#ifdef TESTING
+                          public:
+#endif //TESTING
                           CompartmentGridKey(){} public: ~CompartmentGridKey(){} };
 
 
@@ -26,43 +29,45 @@ class CompartmentGridKey {friend class SubSystem;
  *  holding internal and diffusion reactions, species information, as well as spatial information.
  *  This class is n-dimensional, and the dimension is specified at runtime.
  *
- *  All compartments within CompartmentGrid are indexed, and this class is responsible for
- *  assignment of compartment neighbors upon initialization.
+ *  All compartments within CompartmentGrid are indexed by the geometry controller, and this class 
+ *  is responsible for assignment of compartment neighbors upon initialization. All initialization
+ *  of the CompartmentGrid should be done through GController::initializeGrid().
  *
  *  The _prototype_compartment is used such that all reactions and species can be added to 
  *  the prototype, and this configuration can be copied to all compartments in the grid.
  *  An example of such is below:
  *
  *  @code
- *  CompartmentGrid::setInstance(CompartmentGridKey(), {50,50,50});
- *  Compartment &Cproto = CompartmentGrid::Instance()->getProtoCompartment();
+ *  GController g;
+ *  g.initializeGrid(3, {50, 50, 50}, {5000.0, 5000.0, 5000.0});
+ *
+ *  Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
  *  Species *M1 = Cproto.addSpecies("Myosin",1U);
  *  Cproto.setDiffusionRate(M1,2000);
  *  Species *M2 = Cproto.addSpecies("Fascin",6U);
  *  Cproto.setDiffusionRate(M2,2000);
  *
- *  vector<float> sides{100.0,100.0,100.0};
- *  Cproto.setSides(sides.begin());
- *
  *  Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
  *  Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
- *  CompartmentGrid::Instance()->initialize();
  *  @endcode
  *
- *  @note the protocompartment's side length must be specified so that all compartments will
- *  be initialized to the same side length. The protocomparment must be set up BEFORE initalize()
- *  is called.
  */
 class CompartmentGrid : public Composite {
 private:
     Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
-    bool _is_initialized; /// grid is initalized or not
     int _numCompartments;
     
     static CompartmentGrid* _instance; ///singleton instance
     
     //private constructor
-    CompartmentGrid(int numCompartments) : _numCompartments(numCompartments) {}
+    CompartmentGrid(int numCompartments) : _numCompartments(numCompartments) {
+        
+        ///add children
+        for(size_t i=0; i<numCompartments; ++i)
+        {
+            addChild(std::unique_ptr<Component>(new Compartment()));
+        }
+    }
 public:
     
     /// Copying is not allowed
@@ -72,6 +77,7 @@ public:
     CompartmentGrid& operator=(CompartmentGrid &rhs) = delete;
     
     ///set instance of grid (should only be done at beginning of program)
+    ///@note if called, a completely new grid will be created, and the old one erased.
     static void setInstance(CompartmentGridKey k, int numCompartments);
     
     ///Get instance of grid
@@ -79,23 +85,6 @@ public:
     
     /// Get name of this compartment grid
     virtual std::string getFullName() const {return std::string("CompartmentGrid");};
-    
-    /// Initialize the compartment, which copies all species and reactions of the protocompartment into the
-    /// compartments in the grid. Also generates neighboring connections for all compartments as well as
-    /// initializes spatial coordinates of all compartments.
-    /// @note - _prototype_compartment must be configured before this is called
-    void initialize(int length)
-    {
-        if(_is_initialized)
-            throw std::runtime_error("CompartmentGrid::initialize() should be called only once");
-        
-        for(size_t i=0; i<length; ++i)
-        {
-            addChild(std::unique_ptr<Component>(new Compartment()));
-        }
-        
-        _is_initialized=true;
-    }
     
     ///Activate all compartments
     void activateAll()

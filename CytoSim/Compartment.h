@@ -56,13 +56,13 @@ public:
     Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
                     _neighbours(), _diffusion_rates() {}
     
-    ///Constructor which essentially clones another compartment
-    Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(),
-                                        _neighbours(), _diffusion_rates()
+    ///Constructor which clones another compartment
+    Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours()
     {
         C.cloneSpecies(this);
         C.cloneReactions(this);
         _diffusion_rates = C._diffusion_rates;
+        _activated = C._activated;
     }
     
     //Assignment operator
@@ -387,8 +387,7 @@ public:
     /// @note - this does not clone the neighbors, just reactions and species
     virtual Compartment* clone()
     {
-        Compartment *C = new Compartment();
-        cloneSpeciesReactions(C);
+        Compartment *C = new Compartment(*this);
         return C;
     }
     

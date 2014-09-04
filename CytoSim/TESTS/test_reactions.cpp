@@ -9,6 +9,7 @@
 #define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
+#define TESTING
 
 #include <iostream>
 

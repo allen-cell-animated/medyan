@@ -83,7 +83,7 @@ template <unsigned short M, unsigned short N>
                 
                 for(auto it = s->beginReactantReactions(); it != s->endReactantReactions(); it++) {
                     ReactionBase* r = (*it);
-                    if (!r->isPassivated()) rxns.insert(r);
+                    rxns.insert(r);
                 }
             }
             //        std::sort(rxns.begin(),rxns.end());
@@ -101,7 +101,11 @@ template <unsigned short M, unsigned short N>
             std::transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             
-            _dependents=getAffectedReactions();
+            auto tempDependents = getAffectedReactions();
+            
+            //loop through these dependents, remove passivated
+            for(auto &d : tempDependents) { if(!d->isPassivated()) _dependents.push_back(d); }
+            
             for(auto i=0U; i<M; ++i)
                 _rspecies[i]->addAsReactant(this);
             for(auto i=M; i<(M+N); ++i)

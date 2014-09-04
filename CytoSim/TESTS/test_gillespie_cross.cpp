@@ -9,6 +9,7 @@
 //#define DO_THIS_LONG_TEST
 
 #ifdef DO_THIS_LONG_TEST 
+#define TESTING
 
 #include <iostream>
 

@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_TEST
+//#define DO_THIS_VISITOR_TEST
 
-#ifdef DO_THIS_TEST
+#ifdef DO_THIS_VISITOR_TEST
+#define TESTING
 
 #include <iostream>
 
@@ -22,4 +23,4 @@ using namespace std;
 TEST(VisitorTest, Simple) {
 }
 
-#endif // DO_THIS_TEST
+#endif // DO_THIS_VISITOR_TEST

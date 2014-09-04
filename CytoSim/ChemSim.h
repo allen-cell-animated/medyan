@@ -16,15 +16,27 @@
 class ChemSimImpl;
 
 ///Key for initialization of ChemSim
-class ChemSimInitKey { friend class CController; ChemSimInitKey(){} ~ChemSimInitKey() {} };
+class ChemSimInitKey { friend class CController;
+#ifdef TESTING
+                       public:
+#endif //TESTING
+                       ChemSimInitKey(){} ~ChemSimInitKey() {} };
 
 ///Key for adding and removing reactions
-class ChemSimReactionKey {friend class CCylinder; friend class Compartment; ChemSimReactionKey(){}; ~ChemSimReactionKey(){}; };
+class ChemSimReactionKey {friend class CCylinder;
+#ifdef TESTING
+                          public:
+#endif //TESTING
+                          friend class Compartment; ChemSimReactionKey(){}; ~ChemSimReactionKey(){}; };
     
 ///Key for running the ChemSim
-class ChemSimRunKey {friend class CController; ChemSimRunKey(){} ~ChemSimRunKey() {} };
-    
-    
+class ChemSimRunKey {friend class CController;
+#ifdef TESTING
+                     public:
+#endif //TESTING
+                     ChemSimRunKey(){} ~ChemSimRunKey() {} };
+                    
+
 /// ChemSim is used to manage running a network of chemical reactions.
 
 /*! ChemSim implements a Strategy pattern, allowing custom algorithms for running stochastic chemical simulations. 

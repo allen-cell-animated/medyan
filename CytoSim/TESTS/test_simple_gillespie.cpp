@@ -9,7 +9,7 @@
 //#define DO_THIS_TEST
 
 #ifdef DO_THIS_TEST
-
+#define TESTING
 
 #include <iostream>
 

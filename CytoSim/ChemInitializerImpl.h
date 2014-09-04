@@ -54,11 +54,11 @@ struct FilamentExtensionFrontCallback {
     Filament* _filament;
     
     ///Constructor, sets members
-    FilamentExtensionCallback(Filament* filament) : _filament(filament){};
+    FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->PolymerizeFront();
+        //_filament->PolymerizeFront();
     }
 };
 
@@ -69,11 +69,11 @@ struct FilamentExtensionBackCallback {
     Filament* _filament;
     
     ///Constructor, sets members
-    FilamentExtensionCallback(Filament* filament) : _filament(filament){};
+    FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->PolymerizeBack();
+        //_filament->PolymerizeBack();
     }
 };
 

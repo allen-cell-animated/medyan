@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_TEST
+//#define DO_THIS_NRM_TEST
 
-#ifdef DO_THIS_TEST
+#ifdef DO_THIS_NRM_TEST
+#define TESTING
 
 #include <iostream>
 
@@ -32,22 +33,6 @@ using namespace std;
 
 #ifdef TRACK_DEPENDENTS // the NRM algorithm fundamentally depends on the ability to track dependents
 
-TEST(ChemNRMTest, SimpleStoichiometryInvariants) {
-    SpeciesBulk A1("A1",  100);
-    SpeciesBulk A2("A2", 0);
-    Reaction<1,1> r1 = { {&A1,&A2}, 100.0 };
-    
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&r1);
-    chem.initialize();
-    //    chem.printReactions();
-    chem.run(30);
-    //    chem.printReactions();
-    EXPECT_EQ(70,A1.getN());
-    EXPECT_EQ(30,A2.getN());
-}
-
 TEST(ChemNRMTest, StoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);
     SpeciesBulk A2("A2", 0);
@@ -56,14 +41,15 @@ TEST(ChemNRMTest, StoichiometryInvariants) {
     Reaction<1,1> r2 = { {&A2,&A1}, 15.0 };
     Reaction<1,1> r3 = { {&A1,&A3}, 20.0 };
     
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&r1);
-    chem.addReaction(&r2);
-    chem.addReaction(&r3);
-    chem.initialize();
+    ChemSim::setInstance(ChemSimInitKey(), new ChemNRMImpl());
+    
+    ChemSim::addReaction(ChemSimReactionKey(), &r1);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    ChemSim::addReaction(ChemSimReactionKey(), &r3);
+    
+    ChemSim::initialize(ChemSimInitKey());
     //    chem.printReactions();
-    chem.run(30);
+    ChemSim::run(ChemSimRunKey(), 30);
     //    chem.printReactions();
     EXPECT_EQ(100,A1.getN()+A2.getN()+A3.getN());
 }
@@ -77,20 +63,22 @@ TEST(ChemNRMTest, SimpleSteadyState) {
     Reaction<1,1> r1 = { {&A1,&A2}, 100.0 };
     Reaction<1,1> r2 = { {&A2,&A1}, 100.0 };
     
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&r1);
-    chem.addReaction(&r2);
-    chem.initialize();
+    ChemSim::setInstance(ChemSimInitKey(), new ChemNRMImpl());
+    
+    ChemSim::addReaction(ChemSimReactionKey(), &r1);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    
+    ChemSim::initialize(ChemSimInitKey());
+    
     //    chem.printReactions();
-    chem.run(10000);
+    ChemSim::run(ChemSimRunKey(), 1000);
     // chem.printReactions();
     accumulator_set<int, stats<tag::variance(immediate)>> accA1;
     accumulator_set<int, stats<tag::mean>> accA2;
     accumulator_set<int, stats<tag::covariance<double, tag::covariate1> > > accCov;
     int N_SAMPLE_POINTS=1000;
     for(int i=0;i<N_SAMPLE_POINTS;++i){
-        chem.run(100);
+        ChemSim::run(ChemSimRunKey(), 100);
         //        cout << "N= " << A1.getN() << ", " << A1.getN() << endl;
         accA1(A1.getN());
         accCov(A1.getN(), covariate1 = A2.getN());
@@ -118,10 +106,10 @@ TEST(ChemNRMTest, SimpleTransient) {
     Reaction<1,1> r1 = { {&A1,&A2}, 2.5 };
     Reaction<1,1> r2 = { {&A2,&A1}, 2.5 };
     
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&r1);
-    chem.addReaction(&r2);
+    ChemSim::setInstance(ChemSimInitKey(), new ChemNRMImpl());
+    
+    ChemSim::addReaction(ChemSimReactionKey(), &r1);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2);
     //    chem.printReactions();
     // chem.printReactions();
     vector<long long int> n_hist(Nstart+1);
@@ -132,11 +120,11 @@ TEST(ChemNRMTest, SimpleTransient) {
     for(long long int i=0;i<N_SAMPLE_POINTS;++i){
         A1.setN(Nstart);
         A2.setN(0);
-        chem.initialize();
+        ChemSim::initialize(ChemSimInitKey());
         //        long long int events=0;
         do {
             N_penultimate=A1.getN();
-            chem.run(1);
+            ChemSim::run(ChemSimRunKey(), 1);
             //            ++events;
         } while (tau()<tau_snapshot);
         ++n_hist[N_penultimate];
@@ -184,11 +172,11 @@ TEST(ChemNRMTest, CyclicTransient) {
     Reaction<1,1> r2 = { {&A2,&A3}, 2.5 };
     Reaction<1,1> r3 = { {&A3,&A1}, 0.5 };
     
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&r1);
-    chem.addReaction(&r2);
-    chem.addReaction(&r3);
+    ChemSim::setInstance(ChemSimInitKey(), new ChemNRMImpl());
+    
+    ChemSim::addReaction(ChemSimReactionKey(), &r1);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    ChemSim::addReaction(ChemSimReactionKey(), &r3);
     
     long long int n_a1_hist=0;
     long long int n_a2_hist=0;
@@ -201,13 +189,13 @@ TEST(ChemNRMTest, CyclicTransient) {
         long long int n_a1_pentult=0;
         long long int n_a2_pentult=0;
         long long int n_a3_pentult=0;
-        chem.initialize();
+        ChemSim::initialize(ChemSimInitKey());
         long long int events=0;
         do {
             n_a1_pentult=A1.getN();
             n_a2_pentult=A2.getN();
             n_a3_pentult=A3.getN();
-            chem.run(1);
+            ChemSim::run(ChemSimRunKey(), 1);
             //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
             ++events;
             //            chem.printReactions();
@@ -263,13 +251,13 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
     Reaction<1,1> r2 = { {&B,&C}, kbc };
     Reaction<1,1> r3 = { {&C,&A}, kca };
     
-    ChemNRMImpl chem_nrm_impl;
-    ChemSim chem(&chem_nrm_impl);
-    chem.addReaction(&xa);
-    chem.addReaction(&ax);
-    chem.addReaction(&r1);
-    chem.addReaction(&r2);
-    chem.addReaction(&r3);
+    ChemSim::setInstance(ChemSimInitKey(), new ChemNRMImpl());
+    
+    ChemSim::addReaction(ChemSimReactionKey(), &r1);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    ChemSim::addReaction(ChemSimReactionKey(), &r3);
+    ChemSim::addReaction(ChemSimReactionKey(), &xa);
+    ChemSim::addReaction(ChemSimReactionKey(), &ax);
     
     vector<long long int> x_hist(Nstart+1);
     long long int n_a1_hist=0;
@@ -285,7 +273,7 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
         long long int n_b_pentult=0;
         long long int n_c_pentult=0;
         long long int x_pentult=0;
-        chem.initialize();
+        ChemSim::initialize(ChemSimInitKey());
         long long int events=0;
         do {
             //            cout << "chem.run(1) start, i= " << i << endl;
@@ -293,10 +281,10 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
             n_a_pentult=A.getN();
             n_b_pentult=B.getN();
             n_c_pentult=C.getN();
-            bool success = chem.run(1);
+            bool success = ChemSim::run(ChemSimRunKey(), 1);
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
-                chem.printReactions();
+                ChemSim::printReactions();
                 break;
             }
             //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
@@ -339,4 +327,4 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
 
 #endif // TRACK_DEPENDENTS
 
-#endif // DO_THIS_TEST
+#endif // DO_THIS_NRM_TEST

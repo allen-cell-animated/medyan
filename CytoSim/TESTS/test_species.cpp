@@ -9,9 +9,10 @@
 // Note: This test omits many functions of Species that interact with Reaction objects. 
 //        Separate tests weill cover those methods.
 
-//#define DO_THIS_TEST
+//#define DO_THIS_SPECIES_TEST
 
-#ifdef DO_THIS_TEST
+#ifdef DO_THIS_SPECIES_TEST
+#define TESTING
 
 #include <iostream>
 #include "gtest/gtest.h"
@@ -21,6 +22,8 @@
 using namespace std;
 
 TEST(SpeciesNamesDBTest, All) {
+    
+    ///basic test
     SpeciesNamesDB::Instance()->clear();
     int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");
     EXPECT_EQ(0,y);
@@ -34,6 +37,15 @@ TEST(SpeciesNamesDBTest, All) {
     x = SpeciesNamesDB::Instance()->intToString(y);
     EXPECT_EQ("G-Actin",x);
     EXPECT_NO_THROW(SpeciesNamesDB::Instance()->intToString(1));
+    
+    ///testing unique name generator
+    std::string a1 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    std::string a2 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    std::string a3 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    
+    EXPECT_FALSE(a1 == a2);
+    EXPECT_FALSE(a2 == a3);
+    EXPECT_FALSE(a1 == a3);
 }
 
 TEST(SpeciesTest, CTors) {
@@ -271,4 +283,4 @@ TEST(SpeciesContainerVectorTest, Main) {
 }
 
 
-#endif // DO_THIS_TEST
+#endif // DO_THIS_SPECIES_TEST

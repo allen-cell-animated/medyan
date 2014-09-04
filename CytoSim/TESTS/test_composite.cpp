@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_TEST
+//#define DO_THIS_COMPOSITE_TEST
 
-#ifdef DO_THIS_TEST
+#ifdef DO_THIS_COMPOSITE_TEST
+#define TESTING
 
 #include <iostream>
 
@@ -84,4 +85,4 @@ TEST(CompositeTest, ChildrenMethods) {
     EXPECT_EQ(2U, Y->numberOfChildren());
     EXPECT_EQ(2U, Y->countDescendents());
 }
-#endif // DO_THIS_TEST
+#endif // DO_THIS_COMPOSITE_TEST
