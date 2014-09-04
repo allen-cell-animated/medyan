@@ -32,7 +32,7 @@ void Bead::updateBoundaryElements() {
     ///First, update this bead's list
     for(auto it = _boundaryElements.begin(); it != _boundaryElements.end(); it++) {
         auto be = (*it);
-        if (TwoPointDistance(be->coords(), coordinate) > BOUNDARY_INTERACTION_CUTOFF) {
+        if (be == nullptr || TwoPointDistance(be->coords(), coordinate) > BOUNDARY_INTERACTION_CUTOFF) {
             _boundaryElements.erase(it);
             be->removeBead(this);
         }

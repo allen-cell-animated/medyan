@@ -17,7 +17,7 @@ class SquareBoundaryElement : public BoundaryElement {
     
 private:
     std::vector<float> _sides; ///< side lengths of square
-    short _orientation; ///< normal vector to the square (can only be unit vectors x,y,z)
+    short _orientation; ///< normal vector to the square (can only be unit vectors x(0),y(1),z(2))
     
 public:
     SquareBoundaryElement(std::vector<double> coords, std::vector<float> sides, int orientation) :

@@ -14,6 +14,9 @@ using namespace mathfunc;
 BasicPlane::BasicPlane(std::vector<std::vector<double>> points, std::vector<int> numDivisions, short orientation) :
 _points(points), _orientation(orientation), BoundarySurface(3) {
     
+    ///check if valid orientation
+    assert(_orientation >= 0 && _orientation <= 2);
+    
     ///Calculate side lengths and boundary element sizes
     double L1 = TwoPointDistance(points[0], points[1]);
     double L2 = TwoPointDistance(points[1], points[2]);

@@ -49,6 +49,24 @@ public:
         for (auto &be : _neighbors) be->removeNeighbor(this);
     }
     
+    ///add a bead to list of interacting beads
+    void addBead(Bead* b) {_beads.push_back(b);}
+    ///Remove a bead from list of interacting beads
+    ///@note does nothing if bead is not in interacting list already
+    void removeBead(Bead* b) {
+        auto it = std::find(_beads.begin(), _beads.end(), b);
+        if(it != _beads.end()) _beads.erase(it);
+    }
+    
+    ///Add a boundary element neighbor to this element
+    void addNeighbor(BoundaryElement* b) {_neighbors.push_back(b);}
+    ///remove a boundary element neighbor
+    ///@note does nothing if boundary element is not in list already
+    void removeNeighbor(BoundaryElement* b) {
+        auto it = std::find(_neighbors.begin(), _neighbors.end(), b);
+        if(it != _neighbors.end()) _neighbors.erase(it);
+    }
+    
     ///Set the current compartment that this boundary element is in
     void setCompartment() {
         
@@ -74,26 +92,9 @@ public:
     ///Get the compartment that this element is in
     Compartment* getCompartment() {return _compartment;}
     
-    ///add a bead to list of interacting beads
-    void addBead(Bead* b) {_beads.push_back(b);}
-    ///Remove a bead from list of interacting beads
-    ///@note does nothing if bead is not in interacting list already
-    void removeBead(Bead* b) {
-        auto it = std::find(_beads.begin(), _beads.end(), b);
-        if(it != _beads.end()) _beads.erase(it);
-    }
-    
-    ///Add a boundary element neighbor to this element
-    void addNeighbor(BoundaryElement* b) {_neighbors.push_back(b);}
-    ///remove a boundary element neighbor
-    ///@note does nothing if boundary element is not in list already
-    void removeNeighbor(BoundaryElement* b) {
-        auto it = std::find(_neighbors.begin(), _neighbors.end(), b);
-        if(it != _neighbors.end()) _neighbors.erase(it);
-    }
     
     ///return coordinates of boundary element
-    std::vector<double>& coords() {return _coords;}
+    const std::vector<double>& coords() {return _coords;}
     ///set coordinates of boundary element
     void setCoords(std::vector<double>& newCoords) {_coords = newCoords;}
  
