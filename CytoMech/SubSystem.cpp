@@ -106,31 +106,4 @@ void SubSystem::ResetForcesAux(BeadDB&  list){
     
 }
 
-
-void SubSystem::CopmuteForce(int i)
-{
-    if (i == 0){
-        ResetForces(*_pS->getBDB());
-        for (auto it: (*_pfdb) ) {it->CopmuteForce();}  /// Go over all filaments in the SubSystem and call Calc. forces.
-        
-        for (auto it: (*_pmgdb) ) {it->CopmuteForce();} /// Go over all gost motors in the SubSystem and call Calc. forces.
-        
-        for (auto it: (*_pldb) ) {it->CopmuteForce();}  /// Go over all filaments in the SubSystem and call Calc. forces.
-        
-    }
-    
-    else{
-        
-        ResetForcesAux(*_pS->getBDB());
-        for (auto it: (*_pfdb) ) {it->CopmuteForceAux();}
-        
-        for (auto it: (*_pmgdb) ) {it->CopmuteForceAux();}
-        
-        for (auto it: (*_pldb) ) {it->CopmuteForceAux();}
-        
-    }
-    
-    
-}
-
 double SubSystem::getSubSystemEnergy() {return _energy;}

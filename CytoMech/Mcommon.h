@@ -32,7 +32,5 @@ const double kS = 10.0;
 const double kB = 10.0;
 const double kTw = 10.0;
 
-const double BOUNDARY_INTERACTION_CUTOFF = 10.0;
-
 
 #endif

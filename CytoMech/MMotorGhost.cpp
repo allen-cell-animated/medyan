@@ -20,8 +20,8 @@ MotorGhost::MotorGhost(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretch
     _pc2 = pc2;
    
     _kStretch = stretchConst;
-    position1 = pos1;
-    position2 = pos2;
+    _position1 = pos1;
+    _position2 = pos2;
     
      _eqLength = TwoPointDistance(MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, position1 ), MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, position2 ) );
     

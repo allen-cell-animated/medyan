@@ -24,12 +24,15 @@ class MotorGhost{
 public:
     MotorGhost(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretchConst, double position1, double position2);
     //Public methods called by MotorGhost:
-    void CopmuteForce();
-    void CopmuteForceAux();
-    double CopmuteEnergy();
-    double CopmuteEnergy(double);
+  
     double getStretching();
     
+    Cylinder* GetFirstCylinder(){return _pc1;}
+    Cylinder* GetSecondCylinder(){return _pc2;}
+    double GetStretchingConstant(){return _kStretch;}
+    double GetFirstPosition(){return  _position1;}
+    double GetSecondPosition(){return _position2;}
+    double GetEqLength(){return _eqLength;}
     
     
 private:
@@ -44,8 +47,8 @@ private:
     Cylinder* _pc2;
     double _eqLength;
     double _kStretch;
-    double position1;
-    double position2;
+    double _position1;
+    double _position2;
     
     
     Network* _pNetwork;

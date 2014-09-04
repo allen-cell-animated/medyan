@@ -16,7 +16,7 @@
 #include "MFilament.h"
 
 ///Key to access instance of FilamentDB
-class FilamentDBKey {friend class System; FilamentDBKey(); ~FilamentDBKey(); };
+class FilamentDBKey {friend class System; friend class FilamentFF; FilamentDBKey(); ~FilamentDBKey(); };
 
 
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.

@@ -19,32 +19,30 @@ class Linker{
     /// The class which manages interactions betwin cross-linkered beads.
     
 public:
-    Linker(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretchConst);
+    Linker(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretchConst, double position1, double position2);
     //Public methods called by Network:
     void CopmuteForce();
     void CopmuteForceAux();
     double CopmuteEnergy();
     double CopmuteEnergy(double);
     
-//    //More for test purpose:
-//    Bead* getFirstBead(){return _pb1;}
-//    Bead* getSecondBead(){return _pb2;}
-    
+
+    Cylinder* GetFirstCylinder(){return _pc1;}
+    Cylinder* GetSecondCylinder(){return _pc2;}
+    double GetStretchingConstant(){return _kStretch;}
+    double GetFirstPosition(){return  _position1;}
+    double GetSecondPosition(){return _position2;}
+    double GetEqLength(){return _eqLength;}
     
     
 private:
-    
-    // Energy calculation methods:
-    double EnergyHarmonicStretching(Bead* pb1, Bead* pb2 );
-    double EnergyHarmonicStretching(Bead* pb1, Bead* pb2, double d );
-    // Force calculation methods:
-    void ForceHarmonicStretching(Bead* pb1, Bead* pb2 );
-    void ForceHarmonicStretchingAux(Bead* pb1, Bead* pb2);
-    
+   
     Cylinder* _pc1;
     Cylinder* _pc2;
     double _eqLength;
     double _kStretch;
+    double _position1;
+    double _position2;
     
     
     Network* _pNetwork;

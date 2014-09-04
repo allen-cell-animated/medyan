@@ -51,7 +51,7 @@ Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, in
     for (int i = 1; i<numBeads; i++) {
         
         PolymerizeFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
-    }
+        }
     
 }
 
@@ -111,7 +111,7 @@ void Filament::PolymerizeBack() {
         
         Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(
                     NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, L, tau) );
-        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, false, true);
+        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, true);
         c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
         c->SetLast(false);
         _pCylinderVector.push_front(c);
@@ -142,85 +142,6 @@ vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<doubl
     return coordinate;
 }
 
-//Public mechanical interfaces which call private "potentials" and force expressions to calculate bonded interactions:
-
-double Filament::CopmuteEnergy(){
-    
-    ///Iterates over beads in the filament and calculate energy from stretchin, bending and twisting interaction.
-    
-    double U = 0;
-    double Us = 0;
-    double Ub = 0;
-    double Ut = 0;
-    
-    for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
-        
-        Us += EnergyHarmonicStretching( (*(it-1)) );
-        Ut += EnergyHarmonicBending( (*(it-1)), (*it) );
-        
-    }
-    
-    U = Us + Ub + Ut;
-    
-    return U;
-    
-}
-
-double Filament::CopmuteEnergy(double d){
-    
-    ///Iterates over beads in the filament and calculate energy from stretchin, bending and twisting interaction(with coord - d*force argument).
-    
-    double U = 0;
-    double Us = 0;
-    double Ub = 0;
-    double Ut = 0;
-    
-    for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
-        
-        //        cout<<"force size  " <<(*(it-1))->force.size()<<endl;
-        //        cout<<"coord size  " <<(*(it-1))->coordinate.size()<<endl;
-        
-        Us += EnergyHarmonicStretching((*(it-1)), d);
-        Ut += EnergyHarmonicBending( (*(it-1)), (*it), d );
-        
-    }
-    
-    U = Us + Ub + Ut;
-    
-    //    cout<<"Uaux =  "<<U <<endl;
-    return U;
-}
-
-/// Interface that iterates over beads in a filament and compute forces on aech pair(triplet) of beads i and i-1 (i-1, i, i+1; );
-void Filament:: CopmuteForce(){
-    
-    cout<< "fz= "<<_pCylinderVector[0]->GetFirstBead()->force[2]<<endl;
-    
-    for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
-        
-        ForceHarmonicStretching((*(it-1)));
-        
-        ForceHarmonicBending( (*(it-1)), (*it) );
-        
-    }
-    
-    cout<< "fz= "<<_pCylinderVector[0]->GetFirstBead()->force[2]<<endl;
-    
-}
-
-
-void Filament:: CopmuteForceAux(){
-    
-   for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
-        
-       ForceHarmonicStretchingAux((*(it-1)));
-       
-       ForceHarmonicBendingAux( (*(it-1)), (*it) );
-       
-        
-    }
-    
-}
 
 void Filament::DeleteBead(Bead*){
     

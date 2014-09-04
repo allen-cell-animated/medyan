@@ -1,87 +1,63 @@
 //
-//  MLinkerStretching.cpp
-//  CytoMech
+//  MLinkerStratching.cpp
+//  Cyto
 //
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//  Created by Konstantin Popov on 8/28/14.
+//  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "MLinker.h"
-#include "MBead.h"
+#include "MLinkerStretching.h"
 
-using namespace std;
-using namespace mathfunc;
-
-
-double Linker::EnergyHarmonicStretching(Bead* pb1, Bead* pb2 ){
+double LinkerStretching::ComputeEnergy(Linker* pl, double d)
+{
+    if (d == 0.0){
+        
+        Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+        Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();
+        Bead* pb3 = pl->GetsecondCylinder()->GetFirstBead();
+        Bead* pb4 = pl->GetSecondCylinder()->GetSecondtBead();
+        double kStretch = pl->GetBendingConst();
+        double L = pl->GetEqLength();
+        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L);
+        
+    }
     
-    double u = 0.5 * _kStretch * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - _eqLength ) * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - _eqLength );
+    else {
+        
+        Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+        Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();
+        Bead* pb3 = pl->GetsecondCylinder()->GetFirstBead();
+        Bead* pb4 = pl->GetSecondCylinder()->GetSecondtBead();
+        double kStretch = pl->GetBendingConst();
+        double L = pl->GetEqLength();
+        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+    }
+}
+
+void LinkerStretching::ComputeForce(Filament* pf)
+{
+    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();
+    Bead* pb3 = pl->GetsecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->GetSecondCylinder()->GetSecondtBead();
+    double kStretch = pl->GetBendingConst();
+    double L = pl->GetEqLength();
+
     
-    return u;
+        _FFType.Forces(pb1, pb2, pb3, pb4, kStretch, L);
+    
 }
 
 
-double Linker::EnergyHarmonicStretching(Bead* pb1, Bead* pb2, double d){
-    
-    double u = 0.5 * _kStretch * ( TwoPointDistanceStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d) - _eqLength ) * ( TwoPointDistanceStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d) - _eqLength );
-    return u;
-}
+void LinkerStretching::ComputeForceAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
+{
+    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();
+    Bead* pb3 = pl->GetsecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->GetSecondCylinder()->GetSecondtBead();
+    double kStretch = pl->GetBendingConst();
+    double L = pl->GetEqLength();
 
-
-void Linker::ForceHarmonicStretching(Bead* pb1, Bead* pb2 ){
-    
-    
-    double invL = 1/TwoPointDistance( pb1->coordinate, pb2->coordinate);
-    
-    double f0 = _kStretch * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - _eqLength ) * invL;
-    
-    cout<< "f0= "<<f0<<endl;
-    
-    //force on b2
-    
-    pb2->force[0] +=   -f0 * ( pb1->coordinate[0] - pb2->coordinate[0] );
-    
-    pb2->force[1] +=   -f0 * ( pb1->coordinate[1] - pb2->coordinate[1] );
-    
-    pb2->force[2] +=   -f0 * ( pb1->coordinate[2] - pb2->coordinate[2] );
-    
-    
-    // force b1
-    
-    
-    pb1->force[0] +=   -f0 * ( pb2->coordinate[0] - pb1->coordinate[0] );
-    
-    pb1->force[1] +=   -f0 * ( pb2->coordinate[1] - pb1->coordinate[1] );
-    
-    pb1->force[2] +=  -f0 * ( pb2->coordinate[2] - pb1->coordinate[2] );
-    
-}
-
-void Linker::ForceHarmonicStretchingAux(Bead* pb1, Bead* pb2 ){
-    
-    
-    double invL = 1/TwoPointDistance( pb1->coordinate, pb2->coordinate);
-    
-    double f0 = _kStretch * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - _eqLength) * invL;
-    
-    cout<< "f0= "<<f0<<endl;
-    
-    //force on b2
-    
-    pb2->forceAux[0] +=   -f0 * ( pb1->coordinate[0] - pb2->coordinate[0] );
-    
-    pb2->forceAux[1] +=   -f0 * ( pb1->coordinate[1] - pb2->coordinate[1] );
-    
-    pb2->forceAux[2] +=   -f0 * ( pb1->coordinate[2] - pb2->coordinate[2] );
-    
-    
-    // force b1
-    
-    
-    pb1->forceAux[0] +=   -f0 * ( pb2->coordinate[0] - pb1->coordinate[0] );
-    
-    pb1->forceAux[1] +=   -f0 * ( pb2->coordinate[1] - pb1->coordinate[1] );
-    
-    pb1->forceAux[2] +=  -f0 * ( pb2->coordinate[2] - pb1->coordinate[2] );
+        _FFType.ForcesAux(pb1, pb2, pb3, pb4, kStretch, L);
     
 }

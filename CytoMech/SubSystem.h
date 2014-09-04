@@ -46,19 +46,6 @@ public:
     
     
     
-    // Mechanical interfaces:
-    
-    void ResetForces(); //!< Set force to zero before every update.
-    void ResetForcesAux(); //!< Set forceAux to zero before every update.
-
-    
-    void CopmuteForce(int);         //!< compute forces (also an interface whic calls compute at the network sub units). Argument determins where to write forces: foce (0), forceAux (other then 0).
-    double CopmuteEnergy(double);   //!< compute energy (also an interface whic calls compute at the network sub units). Argument determins if use just energy equations with a simple coordinates argument(d=0.0) or Bead.coordinates - d*Bead.force as an argument.
-    
-
-    
-    
-    
 private:
 	
     double _energy;

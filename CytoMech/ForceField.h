@@ -22,15 +22,14 @@ private:
     std::string _name;
     
 public:
-    ///Constructor
-    ForceField(std::string name) {_name = name;}
-    ~ForceField();
     
     std::string getName() {return _name;}
     
-    virtual double ComputeEnergy() = 0;
+    virtual double ComputeEnergy(double d) = 0;
     
     virtual void ComputeForces() = 0;
+    
+    virtual void ComputeForcesAux() = 0;
     
 };
 
