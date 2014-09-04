@@ -76,20 +76,23 @@ vector<double> A1_A8_Network (int method)
         default:
             assert(0 && "The method variable can only be 0, 1, or 2.");
     }
-    ChemSim chem(chem_sim_impl);
-    chem.addReaction(&r1f);
-    chem.addReaction(&r1b);
-    chem.addReaction(&r2f);
-    chem.addReaction(&r2b);
-    chem.addReaction(&r3);
-    chem.addReaction(&r4);
-    chem.addReaction(&r5);
-    chem.addReaction(&r6);
-    chem.addReaction(&r7);
-    chem.addReaction(&r8);
-    chem.addReaction(&r9);
-    chem.addReaction(&r10);
-    chem.initialize();
+    ChemSim::setInstance(ChemSimInitKey(), chem_sim_impl);
+    
+
+    ChemSim::addReaction(ChemSimReactionKey(), &r3);
+    ChemSim::addReaction(ChemSimReactionKey(), &r4);
+    ChemSim::addReaction(ChemSimReactionKey(), &r5);
+    ChemSim::addReaction(ChemSimReactionKey(), &r6);
+    ChemSim::addReaction(ChemSimReactionKey(), &r7);
+    ChemSim::addReaction(ChemSimReactionKey(), &r8);
+    ChemSim::addReaction(ChemSimReactionKey(), &r9);
+    ChemSim::addReaction(ChemSimReactionKey(), &r10);
+    ChemSim::addReaction(ChemSimReactionKey(), &r1f);
+    ChemSim::addReaction(ChemSimReactionKey(), &r1b);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2f);
+    ChemSim::addReaction(ChemSimReactionKey(), &r2b);
+
+    ChemSim::initialize(ChemSimInitKey());
     //    chem.printReactions();
     //    chem.run(20);
     //    cout << endl;
@@ -113,10 +116,10 @@ vector<double> A1_A8_Network (int method)
         do {
             //            cout << "chem.run(1) start, i= " << i << endl;
             x_pentult=A1.getN();
-            bool success = chem.run(1);
+            bool success = ChemSim::run(ChemSimRunKey(), 1);
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
-                chem.printReactions();
+                ChemSim::printReactions();
                 break;
             }
             //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
