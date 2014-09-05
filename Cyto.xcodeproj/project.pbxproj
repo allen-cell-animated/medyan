@@ -121,10 +121,8 @@
 		F79CA3BC19BA055100008021 /* MMotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA37D19BA055100008021 /* MMotorGhostStretching.cpp */; };
 		F79CA3BD19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA37F19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp */; };
 		F79CA3BE19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA37F19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp */; };
-		F79CA3BF19BA055100008021 /* MMotorGhostStretchingTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38119BA055100008021 /* MMotorGhostStretchingTMP.cpp */; };
-		F79CA3C019BA055100008021 /* MMotorGhostStretchingTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38119BA055100008021 /* MMotorGhostStretchingTMP.cpp */; };
-		F79CA3C119BA055100008021 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38219BA055100008021 /* MNetwork.cpp */; };
-		F79CA3C219BA055100008021 /* MNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38219BA055100008021 /* MNetwork.cpp */; };
+		F79CA3C119BA055100008021 /* MNetworkTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38219BA055100008021 /* MNetworkTMP.cpp */; };
+		F79CA3C219BA055100008021 /* MNetworkTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38219BA055100008021 /* MNetworkTMP.cpp */; };
 		F79CA3C319BA055100008021 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38519BA055100008021 /* MVolRepulsionEnergy.cpp */; };
 		F79CA3C419BA055100008021 /* MVolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38519BA055100008021 /* MVolRepulsionEnergy.cpp */; };
 		F79CA3C519BA055100008021 /* MVolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F79CA38619BA055100008021 /* MVolRepulsionForce.cpp */; };
@@ -340,9 +338,8 @@
 		F79CA37E19BA055100008021 /* MMotorGhostStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhostStretching.h; sourceTree = "<group>"; };
 		F79CA37F19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F79CA38019BA055100008021 /* MMotorGhostStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMotorGhostStretchingHarmonic.h; sourceTree = "<group>"; };
-		F79CA38119BA055100008021 /* MMotorGhostStretchingTMP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMotorGhostStretchingTMP.cpp; sourceTree = "<group>"; };
-		F79CA38219BA055100008021 /* MNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MNetwork.cpp; sourceTree = "<group>"; };
-		F79CA38319BA055100008021 /* MNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MNetwork.h; sourceTree = "<group>"; };
+		F79CA38219BA055100008021 /* MNetworkTMP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MNetworkTMP.cpp; sourceTree = "<group>"; };
+		F79CA38319BA055100008021 /* MNetworkTMP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MNetworkTMP.h; sourceTree = "<group>"; };
 		F79CA38419BA055100008021 /* MVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVolRepulsion.h; sourceTree = "<group>"; };
 		F79CA38519BA055100008021 /* MVolRepulsionEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionEnergy.cpp; sourceTree = "<group>"; };
 		F79CA38619BA055100008021 /* MVolRepulsionForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVolRepulsionForce.cpp; sourceTree = "<group>"; };
@@ -438,6 +435,67 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B52F64BD19BA22F600A2B9FD /* ForceField */ = {
+			isa = PBXGroup;
+			children = (
+				F79CA34A19BA055100008021 /* ForceField.h */,
+				F79CA36619BA055100008021 /* MFilamentFF.h */,
+				F79CA36519BA055100008021 /* MFilamentFF.cpp */,
+				F79CA36719BA055100008021 /* MFilamentIntercations.h */,
+				F79CA36019BA055100008021 /* MFilamentBending.h */,
+				F79CA35F19BA055100008021 /* MFilamentBending.cpp */,
+				F79CA36219BA055100008021 /* MFilamentBendingHarmonic.h */,
+				F79CA36119BA055100008021 /* MFilamentBendingHarmonic.cpp */,
+				F79CA36919BA055100008021 /* MFilamentStretching.h */,
+				F79CA36819BA055100008021 /* MFilamentStretching.cpp */,
+				F79CA36B19BA055100008021 /* MFilamentStretchingHarmonic.h */,
+				F79CA36A19BA055100008021 /* MFilamentStretchingHarmonic.cpp */,
+				F79CA36C19BA055100008021 /* MFilamentTwisting.cpp */,
+				F79CA37119BA055100008021 /* MLinkerInteractions.h */,
+				F79CA37219BA055100008021 /* MLinkerStretching.cpp */,
+				F79CA37319BA055100008021 /* MLinkerStretching.h */,
+				F79CA37419BA055100008021 /* MLinkerStretchingHarmonic.cpp */,
+				F79CA37519BA055100008021 /* MLinkerStretchingHarmonic.h */,
+				F79CA37A19BA055100008021 /* MMotorGhostFF.cpp */,
+				F79CA37B19BA055100008021 /* MMotorGhostFF.h */,
+				F79CA37C19BA055100008021 /* MMotorGhostInteractions.h */,
+				F79CA37D19BA055100008021 /* MMotorGhostStretching.cpp */,
+				F79CA37E19BA055100008021 /* MMotorGhostStretching.h */,
+				F79CA37F19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp */,
+				F79CA38019BA055100008021 /* MMotorGhostStretchingHarmonic.h */,
+			);
+			name = ForceField;
+			sourceTree = "<group>";
+		};
+		B52F64BE19BA230000A2B9FD /* Structure */ = {
+			isa = PBXGroup;
+			children = (
+				F79CA38919BA055100008021 /* SubSystem.cpp */,
+				F79CA38A19BA055100008021 /* SubSystem.h */,
+				F79CA34E19BA055100008021 /* MBead.h */,
+				F79CA34D19BA055100008021 /* MBead.cpp */,
+				F79CA35019BA055100008021 /* MBeadDB.h */,
+				F79CA34F19BA055100008021 /* MBeadDB.cpp */,
+				F79CA35819BA055100008021 /* MCylinder.h */,
+				F79CA35719BA055100008021 /* MCylinder.cpp */,
+				F79CA35A19BA055100008021 /* MCylinderDB.h */,
+				F79CA35919BA055100008021 /* MCylinderDB.cpp */,
+				F79CA35E19BA055100008021 /* MFilament.h */,
+				F79CA35D19BA055100008021 /* MFilament.cpp */,
+				F79CA36419BA055100008021 /* MFilamentDB.h */,
+				F79CA36319BA055100008021 /* MFilamentDB.cpp */,
+				F79CA36E19BA055100008021 /* MLinker.h */,
+				F79CA36D19BA055100008021 /* MLinker.cpp */,
+				F79CA37019BA055100008021 /* MLinkerDB.h */,
+				F79CA36F19BA055100008021 /* MLinkerDB.cpp */,
+				F79CA37719BA055100008021 /* MMotorGhost.h */,
+				F79CA37619BA055100008021 /* MMotorGhost.cpp */,
+				F79CA37919BA055100008021 /* MMotorGhostDB.h */,
+				F79CA37819BA055100008021 /* MMotorGhostDB.cpp */,
+			);
+			name = Structure;
+			sourceTree = "<group>";
+		};
 		F71E973C1565A783002BDF16 /* TESTS */ = {
 			isa = PBXGroup;
 			children = (
@@ -564,71 +622,25 @@
 		F79CA34919BA055100008021 /* CytoMech */ = {
 			isa = PBXGroup;
 			children = (
-				F79CA34A19BA055100008021 /* ForceField.h */,
-				F79CA34B19BA055100008021 /* MathFunctions.cpp */,
-				F79CA34C19BA055100008021 /* MathFunctions.h */,
-				F79CA34D19BA055100008021 /* MBead.cpp */,
-				F79CA34E19BA055100008021 /* MBead.h */,
-				F79CA34F19BA055100008021 /* MBeadDB.cpp */,
-				F79CA35019BA055100008021 /* MBeadDB.h */,
-				F79CA35119BA055100008021 /* MCGsolver.cpp */,
 				F79CA35219BA055100008021 /* Mcommon.h */,
+				F79CA34C19BA055100008021 /* MathFunctions.h */,
+				F79CA34B19BA055100008021 /* MathFunctions.cpp */,
+				F79CA35119BA055100008021 /* MCGsolver.cpp */,
 				F79CA35319BA055100008021 /* MComponent.cpp */,
 				F79CA35419BA055100008021 /* MComponent.h */,
 				F79CA35519BA055100008021 /* MComposite.cpp */,
 				F79CA35619BA055100008021 /* MComposite.h */,
-				F79CA35719BA055100008021 /* MCylinder.cpp */,
-				F79CA35819BA055100008021 /* MCylinder.h */,
-				F79CA35919BA055100008021 /* MCylinderDB.cpp */,
-				F79CA35A19BA055100008021 /* MCylinderDB.h */,
-				F79CA35B19BA055100008021 /* MExclVol.cpp */,
+				B52F64BE19BA230000A2B9FD /* Structure */,
+				B52F64BD19BA22F600A2B9FD /* ForceField */,
+				F79CA38319BA055100008021 /* MNetworkTMP.h */,
+				F79CA38219BA055100008021 /* MNetworkTMP.cpp */,
 				F79CA35C19BA055100008021 /* MExclVol.h */,
-				F79CA35D19BA055100008021 /* MFilament.cpp */,
-				F79CA35E19BA055100008021 /* MFilament.h */,
-				F79CA35F19BA055100008021 /* MFilamentBending.cpp */,
-				F79CA36019BA055100008021 /* MFilamentBending.h */,
-				F79CA36119BA055100008021 /* MFilamentBendingHarmonic.cpp */,
-				F79CA36219BA055100008021 /* MFilamentBendingHarmonic.h */,
-				F79CA36319BA055100008021 /* MFilamentDB.cpp */,
-				F79CA36419BA055100008021 /* MFilamentDB.h */,
-				F79CA36519BA055100008021 /* MFilamentFF.cpp */,
-				F79CA36619BA055100008021 /* MFilamentFF.h */,
-				F79CA36719BA055100008021 /* MFilamentIntercations.h */,
-				F79CA36819BA055100008021 /* MFilamentStretching.cpp */,
-				F79CA36919BA055100008021 /* MFilamentStretching.h */,
-				F79CA36A19BA055100008021 /* MFilamentStretchingHarmonic.cpp */,
-				F79CA36B19BA055100008021 /* MFilamentStretchingHarmonic.h */,
-				F79CA36C19BA055100008021 /* MFilamentTwisting.cpp */,
-				F79CA36D19BA055100008021 /* MLinker.cpp */,
-				F79CA36E19BA055100008021 /* MLinker.h */,
-				F79CA36F19BA055100008021 /* MLinkerDB.cpp */,
-				F79CA37019BA055100008021 /* MLinkerDB.h */,
-				F79CA37119BA055100008021 /* MLinkerInteractions.h */,
-				F79CA37219BA055100008021 /* MLinkerStretching.cpp */,
-				F79CA37319BA055100008021 /* MLinkerStretching.h */,
-				F79CA37419BA055100008021 /* MLinkerStretchingHarmonic.cpp */,
-				F79CA37519BA055100008021 /* MLinkerStretchingHarmonic.h */,
-				F79CA37619BA055100008021 /* MMotorGhost.cpp */,
-				F79CA37719BA055100008021 /* MMotorGhost.h */,
-				F79CA37819BA055100008021 /* MMotorGhostDB.cpp */,
-				F79CA37919BA055100008021 /* MMotorGhostDB.h */,
-				F79CA37A19BA055100008021 /* MMotorGhostFF.cpp */,
-				F79CA37B19BA055100008021 /* MMotorGhostFF.h */,
-				F79CA37C19BA055100008021 /* MMotorGhostInteractions.h */,
-				F79CA37D19BA055100008021 /* MMotorGhostStretching.cpp */,
-				F79CA37E19BA055100008021 /* MMotorGhostStretching.h */,
-				F79CA37F19BA055100008021 /* MMotorGhostStretchingHarmonic.cpp */,
-				F79CA38019BA055100008021 /* MMotorGhostStretchingHarmonic.h */,
-				F79CA38119BA055100008021 /* MMotorGhostStretchingTMP.cpp */,
-				F79CA38219BA055100008021 /* MNetwork.cpp */,
-				F79CA38319BA055100008021 /* MNetwork.h */,
+				F79CA35B19BA055100008021 /* MExclVol.cpp */,
 				F79CA38419BA055100008021 /* MVolRepulsion.h */,
 				F79CA38519BA055100008021 /* MVolRepulsionEnergy.cpp */,
 				F79CA38619BA055100008021 /* MVolRepulsionForce.cpp */,
 				F79CA38719BA055100008021 /* MVolumInter.cpp */,
 				F79CA38819BA055100008021 /* MVolumInter.h */,
-				F79CA38919BA055100008021 /* SubSystem.cpp */,
-				F79CA38A19BA055100008021 /* SubSystem.h */,
 			);
 			path = CytoMech;
 			sourceTree = "<group>";
@@ -904,13 +916,12 @@
 				F79CA3C719BA055100008021 /* MVolumInter.cpp in Sources */,
 				F75201C019B6105B00619A16 /* BoundaryElementDB.cpp in Sources */,
 				F79CA3A919BA055100008021 /* MFilamentStretchingHarmonic.cpp in Sources */,
-				F79CA3BF19BA055100008021 /* MMotorGhostStretchingTMP.cpp in Sources */,
 				F7954CAA197D9CC000074A12 /* ChemSim.cpp in Sources */,
 				F79CA3A519BA055100008021 /* MFilamentFF.cpp in Sources */,
 				F79CA3C519BA055100008021 /* MVolRepulsionForce.cpp in Sources */,
 				F79CA3B519BA055100008021 /* MMotorGhost.cpp in Sources */,
 				F79CA3C319BA055100008021 /* MVolRepulsionEnergy.cpp in Sources */,
-				F79CA3C119BA055100008021 /* MNetwork.cpp in Sources */,
+				F79CA3C119BA055100008021 /* MNetworkTMP.cpp in Sources */,
 				F7954CAB197D9CC000074A12 /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F79CA3A319BA055100008021 /* MFilamentDB.cpp in Sources */,
 				F75201C919B62CE400619A16 /* BoundarySurfaceImpl.cpp in Sources */,
@@ -973,14 +984,13 @@
 				F79CA39C19BA055100008021 /* MExclVol.cpp in Sources */,
 				F79CA39E19BA055100008021 /* MFilament.cpp in Sources */,
 				F79CA3A219BA055100008021 /* MFilamentBendingHarmonic.cpp in Sources */,
-				F79CA3C219BA055100008021 /* MNetwork.cpp in Sources */,
+				F79CA3C219BA055100008021 /* MNetworkTMP.cpp in Sources */,
 				F79CA3BA19BA055100008021 /* MMotorGhostFF.cpp in Sources */,
 				F79CA3A819BA055100008021 /* MFilamentStretching.cpp in Sources */,
 				F79CA3B219BA055100008021 /* MLinkerStretching.cpp in Sources */,
 				F79CA3A619BA055100008021 /* MFilamentFF.cpp in Sources */,
 				F79CA3CA19BA055100008021 /* SubSystem.cpp in Sources */,
 				F79CA38C19BA055100008021 /* MathFunctions.cpp in Sources */,
-				F79CA3C019BA055100008021 /* MMotorGhostStretchingTMP.cpp in Sources */,
 				F79CA39619BA055100008021 /* MComposite.cpp in Sources */,
 				F79CA3C619BA055100008021 /* MVolRepulsionForce.cpp in Sources */,
 				F79CA3AA19BA055100008021 /* MFilamentStretchingHarmonic.cpp in Sources */,

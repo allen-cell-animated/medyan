@@ -15,13 +15,13 @@ using namespace mathfunc;
 
 
 
-Filament::Filament(System* ps, Network* pn ,vector<double> position, vector<double> direction){
+Filament::Filament(SubSystem* ps, vector<double> position, vector<double> direction){
    
     
     //This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an input, second is set up by using an input direction and a coarsegrain length L. Using all this, two constructors for beads are called.
     
-    _pSystem = ps;
-    _pNetwork = pn;
+    _pSubSystem = ps;
+ 
 	
     
     Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position);
@@ -34,12 +34,12 @@ Filament::Filament(System* ps, Network* pn ,vector<double> position, vector<doub
 }
 
 
-Filament::Filament(System* ps, Network* pn, vector<vector<double> > position, int numBeads){
+Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads){
     
     /// This constructor is called to create a longer filament. It creates a filament with a number of beads numBeads. Filaments starts and ends in the point determined by position vector and has a direction direction. Number of beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be pushed to cylinder vector, but will be stored in the _pLastCylinder;
     
-    _pSystem = ps;
-    _pNetwork = pn;
+    _pSubSystem = ps;
+   
     
     vector<vector<double> > tmpBeadsCoord = StraightFilamentProjection(position, numBeads); //this function calculate coordinates for all beads on the line separated by a segment length.
    

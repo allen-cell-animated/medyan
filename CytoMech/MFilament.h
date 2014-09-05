@@ -28,14 +28,14 @@ class Filament : public MComposite
 private:
     std::deque<Cylinder*> _pCylinderVector; //< Vector of cylinders;
     Cylinder* _pLastCylinder;
-    System* _pSubSystem;
+    SubSystem* _pSubSystem;
     Network* _pNetwork;
 
     
 public:
     
-	Filament(System* ps, Network* pn, std::vector<double> position, std::vector<double> direction);
-    Filament(System* ps, Network* pn, std::vector<std::vector<double>> position, int numBeads);
+	Filament(SubSystem* ps, std::vector<double> position, std::vector<double> direction);
+    Filament(SubSystem* ps, std::vector<std::vector<double>> position, int numBeads);
     
     void PolymerizeFront();  // Polymerization of a new cylinder (with the first bead = new bead b and last bead = empty: before: --x---x---o, after --x---x---[x---o]). Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further polymerization, not initiation.
 

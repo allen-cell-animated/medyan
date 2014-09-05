@@ -42,7 +42,7 @@ public:
     //System related iterfaces:
    
     int getSystemSize(); //Return a number of beads;
-    double getSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
+    double getSubSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
     
     
     
