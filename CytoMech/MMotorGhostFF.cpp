@@ -23,7 +23,7 @@ double MotorGhostFF::ComputeEnergy(double d)
         
     }
     
-    return U_link;
+    return U_motor;
 }
 
 void MotorGhostFF::ComputeForces()
@@ -47,7 +47,7 @@ void MotorGhostFF::ComputeForcesAux()
     for ( auto it: MotorGhostDB::Instance(MotorghostDBKey()) )
     {
         
-        ffor (auto motorGhostInteraction : _motorGhostInteractionVector)
+        for (auto motorGhostInteraction : _motorGhostInteractionVector)
         {
             motorGhostInteraction->ComputeForcesAux(it);
         }

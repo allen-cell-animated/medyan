@@ -1,26 +1,26 @@
 //
-//  MMotorGhostFF.h
+//  MLinkerFF.h
 //  Cyto
 //
-//  Created by Konstantin Popov on 9/3/14.
+//  Created by Konstantin Popov on 9/5/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __Cyto__MMotorGhostFF__
-#define __Cyto__MMotorGhostFF__
+#ifndef __Cyto__MLinkerFF__
+#define __Cyto__MLinkerFF__
 
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
 
 
-class MotorGhostInteractions;
+class LinkerInteractions;
 
-class MotorGhostFF : private ForceField
+class LinkerFF : private ForceField
 {
     
 private:
-    std::vector <MotorGhostInteractions> _motorGhostInteractionVector;
+    std::vector <LinkerInteractions> _linkerInteractionVector;
     
     
 public:
@@ -39,4 +39,6 @@ public:
 
 
 
-#endif /* defined(__Cyto__MMotorGhostFF__) */
+
+
+#endif /* defined(__Cyto__MLinkerFF__) */
