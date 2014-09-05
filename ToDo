@@ -1,22 +1,29 @@
 Goals for September 2014
 --------
 
+TODO                                                                        COMPLETED?
+
 1) Combining code
     -Compiling all of cytosim and cytomech together
     -Organizing code into folders
 2) Finishing touches
     -Moving cylinders
     -Boundary hard wall potential
-    -SpeciesBulk implementation
+    -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?
 3) TESTING!!!!
     -Boundaries
+    -SpeciesBulk
     -Geometry
     -FilamentElement / Cylinders
     -Filaments (polymerize, depolymerize, intialization)
 4) Simple use cases
     -Polymer melt
     -Basic actin network?
+
+Logistical things:
+-Change name of code / project?
+
 
 
 --------

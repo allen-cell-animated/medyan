@@ -225,7 +225,7 @@ public:
     }
     
     /// Add a filament species to this compartment
-    /// @param args - any number of SpeciesDiffusing objects
+    /// @param args - any number of SpeciesFilament objects
     template<typename ...Args>
     SpeciesFilament* addSpeciesFilament(Args&& ...args)
     {
@@ -237,7 +237,7 @@ public:
     }
     
     /// Add a bound species to this compartment
-    /// @param args - any number of SpeciesDiffusing objects
+    /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
     SpeciesBound* addSpeciesBound(Args&& ...args)
     {
