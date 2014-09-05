@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B52F64C119BA4F4F00A2B9FD /* MLinkerFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B52F64BF19BA4F4F00A2B9FD /* MLinkerFF.cpp */; };
+		B52F64C219BA4F4F00A2B9FD /* MLinkerFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B52F64BF19BA4F4F00A2B9FD /* MLinkerFF.cpp */; };
 		F700784719B8DFE10014C178 /* GController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C691119916CC300760D20 /* GController.cpp */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F7013D8115D6C19D00A0428D /* ChemGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */; };
@@ -219,6 +221,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B52F64BF19BA4F4F00A2B9FD /* MLinkerFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLinkerFF.cpp; sourceTree = "<group>"; };
+		B52F64C019BA4F4F00A2B9FD /* MLinkerFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLinkerFF.h; sourceTree = "<group>"; };
 		F7013D7E15D6C18800A0428D /* ChemGillespieImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemGillespieImpl.h; sourceTree = "<group>"; };
 		F7013D8015D6C19D00A0428D /* ChemGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemGillespieImpl.cpp; sourceTree = "<group>"; };
 		F701749D15DD0C5900AAA2AD /* ChemSimpleGillespieImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChemSimpleGillespieImpl.h; sourceTree = "<group>"; };
@@ -451,13 +455,15 @@
 				F79CA36B19BA055100008021 /* MFilamentStretchingHarmonic.h */,
 				F79CA36A19BA055100008021 /* MFilamentStretchingHarmonic.cpp */,
 				F79CA36C19BA055100008021 /* MFilamentTwisting.cpp */,
+				B52F64C019BA4F4F00A2B9FD /* MLinkerFF.h */,
+				B52F64BF19BA4F4F00A2B9FD /* MLinkerFF.cpp */,
 				F79CA37119BA055100008021 /* MLinkerInteractions.h */,
 				F79CA37219BA055100008021 /* MLinkerStretching.cpp */,
 				F79CA37319BA055100008021 /* MLinkerStretching.h */,
 				F79CA37419BA055100008021 /* MLinkerStretchingHarmonic.cpp */,
 				F79CA37519BA055100008021 /* MLinkerStretchingHarmonic.h */,
-				F79CA37A19BA055100008021 /* MMotorGhostFF.cpp */,
 				F79CA37B19BA055100008021 /* MMotorGhostFF.h */,
+				F79CA37A19BA055100008021 /* MMotorGhostFF.cpp */,
 				F79CA37C19BA055100008021 /* MMotorGhostInteractions.h */,
 				F79CA37D19BA055100008021 /* MMotorGhostStretching.cpp */,
 				F79CA37E19BA055100008021 /* MMotorGhostStretching.h */,
@@ -905,6 +911,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7954CA8197D9CC000074A12 /* ChemGillespieImpl.cpp in Sources */,
+				B52F64C119BA4F4F00A2B9FD /* MLinkerFF.cpp in Sources */,
 				F79CA3A119BA055100008021 /* MFilamentBendingHarmonic.cpp in Sources */,
 				F7954CA9197D9CC000074A12 /* ChemNRMImpl.cpp in Sources */,
 				F79CA39D19BA055100008021 /* MFilament.cpp in Sources */,
@@ -995,6 +1002,7 @@
 				F79CA3C619BA055100008021 /* MVolRepulsionForce.cpp in Sources */,
 				F79CA3AA19BA055100008021 /* MFilamentStretchingHarmonic.cpp in Sources */,
 				F79CA3A419BA055100008021 /* MFilamentDB.cpp in Sources */,
+				B52F64C219BA4F4F00A2B9FD /* MLinkerFF.cpp in Sources */,
 				F79CA39A19BA055100008021 /* MCylinderDB.cpp in Sources */,
 				F79CA3A019BA055100008021 /* MFilamentBending.cpp in Sources */,
 				F79CA3B019BA055100008021 /* MLinkerDB.cpp in Sources */,
