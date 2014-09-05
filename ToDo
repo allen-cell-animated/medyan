@@ -1,18 +1,22 @@
-Goals for June 2014
+Goals for September 2014
 --------
 
-Filopodia:
-Reactions needed: (seperate tests for each reaction!)
-    -Polymerization/Depolymerization at barbed end
-    -Depolymerization at pointed end
-    -capping and anti-capping
-    -Aging reactions
-    -Walking motors
-
-
-1. Implement a simple simulation of filopodial growth
-2. Somehow implement retrograde flow
-2. Write tests and documentation for filopodial simulations
+1) Combining code
+    -Compiling all of cytosim and cytomech together
+    -Organizing code into folders
+2) Finishing touches
+    -Moving cylinders
+    -Boundary hard wall potential
+    -SpeciesBulk implementation
+    -Depolymerizing front / back?
+3) TESTING!!!!
+    -Boundaries
+    -Geometry
+    -FilamentElement / Cylinders
+    -Filaments (polymerize, depolymerize, intialization)
+4) Simple use cases
+    -Polymer melt
+    -Basic actin network?
 
 
 --------
