@@ -71,7 +71,7 @@ public:
     void setCompartment() {
         
         ///remove from old compartment
-        _compartment->removeBoundaryElement(this);
+        if(_compartment != nullptr) _compartment->removeBoundaryElement(this);
         
         ///Add to new compartment
         _compartment = GController::getCompartment(_coords);
@@ -82,7 +82,7 @@ public:
     void setCompartment(Compartment* c) {
         
         ///remove from old compartment
-        _compartment->removeBoundaryElement(this);
+        if(_compartment != nullptr) _compartment->removeBoundaryElement(this);
         
         ///add to new compartment
         _compartment = c;

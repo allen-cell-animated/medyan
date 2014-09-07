@@ -53,7 +53,7 @@ public:
     void setCompartment() {
         
         ///remove from old compartment
-        _compartment->removeBead(this);
+        if(_compartment != nullptr) _compartment->removeBead(this);
         
         ///Add to new compartment
         _compartment = GController::getCompartment(coordinate); _compartment->addBead(this);
@@ -63,7 +63,7 @@ public:
     void setCompartment(Compartment* c) {
         
         ///remove from old compartment
-        _compartment->removeBead(this);
+        if(_compartment != nullptr) _compartment->removeBead(this);
         
         ///add to new compartment
         _compartment = c; _compartment->addBead(this);

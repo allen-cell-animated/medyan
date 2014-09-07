@@ -43,18 +43,15 @@ public:
         
         ///Set instance of chemsim algorithm
         ChemSimImpl* csi;
-        if(chemAlgorithm == "NRM") {
-            ChemNRMImpl chem;
-            csi = &chem;
-        }
-        else if(chemAlgorithm == "Gillespie") {
-            ChemGillespieImpl chem;
-            csi = &chem;
-        }
-        else if(chemAlgorithm == "SimpleGillespie") {
-            ChemSimpleGillespieImpl chem;
-            csi = &chem;
-        }
+        if(chemAlgorithm == "NRM")
+            csi = new ChemNRMImpl;
+        
+        else if(chemAlgorithm == "Gillespie")
+            csi = new ChemGillespieImpl;
+        
+        else if(chemAlgorithm == "SimpleGillespie")
+            csi = new ChemSimpleGillespieImpl;
+        
         else {
             std::cout<< "Chem algorithm not found. Exiting." <<std::endl;
             exit(EXIT_FAILURE);
