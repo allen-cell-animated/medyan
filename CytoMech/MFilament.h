@@ -29,8 +29,6 @@ private:
     std::deque<Cylinder*> _pCylinderVector; //< Vector of cylinders;
     Cylinder* _pLastCylinder;
     SubSystem* _pSubSystem;
-    Network* _pNetwork;
-
     
 public:
     

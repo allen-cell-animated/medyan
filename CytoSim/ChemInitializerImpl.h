@@ -11,13 +11,14 @@
 
 #include <iostream>
 #include <vector>
-#include "MFilament.h"
+//#include "MFilament.h"
 #include "CompartmentContainer.h"
 
 class ReactionBase;
 class CompartmentGrid;
 class Compartment;
 class CCylinder;
+class Filament;
 
 ///ChemInitializerImpl is an abstract base class for initialization of all chemistry in the system
 

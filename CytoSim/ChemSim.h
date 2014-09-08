@@ -24,10 +24,11 @@ class ChemSimInitKey { friend class CController;
 
 ///Key for adding and removing reactions
 class ChemSimReactionKey {friend class CCylinder;
+                          friend class Compartment;
 #ifdef TESTING
                           public:
 #endif //TESTING
-                          friend class Compartment; ChemSimReactionKey(){}; ~ChemSimReactionKey(){}; };
+                          ChemSimReactionKey(){}; ~ChemSimReactionKey(){}; };
     
 ///Key for running the ChemSim
 class ChemSimRunKey {friend class CController;

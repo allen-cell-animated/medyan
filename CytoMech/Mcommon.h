@@ -18,12 +18,11 @@ class Filament;
 class FilamentDB;
 class BeadDB;
 class SubSystem;
-class Network;
 class Cylinder;
 class CylinderDB;
 
-void FletcherRievesMethod(System* ps);
-void PolakRibiereMethod(System* ps);
+void FletcherRievesMethod(SubSystem* ps);
+void PolakRibiereMethod(SubSystem* ps);
 
 /// Some constants for potentials. Maybe not the best place for them, can be moved to other places;
 const double L = 20.0;
@@ -32,5 +31,6 @@ const double kS = 10.0;
 const double kB = 10.0;
 const double kTw = 10.0;
 
+const double BOUNDARY_INTERACTION_CUTOFF = 10.0;
 
 #endif

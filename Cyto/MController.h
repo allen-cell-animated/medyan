@@ -14,6 +14,7 @@
 #include "Mcommon.h"
 #include <iostream>
 
+
 /// MController class is used to initialize and run the mechanical components of a simulation
 
 /*!
@@ -26,6 +27,7 @@ class MController {
     
 private:
     std::vector<ForceField> _forceFields; ///< vector of force field selections
+    
     
 public:
     

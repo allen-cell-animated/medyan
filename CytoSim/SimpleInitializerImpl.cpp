@@ -13,8 +13,11 @@ void SimpleInitializerImpl::initializeGrid() {
     
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
-    ///Add species
-    cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
+    ///Add bulk species
+    //cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
+    
+    
+    CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 100000U);
     
     ///initialize all compartments with species
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
@@ -26,12 +29,12 @@ void SimpleInitializerImpl::initializeGrid() {
     ///activate all compartments for diffusion
     CompartmentGrid::Instance(compartmentGridKey())->activateAll();
     
-    ///Generate all diffusion reactions
-    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
-    {
-        Compartment *C = static_cast<Compartment*>(c.get());
-        C->generateAllDiffusionReactions();
-    }
+//    ///Generate all diffusion reactions
+//    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
+//    {
+//        Compartment *C = static_cast<Compartment*>(c.get());
+//        C->generateAllDiffusionReactions();
+//    }
     
     CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
 }
@@ -126,7 +129,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     
     
     //Look up diffusing species in this compartment
-    Species* actinDiffusing = c->findSpeciesDiffusingByName("Actin");
+    Species* actinBulk = &CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName("Actin");
     
     ReactionBase *rPolyPlus, *rPolyMinus;
     
@@ -140,13 +143,13 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         
         ///Plus end polymerization
         if (index == maxlength - 1) {
-            rPolyPlus = c->addInternal<Reaction,2,0>({m1->getFront(), actinDiffusing},_k_on_plus);
+            rPolyPlus = c->addInternal<Reaction,2,0>({m1->getFront(), actinBulk},_k_on_plus);
             boost::signals2::shared_connection_block
                 rcb1(rPolyPlus->connect(extensionFrontCallback,false));
         }
         else {
             ///Add basic polymerization reactions
-            rPolyPlus = c->addInternal<Reaction,2,2>({m1->getFront(), actinDiffusing,
+            rPolyPlus = c->addInternal<Reaction,2,2>({m1->getFront(), actinBulk,
                 m2->getActin(), m2->getFront()}, _k_on_plus);
             boost::signals2::shared_connection_block
             rcb1(rPolyPlus->connect(polyCallback,false));
@@ -154,13 +157,13 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
         ///Minus end polymerization
         if(index == 0) {
-            rPolyMinus = c->addInternal<Reaction,2,0>({m1->getBack(), actinDiffusing},_k_on_minus);
+            rPolyMinus = c->addInternal<Reaction,2,0>({m1->getBack(), actinBulk},_k_on_minus);
             boost::signals2::shared_connection_block
                 rcb1(rPolyMinus->connect(extensionBackCallback,false));
         }
         else {
             ///Add basic polymerization reactions
-            rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinDiffusing,
+            rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinBulk,
                                                 m0->getActin(), m0->getBack()}, _k_on_plus);
             boost::signals2::shared_connection_block
                 rcb2(rPolyMinus->connect(polyCallback,false));

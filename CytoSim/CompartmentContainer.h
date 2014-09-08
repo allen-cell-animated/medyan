@@ -55,7 +55,8 @@ class CompartmentGridKey {friend class SubSystem;
 class CompartmentGrid : public Composite {
 private:
     Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
-    int _numCompartments;
+    SpeciesContainerVector<SpeciesBulk> _bulkSpecies; ///<Bulk species in this grid
+    int _numCompartments; ///<num compartments in the grid
     
     static CompartmentGrid* _instance; ///singleton instance
     
@@ -118,6 +119,22 @@ public:
         for(auto &c : children())
             c->printSelf();
     }
+    
+    ///Add a bulk species to this grid
+    template<typename ...Args>
+    SpeciesBulk& addSpeciesBulk (Args&& ...args) {
+        _bulkSpecies.addSpecies(std::forward<Args>(args)...);
+        return _bulkSpecies.findSpecies(_bulkSpecies.size() - 1);
+    }
+    
+    ///Remove bulk species
+    void removeSpeciesBulk(int index) {_bulkSpecies.removeSpecies(index);}
+    void removeSpeciesBulk(const std::string& name) {_bulkSpecies.removeSpecies(name);}
+    
+    ///Bulk species finder functions
+    SpeciesBulk& findSpeciesBulkByName(const std::string& name) {return _bulkSpecies.findSpecies(name);}
+    SpeciesBulk& findSpeciesBulkByMolecule(int molecule) {return _bulkSpecies.findSpeciesByMolecule(molecule);}
+    
 
 };
 

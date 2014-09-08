@@ -154,7 +154,6 @@ public:
     
     /// Species finder functions
     Species* findSpeciesByName(const std::string &name) {return _species.findSpeciesByName(name);};
-    Species* findSpeciesDiffusingByName(const std::string &name) {return _species.findSpeciesDiffusingByName(name);};
     Species* findSpeciesByIndex (size_t index) {return _species.findSpeciesByIndex(index);};
     Species* findSpeciesByMolecule (int molecule) {return _species.findSpeciesByMolecule(molecule);};
     Species* findSimilarSpecies (const Species &s) {return _species.findSimilarSpecies(s);}
@@ -225,7 +224,7 @@ public:
     }
     
     /// Add a filament species to this compartment
-    /// @param args - any number of SpeciesDiffusing objects
+    /// @param args - any number of SpeciesFilament objects
     template<typename ...Args>
     SpeciesFilament* addSpeciesFilament(Args&& ...args)
     {
@@ -237,7 +236,7 @@ public:
     }
     
     /// Add a bound species to this compartment
-    /// @param args - any number of SpeciesDiffusing objects
+    /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
     SpeciesBound* addSpeciesBound(Args&& ...args)
     {
