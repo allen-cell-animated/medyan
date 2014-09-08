@@ -38,7 +38,4 @@ class BoundarySpherical: public Boundary {
 };
 
 
-
-
-
 #endif /* defined(__Cyto__BoundaryImpl__) */

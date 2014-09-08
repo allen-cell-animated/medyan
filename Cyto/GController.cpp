@@ -8,24 +8,49 @@
 
 #include "GController.h"
 
+void GController::initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize) {
+    
+    ///Ensure that nDim is consistent with grid size, compartmentDimensions
+    assert(nDim == grid.size() && nDim == compartmentSize.size());
+    
+    ///Set static members
+    _nDim = nDim;
+    _grid = grid;
+    _compartmentSize = compartmentSize;
+    
+    int size = 1;
+    int i = 0;
+    for(auto x: grid) {
+        _systemSize[i] = _grid[i] * _compartmentSize[i];
+        size*=x;
+        i++;
+    }
+    ///Set the instance of this grid with given parameters
+    CompartmentGrid::setInstance(CompartmentGridKey(), size);
+    
+    ///Create connections based on dimensionality
+    generateConnections();
+}
+
+
 void GController::generateConnections()
 {
     
     //Three dimensional
-    if (NDIM == 3) {
+    if (_nDim == 3) {
         
-        for(size_t i=0U; i<GRID[0]; ++i) {
+        for(size_t i=0U; i<_grid[0]; ++i) {
             
-            for(size_t j=0U; j<GRID[1]; ++j) {
+            for(size_t j=0U; j<_grid[1]; ++j) {
                 
-                for(size_t k=0U; k<GRID[2]; ++k)
+                for(size_t k=0U; k<_grid[2]; ++k)
                 {
                     Compartment *target = getCompartment(i,j,k);
                     
                     for(int ii: {-1,1})
                     {
                         int iprime = i+ii;
-                        if(iprime<0 or iprime==int(GRID[0]))
+                        if(iprime<0 or iprime==int(_grid[0]))
                             continue;
                         Compartment *neighbor = getCompartment(size_t(iprime),j,k);
                         target->addNeighbour(neighbor);
@@ -33,7 +58,7 @@ void GController::generateConnections()
                     for(int jj: {-1,1})
                     {
                         int jprime = j+jj;
-                        if(jprime<0 or jprime==int(GRID[1]))
+                        if(jprime<0 or jprime==int(_grid[1]))
                             continue;
                         Compartment *neighbor = getCompartment(i,size_t(jprime),k);
                         target->addNeighbour(neighbor);
@@ -41,7 +66,7 @@ void GController::generateConnections()
                     for(int kk: {-1,1})
                     {
                         int kprime = k+kk;
-                        if(kprime<0 or kprime==int(GRID[2]))
+                        if(kprime<0 or kprime==int(_grid[2]))
                             continue;
                         Compartment *neighbor = getCompartment(i,j,size_t(kprime));
                         target->addNeighbour(neighbor);
@@ -52,18 +77,18 @@ void GController::generateConnections()
     }
     
     //Two dimensional
-    else if (NDIM == 2) {
+    else if (_nDim == 2) {
         
-        for(size_t i=0U; i<GRID[0]; ++i) {
+        for(size_t i=0U; i<_grid[0]; ++i) {
             
-            for(size_t j=0U; j<GRID[1]; ++j) {
+            for(size_t j=0U; j<_grid[1]; ++j) {
                 
                 Compartment *target = getCompartment(i,j);
                 
                 for(int ii: {-1,1})
                 {
                     int iprime = i+ii;
-                    if(iprime<0 or iprime==int(GRID[0]))
+                    if(iprime<0 or iprime==int(_grid[0]))
                         continue;
                     Compartment *neighbor = getCompartment(size_t(iprime),j);
                     target->addNeighbour(neighbor);
@@ -71,7 +96,7 @@ void GController::generateConnections()
                 for(int jj: {-1,1})
                 {
                     int jprime = j+jj;
-                    if(jprime<0 or jprime==int(GRID[1]))
+                    if(jprime<0 or jprime==int(_grid[1]))
                         continue;
                     Compartment *neighbor = getCompartment(i,size_t(jprime));
                     target->addNeighbour(neighbor);
@@ -82,14 +107,14 @@ void GController::generateConnections()
     
     //One dimensional
     else {
-        for(size_t i=0U; i<GRID[0]; ++i) {
+        for(size_t i=0U; i<_grid[0]; ++i) {
             
             Compartment *target = getCompartment(i);
             
             for(int ii: {-1,1})
             {
                 int iprime = i+ii;
-                if(iprime<0 or iprime==int(GRID[0]))
+                if(iprime<0 or iprime==int(_grid[0]))
                     continue;
                 Compartment *neighbor = getCompartment(size_t(iprime));
                 target->addNeighbour(neighbor);

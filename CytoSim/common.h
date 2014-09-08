@@ -34,14 +34,5 @@ const double kT = 4.1; //in pN * nm
 
 inline double tau() {return global_time;}
 
-///Geometrical constants
-const std::vector<int> GRID{50,50,50};
-const std::vector<float> COMPARTMENT_SIZE{100.0,100.0,100.0};
-const short NDIM = 3;
-
-
-
-
-
 
 #endif

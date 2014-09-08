@@ -515,7 +515,8 @@
 				F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */,
 				F7981A68194604F100A7E22C /* test_compartments.cpp */,
 			);
-			path = TESTS;
+			name = TESTS;
+			path = CytoSim/TESTS;
 			sourceTree = "<group>";
 		};
 		F763ECFB1548FFC70069DA61 = {
@@ -523,6 +524,7 @@
 			children = (
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED071548FFC70069DA61 /* Products */,
+				F71E973C1565A783002BDF16 /* TESTS */,
 				F79CA34919BA055100008021 /* CytoMech */,
 				F7954C4A197D98BE00074A12 /* Cyto */,
 				F763ED091548FFC70069DA61 /* CytoSim */,
@@ -588,7 +590,6 @@
 				F763ED201548FFED0069DA61 /* Species.h */,
 				F7B99A6D15EFBBE7004A245A /* SpeciesContainer.h */,
 				F7E432D015FEDD3200C8EA50 /* Signaling.h */,
-				F71E973C1565A783002BDF16 /* TESTS */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7AA4EFD1554B38B0069F7A1 /* utility.h */,
 				F7A1DC0D157AD36A004C738D /* Visitor.h */,

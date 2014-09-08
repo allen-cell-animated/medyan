@@ -13,19 +13,30 @@
 
 ///Forward declarations
 class ChemInitializerImpl;
-class CompartmentGrid;
 class Compartment;
 class Filament;
 class CCylinder;
 
 ///Key for initialization of ChemInitializer
-class ChemInitializerInitKey { friend class CController; ChemInitializerInitKey(){}; ~ChemInitializerInitKey(){}; };
+class ChemInitializerInitKey { friend class CController;
+#ifdef TESTING
+                                public:
+#endif //TESTING
+                                ChemInitializerInitKey(){}; ~ChemInitializerInitKey(){}; };
 
 ///Key for the initialization of grid
-class ChemInitializerGridKey { friend class CController; ChemInitializerGridKey(){}; ~ChemInitializerGridKey(){}; };
+class ChemInitializerGridKey { friend class CController;
+#ifdef TESTING
+                               public:
+#endif //TESTING
+                               ChemInitializerGridKey(){}; ~ChemInitializerGridKey(){}; };
 
 ///Key for the creation and destruction of CCylinders
-class ChemInitializerCylinderKey { friend class Filament; friend class Cylinder;
+class ChemInitializerCylinderKey { friend class Filament;
+                                   friend class Cylinder;
+#ifdef TESTING
+                                   public:
+#endif //TESTING
                                    ChemInitializerCylinderKey(){}; ~ChemInitializerCylinderKey(){}; };
 
 /// ChemInitializer class is used for initailizing chemical reactions based on a specific system
