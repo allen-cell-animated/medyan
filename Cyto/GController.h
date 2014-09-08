@@ -15,19 +15,6 @@
 
 class Boundary;
 
-///GParameters class simply stores the geometry parameters of this system
-class GParameters {
-public:
-    
-    GParameters(short nDim, std::vector<int> grid, std::vector<double> compartmentSize, std::vector<double> systemSize)
-    : _nDim(nDim), _grid(grid), _compartmentSize(compartmentSize), _systemSize(systemSize) {}
-    
-    short _nDim; ///<grid dimensionality
-    std::vector<int> _grid; ///< grid dimensions (in units of compartments)
-    std::vector<double> _compartmentSize; ///< compartment size in nm
-    std::vector<double> _systemSize; ///<size of entire system in nm
-};
-
 /// GController class is used to control the geometry of the grid, as well as the geometry of entire system
 /*!
  *
@@ -40,19 +27,17 @@ public:
 class GController {
     
 private:
+    static short _nDim; ///<grid dimensionality
+    static std::vector<int> _grid; ///< grid dimensions (in units of compartments)
+    static std::vector<double> _compartmentSize; ///< compartment size in nm
     
     ///Generate all neighbors lists for each compartment
-    void generateConnections();
+    static void generateConnections();
     
 public:
-    ///Static GParameters
-    static GParameters _gParameters;
     
     ///initialize the grid based on input parameters
-    ///@param nDim - the number of dimensions in this system
-    ///@param grid - the number of compartments in each dimension
-    ///@param compartmentDimensions - actual compartment dimensions in nm
-    void initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize);
+    static void initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize);
     
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
@@ -60,10 +45,10 @@ public:
     static Compartment* getCompartment(Args&& ...args)
     {
         size_t index = 0;
-        size_t i = _gParameters._nDim-1;
+        size_t i = _nDim-1;
         for(auto x: {args...})
         {
-            index+=x*std::pow(_gParameters._grid[i],i);
+            index+=x*std::pow(_grid[i],i);
             --i;
         }
         //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
@@ -74,10 +59,10 @@ public:
     static Compartment* getCompartment(const std::vector<size_t> &indices)
     {
         size_t index = 0;
-        size_t i = _gParameters._nDim-1;
+        size_t i = _nDim-1;
         for(auto x: indices)
         {
-            index+=x*std::pow(_gParameters._grid[i],i);
+            index+=x*std::pow(_grid[i],i);
             --i;
         }
         //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
@@ -88,15 +73,19 @@ public:
     static Compartment* getCompartment(const std::vector<float> &coords)
     {
         size_t index = 0;
-        size_t i = _gParameters._nDim-1;
+        size_t i = _nDim-1;
         for(auto x: coords)
         {
-            index+=int(x / _gParameters._compartmentSize[index]) * std::pow(_gParameters._grid[i],i);
+            index+=int(x / _compartmentSize[index]) * std::pow(_grid[i],i);
             --i;
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
     
+    ///return geometric parameters
+    static short nDim() {return _nDim;}
+    static std::vector<int> gridSize() {return _grid;}
+    static std::vector<double> compartmentSize() {return _compartmentSize;}
 };
 
 

@@ -20,6 +20,7 @@
 		F71EAF1915B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F71EAF1A15B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F722372919BE06C2006FAB85 /* test_geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372719BE06C2006FAB85 /* test_geometry.cpp */; };
+		F722372E19BE1F7C006FAB85 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372C19BE1F7C006FAB85 /* Parser.cpp */; };
 		F72EC63319782604007DA75F /* CFilamentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F72EC62F19782604007DA75F /* CFilamentElement.h */; };
 		F7346A8A1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
@@ -237,6 +238,9 @@
 		F71E97411565B01A002BDF16 /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
 		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F722372719BE06C2006FAB85 /* test_geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_geometry.cpp; sourceTree = "<group>"; };
+		F722372A19BE1728006FAB85 /* input.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = input.txt; path = Cyto/input.txt; sourceTree = SOURCE_ROOT; };
+		F722372C19BE1F7C006FAB85 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
+		F722372D19BE1F7C006FAB85 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		F72EC62F19782604007DA75F /* CFilamentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilamentElement.h; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
@@ -603,6 +607,9 @@
 		F7954C4A197D98BE00074A12 /* Cyto */ = {
 			isa = PBXGroup;
 			children = (
+				F722372A19BE1728006FAB85 /* input.txt */,
+				F722372C19BE1F7C006FAB85 /* Parser.cpp */,
+				F722372D19BE1F7C006FAB85 /* Parser.h */,
 				F7BFC61C1992BD6600909969 /* Boundary.h */,
 				F75201C119B61B5A00619A16 /* BoundaryImpl.cpp */,
 				F75201C219B61B5A00619A16 /* BoundaryImpl.h */,
@@ -960,6 +967,7 @@
 				F79CA3A719BA055100008021 /* MFilamentStretching.cpp in Sources */,
 				F735849A198990E60026E1B6 /* CController.cpp in Sources */,
 				F75201C319B61B5A00619A16 /* BoundaryImpl.cpp in Sources */,
+				F722372E19BE1F7C006FAB85 /* Parser.cpp in Sources */,
 				F7358482198967230026E1B6 /* SimpleInitializerImpl.cpp in Sources */,
 				F79CA3AD19BA055100008021 /* MLinker.cpp in Sources */,
 				F79CA3B919BA055100008021 /* MMotorGhostFF.cpp in Sources */,

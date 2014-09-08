@@ -20,20 +20,12 @@ using namespace std;
 
 ///testing basic initialization
 TEST(GeometryTest, Initialization) {
+
+    GController::initializeGrid(3, {3,3,3}, {100.0,100.0,100.0});
     
+    EXPECT_EQ(GController::nDim(), 3);
     
-    GController g;
-    g.initializeGrid(3, {3,3,3}, {100.0,100.0,100.0});
-    
-    EXPECT_EQ(GController::_nDim, 3);
-    
-    
-    
-    EXPECT_EQ(GController::_systemSize[0], 300.0);
-    EXPECT_EQ(GController::_systemSize[0], 300.0);
-    EXPECT_EQ(GController::_systemSize[0], 300.0);
-    
-    EXPECT_EQ(GController::_compartmentSize[0], 100.0);
+    EXPECT_EQ(GController::compartmentSize()[0], 100.0);
 }
 
 
