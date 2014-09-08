@@ -13,7 +13,7 @@ using namespace mathfunc;
 
 
 // Energy calculation methods:
-double LinkerStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4, double position1, double position2, double kStr, double L) ){
+double LinkerStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4, double position1, double position2, double kStr, double L) {
     
     auto v1 = MidPointCoordinate(pb1->coordinate, pb2->coordinate, position1);
     auto v2 = MidPointCoordinate(pb3->coordinate, pb4->coordinate, position2);
@@ -43,7 +43,7 @@ void LinkerStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4
     
     double invL = 1/TwoPointDistance( v1, v2);
     
-    double f0 = kSt * ( TwoPointDistance( v1, v2) - L ) * invL;
+    double f0 = kStr * ( TwoPointDistance( v1, v2) - L ) * invL;
     
     cout<< "f0= "<<f0<<endl;
     

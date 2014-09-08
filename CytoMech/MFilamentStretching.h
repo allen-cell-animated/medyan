@@ -18,12 +18,12 @@ class FilamentInteractions;
 class Filament;
 
 
-template <class StretchingInteractionType>
+template <class FStretchingInteractionType>
 class FilamentStretching : private FilamentInteractions
 {
     
 private:
-    StretchingInteractionType _FFType;
+    FStretchingInteractionType _FFType;
     
     
 public:

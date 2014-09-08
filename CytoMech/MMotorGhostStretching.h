@@ -18,12 +18,12 @@ class LinkerInteractions;
 class Linker;
 
 
-template <class StretchingInteractionType>
+template <class MStretchingInteractionType>
 class MotorGhostStretching : private MotorGhostStretching
 {
     
 private:
-    StretchingInteractionType _FFType;
+    MStretchingInteractionType _FFType;
     
     
 public:

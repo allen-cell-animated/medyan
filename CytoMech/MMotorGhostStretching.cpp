@@ -7,8 +7,8 @@
 //
 
 #include "MMotorGhostStretching.h"
-
-double LinkerStretching::ComputeEnergy(MotorGhost* pm, double d)
+template <class MStretchingInteractionType>
+double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhost* pm, double d)
 {
     if (d == 0.0){
         
@@ -35,7 +35,8 @@ double LinkerStretching::ComputeEnergy(MotorGhost* pm, double d)
     }
 }
 
-void LinkerStretching::ComputeForce(MotorGhost* pm)
+template <class MStretchingInteractionType>
+void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost* pm)
 {
     Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
     Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();
@@ -51,7 +52,8 @@ void LinkerStretching::ComputeForce(MotorGhost* pm)
 }
 
 
-void LinkerStretching::ComputeForceAux(MotorGhost* pm) /// Needed for Conjugated Gradient minimization;
+template <class MStretchingInteractionType>
+void MotorGhostStretching<MStretchingInteractionType>::ComputeForcesAux(MotorGhost* pm) /// Needed for Conjugated Gradient minimization;
 {
     Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
     Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();

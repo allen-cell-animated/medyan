@@ -7,8 +7,8 @@
 //
 
 #include "MLinkerStretching.h"
-
-double LinkerStretching::ComputeEnergy(Linker* pl, double d)
+template <class LStretchingInteractionType>
+double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d)
 {
     if (d == 0.0){
         
@@ -34,7 +34,8 @@ double LinkerStretching::ComputeEnergy(Linker* pl, double d)
     }
 }
 
-void LinkerStretching::ComputeForce(Filament* pf)
+template <class LStretchingInteractionType>
+void LinkerStretching<LStretchingInteractionType>::ComputeForces(Filament* pf)
 {
     Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
     Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();
@@ -49,7 +50,8 @@ void LinkerStretching::ComputeForce(Filament* pf)
 }
 
 
-void LinkerStretching::ComputeForceAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
+template <class LStretchingInteractionType>
+double LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
     Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
     Bead* pb2 = pl->GetFirstCylinder()->GetSecondtBead();

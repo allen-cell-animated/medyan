@@ -18,12 +18,12 @@ class LinkerInteractions;
 class Linker;
 
 
-template <class StretchingInteractionType>
+template <class LStretchingInteractionType>
 class LinkerStretching : private LinkerInteractions
 {
     
 private:
-    StretchingInteractionType _FFType;
+    LStretchingInteractionType _FFType;
     
     
 public:

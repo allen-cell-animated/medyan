@@ -6,9 +6,10 @@
 //  Copyright (c) 2014 Konstantin Popov. All rights reserved.
 //
 
-#include "MFilamentStratching.h"
+#include "MFilamentStretching.h"
 
-double FilamentStretching::ComputeEnergy(Filament* pf, double d)
+template <class FStretchingInteractionType>
+double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* pf, double d)
 {
     double U = 0.0;
     
@@ -36,7 +37,8 @@ double FilamentStretching::ComputeEnergy(Filament* pf, double d)
     }
 }
 
-void FilamentStretching::ComputeForce(Filament* pf)
+template <class FStretchingInteractionType>
+void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 {
    for(auto it : pf->getCylinderVector()){
        
@@ -49,7 +51,8 @@ void FilamentStretching::ComputeForce(Filament* pf)
 }
 
 
-void FilamentStretching::ComputeForceAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
+template <class FStretchingInteractionType>
+void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
     for(auto it : pf->getCylinderVector()){
         

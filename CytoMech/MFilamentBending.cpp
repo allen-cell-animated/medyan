@@ -8,7 +8,8 @@
 
 #include "MFilamentBending.h"
 
-double FilamentBending::ComputeEnergy(Filament* pf, double d)
+template <class FBendingInteractionType>
+double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, double d)
 {
     double U = 0.0;
     
@@ -36,8 +37,8 @@ double FilamentBending::ComputeEnergy(Filament* pf, double d)
             return U;
         }    }
 }
-
-void FilamentBending::ComputeForce(Filament* pf)
+template <class FBendingInteractionType>
+void FilamentBending<FBendingInteractionType>::ComputeForces(Filament* pf)
 {
     for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
         
@@ -52,8 +53,8 @@ void FilamentBending::ComputeForce(Filament* pf)
     
 }
 
-
-void FilamentBending::ComputeForceAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
+template <class FBendingInteractionType>
+void FilamentBending<FBendingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
     for ( auto it = _pCylinderVector.begin()+1; it != _pCylinderVector.end(); it++){
         

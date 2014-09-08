@@ -14,12 +14,12 @@ class FilamentInteractions;
 class Filament;
 
 
-template <class BendingInteractionType>
+template <class FBendingInteractionType>
 class FilamentBending : private FilamentInteractions
 {
     
 private:
-    BendingInteractionType _FFType;
+    FBendingInteractionType _FFType;
     
     
 public:
