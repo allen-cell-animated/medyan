@@ -16,6 +16,7 @@ TODO                                                                        COMP
     -SpeciesBulk
     -Geometry
     -FilamentElement / Cylinders
+    -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)
 4) Simple use cases
     -Polymer melt

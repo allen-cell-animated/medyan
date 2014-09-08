@@ -36,10 +36,6 @@ public:
     /// @note The first match is returned.
     virtual Species* findSpeciesByName(const std::string &name) const = 0;
     
-    /// Return a pointer to SpeciesDiffusing which has a name matching the argument.
-    /// @note The first match is returned.
-    virtual Species* findSpeciesDiffusingByName(const std::string &name) const = 0;
-    
     /// Return a pointer to Species having specified index in the container 
     virtual Species* findSpeciesByIndex (size_t index) const = 0;
     
@@ -158,20 +154,6 @@ public:
                                        {
                                            return element->getName()==name ? true : false;
                                        });
-        if(child_iter!=_species.end())
-            return child_iter->get();
-        else
-            return nullptr;
-    }
-    
-    /// Return a pointer to SpeciesDiffusing which has a name matching the argument. Otherwise, return a nullptr.
-    /// @note The first match is returned.
-    virtual Species* findSpeciesDiffusingByName(const std::string &name) const {
-        auto child_iter = std::find_if(_species.begin(),_species.end(),
-                                       [&name](const std::unique_ptr<Species> &element)
-                        {
-                        return (element->getName()==name && dynamic_cast<SpeciesDiffusing*>(element.get())) ? true : false;
-                        });
         if(child_iter!=_species.end())
             return child_iter->get();
         else
@@ -333,7 +315,7 @@ public:
     
     /// Return a reference to the first Species having the specified name.
     /// @note Throw an exception if the Species is not found.
-    virtual Species& findSpecies(const std::string &name) override {
+    virtual SpeciesSpecific& findSpecies(const std::string &name) override {
         auto child_iter = std::find_if(_species.begin(),_species.end(),
                                        [&name](const Species &element)
                                        {
@@ -361,7 +343,7 @@ public:
     
     /// Return a reference to Species at the position index in the container.
     /// @note No bound checking is done, hence, index must be valid.
-    virtual Species& findSpecies (size_t index) override {
+    virtual SpeciesSpecific& findSpecies (size_t index) override {
         return _species[index];
     }
     
@@ -381,7 +363,7 @@ public:
     
     /// Return a reference to Species which satisfies the equality operator with s. Otherwise, return a nullptr.
     /// @note The first match is returned.
-    virtual Species& findSimilarSpecies (const Species &s) override {
+    virtual SpeciesSpecific& findSimilarSpecies (const Species &s) override {
         auto it = std::find_if(_species.begin(),_species.end(),
                                [&s](const Species &element)
                                {return s==element;});
@@ -393,7 +375,7 @@ public:
     
     /// Return a reference to Species matching the molecule field of Species. Otherwise, return a nullptr.
     /// @note The first match is returned.
-    virtual Species& findSpeciesByMolecule (int molecule) override {
+    virtual SpeciesSpecific& findSpeciesByMolecule (int molecule) override {
         auto child_iter = std::find_if(_species.begin(),_species.end(),
                                        [molecule](const Species &element)
                                        {

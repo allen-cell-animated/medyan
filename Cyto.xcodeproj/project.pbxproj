@@ -19,6 +19,7 @@
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71EAF1915B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
 		F71EAF1A15B224210072EE4E /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71EAF1815B224210072EE4E /* common.cpp */; };
+		F722372919BE06C2006FAB85 /* test_geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372719BE06C2006FAB85 /* test_geometry.cpp */; };
 		F72EC63319782604007DA75F /* CFilamentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F72EC62F19782604007DA75F /* CFilamentElement.h */; };
 		F7346A8A1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
 		F7346A8B1578206500326E09 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7346A891578206500326E09 /* Component.cpp */; };
@@ -235,6 +236,7 @@
 		F71E973D1565A79A002BDF16 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
 		F71E97411565B01A002BDF16 /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
 		F71EAF1815B224210072EE4E /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
+		F722372719BE06C2006FAB85 /* test_geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_geometry.cpp; sourceTree = "<group>"; };
 		F72EC62F19782604007DA75F /* CFilamentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFilamentElement.h; sourceTree = "<group>"; };
 		F7346A871578202600326E09 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F7346A891578206500326E09 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
@@ -514,6 +516,7 @@
 				F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */,
 				F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */,
 				F7981A68194604F100A7E22C /* test_compartments.cpp */,
+				F722372719BE06C2006FAB85 /* test_geometry.cpp */,
 			);
 			name = TESTS;
 			path = CytoSim/TESTS;
@@ -1027,6 +1030,7 @@
 				F7A8EEB1193F91A600A52210 /* test_species.cpp in Sources */,
 				F7A8EEB2193F91A600A52210 /* test_reactions.cpp in Sources */,
 				F7A8EEB3193F91A600A52210 /* test_gillespie.cpp in Sources */,
+				F722372919BE06C2006FAB85 /* test_geometry.cpp in Sources */,
 				F7A8EEB4193F91A600A52210 /* test_nrm.cpp in Sources */,
 				F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */,
 				F7A8EEB5193F91A600A52210 /* test_simple_gillespie.cpp in Sources */,

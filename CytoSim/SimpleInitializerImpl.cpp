@@ -17,7 +17,7 @@ void SimpleInitializerImpl::initializeGrid() {
     //cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
     
     
-    CompartmentGrid::Instance(CompartmentGridKey())->addSpeciesBulk("Actin", 100000U);
+    CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 100000U);
     
     ///initialize all compartments with species
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
@@ -129,7 +129,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     
     
     //Look up diffusing species in this compartment
-    Species* actinBulk = &CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName("Actin");
+    Species* actinBulk = &CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName("Actin");
     
     ReactionBase *rPolyPlus, *rPolyMinus;
     

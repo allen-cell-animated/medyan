@@ -123,16 +123,17 @@ public:
     ///Add a bulk species to this grid
     template<typename ...Args>
     SpeciesBulk& addSpeciesBulk (Args&& ...args) {
-        return _bulkSpecies.addSpecies(std::forward<Args>(args)...);
+        _bulkSpecies.addSpecies(std::forward<Args>(args)...);
+        return _bulkSpecies.findSpecies(_bulkSpecies.size() - 1);
     }
     
     ///Remove bulk species
     void removeSpeciesBulk(int index) {_bulkSpecies.removeSpecies(index);}
-    void removeSpeciesBulk(std::string& name) {_bulkSpecies.removeSpecies(name);}
+    void removeSpeciesBulk(const std::string& name) {_bulkSpecies.removeSpecies(name);}
     
     ///Bulk species finder functions
-    SpeciesBulk& findSpeciesBulkByName(std::string& name) {_bulkSpecies.findSpecies(name);}
-    SpeciesBulk& findSpeciesBulkByMolecule(int molecule) {_bulkSpecies.findSpeciesByMolecule(molecule);}
+    SpeciesBulk& findSpeciesBulkByName(const std::string& name) {return _bulkSpecies.findSpecies(name);}
+    SpeciesBulk& findSpeciesBulkByMolecule(int molecule) {return _bulkSpecies.findSpeciesByMolecule(molecule);}
     
 
 };
