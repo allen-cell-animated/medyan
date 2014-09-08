@@ -18,7 +18,6 @@ class Filament;
 class FilamentDB;
 class BeadDB;
 class SubSystem;
-class Network;
 class Cylinder;
 class CylinderDB;
 

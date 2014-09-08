@@ -32,8 +32,7 @@ public:
 	std::vector<double> coordinate; //Coordinates of the bead
 	std::vector<double> force;      // Forces based on curent coordinates. Forces should alwais corespond to current coordinates.
     std::vector<double> forceAux; //An Aux field neede during CG minimization.
-    
-    
+
     //Aux functios:
     double CalcForceSquare() {return force[0]*force[0] + force[1]*force[1] + force[2]*force[2];  } // Aux method for CG minimization;
     double CalcForceSquare( int i) {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];  }
