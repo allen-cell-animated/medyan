@@ -11,6 +11,7 @@
 
 #include "SubSystem.h"
 #include "ForceField.h"
+#include "MMinimizer.h"
 #include "Mcommon.h"
 #include <iostream>
 
@@ -27,13 +28,20 @@ class MController {
     
 private:
     std::vector<ForceField> _forceFields; ///< vector of force field selections
-    
+    std::vector<Minimizer> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
     
 public:
     
     ///Initialize the MController using a list of vector names
     ///@param forceFields - a list of forcefields to be added
-    void initialize (std::initializer_list<std::string> forceFields)
+    void initializeFF (std::initializer_list<std::string> forceFields)
+    {
+        for(auto &f : forceFields) {
+            ///implement this
+        }
+    }
+    
+    void initializeMinAlorythms (std::initializer_list<std::string> Minimizers)
     {
         for(auto &f : forceFields) {
             ///implement this

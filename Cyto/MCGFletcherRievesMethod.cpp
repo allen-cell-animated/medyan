@@ -127,7 +127,7 @@ void FletcherRieves::Minimize(MController* mc)
 	double curVal = mc->ComputeEnergy(0.0);
     cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;
-	mc->CopmuteForce(0);
+	mc->CopmuteForce();
     
     PrintForces(*ps->getBDB());
     
@@ -152,7 +152,7 @@ void FletcherRieves::Minimize(MController* mc)
         MoveBeads(*ps->getBDB(), lambda);
         PrintForces(*ps->getBDB());
         
-        ps->CopmuteForce(1);
+        ps->CopmuteForceAux();
         PrintForces(*ps->getBDB());
         
 		newGradSquare = GradSquare(*ps->getBDB(), 1);
@@ -163,7 +163,7 @@ void FletcherRieves::Minimize(MController* mc)
 		ShiftGradient(*ps->getBDB(), beta);
         
 		prevVal = curVal;
-		curVal = ps->UpdateEnergy(0.0);
+		curVal = mc->ComputeEnergy(0.0);
         
 		gradSquare = newGradSquare;
 	}
