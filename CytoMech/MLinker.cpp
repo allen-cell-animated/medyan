@@ -16,7 +16,8 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, double stretchConst, double positio
     
     _pc1 = pc1;
     _pc2 = pc2;
-    _kStretch = stretchConst;
+    _eqLength = SystemParameters::Mechanics().LStretchingL;
+    _kStretch = SystemParameters::Mechanics().LStretchingK;
     _position1 = position1;
     _position2 = position2;
     

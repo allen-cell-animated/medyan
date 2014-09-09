@@ -53,6 +53,7 @@
 		F75201C319B61B5A00619A16 /* BoundaryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75201C119B61B5A00619A16 /* BoundaryImpl.cpp */; };
 		F75201C919B62CE400619A16 /* BoundarySurfaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75201C719B62CE400619A16 /* BoundarySurfaceImpl.cpp */; };
 		F75201CF19B6528D00619A16 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75201CD19B6528D00619A16 /* BoundaryElementImpl.cpp */; };
+		F75AE13619BF6F2400DD7919 /* SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */; };
 		F76148D115F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
 		F76148D215F79CE800587017 /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76148CF15F79CE800587017 /* CompartmentContainer.cpp */; };
 		F76148D315F79CE800587017 /* CompartmentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F76148D015F79CE800587017 /* CompartmentContainer.h */; };
@@ -279,6 +280,8 @@
 		F75201CB19B6320F00619A16 /* BoundaryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryElement.h; sourceTree = "<group>"; };
 		F75201CD19B6528D00619A16 /* BoundaryElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryElementImpl.cpp; sourceTree = "<group>"; };
 		F75201CE19B6528D00619A16 /* BoundaryElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryElementImpl.h; sourceTree = "<group>"; };
+		F75AE13319BF6C6B00DD7919 /* SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemParameters.h; sourceTree = "<group>"; };
+		F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemParameters.cpp; sourceTree = "<group>"; };
 		F76148CF15F79CE800587017 /* CompartmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentContainer.cpp; sourceTree = "<group>"; };
 		F76148D015F79CE800587017 /* CompartmentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompartmentContainer.h; sourceTree = "<group>"; };
 		F763ED061548FFC70069DA61 /* CytoSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CytoSim; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -659,6 +662,8 @@
 				F7358498198990E60026E1B6 /* CController.cpp */,
 				F7358499198990E60026E1B6 /* CController.h */,
 				F7954C4B197D98BE00074A12 /* Cyto.cpp */,
+				F75AE13319BF6C6B00DD7919 /* SystemParameters.h */,
+				F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */,
 			);
 			path = Cyto;
 			sourceTree = "<group>";
@@ -960,6 +965,7 @@
 				F7954CA9197D9CC000074A12 /* ChemNRMImpl.cpp in Sources */,
 				F79CA39D19BA055100008021 /* MFilament.cpp in Sources */,
 				F79CA39B19BA055100008021 /* MExclVol.cpp in Sources */,
+				F75AE13619BF6F2400DD7919 /* SystemParameters.cpp in Sources */,
 				F79CA38B19BA055100008021 /* MathFunctions.cpp in Sources */,
 				B52F64D119BE6A6800A2B9FD /* MCGPolakRibiereMethod.cpp in Sources */,
 				F7A94247198AB05400086614 /* Cylinder.cpp in Sources */,

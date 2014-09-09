@@ -12,6 +12,7 @@
 #include <iostream>
 #include <math.h>
 #include "MathFunctions.h"
+#include "SystemParameters.h"
 
 class Bead;
 class Filament;
@@ -21,16 +22,5 @@ class SubSystem;
 class Cylinder;
 class CylinderDB;
 
-void FletcherRievesMethod(SubSystem* ps);
-void PolakRibiereMethod(SubSystem* ps);
-
-/// Some constants for potentials. Maybe not the best place for them, can be moved to other places;
-const double L = 20.0;
-const double teta = 180.0;
-const double kS = 10.0;
-const double kB = 10.0;
-const double kTw = 10.0;
-
-const double BOUNDARY_INTERACTION_CUTOFF = 10.0;
 
 #endif

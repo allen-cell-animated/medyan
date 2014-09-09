@@ -12,12 +12,12 @@
 
 MCylinder::MCylinder(Filament* pf, Bead* pb){
     
-    _eqLenght = L;
-    _eqAngle = teta;
-    _eqAngleTwist = 0.0;
-    _kStretch = kS;
-    _kBend = kB;
-    _kTwist = kTw;
+    _eqLength = SystemParameters::Mechanics().FStretchingL;
+    _eqAngle = SystemParameters::Mechanics().FBendingTheta;
+    _eqAngleTwist = SystemParameters::Mechanics().FTwistingPhi;
+    _kStretch = SystemParameters::Mechanics().FStretchingK;
+    _kBend = SystemParameters::Mechanics().FBendingK;
+    _kTwist = SystemParameters::Mechanics().FTwistingK;
     
     _pSecond = NULL;
     _ifLast = true;

@@ -81,11 +81,6 @@ public:
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
-    
-    ///return geometric parameters
-    static short nDim() {return _nDim;}
-    static std::vector<int> gridSize() {return _grid;}
-    static std::vector<double> compartmentSize() {return _compartmentSize;}
 };
 
 

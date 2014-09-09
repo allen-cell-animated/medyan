@@ -60,7 +60,7 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    ChemistryAlgorithm CParams;
+    ChemistryAlgorithm CAlgorithm;
     
     std::string line;
     while(getline(_inputFile, line)) {
@@ -73,7 +73,7 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.algorithm = lineVector[1];
+                CAlgorithm.algorithm = lineVector[1];
             }
         }
         
@@ -85,124 +85,12 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.setup = lineVector[1];
+                CAlgorithm.setup = lineVector[1];
             }
         }
     }
-    return CParams;
+    return CAlgorithm;
 }
-
-BoundaryParameters Parser::readBoundaryParameters() {
-    
-    BoundaryParameters BParams;
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    std::string line;
-    while(getline(_inputFile, line)) {
-        
-        if (line.find("BOUNDARYTYPE") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
-                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                BParams.boundaryType = lineVector[1];
-            }
-        }
-    }
-    return BParams;
-}
-
-///GEOMETRY CONSTANT PARSER
-GeometryParameters Parser::readGeometryParameters() {
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    GeometryParameters GParams;
-    
-    std::vector<double> gridTemp;
-    std::vector<double> compartmentTemp;
-    double monomerSize = 0;
-    short nDim = 0;
-    
-    //find grid size lines
-    std::string line;
-    while(getline(_inputFile, line)) {
-        if (line.find("NX") != std::string::npos
-            || line.find("NY") != std::string::npos
-            || line.find("NZ") != std::string::npos) {
-            
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at grid dimensions. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if(lineVector.size() == 2)
-                gridTemp.push_back(double(std::atoi(lineVector[1].c_str())));
-            else {}
-        }
-        
-        else if (line.find("COMPARTMENTSIZEX") != std::string::npos
-                 || line.find("COMPARTMENTSIZEY") != std::string::npos
-                 || line.find("COMPARTMENTSIZEZ") != std::string::npos) {
-            
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                compartmentTemp.push_back(double(std::atoi(lineVector[1].c_str())));
-            else {}
-        }
-        
-        else if(line.find("MONOMERSIZE") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at monomer size. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                monomerSize = double(std::atoi(lineVector[1].c_str()));
-            else {}
-        }
-        
-        else if(line.find("NDIM") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                nDim = short(std::atoi(lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else {}
-    }
-    ///set geometry parameters and return
-    GParams.nDim = nDim;
-    GParams.monomerSize = monomerSize;
-    if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
-    if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
-    if(gridTemp.size() >= 3) GParams.NZ = gridTemp[2];
-    if(compartmentTemp.size() >= 1) GParams.compartmentSizeX = compartmentTemp[0];
-    if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
-    if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
-    
-    return GParams;
-    
-}
-
 
 ///Mechanics force field types
 MechanicsFFType Parser::readMechanicsFFType() {
@@ -332,7 +220,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
 
 
 ///MECHANICS CONSTANT PARSER
-MechanicsParameters Parser::readMechanicsParameters() {
+void Parser::readMechanicsParameters() {
     
     MechanicsParameters MParams;
     
@@ -572,201 +460,9 @@ MechanicsParameters Parser::readMechanicsParameters() {
         }
         else {}
     }
-    return MParams;
+    ///Set system parameters
+    SystemParameters::MParams = MParams;
 }
-
-
-///Function to check consistency between all desired forcefields, boundaries, and constants
-bool Parser::checkInput(ChemistryAlgorithm &CParams, MechanicsAlgorithm &MAlgorithm,
-                        MechanicsFFType &MTypes, MechanicsParameters &MParams,
-                        BoundaryParameters &BParams, GeometryParameters &GParams) {
-    
-    std::cout << "Checking parsed data..." << std::endl;
-    
-    ///Check mechanics input consistency
-    //Filaments
-    if(MTypes.FStretchingType != "") {
-        if(MParams.FStretchingK == 0 || MParams.FStretchingL == 0) {
-            std::cout << "Did not specify non-zero FStretching constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.FStretchingK != 0 || MParams.FStretchingL != 0) {
-            std::cout << "Specified FStretching constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.FBendingType != "") {
-        if(MParams.FBendingK == 0 || MParams.FBendingTheta == 0) {
-            std::cout << "Did not specify non-zero FBending constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.FBendingK != 0 || MParams.FBendingTheta != 0) {
-            std::cout << "Specified FBending constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.FTwistingType != "") {
-        if(MParams.FTwistingK == 0 || MParams.FTwistingPhi == 0) {
-            std::cout << "Did not specify non-zero FTwisting constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.FTwistingK != 0 || MParams.FTwistingPhi != 0) {
-            std::cout << "Specified FTwisting constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    //Linkers
-    if(MTypes.LStretchingType != "") {
-        if(MParams.LStretchingK == 0 || MParams.LStretchingL == 0) {
-            std::cout << "Did not specify non-zero LStretching constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.LStretchingK != 0 || MParams.LStretchingL != 0) {
-            std::cout << "Specified LStretching constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.LBendingType != "") {
-        if(MParams.LBendingK == 0 || MParams.LBendingTheta == 0) {
-            std::cout << "Did not specify non-zero LBending constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.LBendingK != 0 || MParams.LBendingTheta != 0) {
-            std::cout << "Specified FBending constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.LTwistingType != "") {
-        if(MParams.LTwistingK == 0 || MParams.LTwistingPhi == 0) {
-            std::cout << "Did not specify non-zero LTwisting constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.LTwistingK != 0 || MParams.LTwistingPhi != 0) {
-            std::cout << "Specified LTwisting constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    //Motors
-    if(MTypes.MStretchingType != "") {
-        if(MParams.MStretchingK == 0 || MParams.MStretchingL == 0) {
-            std::cout << "Did not specify non-zero MStretching constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.MStretchingK != 0 || MParams.MStretchingL != 0) {
-            std::cout << "Specified MStretching constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.MBendingType != "") {
-        if(MParams.MBendingK == 0 || MParams.MBendingTheta == 0) {
-            std::cout << "Did not specify non-zero MBending constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.MBendingK != 0 || MParams.MBendingTheta != 0) {
-            std::cout << "Specified MBending constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    if(MTypes.MTwistingType != "") {
-        if(MParams.MTwistingK == 0 || MParams.MTwistingPhi == 0) {
-            std::cout << "Did not specify non-zero MTwisting constants." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.MTwistingK != 0 || MParams.MTwistingPhi != 0) {
-            std::cout << "Specified MTwisting constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    ///Volume
-    if(MTypes.VolumeType != "") {
-        if(MParams.VolumeK == 0) {
-            std::cout << "Did not specify non-zero volume constant." << std::endl;
-            return false;
-        }
-    }
-    else {
-        if(MParams.VolumeK != 0 ) {
-            std::cout << "Specified MStretching constants but did not choose FF type." << std::endl;
-            return false;
-        }
-    }
-    
-    
-    ///Check Geometry consistency
-    if(GParams.nDim > 3 || GParams.nDim <= 0)
-        std::cout << "Specified nDim must be between 1 and 3!" <<std::endl;
-    
-    if(GParams.nDim == 1) {
-        if((GParams.NY != 0 || GParams.NZ != 0) || (GParams.NX == 0)) {
-            std::cout << "Specified grid dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-        if((GParams.compartmentSizeY != 0 || GParams.compartmentSizeZ != 0) || (GParams.compartmentSizeX == 0)) {
-            std::cout << "Specified compartment dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-        
-        
-    }
-    else if(GParams.nDim == 2) {
-        if(GParams.NZ != 0 || (GParams.NX == 0 || GParams.NY == 0)) {
-            std::cout << "Specified grid dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-        if(GParams.compartmentSizeZ != 0 || (GParams.compartmentSizeX == 0 || GParams.compartmentSizeY == 0)) {
-            std::cout << "Specified compartment dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-        
-    }
-    else {
-        if(GParams.NX == 0 || GParams.NY == 0 || GParams.NZ == 0) {
-            std::cout << "Specified grid dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-        if(GParams.compartmentSizeX == 0 || GParams.compartmentSizeY == 0 || GParams.compartmentSizeZ == 0) {
-            std::cout << "Specified compartment dimensions do not match NDIM." << std::endl;
-            return false;
-        }
-    }
-    
-    if(GParams.monomerSize == 0) {
-        std::cout << "Must specify a non-zero monomer size" << std::endl;
-        return false;
-    }
-    
-    
-    std::cout << "Parsing checks all passed!" <<std::endl;
-    return true;
-}
-    
 
 MechanicsAlgorithm readMechanicsAlgorithm() {
     
@@ -790,4 +486,143 @@ MechanicsAlgorithm readMechanicsAlgorithm() {
             }
         }
     return MAlgorithm;
+}
+
+    
+///BOUNDARY PARSERS
+void Parser::readBoundaryParameters() {
+    
+    BoundaryParameters BParams;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        
+        if (line.find("BINTERACTIONCUTOFF") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() != 2) {
+                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                BParams.boundaryType = lineVector[1];
+            }
+        }
+    }
+    ///Set system parameters
+    SystemParameters::BParams = BParams;
+}
+
+BoundaryType readBoundaryType() {
+        
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    BoundaryType BType;
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        
+        if (line.find("BOUNDARYTYPE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() != 2) {
+                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                BType.boundaryType = lineVector[1];
+            }
+        }
+    return BType;
+}
+    
+    
+///GEOMETRY PARSERS
+void Parser::readGeometryParameters() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    GeometryParameters GParams;
+    
+    std::vector<double> gridTemp;
+    std::vector<double> compartmentTemp;
+    double monomerSize = 0;
+    short nDim = 0;
+    
+    //find grid size lines
+    std::string line;
+    while(getline(_inputFile, line)) {
+        if (line.find("NX") != std::string::npos
+            || line.find("NY") != std::string::npos
+            || line.find("NZ") != std::string::npos) {
+            
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at grid dimensions. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2)
+                gridTemp.push_back(double(std::atoi(lineVector[1].c_str())));
+            else {}
+        }
+        
+        else if (line.find("COMPARTMENTSIZEX") != std::string::npos
+                 || line.find("COMPARTMENTSIZEY") != std::string::npos
+                 || line.find("COMPARTMENTSIZEZ") != std::string::npos) {
+            
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                compartmentTemp.push_back(double(std::atoi(lineVector[1].c_str())));
+            else {}
+        }
+        
+        else if(line.find("MONOMERSIZE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at monomer size. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                monomerSize = double(std::atoi(lineVector[1].c_str()));
+            else {}
+        }
+        
+        else if(line.find("NDIM") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                nDim = short(std::atoi(lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else {}
+    }
+    ///set geometry parameters and return
+    GParams.nDim = nDim;
+    GParams.monomerSize = monomerSize;
+    if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
+    if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
+    if(gridTemp.size() >= 3) GParams.NZ = gridTemp[2];
+    if(compartmentTemp.size() >= 1) GParams.compartmentSizeX = compartmentTemp[0];
+    if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
+    if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
+    
+    SystemParameters::GParams = GParams;
+    
 }

@@ -46,7 +46,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     CCylinder* cylinder = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
-    int maxlength = L / monomer_size;
+    int maxlength = SystemParameters::Mechanics().FStretchingL / SystemParameters::Geometry().monomerSize;
     
     ///add to cylinder
     for (int index = 0; index < maxlength; index++) {
