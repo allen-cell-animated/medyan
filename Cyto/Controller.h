@@ -47,14 +47,17 @@ public:
         
         ///read if activated
         if(_mechanics) {
+            ///read algorithm and types
             MAlgorithm = p.readMechanicsAlgorithm();
-            p.readMechanicsParameters();
             MTypes = p.readMechanicsFFType();
-            p.readBoundaryParameters();
             BTypes = p.readBoundaryType();
             
+            ///read const parameters
+            p.readMechanicsParameters();
+            p.readBoundaryParameters();
         }
         if(_chemistry) {
+            ///read algorithm
             CAlgorithm = p.readChemistryAlgorithm();
         }
         ///Always read geometry
@@ -63,13 +66,7 @@ public:
         ///CALLING ALL CONTROLLERS TO INITIALIZE
         
         ///Initialize geometry controller
-        GController::initializeGrid(SystemParameters::Geometry().nDim,
-                                    {SystemParameters::Geometry().NX,
-                                     SystemParameters::Geometry().NY,
-                                     SystemParameters::Geometry().NZ},
-                                    {SystemParameters::Geometry().compartmentSizeX,
-                                     SystemParameters::Geometry().compartmentSizeY,
-                                     SystemParameters::Geometry().compartmentSizeZ});
+        GController::initializeGrid();
         
         ///Initialize chemical controller
         if(_chemistry)

@@ -19,8 +19,8 @@ bool mechanics() {
         if (line.find("MECHANICS") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+            if(lineVector.size() != 2) {
+                std::cout << "Need to specify Mechanics ON/OFF. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -42,8 +42,8 @@ bool chemistry() {
         if (line.find("CHEMISTRY") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+            if(lineVector.size() != 2) {
+                std::cout << "Need to specify Chemistry ON/OFF. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -68,7 +68,7 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
         if (line.find("CALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -80,7 +80,7 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
         if (line.find("SETUP") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -106,7 +106,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         if (line.find("FSTRETCHINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament stretching type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -117,7 +117,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("FBENDINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament bending type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -128,7 +128,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("FTWISTINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament twisting type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -139,7 +139,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("LSTRETCHINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker stretching type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -150,7 +150,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("LBENDINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker bending type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -161,7 +161,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("LTWISTINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker twisting type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -172,7 +172,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("MSTRETCHINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor stretching type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -183,7 +183,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("MBENDINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor bending type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -194,7 +194,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("MTWISTINGTYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor twisting type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -205,7 +205,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
         else if (line.find("VOLUMETYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Volume type. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -234,7 +234,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("FSTRETCHINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -245,7 +245,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("FSTRETCHINGL") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -258,7 +258,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("FBENDINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -269,7 +269,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("FBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -282,7 +282,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("FTWISTINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -293,7 +293,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("FTWISTINGPHI") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -306,7 +306,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("LSTRETCHINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -317,7 +317,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("LSTRETCHINGL") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -330,7 +330,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("LBENDINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -341,7 +341,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("LBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -354,7 +354,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("LTWISTINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -365,7 +365,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("LTWISTINGPHI") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -378,7 +378,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("MSTRETCHINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -389,7 +389,7 @@ void Parser::readMechanicsParameters() {
         if (line.find("MSTRETCHINGL") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -402,7 +402,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("MBENDINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -413,7 +413,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("FBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -426,7 +426,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("MTWISTINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -437,7 +437,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("MTWISTINGPHI") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -450,7 +450,7 @@ void Parser::readMechanicsParameters() {
         else if (line.find("VOLUMEK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "There was an error parsing input file at Volume parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -477,8 +477,8 @@ MechanicsAlgorithm readMechanicsAlgorithm() {
         if (line.find("MALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() >= 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+            if(lineVector.size() != 2) {
+                std::cout << "A Mechanics algorithm must be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -530,7 +530,7 @@ BoundaryType readBoundaryType() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                std::cout << "A boundary type needs to be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -552,6 +552,7 @@ void Parser::readGeometryParameters() {
     std::vector<double> gridTemp;
     std::vector<double> compartmentTemp;
     double monomerSize = 0;
+    double cylinderSize = 0;
     short nDim = 0;
     
     //find grid size lines
@@ -590,8 +591,8 @@ void Parser::readGeometryParameters() {
         else if(line.find("MONOMERSIZE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at monomer size. Exiting" << std::endl;
+            if(lineVector.size() != 2) {
+                std::cout << "A monomer size needs to be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -599,11 +600,23 @@ void Parser::readGeometryParameters() {
             else {}
         }
         
+        else if(line.find("CYLINDERSIZE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() != 2) {
+                std::cout << "A cylinder size needs to be specified. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                cylinderSize = double(std::atoi(lineVector[1].c_str()));
+            else {}
+        }
+        
         else if(line.find("NDIM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
+            if(lineVector.size() !=  2) {
+                std::cout << "Number of dimensions needs to be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -615,6 +628,7 @@ void Parser::readGeometryParameters() {
     }
     ///set geometry parameters and return
     GParams.nDim = nDim;
+    GParams.cylinderSize = cylinderSize;
     GParams.monomerSize = monomerSize;
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
     if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];

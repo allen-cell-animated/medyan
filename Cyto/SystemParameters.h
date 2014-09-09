@@ -55,6 +55,7 @@ struct GeometryParameters {
     double compartmentSizeZ = 0;
     
     double monomerSize = 0;
+    double cylinderSize = 0;
 };
 
 ///Struct to hold the read boundary parameters
