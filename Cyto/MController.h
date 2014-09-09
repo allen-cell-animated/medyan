@@ -41,11 +41,11 @@ public:
     }
     
     ///Compute the energy using all available force fields
-    double ComputeEnergy() {
+    double ComputeEnergy(double d) {
         
         double energy = 0;
         for(auto &f : _forceFields)
-            energy += f.ComputeEnergy();
+            energy += f.ComputeEnergy(d);
         
         return energy;
     }
@@ -56,6 +56,13 @@ public:
         ///implement this
     }
     
+    ///Reset the forcesAux of all objects
+    void ResetForcesAux() {
+        
+        ///implement this
+    }
+
+    
     ///Compute the forces of all force fields
     void ComputeForces() {
         ResetForces();
@@ -63,6 +70,15 @@ public:
         for(auto &f : _forceFields)
             f.ComputeForces();
     }
+    
+    ///Compute the forcesAux of all force fields
+    void ComputeForcesAux() {
+        ResetForces();
+        
+        for(auto &f : _forceFields)
+            f.ComputeForces();
+    }
+
     
     
     ///Run minimization on the system using the chosen algorithm
