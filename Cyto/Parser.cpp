@@ -202,6 +202,17 @@ MechanicsFFType Parser::readMechanicsFFType() {
                 MTypes.MTwistingType = lineVector[1];
             }
         }
+        else if (line.find("BOUNDARYTYPE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Boundary type. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BoundaryFFType = lineVector[1];
+            }
+        }
         else if (line.find("VOLUMETYPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -213,6 +224,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
                 MTypes.VolumeType = lineVector[1];
             }
         }
+        
         else {}
     }
     return MTypes;
@@ -526,11 +538,11 @@ BoundaryType readBoundaryType() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("BOUNDARYTYPE") != std::string::npos) {
+        if (line.find("BOUNDARYSHAPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A boundary type needs to be specified. Exiting" << std::endl;
+                std::cout << "A boundary shape needs to be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {

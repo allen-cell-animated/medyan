@@ -48,9 +48,9 @@ public:
         ///read if activated
         if(_mechanics) {
             ///read algorithm and types
-            MAlgorithm = p.readMechanicsAlgorithm();
             MTypes = p.readMechanicsFFType();
             BTypes = p.readBoundaryType();
+            MAlgorithm = p.readMechanicsAlgorithm();
             
             ///read const parameters
             p.readMechanicsParameters();
@@ -76,7 +76,7 @@ public:
         if(_mechanics) {
             
             ///Boundary
-            if(BTypes.boundaryType == "CUBIC")
+            if(BTypes.boundaryShape == "CUBIC")
                 _subSystem.AddBoundary(new BoundaryCubic());
             else {
                 std::cout << "Boundary not yet implemented. Exiting." <<std::endl;

@@ -53,7 +53,8 @@ MTWISTINGPHI:
 VOLUMETYPE:
 VOLUMEK:
 
-BOUNDARYTYPE:                CUBIC
+BOUNDARYTYPE:                WALL
+BOUNDARYSHAPE:               CUBIC
 BINTERACTIONCUTOFF:          10.0
 
 ##################################################

@@ -30,7 +30,7 @@ struct ChemistryAlgorithm {
 ///Struct to hold boundary parameters (simple for now)
 struct BoundaryType {
     
-    std::string boundaryType = "";
+    std::string boundaryShape = "";
 };
 
 ///Struct to hold mechanics ff type
@@ -52,6 +52,10 @@ struct MechanicsFFType {
     
     ///Volume FF type
     std::string VolumeType = "";
+    
+    ///Boundary FF Type
+    std::string BoundaryFFType = "";
+    
 };
 
 ///Struct to hold mechanics algorithm information
@@ -101,8 +105,8 @@ public:
     void readMechanicsParameters();
     
     ///Boundary parser
-    void readBoundaryParameters();
     BoundaryType readBoundaryType();
+    void readBoundaryParameters();
 
     ///Geometry parser
     void readGeometryParameters();
