@@ -125,9 +125,9 @@ vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<doubl
     
     for (int i = 0; i<numBeads; i++) {
         
-        tmpVec[0] = v[0][0] + L * i * tau[0];
-        tmpVec[1] = v[0][1] + L * i * tau[1];
-        tmpVec[2] = v[0][2] + L * i * tau[2];
+        tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * tau[0];
+        tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * tau[1];
+        tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * tau[2];
         
         coordinate.push_back(tmpVec);
     }

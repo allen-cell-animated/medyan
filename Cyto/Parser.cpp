@@ -221,7 +221,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.VolumeType = lineVector[1];
+                MTypes.VolumeFFType = lineVector[1];
             }
         }
         

@@ -40,10 +40,8 @@ public:
         _chemistry = p.chemistry();
         
         ///Parameters for input
-        ChemistryAlgorithm CAlgorithm;
-        MechanicsAlgorithm MAlgorithm;
-        MechanicsFFType MTypes;
-        BoundaryType BTypes;
+        ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
+        MechanicsFFType MTypes; BoundaryType BTypes;
         
         ///read if activated
         if(_mechanics) {

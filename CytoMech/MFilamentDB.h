@@ -39,7 +39,7 @@ public:
         double d = mathfunc::TwoPointDistance(v[0], v[1]);
         std::vector<double> tau = mathfunc::TwoPointDirection(v[0], v[1]);
         
-        int numSegment = d/SystemParameters::Mechanics().FStretchingL;
+        int numSegment = d/SystemParameters::Geometry().cylinderSize;
         // check how many segments can fit between end-to-end of the filament
         
         if (numSegment == 0){

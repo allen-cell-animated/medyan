@@ -53,6 +53,8 @@ MTWISTINGPHI:
 VOLUMETYPE:
 VOLUMEK:
 
+### BOUNDARY ###
+
 BOUNDARYTYPE:                WALL
 BOUNDARYSHAPE:               CUBIC
 BINTERACTIONCUTOFF:          10.0
@@ -79,7 +81,7 @@ CYLINDERSIZE:                27.0
 
 CHEMISTRY:                   ON
 
-CALGORITHM:                   NRM
+CALGORITHM:                  NRM
 SETUP:                       SIMPLE
 
 

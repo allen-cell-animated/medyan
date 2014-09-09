@@ -18,6 +18,10 @@
 #include <ios>
 #include "Mcommon.h"
 
+///Struct to hold mechanics algorithm information
+struct MechanicsAlgorithm {
+    std::string algorithm = "";
+};
 
 ///Struct to hold chemistry algorithm (simple for now)
 struct ChemistryAlgorithm {
@@ -51,16 +55,11 @@ struct MechanicsFFType {
     std::string MTwistingType = "";
     
     ///Volume FF type
-    std::string VolumeType = "";
+    std::string VolumeFFType = "";
     
     ///Boundary FF Type
     std::string BoundaryFFType = "";
     
-};
-
-///Struct to hold mechanics algorithm information
-struct MechanicsAlgorithm {
-    std::string algorithm = "";
 };
 
 
