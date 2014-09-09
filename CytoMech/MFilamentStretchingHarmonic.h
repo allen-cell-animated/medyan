@@ -7,7 +7,7 @@
 //
 
 #ifndef Cyto_MFilamentStretchingHarmonic_h
-#define Cyto_FilamentStretchingHarmonic_h
+#define Cyto_MFilamentStretchingHarmonic_h
 
 #include "MBead.h"
 

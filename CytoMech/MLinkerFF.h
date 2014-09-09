@@ -16,12 +16,13 @@
 
 class LinkerInteractions;
 
-class LinkerFF : private ForceField
+class LinkerFF : public ForceField
 {
     
 private:
     std::vector <LinkerInteractions> _linkerInteractionVector;
     
+    LinkerFF(std::string Stretching, std::string Bending, std::string Twisting );
     
 public:
     

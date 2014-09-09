@@ -9,6 +9,13 @@
 #include "MMotorGhostFF.h"
 
 
+MotorGhostFF::MotorGhostFF (std::string Stretching, std::string Bending, std::string Twisting)
+{
+    if (Stretching == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostStretching<MotorGhostStretchingHarmonic>());}
+    if (Bending == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostBending<MotorGhostBendingHarmonic>());}
+    if (Twisting == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostTwisting<MotorGhostTwistingHarmonic>());}
+}
+
 double MotorGhostFF::ComputeEnergy(double d)
 {
     double U_motor = 0;

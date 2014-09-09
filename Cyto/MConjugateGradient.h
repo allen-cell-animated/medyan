@@ -13,7 +13,7 @@ class MController;
 class Minimize;
 
 template <class CGType>
-class ConjugateGradient : private Minimize
+class ConjugateGradient : public Minimize
 {
     
 private:

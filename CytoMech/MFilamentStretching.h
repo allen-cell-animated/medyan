@@ -19,7 +19,7 @@ class Filament;
 
 
 template <class FStretchingInteractionType>
-class FilamentStretching : private FilamentInteractions
+class FilamentStretching : public FilamentInteractions
 {
     
 private:

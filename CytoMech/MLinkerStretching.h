@@ -19,7 +19,7 @@ class Linker;
 
 
 template <class LStretchingInteractionType>
-class LinkerStretching : private LinkerInteractions
+class LinkerStretching : public LinkerInteractions
 {
     
 private:

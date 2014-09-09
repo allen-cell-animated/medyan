@@ -16,12 +16,12 @@
 
 class MotorGhostInteractions;
 
-class MotorGhostFF : private ForceField
+class MotorGhostFF : public ForceField
 {
     
 private:
     std::vector <MotorGhostInteractions> _motorGhostInteractionVector;
-    
+    MotorGhostFF(std::string Stretching, std::string Bending, std::string Twisting );
     
 public:
     

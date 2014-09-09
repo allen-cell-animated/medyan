@@ -73,9 +73,7 @@ public:
         ///Initialize Mechanical controller
         if(_mechanics) {
             
-            
-            
-            _mController.initialize({""});
+            _mController.initialize(MTypes, MAlgorithm);
         }
         else {
             ///initialize mechanical controller with no forcefields?

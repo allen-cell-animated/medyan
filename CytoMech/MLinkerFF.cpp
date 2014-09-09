@@ -8,6 +8,13 @@
 
 #include "MLinkerFF.h"
 
+LinkerFF::LinkerFF (std::string Stretching, std::string Bending, std::string Twisting)
+{
+    if (Stretching == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerStretching<FilamentStretchingHarmonic>());}
+    if (Bending == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerBending<FilamentBendingHarmonic>());}
+    if (Twisting == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerTwisting<FilamentTwistingHarmonic>());}
+}
+
 double LinkerFF::ComputeEnergy(double d)
 {
     double U_linker = 0;

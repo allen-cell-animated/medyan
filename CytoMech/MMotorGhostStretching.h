@@ -14,12 +14,12 @@
 #include "MBead.h"
 
 
-class LinkerInteractions;
-class Linker;
+class MotorGhostInteractions;
+
 
 
 template <class MStretchingInteractionType>
-class MotorGhostStretching : private MotorGhostStretching
+class MotorGhostStretching : public MotorGhostInteractions
 {
     
 private:

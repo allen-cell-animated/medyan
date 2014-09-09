@@ -12,21 +12,18 @@
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
-
+#include <stdlib.h>
 
 class FilamentInteractions;
 
-class FilamentFF : private ForceField
+class FilamentFF : public ForceField
 {
  
 private:
     std::vector <FilamentInteractions> _filamentInteractionVector;
-   
+    FilamentFF(std::string Stretching, std::string Bending, std::string Twisting );
     
 public:
-    FilamentFF(std::vector<std::string>);
-    ~FilamentFF();
-    
     
    // Public interfaecs to compute forces:
     

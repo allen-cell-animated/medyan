@@ -12,8 +12,17 @@
 #include "SubSystem.h"
 #include "ForceField.h"
 #include "MMinimizer.h"
+#include "Parser.h"
 #include "Mcommon.h"
+#include "ForceField.h"
+#include "MFilamentFF.h"
+#include "MLinkerFF.h"
+#include "MMotorGhostFF.h"
+#include "MConjugateGradient.h"
+#include "MCGPolakRibiereMethod.cpp"
+#include "MCGFletcherRievesMethod.h"
 #include <iostream>
+#include <vector>
 
 
 /// MController class is used to initialize and run the mechanical components of a simulation
@@ -27,28 +36,39 @@
 class MController {
     
 private:
-    std::vector<ForceField> _forceFields; ///< vector of force field selections
-    std::vector<Minimizer> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
-    
-public:
+    std::vector<ForceField*> _forceFields; ///< vector of force field selections
+    std::vector<Minimizer*> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
     
     ///Initialize the MController using a list of vector names
     ///@param forceFields - a list of forcefields to be added
-    void initializeFF (std::initializer_list<std::string> forceFields)
+    void initializeFF (MechanicsFFType forceFields)
     {
-        for(auto &f : forceFields) {
-            ///implement this
-        }
+        /// Check if exist!!!
+        _forceFields.push_back(new FilamentFF(forceFields.FStretchingType, forceFields.FBendingType, forceFields.FTwistingType) );
+        _forceFields.push_back(new LinkerFF(forceFields.LStretchingType, forceFields.LBendingType, forceFields.LTwistingType) );
+        _forceFields.push_back(new MotorGhostFF(forceFields.MStretchingType, forceFields.MBendingType, forceFields.MTwistingType) );
+        
+        /// Add other FF's
+        
     }
     
-    void initializeMinAlorythms (std::initializer_list<std::string> Minimizers)
+    void initializeMinAlorythms (MechanicsAlgorithm Minimizers)
     {
-        for(auto &f : forceFields) {
-            ///implement this
-        }
+        if (Minimizers.algorithm == "FLETCHERRIVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
+        if (Minimizers.algorithm == "POLAKRIBIERE") {_minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>() );}
+        
+        ///Change .algorithm to .cgFR , .md etc
+    }
+
+public:
+    
+    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers )
+    {
+        initializeFF(forceFields);
+        initializeMinAlorythms(Minimizers);
     }
     
-    ///Compute the energy using all available force fields
+    //Compute the energy using all available force fields
     double ComputeEnergy(double d) {
         
         double energy = 0;

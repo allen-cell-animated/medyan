@@ -15,7 +15,7 @@ class Filament;
 
 
 template <class FBendingInteractionType>
-class FilamentBending : private FilamentInteractions
+class FilamentBending : public FilamentInteractions
 {
     
 private:
