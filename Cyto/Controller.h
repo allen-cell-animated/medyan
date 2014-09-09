@@ -14,6 +14,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "Parser.h"
+#include "BoundaryImpl.h"
 
 class SubSystem;
 
@@ -42,6 +43,7 @@ public:
         ChemistryAlgorithm CAlgorithm;
         MechanicsAlgorithm MAlgorithm;
         MechanicsFFType MTypes;
+        BoundaryType BTypes;
         
         ///read if activated
         if(_mechanics) {
@@ -49,6 +51,7 @@ public:
             p.readMechanicsParameters();
             MTypes = p.readMechanicsFFType();
             p.readBoundaryParameters();
+            BTypes = p.readBoundaryType();
             
         }
         if(_chemistry) {
@@ -58,6 +61,8 @@ public:
         p.readGeometryParameters();
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
+        
+        ///Initialize geometry controller
         GController::initializeGrid(SystemParameters::Geometry().nDim,
                                     {SystemParameters::Geometry().NX,
                                      SystemParameters::Geometry().NY,
@@ -72,6 +77,14 @@ public:
         
         ///Initialize Mechanical controller
         if(_mechanics) {
+            
+            ///Boundary
+            if(BTypes.boundaryType == "CUBIC")
+                _subSystem.AddBoundary(new BoundaryCubic());
+            else {
+                std::cout << "Boundary not yet implemented. Exiting." <<std::endl;
+                exit(EXIT_FAILURE);
+            }
             
             
             

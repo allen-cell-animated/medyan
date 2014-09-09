@@ -26,6 +26,9 @@ class SubSystem {
 public:
     // Interfaces to add new objects:
     
+    ///Add a boundary to this subsystem
+    void AddBoundary(Boundary* boundary) {_boundary = boundary;}
+    
     /// Add new Filaments. v - coordinates of the first and last bead in the filament.
     void AddNewFilaments(std::vector<std::vector<std::vector<double> > > v);
     
@@ -47,6 +50,7 @@ public:
     
 private:
     double _energy; ///< energy of subsystem
+    Boundary* _boundary; ///<subsystem boundary
 	
 };
 
