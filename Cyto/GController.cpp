@@ -11,6 +11,9 @@
 
 void GController::initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize) {
     
+    ///Ensure dimensions are correct 
+    assert(nDim == grid.size() && nDim == compartmentSize.size());
+    
     _nDim = nDim;
     _grid = grid;
     _compartmentSize = compartmentSize;

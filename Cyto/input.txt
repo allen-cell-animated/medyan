@@ -1,73 +1,68 @@
 
 ##################################################
+################### MECHANICS ####################
 MECHANICS:                   ON
 
-FILAMENTS:                   ON
+### ALGORITHM ###
+ALGORITHM:                   POLAKRIBIERE
 
-FSTRETCHING:                 ON
+### FILAMENTS ###
+
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                10.0
 FSTRETCHINGL:                27.0
 
-FBENDING:                    ON
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   10.0
 FBENDINGTHETA:               180.0
 
-FTWISTING:                   OFF
 FTWISTINGTYPE:
 FTWISTINGK:
 FTWISTINGPHI:
 
+### LINKERS ###
 
-LINKERS:                      OFF
-
-LSTRETCHING:
 LSTRETCHINGTYPE:
 LSTRETCHINGK:
 LSTRETCHINGL:
 
-LBENDING:
 LBENDINGTYPE:
 LBENDINGK:
 LBENDINGTHETA:
 
-LTWISTING:
 LTWISTINGTYPE:
 LTWISTINGK:
 LTWISTINGPHI:
 
+### MOTORS ###
 
-MOTORS:                      OFF
-
-MSTRETCHING:
 MSTRETCHINGTYPE:
 MSTRETCHINGK:
 MSTRETCHINGL:
 
-MBENDING:
 MBENDINGTYPE:
 MBENDINGK:
 MBENDINGTHETA:
 
-MTWISTING:
 MTWISTINGTYPE:
 MTWISTINGK:
 MTWISTINGPHI:
 
-VOLUME:                      OFF
+### VOLUME ###
 
 VOLUMETYPE:
 VOLUMEK:
 
-BOUNDARIES:                  ON
+##################################################
+#################### BOUNDARIES ##################
 
 BOUNDARYTYPE:                CUBIC
 
 
 ##################################################
+##################### GEOMETRY ###################
 
-GEOMETRY:
+NDIM:                        3
 
 NX:                          50
 NY:                          50
@@ -79,7 +74,13 @@ COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 2.7
 
+##################################################
+################### CHEMISTRY ####################
 
+CHEMISTRY:                   ON
+
+ALGORITHM:                   NRM
+SETUP:                       SIMPLE
 
 
 
