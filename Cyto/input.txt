@@ -54,7 +54,7 @@ VOLUMETYPE:
 VOLUMEK:
 
 BOUNDARYTYPE:                CUBIC
-
+BINTERACTIONCUTOFF:          10.0
 
 ##################################################
 ##################### GEOMETRY ###################

@@ -30,7 +30,7 @@ private:
     
 // Mechanical constants:
     
-    double _eqLenght;   //< Lenght of unstertched cylinder;
+    double _eqLength;   //< Lenght of unstertched cylinder;
     double _eqAngle;   //< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS;
     double _eqAngleTwist;
     double _kStretch;  //< Local stretching constant, describes axial stretching of a single cylinder;

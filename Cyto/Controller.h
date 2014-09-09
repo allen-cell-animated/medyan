@@ -42,30 +42,29 @@ public:
         ChemistryAlgorithm CAlgorithm;
         MechanicsAlgorithm MAlgorithm;
         MechanicsFFType MTypes;
-        MechanicsParameters MParams;
-        BoundaryParameters BParams;
-        GeometryParameters GParams;
         
         ///read if activated
         if(_mechanics) {
             MAlgorithm = p.readMechanicsAlgorithm();
-            MParams = p.readMechanicsParameters();
+            p.readMechanicsParameters();
             MTypes = p.readMechanicsFFType();
-            BParams = p.readBoundaryParameters();
+            p.readBoundaryParameters();
             
         }
         if(_chemistry) {
             CAlgorithm = p.readChemistryAlgorithm();
         }
         ///Always read geometry
-        GParams = p.readGeometryParameters();
-        
-        ///Check input
-        if(!p.checkInput(CAlgorithm, MAlgorithm, MTypes, MParams, BParams, GParams)) exit(EXIT_FAILURE);
-        
+        p.readGeometryParameters();
+
         ///CALLING ALL CONTROLLERS TO INITIALIZE
-        GController::initializeGrid(GParams.nDim, {GParams.NX, GParams.NY, GParams.NZ},
-                                    {GParams.compartmentSizeX, GParams.compartmentSizeY, GParams.compartmentSizeZ});
+        GController::initializeGrid(SystemParameters::Geometry().nDim,
+                                    {SystemParameters::Geometry().NX,
+                                     SystemParameters::Geometry().NY,
+                                     SystemParameters::Geometry().NZ},
+                                    {SystemParameters::Geometry().compartmentSizeX,
+                                     SystemParameters::Geometry().compartmentSizeY,
+                                     SystemParameters::Geometry().compartmentSizeZ});
         
         ///Initialize chemical controller
         if(_chemistry)
