@@ -82,7 +82,7 @@ void FletcherRieves::PrintForces(BeadDB& list)
 
 
 
-double FletcherRieves::GoldenSection(System* ps)
+double FletcherRieves::GoldenSection(MController* mc)
 {
 	
     const double EPS = 1e-6;
@@ -97,7 +97,7 @@ double FletcherRieves::GoldenSection(System* ps)
     
 	while (abs(b - a) > EPS)
 	{
-		if (ps->UpdateEnergy(x1) >= ps->UpdateEnergy(x2) ){
+		if (mc->ComputeEnergy(x1) >= mc->ComputeEnergy(x2) ){
             
             a = x1;
             x1 = x2;
@@ -123,11 +123,11 @@ void FletcherRieves::Minimize(MController* mc)
 	
 	const double EPS = 1e-10;
 	
-    int SpaceSize = 3 * ps->getSystemSize();
-	double curVal = ps->UpdateEnergy(0.0);
+    int SpaceSize = 3 * ps->getSystemSize(); ///!!!!!! need to know
+	double curVal = mc->ComputeEnergy(0.0);
     cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;
-	ps->CopmuteForce(0);
+	mc->CopmuteForce();
     
     PrintForces(*ps->getBDB());
     
@@ -152,7 +152,7 @@ void FletcherRieves::Minimize(MController* mc)
         MoveBeads(*ps->getBDB(), lambda);
         PrintForces(*ps->getBDB());
         
-        ps->CopmuteForce(1);
+        ps->CopmuteForceAux();
         PrintForces(*ps->getBDB());
         
 		newGradSquare = GradSquare(*ps->getBDB(), 1);
@@ -163,7 +163,7 @@ void FletcherRieves::Minimize(MController* mc)
 		ShiftGradient(*ps->getBDB(), beta);
         
 		prevVal = curVal;
-		curVal = ps->UpdateEnergy(0.0);
+		curVal = mc->ComputeEnergy(0.0);
         
 		gradSquare = newGradSquare;
 	}

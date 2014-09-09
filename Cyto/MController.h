@@ -11,6 +11,7 @@
 
 #include "SubSystem.h"
 #include "ForceField.h"
+#include "MMinimizer.h"
 #include "Mcommon.h"
 #include <iostream>
 
@@ -27,13 +28,20 @@ class MController {
     
 private:
     std::vector<ForceField> _forceFields; ///< vector of force field selections
-    
+    std::vector<Minimizer> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
     
 public:
     
     ///Initialize the MController using a list of vector names
     ///@param forceFields - a list of forcefields to be added
-    void initialize (std::initializer_list<std::string> forceFields)
+    void initializeFF (std::initializer_list<std::string> forceFields)
+    {
+        for(auto &f : forceFields) {
+            ///implement this
+        }
+    }
+    
+    void initializeMinAlorythms (std::initializer_list<std::string> Minimizers)
     {
         for(auto &f : forceFields) {
             ///implement this
@@ -41,11 +49,11 @@ public:
     }
     
     ///Compute the energy using all available force fields
-    double ComputeEnergy() {
+    double ComputeEnergy(double d) {
         
         double energy = 0;
         for(auto &f : _forceFields)
-            energy += f.ComputeEnergy();
+            energy += f.ComputeEnergy(d);
         
         return energy;
     }
@@ -56,6 +64,13 @@ public:
         ///implement this
     }
     
+    ///Reset the forcesAux of all objects
+    void ResetForcesAux() {
+        
+        ///implement this
+    }
+
+    
     ///Compute the forces of all force fields
     void ComputeForces() {
         ResetForces();
@@ -63,6 +78,15 @@ public:
         for(auto &f : _forceFields)
             f.ComputeForces();
     }
+    
+    ///Compute the forcesAux of all force fields
+    void ComputeForcesAux() {
+        ResetForces();
+        
+        for(auto &f : _forceFields)
+            f.ComputeForces();
+    }
+
     
     
     ///Run minimization on the system using the chosen algorithm
