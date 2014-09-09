@@ -19,10 +19,12 @@
 class BeadDBKey {friend class Cylinder; friend class Filament; BeadDBKey(); ~BeadDBKey(); };
 
 
-/*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
+///BeadDB class is a database for all beads in the system
+
+/*!  An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers
+ *   Boundary Elements and Motors. This structure inherits from std:: list and manage all creations and removing of 
+ *   objects, as well as some stabdart list functions and iterators.
  */
-
-
 class BeadDB: private std::list<Bead*>
 {
     typedef std::list<Bead*> bdb;
@@ -44,16 +46,15 @@ public:
     /// get the instance of this singleton
     static BeadDB* Instance(BeadDBKey k);
     
-    // create a new bead with no ccordinates and
+    /// create a new bead with no ccordinates and
     Bead* CreateBead() {
         
         Bead* b = new Bead();
         push_back(b);
         return b ;}
     
-    // Create  bid with a given coordinate on a given filament:
+    /// Create bead with a given coordinate on a given filament:
     Bead* CreateBead(std::vector<double> v) {
-        
         
         Bead* b = new Bead(v);
         
@@ -62,7 +63,7 @@ public:
         return b ;}
     
     
-    // Remove bead:
+    /// Remove bead:
     void RemoveBead(Bead* pb){
         pb->getParent()->DeleteBead(pb);
         ///Also need to clean all neighbours lists!
@@ -73,11 +74,6 @@ public:
 private:
     static BeadDB* _instance;
     BeadDB() {};
-    
 };
 
-
-
-
-
-#endif
+#endif /* defined(__CytoMech__MBeadDB__) */

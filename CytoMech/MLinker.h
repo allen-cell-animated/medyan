@@ -12,21 +12,18 @@
 #include <iostream>
 #include "Mcommon.h"
 
-
-
-class Linker{
-    
-    /// The class which manages interactions betwin cross-linkered beads.
+///Linker class represents a cross-link between filaments
+/*!
+ *  A linker represents a cross link between cylinders. It contains mechanical information, including
+ *  constants and pointers to its respective cylinders.
+ */
+class Linker {
     
 public:
-    Linker(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretchConst, double position1, double position2);
-    //Public methods called by Network:
-    void CopmuteForce();
-    void CopmuteForceAux();
-    double CopmuteEnergy();
-    double CopmuteEnergy(double);
+    ///Main constructor
+    Linker(Cylinder* pc1, Cylinder* pc2, double stretchConst, double position1, double position2);
     
-
+    ///Getters for constants and cylinders
     Cylinder* GetFirstCylinder(){return _pc1;}
     Cylinder* GetSecondCylinder(){return _pc2;}
     double GetStretchingConstant(){return _kStretch;}
@@ -43,9 +40,6 @@ private:
     double _kStretch;
     double _position1;
     double _position2;
-    
-    
-    Network* _pNetwork;
     
 };
 

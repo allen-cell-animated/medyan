@@ -14,34 +14,38 @@
 #include "MComposite.h"
 class Cylinder;
 
-class MCylinder
-{
+///MCylinder class is used to hold mechanical properties of a cylinder
+/*!
+ * MCylinder is a class to hold mechanical properties of a cylinder, including equilibrium force constants and
+ * pointers to related structures, including a neighbors list of cylinders as well as its corresponding beads.
+ */
+
+class MCylinder {
 
 private:
-    Bead* _pFirst;  //< Pointer to the first bead, associated with this cylinder ;
-    Bead* _pSecond; //< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
+    Bead* _pFirst;  ///< Pointer to the first bead, associated with this cylinder ;
+    Bead* _pSecond; ///< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
     Cylinder* _pCylinder;
     
 // Mechanical constants:
+    
     double _eqLenght;   //< Lenght of unstertched cylinder;
-    double _eqAngle;   //< Equilibrium value for angale in bending potential. For interaction between this cylinder and PREVIOUS;
+    double _eqAngle;   //< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS;
     double _eqAngleTwist;
     double _kStretch;  //< Local stretching constant, describes axial stretching of a single cylinder;
     double _kBend;  //< Local bending constant, which describes bendinig interaction between current and PREVIOUS cylinders;
     double _kTwist;
     
-    
-
     std::vector<MCylinder*> _NeighbourList;
 
 public:
     
-//    Cylinder();
-//    Cylinder(Filament* pf, Bead* firstBead, double L, double theta, double ks, double kb, double kt);
+    ///Constructor and destructor
     MCylinder(Filament* pf, Bead* firstBead);
     virtual ~MCylinder() {}
     
+    ///Other setter and getter functions:
     
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}

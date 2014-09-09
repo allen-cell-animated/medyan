@@ -16,18 +16,18 @@
 #include "MFilament.h"
 
 ///Key to access instance of FilamentDB
-class FilamentDBKey {friend class System; friend class FilamentFF; FilamentDBKey(); ~FilamentDBKey(); };
+class FilamentDBKey {friend class SubSystem; friend class FilamentFF; FilamentDBKey(); ~FilamentDBKey(); };
 
 
-/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
+///FilamentDB is used to store all filaments in the system
+/*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers,
+ *  Boundary Elements, and Motors. This structure inherits from std:: list and manage all creations and removing 
+ *  of objects, as well as some stabdart list functions and iterators.
  */
-
-class FilamentDB: private std::list<Filament*>
-{
+class FilamentDB: private std::list<Filament*> {
     typedef std::list<Filament*> fdb;
     
 public:
-    
     using fdb::size;
     using fdb::begin;
     using fdb::end;
@@ -47,7 +47,6 @@ public:
             push_back(pf);
             std::cout<<"short filament created"<<std::endl;
             return pf;}
-        
         
         else {
             Filament* pf = new Filament(s, v, numSegment + 1);  //Create a long filament with numSeg.

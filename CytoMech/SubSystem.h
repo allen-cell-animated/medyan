@@ -1,5 +1,5 @@
 //
-//  MSystem.h
+//  SubSystem.h
 //  CytoMech
 //
 //  Created by Konstantin Popov on 4/15/14.
@@ -19,39 +19,37 @@
 #include "MFilamentDB.h"
 #include "Mcommon.h"
 
-class SubSystem
-{
-    
-    /*! This is the main class which handel all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
-     
-     */
-    
-public:
-		
-    // Interfaces to add new objects:
 
-    void AddNewFilaments(std::vector<std::vector<std::vector<double> > > v);    //!< Add new Filaments. v - coordinates of the first and last bead in the filament.
-    void AddNewLinkers(std::vector<std::vector<Cylinder* > > v, double stretchConst);   //!< Add a linker conecting two beads Bead*[0] and Bead*[1] and providing a stretching spring constant(coubling to twisting will be implemented later).
+/*! This is the main class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
+ */
+class SubSystem {
+public:
+    // Interfaces to add new objects:
+    
+    /// Add new Filaments. v - coordinates of the first and last bead in the filament.
+    void AddNewFilaments(std::vector<std::vector<std::vector<double> > > v);
+    
+    /// Add a linker conecting two beads Bead*[0] and Bead*[1] and providing a stretching spring constant
+    /// (coupling to twisting will be implemented later).
+    void AddNewLinkers(std::vector<std::vector<Cylinder* > > v, double stretchConst);
+    /// Add a single linker
     void AddNewLinker(Cylinder* pc1, Cylinder* pc2, double stretchConst);
     
-    void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2); //!< Add a ghost motor connectind two CG segments (4 beads), providing a stretching constant, and positions on each segment.
-    void AddNewMotorGhosts(std::vector<std::vector<Cylinder* > > v, double k, double position1, double position2); //Add many motors. Input: vector of vectors(cyl1, cyl2), pair connected by a motor.
-
-
+    /// Add a ghost motor connectind two CG segments (4 beads), providing a stretching constant, and positions
+    /// on each segment.
+    void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2);
+    //Add many motors. Input: vector of vectors(cyl1, cyl2), pair connected by a motor.
+    void AddNewMotorGhosts(std::vector<std::vector<Cylinder* > > v, double k, double position1, double position2);
     
     //System related iterfaces:
-   
     int getSystemSize(); //Return a number of beads;
     double getSubSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
     
-    
-    
 private:
-	
-    double _energy;
+    double _energy; ///< energy of subsystem
 	
 };
 
 
 
-#endif /* defined(__CytoMech__MSystem__) */
+#endif /* defined(__CytoMech__SubSystem__) */

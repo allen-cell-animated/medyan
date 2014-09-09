@@ -24,10 +24,7 @@ Bead::Bead (std::vector<double> v): coordinate(v), _parent(NULL), force(3, 0), f
     }
 }
 
-
-
 void Bead::updateBoundaryElements() {
-    
     
     ///First, update this bead's list
     for(auto it = _boundaryElements.begin(); it != _boundaryElements.end(); it++) {

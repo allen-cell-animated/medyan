@@ -16,18 +16,18 @@
 #include "MCylinder.h"
 
 ///Key to access instance of LinkerDB
-class LinkerDBKey {friend class System; LinkerDBKey(); ~LinkerDBKey(); };
+class LinkerDBKey {friend class SubSystem; LinkerDBKey(); ~LinkerDBKey(); };
 
-
-/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
+///LinkerDB class is used to store all linkers in the system
+/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 
+ *  Boundary Elements, and Motors. This structure inherits from std:: list and manage all creations and removing
+ *  of objects, as well as some stabdart list functions and iterators.
  */
-
 class LinkerDB: private std::list<Linker*>
 {
     typedef std::list<Linker*> ldb;
     
 public:
-
     using ldb::size;
     using ldb::begin;
     using ldb::end;
@@ -41,12 +41,10 @@ public:
     
     static LinkerDB* Instance(LinkerDBKey k);
     
-    void CreateLinker(System* ps, Network* pn, Cylinder* pc1, Cylinder* pc2, double k) {
+    void CreateLinker(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2) {
         
-        Linker* pl = new Linker(ps, pn, pc1, pc2, k);
+        Linker* pl = new Linker(pc1, pc2, k, position1, position2);
         push_back(pl);
-        
-        
     }
 
     void RemoveLinker(Linker* pl) {};
