@@ -11,12 +11,22 @@
 
 void GController::initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize) {
     
-    ///Ensure dimensions are correct 
-    assert(nDim == grid.size() && nDim == compartmentSize.size());
-    
     _nDim = nDim;
-    _grid = grid;
-    _compartmentSize = compartmentSize;
+    
+    /// set up
+    if(_nDim == 1) {
+        _grid = {grid[0]};
+        _compartmentSize = {compartmentSize[0]};
+    }
+    else if(_nDim == 2) {
+        _grid = {grid[0], grid[1]};
+        _compartmentSize = {compartmentSize[0], compartmentSize[1]};
+        
+    }
+    else {
+        _grid = {grid[0], grid[1], grid[2]};
+        _compartmentSize = {compartmentSize[0], compartmentSize[1], compartmentSize[2]};
+    }
     
     int size = 1;
     int i = 0;

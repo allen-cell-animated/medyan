@@ -22,7 +22,7 @@ private:
     
 public:
     
-    void Equlibrate(MController*){_CGType.Minimize();}
+    void Equlibrate(MController*){_CGType.Minimize(MController*);}
     
 };
 

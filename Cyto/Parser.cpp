@@ -55,17 +55,17 @@ bool chemistry() {
 }
 
 ///CHEMISTRY PARSER
-ChemistryParameters Parser::readChemistryParameters() {
+ChemistryAlgorithm Parser::readChemistryAlgorithm() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    ChemistryParameters CParams;
+    ChemistryAlgorithm CParams;
     
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("SETUP") != std::string::npos) {
+        if (line.find("CALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() >= 2) {
@@ -577,18 +577,13 @@ MechanicsParameters Parser::readMechanicsParameters() {
 
 
 ///Function to check consistency between all desired forcefields, boundaries, and constants
-bool Parser::checkInput(ChemistryParameters &CParams, BoundaryParameters &BParams, GeometryParameters &GParams,
-                MechanicsFFType &MTypes, MechanicsParameters &MParams) {
+bool Parser::checkInput(ChemistryAlgorithm &CParams, MechanicsAlgorithm &MAlgorithm,
+                        MechanicsFFType &MTypes, MechanicsParameters &MParams,
+                        BoundaryParameters &BParams, GeometryParameters &GParams) {
     
     std::cout << "Checking parsed data..." << std::endl;
     
-    ///Check chemistry input
-    if(CParams.algorithm == "" || CParams.setup == "") {
-        std::cout << "Did not specify all chemistry parameters." << std::endl;
-        return false;
-    }
-    
-      ///Check mechanics input consistency
+    ///Check mechanics input consistency
     //Filaments
     if(MTypes.FStretchingType != "") {
         if(MParams.FStretchingK == 0 || MParams.FStretchingL == 0) {
@@ -770,4 +765,29 @@ bool Parser::checkInput(ChemistryParameters &CParams, BoundaryParameters &BParam
     
     std::cout << "Parsing checks all passed!" <<std::endl;
     return true;
+}
+    
+
+MechanicsAlgorithm readMechanicsAlgorithm() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    MechanicsAlgorithm MAlgorithm;
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        
+        if (line.find("MALGORITHM") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() >= 2) {
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MAlgorithm.algorithm = lineVector[1];
+            }
+        }
+    return MAlgorithm;
 }

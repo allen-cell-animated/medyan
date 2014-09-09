@@ -17,8 +17,8 @@
 #include <sstream>
 #include <ios>
 
-///Struct to hold chemistry parameters (simple for now)
-struct ChemistryParameters {
+///Struct to hold chemistry algorithm (simple for now)
+struct ChemistryAlgorithm {
     
     std::string algorithm = "";
     std::string setup = "";
@@ -99,6 +99,12 @@ struct MechanicsParameters {
     double VolumeK = 0;
 };
 
+///Struct to hold mechanics algorithm information
+struct MechanicsAlgorithm {
+    std::string algorithm = "";
+};
+
+
 
 ///Function to split a string by whitespace into generic type
 template<typename T>
@@ -133,13 +139,10 @@ public:
     bool chemistry();
     
     ///Chemistry parameters parser
-    ChemistryParameters readChemistryParameters();
+    ChemistryAlgorithm readChemistryAlgorithm();
     
-    ///Boundary Parameters parser
-    BoundaryParameters readBoundaryParameters();
-
-    ///Geometry parameters parser
-    GeometryParameters readGeometryParameters();
+    ///Mechanics algorithm parser
+    MechanicsAlgorithm readMechanicsAlgorithm();
     
     ///Mechanics FF Types parser
     MechanicsFFType readMechanicsFFType();
@@ -147,9 +150,17 @@ public:
     ///Mechanics Parameters parser
     MechanicsParameters readMechanicsParameters();
     
+    ///Boundary Parameters parser
+    BoundaryParameters readBoundaryParameters();
+
+    ///Geometry parameters parser
+    GeometryParameters readGeometryParameters();
+    
+    
     ///Function to check consistency between all desired forcefields, boundaries, and constants
-    bool checkInput(ChemistryParameters &CParams, BoundaryParameters &BParams, GeometryParameters &GParams,
-                    MechanicsFFType &MTypes, MechanicsParameters &MParams);
+    bool checkInput(ChemistryAlgorithm &CAlgorithm, MechanicsAlgorithm &MAlgorithm,
+                    MechanicsFFType &MTypes, MechanicsParameters &MParams,
+                    BoundaryParameters &BParams, GeometryParameters &GParams);
     
 };
 
