@@ -10,9 +10,10 @@
 #define __CytoMech__MCylinder__
 
 #include <iostream>
-#include "Mcommon.h"
+#include <vector>
 #include "MComposite.h"
 class Cylinder;
+class Filament;
 
 ///MCylinder class is used to hold mechanical properties of a cylinder
 /*!

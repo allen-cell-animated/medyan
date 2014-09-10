@@ -17,17 +17,14 @@ class Linker;
 
 class LinkerInteractions
 {
-    
-    
 private:
-    
     std::string _name;
     
     
 public:
     virtual double ComputeEnergy( Linker*,  double d) = 0;
-    virtual double ComputeForces(Linker*) = 0;
-    virtual double ComputeForcesAux(Linker*) = 0;
+    virtual void ComputeForces(Linker*) = 0;
+    virtual void ComputeForcesAux(Linker*) = 0;
     
     // std::string getName() {return _name;}
     

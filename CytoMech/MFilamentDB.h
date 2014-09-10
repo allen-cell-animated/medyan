@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <list>
-#include "Mcommon.h"
 #include "MFilament.h"
 
 ///Key to access instance of FilamentDB
@@ -32,7 +31,7 @@ public:
     using fdb::begin;
     using fdb::end;
     
-    FilamentDB* Instance(FilamentDBKey k);
+    static FilamentDB* Instance(FilamentDBKey k);
     
     Filament* CreateFilament(SubSystem* s, std::vector<std::vector<double> > v) {
         

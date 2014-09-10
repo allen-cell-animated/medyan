@@ -10,7 +10,7 @@
 #define __CytoMech__MMotorGhost__
 
 #include <iostream>
-#include "Mcommon.h"
+#include "Cylinder.h"
 
 //!  A MotorGhost class is used to describe mechanical properties of a motor
 /*! The class describes interaction between 4 beads connected by a motor. Ghost stands for the fact that there 
@@ -23,8 +23,6 @@
  */
 
 class MotorGhost{
-    
-    
     
 public:
     ///Main constructor

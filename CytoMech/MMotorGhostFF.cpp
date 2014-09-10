@@ -11,21 +11,21 @@
 
 MotorGhostFF::MotorGhostFF (std::string Stretching, std::string Bending, std::string Twisting)
 {
-    if (Stretching == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostStretching<MotorGhostStretchingHarmonic>());}
-    if (Bending == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostBending<MotorGhostBendingHarmonic>());}
-    if (Twisting == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostTwisting<MotorGhostTwistingHarmonic>());}
+    if (Stretching == "HARMONIC") {_motorGhostInteractionVector.emplace_back(new MotorGhostStretching<MotorGhostStretchingHarmonic>());}
+//    if (Bending == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostBending<MotorGhostBendingHarmonic>());}
+//    if (Twisting == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostTwisting<MotorGhostTwistingHarmonic>());}
 }
 
 double MotorGhostFF::ComputeEnergy(double d)
 {
     double U_motor = 0;
     
-    for ( auto it: MotorGhostDB::Instance(MotorghostDBKey()) )
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
     {
         
-        for (auto motorGhostInteraction : _motorGhostInteractionVector)
+        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
         {
-            U_motor += motorGhostInteraction->ComputeEnergy(it, d);
+            U_motor += motorGhostInteraction.get()->ComputeEnergy(it, d);
         }
         
     }
@@ -36,12 +36,12 @@ double MotorGhostFF::ComputeEnergy(double d)
 void MotorGhostFF::ComputeForces()
 {
     
-    for ( auto it: MotorGhostDB::Instance(MotorghostDBKey()) )
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
     {
         
-        for (auto motorGhostInteraction : _motorGhostInteractionVector)
+        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
         {
-            motorGhostInteraction->ComputeForces(it);
+            motorGhostInteraction.get()->ComputeForces(it);
         }
         
     }
@@ -51,12 +51,12 @@ void MotorGhostFF::ComputeForces()
 void MotorGhostFF::ComputeForcesAux()
 {
     
-    for ( auto it: MotorGhostDB::Instance(MotorghostDBKey()) )
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
     {
         
-        for (auto motorGhostInteraction : _motorGhostInteractionVector)
+        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
         {
-            motorGhostInteraction->ComputeForcesAux(it);
+            motorGhostInteraction.get()->ComputeForcesAux(it);
         }
         
     }

@@ -10,6 +10,7 @@
 #define __Cyto__CController__
 
 #include <iostream>
+#include "SubSystem.h"
 #include "ChemSim.h"
 #include "ChemInitializer.h"
 
@@ -31,8 +32,11 @@
  */
 class CController {
    
-public:
+private:
+    SubSystem* _subSystem;
     
+public:
+    CController(SubSystem* s) {_subSystem = s;}
     ///Initialize the chemical system. MUST BE CALLED BEFORE RUN!
     
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used

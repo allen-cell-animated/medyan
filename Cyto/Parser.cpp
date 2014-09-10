@@ -488,26 +488,26 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("MMETHOD") != std::string::npos) {
+        if (line.find("CONJUGATEGRADIENT") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A Mechanics method must be specified. Exiting" << std::endl;
+                std::cout << "A conjugate gradient method must be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MAlgorithm.method = lineVector[1];
+                MAlgorithm.ConjugateGradient = lineVector[1];
             }
         }
-        else if (line.find("MALGORITHM") != std::string::npos) {
+        else if (line.find("MD") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() != 2) {
+            if(lineVector.size() > 2) {
                 std::cout << "A Mechanics algorithm must be specified. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MAlgorithm.algorithm = lineVector[1];
+                MAlgorithm.MD = lineVector[1];
             }
         }
     }

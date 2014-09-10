@@ -16,11 +16,11 @@
 #include <string>
 #include <sstream>
 #include <ios>
-#include "Mcommon.h"
+#include "common.h"
 
 ///Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
-    std::string ConjugareGradient = "";
+    std::string ConjugateGradient = "";
     std::string MD = "";
 };
 

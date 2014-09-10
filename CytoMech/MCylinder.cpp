@@ -20,13 +20,8 @@ MCylinder::MCylinder(Filament* pf, Bead* pb){
     _kTwist = SystemParameters::Mechanics().FTwistingK;
     
     _pSecond = NULL;
-    _ifLast = true;
     
-    _positionFilament = -1000;
-    
-    _pFilament = pf;
     _pFirst = pb;
-    _pFirst->SetParent(this);
     _NeighbourList.assign (0, NULL);
 }
 
@@ -36,8 +31,8 @@ void MCylinder::SetSecondBead(Bead *pb) {_pSecond = pb;}
 Bead* MCylinder::GetFirstBead() { return _pFirst;}
 Bead* MCylinder::GetSecondBead() { return _pSecond;}
 
-void MCylinder::SetEqLength(double l) {_eqLenght = l;}
-double MCylinder::GetEqLength() {return _eqLenght;}
+void MCylinder::SetEqLength(double l) {_eqLength = l;}
+double MCylinder::GetEqLength() {return _eqLength;}
 
 void MCylinder::SetAngle(double alpha) {_eqAngle = alpha;}
 double MCylinder::GetAngle() {return _eqAngle;}

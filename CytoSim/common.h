@@ -19,6 +19,11 @@
 
 #include <cstdint>
 #include <vector>
+#include <iostream>
+#include <math.h>
+#include "MathFunctions.h"
+#include "SystemParameters.h"
+
 
 ///species constants
 typedef unsigned short species_copy_t;

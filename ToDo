@@ -7,7 +7,8 @@ TODO                                                                        COMP
     -Compiling all of cytosim and cytomech together
     -Organizing code into folders
 2) Finishing touches
-    -Filament input file
+    -Combine common files                                                       X
+    -Filament input file                                                        X
     -Out of bounds management
     -Moving cylinders, placing new cylinders
     -Boundary hard wall potential
@@ -27,6 +28,7 @@ TODO                                                                        COMP
 Logistical things:
 -Change name of code / project?
 
-
+WISH LIST
+-Preprocessor macros set at command line?
 
 --------

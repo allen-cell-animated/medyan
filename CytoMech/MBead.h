@@ -12,7 +12,6 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include "Mcommon.h"
 #include "MComponent.h"
 #include "BoundaryElement.h"
 #include "MathFunctions.h"

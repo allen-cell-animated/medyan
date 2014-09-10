@@ -4,8 +4,8 @@
 MECHANICS:                   ON
 
 ### ALGORITHM ###
-MMETHOD:                     CONJUGATEDGRADIENT
-MALGORITHM:                  POLAKRIBIERE
+CONJUGATEGRADIENT:           POLAKRIBIERE
+MD:
 
 ### FILAMENTS ###
 

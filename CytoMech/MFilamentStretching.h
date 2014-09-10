@@ -10,13 +10,9 @@
 #define Cyto_MFilamentStretching_h
 
 #include "MFilament.h"
+#include "MFilamentInteractions.h"
 #include "MBead.h"
-#include "MCylinder.h"
-
-
-class FilamentInteractions;
-class Filament;
-
+#include "Cylinder.h"
 
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions

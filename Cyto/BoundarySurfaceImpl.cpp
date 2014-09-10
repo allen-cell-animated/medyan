@@ -41,8 +41,7 @@ _points(points), _orientation(orientation), BoundarySurface(3) {
             ///loop over row
             for(int j = 0; j < numDivisions[0]; j++) {
                 
-                _boundaryElements.push_back(make_unique<BoundaryElement>(
-                    BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation)));
+                _boundaryElements.emplace_back(BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation));
                 BECoordinate[0] += s1;
             }
         }
@@ -63,8 +62,7 @@ _points(points), _orientation(orientation), BoundarySurface(3) {
             ///loop over row
             for(int j = 0; j < numDivisions[0]; j++) {
                 
-                _boundaryElements.push_back(make_unique<BoundaryElement>
-                    (BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation)));
+                _boundaryElements.emplace_back(BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation));
                 BECoordinate[0] += s1;
             }
         }
@@ -85,8 +83,7 @@ _points(points), _orientation(orientation), BoundarySurface(3) {
             ///loop over row
             for(int j = 0; j < numDivisions[0]; j++) {
                 
-                _boundaryElements.push_back(make_unique<BoundaryElement>
-                    (BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation)));
+                _boundaryElements.emplace_back(BoundaryElementDB::Instance(BEDBKey())->CreateSquareBoundaryElement(BECoordinate, {s1, s2}, _orientation));
                 BECoordinate[1] += s1;
             }
         }

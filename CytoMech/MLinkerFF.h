@@ -12,7 +12,9 @@
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
-
+#include "MLinkerStretching.h"
+#include "MLinkerStretchingHarmonic.h"
+#include "MLinkerDB.h"
 
 class LinkerInteractions;
 
@@ -20,12 +22,11 @@ class LinkerFF : public ForceField
 {
     
 private:
-    std::vector <LinkerInteractions> _linkerInteractionVector;
-    
-    LinkerFF(std::string Stretching, std::string Bending, std::string Twisting );
+    std::vector<std::unique_ptr<LinkerInteractions>> _linkerInteractionVector;
     
 public:
     
+    LinkerFF(std::string Stretching, std::string Bending, std::string Twisting );
     
     // Public interfaecs to compute forces:
     

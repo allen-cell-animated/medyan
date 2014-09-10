@@ -20,7 +20,12 @@ Filament::Filament(SubSystem* ps, vector<double> position, vector<double> direct
  
     ///Create cylinders, beads
     Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position);
-    Cylinder* c1 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1);
+    
+    auto midpoint = MidPointCoordinate(b1->coordinate, NextPointProjection(b1->coordinate,
+                              SystemParameters::Geometry().cylinderSize, direction), 0.5);
+    Compartment* c = GController::getCompartment(midpoint);
+    
+    Cylinder* c1 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, c);
     _pLastCylinder = c1;
    
     PolymerizeFront( NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction) );
@@ -36,7 +41,11 @@ Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads
    
     ///Create beads, cylinders
     Bead* b0 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0]);
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b0);
+    
+    auto midpoint = MidPointCoordinate(tmpBeadsCoord[0], tmpBeadsCoord[1], 0.5);
+    Compartment* c = GController::getCompartment(midpoint);
+    
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b0, c);
     _pLastCylinder = c0;
    
     
@@ -50,13 +59,17 @@ Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads
 void Filament::PolymerizeFront(vector<double> coordinates) {
     
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
-    Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b);
+    
+    auto midpoint = MidPointCoordinate(_pLastCylinder->getMCylinder()->GetFirstBead()->coordinate, coordinates, 0.5);
+    Compartment* c = GController::getCompartment(midpoint);
+    
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c);
     _pLastCylinder->getMCylinder()->SetSecondBead(b);
     _pLastCylinder->SetLast(false);
     
     _pCylinderVector.push_back(_pLastCylinder);
     
-    _pLastCylinder = c;
+    _pLastCylinder = c0;
     
 }
 
@@ -64,10 +77,14 @@ void Filament::PolymerizeFront(vector<double> coordinates) {
 void Filament::PolymerizeBack(vector<double> coordinates) {
     
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
-    Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b);
-    c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
-    c->SetLast(false);
-    _pCylinderVector.push_front(c);
+    
+    auto midpoint = MidPointCoordinate(coordinates, _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, 0.5);
+    Compartment* c = GController::getCompartment(midpoint);
+    
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c);
+    c0->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
+    c0->SetLast(false);
+    _pCylinderVector.push_front(c0);
 
 }
 
@@ -85,12 +102,14 @@ void Filament::PolymerizeFront() {
         BeadDB::Instance(BeadDBKey())->CreateBead(NextPointProjection(
                _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate,
                SystemParameters::Geometry().cylinderSize, tau) );
+        auto midpoint = MidPointCoordinate(b->coordinate, NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau), 0.5);
+        Compartment* c = GController::getCompartment(midpoint);
         
-        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, true);
+        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c, true);
         _pLastCylinder->getMCylinder()->SetSecondBead(b);
         _pLastCylinder->SetLast(false);
         _pCylinderVector.push_back(_pLastCylinder);
-        _pLastCylinder = c;
+        _pLastCylinder = c0;
                                        
     }
 }
@@ -100,18 +119,22 @@ void Filament::PolymerizeBack() {
     if (_pCylinderVector.size()<2) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
     
     else{
+        /// Check out!!!!
         auto tau = TwoPointDirection(
-         _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate,
+         _pCylinderVector[0]->getMCylinder()->GetSecondBead()->coordinate,
          _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate);
-        
+
         Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(
                     NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate,
                     SystemParameters::Geometry().cylinderSize, tau) );
         
-        Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, false, true);
-        c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
-        c->SetLast(false);
-        _pCylinderVector.push_front(c);
+        auto midpoint = MidPointCoordinate(b->coordinate, _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, 0.5);
+        Compartment* c = GController::getCompartment(midpoint);
+        
+        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c, false, true);
+        c0->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
+        c0->SetLast(false);
+        _pCylinderVector.push_front(c0);
     }
 }
 

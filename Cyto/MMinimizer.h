@@ -11,15 +11,12 @@
 
 #include <iostream>
 
-class MController;
+class ForceFieldManager;
 
-class Minimizer
-{
+class Minimizer {
 
 public:
-    
-    void virtual Equlibrate(MController*) = 0;
-    
+    void virtual Equlibrate(ForceFieldManager &FFM) = 0;
 };
 
 

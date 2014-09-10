@@ -15,31 +15,12 @@
 #include <vector>
 #include <math.h>
 #include <algorithm>
-#include "Mcommon.h"
-#include "MFilament.h"
-#include "SubSystem.h"
+#include "MCGMethod.h"
 
-using namespace std;
-
-class MController;
-
-class FletcherRieves
+class FletcherRieves : public CGMethod
 {
-
-private:
-    double GradSquare();
-    double GradSquare(int i);
-    double GradDotProduct();
-    void MoveBeads(double d);
-    void ShiftGradient(double d);
-    void PrintForces();
-    double GoldenSection(MController* mc);
-
 public:
-
-   void Minimize(MController* mc);
+   void Minimize(ForceFieldManager &FFM);
 };
-
-
 
 #endif /* defined(__Cyto__MCGFletcherRievesMethod__) */

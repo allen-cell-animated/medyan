@@ -17,10 +17,10 @@ class FilamentBendingHarmonic
 {
     
 public:
-    Energy(Bead*, Bead*, Bead*, double);
-    Energu(Bead*, Bead*, Bead*, double, double);
-    Forces(Bead*, Bead*, Bead*, double);
-    ForcesAux(Bead*, Bead*, Bead*, double);
+    double Energy(Bead*, Bead*, Bead*, double);
+    double Energy(Bead*, Bead*, Bead*, double, double);
+    void Forces(Bead*, Bead*, Bead*, double);
+    void ForcesAux(Bead*, Bead*, Bead*, double);
     
 };
 

@@ -10,42 +10,29 @@
 template <class MStretchingInteractionType>
 double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhost* pm, double d)
 {
-    if (d == 0.0){
-        
-        Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
-        Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();
-        Bead* pb3 = pm->GetsecondCylinder()->GetFirstBead();
-        Bead* pb4 = pm->GetSecondCylinder()->GetSecondtBead();
-        double kStretch = pm->GetBendingConst();
-        double L = pm->GetEqLength();
-        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L);
-        
-    }
+    Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
+    Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb4 = pm->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    double kStretch = pm->GetStretchingConstant();
+    double L = pm->GetEqLength();
     
-    else {
-        
-        Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
-        Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();
-        Bead* pb3 = pm->GetsecondCylinder()->GetFirstBead();
-        Bead* pb4 = pm->GetSecondCylinder()->GetSecondtBead();
-        double kStretch = pm->GetBendingConst();
-        double L = pm->GetEqLength();
-
+    if (d == 0.0)
+        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L);
+    else
         return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L, d);   ///This type of function needed for conjugated gradient minimisation only;
-    }
+    
 }
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost* pm)
 {
-    Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
-    Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();
-    Bead* pb3 = pm->GetsecondCylinder()->GetFirstBead();
-    Bead* pb4 = pm->GetSecondCylinder()->GetSecondtBead();
-    double kStretch = pm->GetBendingConst();
+    Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
+    Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb4 = pm->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    double kStretch = pm->GetStretchingConstant();
     double L = pm->GetEqLength();
-
-    
     
     _FFType.Forces(pb1, pb2, pb3, pb4, kStretch, L);
     
@@ -55,11 +42,11 @@ void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost*
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::ComputeForcesAux(MotorGhost* pm) /// Needed for Conjugated Gradient minimization;
 {
-    Bead* pb1 = pm->GetFirstCylinder()->GetFirstBead();
-    Bead* pb2 = pm->GetFirstCylinder()->GetSecondtBead();
-    Bead* pb3 = pm->GetsecondCylinder()->GetFirstBead();
-    Bead* pb4 = pm->GetSecondCylinder()->GetSecondtBead();
-    double kStretch = pm->GetBendingConst();
+    Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
+    Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
+    Bead* pb4 = pm->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    double kStretch = pm->GetStretchingConstant();
     double L = pm->GetEqLength();
     
     _FFType.ForcesAux(pb1, pb2, pb3, pb4, kStretch, L);

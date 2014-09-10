@@ -41,19 +41,19 @@ public:
     
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
-    template<typename ...Args>
-    static Compartment* getCompartment(Args&& ...args)
-    {
-        size_t index = 0;
-        size_t i = _nDim-1;
-        for(auto x: {args...})
-        {
-            index+=x*std::pow(_grid[i],i);
-            --i;
-        }
-        //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
-    }
+//    template<typename ...Args>
+//    static Compartment* getCompartment(Args&& ...args)
+//    {
+//        size_t index = 0;
+//        size_t i = _nDim-1;
+//        for(auto x: {args...})
+//        {
+//            index+= x * std::pow(_grid[i],i);
+//            --i;
+//        }
+//        //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
+//        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
+//    }
     
     /// Alternate getter from the grid
     static Compartment* getCompartment(const std::vector<size_t> &indices)
@@ -70,7 +70,7 @@ public:
     }
     
     /// Get the compartment given a set of coordinates
-    static Compartment* getCompartment(const std::vector<float> &coords)
+    static Compartment* getCompartment(const std::vector<double> &coords)
     {
         size_t index = 0;
         size_t i = _nDim-1;

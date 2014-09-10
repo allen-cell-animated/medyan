@@ -68,14 +68,16 @@ void GController::generateConnections()
                 
                 for(size_t k=0U; k<_grid[2]; ++k)
                 {
-                    Compartment *target = getCompartment(i,j,k);
+                    std::vector<size_t> indices{i,j,k};
+                    Compartment *target = getCompartment(indices);
                     
                     for(int ii: {-1,1})
                     {
                         int iprime = i+ii;
                         if(iprime<0 or iprime==int(_grid[0]))
                             continue;
-                        Compartment *neighbor = getCompartment(size_t(iprime),j,k);
+                        std::vector<size_t> currentIndices{size_t(iprime), j, k};
+                        Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
                     for(int jj: {-1,1})
@@ -83,7 +85,8 @@ void GController::generateConnections()
                         int jprime = j+jj;
                         if(jprime<0 or jprime==int(_grid[1]))
                             continue;
-                        Compartment *neighbor = getCompartment(i,size_t(jprime),k);
+                        std::vector<size_t> currentIndices{i, size_t(jprime), k};
+                        Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
                     for(int kk: {-1,1})
@@ -91,7 +94,8 @@ void GController::generateConnections()
                         int kprime = k+kk;
                         if(kprime<0 or kprime==int(_grid[2]))
                             continue;
-                        Compartment *neighbor = getCompartment(i,j,size_t(kprime));
+                        std::vector<size_t> currentIndices{i, j, size_t(kprime)};
+                        Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
                 }
@@ -106,22 +110,26 @@ void GController::generateConnections()
             
             for(size_t j=0U; j<_grid[1]; ++j) {
                 
-                Compartment *target = getCompartment(i,j);
+                std::vector<size_t> indices{i,j};
+                Compartment *target = getCompartment(indices);
                 
                 for(int ii: {-1,1})
                 {
                     int iprime = i+ii;
                     if(iprime<0 or iprime==int(_grid[0]))
                         continue;
-                    Compartment *neighbor = getCompartment(size_t(iprime),j);
+                    std::vector<size_t> currentIndices{size_t(i), j};
+                    Compartment *neighbor = getCompartment(currentIndices);
                     target->addNeighbour(neighbor);
                 }
+                
                 for(int jj: {-1,1})
                 {
                     int jprime = j+jj;
                     if(jprime<0 or jprime==int(_grid[1]))
                         continue;
-                    Compartment *neighbor = getCompartment(i,size_t(jprime));
+                    std::vector<size_t> currentIndices{i, size_t(j)};
+                    Compartment *neighbor = getCompartment(currentIndices);
                     target->addNeighbour(neighbor);
                 }
             }
@@ -132,14 +140,16 @@ void GController::generateConnections()
     else {
         for(size_t i=0U; i<_grid[0]; ++i) {
             
-            Compartment *target = getCompartment(i);
+            std::vector<size_t> indices{i};
+            Compartment *target = getCompartment(indices);
             
             for(int ii: {-1,1})
             {
                 int iprime = i+ii;
                 if(iprime<0 or iprime==int(_grid[0]))
                     continue;
-                Compartment *neighbor = getCompartment(size_t(iprime));
+                std::vector<size_t> currentIndices{size_t(i)};
+                Compartment *neighbor = getCompartment(currentIndices);
                 target->addNeighbour(neighbor);
             }
         }

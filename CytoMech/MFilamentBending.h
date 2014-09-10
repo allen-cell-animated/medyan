@@ -9,6 +9,8 @@
 #ifndef Cyto_MFilamentBending_h
 #define Cyto_MFilamentBending_h
 #include "MBead.h"
+#include "MFilamentInteractions.h"
+#include "MFilament.h"
 
 class FilamentInteractions;
 class Filament;

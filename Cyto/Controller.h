@@ -22,7 +22,7 @@ class SubSystem;
 class Controller {
     
 private:
-    SubSystem _subSystem; ///< SubSystem that this controller is in
+    SubSystem *_subSystem; ///< SubSystem that this controller is in
     
     MController _mController; ///< Chemical Controller
     CController _cController; ///< Mechanical Controller
@@ -31,6 +31,11 @@ private:
     bool _chemistry; ///< are we running chemistry?
     
 public:
+    ///Default constructor and destructor
+    Controller(SubSystem* s) : _mController(s), _cController(s), _subSystem(s) { };
+    
+    ~Controller() {};
+    
     void initialize(std::string inputFile) {
         
         ///Parse input, get parameters
@@ -80,12 +85,16 @@ public:
         ///Initialize Mechanical controller
         if(_mechanics) {
             
+            ///Initialize mcontroller
             _mController.initialize(MTypes, MAlgorithm);
-        }
-        else {
-            ///initialize mechanical controller with no forcefields?
             
-            
+            ///Initialize boundary
+            if(BTypes.boundaryShape == "CUBIC")
+                _subSystem->AddBoundary(new BoundaryCubic());
+            else{
+                std::cout<< "Given boundary not yet implemented. Exiting" <<std::endl;
+                exit(EXIT_FAILURE);
+            }
         }
         
         ///Read filament setup, parse filament input file if needed
@@ -101,8 +110,8 @@ public:
             exit(EXIT_FAILURE);
         }
         
-        ///Create 
-        
+        ///Create filaments
+        _subSystem->AddNewFilaments(filamentData);
     }
     
     void run() {

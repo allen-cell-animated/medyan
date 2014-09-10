@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "MLinker.h"
+#include "MLinkerInteractions.h"
 #include "MBead.h"
 
 

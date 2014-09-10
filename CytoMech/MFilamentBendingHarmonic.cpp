@@ -24,7 +24,7 @@ double FilamentBendingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, double k
     
     double l1l2 = ScalarProduct(pb1->coordinate, pb2->coordinate, pb2->coordinate, pb3->coordinate);
     
-    return pc2->k_bend * ( 1 - l1l2 / L1L2 );
+    return k_bend * ( 1 - l1l2 / L1L2 );
   
 }
 
@@ -38,7 +38,7 @@ double FilamentBendingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, double k
     
     double l1l2 = ScalarProductStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d);
     
-    return pc2->k_bend * ( 1 - l1l2 / L1L2 );
+    return k_bend * ( 1 - l1l2 / L1L2 );
  
 }
 

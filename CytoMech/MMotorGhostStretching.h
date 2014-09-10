@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "MMotorGhost.h"
+#include "MMotorGhostInteractions.h"
 #include "MBead.h"
 
 

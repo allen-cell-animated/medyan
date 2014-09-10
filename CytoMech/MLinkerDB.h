@@ -11,12 +11,11 @@
 
 #include <iostream>
 #include <list>
-#include "Mcommon.h"
 #include "MLinker.h"
 #include "MCylinder.h"
 
 ///Key to access instance of LinkerDB
-class LinkerDBKey {friend class SubSystem; LinkerDBKey(); ~LinkerDBKey(); };
+class LinkerDBKey {friend class SubSystem; friend class LinkerFF; LinkerDBKey(); ~LinkerDBKey(); };
 
 ///LinkerDB class is used to store all linkers in the system
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 
@@ -41,7 +40,7 @@ public:
     
     static LinkerDB* Instance(LinkerDBKey k);
     
-    void CreateLinker(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2) {
+    void CreateLinker(Cylinder* pc1, Cylinder* pc2, double k, double position1 = 0.5, double position2 = 0.5) {
         
         Linker* pl = new Linker(pc1, pc2, k, position1, position2);
         push_back(pl);

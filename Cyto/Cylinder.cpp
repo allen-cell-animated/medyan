@@ -10,13 +10,9 @@
 #include "GController.h"
 #include "ChemInitializer.h"
 
-Cylinder::Cylinder(Filament* pf, Bead* firstBead, bool extensionFront, bool extensionBack) {
+Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack) {
     
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead));
-    
-    ///Get compartment that this cylinder should be in
-    Compartment* c = GController::getCompartment(0.0,0.0,0.0);
-    
     _cCylinder = std::unique_ptr<CCylinder>(
         ChemInitializer::createCCylinder(ChemInitializerCylinderKey() , pf, c, extensionFront, extensionBack));
     

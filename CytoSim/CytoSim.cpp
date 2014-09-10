@@ -35,50 +35,11 @@
 #include <numeric>
 #include <chrono>
 
-#include "ChemNRMImpl.h"
-#include "ChemGillespieImpl.h"
-#include "ChemSimpleGillespieImpl.h"
-
-#include "CMembrane.h"
-
 using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    ///Create chemsim and init
-    ChemNRMImpl chem_sim_impl;
-    ChemSim chem(&chem_sim_impl);
 
-    CMembrane mem;
-    
-    ///Init filament initializer
-    SimpleInitializer<1> initializer{chem, mem};
-    
-    //Init filament controller
-    FilopodiaCSystem<1> csystem{&initializer};
-    
-    for(int i = 0; i < 16; i++)
-        csystem.initializeCFilament(81.0);
-    
-    ///init chemistry
-    csystem.initChem();
-    
-    for(int step = 0; step < 1; step++) {
-        
-        ///Run 100 steps
-        auto chk1 = chrono::high_resolution_clock::now();
-        chem.run(80000);
-        auto chk2 = chrono::high_resolution_clock::now();
-        
-        //csystem.retrogradeFlow();
-        
-        chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
-        //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
-       
-    }
-    csystem.printFilaments();
-    cout << "tau=" << tau() <<endl;
-    std::cout << "Done!" <<std::endl;
     
 }
 

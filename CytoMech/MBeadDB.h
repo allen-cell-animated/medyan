@@ -16,7 +16,11 @@
 #include "MComposite.h"
 
 ///Key to access instance of BeadDB
-class BeadDBKey {friend class Cylinder; friend class Filament; BeadDBKey(); ~BeadDBKey(); };
+class BeadDBKey {friend class Cylinder;
+                 friend class Filament;
+                 friend class CGMethod;
+                 BeadDBKey();
+                 public: ~BeadDBKey(); };
 
 
 ///BeadDB class is a database for all beads in the system

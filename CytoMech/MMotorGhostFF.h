@@ -12,7 +12,9 @@
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
-
+#include "MMotorGhostStretching.h"
+#include "MMotorGhostStretchingHarmonic.h"
+#include "MMotorGhostDB.h"
 
 class MotorGhostInteractions;
 
@@ -20,11 +22,11 @@ class MotorGhostFF : public ForceField
 {
     
 private:
-    std::vector <MotorGhostInteractions> _motorGhostInteractionVector;
-    MotorGhostFF(std::string Stretching, std::string Bending, std::string Twisting );
+    std::vector <std::unique_ptr<MotorGhostInteractions>> _motorGhostInteractionVector;
     
 public:
     
+    MotorGhostFF(std::string Stretching, std::string Bending, std::string Twisting );
     
     // Public interfaecs to compute forces:
     

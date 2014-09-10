@@ -13,11 +13,10 @@
 #include <list>
 #include <vector>
 #include "MBeadDB.h"
-#include "MBead.h"
-#include "MCylinder.h"
 #include "MCylinderDB.h"
 #include "MFilamentDB.h"
-#include "Mcommon.h"
+#include "MMotorGhostDB.h"
+#include "MLinkerDB.h"
 
 
 /*! This is the main class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
@@ -48,6 +47,7 @@ public:
     int getSystemSize(); //Return a number of beads;
     double getSubSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
     
+    void setSubSystemEnergy(double energy); //set energy of subsystem
 private:
     double _energy; ///< energy of subsystem
     Boundary* _boundary; ///<subsystem boundary

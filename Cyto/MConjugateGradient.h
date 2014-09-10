@@ -9,21 +9,22 @@
 #ifndef Cyto_MConjugateGradient_h
 #define Cyto_MConjugateGradient_h
 
-class MController;
-class Minimize;
+#include "MCGFletcherRievesMethod.h"
+#include "MCGPolakRibiereMethod.h"
+
+class ForceFieldManager;
+class Minimizer;
+
 
 template <class CGType>
-class ConjugateGradient : public Minimize
+class ConjugateGradient : public Minimizer
 {
     
 private:
     CGType _CGType;
     
-    
 public:
-    
-    void Equlibrate(MController*){_CGType.Minimize(MController*);}
-    
+    void Equlibrate(ForceFieldManager &FFM) {_CGType.Minimize(FFM);}
 };
 
 #endif

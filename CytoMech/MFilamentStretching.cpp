@@ -16,22 +16,22 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
     if (d == 0.0){
         for(auto it : pf->getCylinderVector()){
             
-            Bead* pb1 = it->GetFirstBead();
-            Bead* pb2 = it->GetFirstBead();
-            double kStr = it->GetStretchingConst();
-            double L = it->GetEqLength();
+            Bead* pb1 = it->getMCylinder()->GetFirstBead();
+            Bead* pb2 = it->getMCylinder()->GetFirstBead();
+            double kStr = it->getMCylinder()->GetStretchingConst();
+            double L = it->getMCylinder()->GetEqLength();
             U += _FFType.Energy(pb1, pb2, kStr, L);
             return U;
         }
     }
     else {
         for(auto it : pf->getCylinderVector()){
-            Bead* pb1 = it->GetFirstBead();
-            Bead* pb2 = it->GetFirstBead();
-            double kStr =it->GetStretchingConst();
-            double L = it->GetEqLength();
+            Bead* pb1 = it->getMCylinder()->GetFirstBead();
+            Bead* pb2 = it->getMCylinder()->GetFirstBead();
+            double kStr =it->getMCylinder()->GetStretchingConst();
+            double L = it->getMCylinder()->GetEqLength();
             
-            U += _FFType.Energy(pb1, pb2, k_str, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+            U += _FFType.Energy(pb1, pb2, kStr, L, d);   ///This type of function needed for conjugated gradient minimisation only;
             return U;
         }
     }
@@ -42,11 +42,11 @@ void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 {
    for(auto it : pf->getCylinderVector()){
        
-       Bead* pb1 = it->GetFirstBead();
-       Bead* pb2 = it->GetFirstBead();
-       double kStr =it->GetStretchingConst();
-       double L = it->GetEqLength();
-       _FFType.Forces(pb1, pb2, k_str, L);
+       Bead* pb1 = it->getMCylinder()->GetFirstBead();
+       Bead* pb2 = it->getMCylinder()->GetFirstBead();
+       double kStr =it->getMCylinder()->GetStretchingConst();
+       double L = it->getMCylinder()->GetEqLength();
+       _FFType.Forces(pb1, pb2, kStr, L);
    }
 }
 
@@ -56,10 +56,10 @@ void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* 
 {
     for(auto it : pf->getCylinderVector()){
         
-        Bead* pb1 = it->GetFirstBead();
-        Bead* pb2 = it->GetFirstBead();
-        double kStr =it->GetStretchingConst();
-        double L = it->GetEqLength();
+        Bead* pb1 = it->getMCylinder()->GetFirstBead();
+        Bead* pb2 = it->getMCylinder()->GetFirstBead();
+        double kStr =it->getMCylinder()->GetStretchingConst();
+        double L = it->getMCylinder()->GetEqLength();
         
         _FFType.ForcesAux(pb1, pb2, kStr, L);
     }

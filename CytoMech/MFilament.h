@@ -9,13 +9,14 @@
 #ifndef __CytoMech__MFilament__
 #define __CytoMech__MFilament__
 
-#include <iostream>
+#include <vector>
 #include <iostream>
 #include <deque>
-#include "Mcommon.h"
 #include "MComposite.h"
+#include "Cylinder.h"
 #include <math.h>
 
+class SubSystem;
 ///Filament class is used to store data about connectivity of cylinders
 /*!
  * This class contains information about beads connectivity. It iterates over the beads whithin itself

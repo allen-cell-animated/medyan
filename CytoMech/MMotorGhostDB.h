@@ -11,12 +11,11 @@
 
 #include <iostream>
 #include <list>
-#include "Mcommon.h"
 #include "MMotorGhost.h"
 #include "MCylinder.h"
 
 ///Key to access instance of MotorGhostDB
-class MotorGhostDBKey {friend class SubSystem; MotorGhostDBKey(); ~MotorGhostDBKey(); };
+class MotorGhostDBKey {friend class SubSystem; friend class MotorGhostFF; MotorGhostDBKey(); ~MotorGhostDBKey(); };
 
 
 ///MotorGhostDB is used to store all MotorGhosts in the system

@@ -12,7 +12,6 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include "Mcommon.h"
 #include "Cylinder.h"
 
 ///Key to access instance of CylinderDB
@@ -49,11 +48,11 @@ public:
     static CylinderDB* Instance(CylinderDBKey k);
     
     // create new empty cylinder
-    Cylinder* CreateCylinder(Filament* pf, Bead* pb, bool extensionFront = false, bool extensionBack = false) {
+    Cylinder* CreateCylinder(Filament* pf, Bead* pb, Compartment* c, bool extensionFront = false, bool extensionBack = false) {
         
-        Cylinder* c = new Cylinder(pf, pb, extensionFront, extensionBack);
-        push_back(c);
-        return c ;}
+        Cylinder* pc = new Cylinder(pf, pb, c, extensionFront, extensionBack);
+        push_back(pc);
+        return pc ;}
     
     // Remove Cylinder:
     void RemoveCylinder(Cylinder* pc){

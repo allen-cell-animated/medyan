@@ -31,26 +31,20 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     std::vector<double> p6 = {sysX, sysY, sysZ};
     std::vector<double> p7 = {zeroX, sysY, sysZ};
     
-    std::vector<int> numDivisions = {SystemParameters::Geometry().compartmentSizeX * 10,
-                                     SystemParameters::Geometry().compartmentSizeY * 10}
+    std::vector<int> numDivisions = {int(SystemParameters::Geometry().compartmentSizeX * 10),
+                                     int(SystemParameters::Geometry().compartmentSizeY * 10)};
     
     ///Create boundary surfaces, add to vector
     ///Y normal planes
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p0, p1, p5, p4}, numDivisions, 1)));
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p3, p2, p6, p7}, numDivisions, 1)));
+    _boundarySurfaces.emplace_back(new BasicPlane({p0, p1, p5, p4}, numDivisions, 1));
+    _boundarySurfaces.emplace_back(new BasicPlane({p3, p2, p6, p7}, numDivisions, 1));
     
     ///X normal planes
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p0, p3, p7, p4}, numDivisions, 0)));
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p1, p2, p6, p5}, numDivisions, 0)));
+    _boundarySurfaces.emplace_back(new BasicPlane({p0, p3, p7, p4}, numDivisions, 0));
+    _boundarySurfaces.emplace_back(new BasicPlane({p1, p2, p6, p5}, numDivisions, 0));
     
     ///Z normal planes
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p0, p1, p2, p3}, numDivisions, 2)));
-    _boundarySurfaces.push_back(make_unique<BoundarySurface>
-        (new BasicPlane({p4, p5, p6, p7}, numDivisions, 2)));
+    _boundarySurfaces.emplace_back(new BasicPlane({p0, p1, p2, p3}, numDivisions, 2));
+    _boundarySurfaces.emplace_back(new BasicPlane({p4, p5, p6, p7}, numDivisions, 2));
     
 }

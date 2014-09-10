@@ -48,7 +48,7 @@ TEST(SystemParserTest, main) {
     EXPECT_EQ(BType.boundaryShape, "CUBIC" );
 }
 
-TEST(FIlamentParserTest, main) {
+TEST(FilamentParserTest, main) {
     
     FilamentParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt");
     
