@@ -67,7 +67,7 @@ struct BoundaryParameters {
 
 ///This class holds all system-wide parameters, initialized by the Parser
 class SystemParameters {
-friend class Parser;
+friend class SystemParser;
     
 private:
     static MechanicsParameters MParams; ///< mechanical parameters

@@ -84,7 +84,12 @@ CHEMISTRY:                   ON
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
 
+##################################################
+################### FILAMENTS ####################
 
+FILAMENTFILE:                filamentinput.txt
+
+NUMFILAMENTS:                
 
 
 

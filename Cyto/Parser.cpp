@@ -8,7 +8,7 @@
 
 #include "Parser.h"
 
-bool mechanics() {
+bool SystemParser::mechanics() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -16,7 +16,7 @@ bool mechanics() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("MECHANICS") != std::string::npos) {
+        if (line.find("MECHANICS:") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
@@ -27,11 +27,12 @@ bool mechanics() {
                 if(lineVector[1] == "ON") return true;
             }
         }
+    }
     ///default is false
     return false;
 }
 
-bool chemistry() {
+bool SystemParser::chemistry() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -39,7 +40,7 @@ bool chemistry() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("CHEMISTRY") != std::string::npos) {
+        if (line.find("CHEMISTRY:") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
@@ -50,12 +51,13 @@ bool chemistry() {
                 if(lineVector[1] == "ON") return true;
             }
         }
+    }
     ///default is false
     return false;
 }
 
 ///CHEMISTRY PARSER
-ChemistryAlgorithm Parser::readChemistryAlgorithm() {
+ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -93,7 +95,7 @@ ChemistryAlgorithm Parser::readChemistryAlgorithm() {
 }
 
 ///Mechanics force field types
-MechanicsFFType Parser::readMechanicsFFType() {
+MechanicsFFType SystemParser::readMechanicsFFType() {
     
     MechanicsFFType MTypes;
     
@@ -232,7 +234,7 @@ MechanicsFFType Parser::readMechanicsFFType() {
 
 
 ///MECHANICS CONSTANT PARSER
-void Parser::readMechanicsParameters() {
+void SystemParser::readMechanicsParameters() {
     
     MechanicsParameters MParams;
     
@@ -476,7 +478,7 @@ void Parser::readMechanicsParameters() {
     SystemParameters::MParams = MParams;
 }
 
-MechanicsAlgorithm readMechanicsAlgorithm() {
+MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -497,12 +499,13 @@ MechanicsAlgorithm readMechanicsAlgorithm() {
                 MAlgorithm.algorithm = lineVector[1];
             }
         }
+    }
     return MAlgorithm;
 }
 
     
 ///BOUNDARY PARSERS
-void Parser::readBoundaryParameters() {
+void SystemParser::readBoundaryParameters() {
     
     BoundaryParameters BParams;
     
@@ -520,7 +523,7 @@ void Parser::readBoundaryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryType = lineVector[1];
+                BParams.interactionCutoff = double(std::atoi(lineVector[1].c_str()));
             }
         }
     }
@@ -528,7 +531,7 @@ void Parser::readBoundaryParameters() {
     SystemParameters::BParams = BParams;
 }
 
-BoundaryType readBoundaryType() {
+BoundaryType SystemParser::readBoundaryType() {
         
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -546,15 +549,16 @@ BoundaryType readBoundaryType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BType.boundaryType = lineVector[1];
+                BType.boundaryShape = lineVector[1];
             }
         }
+    }
     return BType;
 }
     
     
 ///GEOMETRY PARSERS
-void Parser::readGeometryParameters() {
+void SystemParser::readGeometryParameters() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -650,5 +654,72 @@ void Parser::readGeometryParameters() {
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
     
     SystemParameters::GParams = GParams;
-    
 }
+
+///FILAMENT SETUP PARSER
+FilamentSetup SystemParser::readFilamentSetup() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    FilamentSetup FSetup;
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        if(line.find("FILAMENTFILE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "Error reading filament input file. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                FSetup.inputFile = lineVector[1];
+            else {}
+        }
+        else if(line.find("NUMFILAMENTS") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "Error reading number of filaments. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                FSetup.numFilaments = std::atoi(lineVector[1].c_str());
+            else {}
+        }
+    }
+    return FSetup;
+}
+
+///FILAMENT DATA PARSER
+std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    std::vector<std::vector<std::vector<double>>> returnVector;
+    
+    std::string line;
+    int filamentIndex = 0;
+    
+    while(getline(_inputFile, line)) {
+        std::vector<double> lineVector = split<double>(line);
+        if(lineVector.size() == 7) {
+            
+            std::vector<double> coord1;
+            std::vector<double> coord2;
+            for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++)
+                coord1.push_back(*it);
+            for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++)
+                coord2.push_back(*it);
+            
+            returnVector[filamentIndex] = {coord1, coord2};
+        }
+        filamentIndex++;
+    }
+    return returnVector;
+}
+
+
+

@@ -7,6 +7,6 @@
 //
 
 #include "SystemParameters.h"
-MechanicsParameters SystemParamters::MParams;
+MechanicsParameters SystemParameters::MParams;
 GeometryParameters SystemParameters::GParams;
 BoundaryParameters SystemParameters::BParams;

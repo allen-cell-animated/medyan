@@ -34,7 +34,7 @@ public:
     void initialize(std::string inputFile) {
         
         ///Parse input, get parameters
-        Parser p(inputFile);
+        SystemParser p(inputFile);
         
         _mechanics = p.mechanics();
         _chemistry = p.chemistry();
@@ -62,9 +62,16 @@ public:
         p.readGeometryParameters();
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
-        
         ///Initialize geometry controller
-        GController::initializeGrid();
+        short nDim = SystemParameters::Geometry().nDim;
+        std::vector<int> grid = {SystemParameters::Geometry().NX,
+            SystemParameters::Geometry().NY,
+            SystemParameters::Geometry().NZ};
+        std::vector<double> compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
+            SystemParameters::Geometry().compartmentSizeY,
+            SystemParameters::Geometry().compartmentSizeZ};
+
+        GController::initializeGrid(nDim, grid, compartmentSize);
         
         ///Initialize chemical controller
         if(_chemistry)
@@ -91,8 +98,20 @@ public:
             
         }
         
-        //create filaments here
+        ///Read filament setup, parse filament input file if needed
+        FilamentSetup FSetup = p.readFilamentSetup();
+        std::vector<std::vector<std::vector<double>>> filamentData;
         
+        if(FSetup.inputFile != "") {
+            FilamentParser fp(FSetup.inputFile);
+            filamentData = fp.readFilaments();
+        }
+        else {
+            std::cout << "Random filament distributions not yet implemented. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///Create 
         
     }
     
