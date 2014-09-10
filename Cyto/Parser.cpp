@@ -488,7 +488,18 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("MALGORITHM") != std::string::npos) {
+        if (line.find("MMETHOD") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() != 2) {
+                std::cout << "A Mechanics method must be specified. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MAlgorithm.method = lineVector[1];
+            }
+        }
+        else if (line.find("MALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {

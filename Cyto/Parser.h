@@ -20,6 +20,7 @@
 
 ///Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
+    std::string method = "";
     std::string algorithm = "";
 };
 

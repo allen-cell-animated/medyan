@@ -4,6 +4,7 @@
 MECHANICS:                   ON
 
 ### ALGORITHM ###
+MMETHOD:                     CONJUGATEDGRADIENT
 MALGORITHM:                  POLAKRIBIERE
 
 ### FILAMENTS ###
