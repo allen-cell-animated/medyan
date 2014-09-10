@@ -23,7 +23,7 @@ Filament::Filament(SubSystem* ps, vector<double> position, vector<double> direct
     Cylinder* c1 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1);
     _pLastCylinder = c1;
    
-    PolymerizeFront( NextPointProjection(position, L, direction) );
+    PolymerizeFront( NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction) );
 }
 
 
@@ -83,7 +83,8 @@ void Filament::PolymerizeFront() {
         
         Bead* b =
         BeadDB::Instance(BeadDBKey())->CreateBead(NextPointProjection(
-                    _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate, L, tau) );
+               _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate,
+               SystemParameters::Geometry().cylinderSize, tau) );
         
         Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, true);
         _pLastCylinder->getMCylinder()->SetSecondBead(b);
@@ -104,7 +105,8 @@ void Filament::PolymerizeBack() {
          _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate);
         
         Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(
-                    NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, L, tau) );
+                    NextPointProjection(_pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate,
+                    SystemParameters::Geometry().cylinderSize, tau) );
         
         Cylinder* c = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, false, true);
         c->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
@@ -125,9 +127,9 @@ vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<doubl
     
     for (int i = 0; i<numBeads; i++) {
         
-        tmpVec[0] = v[0][0] + L * i * tau[0];
-        tmpVec[1] = v[0][1] + L * i * tau[1];
-        tmpVec[2] = v[0][2] + L * i * tau[2];
+        tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * tau[0];
+        tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * tau[1];
+        tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * tau[2];
         
         coordinate.push_back(tmpVec);
     }

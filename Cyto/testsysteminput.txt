@@ -4,6 +4,7 @@
 MECHANICS:                   ON
 
 ### ALGORITHM ###
+MMETHOD:                     CONJUGATEDGRADIENT
 MALGORITHM:                  POLAKRIBIERE
 
 ### FILAMENTS ###
@@ -53,7 +54,10 @@ MTWISTINGPHI:
 VOLUMETYPE:
 VOLUMEK:
 
-BOUNDARYTYPE:                CUBIC
+### BOUNDARY ###
+
+BOUNDARYTYPE:                WALL
+BOUNDARYSHAPE:               CUBIC
 BINTERACTIONCUTOFF:          10.0
 
 ##################################################
@@ -71,15 +75,22 @@ COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 2.7
 
+CYLINDERSIZE:                27.0
+
 ##################################################
 ################### CHEMISTRY ####################
 
 CHEMISTRY:                   ON
 
-CALGORITHM:                   NRM
+CALGORITHM:                  NRM
 SETUP:                       SIMPLE
 
+##################################################
+################### FILAMENTS ####################
 
+FILAMENTFILE:                filamentinput.txt
+
+NUMFILAMENTS:                
 
 
 

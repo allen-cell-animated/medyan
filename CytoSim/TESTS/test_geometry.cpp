@@ -23,9 +23,6 @@ TEST(GeometryTest, Initialization) {
 
     GController::initializeGrid(3, {3,3,3}, {100.0,100.0,100.0});
     
-    EXPECT_EQ(GController::nDim(), 3);
-    
-    EXPECT_EQ(GController::compartmentSize()[0], 100.0);
 }
 
 

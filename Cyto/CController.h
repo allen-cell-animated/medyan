@@ -46,10 +46,10 @@ public:
         if(chemAlgorithm == "NRM")
             csi = new ChemNRMImpl;
         
-        else if(chemAlgorithm == "Gillespie")
+        else if(chemAlgorithm == "GILLESPIE")
             csi = new ChemGillespieImpl;
         
-        else if(chemAlgorithm == "SimpleGillespie")
+        else if(chemAlgorithm == "SIMPLEGILLESPIE")
             csi = new ChemSimpleGillespieImpl;
         
         else {
@@ -61,7 +61,7 @@ public:
         
         ///Set the instance of the initializer
         ChemInitializerImpl* cii;
-        if(chemInitializer == "Simple") {
+        if(chemInitializer == "SIMPLE") {
             SimpleInitializerImpl init;
             cii = &init;
         }

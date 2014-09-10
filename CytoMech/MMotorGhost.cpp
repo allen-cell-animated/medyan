@@ -18,7 +18,6 @@ MotorGhost::MotorGhost(Network* pn, Cylinder* pc1, Cylinder* pc2, double stretch
     
     _pc1 = pc1;
     _pc2 = pc2;
-    _eqLength = SystemParameters::Mechanics().MStretchingL;
     _kStretch = SystemParameters::Mechanics().MStretchingK;
     _position1 = pos1;
     _position2 = pos2;

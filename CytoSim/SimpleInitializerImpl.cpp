@@ -17,7 +17,7 @@ void SimpleInitializerImpl::initializeGrid() {
     //cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
     
     
-    CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 100000U);
+    CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 1000U);
     
     ///initialize all compartments with species
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
@@ -46,7 +46,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     CCylinder* cylinder = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
-    int maxlength = SystemParameters::Mechanics().FStretchingL / SystemParameters::Geometry().monomerSize;
+    int maxlength = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize;
     
     ///add to cylinder
     for (int index = 0; index < maxlength; index++) {

@@ -18,6 +18,11 @@
 #include <ios>
 #include "Mcommon.h"
 
+///Struct to hold mechanics algorithm information
+struct MechanicsAlgorithm {
+    std::string method = "";
+    std::string algorithm = "";
+};
 
 ///Struct to hold chemistry algorithm (simple for now)
 struct ChemistryAlgorithm {
@@ -30,7 +35,7 @@ struct ChemistryAlgorithm {
 ///Struct to hold boundary parameters (simple for now)
 struct BoundaryType {
     
-    std::string boundaryType = "";
+    std::string boundaryShape = "";
 };
 
 ///Struct to hold mechanics ff type
@@ -51,12 +56,20 @@ struct MechanicsFFType {
     std::string MTwistingType = "";
     
     ///Volume FF type
-    std::string VolumeType = "";
+    std::string VolumeFFType = "";
+    
+    ///Boundary FF Type
+    std::string BoundaryFFType = "";
+    
 };
 
-///Struct to hold mechanics algorithm information
-struct MechanicsAlgorithm {
-    std::string algorithm = "";
+struct FilamentSetup {
+    
+    ///If reading in
+    std::string inputFile = "";
+    
+    ///If want a random distribution
+    int numFilaments = 0;
 };
 
 
@@ -67,24 +80,30 @@ std::vector<T> split(const std::string& line) {
     return std::vector<T>(std::istream_iterator<T>(is), std::istream_iterator<T>());
 }
 
-///Parser class, to parse an input file
+
+///General parser class for io
 class Parser {
-    
-private:
+protected:
     std::fstream _inputFile; ///< input file being used
     
 public:
-
     Parser(std::string inputFileName) {
         _inputFile.open(inputFileName);
         if(!_inputFile.is_open()) {
-            std::cout << "There was an error parsing input file " << inputFileName << ". Exiting" << std::endl;
+            std::cout << "There was an error parsing file " << inputFileName << ". Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
-        std::cout << "Parsing input file " << inputFileName << std::endl;
+        std::cout << "Parsing file " << inputFileName << std::endl;
     }
-    
     ~Parser() {_inputFile.close();}
+};
+
+
+///SystemParser class, to parse a system input file
+class SystemParser : public Parser{
+public:
+    SystemParser(std::string inputFileName) : Parser(inputFileName) {}
+    ~SystemParser() {}
     
     ///Checks if mechanics is activated
     bool mechanics();
@@ -92,22 +111,35 @@ public:
     ///Checks if chemistry is activated
     bool chemistry();
     
-    ///Chemistry parameters parser
+    ///Parameter parsers. These read input directly into system parameters
+    void readMechanicsParameters();
+    void readGeometryParameters();
+    void readBoundaryParameters();
+    
+    ///Algorithm parsers
+    MechanicsAlgorithm readMechanicsAlgorithm();
     ChemistryAlgorithm readChemistryAlgorithm();
     
-    ///Mechanics parsers
-    MechanicsAlgorithm readMechanicsAlgorithm();
+    ///Type parsers
     MechanicsFFType readMechanicsFFType();
-    void readMechanicsParameters();
-    
-    ///Boundary parser
-    void readBoundaryParameters();
     BoundaryType readBoundaryType();
-
-    ///Geometry parser
-    void readGeometryParameters();
     
+    //Filament information
+    FilamentSetup readFilamentSetup();
+
 };
+
+class FilamentParser : public Parser {
+    
+public:
+    FilamentParser(std::string inputFileName) : Parser(inputFileName) {}
+    ~FilamentParser() {}
+    
+    ///Reads filament input file. Returns a vector of filament positions,
+    ///all containing starting and ending points.
+    std::vector<std::vector<std::vector<double>>> readFilaments();
+};
+
 
 
 #endif /* defined(__Cyto__Parser__) */

@@ -13,7 +13,7 @@
 #include "BoundarySurface.h"
 
 ///Boundary type enumeration
-enum class BoundaryType {Cube, Cylinder, Sphere};
+enum class BoundaryShape {Cube, Cylinder, Sphere};
 
 
 ///Boundary class is to store all boundary surfaces that are in the system
@@ -26,14 +26,14 @@ class Boundary {
 protected:
     std::vector<std::unique_ptr<BoundarySurface>> _boundarySurfaces;
     ///<vector of boundary surfaces (could be different implementations)
-    BoundaryType _type; ///<Boundary type of this boundary
+    BoundaryShape _shape; ///<Boundary type of this boundary
     short _nDim; ///<Dimensionality of this boundary
     
 public:
     ///not much for now
     
     ///Constructor and destructor
-    Boundary(int nDim, BoundaryType type) : _nDim(nDim), _type(type) {};
+    Boundary(int nDim, BoundaryShape shape) : _nDim(nDim), _shape(shape) {};
     ~Boundary() {};
 
 };

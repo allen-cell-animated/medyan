@@ -55,6 +55,7 @@ struct GeometryParameters {
     double compartmentSizeZ = 0;
     
     double monomerSize = 0;
+    double cylinderSize = 0;
 };
 
 ///Struct to hold the read boundary parameters
@@ -66,7 +67,7 @@ struct BoundaryParameters {
 
 ///This class holds all system-wide parameters, initialized by the Parser
 class SystemParameters {
-friend class Parser;
+friend class SystemParser;
     
 private:
     static MechanicsParameters MParams; ///< mechanical parameters

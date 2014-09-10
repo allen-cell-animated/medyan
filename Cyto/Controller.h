@@ -14,6 +14,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "Parser.h"
+#include "BoundaryImpl.h"
 
 class SubSystem;
 
@@ -33,38 +34,44 @@ public:
     void initialize(std::string inputFile) {
         
         ///Parse input, get parameters
-        Parser p(inputFile);
+        SystemParser p(inputFile);
         
         _mechanics = p.mechanics();
         _chemistry = p.chemistry();
         
         ///Parameters for input
-        ChemistryAlgorithm CAlgorithm;
-        MechanicsAlgorithm MAlgorithm;
-        MechanicsFFType MTypes;
+        ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
+        MechanicsFFType MTypes; BoundaryType BTypes;
         
         ///read if activated
         if(_mechanics) {
-            MAlgorithm = p.readMechanicsAlgorithm();
-            p.readMechanicsParameters();
+            ///read algorithm and types
             MTypes = p.readMechanicsFFType();
-            p.readBoundaryParameters();
+            BTypes = p.readBoundaryType();
+            MAlgorithm = p.readMechanicsAlgorithm();
             
+            ///read const parameters
+            p.readMechanicsParameters();
+            p.readBoundaryParameters();
         }
         if(_chemistry) {
+            ///read algorithm
             CAlgorithm = p.readChemistryAlgorithm();
         }
         ///Always read geometry
         p.readGeometryParameters();
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
-        GController::initializeGrid(SystemParameters::Geometry().nDim,
-                                    {SystemParameters::Geometry().NX,
-                                     SystemParameters::Geometry().NY,
-                                     SystemParameters::Geometry().NZ},
-                                    {SystemParameters::Geometry().compartmentSizeX,
-                                     SystemParameters::Geometry().compartmentSizeY,
-                                     SystemParameters::Geometry().compartmentSizeZ});
+        ///Initialize geometry controller
+        short nDim = SystemParameters::Geometry().nDim;
+        std::vector<int> grid = {SystemParameters::Geometry().NX,
+            SystemParameters::Geometry().NY,
+            SystemParameters::Geometry().NZ};
+        std::vector<double> compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
+            SystemParameters::Geometry().compartmentSizeY,
+            SystemParameters::Geometry().compartmentSizeZ};
+
+        GController::initializeGrid(nDim, grid, compartmentSize);
         
         ///Initialize chemical controller
         if(_chemistry)
@@ -81,8 +88,20 @@ public:
             
         }
         
-        //create filaments here
+        ///Read filament setup, parse filament input file if needed
+        FilamentSetup FSetup = p.readFilamentSetup();
+        std::vector<std::vector<std::vector<double>>> filamentData;
         
+        if(FSetup.inputFile != "") {
+            FilamentParser fp(FSetup.inputFile);
+            filamentData = fp.readFilaments();
+        }
+        else {
+            std::cout << "Random filament distributions not yet implemented. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///Create 
         
     }
     

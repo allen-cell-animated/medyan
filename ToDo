@@ -7,7 +7,9 @@ TODO                                                                        COMP
     -Compiling all of cytosim and cytomech together
     -Organizing code into folders
 2) Finishing touches
-    -Moving cylinders
+    -Filament input file
+    -Out of bounds management
+    -Moving cylinders, placing new cylinders
     -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?
