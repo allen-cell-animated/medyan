@@ -20,8 +20,8 @@
 
 ///Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
-    std::string method = "";
-    std::string algorithm = "";
+    std::string ConjugareGradient = "";
+    std::string MD = "";
 };
 
 ///Struct to hold chemistry algorithm (simple for now)
