@@ -14,6 +14,7 @@
 #include "CCylinder.h"
 #include "ChemInitializer.h"
 #include "Composite.h"
+#include "GController.h"
 
 class Filament;
 
@@ -37,7 +38,7 @@ private:
 public:
     ///Constructor and destructor
     Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack);
-    ~Cylinder();
+    ~Cylinder() {};
     
     ///get mCylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}

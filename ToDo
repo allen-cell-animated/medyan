@@ -4,13 +4,13 @@ Goals for September 2014
 TODO                                                                        COMPLETED?
 
 1) Combining code
-    -Compiling all of cytosim and cytomech together
-    -Organizing code into folders
+    -Compiling all of cytosim and cytomech together                             X
+    -Organizing code into folders                                               X
 2) Finishing touches
     -Combine common files                                                       X
     -Filament input file                                                        X
-    -Out of bounds management
-    -Moving cylinders, placing new cylinders
+    -Out of bounds management                                                   X
+    -Moving cylinders, placing new cylinders                                     X
     -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?

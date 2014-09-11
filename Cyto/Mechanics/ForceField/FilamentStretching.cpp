@@ -7,6 +7,7 @@
 //
 
 #include "FilamentStretching.h"
+#include "FilamentStretchingHarmonic.h"
 
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* pf, double d)
@@ -21,7 +22,6 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
             double kStr = it->getMCylinder()->GetStretchingConst();
             double L = it->getMCylinder()->GetEqLength();
             U += _FFType.Energy(pb1, pb2, kStr, L);
-            return U;
         }
     }
     else {
@@ -32,9 +32,9 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
             double L = it->getMCylinder()->GetEqLength();
             
             U += _FFType.Energy(pb1, pb2, kStr, L, d);   ///This type of function needed for conjugated gradient minimisation only;
-            return U;
         }
     }
+    return U;
 }
 
 template <class FStretchingInteractionType>
@@ -64,3 +64,8 @@ void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* 
         _FFType.ForcesAux(pb1, pb2, kStr, L);
     }
 }
+
+///Template specializations
+template double FilamentStretching<FilamentStretchingHarmonic>::ComputeEnergy(Filament* pf, double d);
+template void  FilamentStretching<FilamentStretchingHarmonic>::ComputeForces(Filament* pf);
+template void  FilamentStretching<FilamentStretchingHarmonic>::ComputeForcesAux(Filament* pf);

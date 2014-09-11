@@ -8,9 +8,6 @@
 
 #include "FilamentBendingHarmonic.h"
 
-#include "Bead.h"
-#include "Cylinder.h"
-
 using namespace std;
 using namespace mathfunc;
 

@@ -7,6 +7,7 @@
 //
 
 #include "FilamentBending.h"
+#include "FilamentBendingHarmonic.h"
 
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, double d)
@@ -22,7 +23,6 @@ double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, dou
             double k_bend = (*it)->getMCylinder()->GetBendingConst();
             
             U += _FFType.Energy( pb1, pb2, pb3, k_bend );
-            return U;
         }
     }
     else {
@@ -34,9 +34,11 @@ double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, dou
             double k_bend = (*it)->getMCylinder()->GetBendingConst();
             
             U += _FFType.Energy( pb1, pb2, pb3, k_bend, d );
-            return U;
-        }    }
+        }
+    }
+    return U;
 }
+
 template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::ComputeForces(Filament* pf)
 {
@@ -69,3 +71,8 @@ void FilamentBending<FBendingInteractionType>::ComputeForcesAux(Filament* pf) //
         
     }
 }
+
+///Template specializations
+template double FilamentBending<FilamentBendingHarmonic>::ComputeEnergy(Filament* pf, double d);
+template void  FilamentBending<FilamentBendingHarmonic>::ComputeForces(Filament* pf);
+template void  FilamentBending<FilamentBendingHarmonic>::ComputeForcesAux(Filament* pf);

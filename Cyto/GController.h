@@ -62,6 +62,10 @@ public:
         size_t i = _nDim-1;
         for(auto x: indices)
         {
+            if(x < 0 || x >= _grid[i])) {
+                std::cout << "An object has gone out of bounds of the grid. Exiting" <<std::endl;
+                exit(EXIT_FAILURE);
+            }
             index+=x*std::pow(_grid[i],i);
             --i;
         }
@@ -72,11 +76,17 @@ public:
     /// Get the compartment given a set of coordinates
     static Compartment* getCompartment(const std::vector<double> &coords)
     {
+        ///Check if out of bounds
         size_t index = 0;
         size_t i = _nDim-1;
         for(auto x: coords)
         {
-            index+=int(x / _compartmentSize[index]) * std::pow(_grid[i],i);
+            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) {
+                std::cout << "An object has gone out of bounds of the grid. Exiting" <<std::endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            index+=int(x / _compartmentSize[i]) * std::pow(_grid[i],i);
             --i;
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());

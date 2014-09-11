@@ -7,6 +7,7 @@
 //
 
 #include "LinkerStretching.h"
+#include "LinkerStretchingHarmonic.h"
 
 template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d)
@@ -17,11 +18,14 @@ double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, d
     Bead* pb4 = pl->GetSecondCylinder()->getMCylinder()->GetSecondBead();
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
+    double pos1 = pl->GetFirstPosition();
+    double pos2 = pl->GetSecondPosition();
+    
     
     if (d == 0.0)
-        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L);
+        return _FFType.Energy(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
     else
-        return _FFType.Energy(pb1, pb2, pb3, pb4, kStretch, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+        return _FFType.Energy(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L, d);   ///This type of function needed for conjugated gradient minimisation only;
     
 }
 
@@ -35,7 +39,10 @@ void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl)
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
     
-    _FFType.Forces(pb1, pb2, pb3, pb4, kStretch, L);
+    double pos1 = pl->GetFirstPosition();
+    double pos2 = pl->GetSecondPosition();
+    
+    _FFType.Forces(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
     
 }
 
@@ -50,6 +57,14 @@ void LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Linker* pl) 
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
     
-    _FFType.ForcesAux(pb1, pb2, pb3, pb4, kStretch, L);
+    double pos1 = pl->GetFirstPosition();
+    double pos2 = pl->GetSecondPosition();
+    
+    _FFType.ForcesAux(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
     
 }
+
+///Template specializations
+template double LinkerStretching<LinkerStretchingHarmonic>::ComputeEnergy(Linker* pl, double d);
+template void  LinkerStretching<LinkerStretchingHarmonic>::ComputeForces(Linker* pl);
+template void  LinkerStretching<LinkerStretchingHarmonic>::ComputeForcesAux(Linker* pl);

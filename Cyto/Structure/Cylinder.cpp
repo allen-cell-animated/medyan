@@ -7,8 +7,6 @@
 //
 
 #include "Cylinder.h"
-#include "GController.h"
-#include "ChemInitializer.h"
 
 Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack) {
     
@@ -18,7 +16,6 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extension
     
     _mCylinder->setCylinder(this);
     _cCylinder->setCylinder(this);
-    
 }
 
 
