@@ -15,7 +15,7 @@
 #include "Cylinder.h"
 
 ///Key to access instance of CylinderDB
-class CylinderDBKey {friend class Filament; CylinderDBKey(){}; ~CylinderDBKey(){}; };
+class CylinderDBKey {friend class Filament; friend class MController; CylinderDBKey(){}; ~CylinderDBKey(){}; };
 
 
 ///CylinderDB class is used to store all Cylinders in the system

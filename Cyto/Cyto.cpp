@@ -34,12 +34,22 @@
 #include <iostream>
 #include <numeric>
 #include <chrono>
+#include "Controller.h"
+#include "SubSystem.h"
 
 using namespace std;
 
 int main(int argc, const char * argv[])
 {
 
+    SubSystem s;
+    Controller c(&s);
     
+    c.initialize("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testsysteminput.txt");
+    
+    
+    
+    c.run();
+
 }
 

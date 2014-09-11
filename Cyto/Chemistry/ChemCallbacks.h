@@ -1,13 +1,13 @@
 //
-//  Callback.h
+//  ChemCallbacks.h
 //  Cyto
 //
 //  Created by James Komianos on 9/11/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __Cyto__Callback__
-#define __Cyto__Callback__
+#ifndef __Cyto__ChemCallbacks__
+#define __Cyto__ChemCallbacks__
 
 #include <iostream>
 #include "Filament.h"

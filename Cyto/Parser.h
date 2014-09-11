@@ -29,6 +29,8 @@ struct ChemistryAlgorithm {
     
     std::string algorithm = "";
     std::string setup = "";
+    int numSteps = 0;
+    int numStepsPerMech = 0;
 };
 
 
@@ -93,7 +95,7 @@ public:
             std::cout << "There was an error parsing file " << inputFileName << ". Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
-        std::cout << "Parsing file " << inputFileName << std::endl;
+        std::cout << "Loading file " << inputFileName << std::endl;
     }
     ~Parser() {_inputFile.close();}
 };

@@ -18,6 +18,7 @@
 class BeadDBKey {friend class Cylinder;
                  friend class Filament;
                  friend class CGMethod;
+                 friend class MController;
                  BeadDBKey() {};
                  public: ~BeadDBKey() {}; };
 

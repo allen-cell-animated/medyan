@@ -25,7 +25,7 @@ class BoundaryElement {
     
 protected:
     
-    Compartment* _compartment; ///< Compartment that this boundary element is currently in
+    Compartment* _compartment = nullptr; ///< Compartment that this boundary element is currently in
     std::vector<Bead*> _beads; ///< Beads that this boundary element could interact with
     std::vector<BoundaryElement*> _neighbors; ///<neighbors of this boundary element
     

@@ -62,7 +62,7 @@ public:
         size_t i = _nDim-1;
         for(auto x: indices)
         {
-            if(x < 0 || x >= _grid[i])) {
+            if(x >= _grid[i]) {
                 std::cout << "An object has gone out of bounds of the grid. Exiting" <<std::endl;
                 exit(EXIT_FAILURE);
             }

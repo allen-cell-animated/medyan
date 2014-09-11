@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "ChemInitializerImpl.h"
-#include "Callback.h"
+#include "ChemCallbacks.h"
 #include "common.h"
 
 ///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class, which sets up CCylinders

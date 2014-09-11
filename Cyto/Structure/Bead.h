@@ -75,7 +75,7 @@ public:
 
     
 private:
-    Compartment* _compartment; ///< ptr to the compartment that this bead is in
+    Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
     std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
 };
 

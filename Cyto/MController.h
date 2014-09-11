@@ -46,21 +46,21 @@ private:
     {
         /// Check if exist!!!
         _FFManager._forceFields.push_back(new FilamentFF(forceFields.FStretchingType, forceFields.FBendingType, forceFields.FTwistingType) );
-        std::cout << "Filament force field initialized:" <<std::endl;
-        if(forceFields.FStretchingType != "") std::cout << "Stretching: " << forceFields.FStretchingType <<std::endl;
-        if(forceFields.FBendingType != "") std::cout << "Bending: " << forceFields.FBendingType <<std::endl;
+        std::cout << "Filament force field initialized: " <<std::endl;
+        if(forceFields.FStretchingType != "") std::cout << "Stretching: " << forceFields.FStretchingType << std::endl;
+        if(forceFields.FBendingType != "") std::cout << "Bending: " << forceFields.FBendingType<< std::endl;
         if(forceFields.FTwistingType != "")std::cout << "Twisting: " << forceFields.FTwistingType <<std::endl;
         
         _FFManager._forceFields.push_back(new LinkerFF(forceFields.LStretchingType, forceFields.LBendingType, forceFields.LTwistingType) );
-        std::cout << "Linker force field initialized:" <<std::endl;
-        if(forceFields.LStretchingType != "") std::cout << "Stretching: " << forceFields.LStretchingType <<std::endl;
-        if(forceFields.LBendingType != "") std::cout << "Bending: " << forceFields.LBendingType <<std::endl;
+        std::cout << "Linker force field initialized:";
+        if(forceFields.LStretchingType != "") std::cout << "Stretching: " << forceFields.LStretchingType<< std::endl;
+        if(forceFields.LBendingType != "") std::cout << "Bending: " << forceFields.LBendingType<< std::endl;
         if(forceFields.LTwistingType != "") std::cout << "Twisting: " << forceFields.LTwistingType <<std::endl;
         
         _FFManager._forceFields.push_back(new MotorGhostFF(forceFields.MStretchingType, forceFields.MBendingType, forceFields.MTwistingType) );
-        std::cout << "Motor force field initialized:" <<std::endl;
-        if(forceFields.MStretchingType != "") std::cout << "Stretching: " << forceFields.MStretchingType <<std::endl;
-        if(forceFields.MBendingType != "") std::cout << "Bending: " << forceFields.MBendingType <<std::endl;
+        std::cout << "Motor force field initialized:";
+        if(forceFields.MStretchingType != "") std::cout << "Stretching: " << forceFields.MStretchingType<< std::endl;
+        if(forceFields.MBendingType != "") std::cout << "Bending: " << forceFields.MBendingType<< std::endl;
         if(forceFields.MTwistingType != "") std::cout << "Twisting: " << forceFields.MTwistingType <<std::endl;
         
         /// Add other FF's
@@ -92,6 +92,26 @@ public:
     void run() {
         
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
+        
+        ///Update bead-boundary interactions (VERY INEFFICIENT)
+        for(auto b : *BeadDB::Instance(BeadDBKey())) {
+            b->updateBoundaryElements();
+        }
+        
+        ///Update cylinder positions
+        for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
+            
+            std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
+                                                                        Cyl->getMCylinder()->GetSecondBead()->coordinate,
+                                                                        0.5);
+            Compartment* newC = GController::getCompartment(midpoint);
+            CCylinder* cCyl = Cyl->getCCylinder();
+            if(newC != cCyl->getCompartment()) {
+                CCylinder* clone = cCyl->clone(newC);
+                delete cCyl;
+                Cyl->setCCylinder(clone);
+            }
+        }
     }
     
 };

@@ -45,6 +45,8 @@ public:
     
     ///get cCylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
+    ///set cCylinder
+    void setCCylinder(CCylinder* c) {_cCylinder = std::unique_ptr<CCylinder>(c);}
     
     ///get parent filament
     Filament* getFilament() {return _pFilament;}

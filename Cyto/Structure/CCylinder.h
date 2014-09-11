@@ -85,7 +85,7 @@ public:
     }
     
     ///get filament compartment
-    Compartment* compartment() {return _compartment;}
+    Compartment* getCompartment() {return _compartment;}
     
     ///set parent cylinder
     void setCylinder(Cylinder* c) {_pCylinder = c;}

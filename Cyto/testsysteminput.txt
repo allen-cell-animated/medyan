@@ -84,11 +84,13 @@ CHEMISTRY:                   ON
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
+NUMSTEPS:                    1000
+NUMSTEPSPERM:                10
 
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                filamentinput.txt
+FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 
