@@ -12,10 +12,6 @@
 #include <iostream>
 #include "Linker.h"
 #include "LinkerInteractions.h"
-#include "Bead.h"
-
-class LinkerInteractions;
-class Linker;
 
 template <class LStretchingInteractionType>
 class LinkerStretching : public LinkerInteractions
@@ -25,9 +21,9 @@ private:
     LStretchingInteractionType _FFType;
     
 public:
-    double ComputeEnergy( Linker*, double d);
-    void ComputeForces( Linker*);
-    void ComputeForcesAux( Linker*);
+    virtual double ComputeEnergy( Linker*, double d);
+    virtual void ComputeForces( Linker*);
+    virtual void ComputeForcesAux( Linker*);
 };
 
 #endif /* defined(__Cyto__LinkerStratching__) */

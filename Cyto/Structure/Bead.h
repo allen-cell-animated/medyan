@@ -38,7 +38,7 @@ public:
     ///Main constructor
     Bead (std::vector<double> v);
     ///Default constructor
-    Bead(): coordinate (3, 0), _parent(NULL), force(3, 0), forceAux(3, 0) {}
+    Bead(): coordinate (3, 0), force(3, 0), forceAux(3, 0) {}
 
     ///Aux functions
     

@@ -12,8 +12,8 @@
 #include <iostream>
 #include "MCylinder.h"
 #include "CCylinder.h"
-#include "Composite.h"
 #include "ChemInitializer.h"
+#include "Composite.h"
 
 class Filament;
 

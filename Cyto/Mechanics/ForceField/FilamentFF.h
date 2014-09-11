@@ -19,8 +19,6 @@
 #include "FilamentDB.h"
 #include <stdlib.h>
 
-class FilamentInteractions;
-
 class FilamentFF : public ForceField {
  
 private:
@@ -30,9 +28,9 @@ public:
     FilamentFF(std::string Stretching, std::string Bending, std::string Twisting );
     
    // Public interfaecs to compute forces:
-    double ComputeEnergy(double d);
-    void ComputeForces();
-    void ComputeForcesAux();
+    virtual double ComputeEnergy(double d);
+    virtual void ComputeForces();
+    virtual void ComputeForcesAux();
 };
 
 

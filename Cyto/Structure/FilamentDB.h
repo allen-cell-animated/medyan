@@ -15,7 +15,7 @@
 #include "Filament.h"
 
 ///Key to access instance of FilamentDB
-class FilamentDBKey {friend class SubSystem; friend class FilamentFF; FilamentDBKey(); ~FilamentDBKey(); };
+class FilamentDBKey {friend class SubSystem; friend class FilamentFF; FilamentDBKey(){}; ~FilamentDBKey(){}; };
 
 
 ///FilamentDB is used to store all filaments in the system

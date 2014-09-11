@@ -11,9 +11,10 @@
 
 #include <iostream>
 #include <vector>
-#include "Filament.h"
 #include "CompartmentContainer.h"
 
+class Filament;
+class CCylinder;
 class ReactionBase;
 
 ///ChemInitializerImpl is an abstract base class for initialization of all chemistry in the system
@@ -39,85 +40,6 @@ public:
     virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack) = 0;
 
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
-};
-
-
-///REACTION CALLBACKS
-
-///Extension callback
-struct FilamentExtensionFrontCallback {
-    
-    //members
-    Filament* _filament;
-    
-    ///Constructor, sets members
-    FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
-    
-    ///Callback
-    void operator() (ReactionBase *r){
-        _filament->PolymerizeFront();
-    }
-};
-
-///Extension callback
-struct FilamentExtensionBackCallback {
-    
-    //members
-    Filament* _filament;
-    
-    ///Constructor, sets members
-    FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
-    
-    ///Callback
-    void operator() (ReactionBase *r){
-        _filament->PolymerizeBack();
-    }
-};
-
-///Retraction callback
-struct FilamentRetractionCallback {
-    
-    //members
-    Filament* _filament;
-    
-    ///Constructor, sets members
-    FilamentRetractionCallback(Filament* filament) : _filament(filament) {};
-    
-    ///Callback
-    void operator() (ReactionBase *r){
-        //_filament->
-    }
-};
-
-
-///General polymerization callback
-struct FilamentPolyCallback {
-    
-    //members
-    Filament* _filament;
-    
-    FilamentPolyCallback(Filament* filament) : _filament(filament) {};
-    
-    //Callback
-    void operator() (ReactionBase *r){
-        //_filament->
-    }
-    
-};
-
-///General depolymerization callback
-struct FilamentDepolyCallback {
-    
-    //members
-    Filament* _filament;
-    
-    FilamentDepolyCallback(Filament* filament) : _filament(filament) {};
-    
-    //Callback
-    void operator() (ReactionBase *r){
-        //_filament->
-    }
-    
 };
 
 #endif /* defined(__Cyto__ChemInitializerImpl__) */

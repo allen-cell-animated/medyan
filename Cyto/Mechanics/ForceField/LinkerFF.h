@@ -16,8 +16,6 @@
 #include "LinkerStretchingHarmonic.h"
 #include "LinkerDB.h"
 
-class LinkerInteractions;
-
 class LinkerFF : public ForceField {
     
 private:
@@ -27,9 +25,9 @@ public:
     LinkerFF(std::string Stretching, std::string Bending, std::string Twisting );
     
     // Public interfaces to compute forces:
-    double ComputeEnergy(double d);
-    void ComputeForces();
-    void ComputeForcesAux();
+    virtual double ComputeEnergy(double d);
+    virtual void ComputeForces();
+    virtual void ComputeForcesAux();
     
 };
 

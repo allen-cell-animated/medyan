@@ -11,8 +11,6 @@
 
 #include "Filament.h"
 #include "FilamentInteractions.h"
-#include "Bead.h"
-#include "Cylinder.h"
 
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions {
@@ -21,9 +19,9 @@ private:
     FStretchingInteractionType _FFType;
     
 public:
-    double ComputeEnergy( Filament*, double d);
-    void ComputeForces( Filament*);
-    void ComputeForcesAux( Filament*);
+    virtual double ComputeEnergy( Filament*, double d);
+    virtual void ComputeForces( Filament*);
+    virtual void ComputeForcesAux( Filament*);
 };
 
 

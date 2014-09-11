@@ -11,13 +11,13 @@
 
 #include "SubSystem.h"
 #include "ForceFieldManager.h"
-#include "MMinimizer.h"
+#include "Minimizer.h"
 #include "Parser.h"
 #include "ForceField.h"
-#include "MFilamentFF.h"
-#include "MLinkerFF.h"
-#include "MMotorGhostFF.h"
-#include "MConjugateGradient.h"
+#include "FilamentFF.h"
+#include "LinkerFF.h"
+#include "MotorGhostFF.h"
+#include "ConjugateGradient.h"
 #include <iostream>
 #include <vector>
 

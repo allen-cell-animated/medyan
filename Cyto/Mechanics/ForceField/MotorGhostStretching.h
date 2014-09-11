@@ -12,9 +12,6 @@
 #include <iostream>
 #include "MotorGhost.h"
 #include "MotorGhostInteractions.h"
-#include "Bead.h"
-
-class MotorGhostInteractions;
 
 template <class MStretchingInteractionType>
 class MotorGhostStretching : public MotorGhostInteractions {
@@ -23,9 +20,9 @@ private:
     MStretchingInteractionType _FFType;
 
 public:
-    double ComputeEnergy( MotorGhost*, double d);
-    void ComputeForces( MotorGhost*);
-    void ComputeForcesAux( MotorGhost*);
+    virtual double ComputeEnergy( MotorGhost*, double d);
+    virtual void ComputeForces( MotorGhost*);
+    virtual void ComputeForcesAux( MotorGhost*);
 };
 
 

@@ -15,7 +15,7 @@
 #include "Cylinder.h"
 
 ///Key to access instance of LinkerDB
-class LinkerDBKey {friend class SubSystem; friend class LinkerFF; LinkerDBKey(); ~LinkerDBKey(); };
+class LinkerDBKey {friend class SubSystem; friend class LinkerFF; LinkerDBKey() {}; ~LinkerDBKey(){}; };
 
 ///LinkerDB class is used to store all linkers in the system
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 

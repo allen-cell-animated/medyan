@@ -174,8 +174,6 @@
 		F777FA7219C1F3C900D2850A /* CGPolakRibiereMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA6619C1F3C900D2850A /* CGPolakRibiereMethod.cpp */; };
 		F777FA7319C1F3C900D2850A /* CGPolakRibiereMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA6719C1F3C900D2850A /* CGPolakRibiereMethod.h */; };
 		F777FA7419C1F3C900D2850A /* ConjugateGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA6819C1F3C900D2850A /* ConjugateGradient.h */; };
-		F777FA7519C1F3C900D2850A /* MCGsolverTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA6919C1F3C900D2850A /* MCGsolverTMP.cpp */; };
-		F777FA7619C1F3C900D2850A /* MCGsolverTMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA6919C1F3C900D2850A /* MCGsolverTMP.cpp */; };
 		F777FA7719C1F3C900D2850A /* Minimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA6A19C1F3C900D2850A /* Minimizer.h */; };
 		F777FA8519C1F40A00D2850A /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7819C1F40A00D2850A /* common.cpp */; };
 		F777FA8619C1F40A00D2850A /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7819C1F40A00D2850A /* common.cpp */; };
@@ -192,9 +190,10 @@
 		F777FA9119C1F40A00D2850A /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7F19C1F40A00D2850A /* MathFunctions.cpp */; };
 		F777FA9219C1F40A00D2850A /* MathFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA8019C1F40A00D2850A /* MathFunctions.h */; };
 		F777FA9319C1F40A00D2850A /* Signaling.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA8219C1F40A00D2850A /* Signaling.h */; };
-		F777FA9419C1F40A00D2850A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA8319C1F40A00D2850A /* SubSystem.cpp */; };
-		F777FA9519C1F40A00D2850A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA8319C1F40A00D2850A /* SubSystem.cpp */; };
-		F777FA9619C1F40A00D2850A /* SubSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA8419C1F40A00D2850A /* SubSystem.h */; };
+		F777FA9B19C1FC2D00D2850A /* Callback.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA9819C1FC2D00D2850A /* Callback.h */; };
+		F777FA9E19C1FDB200D2850A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA9C19C1FDB200D2850A /* SubSystem.cpp */; };
+		F777FA9F19C1FDB200D2850A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA9C19C1FDB200D2850A /* SubSystem.cpp */; };
+		F777FAA019C1FDB200D2850A /* SubSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA9D19C1FDB200D2850A /* SubSystem.h */; };
 		F7981A6A194604F100A7E22C /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7981A68194604F100A7E22C /* test_compartments.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7A8EEAD193F8C4900A52210 /* test_gillespie_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */; };
@@ -387,7 +386,6 @@
 		F777FA6619C1F3C900D2850A /* CGPolakRibiereMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGPolakRibiereMethod.cpp; sourceTree = "<group>"; };
 		F777FA6719C1F3C900D2850A /* CGPolakRibiereMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGPolakRibiereMethod.h; sourceTree = "<group>"; };
 		F777FA6819C1F3C900D2850A /* ConjugateGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConjugateGradient.h; sourceTree = "<group>"; };
-		F777FA6919C1F3C900D2850A /* MCGsolverTMP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCGsolverTMP.cpp; sourceTree = "<group>"; };
 		F777FA6A19C1F3C900D2850A /* Minimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Minimizer.h; sourceTree = "<group>"; };
 		F777FA7819C1F40A00D2850A /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F777FA7919C1F40A00D2850A /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
@@ -400,8 +398,9 @@
 		F777FA8019C1F40A00D2850A /* MathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathFunctions.h; sourceTree = "<group>"; };
 		F777FA8119C1F40A00D2850A /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		F777FA8219C1F40A00D2850A /* Signaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signaling.h; sourceTree = "<group>"; };
-		F777FA8319C1F40A00D2850A /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubSystem.cpp; sourceTree = "<group>"; };
-		F777FA8419C1F40A00D2850A /* SubSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubSystem.h; sourceTree = "<group>"; };
+		F777FA9819C1FC2D00D2850A /* Callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callback.h; sourceTree = "<group>"; };
+		F777FA9C19C1FDB200D2850A /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubSystem.cpp; path = Cyto/Structure/SubSystem.cpp; sourceTree = SOURCE_ROOT; };
+		F777FA9D19C1FDB200D2850A /* SubSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SubSystem.h; path = Cyto/Structure/SubSystem.h; sourceTree = SOURCE_ROOT; };
 		F77A456A15DF78A2007BB95D /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_simple_gillespie.cpp; path = Cyto/TESTS/test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7981A68194604F100A7E22C /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_compartments.cpp; path = Cyto/TESTS/test_compartments.cpp; sourceTree = "<group>"; };
@@ -467,6 +466,8 @@
 		B52F64BE19BA230000A2B9FD /* Structure */ = {
 			isa = PBXGroup;
 			children = (
+				F777FA9C19C1FDB200D2850A /* SubSystem.cpp */,
+				F777FA9D19C1FDB200D2850A /* SubSystem.h */,
 				F777F98E19C1F35200D2850A /* Bead.cpp */,
 				F777F98F19C1F35200D2850A /* Bead.h */,
 				F777F99019C1F35200D2850A /* BeadDB.cpp */,
@@ -583,6 +584,7 @@
 				F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */,
 				F777F97719C1F32E00D2850A /* SimpleInitializerImpl.cpp */,
 				F777F97819C1F32E00D2850A /* SimpleInitializerImpl.h */,
+				F777FA9819C1FC2D00D2850A /* Callback.h */,
 			);
 			name = Chemistry;
 			path = Cyto/Chemistry;
@@ -642,7 +644,6 @@
 				F777FA6619C1F3C900D2850A /* CGPolakRibiereMethod.cpp */,
 				F777FA6719C1F3C900D2850A /* CGPolakRibiereMethod.h */,
 				F777FA6819C1F3C900D2850A /* ConjugateGradient.h */,
-				F777FA6919C1F3C900D2850A /* MCGsolverTMP.cpp */,
 				F777FA6A19C1F3C900D2850A /* Minimizer.h */,
 			);
 			name = Minimizer;
@@ -668,8 +669,6 @@
 				F777FA7F19C1F40A00D2850A /* MathFunctions.cpp */,
 				F777FA8019C1F40A00D2850A /* MathFunctions.h */,
 				F777FA8219C1F40A00D2850A /* Signaling.h */,
-				F777FA8319C1F40A00D2850A /* SubSystem.cpp */,
-				F777FA8419C1F40A00D2850A /* SubSystem.h */,
 				F722372C19BE1F7C006FAB85 /* Parser.cpp */,
 				F722372D19BE1F7C006FAB85 /* Parser.h */,
 				F76C690A198FEC6800760D20 /* MController.cpp */,
@@ -733,7 +732,6 @@
 				F777FA5819C1F3A800D2850A /* MotorGhostStretchingHarmonic.h in Headers */,
 				F777F98319C1F32E00D2850A /* ChemRNode.h in Headers */,
 				F777F97F19C1F32E00D2850A /* ChemInitializerImpl.h in Headers */,
-				F777FA9619C1F40A00D2850A /* SubSystem.h in Headers */,
 				F777F9E319C1F35200D2850A /* CylinderDB.h in Headers */,
 				F777F9E019C1F35200D2850A /* Cylinder.h in Headers */,
 				F777FA6019C1F3A800D2850A /* VolumInter.h in Headers */,
@@ -757,6 +755,8 @@
 				F777F9FB19C1F35200D2850A /* Reaction.h in Headers */,
 				F777F98219C1F32E00D2850A /* ChemNRMImpl.h in Headers */,
 				F777FA7719C1F3C900D2850A /* Minimizer.h in Headers */,
+				F777FA9B19C1FC2D00D2850A /* Callback.h in Headers */,
+				F777FAA019C1FDB200D2850A /* SubSystem.h in Headers */,
 				F777FA7419C1F3C900D2850A /* ConjugateGradient.h in Headers */,
 				F777F9D319C1F35200D2850A /* CCylinder.h in Headers */,
 				F777F9FF19C1F35200D2850A /* ReactionContainer.h in Headers */,
@@ -922,7 +922,6 @@
 			files = (
 				F777F98519C1F32E00D2850A /* ChemSim.cpp in Sources */,
 				F777FA7219C1F3C900D2850A /* CGPolakRibiereMethod.cpp in Sources */,
-				F777FA7619C1F3C900D2850A /* MCGsolverTMP.cpp in Sources */,
 				F777FA9119C1F40A00D2850A /* MathFunctions.cpp in Sources */,
 				F777F98C19C1F32E00D2850A /* SimpleInitializerImpl.cpp in Sources */,
 				F777FA4D19C1F3A800D2850A /* LinkerStretchingHarmonic.cpp in Sources */,
@@ -942,6 +941,7 @@
 				F777FA5719C1F3A800D2850A /* MotorGhostStretchingHarmonic.cpp in Sources */,
 				F777F97D19C1F32E00D2850A /* ChemInitializer.cpp in Sources */,
 				F777F9F419C1F35200D2850A /* MotorGhost.cpp in Sources */,
+				F777FA9F19C1FDB200D2850A /* SubSystem.cpp in Sources */,
 				F777FA3319C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */,
 				F777FA5B19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */,
 				F777F9C919C1F35200D2850A /* BoundaryElementDB.cpp in Sources */,
@@ -959,7 +959,6 @@
 				F777F9E519C1F35200D2850A /* Filament.cpp in Sources */,
 				F777FA5019C1F3A800D2850A /* MotorGhostFF.cpp in Sources */,
 				F7603ED319C0918000775874 /* SystemParameters.cpp in Sources */,
-				F777FA9519C1F40A00D2850A /* SubSystem.cpp in Sources */,
 				F777FA3619C1F3A800D2850A /* FilamentFF.cpp in Sources */,
 				F777F9E819C1F35200D2850A /* FilamentDB.cpp in Sources */,
 				F777F9EE19C1F35200D2850A /* LinkerDB.cpp in Sources */,
@@ -988,7 +987,6 @@
 			files = (
 				F777F9FC19C1F35200D2850A /* ReactionBase.cpp in Sources */,
 				F777FA7119C1F3C900D2850A /* CGPolakRibiereMethod.cpp in Sources */,
-				F777FA7519C1F3C900D2850A /* MCGsolverTMP.cpp in Sources */,
 				F777FA9019C1F40A00D2850A /* MathFunctions.cpp in Sources */,
 				F777F9DE19C1F35200D2850A /* Cylinder.cpp in Sources */,
 				F777FA4C19C1F3A800D2850A /* LinkerStretchingHarmonic.cpp in Sources */,
@@ -1008,6 +1006,7 @@
 				F777F9C019C1F35200D2850A /* Bead.cpp in Sources */,
 				F777FA3219C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */,
 				F777FA5A19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */,
+				F777FA9E19C1FDB200D2850A /* SubSystem.cpp in Sources */,
 				F777F9D019C1F35200D2850A /* BoundarySurfaceImpl.cpp in Sources */,
 				F777FA5319C1F3A800D2850A /* MotorGhostStretching.cpp in Sources */,
 				F777F9F319C1F35200D2850A /* MotorGhost.cpp in Sources */,
@@ -1025,7 +1024,6 @@
 				F777F9D519C1F35200D2850A /* Compartment.cpp in Sources */,
 				F777FA3519C1F3A800D2850A /* FilamentFF.cpp in Sources */,
 				F777F98819C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp in Sources */,
-				F777FA9419C1F40A00D2850A /* SubSystem.cpp in Sources */,
 				F735849A198990E60026E1B6 /* CController.cpp in Sources */,
 				F777F9E419C1F35200D2850A /* Filament.cpp in Sources */,
 				F722372E19BE1F7C006FAB85 /* Parser.cpp in Sources */,
@@ -1163,7 +1161,10 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"./**",
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-std=c++11",
@@ -1185,7 +1186,10 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"./**",
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-std=c++11",

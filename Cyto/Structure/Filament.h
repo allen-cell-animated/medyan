@@ -12,8 +12,8 @@
 #include <vector>
 #include <iostream>
 #include <deque>
-#include "Cylinder.h"
 #include <math.h>
+#include "Cylinder.h"
 
 class SubSystem;
 ///Filament class is used to store data about connectivity of cylinders
@@ -23,7 +23,7 @@ class SubSystem;
  */
 
 
-class Filament : public Composite {
+class Filament {
 
 private:
     std::deque<Cylinder*> _pCylinderVector; //< Vector of cylinders;

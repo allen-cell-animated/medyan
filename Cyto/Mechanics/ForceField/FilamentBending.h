@@ -12,9 +12,6 @@
 #include "FilamentInteractions.h"
 #include "Filament.h"
 
-class FilamentInteractions;
-class Filament;
-
 template <class FBendingInteractionType>
 class FilamentBending : public FilamentInteractions {
     
@@ -22,10 +19,9 @@ private:
     FBendingInteractionType _FFType;
     
 public:
-    
-    double ComputeEnergy( Filament*, double d);
-    void ComputeForces( Filament*);
-    void ComputeForcesAux( Filament*);
+    virtual double ComputeEnergy( Filament*, double d);
+    virtual void ComputeForces( Filament*);
+    virtual void ComputeForcesAux( Filament*);
 };
 
 #endif /* defined(__Cyto__FilamentBending__) */

@@ -22,7 +22,7 @@ class Cylinder;
  *  it has functionality to print the current composition.
  *  Accessing a particular species in the CCylinder is possible as well.
  */
-class CCylinder : public Component {
+class CCylinder {
     
 protected:
     std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder

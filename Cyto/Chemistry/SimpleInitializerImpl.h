@@ -12,11 +12,8 @@
 #include <iostream>
 
 #include "ChemInitializerImpl.h"
-#include "Filament.h"
-#include "Cylinder.h"
-#include "CompartmentContainer.h"
+#include "Callback.h"
 #include "common.h"
-
 
 ///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class, which sets up CCylinders
 ///to have simple actin network interactions
