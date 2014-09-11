@@ -753,6 +753,7 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
         }
         filamentIndex++;
     }
+    std::cout << "Done" << std::endl;
     return returnVector;
 }
 

@@ -35,7 +35,7 @@ TEST(SystemParserTest, main) {
     
     ///Check string reading
     MechanicsAlgorithm MAlgorithm = p.readMechanicsAlgorithm();
-    EXPECT_EQ(MAlgorithm.algorithm, "POLAKRIBIERE");
+    EXPECT_EQ(MAlgorithm.ConjugateGradient, "POLAKRIBIERE");
     
     ChemistryAlgorithm CAlgorithm = p.readChemistryAlgorithm();
     EXPECT_EQ(CAlgorithm.algorithm, "NRM");
