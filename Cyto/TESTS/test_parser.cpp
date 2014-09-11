@@ -17,7 +17,7 @@
 
 TEST(SystemParserTest, main) {
     
-    SystemParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testsysteminput.txt");
+    SystemParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/TESTS/testsysteminput.txt");
     
     p.readBoundaryParameters();
     p.readGeometryParameters();
@@ -50,7 +50,7 @@ TEST(SystemParserTest, main) {
 
 TEST(FilamentParserTest, main) {
     
-    FilamentParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt");
+    FilamentParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/TESTS/testfilamentinput.txt");
     
     auto filaments = p.readFilaments();
     std::vector<std::vector<std::vector<double>>> expectedValues = { {{10.0,10.0,10.0},{100.0,100.0,100.0}},

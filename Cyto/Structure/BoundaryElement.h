@@ -98,7 +98,6 @@ public:
     ///set coordinates of boundary element
     void setCoords(std::vector<double>& newCoords) {_coords = newCoords;}
  
-
 };
 
 
