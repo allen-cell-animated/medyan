@@ -11,31 +11,17 @@
 			<key>orderHint</key>
 			<integer>6</integer>
 		</dict>
-		<key>CytoMech.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<true/>
-			<key>orderHint</key>
-			<integer>5</integer>
-		</dict>
-		<key>CytoSim-TestSuite.xcscheme</key>
+		<key>TestSuite.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<true/>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>CytoSim.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<true/>
-			<key>orderHint</key>
-			<integer>0</integer>
-		</dict>
 		<key>cyto.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>7</integer>
 		</dict>
 		<key>example_composite.xcscheme</key>
 		<dict>

@@ -352,7 +352,7 @@
 		F7BFC6181992860F00909969 /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
 		F7BFC6191992860F00909969 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		F7BFC61C1992BD6600909969 /* Boundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Boundary.h; path = Cyto/Boundary.h; sourceTree = SOURCE_ROOT; };
-		F7C7A0F315FFBA3D00DF9838 /* CytoSim-TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "CytoSim-TestSuite"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7D98ED615E2613200CCD25E /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
 		F7DB0B2215D81A55009A8650 /* test_nrm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
 		F7E3DB5715799F85002EAF2C /* example_kostya.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = example_kostya.cpp; sourceTree = "<group>"; };
@@ -567,7 +567,7 @@
 				F7123D8115752161008F64D1 /* example_misc */,
 				F7E3DB621579A03C002EAF2C /* example_kostya */,
 				F7A77DAC15ACAC5700076046 /* example_composite */,
-				F7C7A0F315FFBA3D00DF9838 /* CytoSim-TestSuite */,
+				F7C7A0F315FFBA3D00DF9838 /* TestSuite */,
 				F7954C49197D98BE00074A12 /* Cyto */,
 			);
 			name = Products;
@@ -759,7 +759,7 @@
 			);
 			name = TestSuite;
 			productName = CytoSim;
-			productReference = F7C7A0F315FFBA3D00DF9838 /* CytoSim-TestSuite */;
+			productReference = F7C7A0F315FFBA3D00DF9838 /* TestSuite */;
 			productType = "com.apple.product-type.tool";
 		};
 		F7E3DB591579A03C002EAF2C /* example_kostya */ = {
@@ -1232,7 +1232,7 @@
 					"-lgtest_main",
 					"-lgsl",
 				);
-				PRODUCT_NAME = "CytoSim-TestSuite";
+				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
@@ -1265,7 +1265,7 @@
 					"-lgtest_main",
 					"-lgsl",
 				);
-				PRODUCT_NAME = "CytoSim-TestSuite";
+				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
