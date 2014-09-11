@@ -11,9 +11,9 @@
 
 #include <iostream>
 #include <vector>
-#include "MComposite.h"
 class Cylinder;
 class Filament;
+class Bead;
 
 ///MCylinder class is used to hold mechanical properties of a cylinder
 /*!

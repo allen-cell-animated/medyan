@@ -6,18 +6,17 @@
 //  Copyright (c) 2014 Konstantin Popov. All rights reserved.
 //
 
-#ifndef __CytoMech__MSystem__
-#define __CytoMech__MSystem__
+#ifndef __CytoMech__SubSystem__
+#define __CytoMech__SubSystem__
 
 #include <iostream>
 #include <list>
 #include <vector>
-#include "MBeadDB.h"
-#include "MCylinderDB.h"
-#include "MFilamentDB.h"
-#include "MMotorGhostDB.h"
-#include "MLinkerDB.h"
-
+#include "BeadDB.h"
+#include "CylinderDB.h"
+#include "FilamentDB.h"
+#include "MotorGhostDB.h"
+#include "LinkerDB.h"
 
 /*! This is the main class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
  */

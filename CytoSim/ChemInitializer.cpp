@@ -7,8 +7,6 @@
 //
 
 #include "ChemInitializer.h"
-#include "ChemInitializerImpl.h"
-
 
 ChemInitializerImpl* ChemInitializer::_pimpl = 0;
 

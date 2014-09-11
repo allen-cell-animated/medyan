@@ -7,7 +7,7 @@
 //
 #include <vector>
 #include "MCylinder.h"
-#include "MBead.h"
+#include "Bead.h"
 
 
 MCylinder::MCylinder(Filament* pf, Bead* pb){

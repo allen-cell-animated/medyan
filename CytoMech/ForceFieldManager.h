@@ -13,6 +13,12 @@
 #include <vector>
 #include "ForceField.h"
 
+///ForceFieldManager is a class to store and iterate over all forcefields.
+/*!
+ *  The ForceFieldManager is used to store all forcefields initialized by the
+ *  system, as well as iterate over these forcefields and calculate total
+ *  forces and energies. Contains functions for the said calculations.
+ */
 class ForceFieldManager {
     
 public:

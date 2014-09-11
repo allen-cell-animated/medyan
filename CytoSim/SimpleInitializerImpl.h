@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "ChemInitializerImpl.h"
-#include "MFilament.h"
+#include "Filament.h"
 #include "Cylinder.h"
 #include "CompartmentContainer.h"
 #include "common.h"

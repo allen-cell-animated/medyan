@@ -22,15 +22,10 @@ private:
     std::string _name;
     
 public:
-    
     std::string getName() {return _name;}
-    
     virtual double ComputeEnergy(double d) = 0;
-    
     virtual void ComputeForces() = 0;
-    
     virtual void ComputeForcesAux() = 0;
-    
 };
 
 

@@ -9,6 +9,7 @@
 #ifndef __Cyto__ChemInitializer__
 #define __Cyto__ChemInitializer__
 
+#include "ChemInitializerImpl.h"
 #include <iostream>
 
 ///Forward declarations

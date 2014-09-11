@@ -16,13 +16,9 @@
 //#define epsilon
 
 using namespace std;
-
-
 #include "ChemNRMImpl.h"
 
-
 #ifdef BOOST_MEM_POOL
-    
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
@@ -31,7 +27,6 @@ boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
 
-    
 
 #ifdef BOOST_POOL_MEM_PQNODE
 void* PQNode::operator new(size_t size)
@@ -66,7 +61,6 @@ void RNodeNRM::operator delete(void* ptr) noexcept
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
 #endif
-    
 #endif
 
 long long int elapsed14 = 0;

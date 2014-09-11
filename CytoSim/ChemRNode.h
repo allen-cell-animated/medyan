@@ -27,6 +27,4 @@ public:
     virtual bool isPassivated() const = 0;
 };
 
-
-
 #endif
