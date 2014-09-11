@@ -21,4 +21,4 @@ class VolumInter
 
 
 
-#endif /* defined(__CytoMech__MVolumInter__) */
+#endif /* defined(__CytoMech__MolumInter__) */

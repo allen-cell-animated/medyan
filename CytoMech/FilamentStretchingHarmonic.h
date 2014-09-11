@@ -20,4 +20,4 @@ public:
     void ForcesAux(Bead*, Bead*, double, double);
 };
 
-#endif
+#endif /* defined(__Cyto__FilamentStretchingHarmonic__) */

@@ -27,4 +27,4 @@ public:
 };
 
 
-#endif
+#endif /* defined(__Cyto__FilamentStretching__) */

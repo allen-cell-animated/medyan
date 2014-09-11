@@ -25,4 +25,4 @@ public:
     void Equlibrate(ForceFieldManager &FFM) {_CGType.Minimize(FFM);}
 };
 
-#endif
+#endif /* defined(__Cyto__ConjugateGradient__) */

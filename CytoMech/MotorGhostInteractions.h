@@ -26,4 +26,4 @@ public:
     std::string getName() {return _name;}
 };
 
-#endif
+#endif /* defined(__Cyto__MotorGhostInteractions__) */

@@ -1,5 +1,5 @@
 //
-//  CytoSim.cpp
+//  Cyto.cpp
 //  CytoSim
 //
 //  Created by Garegin Papoian on 4/19/12.

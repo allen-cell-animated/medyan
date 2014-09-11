@@ -58,4 +58,4 @@ private:
 };
 
 
-#endif
+#endif /* defined(__CytoMech__MotorGhostDB__) */

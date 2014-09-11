@@ -28,4 +28,4 @@ public:
     void ComputeForcesAux( Filament*);
 };
 
-#endif
+#endif /* defined(__Cyto__FilamentBending__) */

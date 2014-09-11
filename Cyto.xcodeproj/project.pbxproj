@@ -261,7 +261,7 @@
 		F763ED131548FFED0069DA61 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = CytoSim/common.h; sourceTree = SOURCE_ROOT; };
 		F763ED141548FFED0069DA61 /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Compartment.cpp; path = ../CytoSim/Compartment.cpp; sourceTree = "<group>"; };
 		F763ED151548FFED0069DA61 /* Compartment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compartment.h; path = ../CytoSim/Compartment.h; sourceTree = "<group>"; };
-		F763ED161548FFED0069DA61 /* CytoSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CytoSim.cpp; path = CytoSim/CytoSim.cpp; sourceTree = SOURCE_ROOT; };
+		F763ED161548FFED0069DA61 /* Cyto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Cyto.cpp; path = CytoSim/Cyto.cpp; sourceTree = SOURCE_ROOT; };
 		F763ED181548FFED0069DA61 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = notes.txt; path = CytoSim/notes.txt; sourceTree = SOURCE_ROOT; };
 		F763ED1B1548FFED0069DA61 /* Reaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Reaction.cpp; path = ../CytoSim/Reaction.cpp; sourceTree = "<group>"; };
 		F763ED1C1548FFED0069DA61 /* Reaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reaction.h; path = ../CytoSim/Reaction.h; sourceTree = "<group>"; };
@@ -603,7 +603,7 @@
 				F763ED091548FFC70069DA61 /* Chemistry */,
 				B52F64BE19BA230000A2B9FD /* Structure */,
 				F79CA34919BA055100008021 /* Mechanics */,
-				F763ED161548FFED0069DA61 /* CytoSim.cpp */,
+				F763ED161548FFED0069DA61 /* Cyto.cpp */,
 				F763ED181548FFED0069DA61 /* notes.txt */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F7346A891578206500326E09 /* Component.cpp */,
