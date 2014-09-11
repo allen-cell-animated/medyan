@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F7E3DB591579A03C002EAF2C"
                BuildableName = "example_kostya"
-               BlueprintName = "CytoSim-example_kostya"
+               BlueprintName = "example_kostya"
                ReferencedContainer = "container:Cyto.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,7 +34,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F7E3DB591579A03C002EAF2C"
             BuildableName = "example_kostya"
-            BlueprintName = "CytoSim-example_kostya"
+            BlueprintName = "example_kostya"
             ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -53,7 +53,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F7E3DB591579A03C002EAF2C"
             BuildableName = "example_kostya"
-            BlueprintName = "CytoSim-example_kostya"
+            BlueprintName = "example_kostya"
             ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -71,7 +71,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F7E3DB591579A03C002EAF2C"
             BuildableName = "example_kostya"
-            BlueprintName = "CytoSim-example_kostya"
+            BlueprintName = "example_kostya"
             ReferencedContainer = "container:Cyto.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
