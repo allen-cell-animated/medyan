@@ -68,15 +68,7 @@ public:
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
         ///Initialize geometry controller
-        short nDim = SystemParameters::Geometry().nDim;
-        std::vector<int> grid = {SystemParameters::Geometry().NX,
-            SystemParameters::Geometry().NY,
-            SystemParameters::Geometry().NZ};
-        std::vector<double> compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
-            SystemParameters::Geometry().compartmentSizeY,
-            SystemParameters::Geometry().compartmentSizeZ};
-
-        GController::initializeGrid(nDim, grid, compartmentSize);
+        GController::initializeGrid();
         
         ///Initialize chemical controller
         if(_chemistry)

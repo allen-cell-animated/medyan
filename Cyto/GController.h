@@ -37,7 +37,7 @@ private:
 public:
     
     ///initialize the grid based on input parameters
-    static void initializeGrid(short nDim, std::vector<int> grid, std::vector<double> compartmentSize);
+    static void initializeGrid();
     
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
