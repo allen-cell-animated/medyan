@@ -113,8 +113,6 @@ public:
             std::cout << "Random filament distributions not yet implemented. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
-
-        std::cout << filamentData.size() << std::endl;
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
     }
