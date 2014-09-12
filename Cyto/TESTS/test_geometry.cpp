@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_GEOMETRY_TEST
+//#define DO_THIS_GEOMETRY_TEST
 
 #ifdef DO_THIS_GEOMETRY_TEST
 #define TESTING

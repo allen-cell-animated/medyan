@@ -89,9 +89,11 @@ public:
             ///Initialize mcontroller
             _mController.initialize(MTypes, MAlgorithm);
 
+            std::cout << "Initializing boundary..." << std::endl;
             ///Initialize boundary
-            if(BTypes.boundaryShape == "CUBIC")
-                _subSystem->AddBoundary(new BoundaryCubic());
+            if(BTypes.boundaryShape == "CUBIC") {
+                //_subSystem->AddBoundary(new BoundaryCubic());
+            }
             else{
                 std::cout<< "Given boundary not yet implemented. Exiting" <<std::endl;
                 exit(EXIT_FAILURE);
@@ -111,7 +113,6 @@ public:
             std::cout << "Random filament distributions not yet implemented. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
-
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
     }
@@ -123,7 +124,7 @@ public:
             if(_mechanics)
                 _mController.run();
         }
-        std::cout << "Done!" << std::endl;
+        std::cout << "Done with simulation!" << std::endl;
     }
     
 };

@@ -16,6 +16,7 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extension
     
     _mCylinder->setCylinder(this);
     _cCylinder->setCylinder(this);
+    setFilament(pf);
 }
 
 

@@ -50,6 +50,8 @@ public:
     
     ///get parent filament
     Filament* getFilament() {return _pFilament;}
+    ///set parent filament
+    void setFilament(Filament* pf) {_pFilament = pf;}
     
     bool IfLast();
     void SetLast(bool);

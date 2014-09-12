@@ -10,7 +10,7 @@ TODO                                                                        COMP
     -Combine common files                                                       X
     -Filament input file                                                        X
     -Out of bounds management                                                   X
-    -Moving cylinders, placing new cylinders                                     X
+    -Moving cylinders, placing new cylinders                                    XX
     -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?

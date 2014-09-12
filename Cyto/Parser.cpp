@@ -90,7 +90,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.setup = lineVector[1];
             }
         }
-        if (line.find("NUMSTEPS") != std::string::npos) {
+        if (line.find("NUMSTEPS:") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
@@ -101,7 +101,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.numSteps = std::atoi(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMSTEPSPERM") != std::string::npos) {
+        if (line.find("NUMSTEPSPERM:") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
@@ -734,24 +734,22 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
     _inputFile.seekg(0);
     
     std::vector<std::vector<std::vector<double>>> returnVector;
-    
     std::string line;
-    int filamentIndex = 0;
     
     while(getline(_inputFile, line)) {
-        std::vector<double> lineVector = split<double>(line);
+        std::vector<std::string> lineVector = split<std::string>(line);
         if(lineVector.size() == 7) {
-            
             std::vector<double> coord1;
             std::vector<double> coord2;
-            for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++)
-                coord1.push_back(*it);
-            for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++)
-                coord2.push_back(*it);
+            for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++) {
+                coord1.push_back(double(std::atoi((*it).c_str())));
+            }
+            for(auto it = lineVector.begin() + 4; it != lineVector.end(); it++) {
+                coord2.push_back(double(std::atoi((*it).c_str())));
+            }
             
-            returnVector[filamentIndex] = {coord1, coord2};
+            returnVector.push_back({coord1, coord2});
         }
-        filamentIndex++;
     }
     return returnVector;
 }

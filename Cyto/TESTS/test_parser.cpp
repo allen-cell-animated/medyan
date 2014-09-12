@@ -17,7 +17,7 @@
 
 TEST(SystemParserTest, main) {
     
-    SystemParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/TESTS/testsysteminput.txt");
+    SystemParser p("/Users/jimmy/Code/Cyto/Cyto/testsysteminput.txt");
     
     p.readBoundaryParameters();
     p.readGeometryParameters();
@@ -35,7 +35,7 @@ TEST(SystemParserTest, main) {
     
     ///Check string reading
     MechanicsAlgorithm MAlgorithm = p.readMechanicsAlgorithm();
-    EXPECT_EQ(MAlgorithm.algorithm, "POLAKRIBIERE");
+    EXPECT_EQ(MAlgorithm.ConjugateGradient, "POLAKRIBIERE");
     
     ChemistryAlgorithm CAlgorithm = p.readChemistryAlgorithm();
     EXPECT_EQ(CAlgorithm.algorithm, "NRM");
@@ -50,13 +50,10 @@ TEST(SystemParserTest, main) {
 
 TEST(FilamentParserTest, main) {
     
-    FilamentParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/TESTS/testfilamentinput.txt");
+    FilamentParser p("/Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt");
     
     auto filaments = p.readFilaments();
-    std::vector<std::vector<std::vector<double>>> expectedValues = { {{10.0,10.0,10.0},{100.0,100.0,100.0}},
-                                                                     {{50.0,50.0,50.0},{150.0,150.0,150.0}},
-                                                                     {{100.0,100.0,100.0},{200.0,200.0,200.0}},
-                                                                     {{300.0,300.0,300.0},{400.0,400.0,400.0}} };
+    std::vector<std::vector<std::vector<double>>> expectedValues = { {{100.0,100.0,100.0},{200.0,200.0,200.0}}};
     
     EXPECT_TRUE(std::equal(filaments.begin(), filaments.end(), expectedValues.begin()));
 }

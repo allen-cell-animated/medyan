@@ -56,14 +56,11 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     
     ///get last ccylinder
     CCylinder* lastCCylinder;
-    
-    if(extensionFront || !extensionBack)
-        lastCCylinder = pf->getLastCylinder()->getCCylinder();
-    else
-        lastCCylinder = nullptr;
  
     ///extension of front
     if(extensionFront) {
+        
+        lastCCylinder = pf->getLastCylinder()->getCCylinder();
         
         auto m1 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
         auto m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
@@ -81,6 +78,8 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///extension of back
     else if(extensionBack) {
         
+        lastCCylinder = pf->getCylinderVector()[0]->getCCylinder();
+        
         auto m2 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
         auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
         
@@ -96,9 +95,11 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
     ///Base case, initialization
     else {
+        Cylinder* lastCylinder = pf->getLastCylinder();
         
         ///remove front from last ccylinder, if not null
-        if(lastCCylinder != nullptr) {
+        if(lastCylinder != nullptr) {
+            lastCCylinder = lastCylinder->getCCylinder();
             auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
             front->getRSpecies().down();
         }

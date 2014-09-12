@@ -27,7 +27,7 @@ class Filament {
 
 private:
     std::deque<Cylinder*> _pCylinderVector; //< Vector of cylinders;
-    Cylinder* _pLastCylinder;
+    Cylinder* _pLastCylinder = nullptr;
     SubSystem* _pSubSystem;
     
 public:

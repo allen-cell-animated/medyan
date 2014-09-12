@@ -65,9 +65,9 @@ BINTERACTIONCUTOFF:          10.0
 
 NDIM:                        3
 
-NX:                          50
-NY:                          50
-NZ:                          50
+NX:                          10
+NY:                          10
+NZ:                          10
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
@@ -90,7 +90,7 @@ NUMSTEPSPERM:                10
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
+FILAMENTFILE:                /Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 

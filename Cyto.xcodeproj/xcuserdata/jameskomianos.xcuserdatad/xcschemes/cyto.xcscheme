@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F771ADBA15655CD70010B123"
-               BuildableName = "libcyto.dylib"
-               BlueprintName = "cyto"
+               BlueprintIdentifier = "F7954C48197D98BE00074A12"
+               BuildableName = "Cyto"
+               BlueprintName = "Cyto"
                ReferencedContainer = "container:Cyto.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,6 +29,15 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F7954C48197D98BE00074A12"
+            BuildableName = "Cyto"
+            BlueprintName = "Cyto"
+            ReferencedContainer = "container:Cyto.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -39,6 +48,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F7954C48197D98BE00074A12"
+            BuildableName = "Cyto"
+            BlueprintName = "Cyto"
+            ReferencedContainer = "container:Cyto.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -48,6 +66,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F7954C48197D98BE00074A12"
+            BuildableName = "Cyto"
+            BlueprintName = "Cyto"
+            ReferencedContainer = "container:Cyto.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

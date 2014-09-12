@@ -52,13 +52,13 @@ private:
         if(forceFields.FTwistingType != "")std::cout << "Twisting: " << forceFields.FTwistingType <<std::endl;
         
         _FFManager._forceFields.push_back(new LinkerFF(forceFields.LStretchingType, forceFields.LBendingType, forceFields.LTwistingType) );
-        std::cout << "Linker force field initialized:";
+        std::cout << "Linker force field initialized:"<<std::endl;
         if(forceFields.LStretchingType != "") std::cout << "Stretching: " << forceFields.LStretchingType<< std::endl;
         if(forceFields.LBendingType != "") std::cout << "Bending: " << forceFields.LBendingType<< std::endl;
         if(forceFields.LTwistingType != "") std::cout << "Twisting: " << forceFields.LTwistingType <<std::endl;
         
         _FFManager._forceFields.push_back(new MotorGhostFF(forceFields.MStretchingType, forceFields.MBendingType, forceFields.MTwistingType) );
-        std::cout << "Motor force field initialized:";
+        std::cout << "Motor force field initialized:"<<std::endl;
         if(forceFields.MStretchingType != "") std::cout << "Stretching: " << forceFields.MStretchingType<< std::endl;
         if(forceFields.MBendingType != "") std::cout << "Bending: " << forceFields.MBendingType<< std::endl;
         if(forceFields.MTwistingType != "") std::cout << "Twisting: " << forceFields.MTwistingType <<std::endl;
@@ -98,7 +98,7 @@ public:
             b->updateBoundaryElements();
         }
         
-        ///Update cylinder positions
+        ///Update cylinder positions (ALSO VERY INEFFICIENT)
         for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
             
             std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
@@ -108,10 +108,11 @@ public:
             CCylinder* cCyl = Cyl->getCCylinder();
             if(newC != cCyl->getCompartment()) {
                 CCylinder* clone = cCyl->clone(newC);
-                delete cCyl;
                 Cyl->setCCylinder(clone);
+                delete cCyl;
             }
         }
+
     }
     
 };
