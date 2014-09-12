@@ -66,8 +66,7 @@ public:
         ///Set the instance of the initializer
         ChemInitializerImpl* cii;
         if(chemInitializer == "SIMPLE") {
-            SimpleInitializerImpl init;
-            cii = &init;
+            cii = new SimpleInitializerImpl;
         }
         else {
             std::cout<< "Initializer type not found. Exiting." <<std::endl;

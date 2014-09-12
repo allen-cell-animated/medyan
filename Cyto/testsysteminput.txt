@@ -90,7 +90,7 @@ NUMSTEPSPERM:                10
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
+FILAMENTFILE:                /Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 

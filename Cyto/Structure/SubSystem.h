@@ -48,7 +48,7 @@ public:
     
     void setSubSystemEnergy(double energy); //set energy of subsystem
 private:
-    double _energy; ///< energy of subsystem
+    double _energy = 0; ///< energy of subsystem
     Boundary* _boundary; ///<subsystem boundary
 	
 };

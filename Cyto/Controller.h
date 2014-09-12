@@ -114,6 +114,7 @@ public:
             exit(EXIT_FAILURE);
         }
 
+        std::cout << filamentData.size() << std::endl;
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
     }
