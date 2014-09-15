@@ -19,10 +19,7 @@
 class BoundaryCubic: public Boundary {
     
 public:
-    ///Default constructor, this will create a cube with given corners
-    ///@param points - 8 corners of cube, in the following order:
-    /// lower plane - front left, front right, back right, back left
-    /// upper plane - front left, front right, back right, back left
+    ///Default constructor, this will create a cube with given corners at edges of current grid
     BoundaryCubic();
 };
 

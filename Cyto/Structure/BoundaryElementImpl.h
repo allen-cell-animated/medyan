@@ -10,19 +10,22 @@
 #define __Cyto__BoundaryElementImpl__
 
 #include <iostream>
+#include <cmath>
 #include "BoundaryElement.h"
 
-///SquareBoundaryElement is a square implementation of a boundary element
-class SquareBoundaryElement : public BoundaryElement {
+///PlaneBoundaryElement is a plane implementation of a boundary element
+class PlaneBoundaryElement : public BoundaryElement {
     
 private:
-    std::vector<float> _sides; ///< side lengths of square
-    short _orientation; ///< normal vector to the square (can only be unit vectors x(0),y(1),z(2))
-    
+    ///Parameters of equation (ax + by + cz + d = 0)
+    double _a, _b, _c, _d;
+
 public:
-    SquareBoundaryElement(std::vector<double> coords, std::vector<float> sides, int orientation) :
-        _sides(sides), _orientation(orientation), BoundaryElement(coords) {}
+    ///Constructor, sets parameters of equation
+    PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal);
     
+    ///distance to this plane
+    virtual double distance(const std::vector<double>& point);
 };
 
 class TriangleBoundaryElement : public BoundaryElement {

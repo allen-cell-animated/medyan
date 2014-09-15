@@ -40,24 +40,23 @@ public:
     /// get the instance of this singleton
     static BoundaryElementDB* Instance(BoundaryElementDBKey k);
     
-    /// create a new bead
-    BoundaryElement* CreateTriangleBoundaryElement(std::vector<double> coords, float size) {
-        
-        //BoundaryElement* b = new TriangleBoundaryElement(coords, size);
-        //push_back(b);
-        //return b ;
-        return nullptr;
-    }
+//    BoundaryElement* CreateTriangleBoundaryElement(std::vector<double> coords, float size) {
+//        
+//        //BoundaryElement* b = new TriangleBoundaryElement(coords, size);
+//        //push_back(b);
+//        //return b ;
+//        return nullptr;
+//    }
     
-    /// create a new bead
-    BoundaryElement* CreateSquareBoundaryElement(std::vector<double> coords, std::vector<float> size, short orientation) {
+    /// create a new plane boundary element
+    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal) {
         
-        BoundaryElement* b = new SquareBoundaryElement(coords, size, orientation);
+        BoundaryElement* b = new PlaneBoundaryElement(coords, normal);
         push_back(b);
         return b ;
     }
     
-    // Remove bead
+    // Remove boundary element
     void RemoveBoundaryElement(BoundaryElement* pb){
         
         remove(pb);

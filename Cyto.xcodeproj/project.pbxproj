@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
 		F7603ED219C08D5700775874 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372C19BE1F7C006FAB85 /* Parser.cpp */; };
 		F7603ED319C0918000775874 /* SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */; };
 		F777F96719C1E71C00D2850A /* MController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C690A198FEC6800760D20 /* MController.cpp */; };
@@ -206,6 +207,7 @@
 
 /* Begin PBXFileReference section */
 		F7123D8115752161008F64D1 /* example_misc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_misc; sourceTree = BUILT_PRODUCTS_DIR; };
+		F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryElementImpl.cpp; path = Cyto/Structure/BoundaryElementImpl.cpp; sourceTree = SOURCE_ROOT; };
 		F722372A19BE1728006FAB85 /* testsysteminput.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = testsysteminput.txt; path = Cyto/testsysteminput.txt; sourceTree = SOURCE_ROOT; };
 		F722372C19BE1F7C006FAB85 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		F722372D19BE1F7C006FAB85 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
@@ -425,12 +427,13 @@
 				F777F99019C1F35200D2850A /* BeadDB.cpp */,
 				F777F99119C1F35200D2850A /* BeadDB.h */,
 				F777F99219C1F35200D2850A /* Boundary.h */,
+				F777F99719C1F35200D2850A /* BoundaryImpl.cpp */,
+				F777F99819C1F35200D2850A /* BoundaryImpl.h */,
 				F777F99319C1F35200D2850A /* BoundaryElement.h */,
 				F777F99419C1F35200D2850A /* BoundaryElementDB.cpp */,
 				F777F99519C1F35200D2850A /* BoundaryElementDB.h */,
+				F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */,
 				F777F99619C1F35200D2850A /* BoundaryElementImpl.h */,
-				F777F99719C1F35200D2850A /* BoundaryImpl.cpp */,
-				F777F99819C1F35200D2850A /* BoundaryImpl.h */,
 				F777F99919C1F35200D2850A /* BoundarySurface.h */,
 				F777F99A19C1F35200D2850A /* BoundarySurfaceImpl.cpp */,
 				F777F99B19C1F35200D2850A /* BoundarySurfaceImpl.h */,
@@ -921,6 +924,7 @@
 				F777F9E819C1F35200D2850A /* FilamentDB.cpp in Sources */,
 				F777F9EE19C1F35200D2850A /* LinkerDB.cpp in Sources */,
 				F777F9CD19C1F35200D2850A /* BoundaryImpl.cpp in Sources */,
+				F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */,
 				F777F98919C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F777FA8619C1F40A00D2850A /* common.cpp in Sources */,
 				F777FA6F19C1F3C900D2850A /* CGMethod.cpp in Sources */,
@@ -1215,17 +1219,17 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jimmy/Code/googletest,
 					/usr/local/include,
+					/Users/jameskomianos/Code/googletest,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/Users/jimmy/Code/googletest,
 					"/usr/local/lib/**",
+					/Users/jameskomianos/Code/googletest,
 				);
 				OTHER_CFLAGS = (
 					"-std=c++11",
@@ -1247,18 +1251,18 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jimmy/Code/googletest,
 					/usr/local/include,
+					/Users/jameskomianos/Code/googletest,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/Users/jimmy/Code/googletest,
 					"/usr/local/lib/**",
+					/Users/jameskomianos/Code/googletest,
 				);
 				OTHER_CFLAGS = (
 					"-std=c++11",

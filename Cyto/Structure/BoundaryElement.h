@@ -41,10 +41,8 @@ public:
     
     ///Destructor
     ~BoundaryElement() {
-        
         ///remove from compartment
         _compartment->removeBoundaryElement(this);
-        
         ///remove from neighbors
         for (auto &be : _neighbors) be->removeNeighbor(this);
     }
@@ -77,7 +75,6 @@ public:
         _compartment = GController::getCompartment(_coords);
         _compartment->addBoundaryElement(this);
     }
-    
     ///Alternate set compartment when compartment is known
     void setCompartment(Compartment* c) {
         
@@ -88,15 +85,14 @@ public:
         _compartment = c;
         _compartment->addBoundaryElement(this);
     }
-    
     ///Get the compartment that this element is in
     Compartment* getCompartment() {return _compartment;}
     
-    
     ///return coordinates of boundary element
     const std::vector<double>& coords() {return _coords;}
-    ///set coordinates of boundary element
-    void setCoords(std::vector<double>& newCoords) {_coords = newCoords;}
+    
+    ///Calculate the distance away from this boundary element
+    virtual double distance(const std::vector<double>& point) {return 0.0;}
  
 };
 
