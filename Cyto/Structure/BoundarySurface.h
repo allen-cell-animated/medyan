@@ -32,7 +32,12 @@ public:
     
     ///Default constructor and destructor
     BoundarySurface(int nDim) : _nDim(nDim) {};
-    ~BoundarySurface() {};
+    
+    ~BoundarySurface() {
+        //loop through boundary elements, remove from DB
+        for (auto &b : _boundaryElements)
+            BoundaryElementDB::Instance(BEDBKey())->RemoveBoundaryElement(b.get());
+    };
     
     ///Access for all implementations of BoundarySurface to the DB key
     BoundaryElementDBKey BEDBKey() {return BoundaryElementDBKey();}

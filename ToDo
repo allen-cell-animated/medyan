@@ -6,6 +6,7 @@ TODO                                                                        COMP
 1) Combining code
     -Compiling all of cytosim and cytomech together                             X
     -Organizing code into folders                                               X
+    -Clean up output of controller
 2) Finishing touches
     -Combine common files                                                       X
     -Filament input file                                                        X

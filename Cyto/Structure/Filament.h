@@ -56,11 +56,11 @@ public:
     
     std::deque<Cylinder*> getCylinderVector() {return _pCylinderVector;}
     
-    
     //just for example, will rewrite this function, so it not returns anything
     std:: vector<double> NextBeadProjection(Bead* pb, double d, std::vector<double> director);
     std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
     std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
+    
 };
 
 #endif /* defined(__CytoMech__Filament__) */

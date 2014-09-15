@@ -14,20 +14,18 @@
 #include <iostream>
 
 ///BasicPlane is a simple implementation of the BoundarySurface class
-class BasicPlane: public BoundarySurface {
+class Plane: public BoundarySurface {
     
 private:
-    std::vector<std::vector<double>> _points; ///<the points that define this plane (4 for 3D, 2 for 2D)
-    short _orientation; ///<Direction of normal vector to plane (for basic plane, can be unit vectors only)
-                        ///@note 2 for XY, 1 for XZ, 0 for YZ
+    std::vector<double> _coords; ///< coordinates of center
+    std::vector<double> _normal; ///< normal vector
     
 public:
     
     ///Constructor, creates boundary elements
-    ///@note - points must be in order of LL, LR, UR, UL
-    ///@param numDivisions - number of divisions per side for boundary elements
-    BasicPlane(std::vector<std::vector<double>> points, std::vector<int> numDivisions, short orientation);
-
+    ///@param coords - coordinates of center of plane
+    ///@param normal - normal vector to plane
+    Plane(std::vector<double> coords, std::vector<double> normal);
 };
 
 

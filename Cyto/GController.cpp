@@ -24,8 +24,6 @@ void GController::initializeGrid() {
     if((nDim == 1 && grid[0] != 0 && grid[1] == 0 && grid[2]==0 && compartmentSize[0] != 0 && compartmentSize[1] == 0 && compartmentSize[2] == 0)
            || (nDim == 2 && grid[0] != 0 && grid[1] != 0 && grid[2]==0 && compartmentSize[0] != 0 && compartmentSize[1] != 0 && compartmentSize[2] == 0)
            || (nDim == 3 && grid[0] != 0 && grid[1] != 0 && grid[2]!=0 && compartmentSize[0] != 0 && compartmentSize[1] != 0 && compartmentSize[2] != 0)){
-        
-        std::cout << "Initializing grid..." <<std::endl;
     }
     else {
         std::cout << "Grid parameters are invalid. Exiting" << std::endl;

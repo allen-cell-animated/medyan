@@ -79,9 +79,9 @@ public:
     ///Get a species
     virtual SpeciesFilament* getActin() {return _species[0];}
     
-    virtual SpeciesFilament* getFront() {return _species[0];}
+    virtual SpeciesFilament* getFront() {return _species[1];}
     
-    virtual SpeciesFilament* getBack() {return _species[1];}
+    virtual SpeciesFilament* getBack() {return _species[2];}
     
     
     ///Look up species by name

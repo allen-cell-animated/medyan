@@ -20,31 +20,17 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     double sysY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY - zeroY;
     double sysZ = SystemParameters::Geometry().compartmentSizeZ * SystemParameters::Geometry().NZ - zeroZ;
     
-    ///Create points of cube
-    std::vector<double> p0 = {zeroX, zeroY, zeroZ};
-    std::vector<double> p1 = {sysX, zeroY, zeroZ};
-    std::vector<double> p2 = {sysX, sysY, zeroZ};
-    std::vector<double> p3 = {zeroX, sysY, zeroZ};
-    
-    std::vector<double> p4 = {zeroX, zeroY, sysZ};
-    std::vector<double> p5 = {sysX, zeroY, sysZ};
-    std::vector<double> p6 = {sysX, sysY, sysZ};
-    std::vector<double> p7 = {zeroX, sysY, sysZ};
-    
-    std::vector<int> numDivisions = {int(SystemParameters::Geometry().compartmentSizeX * 10),
-                                     int(SystemParameters::Geometry().compartmentSizeY * 10)};
-    
     ///Create boundary surfaces, add to vector
-    ///Y normal planes
-    _boundarySurfaces.emplace_back(new BasicPlane({p0, p1, p5, p4}, numDivisions, 1));
-    _boundarySurfaces.emplace_back(new BasicPlane({p3, p2, p6, p7}, numDivisions, 1));
-    
     ///X normal planes
-    _boundarySurfaces.emplace_back(new BasicPlane({p0, p3, p7, p4}, numDivisions, 0));
-    _boundarySurfaces.emplace_back(new BasicPlane({p1, p2, p6, p5}, numDivisions, 0));
+    _boundarySurfaces.emplace_back(new Plane({0, sysY / 2, sysZ / 2}, {1, 0, 0}));
+    _boundarySurfaces.emplace_back(new Plane({sysX, sysY / 2, sysZ / 2}, {-1, 0, 0}));
+    
+    ///Y normal planes
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, 0, sysZ / 2}, {0, 1, 0}));
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY, sysZ / 2}, {0, -1, 0}));
     
     ///Z normal planes
-    _boundarySurfaces.emplace_back(new BasicPlane({p0, p1, p2, p3}, numDivisions, 2));
-    _boundarySurfaces.emplace_back(new BasicPlane({p4, p5, p6, p7}, numDivisions, 2));
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, 0}, {0, 0, 1}));
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, sysZ}, {0, 0, -1}));
     
 }
