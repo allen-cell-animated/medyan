@@ -81,7 +81,10 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             species.push_back(vit->get());
         }
     }
-    return new Reaction<M,N>(species,_rate);
+    ///Create new reaction, copy ownership of signal, return
+    Reaction* newReaction = new Reaction<M,N>(species,_rate);
+    newReaction->_signal = _signal;
+    return newReaction;
 }
     
 #ifdef BOOST_MEM_POOL

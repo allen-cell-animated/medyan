@@ -59,7 +59,7 @@ protected:
     float _rate; ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
-    ReactionEventSignal* _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
+    std::shared_ptr<ReactionEventSignal> _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
@@ -80,13 +80,7 @@ public:
     ReactionBase& operator=(ReactionBase &rb) = delete;
     
     /// Destructor
-    virtual ~ReactionBase() noexcept
-    {
-#ifdef REACTION_SIGNALING
-        if(_signal!=nullptr)
-            delete _signal;
-#endif
-    }
+    virtual ~ReactionBase() noexcept {}
     
     /// Copy this reaction using SpeciesPtrContainerVector &spcv as a source of analogous Species.
     /// @return the cloned ReactionBase pointer.
