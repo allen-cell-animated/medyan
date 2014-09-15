@@ -12,7 +12,6 @@ using namespace mathfunc;
 
 double FilamentStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, double k_str, double L){
 
-    
     return 0.5 * k_str* ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - L ) * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - L );
 
 }
@@ -52,6 +51,7 @@ void FilamentStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, double k_str, doub
     
     pb1->force[2] +=  -f0 * ( pb2->coordinate[2] - pb1->coordinate[2] );
    
+  
     
 }
 

@@ -101,18 +101,21 @@ public:
         ///Update cylinder positions (ALSO VERY INEFFICIENT)
         for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
             
-            std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
-                                                                        Cyl->getMCylinder()->GetSecondBead()->coordinate,
-                                                                        0.5);
-            Compartment* newC;
-            try {newC = GController::getCompartment(midpoint);}
-            catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+            if(Cyl != Cyl->getFilament()->getLastCylinder()) {
             
-            CCylinder* cCyl = Cyl->getCCylinder();
-            if(newC != cCyl->getCompartment()) {
-                CCylinder* clone = cCyl->clone(newC);
-                Cyl->setCCylinder(clone);
-                delete cCyl;
+                std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
+                                                                            Cyl->getMCylinder()->GetSecondBead()->coordinate,
+                                                                            0.5);
+                Compartment* newC;
+                try {newC = GController::getCompartment(midpoint);}
+                catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+                
+                CCylinder* cCyl = Cyl->getCCylinder();
+                if(newC != cCyl->getCompartment()) {
+                    CCylinder* clone = cCyl->clone(newC);
+                    Cyl->setCCylinder(clone);
+                    delete cCyl;
+                }
             }
         }
 

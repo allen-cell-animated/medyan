@@ -111,9 +111,9 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     }
     
     ///Callbacks needed
-    auto polyCallback = new FilamentPolyCallback(pf);
-    auto extensionFrontCallback = new FilamentExtensionFrontCallback(pf);
-    auto extensionBackCallback = new FilamentExtensionBackCallback(pf);
+    auto polyCallback = FilamentPolyCallback(pf);
+    auto extensionFrontCallback = FilamentExtensionFrontCallback(pf);
+    auto extensionBackCallback = FilamentExtensionBackCallback(pf);
 
     //Look up diffusing species in this compartment
     Species* actinBulk = &CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName("Actin");
@@ -132,28 +132,28 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         if (index == maxlength - 1) {
             rPolyPlus = c->addInternal<Reaction,2,0>({m1->getFront(), actinBulk},_k_on_plus);
             boost::signals2::shared_connection_block
-                rcb1(rPolyPlus->connect(*extensionFrontCallback,false));
+                rcb1(rPolyPlus->connect(extensionFrontCallback,false));
         }
         else {
             ///Add basic polymerization reactions
             rPolyPlus = c->addInternal<Reaction,2,2>({m1->getFront(), actinBulk,
                 m2->getActin(), m2->getFront()}, _k_on_plus);
             boost::signals2::shared_connection_block
-            rcb1(rPolyPlus->connect(*polyCallback,false));
+            rcb1(rPolyPlus->connect(polyCallback,false));
         }
 
         ///Minus end polymerization
         if(index == 0) {
             rPolyMinus = c->addInternal<Reaction,2,0>({m1->getBack(), actinBulk},_k_on_minus);
             boost::signals2::shared_connection_block
-                rcb1(rPolyMinus->connect(*extensionBackCallback,false));
+                rcb1(rPolyMinus->connect(extensionBackCallback,false));
         }
         else {
             ///Add basic polymerization reactions
             rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinBulk,
                                                 m0->getActin(), m0->getBack()}, _k_on_minus);
             boost::signals2::shared_connection_block
-                rcb2(rPolyMinus->connect(*polyCallback,false));
+                rcb2(rPolyMinus->connect(polyCallback,false));
             
         }
         
@@ -213,16 +213,6 @@ CMonomerBasic::CMonomerBasic(Compartment* c)
     
 }
 
-///Look up species by name
-Species* CMonomerBasic::getSpeciesByName(std::string& name)
-{
-    for (auto &s : _species) {
-        if(name.find(s->getName()) != std::string::npos) return s;
-    }
-    
-    return nullptr;
-}
-
 ///Print a species in this filament element
 void CMonomerBasic::print()
 {
@@ -237,13 +227,6 @@ CBoundBasic::CBoundBasic(Compartment* c)
     _species.push_back(c->addSpeciesBound("Empty", 0, 1));
 }
 
-///Look up species by name
-Species* CBoundBasic::getSpeciesByName(std::string& name)
-{
-    for (auto &s : _species)
-        if(s->getName() == name) return s;
-    return nullptr;
-}
 
 ///Print a species in this filament element
 void CBoundBasic::print()

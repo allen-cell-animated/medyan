@@ -83,6 +83,14 @@ public:
     
     ///Get the vector of species
     std::vector<SpeciesFilament*>& species() {return _species;}
+    
+    ///Get species by name
+    virtual Species* getSpeciesByName(std::string& name) {
+        
+        for (auto &s : _species)
+            if(name.find(s->getName()) != std::string::npos) return s;
+        return nullptr;
+    }
 
     
 };
@@ -128,6 +136,14 @@ public:
     
     ///Get the vector of species
     std::vector<SpeciesBound*>& species() {return _species;}
+    
+    ///Get species by name
+    virtual Species* getSpeciesByName(std::string& name) {
+        
+        for (auto &s : _species)
+            if(name.find(s->getName()) != std::string::npos) return s;
+        return nullptr;
+    }
     
 };
 

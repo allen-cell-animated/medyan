@@ -84,10 +84,6 @@ public:
     virtual SpeciesFilament* getBack() {return _species[2];}
     
     
-    ///Look up species by name
-    virtual Species* getSpeciesByName(std::string& name);
-    
-    
     ///Check if this monomer is valid
     bool checkSpecies(int sum)
     {
@@ -134,9 +130,7 @@ public:
 
     ///Look up a species given a name
     virtual SpeciesBound* getEmpty() {return _species[0];}
-    
-    ///Look up species by name
-    virtual Species* getSpeciesByName(std::string& name);
+
     
     ///Check if this monomer is valid
     bool checkSpecies(int sum)
