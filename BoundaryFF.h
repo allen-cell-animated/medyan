@@ -12,12 +12,13 @@
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
+#include "BoundaryRepulsion.h"
 #include <stdlib.h>
 
 class BoundaryFF : public ForceField {
     
 private:
-    std::vector<std::unique_ptr<BoundaryInteraction>> _BoundaryInteractionVector;
+    std::vector<std::unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector;
     
 public:
     BoundaryFF(std::string Interacion1, std::string Interacion2, std::string Interacion3 );
