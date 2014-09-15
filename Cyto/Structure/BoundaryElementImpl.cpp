@@ -8,7 +8,7 @@
 
 #include "BoundaryElementImpl.h"
 
-PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal) : BoundaryElement(coords) {
+PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal) : _normal(normal), BoundaryElement(coords) {
     
     ///set parameters
     _a = normal[0];

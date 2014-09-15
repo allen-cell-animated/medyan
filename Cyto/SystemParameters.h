@@ -61,7 +61,7 @@ struct GeometryParameters {
 ///Struct to hold the read boundary parameters
 struct BoundaryParameters {
     
-    double interactionCutoff = 0;
+    double boundaryCutoff = 0;
 };
 
 

@@ -19,6 +19,7 @@ class PlaneBoundaryElement : public BoundaryElement {
 private:
     ///Parameters of equation (ax + by + cz + d = 0)
     double _a, _b, _c, _d;
+    std::vector<double> _normal;
 
 public:
     ///Constructor, sets parameters of equation

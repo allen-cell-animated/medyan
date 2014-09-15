@@ -58,7 +58,7 @@ VOLUMEK:
 
 BOUNDARYTYPE:                WALL
 BOUNDARYSHAPE:               CUBIC
-BINTERACTIONCUTOFF:          10.0
+BCUTOFF:          10.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -90,7 +90,7 @@ NUMSTEPSPERM:                10
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                /Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt
+FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 

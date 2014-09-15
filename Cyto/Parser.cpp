@@ -550,7 +550,7 @@ void SystemParser::readBoundaryParameters() {
     std::string line;
     while(getline(_inputFile, line)) {
         
-        if (line.find("BINTERACTIONCUTOFF") != std::string::npos) {
+        if (line.find("BCUTOFF") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() != 2) {
@@ -558,7 +558,11 @@ void SystemParser::readBoundaryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.interactionCutoff = double(std::atoi(lineVector[1].c_str()));
+                BParams.boundaryCutoff = double(std::atoi(lineVector[1].c_str()));
+            }
+            ///Default value to be half compartment size
+            else {
+                BParams.boundaryCutoff = SystemParameters::Geometry().compartmentSizeX / 2;
             }
         }
     }

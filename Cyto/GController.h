@@ -13,6 +13,11 @@
 #include <vector>
 #include "CompartmentContainer.h"
 
+
+///Exception to be thrown when an index/coordinate is out of bounds of the grid
+
+
+
 class Boundary;
 
 /// GController class is used to control the geometry of the grid, as well as the geometry of entire system

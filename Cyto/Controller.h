@@ -73,48 +73,54 @@ public:
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
         ///Initialize geometry controller
+        std::cout << "Initializing chemistry...";
         GController::initializeGrid();
+        std::cout << "Done." << std::endl;
 
         ///Initialize chemical controller
         if(_chemistry) {
-            std::cout << "Initializing chemistry..." <<std::endl;
+            std::cout << "Initializing chemistry...";
             _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
             ChemSim::printReactions();
+            std::cout << "Done." <<std::endl;
         }
         
         ///Initialize Mechanical controller
         if(_mechanics) {
             
-            std::cout << "Initializing mechanics..." << std::endl;
+            std::cout << "Initializing mechanics...";
             ///Initialize mcontroller
             _mController.initialize(MTypes, MAlgorithm);
+            std::cout << "Done." <<std::endl;
 
-            std::cout << "Initializing boundary..." << std::endl;
+            std::cout << "Initializing boundary...";
             ///Initialize boundary
             if(BTypes.boundaryShape == "CUBIC") {
                 //_subSystem->AddBoundary(new BoundaryCubic());
             }
             else{
-                std::cout<< "Given boundary not yet implemented. Exiting" <<std::endl;
+                std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
                 exit(EXIT_FAILURE);
             }
+            std::cout << "Done." <<std::endl;
         }
 
         ///Read filament setup, parse filament input file if needed
         FilamentSetup FSetup = p.readFilamentSetup();
         std::vector<std::vector<std::vector<double>>> filamentData;
-        std::cout << "Initializing filaments..." <<std::endl;
+        std::cout << "Initializing filaments...";
         
         if(FSetup.inputFile != "") {
             FilamentParser fp(FSetup.inputFile);
             filamentData = fp.readFilaments();
         }
         else {
-            std::cout << "Random filament distributions not yet implemented. Exiting" << std::endl;
+            std::cout<< std::endl << "Random filament distributions not yet implemented. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
+        std::cout << "Done." <<std::endl;
     }
 
     void run() {
