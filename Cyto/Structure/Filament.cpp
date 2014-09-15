@@ -10,6 +10,7 @@
 #include "Bead.h"
 #include "SubSystem.h"
 
+
 using namespace std;
 using namespace mathfunc;
 
@@ -23,7 +24,9 @@ Filament::Filament(SubSystem* ps, vector<double> position, vector<double> direct
     
     auto midpoint = MidPointCoordinate(b1->coordinate, NextPointProjection(b1->coordinate,
                               SystemParameters::Geometry().cylinderSize, direction), 0.5);
-    Compartment* c = GController::getCompartment(midpoint);
+    Compartment* c;
+    try {c =  GController::getCompartment(midpoint);}
+    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     Cylinder* c1 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, c);
     _pLastCylinder = c1;
@@ -43,7 +46,9 @@ Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads
     Bead* b0 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0]);
     
     auto midpoint = MidPointCoordinate(tmpBeadsCoord[0], tmpBeadsCoord[1], 0.5);
-    Compartment* c = GController::getCompartment(midpoint);
+    Compartment* c;
+    try {c = GController::getCompartment(midpoint);}
+    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b0, c);
     _pLastCylinder = c0;
@@ -60,7 +65,9 @@ void Filament::PolymerizeFront(vector<double> coordinates) {
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
     
     auto midpoint = MidPointCoordinate(_pLastCylinder->getMCylinder()->GetFirstBead()->coordinate, coordinates, 0.5);
-    Compartment* c = GController::getCompartment(midpoint);
+    Compartment* c;
+    try {c = GController::getCompartment(midpoint);}
+    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c);
     _pLastCylinder->getMCylinder()->SetSecondBead(b);
@@ -78,7 +85,9 @@ void Filament::PolymerizeBack(vector<double> coordinates) {
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
     
     auto midpoint = MidPointCoordinate(coordinates, _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, 0.5);
-    Compartment* c = GController::getCompartment(midpoint);
+    Compartment* c;
+    try {c = GController::getCompartment(midpoint);}
+    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c);
     c0->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
@@ -102,7 +111,9 @@ void Filament::PolymerizeFront() {
                _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate,
                SystemParameters::Geometry().cylinderSize, tau) );
         auto midpoint = MidPointCoordinate(b->coordinate, NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau), 0.5);
-        Compartment* c = GController::getCompartment(midpoint);
+        Compartment* c;
+        try {c = GController::getCompartment(midpoint);}
+        catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         
         Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c, true);
         _pLastCylinder->getMCylinder()->SetSecondBead(b);
@@ -128,7 +139,9 @@ void Filament::PolymerizeBack() {
                     SystemParameters::Geometry().cylinderSize, tau) );
         
         auto midpoint = MidPointCoordinate(b->coordinate, _pCylinderVector[0]->getMCylinder()->GetFirstBead()->coordinate, 0.5);
-        Compartment* c = GController::getCompartment(midpoint);
+        Compartment* c;
+        try {c = GController::getCompartment(midpoint);}
+        catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         
         Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b, c, false, true);
         c0->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());

@@ -52,7 +52,9 @@ public:
             Filament* pf = new Filament(s, v, numSegment + 1);  //Create a long filament with numSeg.
             push_back(pf);
             std::cout<<"long filament created"<<std::endl;
-            return pf;}
+            
+            return pf;
+        }
     }
 
     void RemoveFilament(Filament* f) {};

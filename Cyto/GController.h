@@ -13,10 +13,13 @@
 #include <vector>
 #include "CompartmentContainer.h"
 
-
 ///Exception to be thrown when an index/coordinate is out of bounds of the grid
-
-
+class OutOfBoundsException : public std::exception {
+    
+    virtual const char* what() const throw() {
+        return "An element is out of bounds of the grid.";
+    }
+};
 
 class Boundary;
 
@@ -67,10 +70,7 @@ public:
         size_t i = _nDim-1;
         for(auto x: indices)
         {
-            if(x >= _grid[i]) {
-                std::cout << "An object has gone out of bounds of the grid. Exiting" <<std::endl;
-                exit(EXIT_FAILURE);
-            }
+            if(x >= _grid[i]) { throw OutOfBoundsException();}
             index+=x*std::pow(_grid[i],i);
             --i;
         }
@@ -86,11 +86,7 @@ public:
         size_t i = _nDim-1;
         for(auto x: coords)
         {
-            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) {
-                std::cout << "An object has gone out of bounds of the grid. Exiting" <<std::endl;
-                exit(EXIT_FAILURE);
-            }
-            
+            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) { throw OutOfBoundsException();}
             index+=int(x / _compartmentSize[i]) * std::pow(_grid[i],i);
             --i;
         }

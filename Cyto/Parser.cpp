@@ -277,7 +277,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FStretchingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.FStretchingK = std::atof(lineVector[1].c_str());
             }
         }
         if (line.find("FSTRETCHINGL") != std::string::npos) {
@@ -288,7 +288,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FStretchingL = double(std::atoi(lineVector[1].c_str()));
+                MParams.FStretchingL = std::atof(lineVector[1].c_str());
             }
         }
         
@@ -301,7 +301,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FBendingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.FBendingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("FBENDINGTHETA") != std::string::npos) {
@@ -312,7 +312,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FBendingTheta = double(std::atoi(lineVector[1].c_str()));
+                MParams.FBendingTheta = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -325,7 +325,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FTwistingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.FTwistingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("FTWISTINGPHI") != std::string::npos) {
@@ -336,7 +336,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FTwistingPhi = double(std::atoi(lineVector[1].c_str()));
+                MParams.FTwistingPhi = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -349,7 +349,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LStretchingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.LStretchingK = std::atof((lineVector[1].c_str()));
             }
         }
         if (line.find("LSTRETCHINGL") != std::string::npos) {
@@ -360,7 +360,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LStretchingL = double(std::atoi(lineVector[1].c_str()));
+                MParams.LStretchingL = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -373,7 +373,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LBendingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.LBendingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("LBENDINGTHETA") != std::string::npos) {
@@ -384,7 +384,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LBendingTheta = double(std::atoi(lineVector[1].c_str()));
+                MParams.LBendingTheta = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -397,7 +397,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LTwistingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.LTwistingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("LTWISTINGPHI") != std::string::npos) {
@@ -408,7 +408,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.LTwistingPhi = double(std::atoi(lineVector[1].c_str()));
+                MParams.LTwistingPhi = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -421,7 +421,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MStretchingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.MStretchingK = std::atof((lineVector[1].c_str()));
             }
         }
         if (line.find("MSTRETCHINGL") != std::string::npos) {
@@ -432,7 +432,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MStretchingL = double(std::atoi(lineVector[1].c_str()));
+                MParams.MStretchingL = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -445,7 +445,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MBendingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.MBendingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("FBENDINGTHETA") != std::string::npos) {
@@ -456,7 +456,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MBendingTheta = double(std::atoi(lineVector[1].c_str()));
+                MParams.MBendingTheta = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -469,7 +469,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MTwistingK = double(std::atoi(lineVector[1].c_str()));
+                MParams.MTwistingK = std::atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("MTWISTINGPHI") != std::string::npos) {
@@ -480,7 +480,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MTwistingPhi = double(std::atoi(lineVector[1].c_str()));
+                MParams.MTwistingPhi = std::atof((lineVector[1].c_str()));
             }
         }
         
@@ -493,7 +493,7 @@ void SystemParser::readMechanicsParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.VolumeK = double(std::atoi(lineVector[1].c_str()));
+                MParams.VolumeK = std::atof((lineVector[1].c_str()));
             }
         }
         else {}
@@ -558,7 +558,7 @@ void SystemParser::readBoundaryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryCutoff = double(std::atoi(lineVector[1].c_str()));
+                BParams.boundaryCutoff = std::atof((lineVector[1].c_str()));
             }
             ///Default value to be half compartment size
             else {
@@ -624,7 +624,7 @@ void SystemParser::readGeometryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2)
-                gridTemp.push_back(double(std::atoi(lineVector[1].c_str())));
+                gridTemp.push_back(std::atof((lineVector[1].c_str())));
             else {}
         }
         
@@ -639,7 +639,7 @@ void SystemParser::readGeometryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                compartmentTemp.push_back(double(std::atoi(lineVector[1].c_str())));
+                compartmentTemp.push_back(std::atof((lineVector[1].c_str())));
             else {}
         }
         
@@ -651,7 +651,7 @@ void SystemParser::readGeometryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                monomerSize = double(std::atoi(lineVector[1].c_str()));
+                monomerSize = std::atof(lineVector[1].c_str());
             else {}
         }
         
@@ -663,7 +663,7 @@ void SystemParser::readGeometryParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                cylinderSize = double(std::atoi(lineVector[1].c_str()));
+                cylinderSize = std::atof(lineVector[1].c_str());
             else {}
         }
         
@@ -746,10 +746,10 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
             std::vector<double> coord1;
             std::vector<double> coord2;
             for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++) {
-                coord1.push_back(double(std::atoi((*it).c_str())));
+                coord1.push_back(std::atof(((*it).c_str())));
             }
             for(auto it = lineVector.begin() + 4; it != lineVector.end(); it++) {
-                coord2.push_back(double(std::atoi((*it).c_str())));
+                coord2.push_back(std::atof(((*it).c_str())));
             }
             
             returnVector.push_back({coord1, coord2});

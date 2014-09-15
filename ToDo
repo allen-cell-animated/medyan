@@ -15,8 +15,8 @@ TODO                                                                        COMP
     -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?
+    -Callback transfer when copying reactions
 3) TESTING!!!!
-    -Boundaries
     -SpeciesBulk
     -Geometry
     -FilamentElement / Cylinders

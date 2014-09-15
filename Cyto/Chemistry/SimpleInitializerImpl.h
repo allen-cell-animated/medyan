@@ -23,7 +23,7 @@ private:
     ///REACTION RATES
     //basic
     float _k_on_plus = 21.0;
-    float _k_on_minus = 5.0;
+    float _k_on_minus = 0.0;
     float _k_off_plus = 1.4;
     float _k_off_minus = 1.4;
     
@@ -97,17 +97,7 @@ public:
         //                currentSum += s->getN();
         //            return currentSum = sum;
     }
-    
-    ///Print a species in this filament element
-    virtual void print();
-    
-    ///Find active filament species
-    ///@note return null if none
-    virtual SpeciesFilament* getActiveFilamentSpecies();
-    
-    ///Find active end species
-    ///@note return null if none
-    virtual SpeciesFilament* getActiveEndSpecies();
+     virtual void print();
 };
 
 ///Basic bound consisting of myosin, myosin-actin, and a virtual empty species
@@ -158,7 +148,6 @@ public:
         //        return currentSum = sum;
     }
     
-    ///Print a species in this filament element
     virtual void print();
 };
 

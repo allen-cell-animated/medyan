@@ -17,6 +17,7 @@
 //#define BOOST_MEM_POOL
 //#define BOOL_POOL_NSIZE 65536
 
+#include <exception>
 #include <cstdint>
 #include <vector>
 #include <iostream>

@@ -65,9 +65,9 @@ BCUTOFF:          10.0
 
 NDIM:                        3
 
-NX:                          10
-NY:                          10
-NZ:                          10
+NX:                          50
+NY:                          50
+NZ:                          50
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0

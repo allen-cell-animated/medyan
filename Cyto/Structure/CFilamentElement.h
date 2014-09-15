@@ -83,12 +83,6 @@ public:
     
     ///Get the vector of species
     std::vector<SpeciesFilament*>& species() {return _species;}
-    
-    ///Get active filament species from this CMonomer
-    virtual SpeciesFilament* getActiveFilamentSpecies() = 0;
-    
-    ///Get active end species from this CMonomer
-    virtual SpeciesFilament* getActiveEndSpecies() = 0;
 
     
 };

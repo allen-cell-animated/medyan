@@ -61,6 +61,13 @@ public:
     std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
     std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
     
+    ///Print chemical composition of filament (for debugging only)
+    void printChemComposition() {
+        for (auto &c : getCylinderVector()) {
+            c->getCCylinder()->printCCylinder();
+        }
+        getLastCylinder()->getCCylinder()->printCCylinder();
+    }
 };
 
 #endif /* defined(__CytoMech__Filament__) */
