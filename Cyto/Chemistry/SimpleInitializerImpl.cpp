@@ -115,20 +115,17 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
             auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
             m1->getActin()->getRSpecies().up();
             
-            if (index == maxlength - 1) m1->getFront()->getRSpecies().up();
+            if (index == maxlength - 1)  {
+                m1->getFront()->getRSpecies().up();
+            }
         }
     }
     
     ///Callbacks needed
     auto polyCallback = FilamentPolyCallback(pf);
-//    auto depolyCallback = FilamentDepolyCallback(parentFilament);
-//    
     auto extensionFrontCallback = FilamentExtensionFrontCallback(pf);
     auto extensionBackCallback = FilamentExtensionBackCallback(pf);
 
-//    auto retractionCallback = FilamentRetractionCallback(parentFilament);
-    
-    
     //Look up diffusing species in this compartment
     Species* actinBulk = &CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName("Actin");
     
@@ -205,7 +202,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     
     cylinder->addChemSimReactions();
     cylinder->updateReactions();
-    
+
     ///clean up and return
     return cylinder;
 }

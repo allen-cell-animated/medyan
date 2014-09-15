@@ -52,7 +52,6 @@ Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads
     for (int i = 1; i<numBeads; i++) {
         PolymerizeFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
     }
-    
 }
 
 ///Polymerize front for initialization
