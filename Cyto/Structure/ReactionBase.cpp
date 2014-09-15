@@ -44,12 +44,10 @@ void ReactionBase::unregisterDependent(ReactionBase *r){
 
 #ifdef REACTION_SIGNALING
 void ReactionBase::startSignaling () {
-    _signal = new ReactionEventSignal;
+    _signal = std::shared_ptr<ReactionEventSignal>(new ReactionEventSignal);
 }
 
 void ReactionBase::stopSignaling () {
-    if (_signal!=nullptr)
-        delete _signal;
     _signal = nullptr;
 }
 

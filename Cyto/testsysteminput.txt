@@ -10,12 +10,12 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                10.0
-FSTRETCHINGL:                27.0
+FSTRETCHINGK:                1.0
+FSTRETCHINGL:                27.05
 
-FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   10.0
-FBENDINGTHETA:               180.0
+FBENDINGTYPE:
+FBENDINGK:
+FBENDINGTHETA:               
 
 FTWISTINGTYPE:
 FTWISTINGK:
@@ -65,9 +65,9 @@ BCUTOFF:          10.0
 
 NDIM:                        3
 
-NX:                          10
-NY:                          10
-NZ:                          10
+NX:                          50
+NY:                          50
+NZ:                          50
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
@@ -84,7 +84,7 @@ CHEMISTRY:                   ON
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    1000
+NUMSTEPS:                    10000
 NUMSTEPSPERM:                10
 
 ##################################################

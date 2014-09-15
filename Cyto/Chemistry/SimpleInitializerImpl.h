@@ -23,7 +23,7 @@ private:
     ///REACTION RATES
     //basic
     float _k_on_plus = 21.0;
-    float _k_on_minus = 5.0;
+    float _k_on_minus = 0.0;
     float _k_off_plus = 1.4;
     float _k_off_minus = 1.4;
     
@@ -84,10 +84,6 @@ public:
     virtual SpeciesFilament* getBack() {return _species[2];}
     
     
-    ///Look up species by name
-    virtual Species* getSpeciesByName(std::string& name);
-    
-    
     ///Check if this monomer is valid
     bool checkSpecies(int sum)
     {
@@ -97,17 +93,7 @@ public:
         //                currentSum += s->getN();
         //            return currentSum = sum;
     }
-    
-    ///Print a species in this filament element
-    virtual void print();
-    
-    ///Find active filament species
-    ///@note return null if none
-    virtual SpeciesFilament* getActiveFilamentSpecies();
-    
-    ///Find active end species
-    ///@note return null if none
-    virtual SpeciesFilament* getActiveEndSpecies();
+     virtual void print();
 };
 
 ///Basic bound consisting of myosin, myosin-actin, and a virtual empty species
@@ -144,9 +130,7 @@ public:
 
     ///Look up a species given a name
     virtual SpeciesBound* getEmpty() {return _species[0];}
-    
-    ///Look up species by name
-    virtual Species* getSpeciesByName(std::string& name);
+
     
     ///Check if this monomer is valid
     bool checkSpecies(int sum)
@@ -158,7 +142,6 @@ public:
         //        return currentSum = sum;
     }
     
-    ///Print a species in this filament element
     virtual void print();
 };
 

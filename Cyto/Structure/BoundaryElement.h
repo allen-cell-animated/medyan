@@ -72,7 +72,8 @@ public:
         if(_compartment != nullptr) _compartment->removeBoundaryElement(this);
         
         ///Add to new compartment
-        _compartment = GController::getCompartment(_coords);
+        try {_compartment = GController::getCompartment(_coords);}
+        catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         _compartment->addBoundaryElement(this);
     }
     ///Alternate set compartment when compartment is known

@@ -13,8 +13,7 @@
 #include <vector>
 #include <list>
 #include "Component.h"
-#include "BoundaryElement.h"
-#include "MathFunctions.h"
+#include "BoundaryElementDB.h"
 
 using namespace mathfunc;
 
@@ -57,7 +56,9 @@ public:
         if(_compartment != nullptr) _compartment->removeBead(this);
         
         ///Add to new compartment
-        _compartment = GController::getCompartment(coordinate); _compartment->addBead(this);
+        try {_compartment =  GController::getCompartment(coordinate);}
+        catch (std::exception& e) {std::cout << e.what(); exit(EXIT_FAILURE);}
+        _compartment->addBead(this);
     }
     
     ///Alternate set compartment when compartment is known
@@ -65,7 +66,6 @@ public:
         
         ///remove from old compartment
         if(_compartment != nullptr) _compartment->removeBead(this);
-        
         ///add to new compartment
         _compartment = c; _compartment->addBead(this);
     }

@@ -11,7 +11,10 @@
 using namespace std;
 void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
-	const double EPS = 1e-10;
+    
+    cout<<"Forces before minimization:" <<endl;
+	PrintForces();
+    const double EPS = 1e-4;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curVal = FFM.ComputeEnergy(0.0);

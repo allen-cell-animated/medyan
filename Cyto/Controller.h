@@ -73,7 +73,7 @@ public:
 
         ///CALLING ALL CONTROLLERS TO INITIALIZE
         ///Initialize geometry controller
-        std::cout << "Initializing chemistry...";
+        std::cout << "Initializing geometry...";
         GController::initializeGrid();
         std::cout << "Done." << std::endl;
 

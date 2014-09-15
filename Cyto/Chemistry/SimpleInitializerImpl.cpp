@@ -59,16 +59,11 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
  
     ///extension of front
     if(extensionFront) {
-        
-        lastCCylinder = pf->getLastCylinder()->getCCylinder();
-        
-        auto m1 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
+
         auto m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
-        
         SpeciesFilament* front;
         
         ///remove front from last ccylinder, add to current
-        front = m1->getFront(); front->getRSpecies().down();
         front = m2->getFront(); front->getRSpecies().up();
         
         auto actin = m2->getActin();
@@ -77,19 +72,13 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
     ///extension of back
     else if(extensionBack) {
-        
-        lastCCylinder = pf->getCylinderVector()[0]->getCCylinder();
-        
-        auto m2 = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1));
-        auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
+        auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(maxlength - 1));
         
         SpeciesFilament* back;
-        
         ///remove back from last cylinder, add to current
-        back = m1->getBack(); back->getRSpecies().down();
-        back = m2->getBack(); back->getRSpecies().up();
+        back = m1->getBack(); back->getRSpecies().up();
         
-        auto actin = m2->getActin();
+        auto actin = m1->getActin();
         actin->getRSpecies().up();
     }
 
@@ -114,7 +103,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
             
             auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
             m1->getActin()->getRSpecies().up();
-            
+
             if (index == maxlength - 1)  {
                 m1->getFront()->getRSpecies().up();
             }
@@ -162,7 +151,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         else {
             ///Add basic polymerization reactions
             rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinBulk,
-                                                m0->getActin(), m0->getBack()}, _k_on_plus);
+                                                m0->getActin(), m0->getBack()}, _k_on_minus);
             boost::signals2::shared_connection_block
                 rcb2(rPolyMinus->connect(polyCallback,false));
             
@@ -224,36 +213,6 @@ CMonomerBasic::CMonomerBasic(Compartment* c)
     
 }
 
-///Look up species by name
-Species* CMonomerBasic::getSpeciesByName(std::string& name)
-{
-    for (auto &s : _species) {
-        if(name.find(s->getName()) != std::string::npos) return s;
-    }
-    
-    return nullptr;
-}
-
-///Find active filament species
-///@note return null if none
-SpeciesFilament* CMonomerBasic::getActiveFilamentSpecies() {
-    
-    auto itEnd = _species.begin() + 1;
-    
-    for (auto it = _species.begin(); it != itEnd; it++)
-        if((*it)->getN() == 1) return (*it);
-    return nullptr;
-}
-
-///Find active end species
-///@note return null if none
-SpeciesFilament* CMonomerBasic::getActiveEndSpecies() {
-
-    for (auto it = _species.begin() + 1; it != _species.end(); it++)
-        if((*it)->getN() == 1) return (*it);
-    return nullptr;
-}
-
 ///Print a species in this filament element
 void CMonomerBasic::print()
 {
@@ -268,13 +227,6 @@ CBoundBasic::CBoundBasic(Compartment* c)
     _species.push_back(c->addSpeciesBound("Empty", 0, 1));
 }
 
-///Look up species by name
-Species* CBoundBasic::getSpeciesByName(std::string& name)
-{
-    for (auto &s : _species)
-        if(s->getName() == name) return s;
-    return nullptr;
-}
 
 ///Print a species in this filament element
 void CBoundBasic::print()

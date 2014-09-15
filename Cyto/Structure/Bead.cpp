@@ -11,11 +11,12 @@
 Bead::Bead (std::vector<double> v): coordinate(v), force(3, 0), forceAux(3, 0)
 {
     ///Find compartment, add this bead
-    _compartment = GController::getCompartment(v);
+    try {_compartment = GController::getCompartment(v);}
+    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     _compartment->addBead(this);
     
-    ///Add to list of boundary elements in compartment
-    for (auto &be : _compartment->getBoundaryElements()) {
+    ///Add to list of boundary elements
+    for (auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         ///If within cutoff, add bead to this boundary element interaction list
         if(be->distance(v) <= SystemParameters::Boundaries().boundaryCutoff) {
             _boundaryElements.push_back(be);
@@ -35,8 +36,8 @@ void Bead::updateBoundaryElements() {
         }
     }
     
-    ///Check compartment, add any new interacting boundary elements
-    for(auto &be : _compartment->getBoundaryElements()) {
+    ///add any new interacting boundary elements
+    for(auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         if(be->distance(coordinate) <= SystemParameters::Boundaries().boundaryCutoff) {
             _boundaryElements.push_back(be);
             be->addBead(this);

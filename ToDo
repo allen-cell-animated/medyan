@@ -7,6 +7,8 @@ TODO                                                                        COMP
     -Compiling all of cytosim and cytomech together                             X
     -Organizing code into folders                                               X
     -Clean up output of controller
+2a) Chemical input file
+
 2) Finishing touches
     -Combine common files                                                       X
     -Filament input file                                                        X
@@ -15,8 +17,8 @@ TODO                                                                        COMP
     -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?
+    -Callback transfer when copying reactions                                   X
 3) TESTING!!!!
-    -Boundaries
     -SpeciesBulk
     -Geometry
     -FilamentElement / Cylinders
