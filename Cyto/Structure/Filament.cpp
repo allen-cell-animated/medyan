@@ -14,28 +14,27 @@
 using namespace std;
 using namespace mathfunc;
 
-Filament::Filament(SubSystem* ps, vector<double> position, vector<double> direction){
+Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& direction){
    
     
     _pSubSystem = ps;
  
     ///Create cylinders, beads
     Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position);
-    
-    auto midpoint = MidPointCoordinate(b1->coordinate, NextPointProjection(b1->coordinate,
-                              SystemParameters::Geometry().cylinderSize, direction), 0.5);
+    auto npp = NextPointProjection(b1->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+    auto midpoint = MidPointCoordinate(b1->coordinate, npp, 0.5);
     Compartment* c;
     try {c =  GController::getCompartment(midpoint);}
     catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     Cylinder* c1 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, c);
     _pLastCylinder = c1;
-   
-    PolymerizeFront( NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction) );
+    auto point = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
+    PolymerizeFront( point );
 }
 
 
-Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads){
+Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads){
 
     _pSubSystem = ps;
     
@@ -60,7 +59,7 @@ Filament::Filament(SubSystem* ps, vector<vector<double> > position, int numBeads
 }
 
 ///Polymerize front for initialization
-void Filament::PolymerizeFront(vector<double> coordinates) {
+void Filament::PolymerizeFront(vector<double>& coordinates) {
     
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
     
@@ -80,7 +79,7 @@ void Filament::PolymerizeFront(vector<double> coordinates) {
 }
 
 ///Polymerize front for initialization
-void Filament::PolymerizeBack(vector<double> coordinates) {
+void Filament::PolymerizeBack(vector<double>& coordinates) {
     
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
     
@@ -98,19 +97,20 @@ void Filament::PolymerizeBack(vector<double> coordinates) {
 
 ///Polymerize front at runtime
 void Filament::PolymerizeFront() {
-    if (_pCylinderVector.size()<2) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
+    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else{
         
         auto tau = TwoPointDirection(
-        _pCylinderVector[_pCylinderVector.size()-2]->getMCylinder()->GetFirstBead()->coordinate,
-        _pCylinderVector[_pCylinderVector.size()-2]->getMCylinder()->GetSecondBead()->coordinate);
+        _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetFirstBead()->coordinate,
+        _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate);
         
         Bead* b =
         BeadDB::Instance(BeadDBKey())->CreateBead(NextPointProjection(
                _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate,
                SystemParameters::Geometry().cylinderSize, tau) );
-        auto midpoint = MidPointCoordinate(b->coordinate, NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau), 0.5);
+        auto npp = NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau);
+        auto midpoint = MidPointCoordinate(b->coordinate, npp, 0.5);
         Compartment* c;
         try {c = GController::getCompartment(midpoint);}
         catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
@@ -126,7 +126,7 @@ void Filament::PolymerizeFront() {
 
 ///Polymerize back at runtime
 void Filament::PolymerizeBack() {
-    if (_pCylinderVector.size()<2) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
+    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
     
     else{
         /// Check out!!!!
@@ -150,7 +150,7 @@ void Filament::PolymerizeBack() {
     }
 }
 
-vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<double>> v, int numBeads){
+vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);

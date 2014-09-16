@@ -27,7 +27,7 @@ struct FilamentExtensionFrontCallback {
     ///Callback
     void operator() (ReactionBase *r){
         _filament->PolymerizeFront();
-        _filament->printChemComposition();
+       // _filament->printChemComposition();
         
     }
 };

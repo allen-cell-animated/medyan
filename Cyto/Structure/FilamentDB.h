@@ -15,7 +15,7 @@
 #include "Filament.h"
 
 ///Key to access instance of FilamentDB
-class FilamentDBKey {friend class SubSystem; friend class FilamentFF; FilamentDBKey(){}; ~FilamentDBKey(){}; };
+class FilamentDBKey {friend class SubSystem; friend class FilamentFF; friend class Output; FilamentDBKey(){}; ~FilamentDBKey(){}; };
 
 
 ///FilamentDB is used to store all filaments in the system
@@ -33,7 +33,7 @@ public:
     
     static FilamentDB* Instance(FilamentDBKey k);
     
-    Filament* CreateFilament(SubSystem* s, std::vector<std::vector<double> > v) {
+    Filament* CreateFilament(SubSystem* s, std::vector<std::vector<double> >& v) {
         
         double d = mathfunc::TwoPointDistance(v[0], v[1]);
         std::vector<double> tau = mathfunc::TwoPointDirection(v[0], v[1]);

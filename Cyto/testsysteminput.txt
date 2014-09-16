@@ -10,12 +10,12 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                1.0
-FSTRETCHINGL:                27.05
+FSTRETCHINGK:                3.0
+FSTRETCHINGL:                28.0
 
-FBENDINGTYPE:
-FBENDINGK:
-FBENDINGTHETA:               
+FBENDINGTYPE:                HARMONIC
+FBENDINGK:                   5.0
+FBENDINGTHETA:               150.00
 
 FTWISTINGTYPE:
 FTWISTINGK:
@@ -84,8 +84,8 @@ CHEMISTRY:                   ON
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    10000
-NUMSTEPSPERM:                10
+NUMSTEPS:                    20
+NUMSTEPSPERM:                5
 
 ##################################################
 ################### FILAMENTS ####################

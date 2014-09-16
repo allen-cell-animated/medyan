@@ -15,6 +15,7 @@
 #include "CController.h"
 #include "Parser.h"
 #include "BoundaryImpl.h"
+#include "Output.h"
 
 class SubSystem;
 
@@ -124,11 +125,16 @@ public:
     }
 
     void run() {
+        
+        Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
+        
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
             if(_chemistry)
                 _cController.run(_numStepsPerMech);
             if(_mechanics)
                 _mController.run();
+            
+            o.printFilaments();
         }
         std::cout << "Done with simulation!" << std::endl;
     }
