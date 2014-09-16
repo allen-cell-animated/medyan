@@ -78,6 +78,8 @@ void CGMethod::PrintForces()
         
 		for (int i = 0; i<3; i++) { cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "<<(*it).forceAux[i]<<endl;}
 	}
+
+    cout << "End of Print Forces" << endl;
 }
 
 

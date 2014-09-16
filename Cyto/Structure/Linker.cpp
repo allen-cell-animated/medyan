@@ -20,7 +20,7 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, double stretchConst, double positio
     _position1 = position1;
     _position2 = position2;
     
-    _eqLength = TwoPointDistance(
-        MidPointCoordinate(_pc1->getMCylinder()->GetFirstBead()->coordinate, _pc1->getMCylinder()->GetSecondBead()->coordinate, position1),
-        MidPointCoordinate(_pc2->getMCylinder()->GetFirstBead()->coordinate, _pc2->getMCylinder()->GetSecondBead()->coordinate, position2));
+    auto m1 = MidPointCoordinate(_pc1->getMCylinder()->GetFirstBead()->coordinate, _pc1->getMCylinder()->GetSecondBead()->coordinate, position1);
+    auto m2 = MidPointCoordinate(_pc2->getMCylinder()->GetFirstBead()->coordinate, _pc2->getMCylinder()->GetSecondBead()->coordinate, position2);
+    _eqLength = TwoPointDistance(m1, m2);
 }

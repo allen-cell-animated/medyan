@@ -11,7 +11,6 @@
 using namespace std;
 void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
-    
     cout<<"Forces before minimization:" <<endl;
 	PrintForces();
     const double EPS = 1e-4;
@@ -54,9 +53,14 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		ShiftGradient(beta);
         
 		prevVal = curVal;
+        cout << "Calling last compute energy in minimizer" << endl;
 		curVal = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
+        PrintForces();
 		gradSquare = newGradSquare;
+        cout<<"GradSq before end=  "<<gradSquare<<endl;
+
+        
 	}
 	while (gradSquare > EPS);
     

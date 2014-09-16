@@ -19,8 +19,6 @@
 
 class Bead;
 class BoundaryElement;
-class ChemSimReactionKey;
-
 
 /// Compartment class is a compartment for holding species and reactions
 

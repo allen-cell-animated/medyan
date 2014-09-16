@@ -34,19 +34,19 @@ public:
     /// This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an
     /// input, second is set up by using an input direction and a coarsegrain length L. Using all this, two constructors
     /// for beads are called.
-	Filament(SubSystem* ps, std::vector<double> position, std::vector<double> direction);
+	Filament(SubSystem* ps, std::vector<double>& position, std::vector<double>& direction);
     /// This constructor is called to create a longer filament. It creates a filament with a number of beads numBeads.
     /// Filaments starts and ends in the point determined by position vector and has a direction direction. Number of
     /// beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be
     /// pushed to cylinder vector, but will be stored in the _pLastCylinder;
-    Filament(SubSystem* ps, std::vector<std::vector<double>> position, int numBeads);
+    Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads);
     
     void PolymerizeFront();  // Polymerization of a new cylinder (with the first bead = new bead b and last bead = empty: before: --x---x---o, after --x---x---[x---o]). Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further polymerization, not initiation.
     void PolymerizeBack();  // Same as Polymerization front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first.
     
     ///Polymerize, used for initialization
-    void PolymerizeFront(std::vector<double> coordinates );
-    void PolymerizeBack(std::vector<double> coordinates );
+    void PolymerizeFront(std::vector<double>& coordinates );
+    void PolymerizeBack(std::vector<double>& coordinates );
     
     void DepolymerizeFront(); // Depolymerization of back of a cylinder. Removes one cylinder and one bead from the front of filament
     void DepolymerizeBack(); // Depolymerization of back of a cylinder. Removes a cylinder and bead from back of filament
@@ -57,12 +57,12 @@ public:
     ///More getters
     Cylinder* getLastCylinder() {return _pLastCylinder;}
     
-    std::deque<Cylinder*> getCylinderVector() {return _pCylinderVector;}
+    std::deque<Cylinder*>& getCylinderVector() {return _pCylinderVector;}
     
     //just for example, will rewrite this function, so it not returns anything
     std:: vector<double> NextBeadProjection(Bead* pb, double d, std::vector<double> director);
-    std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
-    std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>> v, int numBeads);
+    std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
+    std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
     
     ///Print chemical composition of filament (for debugging only)
     void printChemComposition() {
