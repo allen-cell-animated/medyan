@@ -9,7 +9,7 @@
 #include "gtest/gtest.h"
 #include "Parser.h"
 
-#define DO_THIS_PARSER_TEST
+//#define DO_THIS_PARSER_TEST
 
 #ifdef DO_THIS_PARSER_TEST
 #define TESTING
@@ -27,7 +27,7 @@ TEST(SystemParserTest, main) {
     EXPECT_TRUE(p.chemistry());
     
     ///Check a few
-    EXPECT_EQ(10.0, SystemParameters::Boundaries().interactionCutoff);
+    EXPECT_EQ(10.0, SystemParameters::Boundaries().boundaryCutoff);
     EXPECT_EQ(180.0, SystemParameters::Mechanics().FBendingTheta);
     EXPECT_EQ(0,SystemParameters::Mechanics().MStretchingL);
     EXPECT_EQ(100.0, SystemParameters::Geometry().compartmentSizeX);

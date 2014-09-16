@@ -6,10 +6,11 @@ TODO                                                                        COMP
 1) Combining code
     -Compiling all of cytosim and cytomech together                             X
     -Organizing code into folders                                               X
-    -Clean up output of controller
+    -Clean up output of controller                                              X
+
 2a) Chemical input file
 
-2) Finishing touches
+2b) Finishing touches
     -Combine common files                                                       X
     -Filament input file                                                        X
     -Out of bounds management                                                   X
@@ -19,8 +20,8 @@ TODO                                                                        COMP
     -Depolymerizing front / back?
     -Callback transfer when copying reactions                                   X
 3) TESTING!!!!
-    -SpeciesBulk
-    -Geometry
+    -SpeciesBulk                                                                X
+    -Geometry                                                                   X
     -FilamentElement / Cylinders
     -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)

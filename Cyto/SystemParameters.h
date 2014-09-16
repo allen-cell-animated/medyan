@@ -69,7 +69,7 @@ struct BoundaryParameters {
 class SystemParameters {
 friend class SystemParser;
     
-#ifndef TESTING ///Public access if testing only
+#ifdef TESTING ///Public access if testing only
 public:
 #endif
     static MechanicsParameters MParams; ///< mechanical parameters

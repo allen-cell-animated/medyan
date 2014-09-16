@@ -351,8 +351,8 @@ public:
         auto nit = std::find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
-        else
-            throw std::out_of_range("Compartment::removeNeighbour(): Compartment is not a neighbour");
+        //else
+            //throw std::out_of_range("Compartment::removeNeighbour(): Compartment is not a neighbour");
     }
     
     /// Clone the species values of another compartment into this one

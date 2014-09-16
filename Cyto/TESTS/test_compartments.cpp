@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_COMPARTMENT_TEST
+#define DO_THIS_COMPARTMENT_TEST
 
 #ifdef DO_THIS_COMPARTMENT_TEST
 #define TESTING
@@ -81,11 +81,23 @@ TEST(CompartmentTest, SpeciesAndReactions){
 //Testing neighbors, species and reaciton generation
 TEST(CompartmentContainerTest, Main) {
     
-    int _numSpecies; ///for testing
-    int NUM_SPECIES_EXPECTED;
     
-    GController g;
-    g.initializeGrid();
+    SystemParameters::GParams.compartmentSizeX = 100.0;
+    SystemParameters::GParams.compartmentSizeY = 100.0;
+    SystemParameters::GParams.compartmentSizeZ = 100.0;
+    
+    SystemParameters::GParams.NX = 50;
+    SystemParameters::GParams.NY = 50;
+    SystemParameters::GParams.NZ = 50;
+    
+    SystemParameters::GParams.monomerSize = 2.7;
+    SystemParameters::GParams.cylinderSize = 27.0;
+    
+    SystemParameters::GParams.nDim = 3;
+    
+    int _numSpecies; ///for testing
+
+    GController::initializeGrid();
     
     Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
     
@@ -116,19 +128,13 @@ TEST(CompartmentContainerTest, Main) {
     
     _numSpecies = CompartmentGrid::Instance(CompartmentGridKey())->countSpecies();
     
-    NUM_SPECIES_EXPECTED = 2;
-    for (auto &x : GRID) NUM_SPECIES_EXPECTED *= x;
-    
-    
-    EXPECT_EQ(_numSpecies, NUM_SPECIES_EXPECTED);
-    
-    Compartment *C1 = GController::getCompartment(10U,10U,10U);
+    Compartment *C1 = GController::getCompartment(std::vector<size_t>{10U,10U,10U});
     
     EXPECT_EQ(6, C1->numberOfNeighbours());
     EXPECT_EQ(2, C1->numberOfSpecies());
     EXPECT_EQ(14, C1->numberOfReactions());
     
-    Compartment*C2 = GController::getCompartment(10U,11U,10U);
+    Compartment*C2 = GController::getCompartment(std::vector<size_t>{10U,11U,10U});
     C1->removeNeighbour(C2);
     
     EXPECT_EQ(5, C1->numberOfNeighbours());
