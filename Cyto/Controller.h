@@ -60,13 +60,11 @@ public:
         
 #ifdef MECHANICS
         ///read algorithm and types
-        MTypes = p.readMechanicsFFType();
-        BTypes = p.readBoundaryType();
+        MTypes = p.readMechanicsFFType(); BTypes = p.readBoundaryType();
         MAlgorithm = p.readMechanicsAlgorithm();
 
         ///read const parameters
-        p.readMechanicsParameters();
-        p.readBoundaryParameters();
+        p.readMechanicsParameters(); p.readBoundaryParameters();
 #endif
 #ifdef CHEMISTRY
         ///read algorithm
