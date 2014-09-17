@@ -13,7 +13,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
     cout<<"Forces before minimization:" <<endl;
 	PrintForces();
-    const double EPS = 1e-4;
+    const double EPS = 1e-10;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curVal = FFM.ComputeEnergy(0.0);
@@ -48,8 +48,10 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		newGradSquare = GradSquare(1);
 		
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
-		else
-			beta = max(0.0, (newGradSquare - GradDotProduct()/ gradSquare));
+		else {
+            if(gradSquare == 0) beta = 0;
+			else beta = max(0.0, (newGradSquare - GradDotProduct()/ gradSquare));
+        }
 		ShiftGradient(beta);
         
 		prevVal = curVal;

@@ -3,14 +3,14 @@
 ################### MECHANICS ####################
 
 ### ALGORITHM ###
-CONJUGATEGRADIENT:           POLAKRIBIERE
+CONJUGATEGRADIENT:           FLETCHERRIEVES
 MD:
 
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                3.0
-FSTRETCHINGL:                28.0
+FSTRETCHINGK:                1.0
+FSTRETCHINGL:                27.5
 
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
@@ -81,7 +81,7 @@ CYLINDERSIZE:                27.0
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    1000
+NUMSTEPS:                    100
 NUMSTEPSPERM:                10
 
 ##################################################

@@ -69,7 +69,7 @@ private:
     
     void initializeMinAlgorithms (MechanicsAlgorithm Minimizers)
     {
-        if (Minimizers.ConjugateGradient == "FLETCHERRIVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
+        if (Minimizers.ConjugateGradient == "FLETCHERRIEVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
         else if (Minimizers.ConjugateGradient == "POLAKRIBIERE") {_minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>() );}
         else {
             std::cout << "Conjugate gradient method not yet implemented. Exiting" << std::endl;
@@ -90,6 +90,9 @@ public:
     
     ///Run minimization on the system using the chosen algorithm
     void run() {
+        
+       
+        
         
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
         
