@@ -104,7 +104,7 @@ public:
     ///Add a filament reaction to this CCylinder
     virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
     ///Get list of reactions associated with this CCylinder
-    virtual std::vector<ReactionBase*>& getReactions() {return _reactions;}
+    std::vector<ReactionBase*>& getReactions() {return _reactions;}
     
     ///Add all reactions associated with this CCylinder
     virtual void addChemSimReactions()

@@ -16,7 +16,6 @@ using namespace mathfunc;
 
 Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& direction){
    
-    
     _pSubSystem = ps;
  
     ///Create cylinders, beads
@@ -62,8 +61,11 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
 void Filament::PolymerizeFront(vector<double>& coordinates) {
     
     Bead* b = BeadDB::Instance(BeadDBKey())->CreateBead(coordinates);
-    
-    auto midpoint = MidPointCoordinate(_pLastCylinder->getMCylinder()->GetFirstBead()->coordinate, coordinates, 0.5);
+
+    auto tau = TwoPointDirection( _pLastCylinder->getMCylinder()->GetFirstBead()->coordinate, coordinates);
+    auto npp = NextPointProjection(coordinates, SystemParameters::Geometry().cylinderSize, tau);
+    auto midpoint = MidPointCoordinate(coordinates, npp, 0.5);
+
     Compartment* c;
     try {c = GController::getCompartment(midpoint);}
     catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
@@ -100,11 +102,8 @@ void Filament::PolymerizeFront() {
     if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else{
-        
-        auto tau = TwoPointDirection(
-        _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetFirstBead()->coordinate,
-        _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate);
-        
+        auto tau = TwoPointDirection( _pCylinderVector[_pCylinderVector.size() - 1]->getMCylinder()->GetFirstBead()->coordinate,
+                                      _pCylinderVector[_pCylinderVector.size() - 1]->getMCylinder()->GetSecondBead()->coordinate);
         auto npp1 = NextPointProjection(
                     _pCylinderVector[_pCylinderVector.size()-1]->getMCylinder()->GetSecondBead()->coordinate,
                     SystemParameters::Geometry().cylinderSize, tau);
@@ -114,6 +113,7 @@ void Filament::PolymerizeFront() {
         auto npp2 = NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau);
         auto midpoint = MidPointCoordinate(b->coordinate, npp2, 0.5);
         Compartment* c;
+        
         try {c = GController::getCompartment(midpoint);}
         catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         

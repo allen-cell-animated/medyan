@@ -22,7 +22,7 @@ TODO                                                                        COMP
 3) TESTING!!!!
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
-    -FilamentElement / Cylinders
+    -FilamentElement / Cylinders (definitely moving)
     -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)
     -Mechanics (filament stretching, bending, etc)
