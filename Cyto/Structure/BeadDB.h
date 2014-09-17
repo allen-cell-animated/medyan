@@ -58,7 +58,7 @@ public:
         return b ;}
     
     /// Create bead with a given coordinate on a given filament:
-    Bead* CreateBead(std::vector<double> v) {
+    Bead* CreateBead(std::vector<double>& v) {
         
         Bead* b = new Bead(v);
         

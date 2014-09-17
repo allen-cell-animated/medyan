@@ -22,7 +22,7 @@ private:
     std::vector<std::unique_ptr<LinkerInteractions>> _linkerInteractionVector;
     
 public:
-    LinkerFF(std::string Stretching, std::string Bending, std::string Twisting );
+    LinkerFF(std::string& Stretching, std::string& Bending, std::string& Twisting );
     
     // Public interfaces to compute forces:
     virtual double ComputeEnergy(double d);

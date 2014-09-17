@@ -25,7 +25,7 @@ private:
     std::vector<std::unique_ptr<FilamentInteractions>> _filamentInteractionVector;
     
 public:
-    FilamentFF(std::string Stretching, std::string Bending, std::string Twisting );
+    FilamentFF(std::string& Stretching, std::string& Bending, std::string& Twisting );
     
    // Public interfaecs to compute forces:
     virtual double ComputeEnergy(double d);

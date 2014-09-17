@@ -17,7 +17,6 @@ class LinkerInteractions {
 private:
     std::string _name;
     
-    
 public:
     virtual double ComputeEnergy( Linker*,  double d) = 0;
     virtual void ComputeForces(Linker*) = 0;
@@ -25,7 +24,7 @@ public:
     
     // std::string getName() {return _name;}
     
-    std::string getName() {return _name;}
+    const std::string& getName() {return _name;}
     
 };
 
