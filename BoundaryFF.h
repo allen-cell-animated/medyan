@@ -13,6 +13,8 @@
 #include <vector>
 #include "ForceField.h"
 #include "BoundaryRepulsion.h"
+#include "BoundaryRepulsionLJ.h"
+#include "BoundaryElementDB.h"
 #include <stdlib.h>
 
 class BoundaryFF : public ForceField {
@@ -21,7 +23,7 @@ private:
     std::vector<std::unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector;
     
 public:
-    BoundaryFF(std::string Interacion1, std::string Interacion2, std::string Interacion3 );
+    BoundaryFF( std::string Interacion1, std::string Interacion2, std::string Interacion3 );
     
     // Public interfaecs to compute forces:
     virtual double ComputeEnergy(double d);

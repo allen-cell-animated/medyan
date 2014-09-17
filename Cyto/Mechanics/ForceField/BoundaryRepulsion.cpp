@@ -14,24 +14,15 @@ double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(Boundar
 {
     double U = 0.0;
     
+    for (auto pbe-> )
+    
     if (d == 0.0){
-        for(auto it : pbe->getCylinderVector()){
-            
-            Bead* pb1 = it->getMCylinder()->GetFirstBead();
-            Bead* pb2 = it->getMCylinder()->GetSecondBead();
-            double kStr = it->getMCylinder()->GetStretchingConst();
-            double L = it->getMCylinder()->GetEqLength();
-            U += _FFType.Energy(pb1, pb2, kStr, L);
-        }
+                }
+    
+
     }
     else {
-        for(auto it : pf->getCylinderVector()){
-            Bead* pb1 = it->getMCylinder()->GetFirstBead();
-            Bead* pb2 = it->getMCylinder()->GetSecondBead();
-            double kStr =it->getMCylinder()->GetStretchingConst();
-            double L = it->getMCylinder()->GetEqLength();
-            
-            U += _FFType.Energy(pb1, pb2, kStr, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+        
         }
     }
     return U;
