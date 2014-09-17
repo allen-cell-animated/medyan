@@ -98,6 +98,7 @@ public:
             b->updateBoundaryElements();
         }
         
+#ifdef CHEMISTRY
         ///Update cylinder positions (ALSO VERY INEFFICIENT)
         for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
             
@@ -118,7 +119,7 @@ public:
                 }
             }
         }
-
+#endif
     }
     
 };

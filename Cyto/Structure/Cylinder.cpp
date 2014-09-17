@@ -11,11 +11,14 @@
 Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack) {
     
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead));
+    _mCylinder->setCylinder(this);
+    
+#ifdef CHEMISTRY
     _cCylinder = std::unique_ptr<CCylinder>(
         ChemInitializer::createCCylinder(ChemInitializerCylinderKey() , pf, c, extensionFront, extensionBack));
-    
-    _mCylinder->setCylinder(this);
     _cCylinder->setCylinder(this);
+#endif
+
     setFilament(pf);
 }
 

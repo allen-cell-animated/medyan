@@ -27,9 +27,6 @@ private:
 
     MController _mController; ///< Chemical Controller
     CController _cController; ///< Mechanical Controller
-
-    bool _mechanics; ///< are we running mechanics?
-    bool _chemistry; ///< are we running chemistry?
     
     int _numSteps; ///< number of chemical steps we are running
     int _numStepsPerMech; ///<number of chemical steps before mechanical equilibration
@@ -45,30 +42,38 @@ public:
         ///Parse input, get parameters
         SystemParser p(inputFile);
 
-        _mechanics = p.mechanics();
-        _chemistry = p.chemistry();
-
+        ///Set macros for chemistry / mechanics
+        bool mechanics = p.mechanics();
+        bool chemistry = p.chemistry();
+#if mechanics
+    #define MECHANICS
+#endif
+#if chemistry
+    #define CHEMISTRY
+#endif
+        mechanics = false;
+        chemistry = false;
+        
         ///Parameters for input
         ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
         MechanicsFFType MTypes; BoundaryType BTypes;
+        
+#ifdef MECHANICS
+        ///read algorithm and types
+        MTypes = p.readMechanicsFFType();
+        BTypes = p.readBoundaryType();
+        MAlgorithm = p.readMechanicsAlgorithm();
 
-        ///read if activated
-        if(_mechanics) {
-            ///read algorithm and types
-            MTypes = p.readMechanicsFFType();
-            BTypes = p.readBoundaryType();
-            MAlgorithm = p.readMechanicsAlgorithm();
-
-            ///read const parameters
-            p.readMechanicsParameters();
-            p.readBoundaryParameters();
-        }
-        if(_chemistry) {
-            ///read algorithm
-            CAlgorithm = p.readChemistryAlgorithm();
-            _numSteps = CAlgorithm.numSteps;
-            _numStepsPerMech = CAlgorithm.numStepsPerMech;
-        }
+        ///read const parameters
+        p.readMechanicsParameters();
+        p.readBoundaryParameters();
+#endif
+#ifdef CHEMISTRY
+        ///read algorithm
+        CAlgorithm = p.readChemistryAlgorithm();
+        _numSteps = CAlgorithm.numSteps;
+        _numStepsPerMech = CAlgorithm.numStepsPerMech;
+#endif
         ///Always read geometry
         p.readGeometryParameters();
 
@@ -79,32 +84,30 @@ public:
         std::cout << "Done." << std::endl;
 
         ///Initialize chemical controller
-        if(_chemistry) {
-            std::cout << "Initializing chemistry...";
+#ifdef CHEMISTRY
+        std::cout << "Initializing chemistry...";
             _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
             ChemSim::printReactions();
             std::cout << "Done." <<std::endl;
-        }
-        
+#endif
+#ifdef MECHANICS
         ///Initialize Mechanical controller
-        if(_mechanics) {
-            
-            std::cout << "Initializing mechanics...";
-            ///Initialize mcontroller
-            _mController.initialize(MTypes, MAlgorithm);
-            std::cout << "Done." <<std::endl;
+        std::cout << "Initializing mechanics...";
+        ///Initialize mcontroller
+        _mController.initialize(MTypes, MAlgorithm);
+        std::cout << "Done." <<std::endl;
 
-            std::cout << "Initializing boundary...";
-            ///Initialize boundary
-            if(BTypes.boundaryShape == "CUBIC") {
-                //_subSystem->AddBoundary(new BoundaryCubic());
-            }
-            else{
-                std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
-                exit(EXIT_FAILURE);
-            }
-            std::cout << "Done." <<std::endl;
+        std::cout << "Initializing boundary...";
+        ///Initialize boundary
+        if(BTypes.boundaryShape == "CUBIC") {
+            //_subSystem->AddBoundary(new BoundaryCubic());
         }
+        else{
+            std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
+            exit(EXIT_FAILURE);
+        }
+        std::cout << "Done." <<std::endl;
+#endif
 
         ///Read filament setup, parse filament input file if needed
         FilamentSetup FSetup = p.readFilamentSetup();
@@ -126,16 +129,22 @@ public:
 
     void run() {
         
+        ///Set up filament output file
         Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-        
+
+#if defined(MECHANICS) && defined(CHEMISTRY)
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
-            if(_chemistry)
-                _cController.run(_numStepsPerMech);
-            if(_mechanics)
-                _mController.run();
-            
-            o.printFilaments();
+            _cController.run(_numStepsPerMech);
+#elif defined(CHEMISTRY)
+        _cController.run(_numSteps);
+#elif defined(MECHANICS)
+        _mController.run();
+#endif
+        ///Filament output
+        o.printFilaments();
+#if defined(MECHANICS) && defined(CHEMISTRY)
         }
+#endif
         std::cout << "Done with simulation!" << std::endl;
     }
     

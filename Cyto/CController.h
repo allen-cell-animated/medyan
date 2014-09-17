@@ -43,7 +43,7 @@ public:
     ///       could be: NRM, Gillespie, SimpleGillespie.
     ///@param chemInitializer - a string defining the chemical initializer used
     ///       could be: Simple.
-    void initialize(std::string chemAlgorithm, std::string chemInitializer) {
+    void initialize(std::string& chemAlgorithm, std::string& chemInitializer) {
         
         ///Set instance of chemsim algorithm
         ChemSimImpl* csi;
