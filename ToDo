@@ -20,9 +20,10 @@ TODO                                                                        COMP
     -Depolymerizing front / back?
     -Callback transfer when copying reactions                                   X
 3) TESTING!!!!
+    -Reaction cloning                                                           
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
-    -FilamentElement / Cylinders (definitely moving)
+    -FilamentElement / Cylinders (structure, cloning, etc)
     -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)
     -Mechanics (filament stretching, bending, etc)

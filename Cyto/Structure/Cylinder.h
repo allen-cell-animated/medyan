@@ -46,6 +46,7 @@ public:
     ///get cCylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
     ///set cCylinder
+    ///@note: since this is a unique ptr, will implicitly delete old CCylinder
     void setCCylinder(CCylinder* c) {_cCylinder = std::unique_ptr<CCylinder>(c);}
     
     ///get parent filament

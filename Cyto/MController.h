@@ -105,17 +105,14 @@ public:
                 std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
                                                                             Cyl->getMCylinder()->GetSecondBead()->coordinate,
                                                                             0.5);
-                std::cout << midpoint[0] << " " << midpoint[1] << " " << midpoint[2] <<std::endl;
-                
-                Compartment* newC;
-                try {newC = GController::getCompartment(midpoint);}
+                Compartment* c;
+                try {c = GController::getCompartment(midpoint);}
                 catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
                 
                 CCylinder* cCyl = Cyl->getCCylinder();
-                if(newC != cCyl->getCompartment()) {
-                    CCylinder* clone = cCyl->clone(newC);
+                if(c != cCyl->getCompartment()) {
+                    CCylinder* clone = cCyl->clone(c);
                     Cyl->setCCylinder(clone);
-                    delete cCyl;
                 }
             }
         }
