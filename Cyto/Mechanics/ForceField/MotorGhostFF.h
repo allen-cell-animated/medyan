@@ -22,7 +22,7 @@ private:
     std::vector <std::unique_ptr<MotorGhostInteractions>> _motorGhostInteractionVector;
     
 public:
-    MotorGhostFF(std::string Stretching, std::string Bending, std::string Twisting );
+    MotorGhostFF(std::string& Stretching, std::string& Bending, std::string& Twisting );
     
     // Public interfaecs to compute forces:
     virtual double ComputeEnergy(double d);

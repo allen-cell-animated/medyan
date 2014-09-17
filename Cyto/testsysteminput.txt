@@ -1,21 +1,20 @@
 
 ##################################################
 ################### MECHANICS ####################
-MECHANICS:                   ON
 
 ### ALGORITHM ###
-CONJUGATEGRADIENT:           POLAKRIBIERE
+CONJUGATEGRADIENT:           FLETCHERRIEVES
 MD:
 
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                3.0
-FSTRETCHINGL:                28.0
+FSTRETCHINGK:                1.0
+FSTRETCHINGL:                27.5
 
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
-FBENDINGTHETA:               150.00
+FBENDINGTHETA:               180.00
 
 FTWISTINGTYPE:
 FTWISTINGK:
@@ -58,7 +57,7 @@ VOLUMEK:
 
 BOUNDARYTYPE:                WALL
 BOUNDARYSHAPE:               CUBIC
-BCUTOFF:          10.0
+BCUTOFF:                     10.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -80,12 +79,10 @@ CYLINDERSIZE:                27.0
 ##################################################
 ################### CHEMISTRY ####################
 
-CHEMISTRY:                   ON
-
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    20
-NUMSTEPSPERM:                5
+NUMSTEPS:                    100
+NUMSTEPSPERM:                10
 
 ##################################################
 ################### FILAMENTS ####################

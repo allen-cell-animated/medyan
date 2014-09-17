@@ -9,7 +9,7 @@
 #include "MotorGhostFF.h"
 
 
-MotorGhostFF::MotorGhostFF (std::string Stretching, std::string Bending, std::string Twisting)
+MotorGhostFF::MotorGhostFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
 {
     if (Stretching == "HARMONIC") {_motorGhostInteractionVector.emplace_back(new MotorGhostStretching<MotorGhostStretchingHarmonic>());}
 //    if (Bending == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostBending<MotorGhostBendingHarmonic>());}

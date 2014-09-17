@@ -18,6 +18,7 @@
 class BeadDBKey {friend class Cylinder;
                  friend class Filament;
                  friend class CGMethod;
+                 friend class ForceFieldManager;
                  friend class MController;
                  BeadDBKey() {};
                  public: ~BeadDBKey() {}; };
@@ -58,7 +59,7 @@ public:
         return b ;}
     
     /// Create bead with a given coordinate on a given filament:
-    Bead* CreateBead(std::vector<double> v) {
+    Bead* CreateBead(std::vector<double>& v) {
         
         Bead* b = new Bead(v);
         

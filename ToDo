@@ -20,11 +20,15 @@ TODO                                                                        COMP
     -Depolymerizing front / back?
     -Callback transfer when copying reactions                                   X
 3) TESTING!!!!
+    -Reaction cloning
+    -Boundary elements/surfaces                                                           
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
-    -FilamentElement / Cylinders
+    -FilamentElement / Cylinders (structure, cloning, etc)
     -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)
+    -All databases
+    -Mechanics (filament stretching, bending, etc)
 4) Simple use cases
     -Polymer melt
     -Basic actin network?
@@ -33,6 +37,6 @@ Logistical things:
 -Change name of code / project?
 
 WISH LIST
--Preprocessor macros set at command line?
+-Preprocessor macros set at command input file?                                 X
 
 --------

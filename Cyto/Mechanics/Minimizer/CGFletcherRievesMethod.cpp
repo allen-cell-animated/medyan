@@ -33,8 +33,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
 
-        lambda =0.01;
-        //GoldenSection(pf);
+        lambda = GoldenSection(FFM);
         cout<<"lambda= "<<lambda<<endl;
 		PrintForces();
         MoveBeads(lambda);
@@ -46,8 +45,10 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		newGradSquare = GradSquare(1);
 		
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
-		else
-			beta = newGradSquare / gradSquare;
+		else {
+            if(gradSquare == 0) beta = 0;
+            else beta = newGradSquare / gradSquare;
+        }
 		ShiftGradient(beta);
         
 		prevVal = curVal;

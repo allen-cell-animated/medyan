@@ -8,7 +8,7 @@
 
 #include "FilamentFF.h"
 
-FilamentFF::FilamentFF (std::string Stretching, std::string Bending, std::string Twisting)
+FilamentFF::FilamentFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
 {
     if (Stretching == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentStretching<FilamentStretchingHarmonic>());}
     if (Bending == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingHarmonic>());}

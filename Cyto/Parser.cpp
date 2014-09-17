@@ -7,54 +7,54 @@
 //
 
 #include "Parser.h"
-
-bool SystemParser::mechanics() {
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    std::string line;
-    while(getline(_inputFile, line)) {
-        
-        if (line.find("MECHANICS:") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() != 2) {
-                std::cout << "Need to specify Mechanics ON/OFF. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                if(lineVector[1] == "ON") return true;
-            }
-        }
-    }
-    ///default is false
-    return false;
-}
-
-bool SystemParser::chemistry() {
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    std::string line;
-    while(getline(_inputFile, line)) {
-        
-        if (line.find("CHEMISTRY:") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() != 2) {
-                std::cout << "Need to specify Chemistry ON/OFF. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                if(lineVector[1] == "ON") return true;
-            }
-        }
-    }
-    ///default is false
-    return false;
-}
+//
+//bool SystemParser::mechanics() {
+//    
+//    _inputFile.clear();
+//    _inputFile.seekg(0);
+//    
+//    std::string line;
+//    while(getline(_inputFile, line)) {
+//        
+//        if (line.find("MECHANICS:") != std::string::npos) {
+//            
+//            std::vector<std::string> lineVector = split<std::string>(line);
+//            if(lineVector.size() != 2) {
+//                std::cout << "Need to specify Mechanics ON/OFF. Exiting" << std::endl;
+//                exit(EXIT_FAILURE);
+//            }
+//            else if (lineVector.size() == 2) {
+//                if(lineVector[1] == "ON") return true;
+//            }
+//        }
+//    }
+//    ///default is false
+//    return false;
+//}
+//
+//bool SystemParser::chemistry() {
+//    
+//    _inputFile.clear();
+//    _inputFile.seekg(0);
+//    
+//    std::string line;
+//    while(getline(_inputFile, line)) {
+//        
+//        if (line.find("CHEMISTRY:") != std::string::npos) {
+//            
+//            std::vector<std::string> lineVector = split<std::string>(line);
+//            if(lineVector.size() != 2) {
+//                std::cout << "Need to specify Chemistry ON/OFF. Exiting" << std::endl;
+//                exit(EXIT_FAILURE);
+//            }
+//            else if (lineVector.size() == 2) {
+//                if(lineVector[1] == "ON") return true;
+//            }
+//        }
+//    }
+//    ///default is false
+//    return false;
+//}
 
 ///CHEMISTRY PARSER
 ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {

@@ -69,7 +69,7 @@ private:
     
     void initializeMinAlgorithms (MechanicsAlgorithm Minimizers)
     {
-        if (Minimizers.ConjugateGradient == "FLETCHERRIVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
+        if (Minimizers.ConjugateGradient == "FLETCHERRIEVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
         else if (Minimizers.ConjugateGradient == "POLAKRIBIERE") {_minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>() );}
         else {
             std::cout << "Conjugate gradient method not yet implemented. Exiting" << std::endl;
@@ -91,13 +91,15 @@ public:
     ///Run minimization on the system using the chosen algorithm
     void run() {
         
+       
+        
+        
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
         
         ///Update bead-boundary interactions (VERY INEFFICIENT)
-        for(auto b : *BeadDB::Instance(BeadDBKey())) {
-            b->updateBoundaryElements();
-        }
+        for(auto b : *BeadDB::Instance(BeadDBKey())) b->updateBoundaryElements();
         
+#ifdef CHEMISTRY
         ///Update cylinder positions (ALSO VERY INEFFICIENT)
         for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
             
@@ -106,19 +108,18 @@ public:
                 std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
                                                                             Cyl->getMCylinder()->GetSecondBead()->coordinate,
                                                                             0.5);
-                Compartment* newC;
-                try {newC = GController::getCompartment(midpoint);}
+                Compartment* c;
+                try {c = GController::getCompartment(midpoint);}
                 catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
                 
                 CCylinder* cCyl = Cyl->getCCylinder();
-                if(newC != cCyl->getCompartment()) {
-                    CCylinder* clone = cCyl->clone(newC);
+                if(c != cCyl->getCompartment()) {
+                    CCylinder* clone = cCyl->clone(c);
                     Cyl->setCCylinder(clone);
-                    delete cCyl;
                 }
             }
         }
-
+#endif
     }
     
 };

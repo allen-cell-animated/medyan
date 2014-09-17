@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include "ForceField.h"
+#include "BeadDB.h"
 
 ///ForceFieldManager is a class to store and iterate over all forcefields.
 /*!
@@ -44,7 +45,7 @@ public:
     
     ///Compute the forcesAux of all force fields
     void ComputeForcesAux() {
-        ResetForces();
+        ResetForcesAux();
         
         for(auto &f : _forceFields)
             f->ComputeForcesAux();
@@ -53,13 +54,17 @@ public:
     ///Reset the forces of all objects
     void ResetForces() {
         
-        ///implement this
+        for(auto it: *BeadDB::Instance(BeadDBKey())) {
+            it->force.assign (3, 0); //Set force to zero;
+        }
     }
     
     ///Reset the forcesAux of all objects
     void ResetForcesAux() {
         
-        ///implement this
+        for(auto it: *BeadDB::Instance(BeadDBKey())) {
+            it->forceAux.assign (3, 0); //Set forceAux to zero;
+        }
     }
     
     

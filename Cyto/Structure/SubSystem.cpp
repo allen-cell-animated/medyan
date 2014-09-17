@@ -11,14 +11,14 @@
 using namespace std;
 
 // Interfaces for creation of a Filament (vector with coordinates of beginning and end for the filament)
-void SubSystem::AddNewFilaments(vector<vector<vector<double> > >& v){
+void SubSystem::AddNewFilaments(vector<vector<vector<double> >>& v){
     
     for (auto it: v) FilamentDB::Instance(FilamentDBKey())->CreateFilament(this, it);
     //Call FilamentDB constructor
 }
 
 /// Add many linkers:
-void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* > > &v, double stretchConst){
+void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* >>& v, double stretchConst){
     
     for (auto it: v) LinkerDB::Instance(LinkerDBKey())->CreateLinker(it[0], it[1], stretchConst);
     //Call Linkers constructor
@@ -31,7 +31,7 @@ void SubSystem::AddNewLinker(Cylinder* pc1, Cylinder* pc2, double stretchConst){
 }
 
 /// Add many motor ghosts:
-void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* > >& v, double k, double position1, double position2){
+void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* >>& v, double k, double position1, double position2){
     
     for (auto it: v)
         MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(it[0], it[1], k, position1, position2);

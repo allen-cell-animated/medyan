@@ -8,7 +8,7 @@
 
 #include "LinkerFF.h"
 
-LinkerFF::LinkerFF (std::string Stretching, std::string Bending, std::string Twisting)
+LinkerFF::LinkerFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
 {
     if (Stretching == "HARMONIC") {_linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());}
     //if (Bending == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerBending<FilamentBendingHarmonic>());}

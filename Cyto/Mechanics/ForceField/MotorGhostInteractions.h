@@ -23,7 +23,7 @@ public:
     virtual void ComputeForcesAux(MotorGhost*) = 0;
     
     // std::string getName() {return _name;}
-    std::string getName() {return _name;}
+    const std::string& getName() {return _name;}
 };
 
 #endif /* defined(__Cyto__MotorGhostInteractions__) */

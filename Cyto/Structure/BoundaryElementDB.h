@@ -49,7 +49,7 @@ public:
 //    }
     
     /// create a new plane boundary element
-    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal) {
+    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double>& coords, std::vector<double>& normal) {
         
         BoundaryElement* b = new PlaneBoundaryElement(coords, normal);
         push_back(b);

@@ -92,8 +92,13 @@ public:
     ///return coordinates of boundary element
     const std::vector<double>& coords() {return _coords;}
     
+    ///return vector of beads
+    const std::vector<Bead*>& beads() {return _beads;}
+    
     ///Calculate the distance away from this boundary element
     virtual double distance(const std::vector<double>& point) {return 0.0;}
+    
+    
  
 };
 

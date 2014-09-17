@@ -23,7 +23,7 @@ public:
     virtual void ComputeForcesAux(Filament*) = 0;
     
    // std::string getName() {return _name;}
-    std::string getName() {return _name;}
+    const std::string& getName() {return _name;}
     
 };
 
