@@ -9,6 +9,11 @@
 #ifndef CytoSim_Experimenting_common_h
 #define CytoSim_Experimenting_common_h
 
+///Will eventually be command line macros
+#define MECHANICS
+#define CHEMISTRY
+
+///Other chemistry macros
 #define TRACK_DEPENDENTS
 #define TRACK_ZERO_COPY_N
 #define TRACK_UPPER_COPY_N

@@ -74,9 +74,6 @@ public:
         for(auto &b : _bounds)
             for(auto &s : b->species())
                 _compartment->removeSpecies(s);
-        
-        _monomers.clear();
-        _bounds.clear();
     }
     
     ///Clone, calls copy constructor

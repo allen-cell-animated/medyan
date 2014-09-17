@@ -94,9 +94,7 @@ public:
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
         
         ///Update bead-boundary interactions (VERY INEFFICIENT)
-        for(auto b : *BeadDB::Instance(BeadDBKey())) {
-            b->updateBoundaryElements();
-        }
+        for(auto b : *BeadDB::Instance(BeadDBKey())) b->updateBoundaryElements();
         
 #ifdef CHEMISTRY
         ///Update cylinder positions (ALSO VERY INEFFICIENT)

@@ -41,18 +41,6 @@ public:
     
         ///Parse input, get parameters
         SystemParser p(inputFile);
-
-        ///Set macros for chemistry / mechanics
-        bool mechanics = p.mechanics();
-        bool chemistry = p.chemistry();
-#if mechanics
-    #define MECHANICS
-#endif
-#if chemistry
-    #define CHEMISTRY
-#endif
-        mechanics = false;
-        chemistry = false;
         
         ///Parameters for input
         ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
@@ -66,12 +54,6 @@ public:
         ///read const parameters
         p.readMechanicsParameters(); p.readBoundaryParameters();
 #endif
-#ifdef CHEMISTRY
-        ///read algorithm
-        CAlgorithm = p.readChemistryAlgorithm();
-        _numSteps = CAlgorithm.numSteps;
-        _numStepsPerMech = CAlgorithm.numStepsPerMech;
-#endif
         ///Always read geometry
         p.readGeometryParameters();
 
@@ -84,9 +66,16 @@ public:
         ///Initialize chemical controller
 #ifdef CHEMISTRY
         std::cout << "Initializing chemistry...";
-            _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
-            ChemSim::printReactions();
-            std::cout << "Done." <<std::endl;
+        
+        ///read algorithm
+        CAlgorithm = p.readChemistryAlgorithm();
+        _numSteps = CAlgorithm.numSteps;
+        _numStepsPerMech = CAlgorithm.numStepsPerMech;
+        
+        
+        _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
+        ChemSim::printReactions();
+        std::cout << "Done." <<std::endl;
 #endif
 #ifdef MECHANICS
         ///Initialize Mechanical controller
@@ -135,7 +124,8 @@ public:
             _cController.run(_numStepsPerMech);
 #elif defined(CHEMISTRY)
         _cController.run(_numSteps);
-#elif defined(MECHANICS)
+#endif
+#if defined(MECHANICS)
         _mController.run();
 #endif
         ///Filament output
