@@ -11,7 +11,7 @@
 
 ///Will eventually be command line macros
 #define MECHANICS
-#define CHEMISTRY
+//#define CHEMISTRY
 
 ///Other chemistry macros
 #define TRACK_DEPENDENTS

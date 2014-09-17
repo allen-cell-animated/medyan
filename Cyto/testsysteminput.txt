@@ -10,7 +10,7 @@ MD:
 
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                3.0
-FSTRETCHINGL:                27.0
+FSTRETCHINGL:                28.0
 
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
