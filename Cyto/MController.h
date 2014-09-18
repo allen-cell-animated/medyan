@@ -9,6 +9,7 @@
 #ifndef __Cyto__MController__
 #define __Cyto__MController__
 
+#include "common.h"
 #include "SubSystem.h"
 #include "ForceFieldManager.h"
 #include "Minimizer.h"

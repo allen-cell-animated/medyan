@@ -7,10 +7,9 @@
 //
 
 #include <iostream>
+#include "common.h"
 #include "Composite.h"
 #include "Visitor.h"
-
-    
 
 bool Composite::apply (Visitor &v) {
     bool res_self = v.visit(this); //pre-order

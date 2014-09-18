@@ -9,6 +9,7 @@
 #ifndef CytoSim_utility_h
 #define CytoSim_utility_h
 
+#include "common.h"
 #include <memory>
 
 template<typename T, typename ...Args>

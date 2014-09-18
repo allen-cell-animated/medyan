@@ -27,6 +27,8 @@ public:
     
     ///distance to this plane
     virtual double distance(const std::vector<double>& point);
+    
+    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
 };
 
 class TriangleBoundaryElement : public BoundaryElement {

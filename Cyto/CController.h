@@ -10,6 +10,7 @@
 #define __Cyto__CController__
 
 #include <iostream>
+#include "common.h"
 #include "SubSystem.h"
 #include "ChemSim.h"
 #include "ChemInitializer.h"

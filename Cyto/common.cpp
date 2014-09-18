@@ -6,11 +6,6 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#include <iostream>
-#include <exception>
-#include <cstdint>
-#include <vector>
-#include <math.h>
-#include "MathFunctions.h"
+#include "common.h"
 
 double global_time;

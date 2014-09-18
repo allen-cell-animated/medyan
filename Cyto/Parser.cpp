@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
+#include "SystemParameters.h"
 #include "Parser.h"
 //
 //bool SystemParser::mechanics() {
