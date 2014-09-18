@@ -23,6 +23,9 @@ class FilamentDBKey {friend class SubSystem;
                     friend class FilamentFF;
                     friend class MController;
                     friend class Output;
+#ifdef TESTING
+                    public:
+#endif //TESTING
                     FilamentDBKey(){};
                     ~FilamentDBKey(){}; };
 

@@ -21,6 +21,9 @@ class BeadDBKey {friend class Filament;
                  friend class CGMethod;
                  friend class ForceFieldManager;
                  friend class MController;
+#ifdef TESTING
+                 public:
+#endif //TESTING
                  BeadDBKey() {};
                  public: ~BeadDBKey() {}; };
 

@@ -33,8 +33,7 @@ class ChemInitializerGridKey { friend class CController;
                                ChemInitializerGridKey(){}; ~ChemInitializerGridKey(){}; };
 
 ///Key for the creation and destruction of CCylinders
-class ChemInitializerCylinderKey { friend class Filament;
-                                   friend class Cylinder;
+class ChemInitializerCylinderKey {friend class Cylinder;
 #ifdef TESTING
                                    public:
 #endif //TESTING

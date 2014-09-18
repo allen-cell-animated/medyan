@@ -24,6 +24,8 @@
 
 #include "ConjugateGradient.h"
 
+#include "FilamentDB.h"
+
 #include <iostream>
 #include <vector>
 
@@ -105,10 +107,9 @@ public:
         
 #ifdef CHEMISTRY
         ///Update cylinder positions (ALSO VERY INEFFICIENT)
-        for(auto Cyl : *CylinderDB::Instance(CylinderDBKey())) {
+        for(auto &f : *FilamentDB::Instance(FilamentDBKey())) {
             
-            if(Cyl != Cyl->getFilament()->getLastCylinder()) {
-            
+            for(auto &Cyl : f->getCylinderVector()) {
                 std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
                                                                             Cyl->getMCylinder()->GetSecondBead()->coordinate,
                                                                             0.5);
