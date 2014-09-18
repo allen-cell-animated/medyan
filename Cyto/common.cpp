@@ -7,5 +7,10 @@
 //
 
 #include <iostream>
+#include <exception>
+#include <cstdint>
+#include <vector>
+#include <math.h>
+#include "MathFunctions.h"
 
 double global_time;

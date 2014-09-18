@@ -13,6 +13,9 @@
 #define MECHANICS
 #define CHEMISTRY
 
+///If compiling for testing
+#define TESTING
+
 ///Other chemistry macros
 #define TRACK_DEPENDENTS
 #define TRACK_ZERO_COPY_N
@@ -21,15 +24,6 @@
 #define REACTION_SIGNALING
 //#define BOOST_MEM_POOL
 //#define BOOL_POOL_NSIZE 65536
-
-#include <exception>
-#include <cstdint>
-#include <vector>
-#include <iostream>
-#include <math.h>
-#include "MathFunctions.h"
-#include "SystemParameters.h"
-
 
 ///species constants
 typedef unsigned short species_copy_t;

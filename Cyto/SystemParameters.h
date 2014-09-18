@@ -10,6 +10,7 @@
 #define __Cyto__SystemParameters__
 
 #include <iostream>
+#include "common.h"
 
 ///Struct to hold the read mechanics parameters
 struct MechanicsParameters {
