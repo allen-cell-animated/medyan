@@ -8,7 +8,7 @@
 
 #include "BoundaryElementImpl.h"
 
-PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal) : _normal(normal), BoundaryElement(coords) {
+PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst) : _normal(normal), BoundaryElement(coords), _k_rep(repulsConst) {
     
     ///set parameters
     _a = normal[0];
@@ -30,4 +30,9 @@ double PlaneBoundaryElement::stretchedDistance(const std::vector<double>& point,
     return (_a * (point[0] - d*force[0]) + _b * (point[1] - d*force[1]) * _c * (point[2] - d*force[2]) + _d) /
         sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
     
+}
+
+double PlaneBoundaryElement::getRepulsionconst(){
+    
+    return _k_rep;
 }
