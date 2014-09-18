@@ -10,6 +10,7 @@
 #define __Cyto__BoundaryRepulsion__
 
 #include <iostream>
+#include <vector>
 #include "BoundaryElement.h"
 #include "BoundaryInteractions.h"
 

@@ -14,52 +14,44 @@ double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(Boundar
 {
     double U = 0.0;
     
-    for (auto pbe-> )
-    
     if (d == 0.0){
-                }
-    
-
-    }
-    else {
         
+        for (auto pb: pbe->beads()){
+           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates));
         }
     }
+    
+
+    
+    else {
+        for (auto pb: pbe->beads()){
+            U+=_FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates), d);
+        }
+    }
+
     return U;
 }
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 {
-    for(auto it : pf->getCylinderVector()){
-        
-        Bead* pb1 = it->getMCylinder()->GetFirstBead();
-        Bead* pb2 = it->getMCylinder()->GetSecondBead();
-        
-        
-        
-        double kStr =it->getMCylinder()->GetStretchingConst();
-        double L = it->getMCylinder()->GetEqLength();
-        _FFType.Forces(pb1, pb2, kStr, L);
+    for (auto pb: pbe->beads()){
+        _FFType.ComputeForces(pb, pbe->distance(pb->coordinates), pbe->normal);
     }
 }
+
+
 
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
-    for(auto it : pf->getCylinderVector()){
-        
-        Bead* pb1 = it->getMCylinder()->GetFirstBead();
-        Bead* pb2 = it->getMCylinder()->GetSecondBead();
-        double kStr =it->getMCylinder()->GetStretchingConst();
-        double L = it->getMCylinder()->GetEqLength();
-        
-        _FFType.ForcesAux(pb1, pb2, kStr, L);
+    for (auto pb: pbe->beads()){
+        _FFType.ComputeForcesAuX(pb, pbe->distance(pb->coordinates), pbe->normal);
     }
 }
 
 ///Template specializations
-template double FilamentStretching<FilamentStretchingHarmonic>::ComputeEnergy(Filament* pf, double d);
-template void  FilamentStretching<FilamentStretchingHarmonic>::ComputeForces(Filament* pf);
-template void  FilamentStretching<FilamentStretchingHarmonic>::ComputeForcesAux(Filament* pf);
+template double BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeEnergy(BoundaryElement* pbe, double d);
+template void BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeForces(BoundaryElement* pbe);
+template void BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeForcesAux(BoundaryElement* pbe);
