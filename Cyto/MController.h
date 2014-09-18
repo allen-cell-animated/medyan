@@ -11,16 +11,19 @@
 
 #include "common.h"
 #include "SubSystem.h"
+#include "Parser.h"
+
 #include "ForceFieldManager.h"
 #include "Minimizer.h"
-#include "Parser.h"
+
 #include "ForceField.h"
 #include "FilamentFF.h"
 #include "LinkerFF.h"
+#include "BoundaryFF.h"
 #include "MotorGhostFF.h"
+
 #include "ConjugateGradient.h"
-#include "CylinderDB.h"
-#include "Filament.h"
+
 #include <iostream>
 #include <vector>
 
@@ -66,12 +69,13 @@ private:
         if(forceFields.MBendingType != "") std::cout << "Bending: " << forceFields.MBendingType<< std::endl;
         if(forceFields.MTwistingType != "") std::cout << "Twisting: " << forceFields.MTwistingType <<std::endl;
         
-        /// Add other FF's
+        _FFManager._forceFields.push_back(new BoundaryFF(forceFields.BoundaryFFType, "", "") );
+        std::cout << "Boundary force field initialized: " <<std::endl;
+        if(forceFields.BoundaryFFType != "") std::cout << "Boundary: " << forceFields.BoundaryFFType << std::endl;
         
     }
     
-    void initializeMinAlgorithms (MechanicsAlgorithm Minimizers)
-    {
+    void initializeMinAlgorithms (MechanicsAlgorithm Minimizers) {
         if (Minimizers.ConjugateGradient == "FLETCHERRIEVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
         else if (Minimizers.ConjugateGradient == "POLAKRIBIERE") {_minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>() );}
         else {
