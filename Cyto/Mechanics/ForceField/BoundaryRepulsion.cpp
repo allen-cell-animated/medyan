@@ -7,50 +7,45 @@
 //
 
 #include "BoundaryRepulsion.h"
-//#include "BoundaryRepulsionOneOverTwelve.h"
+#include "BoundaryRepulsionLJ.h"
+#include "BoundaryElement.h"
+#include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(BoundaryElement* pbe, double d)
-{
+double BoundaryRepulsion<BRepulsionInteractionType>::ComputeEnergy(BoundaryElement* pbe, double d) {
     double U = 0.0;
     double k_rep = pbe->getRepulsionConst();
     
     if (d == 0.0){
         
         for (auto pb: pbe->beads()){
-           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates), k_rep);
+           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinate), k_rep);
         }
     }
-    
-
-    
     else {
         for (auto pb: pbe->beads()){
             U+=_FFType.ComputeEnergy(pb, pbe->stretchedDistance(pb->coordinate, pb->force, d), k_rep);
         }
     }
-
     return U;
 }
 
-template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
-{
+template <class BRepulsionInteractionType>
+void BoundaryRepulsion<BRepulsionInteractionType>::ComputeForces(BoundaryElement* pbe) {
     double k_rep = pbe->getRepulsionConst();
     for (auto pb: pbe->beads()){
-        _FFType.ComputeForces(pb, pbe->distance(pb->coordinates), pbe->normal, k_rep);
+        auto normal = pbe->normal();
+        _FFType.ComputeForces(pb, pbe->distance(pb->coordinate), normal, k_rep);
     }
 }
 
 
-
-
-template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
-{
+template <class BRepulsionInteractionType>
+void BoundaryRepulsion<BRepulsionInteractionType>::ComputeForcesAux(BoundaryElement* pbe) { /// Needed for Conjugated Gradient minimization;
     double k_rep = pbe->getRepulsionConst();
     for (auto pb: pbe->beads()){
-        _FFType.ComputeForcesAuX(pb, pbe->distance(pb->coordinates), pbe->normal, k_rep);
+        auto normal = pbe->normal();
+        _FFType.ComputeForcesAux(pb, pbe->distance(pb->coordinate), normal, k_rep);
     }
 }
 

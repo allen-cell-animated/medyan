@@ -7,6 +7,7 @@
 //
 
 #include "CGPolakRibiereMethod.h"
+#include "ForceFieldManager.h"
 
 using namespace std;
 void PolakRibiere::Minimize(ForceFieldManager &FFM){

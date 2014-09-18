@@ -17,8 +17,7 @@
 class Linker;
 
 template <class LStretchingInteractionType>
-class LinkerStretching : public LinkerInteractions
-{
+class LinkerStretching : public LinkerInteractions {
     
 private:
     LStretchingInteractionType _FFType;

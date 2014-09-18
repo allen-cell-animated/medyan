@@ -21,19 +21,20 @@ class PlaneBoundaryElement : public BoundaryElement {
 private:
     ///Parameters of equation (ax + by + cz + d = 0)
     double _a, _b, _c, _d;
-    std::vector<double> _normal;
     double _k_rep;
 
 public:
     ///Constructor, sets parameters of equation
     PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst);
     
-    ///distance to this plane
+    ///Distance to this plane
     virtual double distance(const std::vector<double>& point);
     
+    ///Stretched distance to plane
     virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
     
-    virtual double getRepulsionconst();
+    ///get the repulsion constant for this plane
+    virtual double getRepulsionConst();
 };
 
 class TriangleBoundaryElement : public BoundaryElement {

@@ -41,18 +41,10 @@ public:
     /// get the instance of this singleton
     static BoundaryElementDB* Instance(BoundaryElementDBKey k);
     
-//    BoundaryElement* CreateTriangleBoundaryElement(std::vector<double> coords, float size) {
-//        
-//        //BoundaryElement* b = new TriangleBoundaryElement(coords, size);
-//        //push_back(b);
-//        //return b ;
-//        return nullptr;
-//    }
-    
     /// create a new plane boundary element
-    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double>& coords, std::vector<double>& normal) {
+    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double>& coords, std::vector<double>& normal, double repulsConst) {
         
-        BoundaryElement* b = new PlaneBoundaryElement(coords, normal);
+        BoundaryElement* b = new PlaneBoundaryElement(coords, normal, repulsConst);
         push_back(b);
         return b ;
     }

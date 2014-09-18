@@ -63,6 +63,7 @@ struct GeometryParameters {
 struct BoundaryParameters {
     
     double boundaryCutoff = 0;
+    double boundaryK = 0;
 };
 
 

@@ -13,8 +13,7 @@
 #include "Linker.h"
 
 template <class LStretchingInteractionType>
-double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d)
-{
+double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d) {
     Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();
@@ -33,8 +32,7 @@ double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, d
 }
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl)
-{
+void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl) {
     Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();
@@ -51,8 +49,8 @@ void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl)
 
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Linker* pl) /// Needed for Conjugated Gradient minimization;
-{
+void LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Linker* pl) { /// Needed for Conjugated Gradient minimization;
+
     Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();

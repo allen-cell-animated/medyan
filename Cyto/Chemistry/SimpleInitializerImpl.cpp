@@ -7,6 +7,7 @@
 //
 
 #include "SimpleInitializerImpl.h"
+#include "SystemParameters.h"
 #include "ChemCallbacks.h"
     
 ///Initialize the compartment grid
@@ -15,9 +16,6 @@ void SimpleInitializerImpl::initializeGrid() {
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
     ///Add bulk species
-    //cProto.setDiffusionRate(cProto.addSpecies("Actin", 10),_diffusion_rate);
-    
-    
     CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 1000U);
     
     ///initialize all compartments with species
@@ -29,13 +27,6 @@ void SimpleInitializerImpl::initializeGrid() {
     
     ///activate all compartments for diffusion
     CompartmentGrid::Instance(compartmentGridKey())->activateAll();
-    
-//    ///Generate all diffusion reactions
-//    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
-//    {
-//        Compartment *C = static_cast<Compartment*>(c.get());
-//        C->generateAllDiffusionReactions();
-//    }
     
     CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
 }

@@ -11,13 +11,16 @@
 
 #include <iostream>
 #include <vector>
-#include "Bead.h"
 
-class BoundaryRepulsionLJ{
+#include "common.h"
+
+class Bead;
+
+class BoundaryRepulsionLJ {
 
 public:
     double ComputeEnergy(Bead*, double, double);
-    void ComputeForces(Bead*, double, std::vector<double> norm, double );
-    void ComputeForcesAux(Bead*, double, std::vector<double> norm, double );
+    void ComputeForces(Bead*, double, std::vector<double>& norm, double );
+    void ComputeForcesAux(Bead*, double, std::vector<double>& norm, double );
 };
 #endif /* defined(__Cyto__BoundaryRepulsionLJ__) */

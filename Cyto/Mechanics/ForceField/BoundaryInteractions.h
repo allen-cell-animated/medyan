@@ -9,6 +9,7 @@
 #ifndef Cyto_BoundaryInteractions_h
 #define Cyto_BoundaryInteractions_h
 
+#include "common.h"
 #include <iostream>
 
 class BoundaryElement;

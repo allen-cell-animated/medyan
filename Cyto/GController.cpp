@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "GController.h"
+#include "SystemParameters.h"
 #include "Parser.h"
 
 void GController::initializeGrid() {

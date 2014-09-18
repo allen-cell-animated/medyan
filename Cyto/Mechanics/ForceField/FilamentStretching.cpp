@@ -11,8 +11,7 @@
 #include "Filament.h"
 
 template <class FStretchingInteractionType>
-double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* pf, double d)
-{
+double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* pf, double d) {
     double U = 0.0;
     
     if (d == 0.0){
@@ -39,8 +38,7 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
 }
 
 template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
-{
+void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf) {
    for(auto it : pf->getCylinderVector()){
        
        Bead* pb1 = it->getMCylinder()->GetFirstBead();
@@ -56,8 +54,7 @@ void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 
 
 template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
-{
+void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) {/// Needed for Conjugated Gradient minimization;
     for(auto it : pf->getCylinderVector()){
         
         Bead* pb1 = it->getMCylinder()->GetFirstBead();

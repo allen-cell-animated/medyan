@@ -19,6 +19,8 @@
 #include "LinkerFF.h"
 #include "MotorGhostFF.h"
 #include "ConjugateGradient.h"
+#include "CylinderDB.h"
+#include "Filament.h"
 #include <iostream>
 #include <vector>
 

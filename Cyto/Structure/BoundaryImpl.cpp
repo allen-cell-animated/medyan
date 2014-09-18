@@ -8,6 +8,7 @@
 
 #include "BoundaryImpl.h"
 #include "BoundarySurfaceImpl.h"
+#include "SystemParameters.h"
 
 BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     

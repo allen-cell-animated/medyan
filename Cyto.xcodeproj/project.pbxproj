@@ -7,14 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B5711ADE19C252C70090C1D1 /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5711ADC19C252C70090C1D1 /* BoundaryFF.cpp */; };
 		B5711ADF19C252C70090C1D1 /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5711ADC19C252C70090C1D1 /* BoundaryFF.cpp */; };
 		B5711AE019C252C70090C1D1 /* BoundaryFF.h in Headers */ = {isa = PBXBuildFile; fileRef = B5711ADD19C252C70090C1D1 /* BoundaryFF.h */; };
 		B580341719C3938F0017FEF4 /* BoundaryInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341619C3938F0017FEF4 /* BoundaryInteractions.h */; };
-		B580341A19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */; };
 		B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */; };
 		B580341C19C3A5460017FEF4 /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341919C3A5460017FEF4 /* BoundaryRepulsion.h */; };
-		B580341F19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
@@ -161,6 +158,8 @@
 		F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D5E7919C8947A00F48A16 /* Output.cpp */; };
 		F7A77DA715ACAC5700076046 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
+		F7D1395819CB47D5007FC395 /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */; };
 		F7E3DB5D1579A03C002EAF2C /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 /* End PBXBuildFile section */
 
@@ -713,6 +712,7 @@
 				F777F9E919C1F35200D2850A /* FilamentDB.h in Headers */,
 				F777FA5819C1F3A800D2850A /* MotorGhostStretchingHarmonic.h in Headers */,
 				F777F98319C1F32E00D2850A /* ChemRNode.h in Headers */,
+				F7D1395819CB47D5007FC395 /* BoundaryRepulsionLJ.h in Headers */,
 				F777F97F19C1F32E00D2850A /* ChemInitializerImpl.h in Headers */,
 				F777F9E319C1F35200D2850A /* CylinderDB.h in Headers */,
 				F777F9E019C1F35200D2850A /* Cylinder.h in Headers */,
@@ -926,6 +926,7 @@
 				F777FAA419C222E400D2850A /* Controller.cpp in Sources */,
 				F777F9F419C1F35200D2850A /* MotorGhost.cpp in Sources */,
 				F777FA9F19C1FDB200D2850A /* SubSystem.cpp in Sources */,
+				F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */,
 				F777FA3319C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */,
 				F777FA5B19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */,
 				B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */,
@@ -973,9 +974,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F777FAA619C2294400D2850A /* Cyto.cpp in Sources */,
-				B580341A19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */,
-				B5711ADE19C252C70090C1D1 /* BoundaryFF.cpp in Sources */,
-				B580341F19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

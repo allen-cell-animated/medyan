@@ -32,17 +32,18 @@ protected:
     std::vector<BoundaryElement*> _neighbors; ///<neighbors of this boundary element
     
     std::vector<double> _coords; ///< coordinates of this boundary element
+    std::vector<double> _normal; ///< normal vector to this boundary element
     
 public:
     ///Default constructor
-    BoundaryElement(std::vector<double> coords) : _coords(coords) {
+    BoundaryElement(std::vector<double> coords, std::vector<double> normal) : _coords(coords), _normal(normal) {
     
         ///set the compartment given the initial coordinates
         setCompartment();
     }
     
     ///Destructor
-    ~BoundaryElement() {
+    virtual ~BoundaryElement() noexcept {
         ///remove from compartment
         _compartment->removeBoundaryElement(this);
         ///remove from neighbors
@@ -78,6 +79,7 @@ public:
         catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         _compartment->addBoundaryElement(this);
     }
+    
     ///Alternate set compartment when compartment is known
     void setCompartment(Compartment* c) {
         
@@ -88,19 +90,20 @@ public:
         _compartment = c;
         _compartment->addBoundaryElement(this);
     }
+    
     ///Get the compartment that this element is in
     Compartment* getCompartment() {return _compartment;}
     
     ///return coordinates of boundary element
     const std::vector<double>& coords() {return _coords;}
-    
+    const std::vector<double>& normal() {return _normal;}
     ///return vector of beads
     const std::vector<Bead*>& beads() {return _beads;}
     
-    ///Calculate the distance away from this boundary element
-    virtual double distance(const std::vector<double>& point) {return 0.0;}
-    
-    
+    ///Implement for all boundary elements
+    virtual double distance(const std::vector<double>& point) = 0;
+    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) = 0;
+    virtual double getRepulsionConst()  = 0;
  
 };
 

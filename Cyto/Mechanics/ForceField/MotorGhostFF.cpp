@@ -19,49 +19,31 @@ MotorGhostFF::MotorGhostFF (std::string& Stretching, std::string& Bending, std::
 //    if (Twisting == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostTwisting<MotorGhostTwistingHarmonic>());}
 }
 
-double MotorGhostFF::ComputeEnergy(double d)
-{
+double MotorGhostFF::ComputeEnergy(double d) {
     double U_motor = 0;
     
-    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
-    {
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) ) {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-        {
             U_motor += motorGhostInteraction.get()->ComputeEnergy(it, d);
-        }
-        
     }
-    
     return U_motor;
 }
 
-void MotorGhostFF::ComputeForces()
-{
-    
-    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
-    {
+void MotorGhostFF::ComputeForces() {
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) ) {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-        {
             motorGhostInteraction.get()->ComputeForces(it);
-        }
-        
     }
-    
 }
 
-void MotorGhostFF::ComputeForcesAux()
-{
+void MotorGhostFF::ComputeForcesAux() {
     
-    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) )
-    {
+    for ( auto it: *MotorGhostDB::Instance(MotorGhostDBKey()) ) {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-        {
             motorGhostInteraction.get()->ComputeForcesAux(it);
-        }
-        
     }
-    
 }
+

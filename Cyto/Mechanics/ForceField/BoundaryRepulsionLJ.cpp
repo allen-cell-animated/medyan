@@ -7,6 +7,7 @@
 //
 
 #include "BoundaryRepulsionLJ.h"
+#include "Bead.h"
 
 double BoundaryRepulsionLJ::ComputeEnergy(Bead* pb, double r, double k_rep)
 {
@@ -15,26 +16,26 @@ double BoundaryRepulsionLJ::ComputeEnergy(Bead* pb, double r, double k_rep)
     
 }
 
-void BoundaryRepulsionLJ::ComputeForces(Bead* pb, double r,  std::vector<double> norm ){
+void BoundaryRepulsionLJ::ComputeForces(Bead* pb, double r, std::vector<double>& norm, double k_rep){
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     
-    pb1->force[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
+    pb->force[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
     
-    pb1->force[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
+    pb->force[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
     
-    pb1->force[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
+    pb->force[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
     
 }
 
-void BoundaryRepulsionLJ::ComputeForcesAux(Bead* pb, double r, std::vector<double> norm ){
+void BoundaryRepulsionLJ::ComputeForcesAux(Bead* pb, double r, std::vector<double>& norm,  double k_rep){
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     
-    pb1->forceAux[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
+    pb->forceAux[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
     
-    pb1->forceAux[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
+    pb->forceAux[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
     
-    pb1->forceAux[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
+    pb->forceAux[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
     
 }

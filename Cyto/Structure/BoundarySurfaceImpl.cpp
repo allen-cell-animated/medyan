@@ -7,6 +7,7 @@
 //
 
 #include "BoundarySurfaceImpl.h"
+#include "SystemParameters.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -14,7 +15,6 @@ using namespace mathfunc;
 Plane::Plane(std::vector<double> coords, std::vector<double> normal ) :
     _coords(coords), _normal(normal), BoundarySurface(3) {
     
-    ///Create a plane boundary element
-        BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal);
-
+    ///Create a plane boundary element (CHANGE REPULSION CONSTANT)
+    BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal, SystemParameters::Boundaries().boundaryK);
 }

@@ -11,14 +11,15 @@
 
 #include <iostream>
 #include <vector>
-#include "BoundaryElement.h"
+
+#include "common.h"
 #include "BoundaryInteractions.h"
 
+class BoundaryElement;
 
 
 template <class BRepulsionInteractionType>
-class BoundaryRepulsion : public BoundaryInteractions
-{
+class BoundaryRepulsion : public BoundaryInteractions {
     
 private:
     BRepulsionInteractionType _FFType;

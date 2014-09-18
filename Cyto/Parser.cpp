@@ -566,6 +566,19 @@ void SystemParser::readBoundaryParameters() {
                 BParams.boundaryCutoff = SystemParameters::Geometry().compartmentSizeX / 2;
             }
         }
+        else if (line.find("BINTERACTIONK") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() != 2) {
+                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                BParams.boundaryK = std::atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else {}
     }
     ///Set system parameters
     SystemParameters::BParams = BParams;

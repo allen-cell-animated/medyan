@@ -10,7 +10,7 @@ MD:
 
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                1.0
-FSTRETCHINGL:                27.5
+FSTRETCHINGL:                15
 
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
@@ -58,23 +58,24 @@ VOLUMEK:
 BOUNDARYTYPE:                WALL
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
+BINTERACTIONK:               1.0
 
 ##################################################
 ##################### GEOMETRY ###################
 
 NDIM:                        3
 
-NX:                          50
-NY:                          50
-NZ:                          50
+NX:                          1
+NY:                          1
+NZ:                          1
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
 COMPARTMENTSIZEZ:            100.0
 
-MONOMERSIZE:                 2.7
+MONOMERSIZE:                 5.0
 
-CYLINDERSIZE:                27.0
+CYLINDERSIZE:                15.0
 
 ##################################################
 ################### CHEMISTRY ####################

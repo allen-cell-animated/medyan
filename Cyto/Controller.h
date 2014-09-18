@@ -88,7 +88,7 @@ public:
         std::cout << "Initializing boundary...";
         ///Initialize boundary
         if(BTypes.boundaryShape == "CUBIC") {
-            //_subSystem->AddBoundary(new BoundaryCubic());
+            _subSystem->AddBoundary(new BoundaryCubic());
         }
         else{
             std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;

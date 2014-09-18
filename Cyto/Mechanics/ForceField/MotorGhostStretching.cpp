@@ -13,8 +13,7 @@
 #include "Bead.h"
 
 template <class MStretchingInteractionType>
-double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhost* pm, double d)
-{
+double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhost* pm, double d) {
     Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
@@ -33,8 +32,7 @@ double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhos
 }
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost* pm)
-{
+void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost* pm) {
     Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
@@ -51,8 +49,8 @@ void MotorGhostStretching<MStretchingInteractionType>::ComputeForces(MotorGhost*
 
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::ComputeForcesAux(MotorGhost* pm) /// Needed for Conjugated Gradient minimization;
-{
+void MotorGhostStretching<MStretchingInteractionType>::ComputeForcesAux(MotorGhost* pm) {/// Needed for Conjugated Gradient minimization;
+
     Bead* pb1 = pm->GetFirstCylinder()->getMCylinder()->GetFirstBead();
     Bead* pb2 = pm->GetFirstCylinder()->getMCylinder()->GetSecondBead();
     Bead* pb3 = pm->GetSecondCylinder()->getMCylinder()->GetFirstBead();
@@ -64,7 +62,6 @@ void MotorGhostStretching<MStretchingInteractionType>::ComputeForcesAux(MotorGho
     double pos2 = pm->GetSecondPosition();
     
     _FFType.ForcesAux(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
-    
 }
 
 ///Template specializations

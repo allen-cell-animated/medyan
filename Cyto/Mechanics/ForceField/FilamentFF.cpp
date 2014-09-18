@@ -22,48 +22,30 @@ FilamentFF::FilamentFF (std::string& Stretching, std::string& Bending, std::stri
 }
 
 
-double FilamentFF::ComputeEnergy(double d)
-{
+double FilamentFF::ComputeEnergy(double d) {
     double U_fil = 0;
     
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) )
-    {
+    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-        {
             U_fil += filamentInteraction.get()->ComputeEnergy(it, d);
-        }
-    
     }
-
     return U_fil;
 }
 
-void FilamentFF::ComputeForces()
-{
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) )
-    {
+void FilamentFF::ComputeForces() {
+    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-        {
           filamentInteraction.get()->ComputeForces(it);
-        }
-        
     }
-
 }
 
-void FilamentFF::ComputeForcesAux()
-{
+void FilamentFF::ComputeForcesAux() {
     
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) )
-    {
+    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-        {
             filamentInteraction.get()->ComputeForcesAux(it);
-        }
-        
     }
-    
 }

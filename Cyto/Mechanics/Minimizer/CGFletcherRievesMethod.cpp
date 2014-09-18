@@ -7,6 +7,7 @@
 //
 
 #include "CGFletcherRievesMethod.h"
+#include "ForceFieldManager.h"
 
 using namespace std;
 void FletcherRieves::Minimize(ForceFieldManager &FFM)
