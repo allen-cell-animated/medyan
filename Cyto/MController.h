@@ -90,10 +90,7 @@ public:
     
     ///Run minimization on the system using the chosen algorithm
     void run() {
-        
-       
-        
-        
+
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
         
         ///Update bead-boundary interactions (VERY INEFFICIENT)

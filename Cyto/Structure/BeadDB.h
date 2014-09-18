@@ -15,8 +15,7 @@
 #include "Bead.h"
 
 ///Key to access instance of BeadDB
-class BeadDBKey {friend class Cylinder;
-                 friend class Filament;
+class BeadDBKey {friend class Filament;
                  friend class CGMethod;
                  friend class ForceFieldManager;
                  friend class MController;
