@@ -13,7 +13,7 @@ using namespace std;
 void FletcherRieves::Minimize(ForceFieldManager &FFM)
 {
 	
-	const double EPS = 1e-10;
+	const double EPS = 1e-3;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); ///!!!!!! need to know
 	double curVal = FFM.ComputeEnergy(0.0);
@@ -36,12 +36,12 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 
         lambda = GoldenSection(FFM);
         cout<<"lambda= "<<lambda<<endl;
-		PrintForces();
+		//PrintForces();
         MoveBeads(lambda);
-        PrintForces();
+        //PrintForces();
         
         FFM.ComputeForcesAux();
-        PrintForces();
+        //PrintForces();
         
 		newGradSquare = GradSquare(1);
 		

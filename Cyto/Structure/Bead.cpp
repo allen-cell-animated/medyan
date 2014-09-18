@@ -30,10 +30,9 @@ Bead::Bead (std::vector<double> v): coordinate(v), force(3, 0), forceAux(3, 0)
 void Bead::updateBoundaryElements() {
     
     ///First, update this bead's list
-    for(auto it = _boundaryElements.begin(); it != _boundaryElements.end(); it++) {
-        auto be = (*it);
-        if (be == nullptr || be->distance(coordinate) > SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.erase(it);
+    for(auto &be : _boundaryElements) {
+        if (be->distance(coordinate) > SystemParameters::Boundaries().boundaryCutoff) {
+            _boundaryElements.erase(std::find(_boundaryElements.begin(), _boundaryElements.end(), be));
             be->removeBead(this);
         }
     }

@@ -34,6 +34,8 @@ public:
     ///Print basic information about filaments
     void printFilaments() {
         
+        _outputFile.precision(15);
+        
         for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
             
             for (auto cylinder : filament->getCylinderVector()){

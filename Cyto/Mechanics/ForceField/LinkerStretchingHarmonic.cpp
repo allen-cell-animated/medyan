@@ -42,7 +42,6 @@ void LinkerStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4
     
     double f0 = kStr * ( TwoPointDistance( v1, v2) - L ) * invL;
     
-    cout<< "f0= "<<f0<<endl;
     
     //force on i
     
@@ -95,7 +94,6 @@ void LinkerStretchingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, Bead* pb3, Bead* 
     
     double f0 = kStr * ( TwoPointDistance( v1, v2) - L ) * invL;
     
-    cout<< "f0= "<<f0<<endl;
     
     //force on i
     

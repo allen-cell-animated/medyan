@@ -12,13 +12,13 @@
 using namespace std;
 void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
-    cout<<"Forces before minimization:" <<endl;
-	PrintForces();
-    const double EPS = 1e-10;
+    //cout<<"Forces before minimization:" <<endl;
+	//PrintForces();
+    const double EPS = 1e-4;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curVal = FFM.ComputeEnergy(0.0);
-    cout<<"Energy = "<< curVal <<endl;
+    //cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;
 	FFM.ComputeForces();
     
@@ -26,7 +26,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
 	double gradSquare = GradSquare();
     
-    cout<<"GradSq=  "<<gradSquare<<endl;
+    //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
 	do
@@ -36,15 +36,15 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		vector<double> newGrad;
         
         lambda = GoldenSection(FFM);
-        cout<<"lambda= "<<lambda<<endl;
-		PrintForces();
+        //cout<<"lambda= "<<lambda<<endl;
+		//PrintForces();
         
         MoveBeads(lambda);
         
-        PrintForces();
+        //PrintForces();
         
         FFM.ComputeForcesAux();
-        PrintForces();
+        //PrintForces();
         
 		newGradSquare = GradSquare(1);
 		
@@ -56,12 +56,12 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		ShiftGradient(beta);
         
 		prevVal = curVal;
-        cout << "Calling last compute energy in minimizer" << endl;
+        //cout << "Calling last compute energy in minimizer" << endl;
 		curVal = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
-        PrintForces();
+        //PrintForces();
 		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
+        //cout<<"GradSq before end=  "<<gradSquare<<endl;
 
         
 	}

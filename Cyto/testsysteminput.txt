@@ -10,10 +10,10 @@ MD:
 
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                1.0
-FSTRETCHINGL:                15
+FSTRETCHINGL:                5.0
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   5.0
+FBENDINGK:                   10.0
 FBENDINGTHETA:               180.00
 
 FTWISTINGTYPE:
@@ -58,7 +58,7 @@ VOLUMEK:
 BOUNDARYTYPE:                REPULSIONLJ
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
-BINTERACTIONK:               1.0
+BINTERACTIONK:               5.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -73,17 +73,17 @@ COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
 COMPARTMENTSIZEZ:            100.0
 
-MONOMERSIZE:                 5.0
+MONOMERSIZE:                 1.0
 
-CYLINDERSIZE:                15.0
+CYLINDERSIZE:                5.0
 
 ##################################################
 ################### CHEMISTRY ####################
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    1000
-NUMSTEPSPERM:                10
+NUMSTEPS:                    100
+NUMSTEPSPERM:                2
 
 ##################################################
 ################### FILAMENTS ####################

@@ -33,7 +33,6 @@ void FilamentStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, double k_str, doub
     
     double f0 = k_str * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - L ) * invL;
     
-    std::cout<< "f0= "<<f0<<std::endl;
     
     //force on i
     
@@ -64,7 +63,6 @@ void FilamentStretchingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, double k_str, d
     
     double f0 = k_str * ( TwoPointDistance( pb1->coordinate, pb2->coordinate) - L ) * invL;
     
-    std::cout<< "f0= "<<f0<<std::endl;
     
     pb2->forceAux[0] +=   -f0 * ( pb1->coordinate[0] - pb2->coordinate[0] );
     

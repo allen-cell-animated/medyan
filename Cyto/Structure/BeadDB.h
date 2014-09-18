@@ -68,7 +68,7 @@ public:
         Bead* b = new Bead(v);
         
         push_back(b);
-        std::cout<<"bead created"<<std::endl;
+        //std::cout<<"bead created"<<std::endl;
         return b ;}
     
     

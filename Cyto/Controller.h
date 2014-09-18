@@ -119,15 +119,18 @@ public:
         
         ///Set up filament output file
         Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-
+        o.printFilaments();
+        
 #if defined(MECHANICS) && defined(CHEMISTRY)
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
             _cController.run(_numStepsPerMech);
+            o.printFilaments();
 #elif defined(CHEMISTRY)
-        _cController.run(_numSteps);
+            _cController.run(_numSteps);
+            o.printFilaments();
 #endif
 #if defined(MECHANICS)
-        _mController.run();
+            _mController.run();
 #endif
         ///Filament output
         o.printFilaments();

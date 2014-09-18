@@ -24,15 +24,15 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     
     ///Create boundary surfaces, add to vector
     ///X normal planes
-    _boundarySurfaces.emplace_back(new Plane({0, sysY / 2, sysZ / 2}, {1, 0, 0}));
+    _boundarySurfaces.emplace_back(new Plane({zeroX, sysY / 2, sysZ / 2}, {1, 0, 0}));
     _boundarySurfaces.emplace_back(new Plane({sysX, sysY / 2, sysZ / 2}, {-1, 0, 0}));
     
     ///Y normal planes
-    _boundarySurfaces.emplace_back(new Plane({sysX / 2, 0, sysZ / 2}, {0, 1, 0}));
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, zeroY, sysZ / 2}, {0, 1, 0}));
     _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY, sysZ / 2}, {0, -1, 0}));
     
     ///Z normal planes
-    _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, 0}, {0, 0, 1}));
+    _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, zeroZ}, {0, 0, 1}));
     _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, sysZ}, {0, 0, -1}));
     
 }
