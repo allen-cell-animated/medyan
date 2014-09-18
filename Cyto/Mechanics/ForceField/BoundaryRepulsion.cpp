@@ -13,11 +13,12 @@ template <class BRepulsionInteractionType>
 double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(BoundaryElement* pbe, double d)
 {
     double U = 0.0;
+    double k_rep = pbe->getRepulsionConst();
     
     if (d == 0.0){
         
         for (auto pb: pbe->beads()){
-           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates));
+           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates), k_rep);
         }
     }
     
@@ -25,7 +26,7 @@ double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(Boundar
     
     else {
         for (auto pb: pbe->beads()){
-            U+=_FFType.ComputeEnergy(pb, pbe->distance(pb->coordinates), d);
+            U+=_FFType.ComputeEnergy(pb, pbe->stretchedDistance(pb->coordinate, pb->force, d), k_rep);
         }
     }
 
@@ -35,8 +36,9 @@ double BoundaryRepulsion<class BRepulsionInteractionType>::ComputeEnergy(Boundar
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 {
+    double k_rep = pbe->getRepulsionConst();
     for (auto pb: pbe->beads()){
-        _FFType.ComputeForces(pb, pbe->distance(pb->coordinates), pbe->normal);
+        _FFType.ComputeForces(pb, pbe->distance(pb->coordinates), pbe->normal, k_rep);
     }
 }
 
@@ -46,8 +48,9 @@ void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf)
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
+    double k_rep = pbe->getRepulsionConst();
     for (auto pb: pbe->beads()){
-        _FFType.ComputeForcesAuX(pb, pbe->distance(pb->coordinates), pbe->normal);
+        _FFType.ComputeForcesAuX(pb, pbe->distance(pb->coordinates), pbe->normal, k_rep);
     }
 }
 
