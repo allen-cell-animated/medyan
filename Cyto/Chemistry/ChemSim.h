@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "Reaction.h"
+#include "common.h"
     
 ///forward delcarations
 class ChemSimImpl;

@@ -12,6 +12,7 @@
 #include <vector>
 #include <random>
 
+#include "common.h"
 #include "utility.h"
 #include "Reaction.h"
 #include "ChemSimImpl.h"

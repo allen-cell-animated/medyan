@@ -8,6 +8,10 @@
 
 #include "LinkerFF.h"
 
+#include "LinkerStretching.h"
+#include "LinkerStretchingHarmonic.h"
+#include "LinkerDB.h"
+
 LinkerFF::LinkerFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
 {
     if (Stretching == "HARMONIC") {_linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());}

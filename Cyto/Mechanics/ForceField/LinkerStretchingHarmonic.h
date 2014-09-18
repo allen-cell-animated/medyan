@@ -10,8 +10,9 @@
 #define __Cyto__LinkerStretchingHarmonic__
 
 #include <iostream>
-#include "Bead.h"
+#include "common.h"
 
+class Bead;
 
 class LinkerStretchingHarmonic {
     

@@ -9,6 +9,8 @@
 #ifndef CytoSim_ChemRNode_h
 #define CytoSim_ChemRNode_h
 
+#include "common.h"
+
 /// This is an abstract base class for classes that need to be associated with the given Reaction object.
 class RNode{
 public:

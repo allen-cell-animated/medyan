@@ -10,7 +10,10 @@
 #define __CytoMech__Linker__
 
 #include <iostream>
-#include "Cylinder.h"
+
+#include "common.h"
+
+class Cylinder;
 
 ///Linker class represents a cross-link between filaments
 /*!

@@ -11,6 +11,8 @@
 
 #include <vector>
 #include <iostream>
+
+#include "common.h"
 #include "Gcontroller.h"
 
 class Bead;

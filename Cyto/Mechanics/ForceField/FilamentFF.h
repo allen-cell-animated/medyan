@@ -11,13 +11,12 @@
 
 #include <iostream>
 #include <vector>
-#include "ForceField.h"
-#include "FilamentStretching.h"
-#include "FilamentStretchingHarmonic.h"
-#include "FilamentBending.h"
-#include "FilamentBendingHarmonic.h"
-#include "FilamentDB.h"
 #include <stdlib.h>
+
+#include "common.h"
+#include "ForceField.h"
+
+class FilamentInteractions;
 
 class FilamentFF : public ForceField {
  

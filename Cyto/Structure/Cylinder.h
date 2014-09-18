@@ -10,13 +10,17 @@
 #define __Cyto__Cylinder__
 
 #include <iostream>
+
+#include "common.h"
+#include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
-#include "ChemInitializer.h"
-#include "Composite.h"
-#include "GController.h"
 
 class Filament;
+class MCylinder;
+class CCylinder;
+class Bead;
+class Compartment;
 
 ///Cylinder class is a wrapper for a mechanical cylinder and chemical cylinder
 /*!

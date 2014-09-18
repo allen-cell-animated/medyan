@@ -11,10 +11,11 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
 #include "ForceField.h"
-#include "LinkerStretching.h"
-#include "LinkerStretchingHarmonic.h"
-#include "LinkerDB.h"
+
+class LinkerInteractions;
 
 class LinkerFF : public ForceField {
     

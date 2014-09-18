@@ -10,6 +10,8 @@
 #define CytoSim_ReactionContainer_h
 
 #include <iostream>
+
+#include "common.h"
 #include "ReactionBase.h"
 #include "Reaction.h"
     

@@ -12,10 +12,11 @@
 //#define DO_THIS_SPECIES_TEST
 
 #ifdef DO_THIS_SPECIES_TEST
-#define TESTING
 
 #include <iostream>
 #include "gtest/gtest.h"
+
+#include "common.h"
 #include "Species.h"
 #include "SpeciesContainer.h"
 

@@ -7,6 +7,7 @@
 //
 
 #include "BoundaryImpl.h"
+#include "BoundarySurfaceImpl.h"
 
 BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     

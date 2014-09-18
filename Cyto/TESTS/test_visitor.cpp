@@ -9,13 +9,13 @@
 //#define DO_THIS_VISITOR_TEST
 
 #ifdef DO_THIS_VISITOR_TEST
-#define TESTING
 
 #include <iostream>
 
 #include <iostream>
 #include "gtest/gtest.h"
 
+#include "common.h"
 #include "Composite.h"
 
 using namespace std;

@@ -8,6 +8,9 @@
 
 #include "MotorGhostStretching.h"
 #include "MotorGhostStretchingHarmonic.h"
+#include "MotorGhostDB.h"
+#include "Cylinder.h"
+#include "Bead.h"
 
 template <class MStretchingInteractionType>
 double MotorGhostStretching<MStretchingInteractionType>::ComputeEnergy(MotorGhost* pm, double d)

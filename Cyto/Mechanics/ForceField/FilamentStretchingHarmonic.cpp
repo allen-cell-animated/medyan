@@ -8,6 +8,8 @@
 
 #include "FilamentStretchingHarmonic.h"
 #include "Bead.h"
+#include "MathFunctions.h"
+
 using namespace mathfunc;
 
 double FilamentStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, double k_str, double L){

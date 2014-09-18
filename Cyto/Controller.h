@@ -10,6 +10,7 @@
 #define __Cyto__Controller__
 
 #include <iostream>
+#include "common.h"
 #include "MController.h"
 #include "GController.h"
 #include "CController.h"

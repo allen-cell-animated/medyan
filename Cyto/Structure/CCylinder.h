@@ -10,6 +10,8 @@
 #define __CytoSim__CCylinder__
 
 #include <iostream>
+
+#include "common.h"
 #include "Compartment.h"
 #include "CFilamentElement.h"
 

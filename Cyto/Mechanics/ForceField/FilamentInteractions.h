@@ -10,6 +10,7 @@
 #define __Cyto__FilamentInteractions__
 
 #include <iostream>
+#include "common.h"
 
 class Filament;
 

@@ -12,6 +12,8 @@
 #include <iostream>
 #include <list>
 #include <vector>
+
+#include "common.h"
 #include "Bead.h"
 
 ///Key to access instance of BeadDB

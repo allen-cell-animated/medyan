@@ -10,6 +10,7 @@
 #define __Cyto__ForceField__
 
 #include <iostream>
+#include "common.h"
 
 ///ForceField is an abstract class to represent various force field calculations
 /*!

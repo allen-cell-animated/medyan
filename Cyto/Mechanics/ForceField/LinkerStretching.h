@@ -10,8 +10,11 @@
 #define __Cyto__LinkerStratching__
 
 #include <iostream>
-#include "Linker.h"
+
+#include "common.h"
 #include "LinkerInteractions.h"
+
+class Linker;
 
 template <class LStretchingInteractionType>
 class LinkerStretching : public LinkerInteractions

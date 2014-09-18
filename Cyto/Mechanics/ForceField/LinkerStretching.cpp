@@ -8,6 +8,9 @@
 
 #include "LinkerStretching.h"
 #include "LinkerStretchingHarmonic.h"
+#include "Cylinder.h"
+#include "Bead.h"
+#include "Linker.h"
 
 template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d)

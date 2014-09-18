@@ -10,11 +10,12 @@
 #define __CytoSim__CompartmentContainer__
 
 #include <iostream>
+
+#include "common.h"
 #include "Compartment.h"
 
 ///Key to access instance of CompartmentGrid
-class CompartmentGridKey {friend class SubSystem;
-                          friend class ChemInitializerImpl;
+class CompartmentGridKey {friend class ChemInitializerImpl;
                           friend class GController;
 #ifdef TESTING
                           public:

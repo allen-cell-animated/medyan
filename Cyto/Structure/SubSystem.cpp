@@ -8,6 +8,12 @@
 
 #include "SubSystem.h"
 
+#include "BeadDB.h"
+#include "CylinderDB.h"
+#include "FilamentDB.h"
+#include "MotorGhostDB.h"
+#include "LinkerDB.h"
+
 using namespace std;
 
 // Interfaces for creation of a Filament (vector with coordinates of beginning and end for the filament)

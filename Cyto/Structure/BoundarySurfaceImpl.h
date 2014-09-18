@@ -9,6 +9,7 @@
 #ifndef __Cyto__BoundarySurfaceImpl__
 #define __Cyto__BoundarySurfaceImpl__
 
+#include "common.h"
 #include "BoundarySurface.h"
 #include <cmath>
 #include <iostream>

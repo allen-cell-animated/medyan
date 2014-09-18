@@ -9,6 +9,7 @@
 #ifndef __Cyto__BoundaryElementDB__
 #define __Cyto__BoundaryElementDB__
 
+#include "common.h"
 #include "BoundaryElementImpl.h"
 #include <iostream>
 

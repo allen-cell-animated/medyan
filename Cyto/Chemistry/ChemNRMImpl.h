@@ -18,6 +18,7 @@
 
 #include <boost/heap/pairing_heap.hpp>
 
+#include "common.h"
 #include "utility.h"
 #include "Reaction.h"
 #include "ChemSimImpl.h"

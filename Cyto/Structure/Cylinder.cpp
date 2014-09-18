@@ -8,6 +8,10 @@
 
 #include "Cylinder.h"
 
+#include "ChemInitializer.h"
+#include "Composite.h"
+#include "GController.h"
+
 Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack) {
     
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead));

@@ -9,6 +9,7 @@
 #ifndef __Cyto__LinkerInteractions__
 #define __Cyto__LinkerInteractions__
 
+#include "common.h"
 #include <iostream>
 
 class Linker;

@@ -10,5 +10,6 @@
 #define __CytoMech__ExclVol__
 
 #include <iostream>
+#include "common.h"
 
 #endif /* defined(__CytoMech__ExclVol__) */

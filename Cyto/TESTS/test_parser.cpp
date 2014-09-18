@@ -6,13 +6,14 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "gtest/gtest.h"
-#include "Parser.h"
-
 //#define DO_THIS_PARSER_TEST
 
 #ifdef DO_THIS_PARSER_TEST
-#define TESTING
+
+#include "gtest/gtest.h"
+
+#include "common.h"
+#include "Parser.h"
 
 
 TEST(SystemParserTest, main) {

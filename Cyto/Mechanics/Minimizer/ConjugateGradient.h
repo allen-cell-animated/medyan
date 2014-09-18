@@ -9,6 +9,7 @@
 #ifndef Cyto_ConjugateGradient_h
 #define Cyto_ConjugateGradient_h
 
+#include "common.h"
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 

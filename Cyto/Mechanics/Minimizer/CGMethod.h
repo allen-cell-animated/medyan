@@ -9,8 +9,12 @@
 #ifndef __Cyto__CGMethod__
 #define __Cyto__CGMethod__
 #include <iostream>
+#include <cmath>
+
+#include "common.h"
 #include "BeadDB.h"
-#include "ForceFieldManager.h"
+
+class ForceFieldManager;
 
 class CGMethod {
     

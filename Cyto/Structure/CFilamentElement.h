@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+#include "common.h"
+
 class SpeciesFilament;
 class SpeciesBound;
 

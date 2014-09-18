@@ -7,6 +7,8 @@
 //
 
 #include "CGMethod.h"
+#include "ForceFieldManager.h"
+
 using namespace std;
 
 

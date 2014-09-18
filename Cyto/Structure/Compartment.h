@@ -12,6 +12,8 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
+
+#include "common.h"
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
 #include "Composite.h"

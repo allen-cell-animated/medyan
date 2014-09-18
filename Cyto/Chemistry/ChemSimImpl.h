@@ -9,6 +9,7 @@
 #ifndef CytoSim_ChemSimImpl_h
 #define CytoSim_ChemSimImpl_h
 
+#include "common.h"
 class ReactionBase;
 
 /// ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics.  

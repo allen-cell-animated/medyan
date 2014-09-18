@@ -9,8 +9,9 @@
 #ifndef __Cyto__BoundaryImpl__
 #define __Cyto__BoundaryImpl__
 
+#include "common.h"
 #include "Boundary.h"
-#include "BoundarySurfaceImpl.h"
+
 #include <vector>
 #include <iostream>
 

@@ -9,7 +9,9 @@
 #ifndef Cyto_FilamentStretchingHarmonic_h
 #define Cyto_FilamentStretchingHarmonic_h
 
-#include "Bead.h"
+#include "common.h"
+
+class Bead;
 
 class FilamentStretchingHarmonic {
     

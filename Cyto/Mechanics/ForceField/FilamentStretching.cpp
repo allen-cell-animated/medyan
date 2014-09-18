@@ -8,6 +8,7 @@
 
 #include "FilamentStretching.h"
 #include "FilamentStretchingHarmonic.h"
+#include "Filament.h"
 
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* pf, double d)

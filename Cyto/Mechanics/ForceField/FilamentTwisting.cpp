@@ -6,5 +6,6 @@
 //  Copyright (c) 2014 Konstantin Popov. All rights reserved.
 //
 
+#include "common.h"
 #include "Filament.h"
 #include "Bead.h"

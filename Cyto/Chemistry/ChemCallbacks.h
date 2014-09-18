@@ -10,6 +10,7 @@
 #define __Cyto__ChemCallbacks__
 
 #include <iostream>
+#include "common.h"
 #include "Filament.h"
 #include "ReactionBase.h"
 

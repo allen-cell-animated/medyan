@@ -18,6 +18,7 @@
 #include <boost/signals2/connection.hpp>
 #include <boost/signals2/shared_connection_block.hpp>
 #include "utility.h"
+#include "common.h"
 
 class RSpecies;
 class ReactionBase;

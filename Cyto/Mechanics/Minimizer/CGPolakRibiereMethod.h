@@ -17,6 +17,8 @@
 #include <vector>
 #include <math.h>
 #include <algorithm>
+
+#include "common.H"
 #include "CGMethod.h"
 
 class PolakRibiere : public CGMethod

@@ -7,6 +7,8 @@
 //
 
 #include "Bead.h"
+#include "BoundaryElementDB.h"
+#include "SystemParameters.h"
 
 Bead::Bead (std::vector<double> v): coordinate(v), force(3, 0), forceAux(3, 0)
 {

@@ -7,6 +7,7 @@
 //
 
 #include "SimpleInitializerImpl.h"
+#include "ChemCallbacks.h"
     
 ///Initialize the compartment grid
 void SimpleInitializerImpl::initializeGrid() {

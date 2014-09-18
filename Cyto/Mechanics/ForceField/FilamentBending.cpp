@@ -8,6 +8,7 @@
 
 #include "FilamentBending.h"
 #include "FilamentBendingHarmonic.h"
+#include "Filament.h"
 
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, double d)

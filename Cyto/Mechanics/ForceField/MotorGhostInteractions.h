@@ -9,6 +9,7 @@
 #ifndef Cyto_MotorGhostInteractions_h
 #define Cyto_MotorGhostInteractions_h
 
+#include "common.h"
 #include <iostream>
 
 class MotorGhost;

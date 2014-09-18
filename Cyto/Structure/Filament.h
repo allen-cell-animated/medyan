@@ -13,7 +13,10 @@
 #include <iostream>
 #include <deque>
 #include <math.h>
+
+#include "common.h"
 #include "Cylinder.h"
+#include "CCylinder.h"
 
 class SubSystem;
 ///Filament class is used to store data about connectivity of cylinders

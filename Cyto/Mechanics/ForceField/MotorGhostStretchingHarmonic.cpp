@@ -8,6 +8,9 @@
 
 #include "MotorGhostStretchingHarmonic.h"
 
+#include "MathFunctions.h"
+#include "Bead.h"
+
 using namespace std;
 using namespace mathfunc;
 

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "common.h"
 #include "FilamentDB.h"
 #include "Bead.h"
 

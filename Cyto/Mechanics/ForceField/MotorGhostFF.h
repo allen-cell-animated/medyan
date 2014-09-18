@@ -11,10 +11,11 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
 #include "ForceField.h"
-#include "MotorGhostStretching.h"
-#include "MotorGhostStretchingHarmonic.h"
-#include "MotorGhostDB.h"
+
+class MotorGhostInteractions;
 
 class MotorGhostFF : public ForceField {
     

@@ -12,6 +12,8 @@
 #include <iostream>
 #include <list>
 #include <vector>
+
+#include "common.h"
 #include "Cylinder.h"
 
 ///Key to access instance of CylinderDB

@@ -10,11 +10,13 @@
 #define __Cyto__Boundary__
 
 #include <iostream>
-#include "BoundarySurface.h"
+
+#include "common.h"
 
 ///Boundary type enumeration
 enum class BoundaryShape {Cube, Cylinder, Sphere};
 
+class BoundarySurface;
 
 ///Boundary class is to store all boundary surfaces that are in the system
 /*!

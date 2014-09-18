@@ -9,10 +9,11 @@
 //#define DO_THIS_GEOMETRY_TEST
 
 #ifdef DO_THIS_GEOMETRY_TEST
-#define TESTING
 
 #include <iostream>
 #include "gtest/gtest.h"
+
+#include "common.h"
 #include "GController.h"
 
 using namespace std;

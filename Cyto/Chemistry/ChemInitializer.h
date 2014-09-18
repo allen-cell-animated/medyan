@@ -9,11 +9,11 @@
 #ifndef __Cyto__ChemInitializer__
 #define __Cyto__ChemInitializer__
 
+#include "common.h"
 #include "ChemInitializerImpl.h"
 #include <iostream>
 
 ///Forward declarations
-class ChemInitializerImpl;
 class Compartment;
 class Filament;
 class CCylinder;

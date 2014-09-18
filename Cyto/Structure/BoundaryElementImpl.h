@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <cmath>
+
+#include "common.h"
 #include "BoundaryElement.h"
 
 ///PlaneBoundaryElement is a plane implementation of a boundary element

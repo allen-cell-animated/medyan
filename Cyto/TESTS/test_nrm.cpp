@@ -9,7 +9,6 @@
 //#define DO_THIS_NRM_TEST
 
 #ifdef DO_THIS_NRM_TEST
-#define TESTING
 
 #include <iostream>
 
@@ -24,6 +23,7 @@ using namespace boost::accumulators;
 
 #include "gtest/gtest.h"
 
+#include "common.h"
 #include "Species.h"
 #include "Reaction.h"
 #include "ChemNRMImpl.h"

@@ -12,8 +12,13 @@
 #include <iostream>
 #include <vector>
 #include <list>
+
+#include "common.h"
 #include "Component.h"
-#include "BoundaryElementDB.h"
+#include "Compartment.h"
+#include "MathFunctions.h"
+#include "GController.h"
+
 
 using namespace mathfunc;
 

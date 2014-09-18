@@ -8,9 +8,11 @@
 
 #ifndef Cyto_FilamentBending_h
 #define Cyto_FilamentBending_h
-#include "Bead.h"
+
+#include "common.h"
 #include "FilamentInteractions.h"
-#include "Filament.h"
+
+class Filament;
 
 template <class FBendingInteractionType>
 class FilamentBending : public FilamentInteractions {

@@ -9,13 +9,13 @@
 //#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
-#define TESTING
 
 #include <iostream>
 
 #include <iostream>
 #include "gtest/gtest.h"
 
+#include "common.h"
 #include "Species.h"
 #include "Reaction.h"
 

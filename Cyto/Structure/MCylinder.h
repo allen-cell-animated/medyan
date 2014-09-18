@@ -11,6 +11,9 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
+
 class Cylinder;
 class Filament;
 class Bead;

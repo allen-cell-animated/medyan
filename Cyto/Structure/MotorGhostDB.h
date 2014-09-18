@@ -11,8 +11,11 @@
 
 #include <iostream>
 #include <list>
+
+#include "common.h"
 #include "MotorGhost.h"
-#include "Cylinder.h"
+
+class Cylinder;
 
 ///Key to access instance of MotorGhostDB
 class MotorGhostDBKey {friend class SubSystem; friend class MotorGhostFF; MotorGhostDBKey(){}; ~MotorGhostDBKey(){}; };

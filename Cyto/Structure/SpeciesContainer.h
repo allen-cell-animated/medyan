@@ -10,6 +10,7 @@
 #define __CytoSim__SpeciesContainer__
 
 #include <iostream>
+#include "common.h"
 #include "Species.h"
 
 /// An abstract interface for a container of pointers to Species objects

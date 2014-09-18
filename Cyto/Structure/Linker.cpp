@@ -9,6 +9,8 @@
 #include "Linker.h"
 #include "Bead.h"
 #include "Cylinder.h"
+#include "MathFunctions.h"
+#include "SystemParameters.h"
 
 using namespace mathfunc;
 

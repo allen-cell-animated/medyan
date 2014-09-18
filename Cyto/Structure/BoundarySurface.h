@@ -9,7 +9,7 @@
 #ifndef __Cyto__BoundarySurface__
 #define __Cyto__BoundarySurface__
 
-#include "BoundaryElement.h"
+#include "common.h"
 #include "BoundaryElementDB.h"
 #include <iostream>
 

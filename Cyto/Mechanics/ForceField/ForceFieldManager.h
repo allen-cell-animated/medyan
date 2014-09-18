@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
 #include "ForceField.h"
 #include "BeadDB.h"
 

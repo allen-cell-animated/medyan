@@ -11,8 +11,11 @@
 
 #include <iostream>
 #include <list>
+
+#include "common.h"
 #include "Linker.h"
-#include "Cylinder.h"
+
+class Cylinder;
 
 ///Key to access instance of LinkerDB
 class LinkerDBKey {friend class SubSystem; friend class LinkerFF; LinkerDBKey() {}; ~LinkerDBKey(){}; };

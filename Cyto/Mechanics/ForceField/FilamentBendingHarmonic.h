@@ -10,7 +10,9 @@
 #define __Cyto__FilamentBendingHarmonic__
 
 #include <iostream>
-#include "Bead.h"
+#include "common.h"
+
+class Bead;
 
 class FilamentBendingHarmonic {
     

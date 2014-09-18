@@ -8,6 +8,9 @@
 
 #include "MotorGhostFF.h"
 
+#include "MotorGhostStretching.h"
+#include "MotorGhostStretchingHarmonic.h"
+#include "MotorGhostDB.h"
 
 MotorGhostFF::MotorGhostFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
 {

@@ -12,6 +12,10 @@
 
 #include <iostream>
 #include <list>
+
+#include "common.h"
+#include "MathFunctions.h"
+#include "SystemParameters.h"
 #include "Filament.h"
 
 ///Key to access instance of FilamentDB

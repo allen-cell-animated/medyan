@@ -9,8 +9,10 @@
 #ifndef __Cyto__MotorGhostStretchingHarmonic__
 #define __Cyto__MotorGhostStretchingHarmonic__
 
+#include "common.h"
 #include <iostream>
-#include "Bead.h"
+
+class Bead;
 
 
 class MotorGhostStretchingHarmonic {

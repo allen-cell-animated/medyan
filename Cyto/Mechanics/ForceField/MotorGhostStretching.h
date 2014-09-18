@@ -10,8 +10,11 @@
 #define __Cyto__MotorGhostStretching__
 
 #include <iostream>
-#include "MotorGhost.h"
+
+#include "common.h"
 #include "MotorGhostInteractions.h"
+
+class MotorGhost;
 
 template <class MStretchingInteractionType>
 class MotorGhostStretching : public MotorGhostInteractions {

@@ -9,8 +9,9 @@
 #ifndef Cyto_FilamentStretching_h
 #define Cyto_FilamentStretching_h
 
-#include "Filament.h"
+#include "common.h"
 #include "FilamentInteractions.h"
+
 
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions {
