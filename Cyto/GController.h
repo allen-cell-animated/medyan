@@ -17,7 +17,7 @@
 class OutOfBoundsException : public std::exception {
     
     virtual const char* what() const throw() {
-        return "An element is out of bounds of the grid.";
+        return "An element is out of the bounds of the grid.";
     }
 };
 

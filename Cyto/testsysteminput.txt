@@ -9,10 +9,10 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                1.0
+FSTRETCHINGK:                4.0
 FSTRETCHINGL:                5.0
 
-FBENDINGTYPE:                HARMONIC
+FBENDINGTYPE:
 FBENDINGK:                   10.0
 FBENDINGTHETA:               180.00
 
@@ -58,7 +58,7 @@ VOLUMEK:
 BOUNDARYTYPE:                REPULSIONLJ
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
-BINTERACTIONK:               5.0
+BINTERACTIONK:               1.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -82,8 +82,8 @@ CYLINDERSIZE:                5.0
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    100
-NUMSTEPSPERM:                2
+NUMSTEPS:                    20
+NUMSTEPSPERM:                5
 
 ##################################################
 ################### FILAMENTS ####################
