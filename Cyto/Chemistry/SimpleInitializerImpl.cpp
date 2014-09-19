@@ -181,7 +181,6 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 //        cylinder->addReaction(rDepoly);
 //    }
     
-    cylinder->addChemSimReactions();
     cylinder->updateReactions();
 
     ///clean up and return

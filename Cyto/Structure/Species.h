@@ -29,8 +29,6 @@
 #include "utility.h"
 #include "RSpecies.h"
 
-class System;
-    
 class Composite;
 
 /// SpeciesNamesDB class is used to associate unique integers with character based names of Species

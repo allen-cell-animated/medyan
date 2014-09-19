@@ -248,30 +248,6 @@ template <unsigned short M, unsigned short N>
         
         /// Implementation of  clone()
         virtual Reaction<M,N>* cloneImpl(const SpeciesPtrContainerVector &spcv) override;
-        
-        
-//        ///Implementation of replaceRSpecies()
-//        virtual void replaceRSpecies(RSpecies* oldRSpecies, RSpecies* newRSpecies)
-//        {
-//            //Find species in rspecies list
-//            for (int i = 0; i < M+N; i++) {
-//                
-//                if(_rspecies[i] == oldRSpecies) {
-//                    
-//                    ///remove old dependents
-//                    _rspecies[i]->removeAsReactant(this);
-//                    _rspecies[i]->removeAsProduct(this);
-//                    
-//                    ///add new dependents
-//                    _rspecies[i] = newRSpecies;
-//                    newRSpecies->addAsReactant(this);
-//                    newRSpecies->addAsProduct(this);
-//                    
-//                    return;
-//                }
-//            }
-//        }
-    
     };
     
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency

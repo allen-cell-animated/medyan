@@ -51,11 +51,9 @@ public:
             _bounds.push_back(std::unique_ptr<CBound>(b->clone(c)));
         
         ///copy all reactions
-        for(auto &r: rhs._reactions) {
-            ReactionBase *R = _compartment->addInternalReactionUnique(
-                                std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer())));
-            _reactions.push_back(R);
-        }
+        for(auto &r: rhs._reactions) addReaction(r->clone(c->speciesContainer()));
+        ///Update and return
+        this->updateReactions();
     }
     
     /// Assignment is not allowed
@@ -65,14 +63,12 @@ public:
     ~CCylinder()
     {
         ///Remove all reactions
-        for(auto &r: _reactions)
-            _compartment->removeInternalReaction(r);
+        for(auto &r: _reactions) removeReaction(r);
         
         ///Remove all species
         for(auto &m: _monomers)
             for(auto &s : m->species())
                 _compartment->removeSpecies(s);
-
         for(auto &b : _bounds)
             for(auto &s : b->species())
                 _compartment->removeSpecies(s);
@@ -104,23 +100,34 @@ public:
     virtual CBound* getCBound(int index) {return _bounds[index].get();}
     
     ///Add a filament reaction to this CCylinder
-    virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
+    virtual void addReaction(ReactionBase* r) {
+        //remove from compartment and chemsim
+        _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r));
+        ChemSim::addReaction(ChemSimReactionKey(), r);
+        
+        ///add to local reaction list
+        _reactions.push_back(r);
+    }
+    
+    ///remove a filament reaction from this CCylinder
+    ///@note no check on whether r is in the reactions list
+    virtual void removeReaction(ReactionBase* r) {
+        ///remove from compartment and chemsim
+        _compartment->removeInternalReaction(r);
+        ChemSim::removeReaction(ChemSimReactionKey(), r);
+        
+        ///remove from local list
+        _reactions.erase(std::find(_reactions.begin(), _reactions.end(), r));
+    }
+    
     ///Get list of reactions associated with this CCylinder
     std::vector<ReactionBase*>& getReactions() {return _reactions;}
-    
-    ///Add all reactions associated with this CCylinder
-    virtual void addChemSimReactions()
-    {
-        for (auto &r: _reactions)
-            ChemSim::addReaction(ChemSimReactionKey(), r);
-    }
     
     ///Update all reactions associated with this CCylinder
     virtual void updateReactions()
     {
         ///loop through all reactions, passivate/activate
         for(auto &r : _reactions) {
-            
             if(r->getProductOfReactants() == 0)
                 r->passivateReaction();
             else
