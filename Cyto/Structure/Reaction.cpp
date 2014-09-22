@@ -76,9 +76,14 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
         else {
             auto vit = std::find_if(spcv.species().cbegin(),spcv.species().cend(),
                                     [molec](const std::unique_ptr<Species> &us){return us->getMolecule()==molec;});
-            if(vit==spcv.species().cend())
-                throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
-            species.push_back(vit->get());
+            ///if we didn't find it, use the old species
+            if(vit==spcv.species().cend()) {
+                species.push_back(&rs->getSpecies());
+                //throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
+            }
+            else {
+                species.push_back(vit->get());
+            }
         }
     }
     ///Create new reaction, copy ownership of signal

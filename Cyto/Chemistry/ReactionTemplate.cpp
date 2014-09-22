@@ -247,8 +247,8 @@ void PolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     if(_direction == FilamentReactionDirection::BACKWARD) {
         
-        CMonomer* m1 = cc1->getCMonomer(0);
-        CMonomer* m2 = cc2->getCMonomer(cc2->size() - 1);
+        CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
+        CMonomer* m2 = cc2->getCMonomer(0);
         std::vector<Species*> reactantSpecies;
         std::vector<Species*> productSpecies;
         
@@ -266,12 +266,12 @@ void PolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                     break;
                 }
                 case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc1->getCompartment();
+                    Compartment* c = cc2->getCompartment();
                     reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::MINUSEND: {
-                    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+                    reactantSpecies.push_back(m2->speciesMinusEnd(speciesInt));
                     break;
                 }
                 default: {}
@@ -286,17 +286,17 @@ void PolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
             switch(type) {
                     
                 case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m1->speciesFilament(speciesInt));
+                    productSpecies.push_back(m2->speciesFilament(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::BOUND: {
-                    productSpecies.push_back(m2->speciesBound(speciesInt));
+                    productSpecies.push_back(m1->speciesBound(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::MINUSEND: {
-                    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+                    productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
                     break;
                 }
                     
@@ -309,8 +309,8 @@ void PolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* r = new Reaction<2, 3>(species, _rate);
         
-        cc1->addBackReaction(r, true);
-        cc2->addFrontReaction(r);
+        cc2->addBackReaction(r, true);
+        cc1->addFrontReaction(r);
     }
 
 }
@@ -553,8 +553,8 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     if(_direction == FilamentReactionDirection::BACKWARD) {
         
-        CMonomer* m1 = cc1->getCMonomer(0);
-        CMonomer* m2 = cc2->getCMonomer(cc2->size() - 1);
+        CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
+        CMonomer* m2 = cc2->getCMonomer(0);
         std::vector<Species*> reactantSpecies;
         std::vector<Species*> productSpecies;
         
@@ -567,17 +567,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
             switch(type) {
                     
                 case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m2->speciesFilament(speciesInt));
+                    productSpecies.push_back(m1->speciesFilament(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::BOUND: {
-                    productSpecies.push_back(m1->speciesBound(speciesInt));
+                    productSpecies.push_back(m2->speciesBound(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::PLUSEND: {
-                    productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+                    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
                     break;
                 }
                 default: {}
@@ -598,12 +598,12 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                     break;
                 }
                 case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc1->getCompartment();
+                    Compartment* c = cc2->getCompartment();
                     reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::PLUSEND: {
-                    reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+                    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
                     break;
                 }
                     
@@ -616,8 +616,8 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* r = new Reaction<2, 3>(species, _rate);
         
-        cc1->addBackReaction(r, true);
-        cc2->addFrontReaction(r);
+        cc2->addBackReaction(r, true);
+        cc1->addFrontReaction(r);
     }
     
 }

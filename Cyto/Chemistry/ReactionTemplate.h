@@ -54,7 +54,7 @@ public:
     virtual void addReaction(CCylinder* cc) = 0;
     
     ///Add this chemical reaction cross two CCylinders.
-    ///@note adds FROM cc1 TO cc2. 
+    ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2 ) = 0;
     
 };
