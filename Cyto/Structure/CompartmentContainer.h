@@ -17,6 +17,7 @@
 ///Key to access instance of CompartmentGrid
 class CompartmentGridKey {friend class ChemInitializerImpl;
                           friend class GController;
+                          friend class ReactionFilamentTemplate;
 #ifdef TESTING
                           public:
 #endif //TESTING

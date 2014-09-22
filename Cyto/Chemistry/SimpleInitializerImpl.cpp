@@ -189,39 +189,12 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
 ///Remove a cylinder. in this impl, set the front of the new front cylinder
 void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack)
-{   
+{
+    
+    
+    
 } 
-    
-///Constructor, initializes species container
-CMonomerBasic::CMonomerBasic(Compartment* c)
-{
-    ///Initialize member array of species
-    std::vector<std::string> species = {"Actin", "Front", "Back"};
-    
-    for(auto &s : species)
-        _species.push_back(c->addSpeciesFilament(
-            SpeciesNamesDB::Instance()->generateUniqueName(s), 0, 1));
-    
-}
-
-///Print a species in this filament element
-void CMonomerBasic::print()
-{
-    for (auto &s : _species)
-        if(s->getN() == 1) std::cout << s->getName().at(0);
-}
 
 
-CBoundBasic::CBoundBasic(Compartment* c)
-{
-    ///Initialize member array of species
-    _species.push_back(c->addSpeciesBound("Empty", 0, 1));
-}
 
 
-///Print a species in this filament element
-void CBoundBasic::print()
-{
-    for (auto &s : _species)
-        if(s->getN() == 1) std::cout << s->getName().at(0);
-}

@@ -50,13 +50,13 @@ struct FilamentExtensionBackCallback {
 };
 
 ///Retraction callback
-struct FilamentRetractionCallback {
+struct FilamentRetractionFrontCallback {
     
     //members
     Filament* _filament;
     
     ///Constructor, sets members
-    FilamentRetractionCallback(Filament* filament) : _filament(filament) {};
+    FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
     void operator() (ReactionBase *r){
@@ -64,36 +64,19 @@ struct FilamentRetractionCallback {
     }
 };
 
-
-///General polymerization callback
-struct FilamentPolyCallback {
-    
+///Retraction callback
+struct FilamentRetractionBackCallback {
     
     //members
     Filament* _filament;
     
-    FilamentPolyCallback(Filament* filament) : _filament(filament) {};
+    ///Constructor, sets members
+    FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
     
-    //Callback
+    ///Callback
     void operator() (ReactionBase *r){
         //_filament->
     }
-    
-};
-
-///General depolymerization callback
-struct FilamentDepolyCallback {
-    
-    //members
-    Filament* _filament;
-    
-    FilamentDepolyCallback(Filament* filament) : _filament(filament) {};
-    
-    //Callback
-    void operator() (ReactionBase *r){
-        //_filament->
-    }
-    
 };
 
 

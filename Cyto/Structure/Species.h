@@ -378,8 +378,8 @@ public:
     ~SpeciesDiffusing () noexcept {};
 };
 
-    /// SpeciesFilament should be used for species that can be in a filament. These species can not move
-/// cross-compartment.
+/// SpeciesFilament should be used for species that can be in a filament.
+///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
 public:
     /// Default constructor
@@ -465,6 +465,98 @@ public:
     /// Default destructor
     ~SpeciesBound () noexcept {};
 };
+
+/// SpeciesPlusEnd is for a plus end species on a filament
+/// This allows for various polymerization/depolymerization rates on filaments
+/// These species can not move cross-compartment.
+class SpeciesPlusEnd : public Species {
+public:
+    /// Default constructor
+    SpeciesPlusEnd()  : Species() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesPlusEnd (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  Species(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : Species(rhs) {}
+    
+    /// Move constructor
+    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : Species(std::move(rhs)) {
+    }
+    
+    /// Regular Assignment
+    SpeciesPlusEnd& operator=(const SpeciesPlusEnd& rhs)  {
+        Species::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesPlusEnd& operator=(SpeciesPlusEnd&& rhs)
+    {
+        Species::operator=(std::move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesPlusEnd* clone() {
+        return new SpeciesPlusEnd(*this);
+    }
+    
+    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
+    virtual std::string getFullName() const {return getName() + "{PlusEnd}";}
+    
+    /// Default destructor
+    ~SpeciesPlusEnd () noexcept {};
+};
+
+/// SpeciesMinusEnd is for a minus end species on a filament
+/// This allows for various polymerization/depolymerization rates on filaments
+/// These species can not move cross-compartment.
+class SpeciesMinusEnd : public Species {
+public:
+    /// Default constructor
+    SpeciesMinusEnd()  : Species() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesMinusEnd (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  Species(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : Species(rhs) {}
+    
+    /// Move constructor
+    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : Species(std::move(rhs)) {
+    }
+    
+    /// Regular Assignment
+    SpeciesMinusEnd& operator=(const SpeciesMinusEnd& rhs)  {
+        Species::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesMinusEnd& operator=(SpeciesMinusEnd&& rhs)
+    {
+        Species::operator=(std::move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesMinusEnd* clone() {
+        return new SpeciesMinusEnd(*this);
+    }
+    
+    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
+    virtual std::string getFullName() const {return getName() + "{MinusEnd}";}
+    
+    /// Default destructor
+    ~SpeciesMinusEnd () noexcept {};
+};
+
+
 
 
 /// Print self into an iostream
