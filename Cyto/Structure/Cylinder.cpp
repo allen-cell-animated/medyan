@@ -14,6 +14,8 @@
 
 Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack) {
     
+    setFilament(pf);
+    
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead));
     _mCylinder->setCylinder(this);
     
@@ -23,8 +25,16 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extension
     _cCylinder->setCylinder(this);
 #endif
 
-    setFilament(pf);
 }
+
+Cylinder::~Cylinder() {
+    
+#ifdef CHEMISTRY
+    ChemInitializer::removeCCylinder(ChemInitializerCylinderKey(), _pFilament, IfLast() , !IfLast());
+#endif
+    
+}
+
 
 
 bool Cylinder::IfLast(){

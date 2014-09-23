@@ -82,7 +82,7 @@ CYLINDERSIZE:                5.0
 
 CALGORITHM:                  NRM
 SETUP:                       SIMPLE
-NUMSTEPS:                    20
+NUMSTEPS:                    12
 NUMSTEPSPERM:                5
 
 ##################################################

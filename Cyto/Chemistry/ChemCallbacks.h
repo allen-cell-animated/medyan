@@ -27,8 +27,9 @@ struct FilamentExtensionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        std::cout << "Polymerizing front" << std::endl;
         _filament->PolymerizeFront();
-       // _filament->printChemComposition();
+        _filament->printChemComposition();
         
     }
 };
@@ -46,6 +47,7 @@ struct FilamentExtensionBackCallback {
     void operator() (ReactionBase *r){
         std::cout << "Polymerizing back" << std::endl;
         _filament->PolymerizeBack();
+        _filament->printChemComposition();
     }
 };
 
@@ -60,7 +62,7 @@ struct FilamentRetractionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        //_filament->
+        _filament->DepolymerizeFront();
     }
 };
 
@@ -75,7 +77,7 @@ struct FilamentRetractionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        //_filament->
+        _filament->DepolymerizeBack();
     }
 };
 

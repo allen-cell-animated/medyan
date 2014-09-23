@@ -56,6 +56,8 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
     for (int i = 1; i<numBeads; i++) {
         PolymerizeFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
     }
+    
+    
 }
 
 ///Polymerize front for initialization
@@ -152,6 +154,34 @@ void Filament::PolymerizeBack() {
         _pCylinderVector.push_front(c0);
     }
 }
+
+///Depolymerize front at runtime
+void Filament::DepolymerizeFront() {
+    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
+    
+    else {
+        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(_pLastCylinder);
+        BeadDB::Instance(BeadDBKey())->RemoveBead(_pCylinderVector[_pCylinderVector.size() - 1]->getMCylinder()->GetSecondBead());
+        
+        _pLastCylinder = _pCylinderVector[_pCylinderVector.size() - 1];
+        _pLastCylinder->getMCylinder()->SetSecondBead(nullptr);
+        _pLastCylinder->SetLast(true);
+        _pCylinderVector.pop_back();
+    }
+    
+}
+
+void Filament::DepolymerizeBack() {
+    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
+    
+    else {
+        BeadDB::Instance(BeadDBKey())->RemoveBead(_pCylinderVector[0]->getMCylinder()->GetSecondBead());
+        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(_pCylinderVector[0]);
+        
+        _pCylinderVector.pop_front();
+    }
+}
+
 
 vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<double>>& v, int numBeads){
     

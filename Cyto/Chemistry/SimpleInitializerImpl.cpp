@@ -9,190 +9,430 @@
 #include "SimpleInitializerImpl.h"
 #include "SystemParameters.h"
 #include "ChemCallbacks.h"
+
+void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chemSetup) {
     
-///Initialize the compartment grid
-void SimpleInitializerImpl::initializeGrid() {
-    
-    Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
-    
-    ///Add bulk species
-    CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk("Actin", 1000U);
-    
-    ///initialize all compartments with species
-    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children())
-    {
-        Compartment *C = static_cast<Compartment*>(c.get());
-        *C = cProto;
+    ///set up reaction templates
+    for(auto &r: chemSetup.reactions) {
+        
+        std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
+        std::vector<std::tuple<int, SpeciesType>> productTemplate;
+        FilamentReactionDirection d;
+        FilamentReactionType type;
+        
+        for(std::string& reactant : std::get<0>(r)) {
+            
+            ///read strings, and look up type
+            if(reactant.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find_if(chemSetup.speciesBulk.begin(), chemSetup.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                                           
+                if(it == chemSetup.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+            }
+            
+            else if(reactant.find("DIFFUSING") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find_if(chemSetup.speciesDiffusing.begin(), chemSetup.speciesDiffusing.end(),
+                                       [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
+                if(it == chemSetup.speciesDiffusing.end()) {
+                    std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            }
+            
+            else if(reactant.find("FILAMENT") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find(_speciesFilament.begin(), _speciesFilament.end(), name);
+                int position = 0;
+                
+                if(it != _speciesFilament.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesFilament.begin(), it);
+                    reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    std::cout << "A filament species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(reactant.find("BOUND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _speciesBound.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesBound.begin(), it);
+                    reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(reactant.find("PLUSEND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+                int position = 0;
+                
+                if(it != _speciesPlusEnd.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesPlusEnd.begin(), it);
+                    reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                    
+                    ///see what position this is (N or N+1)
+                    if(reactant.find("N+1") != std::string::npos) d = FilamentReactionDirection::BACKWARD;
+                    else d = FilamentReactionDirection::FORWARD;
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(reactant.find("MINUSEND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+                int position = 0;
+                
+                if(it != _speciesMinusEnd.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesMinusEnd.begin(), it);
+                    reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                    
+                    ///see what position this is (N or N+1)
+                    if(reactant.find("N+1") != std::string::npos) d = FilamentReactionDirection::BACKWARD;
+                    else d = FilamentReactionDirection::FORWARD;
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+        
+        for(std::string& product : std::get<1>(r)) {
+            
+            ///read strings, and look up type
+            if(product.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find_if(chemSetup.speciesBulk.begin(), chemSetup.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                if(it == chemSetup.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                productTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+            }
+            
+            else if(product.find("DIFFUSING") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find_if(chemSetup.speciesDiffusing.begin(), chemSetup.speciesDiffusing.end(),
+                                       [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
+                if(it == chemSetup.speciesDiffusing.end()) {
+                    std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                productTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            }
+            
+            else if(product.find("FILAMENT") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find(_speciesFilament.begin(), _speciesFilament.end(), name);
+                int position = 0;
+                
+                if(it != _speciesFilament.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesFilament.begin(), it);
+                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    std::cout << "A filament species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(product.find("BOUND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _speciesBound.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesBound.begin(), it);
+                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(product.find("PLUSEND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+                int position = 0;
+                
+                if(it != _speciesPlusEnd.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesPlusEnd.begin(), it);
+                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                    
+                    ///see what position this is (N or N+1)
+                    if(product.find("N+1") != std::string::npos && d != FilamentReactionDirection::FORWARD) {
+                        std::cout << "A filament reaction involving polymerization/depolymerization is invalid. Exiting." << std::endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    if(product.find("N+1") != std::string::npos) { type = FilamentReactionType::POLYMERIZATION; }
+                    else { type = type = FilamentReactionType::DEPOLYMERIZATION; }
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(product.find("MINUSEND") != std::string::npos) {
+                
+                ///look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+                int position = 0;
+                
+                if(it != _speciesMinusEnd.end()) {
+                    
+                    ///get position of iterator
+                    position = std::distance(_speciesMinusEnd.begin(), it);
+                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                    
+                    ///see what position this is (N or N+1)
+                    if(product.find("N+1") != std::string::npos && d != FilamentReactionDirection::FORWARD) {
+                        std::cout << "A filament reaction involving polymerization/depolymerization is invalid. Exiting." << std::endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    if(product.find("N+1") != std::string::npos) { type = FilamentReactionType::DEPOLYMERIZATION; }
+                    else { type = type = FilamentReactionType::POLYMERIZATION; }
+                }
+                else {
+                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+        
+        ///add reaction template
+        if(type == FilamentReactionType::POLYMERIZATION){
+           _reactionFilamentTemplates.emplace_back(new PolymerizationTemplate(reactantTemplate, productTemplate, std::get<2>(r), d));
+        }
+        else if(type == FilamentReactionType::DEPOLYMERIZATION){
+            std::cout << std::get<2>(r) << std::endl;
+           _reactionFilamentTemplates.emplace_back(new DepolymerizationTemplate(reactantTemplate, productTemplate, std::get<2>(r), d));
+        }
+        else {}
     }
-    
-    ///activate all compartments for diffusion
-    CompartmentGrid::Instance(compartmentGridKey())->activateAll();
-    
-    CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
+
 }
 
-///Initializer, inits a cylinder to have actin, and virtual back/front.
+void SimpleInitializerImpl::initialize(ChemistrySetup& chemSetup) {
+    
+    ///Copy all species from chemsetup struct
+    _speciesFilament = chemSetup.speciesFilament; _speciesBound = chemSetup.speciesBound;
+    _speciesPlusEnd = chemSetup.speciesPlusEnd; _speciesMinusEnd = chemSetup.speciesMinusEnd;
+    
+    ///Setup all species diffusing and bulk
+    Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
+    
+    for(auto &sb : chemSetup.speciesBulk)
+        CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk(std::get<0>(sb), std::get<1>(sb));
+    for(auto &sd : chemSetup.speciesDiffusing)
+        cProto.addSpecies(std::get<0>(sd), std::get<1>(sd), std::get<2>(sd));
+    
+    
+    ///initialize all compartments with species
+    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
+        Compartment *C = static_cast<Compartment*>(c.get()); *C = cProto;
+    }
+    ///activate all compartments for diffusion, set up diffusion reactions
+    CompartmentGrid::Instance(compartmentGridKey())->activateAll();
+    for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
+        Compartment *C = static_cast<Compartment*>(c.get()); C->generateAllDiffusionReactions();
+    }
+    CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
+    
+    ///create filament reaction templates
+    createFilamentReactionTemplates(chemSetup);
+}
+
 CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
                                                   bool extensionFront, bool extensionBack)
 {
-    CCylinder* cylinder = new CCylinder(c);
+    CCylinder* cc = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
-    int maxlength = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize;
+    int maxlength = cc->size();
     
-    ///add to cylinder
-    for (int index = 0; index < maxlength; index++) {
-        CMonomerBasic* m = new CMonomerBasic(c);
-        cylinder->addCMonomer(m);
+    ///add monomers to cylinder
+    for(int i = 0; i < maxlength; i++) {
+        
+        CMonomer* m = new CMonomer();
+        for(auto &f : _speciesFilament) {
+            SpeciesFilament* sf = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
+            m->addSpeciesFilament(sf);
+        }
+        for (auto &b : _speciesBound) {
+            SpeciesBound* sb = c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
+            m->addSpeciesBound(sb);
+        }
+        for (auto &p : _speciesPlusEnd) {
+            SpeciesPlusEnd* sp = c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
+            m->addSpeciesPlusEnd(sp);
+        }
+        for (auto &mi : _speciesMinusEnd) {
+            SpeciesMinusEnd* smi = c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
+            m->addSpeciesMinusEnd(smi);
+        }
+        
+        cc->addCMonomer(m);
     }
     
+    ///Add all reaction templates to this cylinder
+    for(auto &r : _reactionFilamentTemplates) { r->addReaction(cc, pf); }
+    
     ///get last ccylinder
-    CCylinder* lastCCylinder;
+    CCylinder* lastcc; Cylinder* lastc;
  
     ///extension of front
     if(extensionFront) {
-
-        auto m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0));
-        SpeciesFilament* front;
-        
-        ///remove front from last ccylinder, add to current
-        front = m2->getFront(); front->getRSpecies().up();
-        
-        auto actin = m2->getActin();
-        actin->getRSpecies().up();
+        lastcc = pf->getLastCylinder()->getCCylinder();
+        for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc);
     }
-
     ///extension of back
     else if(extensionBack) {
-        auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(maxlength - 1));
-        
-        SpeciesFilament* back;
-        ///remove back from last cylinder, add to current
-        back = m1->getBack(); back->getRSpecies().up();
-        
-        auto actin = m1->getActin();
-        actin->getRSpecies().up();
+        lastcc = pf->getCylinderVector()[0]->getCCylinder();
+        for(auto &r : _reactionFilamentTemplates) r->addReaction(cc, lastcc);
     }
 
     ///Base case, initialization
     else {
-        Cylinder* lastCylinder = pf->getLastCylinder();
-        
-        ///remove front from last ccylinder, if not null
-        if(lastCylinder != nullptr) {
-            lastCCylinder = lastCylinder->getCCylinder();
-            auto front = static_cast<CMonomerBasic*>(lastCCylinder->getCMonomer(maxlength - 1))->getFront();
-            front->getRSpecies().down();
+        ///Check if this is the first cylinder
+        lastc = pf->getLastCylinder();
+        if(lastc != nullptr) {
+            
+            ///remove plus end from last, add to this.
+            lastcc = lastc->getCCylinder();
+            CMonomer* m1 = lastcc->getCMonomer(lastcc->size() - 2);
+            m1->speciesPlusEnd(0)->getRSpecies().setN(0);
+            
+            CMonomer* m2 = cc->getCMonomer(cc->size() - 2);
+            m2->speciesPlusEnd(0)->getRSpecies().setN(1);
+            m2->speciesBound(0)->getRSpecies().setN(1);
+            
+            ///fill last cylinder with default filament value
+            for(int i = lastcc->size() - 2; i < lastcc->size(); i++) {
+                lastcc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
+                lastcc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
+                
+            }
+            ///fill new cylinder with default filament value
+            for(int i = 0; i < cc->size() - 2; i++) {
+                cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
+                cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
+            }
+            
+            for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc);
+            
+            //lastcc->printCCylinder();
+            
         }
-        ///if first ccylinder, set back
+        ///this is first one
         else {
-            auto back = static_cast<CMonomerBasic*>(cylinder->getCMonomer(0))->getBack();
-            back->getRSpecies().up();
+            //set back and front
+            CMonomer* m1 = cc->getCMonomer(cc->size() - 2);
+            m1->speciesPlusEnd(0)->getRSpecies().setN(1);
+            m1->speciesBound(0)->getRSpecies().setN(1);
             
-        }
-        ///Set as full
-        for(int index = 0; index < maxlength; index++) {
+            CMonomer* m2 = cc->getCMonomer(1);
+            m2->speciesMinusEnd(0)->getRSpecies().setN(1);
+            m2->speciesBound(0)->getRSpecies().setN(1);
             
-            auto m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
-            m1->getActin()->getRSpecies().up();
-
-            if (index == maxlength - 1)  {
-                m1->getFront()->getRSpecies().up();
+            ///fill with default filament value
+            for(int i = 2; i < cc->size() - 2; i++) {
+                cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
+                cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
         }
     }
     
-    ///Callbacks needed
-    auto polyCallback = FilamentPolyCallback(pf);
-    auto extensionFrontCallback = FilamentExtensionFrontCallback(pf);
-    auto extensionBackCallback = FilamentExtensionBackCallback(pf);
-
-    //Look up diffusing species in this compartment
-    Species* actinBulk = &CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName("Actin");
+    //update all reactions added
+    cc->updateReactions();
     
-    ReactionBase *rPolyPlus, *rPolyMinus;
-    
-    ///Loop through all spots in cylinder, add poly reactions
-    for (int index = 0; index < maxlength; index++) {
-        
-        ///Monomer and bounds at current index
-        CMonomerBasic *m0 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
-        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
-        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index+1));
-        
-        ///Plus end polymerization
-        if (index == maxlength - 1) {
-            rPolyPlus = c->addInternal<Reaction,2,0>({m1->getFront(), actinBulk},_k_on_plus);
-            boost::signals2::shared_connection_block
-                rcb1(rPolyPlus->connect(extensionFrontCallback,false));
-        }
-        else {
-            ///Add basic polymerization reactions
-            rPolyPlus = c->addInternal<Reaction,2,2>({m1->getFront(), actinBulk,
-                m2->getActin(), m2->getFront()}, _k_on_plus);
-            boost::signals2::shared_connection_block
-            rcb1(rPolyPlus->connect(polyCallback,false));
-        }
-
-        ///Minus end polymerization
-        if(index == 0) {
-            rPolyMinus = c->addInternal<Reaction,2,0>({m1->getBack(), actinBulk},_k_on_minus);
-            boost::signals2::shared_connection_block
-                rcb1(rPolyMinus->connect(extensionBackCallback,false));
-        }
-        else {
-            ///Add basic polymerization reactions
-            rPolyMinus = c->addInternal<Reaction,2,2>({m1->getBack(), actinBulk,
-                                                m0->getActin(), m0->getBack()}, _k_on_minus);
-            boost::signals2::shared_connection_block
-                rcb2(rPolyMinus->connect(polyCallback,false));
-            
-        }
-        
-        rPolyPlus->setAsPolymerizationReaction();
-        cylinder->addReaction(rPolyPlus);
-        cylinder->addReaction(rPolyMinus);
-    }
-    
-//    ///loop through all spots in subfilament, add depoly reactions
-//    for (int index = maxlength - 1; index >= 0; index--) {
-//        
-//        ///Monomer and bounds at current index
-//        
-//        CMonomerBasic *m1 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index-1));
-//        CMonomerBasic *m2 = static_cast<CMonomerBasic*>(cylinder->getCMonomer(index));
-//        
-//        ///Retraction callback
-//        if(index == 0) {
-//            rDepoly = c->addInternal<Reaction,2,0>({m2->getFront(), m2->getActin()},
-//                                                   _k_off_plus);
-//            boost::signals2::shared_connection_block
-//            rcb(rDepoly->connect(retractionCallback,false));
-//        }
-//        
-//        ///Typical case
-//        else {
-//            /// add basic depolymerization reactions
-//            rDepoly = c->addInternal<Reaction,2,2>({m2->getFront(), m2->getActin(),
-//                                                    m1->getFront(), actinDiffusing}, _k_off_plus);
-//            boost::signals2::shared_connection_block
-//            rcb(rDepoly->connect(depolyCallback,false));
-//        }
-//        cylinder->addReaction(rDepoly);
-//    }
-    
-    cylinder->updateReactions();
+    ///cc->printCCylinder();
+    //std::cout <<std::endl;
 
     ///clean up and return
-    return cylinder;
+    return cc;
 }
 
-///Remove a cylinder. in this impl, set the front of the new front cylinder
+///Remove a cylinder
 void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack)
 {
     
-    
-    
+    if(!retractionFront && !retractionBack) {
+        std::cout << "RemoveCCylinder : did not specify which filament end is retracting. Exiting" <<std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(retractionFront) {
+        
+        ///remove front reactions from previous cylinder
+        CCylinder* prevcc = pf->getCylinderVector()[pf->getCylinderVector().size() - 1]->getCCylinder();
+        prevcc->clearFrontReactions();
+        
+    }
+    if(retractionBack) {
+
+        ///remove back reactions from previous cylinder
+        CCylinder* prevcc = pf->getCylinderVector()[1]->getCCylinder();
+        prevcc->clearBackReactions();
+
+    }
 } 
 
 

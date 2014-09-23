@@ -247,6 +247,29 @@ public:
         return sp;
     }
     
+    /// Add a plus end species to this compartment
+    /// @param args - any number of SpeciesBound objects
+    template<typename ...Args>
+    SpeciesPlusEnd* addSpeciesPlusEnd(Args&& ...args)
+    {
+        SpeciesPlusEnd *sp =
+        static_cast<SpeciesPlusEnd*>(_species.addSpecies<SpeciesPlusEnd>(std::forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
+        return sp;
+    }
+    
+    /// Add a minus end species to this compartment
+    /// @param args - any number of SpeciesBound objects
+    template<typename ...Args>
+    SpeciesMinusEnd* addSpeciesMinusEnd(Args&& ...args)
+    {
+        SpeciesMinusEnd *sp =
+        static_cast<SpeciesMinusEnd*>(_species.addSpecies<SpeciesMinusEnd>(std::forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
+        return sp;
+    }
 
     /// Add an internal reaction to this compartment
     template<unsigned short M, unsigned short N, typename ...Args>

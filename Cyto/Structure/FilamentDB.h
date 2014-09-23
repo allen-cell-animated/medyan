@@ -65,6 +65,7 @@ public:
             push_back(pf);
             std::cout<<"long filament created"<<std::endl;
             
+            pf->printChemComposition();
             return pf;
         }
     }

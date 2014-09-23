@@ -43,31 +43,6 @@ void CCylinder::removeReaction(ReactionBase* r) {
     ///remove from compartment and chemsim
     _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(ChemSimReactionKey(), r);
-    
-    ///remove from local list
-    _reactions.erase(std::find(_reactions.begin(), _reactions.end(), r));
-}
-
-void CCylinder::removeFrontReaction(ReactionBase* r, bool manage) {
-    ///remove from compartment and chemsim
-    if(manage) {
-        _compartment->removeInternalReaction(r);
-        ChemSim::removeReaction(ChemSimReactionKey(), r);
-    }
-    
-    ///remove from local list
-    _frontReactions.erase(std::find(_reactions.begin(), _reactions.end(), r));
-}
-
-void CCylinder::removeBackReaction(ReactionBase* r, bool manage) {
-    ///remove from compartment and chemsim
-    if(manage) {
-        _compartment->removeInternalReaction(r);
-        ChemSim::removeReaction(ChemSimReactionKey(), r);
-    }
-    
-    ///remove from local list
-    _backReactions.erase(std::find(_reactions.begin(), _reactions.end(), r));
 }
 
 void CCylinder::updateReactions()
@@ -102,6 +77,7 @@ void CCylinder::printCCylinder()
         m->print();
         std::cout << ":";
     }
+    std::cout << std::endl;
 }
 
 

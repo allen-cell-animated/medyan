@@ -9,7 +9,7 @@
 #ifndef __Cyto__ReactionTemplate__
 #define __Cyto__ReactionTemplate__
 
-#include "CCylinder.h"
+#include "Filament.h"
 #include <iostream>
 
 ///Enumeration for species types
@@ -19,6 +19,11 @@ enum SpeciesType {
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
+};
+
+///Enumeration for type of reaction
+enum FilamentReactionType {
+    POLYMERIZATION, DEPOLYMERIZATION, BINDING, WALKING, CREATION, DESTRUCTION
 };
 
 ///ReactionFilamentTemplate is a class to store filament chemical reaction information read from an input file
@@ -43,15 +48,15 @@ protected:
     
     float _rate; ///< rate of reaction
     
-    FilamentReactionDirection _direction; ///< direction of this reaction (forward, backward, in place)
-    
 public:
     ///Default constructor and destructor
-    ReactionFilamentTemplate() {}
+    ReactionFilamentTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                             std::vector<std::tuple<int, SpeciesType>> products,
+                             float rate) : _reactants(reactants), _products(products), _rate(rate) {}
     ~ReactionFilamentTemplate() {}
 
     ///Add this chemical reaction to a CCylinder. Adds all extension and retraction callbacks needed
-    virtual void addReaction(CCylinder* cc) = 0;
+    virtual void addReaction(CCylinder* cc, Filament* pf) = 0;
     
     ///Add this chemical reaction cross two CCylinders.
     ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
@@ -61,25 +66,37 @@ public:
 
 class PolymerizationTemplate : public ReactionFilamentTemplate {
     
+private:
+    FilamentReactionDirection _direction; ///< direction of this reaction (forward, backward, in place)
+    
 public:
     ///Default constructor and destructor
-    PolymerizationTemplate() {}
+    PolymerizationTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                           std::vector<std::tuple<int, SpeciesType>> products,
+                           float rate, FilamentReactionDirection d)
+                           : ReactionFilamentTemplate(reactants, products, rate), _direction(d) {}
     ~PolymerizationTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 class DepolymerizationTemplate : public ReactionFilamentTemplate {
     
+private:
+    FilamentReactionDirection _direction; ///< direction of this reaction (forward, backward, in place)
+    
 public:
     ///Default constructor and destructor
-    DepolymerizationTemplate() {}
+    DepolymerizationTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                             std::vector<std::tuple<int, SpeciesType>> products,
+                             float rate, FilamentReactionDirection d)
+                             : ReactionFilamentTemplate(reactants, products, rate), _direction(d) {}
     ~DepolymerizationTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 

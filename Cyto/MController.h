@@ -50,7 +50,7 @@ private:
     
     ///Initialize the MController using a list of vector names
     ///@param forceFields - a list of forcefields to be added
-    void initializeFF (MechanicsFFType forceFields)
+    void initializeFF (MechanicsFFType& forceFields)
     {
         /// Check if exist!!!
         _FFManager._forceFields.push_back(new FilamentFF(forceFields.FStretchingType, forceFields.FBendingType, forceFields.FTwistingType) );
@@ -77,7 +77,7 @@ private:
         
     }
     
-    void initializeMinAlgorithms (MechanicsAlgorithm Minimizers) {
+    void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers) {
         if (Minimizers.ConjugateGradient == "FLETCHERRIEVES") {_minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>() );}
         else if (Minimizers.ConjugateGradient == "POLAKRIBIERE") {_minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>() );}
         else {

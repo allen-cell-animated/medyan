@@ -16,9 +16,9 @@ void ChemInitializer::setInstance(ChemInitializerInitKey k, ChemInitializerImpl 
     _pimpl=cii;
 }
 
-void ChemInitializer::initializeGrid(ChemInitializerGridKey k)
+void ChemInitializer::initialize(ChemInitializerGridKey k, ChemistrySetup& chemSetup)
 {
-    _pimpl->initializeGrid();
+    _pimpl->initialize(chemSetup);
 }
 
 CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,

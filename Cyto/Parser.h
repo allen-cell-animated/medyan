@@ -33,6 +33,29 @@ struct ChemistryAlgorithm {
     int numStepsPerMech = 0;
 };
 
+///Struct to hold chemical setup
+struct ChemistrySetup {
+    
+    ///Reactions parsed, in the form of a tuple which contains reactants, products and rate
+    ///Reactants and products are in the form:
+    /// Actin:BULK, or Actin:PLUSEND:N, Actin:PLUSEND:N+1 where the first string denotes the species
+    /// name, the second denotes the type and the third denotes the position on the filament (if applicable, only for plus/minus ends).
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> reactions = {};
+    
+    ///SpeciesBulk parsed, in the form of a tuple which contains the name and initial copy number
+    std::vector<std::tuple<std::string, int>> speciesBulk = {};
+    
+    ///SpeciesDiffusing parsed, in the form of a tuple which contains name, initial copy number
+    /// per compartment, and the rate of diffusion.
+    std::vector<std::tuple<std::string, int, double>> speciesDiffusing = {};
+    
+    ///All filament species parsed
+    std::vector<std::string> speciesFilament = {};
+    std::vector<std::string> speciesBound = {};
+    std::vector<std::string> speciesPlusEnd = {};
+    std::vector<std::string> speciesMinusEnd = {};
+    
+};
 
 ///Struct to hold boundary parameters (simple for now)
 struct BoundaryType {

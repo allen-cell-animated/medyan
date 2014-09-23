@@ -19,7 +19,7 @@
 class ChemSimReactionKey;
 class Cylinder;
 
-/// CCylinder class holds all Monomers and Bounds
+/// CCylinder class holds all CMonomers
 /*! 
  *  The CCylinder Class is an template class that has lists of the monomers and bounds that it contains.
  *  it has functionality to print the current composition.
@@ -56,9 +56,9 @@ public:
             _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
         
         ///copy all reactions
-        for(auto &r: rhs._reactions) addReaction(r->clone(c->speciesContainer()));
-        for(auto &r: rhs._frontReactions) addFrontReaction(r->clone(c->speciesContainer()));
-        for(auto &r: rhs._backReactions) addBackReaction(r->clone(c->speciesContainer()));
+        for(auto &r: rhs._reactions)      addReaction(r->clone(c->speciesContainer()));
+        for(auto &r: rhs._frontReactions) addFrontReaction(r->clone(c->speciesContainer()), true);
+        for(auto &r: rhs._backReactions)  addBackReaction(r->clone(c->speciesContainer()), true);
         
         ///Update and return
         this->updateReactions();
@@ -71,20 +71,16 @@ public:
     ~CCylinder()
     {
         ///Remove all reactions
-        for(auto &r: _reactions) removeReaction(r);
-        for(auto &r: _frontReactions) removeReaction(r);
-        for(auto &r: _backReactions) removeReaction(r);
+        for(auto &r: _reactions)       removeReaction(r);
+        for(auto &r: _frontReactions)  removeReaction(r);
+        for(auto &r: _backReactions)   removeReaction(r);
         
         ///Remove all species
         for(auto &m: _monomers) {
-            for(auto &s : m->speciesFilamentVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesBoundVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesPlusEndVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesMinusEndVector())
-                _compartment->removeSpecies(s);
+            for(auto &s : m->speciesFilamentVector()) _compartment->removeSpecies(s);
+            for(auto &s : m->speciesBoundVector())    _compartment->removeSpecies(s);
+            for(auto &s : m->speciesPlusEndVector())  _compartment->removeSpecies(s);
+            for(auto &s : m->speciesMinusEndVector()) _compartment->removeSpecies(s);
         }
     }
     
@@ -118,19 +114,16 @@ public:
     ///add to the chemsim and compartment.
     void addBackReaction(ReactionBase* r, bool manage=false);
     
-    ///remove a filament reaction from this CCylinder
+    ///remove a filament reaction from this system
     ///@note no check on whether r is in the reactions list
     void removeReaction(ReactionBase* r);
-    ///remove a filament reaction from this CCylinder
-    ///@note no check on whether r is in the reactions list
-    ///@note manage decides whether this reaction removing will also
-    ///remove to the chemsim and compartment.
-    void removeFrontReaction(ReactionBase* r, bool manage=false);
-    ///remove a filament reaction from this CCylinder
-    ///@note no check on whether r is in the reactions list
-    ///@note manage decides whether this reaction removing will also
-    ///remove to the chemsim and compartment.
-    void removeBackReaction(ReactionBase* r, bool manage=false);
+    
+    ///clear all filament reactions from front
+    ///typically called when depolymerizing
+    void clearFrontReactions() {_frontReactions.clear();}
+    ///clear all filament reactions from back
+    ///typically called when depolymerizing
+    void clearBackReactions() {_backReactions.clear();}
     
     ///Get list of reactions associated with this CCylinder
     std::vector<ReactionBase*>& getReactions() {return _reactions;}

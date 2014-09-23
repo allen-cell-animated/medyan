@@ -74,7 +74,26 @@ public:
         _numStepsPerMech = CAlgorithm.numStepsPerMech;
         
         
-        _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
+        ////INITIALIZING CHEM SETUP HERE UNTIL PARSER IS MADE
+        ChemistrySetup chemSetup;
+        chemSetup.speciesBulk = {std::tuple<std::string, int>("Actin", 1000)};
+        chemSetup.speciesFilament = {"Actin"};
+        chemSetup.speciesBound = {"Empty"};
+        chemSetup.speciesPlusEnd = {"PActinPlus"};
+        chemSetup.speciesMinusEnd = {"MActinMinus"};
+        
+        chemSetup.reactions = {std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
+                                                                                                     {"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
+                               std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "MActinMinus:MINUSEND:N+1"},
+                                                                                                     {"MActinMinus:MINUSEND:N", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
+            
+                               std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"},
+                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 10.0)
+            
+                                                                                                                                                                        };
+        
+        
+        _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup, chemSetup);
         ChemSim::printReactions();
         std::cout << "Done." <<std::endl;
 #endif

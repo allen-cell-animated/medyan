@@ -18,6 +18,7 @@
 class Filament;
 class CCylinder;
 class ReactionBase;
+struct ChemistrySetup;
 
 ///ChemInitializerImpl is an abstract base class for initialization of all chemistry in the system
 
@@ -31,7 +32,7 @@ public:
     virtual ~ChemInitializerImpl() {}
     
     ///Initialize the compartment grid, based on the given simulation
-    virtual void initializeGrid() = 0;
+    virtual void initialize(ChemistrySetup& chemSetup) = 0;
     
     ///Initializer, based on the given simulation
     ///@param length - starting length of the CCylinder initialized

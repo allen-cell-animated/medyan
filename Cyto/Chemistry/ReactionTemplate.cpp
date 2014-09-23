@@ -11,7 +11,7 @@
 #include "CompartmentContainer.h"
 #include "ChemCallbacks.h"
 
-void PolymerizationTemplate::addReaction(CCylinder* cc) {
+void PolymerizationTemplate::addReaction(CCylinder* cc, Filament* pf) {
     
     ///loop through all monomers of filament
     int maxlength = cc->size();
@@ -78,7 +78,7 @@ void PolymerizationTemplate::addReaction(CCylinder* cc) {
                 }
             }
             
-            FilamentExtensionFrontCallback callback(cc->getCylinder()->getFilament());
+            FilamentExtensionFrontCallback callback(pf);
             
             ///Add the reaction. If it needs a callback then attach
             std::vector<Species*> species = reactantSpecies;
@@ -96,7 +96,7 @@ void PolymerizationTemplate::addReaction(CCylinder* cc) {
     else if(_direction == FilamentReactionDirection::BACKWARD) {
     
         ///loop through all monomers
-        for(int i = maxlength - 1; i > 0; i++) {
+        for(int i = maxlength - 1; i > 0; i--) {
             
             CMonomer* m1 = cc->getCMonomer(i);
             CMonomer* m2 = cc->getCMonomer(i-1);
@@ -155,7 +155,7 @@ void PolymerizationTemplate::addReaction(CCylinder* cc) {
                 }
             }
             
-            FilamentExtensionBackCallback callback(cc->getCylinder()->getFilament());
+            FilamentExtensionBackCallback callback(pf);
             
             ///Add the reaction. If it needs a callback then attach
             std::vector<Species*> species = reactantSpecies;
@@ -317,7 +317,7 @@ void PolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 
 
-void DepolymerizationTemplate::addReaction(CCylinder* cc) {
+void DepolymerizationTemplate::addReaction(CCylinder* cc, Filament* pf) {
     
     ///loop through all monomers of filament
     int maxlength = cc->size();
@@ -341,17 +341,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
                 switch(type) {
                         
                     case SpeciesType::FILAMENT: {
-                        productSpecies.push_back(m2->speciesFilament(speciesInt));
+                        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
                         break;
                     }
                         
                     case SpeciesType::BOUND: {
-                        productSpecies.push_back(m1->speciesBound(speciesInt));
+                        reactantSpecies.push_back(m1->speciesBound(speciesInt));
                         break;
                     }
                         
                     case SpeciesType::MINUSEND: {
-                        productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+                        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
                         break;
                     }
                     default: {}
@@ -366,17 +366,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
                 switch(type) {
                         
                     case SpeciesType::BULK: {
-                        reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                        productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
                                                   findSpeciesBulkByMolecule(speciesInt));
                         break;
                     }
                     case SpeciesType::DIFFUSING: {
                         Compartment* c = cc->getCompartment();
-                        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                         break;
                     }
                     case SpeciesType::MINUSEND: {
-                        reactantSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+                        productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
                         break;
                     }
                         
@@ -384,7 +384,7 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
                 }
             }
             
-            FilamentRetractionBackCallback callback(cc->getCylinder()->getFilament());
+            FilamentRetractionBackCallback callback(pf);
             
             ///Add the reaction. If it needs a callback then attach
             std::vector<Species*> species = reactantSpecies;
@@ -402,7 +402,7 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
     else if(_direction == FilamentReactionDirection::BACKWARD) {
         
         ///loop through all monomers
-        for(int i = maxlength - 1; i > 0; i++) {
+        for(int i = maxlength - 1; i > 0; i--) {
             
             CMonomer* m1 = cc->getCMonomer(i);
             CMonomer* m2 = cc->getCMonomer(i-1);
@@ -418,17 +418,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
                 switch(type) {
                         
                     case SpeciesType::FILAMENT: {
-                        productSpecies.push_back(m2->speciesFilament(speciesInt));
+                        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
                         break;
                     }
                         
                     case SpeciesType::BOUND: {
-                        productSpecies.push_back(m1->speciesBound(speciesInt));
+                        reactantSpecies.push_back(m1->speciesBound(speciesInt));
                         break;
                     }
                         
                     case SpeciesType::PLUSEND: {
-                        productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+                        reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
                         break;
                     }
                     default: {}
@@ -443,24 +443,24 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc) {
                 switch(type) {
                         
                     case SpeciesType::BULK: {
-                        reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                        productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
                                                   findSpeciesBulkByMolecule(speciesInt));
                         break;
                     }
                     case SpeciesType::DIFFUSING: {
                         Compartment* c = cc->getCompartment();
-                        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                         break;
                     }
                     case SpeciesType::PLUSEND: {
-                        reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+                        productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
                         break;
                     }
                     default: {}
                 }
             }
             
-            FilamentRetractionFrontCallback callback(cc->getCylinder()->getFilament());
+            FilamentRetractionFrontCallback callback(pf);
             
             ///Add the reaction. If it needs a callback then attach
             std::vector<Species*> species = reactantSpecies;
@@ -497,17 +497,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
             switch(type) {
    
                 case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m2->speciesFilament(speciesInt));
+                    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::BOUND: {
-                    productSpecies.push_back(m1->speciesBound(speciesInt));
+                    reactantSpecies.push_back(m1->speciesBound(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::MINUSEND: {
-                    productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+                    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
                     break;
                 }
                 default: {}
@@ -523,17 +523,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                     
                     
                 case SpeciesType::BULK: {
-                    reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
                                               findSpeciesBulkByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::DIFFUSING: {
                     Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::MINUSEND: {
-                    reactantSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+                    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
                     break;
                 }
                     
@@ -544,7 +544,7 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<2, 3>(species, _rate);
+        ReactionBase* r = new Reaction<3, 2>(species, _rate);
         
         cc1->addFrontReaction(r, true);
         cc2->addBackReaction(r);
@@ -567,17 +567,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
             switch(type) {
                     
                 case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m1->speciesFilament(speciesInt));
+                    reactantSpecies.push_back(m1->speciesFilament(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::BOUND: {
-                    productSpecies.push_back(m2->speciesBound(speciesInt));
+                    reactantSpecies.push_back(m2->speciesBound(speciesInt));
                     break;
                 }
                     
                 case SpeciesType::PLUSEND: {
-                    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+                    reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
                     break;
                 }
                 default: {}
@@ -593,17 +593,17 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                     
                     
                 case SpeciesType::BULK: {
-                    reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
                                               findSpeciesBulkByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::DIFFUSING: {
                     Compartment* c = cc2->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                     break;
                 }
                 case SpeciesType::PLUSEND: {
-                    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+                    productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
                     break;
                 }
                     
@@ -614,7 +614,7 @@ void DepolymerizationTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<2, 3>(species, _rate);
+        ReactionBase* r = new Reaction<3, 2>(species, _rate);
         
         cc2->addBackReaction(r, true);
         cc1->addFrontReaction(r);

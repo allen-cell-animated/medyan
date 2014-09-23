@@ -36,13 +36,13 @@ private:
     std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
     
     Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
-    int _positionFilament; // position on filament (1st, 2nd, ... etc);
-    bool _ifLast;
+    int _positionFilament; ///< position on filament (1st, 2nd, ... etc)
+    bool _ifLast = true; ///< if the cylinder is last in the filament's cylinder list
     
 public:
     ///Constructor and destructor
     Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack);
-    ~Cylinder() {};
+    ~Cylinder();
     
     ///get mCylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}

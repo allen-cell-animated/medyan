@@ -15,7 +15,7 @@ TODO                                                                        COMP
     -Filament input file                                                        X
     -Out of bounds management                                                   X
     -Moving cylinders, placing new cylinders                                    XX
-    -Boundary hard wall potential
+    -Boundary hard wall potential                                               X
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?
     -Callback transfer when copying reactions                                   X
