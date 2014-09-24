@@ -30,6 +30,7 @@ struct FilamentExtensionFrontCallback {
         std::cout << "Polymerizing front" << std::endl;
         _filament->PolymerizeFront();
         _filament->printChemComposition();
+        std::cout << std::endl;
         
     }
 };
@@ -48,6 +49,7 @@ struct FilamentExtensionBackCallback {
         std::cout << "Polymerizing back" << std::endl;
         _filament->PolymerizeBack();
         _filament->printChemComposition();
+        std::cout << std::endl;
     }
 };
 
@@ -65,6 +67,7 @@ struct FilamentRetractionFrontCallback {
         std::cout << "Depolymerizing front" << std::endl;
         _filament->DepolymerizeFront();
         _filament->printChemComposition();
+        std::cout << std::endl;
     }
 };
 
@@ -82,6 +85,7 @@ struct FilamentRetractionBackCallback {
         std::cout << "Depolymerizing back" << std::endl;
         _filament->DepolymerizeBack();
         _filament->printChemComposition();
+        std::cout << std::endl;
     }
 };
 

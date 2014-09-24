@@ -87,8 +87,6 @@ public:
             exit(EXIT_FAILURE);
         }
         
-        
-        ////INITIALIZING CHEM SETUP HERE UNTIL PARSER IS MADE
 //        chemSR.speciesBulk = {std::tuple<std::string, int>("Actin", 1000)};
 //        chemSR.speciesFilament = {"Actin"};
 //        chemSR.speciesBound = {"Empty"};
