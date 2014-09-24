@@ -795,7 +795,107 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
     ChemistrySpeciesAndReactions chemSR;
     std::string line;
 
-    ///TODO
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("SPECIESBULK") != std::string::npos) {
+        
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  3) {
+                std::cout << "Error reading a bulk species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3)
+                chemSR.speciesBulk.push_back(std::tuple<std::string, int>(lineVector[1], std::atoi(lineVector[2].c_str())));
+            else {}
+        }
+        if(line.find("SPECIESDIFFUSING") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  4) {
+                std::cout << "Error reading a diffusing species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4)
+                chemSR.speciesDiffusing.push_back(std::tuple<std::string, int, double>
+                        (lineVector[1], std::atoi(lineVector[2].c_str()), std::atof(lineVector[3].c_str())));
+            else {}
+        }
+        
+        if(line.find("SPECIESFILAMENT") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesFilament.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESBOUND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament bound species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesBound.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESPLUSEND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament plus end species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesPlusEnd.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESMINUSEND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament minus end species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesMinusEnd.push_back(lineVector[1]);
+            else {}
+        }
+        
+        ///loop through a reaction
+        if(line.find("REACTION") != std::string::npos) {
+            
+            std::vector<std::string> reactants;
+            std::vector<std::string> products;
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            
+            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+            
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chemSR.reactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
+                                        (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                std::cout << "Error reading reaction. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+    }
     
     return chemSR;
 }

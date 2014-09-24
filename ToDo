@@ -25,9 +25,10 @@ TODO                                                                        COMP
     -Boundary elements/surfaces                                                           
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
-    -FilamentElement / Cylinders (structure, cloning, etc)
+    -FilamentElement / Cylinders (structure, cloning, reactions, etc)
     -Chemical parsers
     -Chem initializer
+    -Reaction templates
     -Filaments (polymerize, depolymerize, intialization)
     -All databases
     -Mechanics (filament stretching, bending, etc)
