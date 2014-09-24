@@ -18,6 +18,9 @@ void Output::printSnapshot(int step) {
     
     for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
         
+        filament->printChemComposition();
+        
+        
         ///print first line(Filament ID, length, left_delta, right_delta
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
             << " " << filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << std::endl;

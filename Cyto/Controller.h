@@ -95,13 +95,14 @@ public:
         chemSR.speciesPlusEnd = {"PActinPlus"};
         chemSR.speciesMinusEnd = {"MActinMinus"};
         
-        chemSR.reactions = {std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
-                                                                                                     {"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 10.0),
-                               std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "MActinMinus:MINUSEND:N+1"},
-                                                                                                     {"MActinMinus:MINUSEND:N", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
+        chemSR.reactions = {//std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
+                                                                                                     //{"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 10.0),
+                               //std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "MActinMinus:MINUSEND:N+1"},
+                                                                                                     //{"MActinMinus:MINUSEND:N", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
         
                                std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"},
-                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 0.0) };
+                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 10.0)
+        };
         
         _cController.initialize(CAlgorithm.algorithm, "SIMPLE", chemSR);
         ChemSim::printReactions();
@@ -142,6 +143,9 @@ public:
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
         std::cout << "Done." <<std::endl;
+        
+        
+        ChemSim::printReactions();
     }
 
     void run() {

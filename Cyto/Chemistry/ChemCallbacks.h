@@ -62,7 +62,9 @@ struct FilamentRetractionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        std::cout << "Depolymerizing front" << std::endl;
         _filament->DepolymerizeFront();
+        _filament->printChemComposition();
     }
 };
 
@@ -77,7 +79,9 @@ struct FilamentRetractionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        std::cout << "Depolymerizing back" << std::endl;
         _filament->DepolymerizeBack();
+        _filament->printChemComposition();
     }
 };
 
