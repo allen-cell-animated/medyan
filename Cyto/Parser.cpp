@@ -79,18 +79,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.algorithm = lineVector[1];
             }
         }
-        
-        if (line.find("SETUP") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.setup = lineVector[1];
-            }
-        }
         if (line.find("NUMSTEPS:") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -118,6 +106,32 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     }
     return CAlgorithm;
 }
+
+///CHEMISTRY SETUP PARSER
+ChemistrySetup SystemParser::readChemistrySetup() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    ChemistrySetup CSetup;
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        if(line.find("CHEMISTRYFILE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "Error reading chemistry input file. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                CSetup.inputFile = lineVector[1];
+            else {}
+        }
+    }
+    return CSetup;
+}
+
 
 ///Mechanics force field types
 MechanicsFFType SystemParser::readMechanicsFFType() {
@@ -770,6 +784,20 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
         }
     }
     return returnVector;
+}
+
+///CHEMISTRY INPUT PARSER
+ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    ChemistrySpeciesAndReactions chemSR;
+    std::string line;
+
+    ///TODO
+    
+    return chemSR;
 }
 
 

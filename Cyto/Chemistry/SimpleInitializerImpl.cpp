@@ -10,10 +10,10 @@
 #include "SystemParameters.h"
 #include "ChemCallbacks.h"
 
-void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chemSetup) {
+void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
     ///set up reaction templates
-    for(auto &r: chemSetup.reactions) {
+    for(auto &r: chemSR.reactions) {
         
         std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
         std::vector<std::tuple<int, SpeciesType>> productTemplate;
@@ -27,10 +27,10 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chem
                 
                 ///Look up species, make sure in list
                 std::string name = reactant.substr(0, reactant.find(":"));
-                auto it = std::find_if(chemSetup.speciesBulk.begin(), chemSetup.speciesBulk.end(),
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
                                        [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
                                            
-                if(it == chemSetup.speciesBulk.end()) {
+                if(it == chemSR.speciesBulk.end()) {
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -41,9 +41,9 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chem
                 
                 ///Look up species, make sure in list
                 std::string name = reactant.substr(0, reactant.find(":"));
-                auto it = std::find_if(chemSetup.speciesDiffusing.begin(), chemSetup.speciesDiffusing.end(),
+                auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
                                        [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
-                if(it == chemSetup.speciesDiffusing.end()) {
+                if(it == chemSR.speciesDiffusing.end()) {
                     std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -142,9 +142,9 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chem
                 
                 ///Look up species, make sure in list
                 std::string name = product.substr(0, product.find(":"));
-                auto it = std::find_if(chemSetup.speciesBulk.begin(), chemSetup.speciesBulk.end(),
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
                                        [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
-                if(it == chemSetup.speciesBulk.end()) {
+                if(it == chemSR.speciesBulk.end()) {
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -155,9 +155,9 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chem
                 
                 ///Look up species, make sure in list
                 std::string name = product.substr(0, product.find(":"));
-                auto it = std::find_if(chemSetup.speciesDiffusing.begin(), chemSetup.speciesDiffusing.end(),
+                auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
                                        [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
-                if(it == chemSetup.speciesDiffusing.end()) {
+                if(it == chemSR.speciesDiffusing.end()) {
                     std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -259,33 +259,44 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySetup& chem
         
         ///add reaction template
         if(type == FilamentReactionType::POLYMERIZATION){
-           _reactionFilamentTemplates.emplace_back(new PolymerizationTemplate(reactantTemplate, productTemplate, std::get<2>(r), d));
+            
+            if(d == FilamentReactionDirection::FORWARD)
+                _reactionFilamentTemplates.emplace_back(
+                    new PolymerizationPlusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+            else
+                _reactionFilamentTemplates.emplace_back(
+                    new PolymerizationMinusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
         }
+        
         else if(type == FilamentReactionType::DEPOLYMERIZATION){
-            std::cout << std::get<2>(r) << std::endl;
-           _reactionFilamentTemplates.emplace_back(new DepolymerizationTemplate(reactantTemplate, productTemplate, std::get<2>(r), d));
+           
+            if(d == FilamentReactionDirection::BACKWARD)
+                _reactionFilamentTemplates.emplace_back(
+                    new DepolymerizationPlusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+            else
+                _reactionFilamentTemplates.emplace_back(
+                    new DepolymerizationMinusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
         }
         else {}
     }
 
 }
 
-void SimpleInitializerImpl::initialize(ChemistrySetup& chemSetup) {
+void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     
-    ///Copy all species from chemsetup struct
-    _speciesFilament = chemSetup.speciesFilament; _speciesBound = chemSetup.speciesBound;
-    _speciesPlusEnd = chemSetup.speciesPlusEnd; _speciesMinusEnd = chemSetup.speciesMinusEnd;
+    ///Copy all species from chemSR struct
+    _speciesFilament = chemSR.speciesFilament; _speciesBound = chemSR.speciesBound;
+    _speciesPlusEnd = chemSR.speciesPlusEnd; _speciesMinusEnd = chemSR.speciesMinusEnd;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
-    for(auto &sb : chemSetup.speciesBulk)
+    for(auto &sb : chemSR.speciesBulk)
         CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk(std::get<0>(sb), std::get<1>(sb));
-    for(auto &sd : chemSetup.speciesDiffusing)
-        cProto.addSpecies(std::get<0>(sd), std::get<1>(sd), std::get<2>(sd));
+    for(auto &sd : chemSR.speciesDiffusing)
+        cProto.addSpeciesDiffusing(std::get<0>(sd), std::get<1>(sd), std::get<2>(sd));
     
-    
-    ///initialize all compartments with species
+    ///initialize all compartments with species diffusing
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get()); *C = cProto;
     }
@@ -294,10 +305,12 @@ void SimpleInitializerImpl::initialize(ChemistrySetup& chemSetup) {
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get()); C->generateAllDiffusionReactions();
     }
+    
+    ///add reactions to chemsim
     CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
     
     ///create filament reaction templates
-    createFilamentReactionTemplates(chemSetup);
+    createFilamentReactionTemplates(chemSR);
 }
 
 CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,

@@ -64,41 +64,67 @@ public:
     
 };
 
-class PolymerizationTemplate : public ReactionFilamentTemplate {
-    
-private:
-    FilamentReactionDirection _direction; ///< direction of this reaction (forward, backward, in place)
-    
+///Template for polymerization at plus end
+class PolymerizationPlusEndTemplate : public ReactionFilamentTemplate {
+
 public:
     ///Default constructor and destructor
-    PolymerizationTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+    PolymerizationPlusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
                            std::vector<std::tuple<int, SpeciesType>> products,
-                           float rate, FilamentReactionDirection d)
-                           : ReactionFilamentTemplate(reactants, products, rate), _direction(d) {}
-    ~PolymerizationTemplate() {}
+                           float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~PolymerizationPlusEndTemplate() {}
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-class DepolymerizationTemplate : public ReactionFilamentTemplate {
-    
-private:
-    FilamentReactionDirection _direction; ///< direction of this reaction (forward, backward, in place)
+///Template for polymerization at minus end
+class PolymerizationMinusEndTemplate : public ReactionFilamentTemplate {
     
 public:
     ///Default constructor and destructor
-    DepolymerizationTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                             std::vector<std::tuple<int, SpeciesType>> products,
-                             float rate, FilamentReactionDirection d)
-                             : ReactionFilamentTemplate(reactants, products, rate), _direction(d) {}
-    ~DepolymerizationTemplate() {}
+    PolymerizationMinusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                                  std::vector<std::tuple<int, SpeciesType>> products,
+                                  float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~PolymerizationMinusEndTemplate() {}
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
+
+
+///Template for depolymerization at plus end
+class DepolymerizationPlusEndTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///Default constructor and destructor
+    DepolymerizationPlusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                                    std::vector<std::tuple<int, SpeciesType>> products,
+                                    float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~DepolymerizationPlusEndTemplate() {}
+    
+    ///to be implemented
+    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
+///Template for depolymerization at minus end
+class DepolymerizationMinusEndTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///Default constructor and destructor
+    DepolymerizationMinusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                                     std::vector<std::tuple<int, SpeciesType>> products,
+                                     float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~DepolymerizationMinusEndTemplate() {}
+    
+    ///to be implemented
+    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
 
 
 ///ReactionBulkTemplate is a class to store bulk chemical reaction information read from an input file

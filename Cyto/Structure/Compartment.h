@@ -215,7 +215,7 @@ public:
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>
-    Species* addSpecies(Args&& ...args)
+    Species* addSpeciesDiffusing(Args&& ...args)
     {
         Species *sp = _species.addSpecies<SpeciesDiffusing>(std::forward<Args>(args)...);
         sp->setParent(this);

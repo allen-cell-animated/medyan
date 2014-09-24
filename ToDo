@@ -17,14 +17,16 @@ TODO                                                                        COMP
     -Moving cylinders, placing new cylinders                                    XX
     -Boundary hard wall potential                                               X
     -SpeciesBulk implementation                                                 X
-    -Depolymerizing front / back?
+    -Depolymerizing front / back?                                               X
     -Callback transfer when copying reactions                                   X
+    -Excluded volume force field
 3) TESTING!!!!
     -Reaction cloning
     -Boundary elements/surfaces                                                           
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
     -FilamentElement / Cylinders (structure, cloning, etc)
+    -Chemical parsers
     -Chem initializer
     -Filaments (polymerize, depolymerize, intialization)
     -All databases

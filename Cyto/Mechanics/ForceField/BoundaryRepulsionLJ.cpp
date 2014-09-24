@@ -23,11 +23,11 @@ void BoundaryRepulsionLJ::ComputeForces(Bead* pb, double r, std::vector<double>&
     
     double inv_r4 = 1/r;// * 1/r * 1/r * 1/r;
     
-    pb->force[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
+    pb->force[0] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
     
-    pb->force[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
+    pb->force[1] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
     
-    pb->force[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
+    pb->force[2] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
     
 }
 
@@ -37,10 +37,10 @@ void BoundaryRepulsionLJ::ComputeForcesAux(Bead* pb, double r, std::vector<doubl
     
     double inv_r4 = 1/r;// * 1/r * 1/r * 1/r;
     
-    pb->forceAux[0] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
+    pb->forceAux[0] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[0];
     
-    pb->forceAux[1] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
+    pb->forceAux[1] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[1];
     
-    pb->forceAux[2] +=   k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
+    pb->forceAux[2] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
     
 }

@@ -8,6 +8,7 @@
 
 #include "FilamentDB.h"
 
+int FilamentDB::_currentFilamentID = 0;
 FilamentDB* FilamentDB::_instance = 0;
 
 FilamentDB* FilamentDB::Instance(FilamentDBKey k) {

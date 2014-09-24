@@ -70,30 +70,40 @@ public:
         
         ///read algorithm
         CAlgorithm = p.readChemistryAlgorithm();
+        ChemistrySetup CSetup = p.readChemistrySetup();
+        
+        //num steps for sim
         _numSteps = CAlgorithm.numSteps;
         _numStepsPerMech = CAlgorithm.numStepsPerMech;
         
+        ChemistrySpeciesAndReactions chemSR;
+        
+//        if(CSetup.inputFile != "") {
+//            ChemistryParser cp(CSetup.inputFile);
+//            chemSR = cp.readChemistryInput();
+//        }
+//        else {
+//            std::cout << "Need to specify a chemical input file. Exiting" << std::endl;
+//            exit(EXIT_FAILURE);
+//        }
+        
         
         ////INITIALIZING CHEM SETUP HERE UNTIL PARSER IS MADE
-        ChemistrySetup chemSetup;
-        chemSetup.speciesBulk = {std::tuple<std::string, int>("Actin", 1000)};
-        chemSetup.speciesFilament = {"Actin"};
-        chemSetup.speciesBound = {"Empty"};
-        chemSetup.speciesPlusEnd = {"PActinPlus"};
-        chemSetup.speciesMinusEnd = {"MActinMinus"};
+        chemSR.speciesBulk = {std::tuple<std::string, int>("Actin", 1000)};
+        chemSR.speciesFilament = {"Actin"};
+        chemSR.speciesBound = {"Empty"};
+        chemSR.speciesPlusEnd = {"PActinPlus"};
+        chemSR.speciesMinusEnd = {"MActinMinus"};
         
-        chemSetup.reactions = {std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
-                                                                                                     {"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
+        chemSR.reactions = {std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
+                                                                                                     {"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 10.0),
                                std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "MActinMinus:MINUSEND:N+1"},
                                                                                                      {"MActinMinus:MINUSEND:N", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
-            
+        
                                std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"},
-                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 10.0)
-            
-                                                                                                                                                                        };
+                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 0.0) };
         
-        
-        _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup, chemSetup);
+        _cController.initialize(CAlgorithm.algorithm, "SIMPLE", chemSR);
         ChemSim::printReactions();
         std::cout << "Done." <<std::endl;
 #endif
@@ -138,21 +148,19 @@ public:
         
         ///Set up filament output file
         Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-        o.printFilaments();
+        o.printSnapshot(0);
         
 #if defined(MECHANICS) && defined(CHEMISTRY)
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
             _cController.run(_numStepsPerMech);
-            o.printFilaments();
+            o.printSnapshot(i);
 #elif defined(CHEMISTRY)
             _cController.run(_numSteps);
-            o.printFilaments();
+            o.printSnapshot(_numSteps);
 #endif
 #if defined(MECHANICS)
             _mController.run();
 #endif
-        ///Filament output
-        o.printFilaments();
 #if defined(MECHANICS) && defined(CHEMISTRY)
         }
 #endif

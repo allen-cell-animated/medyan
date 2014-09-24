@@ -50,9 +50,9 @@ void CGMethod::MoveBeads(double d)
 {
 	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
         
-        (*it).coordinate[0] = (*it).coordinate[0] + d* (*it).force[0];
-        (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
-        (*it).coordinate[2] = (*it).coordinate[2] + d* (*it).force[2];
+        (*it).coordinate[0] = (*it).coordinate[0] - d* (*it).force[0];
+        (*it).coordinate[1] = (*it).coordinate[1] - d* (*it).force[1];
+        (*it).coordinate[2] = (*it).coordinate[2] - d* (*it).force[2];
         
 	}
     

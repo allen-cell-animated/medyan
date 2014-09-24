@@ -47,11 +47,11 @@ TEST(CompartmentTest, SpeciesAndReactions){
     Compartment *C1 = new Compartment;
     C1->activate();
     
-    Species *actin = C1->addSpecies("Actin",99U);
+    Species *actin = C1->addSpeciesDiffusing("Actin",99U);
     C1->setDiffusionRate(actin,2000);
-    Species *profilin = C1->addSpecies("Profilin",29U);
+    Species *profilin = C1->addSpeciesDiffusing("Profilin",29U);
     C1->setDiffusionRate(profilin,2000);
-    Species *arp23 = C1->addSpecies("Arp2/3",33U);
+    Species *arp23 = C1->addSpeciesDiffusing("Arp2/3",33U);
     C1->setDiffusionRate(arp23,2000);
     
     Compartment *C2 = C1->clone();
@@ -102,9 +102,9 @@ TEST(CompartmentContainerTest, Main) {
     
     Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
     
-    Species *M1 = Cproto.addSpecies("Myosin",1U);
+    Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
-    Species *M2 = Cproto.addSpecies("Fascin",6U);
+    Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
     Cproto.setDiffusionRate(M2,2000);
     
     Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);

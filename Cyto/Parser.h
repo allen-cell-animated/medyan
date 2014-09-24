@@ -28,13 +28,12 @@ struct MechanicsAlgorithm {
 struct ChemistryAlgorithm {
     
     std::string algorithm = "";
-    std::string setup = "";
     int numSteps = 0;
     int numStepsPerMech = 0;
 };
 
-///Struct to hold chemical setup
-struct ChemistrySetup {
+///Struct to hold chemical species and reactions in system
+struct ChemistrySpeciesAndReactions {
     
     ///Reactions parsed, in the form of a tuple which contains reactants, products and rate
     ///Reactants and products are in the form:
@@ -87,6 +86,13 @@ struct MechanicsFFType {
     std::string BoundaryFFType = "";
     
 };
+
+struct ChemistrySetup {
+    
+    ///If Reading in
+    std::string inputFile = "";
+};
+
 
 struct FilamentSetup {
     
@@ -151,6 +157,9 @@ public:
     
     //Filament information
     FilamentSetup readFilamentSetup();
+    
+    //Chemistry information
+    ChemistrySetup readChemistrySetup();
 
 };
 
@@ -164,6 +173,19 @@ public:
     ///all containing starting and ending points.
     std::vector<std::vector<std::vector<double>>> readFilaments();
 };
+
+
+class ChemistryParser: public Parser {
+    
+public:
+    ChemistryParser(std::string inputFileName) : Parser(inputFileName) {}
+    ~ChemistryParser() {}
+    
+    ///Reads chemical reactions and species from input file. Returns a
+    ///chemistry setup struct containing this data
+    ChemistrySpeciesAndReactions readChemistryInput();
+};
+
 
 
 

@@ -44,7 +44,7 @@ public:
     ///       could be: NRM, Gillespie, SimpleGillespie.
     ///@param chemInitializer - a string defining the chemical initializer used
     ///       could be: Simple.
-    void initialize(std::string& chemAlgorithm, std::string& chemInitializer, ChemistrySetup& chemSetup) {
+    void initialize(std::string& chemAlgorithm, std::string chemInitializer, ChemistrySpeciesAndReactions& chemSR) {
         
         ///Set instance of chemsim algorithm
         ChemSimImpl* csi;
@@ -76,7 +76,7 @@ public:
         ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
         
         ///initialize grid ...
-        ChemInitializer::initialize(ChemInitializerGridKey(), chemSetup);
+        ChemInitializer::initialize(ChemInitializerGridKey(), chemSR);
 
         ///initialize chemsim
         ChemSim::initialize(ChemSimInitKey());

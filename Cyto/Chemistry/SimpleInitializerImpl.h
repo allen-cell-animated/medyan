@@ -30,12 +30,12 @@ private:
     std::vector<std::string> _speciesMinusEnd;
     
     ///Set up all filament reaction templates from chemsetup struct
-    void createFilamentReactionTemplates(ChemistrySetup& chemSetup);
+    void createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
 public:
     ///initialize the chemical reaction templates and species in this system
     ///@param chemSetup - chemistry setup struct from parsed input file
-    virtual void initialize(ChemistrySetup& chemSetup);
+    virtual void initialize(ChemistrySpeciesAndReactions& chemSR);
 
     ///Initializer
     ///@param length - starting length of the CCylinder initialized

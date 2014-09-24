@@ -9,8 +9,8 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                4.0
-FSTRETCHINGL:                5.0
+FSTRETCHINGK:                1.0
+FSTRETCHINGL:                5.5
 
 FBENDINGTYPE:
 FBENDINGK:                   10.0
@@ -58,7 +58,7 @@ VOLUMEK:
 BOUNDARYTYPE:                REPULSIONLJ
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
-BINTERACTIONK:               1.0
+BINTERACTIONK:               10.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -80,9 +80,10 @@ CYLINDERSIZE:                5.0
 ##################################################
 ################### CHEMISTRY ####################
 
+CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
+
 CALGORITHM:                  NRM
-SETUP:                       SIMPLE
-NUMSTEPS:                    12
+NUMSTEPS:                    20
 NUMSTEPSPERM:                5
 
 ##################################################

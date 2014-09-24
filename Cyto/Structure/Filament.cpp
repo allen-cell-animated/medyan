@@ -15,7 +15,7 @@
 using namespace std;
 using namespace mathfunc;
 
-Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& direction){
+Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& direction, int ID) : _ID(ID) {
    
     _pSubSystem = ps;
  
@@ -34,7 +34,7 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
 }
 
 
-Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads){
+Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads, int ID) : _ID(ID) {
 
     _pSubSystem = ps;
     
@@ -125,7 +125,8 @@ void Filament::PolymerizeFront() {
         _pLastCylinder->SetLast(false);
         _pCylinderVector.push_back(_pLastCylinder);
         _pLastCylinder = c0;
-                                       
+        
+        _deltaPlusEnd++;
     }
 }
 
@@ -152,6 +153,8 @@ void Filament::PolymerizeBack() {
         c0->getMCylinder()->SetSecondBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
         c0->SetLast(false);
         _pCylinderVector.push_front(c0);
+        
+        _deltaMinusEnd++;
     }
 }
 
@@ -167,6 +170,8 @@ void Filament::DepolymerizeFront() {
         _pLastCylinder->getMCylinder()->SetSecondBead(nullptr);
         _pLastCylinder->SetLast(true);
         _pCylinderVector.pop_back();
+        
+        _deltaPlusEnd--;
     }
     
 }
@@ -179,6 +184,8 @@ void Filament::DepolymerizeBack() {
         CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(_pCylinderVector[0]);
         
         _pCylinderVector.pop_front();
+        
+        _deltaMinusEnd--;
     }
 }
 

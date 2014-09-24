@@ -17,7 +17,7 @@
 class Compartment;
 class Filament;
 class CCylinder;
-struct ChemistrySetup;
+struct ChemistrySpeciesAndReactions;
 
 ///Key for initialization of ChemInitializer
 class ChemInitializerInitKey { friend class CController;
@@ -54,7 +54,7 @@ public:
     static void setInstance(ChemInitializerInitKey k, ChemInitializerImpl *cii);
     
     ///Initialize the compartment grid, based on the given simulation
-    static void initialize(ChemInitializerGridKey k, ChemistrySetup& chemSetup);
+    static void initialize(ChemInitializerGridKey k, ChemistrySpeciesAndReactions& chemSR);
     
     ///Initializer, based on the given simulation
     ///@param length - starting length of the CCylinder initialized

@@ -382,6 +382,7 @@
 		F7D1395919D06F98007FC395 /* CCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCylinder.cpp; path = Cyto/Structure/CCylinder.cpp; sourceTree = SOURCE_ROOT; };
 		F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionTemplate.cpp; sourceTree = "<group>"; };
 		F7D1395C19D07520007FC395 /* ReactionTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionTemplate.h; sourceTree = "<group>"; };
+		F7D1395F19D30F1B007FC395 /* testchemistryinput.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = testchemistryinput.txt; path = Cyto/testchemistryinput.txt; sourceTree = SOURCE_ROOT; };
 		F7E3DB621579A03C002EAF2C /* example_kostya */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_kostya; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -512,6 +513,7 @@
 				F786BC3C19C2446B00297D03 /* test_visitor.cpp */,
 				F7603ED719C09A2B00775874 /* testfilamentinput.txt */,
 				F722372A19BE1728006FAB85 /* testsysteminput.txt */,
+				F7D1395F19D30F1B007FC395 /* testchemistryinput.txt */,
 			);
 			name = TESTS;
 			path = CytoSim/TESTS;
