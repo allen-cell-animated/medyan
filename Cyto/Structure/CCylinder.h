@@ -56,9 +56,12 @@ public:
             _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
         
         ///copy all reactions
-        for(auto &r: rhs._reactions)   addReaction(r->clone(c->speciesContainer()));
-        for(auto &r: rhs._frontReactions) addFrontReaction(r->clone(c->speciesContainer()), true);
-        for(auto &r: rhs._backReactions)  addBackReaction(r->clone(c->speciesContainer()), true);
+        for(auto &r: rhs._reactions)
+            addReaction(r->clone(c->speciesContainer()));
+        for(auto &r: rhs._frontReactions)
+            addFrontReaction(r->clone(c->speciesContainer()), true);
+        for(auto &r: rhs._backReactions)
+            addBackReaction(r->clone(c->speciesContainer()), true);
         
         ///Update and return
         this->updateReactions();
@@ -71,16 +74,23 @@ public:
     ~CCylinder()
     {
         ///Remove all reactions
-        for(auto &r: _reactions)   removeReaction(r);
-        for(auto &r: _frontReactions) removeReaction(r);
-        for(auto &r: _backReactions)  removeReaction(r);
+        for(auto &r: _reactions)
+            removeReaction(r);
+        for(auto &r: _frontReactions)
+            removeReaction(r);
+        for(auto &r: _backReactions)
+            removeReaction(r);
         
         ///Remove all species
         for(auto &m: _monomers) {
-            for(auto &s : m->speciesFilamentVector()) _compartment->removeSpecies(s);
-            for(auto &s : m->speciesBoundVector())    _compartment->removeSpecies(s);
-            for(auto &s : m->speciesPlusEndVector())  _compartment->removeSpecies(s);
-            for(auto &s : m->speciesMinusEndVector()) _compartment->removeSpecies(s);
+            for(auto &s : m->speciesFilamentVector())
+                _compartment->removeSpecies(s);
+            for(auto &s : m->speciesBoundVector())
+                _compartment->removeSpecies(s);
+            for(auto &s : m->speciesPlusEndVector())
+                _compartment->removeSpecies(s);
+            for(auto &s : m->speciesMinusEndVector())
+                _compartment->removeSpecies(s);
         }
     }
     
