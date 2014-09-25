@@ -21,17 +21,19 @@ TODO                                                                        COMP
     -Callback transfer when copying reactions                                   X
     -Excluded volume force field
 3) TESTING!!!!
-    -Reaction cloning
-    -Boundary elements/surfaces                                                           
+    -Boundary elements/surfaces
     -SpeciesBulk                                                                X
-    -Geometry                                                                   X
-    -FilamentElement / Cylinders (structure, cloning, reactions, etc)
+    -Geometry
+    -Reaction cloning
+    -FilamentElement / CCylinders (structure, cloning, reactions, etc)
     -Chemical parsers
-    -Chem initializer
+    -Chem initializer (basic reactions)
     -Reaction templates
-    -Filaments (polymerize, depolymerize, intialization)
+    -Beads, Mcylinders, Linker/Motors?
+    -Filament chemistry (poly, depoly, etc)
+    -Filament mechanics (poly, depoly)
     -All databases
-    -Mechanics (filament stretching, bending, etc)
+    -Force Fields (filament stretching, bending, etc)
 4) Simple use cases
     -Polymer melt
     -Basic actin network?

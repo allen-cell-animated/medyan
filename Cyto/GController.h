@@ -67,12 +67,20 @@ public:
     static Compartment* getCompartment(const std::vector<size_t> &indices)
     {
         size_t index = 0;
-        size_t i = _nDim-1;
+        size_t i = 0;
         for(auto x: indices)
         {
             if(x >= _grid[i]) { throw OutOfBoundsException();}
-            index+=x*std::pow(_grid[i],i);
-            --i;
+            
+            ///Flatten the indices to 1D
+            if(i == 0)
+                index += x;
+            else if(i == 1)
+                index += x * _grid[0];
+            else
+                index += x * _grid[0] * _grid[1];
+            
+            i++;
         }
         //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
@@ -83,12 +91,19 @@ public:
     {
         ///Check if out of bounds
         size_t index = 0;
-        size_t i = _nDim-1;
+        size_t i = 0;
         for(auto x: coords)
         {
             if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) { throw OutOfBoundsException();}
-            index+=int(x / _compartmentSize[i]) * std::pow(_grid[i],i);
-            --i;
+            
+            ///Flatten the coordinates to 1D, get integer index
+            if(i == 0)
+                index += int(x / _compartmentSize[0]);
+            else if(i == 1)
+                index += int(x / _compartmentSize[1]) * _grid[0];
+            else
+                index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
+            i++;
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }

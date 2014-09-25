@@ -64,10 +64,9 @@ public:
         GController::initializeGrid();
         std::cout << "Done." << std::endl;
 
-        ///Initialize chemical controller
 #ifdef CHEMISTRY
+         ///Initialize chemical controller
         std::cout << "Initializing chemistry...";
-        
         ///read algorithm
         CAlgorithm = p.readChemistryAlgorithm();
         ChemistrySetup CSetup = p.readChemistrySetup();
@@ -86,22 +85,6 @@ public:
             std::cout << "Need to specify a chemical input file. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
-        
-//        chemSR.speciesBulk = {std::tuple<std::string, int>("Actin", 1000)};
-//        chemSR.speciesFilament = {"Actin"};
-//        chemSR.speciesBound = {"Empty"};
-//        chemSR.speciesPlusEnd = {"PActinPlus"};
-//        chemSR.speciesMinusEnd = {"MActinMinus"};
-//        
-//        chemSR.reactions = {//std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "PActinPlus:PLUSEND:N"},
-//                                                                                                     //{"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"}, 10.0),
-//                               //std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"Actin:BULK", "MActinMinus:MINUSEND:N+1"},
-//                                                                                                     //{"MActinMinus:MINUSEND:N", "Actin:FILAMENT", "Empty:BOUND"}, 0.0),
-//        
-//                               std::tuple<std::vector<std::string>,std::vector<std::string>, double>({"PActinPlus:PLUSEND:N+1", "Actin:FILAMENT", "Empty:BOUND"},
-//                                                                                                      {"Actin:BULK", "PActinPlus:PLUSEND:N"}, 10.0)
-//        };
-        
         _cController.initialize(CAlgorithm.algorithm, "SIMPLE", chemSR);
         ChemSim::printReactions();
         std::cout << "Done." <<std::endl;
@@ -109,19 +92,18 @@ public:
 #ifdef MECHANICS
         ///Initialize Mechanical controller
         std::cout << "Initializing mechanics...";
-        ///Initialize mcontroller
         _mController.initialize(MTypes, MAlgorithm);
         std::cout << "Done." <<std::endl;
 
-        std::cout << "Initializing boundary...";
         ///Initialize boundary
-        if(BTypes.boundaryShape == "CUBIC") {
-            _subSystem->AddBoundary(new BoundaryCubic());
-        }
-        else{
-            std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
-            exit(EXIT_FAILURE);
-        }
+//        std::cout << "Initializing boundary...";
+//        if(BTypes.boundaryShape == "CUBIC") {
+//            _subSystem->AddBoundary(new BoundaryCubic());
+//        }
+//        else{
+//            std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
+//            exit(EXIT_FAILURE);
+//        }
         std::cout << "Done." <<std::endl;
 #endif
 

@@ -68,6 +68,9 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
+        
         if (line.find("CALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -117,6 +120,9 @@ ChemistrySetup SystemParser::readChemistrySetup() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if(line.find("CHEMISTRYFILE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -143,6 +149,8 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         if (line.find("FSTRETCHINGTYPE") != std::string::npos) {
             
@@ -282,6 +290,8 @@ void SystemParser::readMechanicsParameters() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         ///Filament stretching
         if (line.find("FSTRETCHINGK") != std::string::npos) {
@@ -527,6 +537,8 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("CONJUGATEGRADIENT") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -564,6 +576,8 @@ void SystemParser::readBoundaryParameters() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         if (line.find("BCUTOFF") != std::string::npos) {
             
@@ -608,6 +622,8 @@ BoundaryType SystemParser::readBoundaryType() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("BOUNDARYSHAPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -641,6 +657,9 @@ void SystemParser::readGeometryParameters() {
     //find grid size lines
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("NX") != std::string::npos
             || line.find("NY") != std::string::npos
             || line.find("NZ") != std::string::npos) {
@@ -733,6 +752,9 @@ FilamentSetup SystemParser::readFilamentSetup() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if(line.find("FILAMENTFILE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -769,6 +791,9 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
     std::string line;
     
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         std::vector<std::string> lineVector = split<std::string>(line);
         if(lineVector.size() == 7) {
             std::vector<double> coord1;
@@ -796,6 +821,8 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
     std::string line;
 
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         if(line.find("SPECIESBULK") != std::string::npos) {
         
