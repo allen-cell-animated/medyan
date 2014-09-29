@@ -94,7 +94,9 @@ public:
         size_t i = 0;
         for(auto x: coords)
         {
-            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) { throw OutOfBoundsException();}
+            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) {
+                throw OutOfBoundsException();
+            }
             
             ///Flatten the coordinates to 1D, get integer index
             if(i == 0)

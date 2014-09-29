@@ -18,6 +18,7 @@
 #include "common.h"
 #include "Species.h"
 #include "Reaction.h"
+#include "Compartment.h"
 
 using namespace std;
 
@@ -263,6 +264,49 @@ TEST(ReactionTest, ReactionSignaling) {
     
 }
 #endif
+
+TEST(ReactionTest, ReactionCloning) {
+    
+    Compartment* C1 = new Compartment;
+    Compartment* C2 = new Compartment;
+    
+    Species* ADiff1 = C1->addSpeciesDiffusing("ADiff", 10);
+    Species* ADiff2 = C2->addSpeciesDiffusing("ADiff", 10);
+    
+    Species* BDiff1 = C1->addSpeciesDiffusing("BDiff", 10);
+    Species* BDiff2 = C2->addSpeciesDiffusing("BDiff", 10);
+    
+    ReactionBase* r1 = C1->addInternal<Reaction,1,1>({ADiff1,BDiff1}, 100.0);
+    auto c = r1->connect([](ReactionBase *r){r->setRate(9.0);});
+    
+    ///Clone, check if valid
+    ReactionBase* r2 = r1->clone(C2->speciesContainer());
+    
+    EXPECT_EQ(1, r2->getM());
+    EXPECT_EQ(1, r2->getN());
+    
+    EXPECT_TRUE(r2->containsSpecies(ADiff2));
+    EXPECT_TRUE(r2->containsSpecies(BDiff2));
+    
+    ///Check signal cloning
+    r2->emitSignal();
+    EXPECT_EQ(9.0, r2->getRate());
+    
+    ///Clone a reaction where not all species are in compartment
+    Compartment* C3 = new Compartment;
+    Species* CDiff3 = C3->addSpeciesDiffusing("CDiff", 10);
+    Species* ADiff3 = C3->addSpeciesDiffusing("ADiff", 10);
+    
+    ReactionBase* r3 = C3->addInternal<Reaction,1,1>({ADiff3, CDiff3}, 100.0);
+    ReactionBase* r4 = r3->clone(C1->speciesContainer());
+    
+    ///Should keep cdiff3 in reactants
+    EXPECT_TRUE(r4->containsSpecies(CDiff3));
+    EXPECT_TRUE(r4->containsSpecies(ADiff1));
+
+}
+
+
 
 #endif // DO_THIS_TEST
 

@@ -96,14 +96,14 @@ public:
         std::cout << "Done." <<std::endl;
 
         ///Initialize boundary
-//        std::cout << "Initializing boundary...";
-//        if(BTypes.boundaryShape == "CUBIC") {
-//            _subSystem->AddBoundary(new BoundaryCubic());
-//        }
-//        else{
-//            std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
-//            exit(EXIT_FAILURE);
-//        }
+        std::cout << "Initializing boundary...";
+        if(BTypes.boundaryShape == "CUBIC") {
+            _subSystem->AddBoundary(new BoundaryCubic());
+        }
+        else{
+            std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
+            exit(EXIT_FAILURE);
+        }
         std::cout << "Done." <<std::endl;
 #endif
 
@@ -125,7 +125,7 @@ public:
         std::cout << "Done." <<std::endl;
         
         
-        ChemSim::printReactions();
+        //ChemSim::printReactions();
     }
 
     void run() {

@@ -13,6 +13,8 @@
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
+		F741A62819D9BAD8006B2351 /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62619D9BAD8006B2351 /* test_boundaries.cpp */; };
+		F741A62B19D9E00F006B2351 /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62919D9E00F006B2351 /* test_ccylinders.cpp */; };
 		F7603ED219C08D5700775874 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372C19BE1F7C006FAB85 /* Parser.cpp */; };
 		F7603ED319C0918000775874 /* SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */; };
 		F777F96719C1E71C00D2850A /* MController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C690A198FEC6800760D20 /* MController.cpp */; };
@@ -227,6 +229,8 @@
 		F722372D19BE1F7C006FAB85 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		F7358498198990E60026E1B6 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
 		F7358499198990E60026E1B6 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
+		F741A62619D9BAD8006B2351 /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_boundaries.cpp; path = Cyto/TESTS/test_boundaries.cpp; sourceTree = SOURCE_ROOT; };
+		F741A62919D9E00F006B2351 /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_ccylinders.cpp; path = Cyto/TESTS/test_ccylinders.cpp; sourceTree = SOURCE_ROOT; };
 		F75AE13319BF6C6B00DD7919 /* SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemParameters.h; sourceTree = "<group>"; };
 		F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemParameters.cpp; sourceTree = "<group>"; };
 		F7603ED719C09A2B00775874 /* testfilamentinput.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = testfilamentinput.txt; path = Cyto/testfilamentinput.txt; sourceTree = "<group>"; };
@@ -500,7 +504,9 @@
 		F71E973C1565A783002BDF16 /* TESTS */ = {
 			isa = PBXGroup;
 			children = (
+				F741A62619D9BAD8006B2351 /* test_boundaries.cpp */,
 				F786BC3219C2446B00297D03 /* test_compartments.cpp */,
+				F741A62919D9E00F006B2351 /* test_ccylinders.cpp */,
 				F786BC3319C2446B00297D03 /* test_composite.cpp */,
 				F786BC3419C2446B00297D03 /* test_geometry.cpp */,
 				F786BC3519C2446B00297D03 /* test_gillespie_cross.cpp */,
@@ -1002,9 +1008,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F741A62B19D9E00F006B2351 /* test_ccylinders.cpp in Sources */,
 				F786BC4619C2446B00297D03 /* test_species.cpp in Sources */,
 				F786BC4519C2446B00297D03 /* test_simple_gillespie.cpp in Sources */,
 				F786BC4719C2446B00297D03 /* test_visitor.cpp in Sources */,
+				F741A62819D9BAD8006B2351 /* test_boundaries.cpp in Sources */,
 				F786BC3D19C2446B00297D03 /* test_compartments.cpp in Sources */,
 				F786BC4319C2446B00297D03 /* test_parser.cpp in Sources */,
 				F786BC4419C2446B00297D03 /* test_reactions.cpp in Sources */,

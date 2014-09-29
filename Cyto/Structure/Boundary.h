@@ -37,6 +37,11 @@ public:
     Boundary(int nDim, BoundaryShape shape) : _nDim(nDim), _shape(shape) {};
     ~Boundary() {};
 
+    //get shape
+    BoundaryShape getShape() {return _shape;}
+    ///get boundary surfaces
+    const std::vector<std::unique_ptr<BoundarySurface>>& boundarySurfaces() {return _boundarySurfaces;}
+    
 };
 
 

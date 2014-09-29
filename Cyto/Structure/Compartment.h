@@ -324,6 +324,11 @@ public:
         auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
         if(it != _boundaryElements.end()) _boundaryElements.erase(it);
     }
+    ///Check if boundary element is in this container
+    bool hasBoundaryElement(BoundaryElement* be) {
+        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        return (it != _boundaryElements.end());   
+    }
     
     ///get the boundary elements in this compartment
     std::vector<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}

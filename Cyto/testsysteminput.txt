@@ -10,9 +10,9 @@ MD:
 
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                1.0
-FSTRETCHINGL:                5.5
+FSTRETCHINGL:                5.0
 
-FBENDINGTYPE:
+FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   10.0
 FBENDINGTHETA:               180.00
 
@@ -67,11 +67,11 @@ NDIM:                        3
 
 NX:                          1
 NY:                          1
-NZ:                          1
+NZ:                          100
 
 COMPARTMENTSIZEX:            100.0
-COMPARTMENTSIZEY:            150.0
-COMPARTMENTSIZEZ:            10000.0
+COMPARTMENTSIZEY:            100.0
+COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 1.0
 

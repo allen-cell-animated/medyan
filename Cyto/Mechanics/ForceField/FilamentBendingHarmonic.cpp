@@ -55,20 +55,20 @@ void FilamentBendingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, double k_b
     double C = l1l2*invL2*A*A*L1;
     
     //force on i-1, f = k*(-A*l2 + B*l1):
-    pb1->force[0] += k_bend * ( (-pb3->coordinate[0] + pb2->coordinate[0])*A + (pb2->coordinate[0] - pb1->coordinate[0])*B );
-    pb1->force[1] += k_bend * ( (-pb3->coordinate[1] + pb2->coordinate[1])*A + (pb2->coordinate[1] - pb1->coordinate[1])*B );
-    pb1->force[2] += k_bend * ( (-pb3->coordinate[2] + pb2->coordinate[2])*A + (pb2->coordinate[2] - pb1->coordinate[2])*B );
+    pb1->force[0] += - k_bend * ( (-pb3->coordinate[0] + pb2->coordinate[0])*A + (pb2->coordinate[0] - pb1->coordinate[0])*B );
+    pb1->force[1] += - k_bend * ( (-pb3->coordinate[1] + pb2->coordinate[1])*A + (pb2->coordinate[1] - pb1->coordinate[1])*B );
+    pb1->force[2] += - k_bend * ( (-pb3->coordinate[2] + pb2->coordinate[2])*A + (pb2->coordinate[2] - pb1->coordinate[2])*B );
     
     
     //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
-    pb2->force[0] += k_bend *( (pb3->coordinate[0] - 2*pb2->coordinate[0] + pb1->coordinate[0])*A - (pb2->coordinate[0] - pb1->coordinate[0])*B + (pb3->coordinate[0] - pb2->coordinate[0])*C );
-    pb2->force[1] += k_bend *( (pb3->coordinate[1] - 2*pb2->coordinate[1] + pb1->coordinate[1])*A - (pb2->coordinate[1] - pb1->coordinate[1])*B + (pb3->coordinate[1] - pb2->coordinate[1])*C );
-    pb2->force[2] += k_bend *( (pb3->coordinate[2] - 2*pb2->coordinate[2] + pb1->coordinate[2])*A - (pb2->coordinate[2] - pb1->coordinate[2])*B + (pb3->coordinate[2] - pb2->coordinate[2])*C );
+    pb2->force[0] += - k_bend *( (pb3->coordinate[0] - 2*pb2->coordinate[0] + pb1->coordinate[0])*A - (pb2->coordinate[0] - pb1->coordinate[0])*B + (pb3->coordinate[0] - pb2->coordinate[0])*C );
+    pb2->force[1] += - k_bend *( (pb3->coordinate[1] - 2*pb2->coordinate[1] + pb1->coordinate[1])*A - (pb2->coordinate[1] - pb1->coordinate[1])*B + (pb3->coordinate[1] - pb2->coordinate[1])*C );
+    pb2->force[2] += - k_bend *( (pb3->coordinate[2] - 2*pb2->coordinate[2] + pb1->coordinate[2])*A - (pb2->coordinate[2] - pb1->coordinate[2])*B + (pb3->coordinate[2] - pb2->coordinate[2])*C );
     
     //force on i-1, f = k*(A*l - B*l2):
-    pb3->force[0] += k_bend *( (pb2->coordinate[0] - pb1->coordinate[0])*A - (pb3->coordinate[0] - pb2->coordinate[0])*C );
-    pb3->force[1] += k_bend *( (pb2->coordinate[1] - pb1->coordinate[1])*A - (pb3->coordinate[1] - pb2->coordinate[1])*C );
-    pb3->force[2] += k_bend *( (pb2->coordinate[2] - pb1->coordinate[2])*A - (pb3->coordinate[2] - pb2->coordinate[2])*C );
+    pb3->force[0] += - k_bend *( (pb2->coordinate[0] - pb1->coordinate[0])*A - (pb3->coordinate[0] - pb2->coordinate[0])*C );
+    pb3->force[1] += - k_bend *( (pb2->coordinate[1] - pb1->coordinate[1])*A - (pb3->coordinate[1] - pb2->coordinate[1])*C );
+    pb3->force[2] += - k_bend *( (pb2->coordinate[2] - pb1->coordinate[2])*A - (pb3->coordinate[2] - pb2->coordinate[2])*C );
     
     
 }
@@ -87,18 +87,18 @@ void FilamentBendingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, Bead* pb3, double 
     double C = l1l2*invL2*A*A*L1;
     
     //force on i-1, f = k*(-A*l2 + B*l1):
-    pb1->force[0] += k_bend * ( (-pb3->coordinate[0] + pb2->coordinate[0])*A + (pb2->coordinate[0] - pb1->coordinate[0])*B );
-    pb1->force[1] += k_bend * ( (-pb3->coordinate[1] + pb2->coordinate[1])*A + (pb2->coordinate[1] - pb1->coordinate[1])*B );
-    pb1->force[2] += k_bend * ( (-pb3->coordinate[2] + pb2->coordinate[2])*A + (pb2->coordinate[2] - pb1->coordinate[2])*B );
+    pb1->force[0] += - k_bend * ( (-pb3->coordinate[0] + pb2->coordinate[0])*A + (pb2->coordinate[0] - pb1->coordinate[0])*B );
+    pb1->force[1] += - k_bend * ( (-pb3->coordinate[1] + pb2->coordinate[1])*A + (pb2->coordinate[1] - pb1->coordinate[1])*B );
+    pb1->force[2] += - k_bend * ( (-pb3->coordinate[2] + pb2->coordinate[2])*A + (pb2->coordinate[2] - pb1->coordinate[2])*B );
     
     //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
-    pb2->forceAux[0] += k_bend *( (pb3->coordinate[0] - 2*pb2->coordinate[0] + pb1->coordinate[0])*A - (pb2->coordinate[0] - pb1->coordinate[0])*B + (pb3->coordinate[0] - pb2->coordinate[0])*C );
-    pb2->forceAux[1] += k_bend *( (pb3->coordinate[1] - 2*pb2->coordinate[1] + pb1->coordinate[1])*A - (pb2->coordinate[1] - pb1->coordinate[1])*B + (pb3->coordinate[1] - pb2->coordinate[1])*C );
-    pb2->forceAux[2] += k_bend *( (pb3->coordinate[2] - 2*pb2->coordinate[2] + pb1->coordinate[2])*A - (pb2->coordinate[2] - pb1->coordinate[2])*B + (pb3->coordinate[2] - pb2->coordinate[2])*C );
+    pb2->forceAux[0] += - k_bend *( (pb3->coordinate[0] - 2*pb2->coordinate[0] + pb1->coordinate[0])*A - (pb2->coordinate[0] - pb1->coordinate[0])*B + (pb3->coordinate[0] - pb2->coordinate[0])*C );
+    pb2->forceAux[1] += - k_bend *( (pb3->coordinate[1] - 2*pb2->coordinate[1] + pb1->coordinate[1])*A - (pb2->coordinate[1] - pb1->coordinate[1])*B + (pb3->coordinate[1] - pb2->coordinate[1])*C );
+    pb2->forceAux[2] += - k_bend *( (pb3->coordinate[2] - 2*pb2->coordinate[2] + pb1->coordinate[2])*A - (pb2->coordinate[2] - pb1->coordinate[2])*B + (pb3->coordinate[2] - pb2->coordinate[2])*C );
     
     //force on i-1, f = k*(A*l - B*l2):
-    pb3->forceAux[0] += k_bend *( (pb2->coordinate[0] - pb1->coordinate[0])*A - (pb3->coordinate[0] - pb2->coordinate[0])*C );
-    pb3->forceAux[1] += k_bend *( (pb2->coordinate[1] - pb1->coordinate[1])*A - (pb3->coordinate[1] - pb2->coordinate[1])*C );
-    pb3->forceAux[2] += k_bend *( (pb2->coordinate[2] - pb1->coordinate[2])*A - (pb3->coordinate[2] - pb2->coordinate[2])*C );
+    pb3->forceAux[0] += - k_bend *( (pb2->coordinate[0] - pb1->coordinate[0])*A - (pb3->coordinate[0] - pb2->coordinate[0])*C );
+    pb3->forceAux[1] += - k_bend *( (pb2->coordinate[1] - pb1->coordinate[1])*A - (pb3->coordinate[1] - pb2->coordinate[1])*C );
+    pb3->forceAux[2] += - k_bend *( (pb2->coordinate[2] - pb1->coordinate[2])*A - (pb3->coordinate[2] - pb2->coordinate[2])*C );
   
 }

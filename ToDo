@@ -21,14 +21,14 @@ TODO                                                                        COMP
     -Callback transfer when copying reactions                                   X
     -Excluded volume force field
 3) TESTING!!!!
-    -Boundary elements/surfaces
+    -Boundary elements/surfaces                                                 X
     -SpeciesBulk                                                                X
-    -Geometry
-    -Reaction cloning
-    -FilamentElement / CCylinders (structure, cloning, reactions, etc)
+    -Geometry                                                                   X
+    -Reaction cloning                                                           X
+    -CMonomers / CCylinders (structure, cloning, reactions, etc)
     -Chemical parsers
-    -Chem initializer (basic reactions)
     -Reaction templates
+    -Chem initializer (basic reactions)
     -Beads, Mcylinders, Linker/Motors?
     -Filament chemistry (poly, depoly, etc)
     -Filament mechanics (poly, depoly)

@@ -117,6 +117,8 @@ void Filament::PolymerizeFront() {
         auto midpoint = MidPointCoordinate(b->coordinate, npp2, 0.5);
         Compartment* c;
         
+        std::cout << midpoint[0] << " " << midpoint[1] << " " << midpoint[2] << std::endl;
+        
         try {c = GController::getCompartment(midpoint);}
         catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         

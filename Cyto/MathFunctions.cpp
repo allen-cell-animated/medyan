@@ -32,7 +32,7 @@ namespace mathfunc {
     
     double TwoPointDistanceStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, double d ){
         
-        double l= sqrt( ((v2[0] - d*p2[0])-(v1[0] - d*p1[0]))*((v2[0] - d*p2[0])-(v1[0] - d*p1[0])) + ((v2[1] - d*p2[1])-(v1[1] - d*p1[1]))*((v2[1] - d*p2[1])-(v1[1] - d*p1[1])) + ((v2[2] - d*p2[2])-(v1[2] - d*p1[2]))*((v2[2] - d*p2[2])-(v1[2] - d*p1[2])));
+        double l= sqrt( ((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))*((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) + ((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))*((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) + ((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))*((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
         
         //    cout<<"Dist_str = "<<l<<endl;
         return l;
