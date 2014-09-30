@@ -27,9 +27,6 @@ TODO                                                                        COMP
     -Reaction cloning                                                           X
     -CMonomers / CCylinders (structure, cloning, reactions, etc)                X
     -Chemical parsers                                                           X
-    -Reaction templates
-    -Chem initializer (basic reactions)
-    -Beads, Mcylinders, Linker/Motors?
     -Filament chemistry (poly, depoly, etc)
     -Filament mechanics (poly, depoly)
     -All databases

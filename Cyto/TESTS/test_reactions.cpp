@@ -19,6 +19,7 @@
 #include "Species.h"
 #include "Reaction.h"
 #include "Compartment.h"
+#include "ReactionTemplate.h"
 
 using namespace std;
 
@@ -307,6 +308,14 @@ TEST(ReactionTest, ReactionCloning) {
 }
 
 
+TEST(ReactionTemplateTest, ForwardPolymerization) {
+    
+    
+    
+    
+}
 
-#endif // DO_THIS_TEST
+
+
+#endif // DO_THIS_REACTION_TEST
 
