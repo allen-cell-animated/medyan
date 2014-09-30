@@ -31,6 +31,11 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
     _pLastCylinder = c1;
     auto point = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
     PolymerizeFront( point );
+    
+#ifdef CHEMISTRY
+    ///Update cylinder reactions
+    for(auto &c : _pCylinderVector) { c->getCCylinder()->updateReactions(); }
+#endif ///CHEMISTRY
 }
 
 
@@ -57,7 +62,10 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
         PolymerizeFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
     }
     
-    
+#ifdef CHEMISTRY
+    ///Update cylinder reactions
+    for(auto &c : _pCylinderVector) { c->getCCylinder()->updateReactions(); }
+#endif ///CHEMISTRY
 }
 
 ///Polymerize front for initialization
@@ -116,8 +124,6 @@ void Filament::PolymerizeFront() {
         auto npp2 = NextPointProjection(b->coordinate, SystemParameters::Geometry().cylinderSize, tau);
         auto midpoint = MidPointCoordinate(b->coordinate, npp2, 0.5);
         Compartment* c;
-        
-        std::cout << midpoint[0] << " " << midpoint[1] << " " << midpoint[2] << std::endl;
         
         try {c = GController::getCompartment(midpoint);}
         catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
@@ -182,7 +188,7 @@ void Filament::DepolymerizeBack() {
     if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else {
-        BeadDB::Instance(BeadDBKey())->RemoveBead(_pCylinderVector[0]->getMCylinder()->GetSecondBead());
+        BeadDB::Instance(BeadDBKey())->RemoveBead(_pCylinderVector[0]->getMCylinder()->GetFirstBead());
         CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(_pCylinderVector[0]);
         
         _pCylinderVector.pop_front();

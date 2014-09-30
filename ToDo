@@ -25,8 +25,8 @@ TODO                                                                        COMP
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
     -Reaction cloning                                                           X
-    -CMonomers / CCylinders (structure, cloning, reactions, etc)
-    -Chemical parsers
+    -CMonomers / CCylinders (structure, cloning, reactions, etc)                X
+    -Chemical parsers                                                           X
     -Reaction templates
     -Chem initializer (basic reactions)
     -Beads, Mcylinders, Linker/Motors?

@@ -8,6 +8,48 @@
 
 #include "CCylinder.h"
 
+CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
+{
+    ///copy all monomers, bounds
+    for(auto &m : rhs._monomers)
+        _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
+    
+    ///copy all reactions
+    for(auto &r: rhs._reactions)
+        addReaction(r->clone(c->speciesContainer()));
+    for(auto &r: rhs._frontReactions)
+        addFrontReaction(r->clone(c->speciesContainer()), true);
+    for(auto &r: rhs._backReactions)
+        addBackReaction(r->clone(c->speciesContainer()), true);
+    
+    ///Update and return
+    this->updateReactions();
+}
+
+CCylinder::~CCylinder()
+{
+    ///Remove all reactions
+    for(auto &r: _reactions)
+        removeReaction(r);
+    for(auto &r: _frontReactions)
+        removeReaction(r);
+    for(auto &r: _backReactions)
+        removeReaction(r);
+    
+    ///Remove all species
+    for(auto &m: _monomers) {
+        for(auto &s : m->speciesFilamentVector())
+            _compartment->removeSpecies(s);
+        for(auto &s : m->speciesBoundVector())
+            _compartment->removeSpecies(s);
+        for(auto &s : m->speciesPlusEndVector())
+            _compartment->removeSpecies(s);
+        for(auto &s : m->speciesMinusEndVector())
+            _compartment->removeSpecies(s);
+    }
+}
+
+
 void CCylinder::addReaction(ReactionBase* r) {
     //remove from compartment and chemsim
     _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r));
@@ -77,7 +119,6 @@ void CCylinder::printCCylinder()
         m->print();
         std::cout << ":";
     }
-    std::cout << std::endl;
 }
 
 

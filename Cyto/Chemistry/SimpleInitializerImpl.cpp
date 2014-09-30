@@ -442,7 +442,11 @@ void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, 
     if(retractionBack) {
 
         ///remove back reactions from previous cylinder
-        CCylinder* prevcc = pf->getCylinderVector()[1]->getCCylinder();
+        CCylinder* prevcc;
+        if(pf->getCylinderVector().size() > 1)
+            prevcc = pf->getCylinderVector()[1]->getCCylinder();
+        else
+            prevcc = pf->getLastCylinder()->getCCylinder();
         prevcc->clearBackReactions();
 
     }

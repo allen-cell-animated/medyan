@@ -49,50 +49,13 @@ public:
     /// @note This constructor will create a new ccylinder with different species and reactions
     /// within the compartment that is chosen as a parameter to the constructor. The copied and
     /// original ccylinders will not share reactions or species, but will be copied into a new compartment.
-    CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
-    {
-        ///copy all monomers, bounds
-        for(auto &m : rhs._monomers)
-            _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
-        
-        ///copy all reactions
-        for(auto &r: rhs._reactions)
-            addReaction(r->clone(c->speciesContainer()));
-        for(auto &r: rhs._frontReactions)
-            addFrontReaction(r->clone(c->speciesContainer()), true);
-        for(auto &r: rhs._backReactions)
-            addBackReaction(r->clone(c->speciesContainer()), true);
-        
-        ///Update and return
-        this->updateReactions();
-    }
+    CCylinder(const CCylinder& rhs, Compartment* c);
     
     /// Assignment is not allowed
     CCylinder& operator=(CCylinder &rhs) = delete;
     
     ///Default destructor, explicitly removes monomers and bounds (including their species, rxns)
-    ~CCylinder()
-    {
-        ///Remove all reactions
-        for(auto &r: _reactions)
-            removeReaction(r);
-        for(auto &r: _frontReactions)
-            removeReaction(r);
-        for(auto &r: _backReactions)
-            removeReaction(r);
-        
-        ///Remove all species
-        for(auto &m: _monomers) {
-            for(auto &s : m->speciesFilamentVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesBoundVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesPlusEndVector())
-                _compartment->removeSpecies(s);
-            for(auto &s : m->speciesMinusEndVector())
-                _compartment->removeSpecies(s);
-        }
-    }
+    ~CCylinder();
     
     ///Clone, calls copy constructor
     virtual CCylinder* clone(Compartment* c) {

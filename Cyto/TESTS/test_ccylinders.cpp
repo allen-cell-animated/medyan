@@ -5,7 +5,7 @@
 //  Created by James Komianos on 9/29/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
-#define DO_THIS_CCYLINDERS_TEST
+//#define DO_THIS_CCYLINDERS_TEST
 
 #ifdef DO_THIS_CCYLINDERS_TEST
 
@@ -14,6 +14,7 @@
 
 #include "common.h"
 #include "CCylinder.h"
+#include "ChemSimpleGillespieImpl.h"
 
 TEST(CMonomer, Main) {
     
@@ -42,17 +43,45 @@ TEST(CMonomer, Main) {
 
 TEST(CCylinder, Main) {
     
+    ChemSim::setInstance(ChemSimInitKey(), new ChemSimpleGillespieImpl);
+    ChemSim::initialize(ChemSimInitKey());
     
+    Compartment* c = new Compartment;
+    SpeciesFilament* sf1;
+    SpeciesFilament* sf2;
+    CCylinder* ccylinder = new CCylinder(c);
     
+    for(int i = 0; i < 10; i++) {
     
+        CMonomer* m = new CMonomer;
+        sf1 = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        sf2 = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        
+        m->addSpeciesFilament(sf1);
+        m->addSpeciesFilament(sf2);
+        
+        ccylinder->addCMonomer(m);
+        
+        ccylinder->addReaction(new Reaction<1,1>({sf1, sf2}, 10.0));
+    }
     
+    ///clone a ccylinder into a new compartment, check its species
+    Compartment* newCompartment = new Compartment;
+    CCylinder* ccylinderClone = ccylinder->clone(newCompartment);
+    
+    EXPECT_EQ(20, newCompartment->numberOfSpecies());
+    EXPECT_EQ(10, newCompartment->numberOfReactions());
+    
+    for(int i = 0; i < 10; i++) {
+        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(0) == ccylinderClone->getCMonomer(i)->speciesFilament(0));
+        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(1) == ccylinderClone->getCMonomer(i)->speciesFilament(1));
+    }
+    
+    ///check destructor
+    delete ccylinder;
+    EXPECT_EQ(0, c->numberOfSpecies());
+    EXPECT_EQ(0, c->numberOfReactions());
 }
-
-
-
-
-
-
 
 
 #endif //DO_THIS_CCYLINDERS_TEST

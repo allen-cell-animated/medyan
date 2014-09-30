@@ -321,8 +321,6 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
     ///loop through all monomers
     for(int i = maxlength - 1; i > 0; i--) {
         
-        std::cout << i << std::endl;
-        
         CMonomer* m1 = cc->getCMonomer(i);
         CMonomer* m2 = cc->getCMonomer(i-1);
         std::vector<Species*> reactantSpecies;
@@ -387,7 +385,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ReactionBase* r = new Reaction<3, 2>(species, _rate);
         
         if(i == maxlength - 1)
-            //boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
+            boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
         
         cc->addReaction(r);
     }

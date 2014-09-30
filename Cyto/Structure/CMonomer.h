@@ -13,6 +13,7 @@
 
 #include "common.h"
 #include "Species.h"
+#include "Compartment.h"
 
 /// CMonomer class represents a container template for all species that could be contained in a
 /// particular filament element at a given position.
@@ -37,30 +38,7 @@ public:
     /// Copy constructor
     /// This constructor will create a new CMonomer, identical to the copied, in a new compartment. The
     /// original species will remain intact, while new identical species will be initialized.
-    CMonomer(const CMonomer& rhs, Compartment* c) {
-        
-        for(auto &s: rhs._speciesFilament) {
-            SpeciesFilament* sNew = s->clone();
-            c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-            _speciesFilament.push_back(sNew);
-        }
-        for(auto &s: rhs._speciesBound) {
-            SpeciesBound* sNew = s->clone();
-            c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-            _speciesBound.push_back(sNew);
-        }
-        for(auto &s: rhs._speciesPlusEnd) {
-            SpeciesPlusEnd* sNew = s->clone();
-            c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-            _speciesPlusEnd.push_back(sNew);
-        }
-        for(auto &s: rhs._speciesMinusEnd) {
-            SpeciesMinusEnd* sNew = s->clone();
-            c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
-            _speciesMinusEnd.push_back(sNew);
-        }
-    }
-    
+    CMonomer(const CMonomer& rhs, Compartment* c);
     /// Assignment is not allowed
     CMonomer& operator=(CMonomer &rhs) = delete;
     
@@ -94,17 +72,7 @@ public:
     void addSpeciesMinusEnd(SpeciesMinusEnd* s) { _speciesMinusEnd.push_back(s); }
     
     ///Print the species in this filament element
-    void print()
-    {
-        for (auto &s : _speciesFilament)
-            if(s->getN() == 1) std::cout << s->getName().at(0);
-        for (auto &s : _speciesBound)
-            if(s->getN() == 1) std::cout << s->getName().at(0);
-        for (auto &s : _speciesPlusEnd)
-            if(s->getN() == 1) std::cout << s->getName().at(0);
-        for (auto &s : _speciesMinusEnd)
-            if(s->getN() == 1) std::cout << s->getName().at(0);
-    }
+    void print();
 
     ///Return all species vectors
     std::vector<SpeciesFilament*>& speciesFilamentVector() {return _speciesFilament;}

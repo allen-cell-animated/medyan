@@ -66,8 +66,8 @@ BINTERACTIONK:               10.0
 NDIM:                        3
 
 NX:                          1
-NY:                          1
-NZ:                          100
+NY:                          100
+NZ:                          1
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
