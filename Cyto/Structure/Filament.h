@@ -47,7 +47,7 @@ public:
     /// Filaments starts and ends in the point determined by position vector and has a direction direction. Number of
     /// beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be
     /// pushed to cylinder vector, but will be stored in the _pLastCylinder;
-    Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads, int ID);
+    Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads, int ID, std::string projectionType = "STRAIGHT");
     
     void PolymerizeFront();  // Polymerization of a new cylinder (with the first bead = new bead b and last bead = empty: before: --x---x---o, after --x---x---[x---o]). Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further polymerization, not initiation.
     void PolymerizeBack();  // Same as Polymerization front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first.
@@ -79,6 +79,7 @@ public:
     //just for example, will rewrite this function, so it not returns anything
     std:: vector<double> NextBeadProjection(Bead* pb, double d, std::vector<double> director);
     std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
+    std::vector<std::vector<double> > ZigZagFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
     std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
     
     ///Print chemical composition of filament (for debugging only)

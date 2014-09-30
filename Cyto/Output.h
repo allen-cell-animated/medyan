@@ -13,6 +13,7 @@
 #include <fstream>
 #include "common.h"
 #include "FilamentDB.h"
+#include "CylinderDB.h"
 #include "Bead.h"
 
 class Output {

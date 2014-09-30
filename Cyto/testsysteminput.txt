@@ -55,7 +55,7 @@ VOLUMEK:
 
 ### BOUNDARY ###
 
-BOUNDARYTYPE:                REPULSIONLJ
+BOUNDARYTYPE:                
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
 BINTERACTIONK:               10.0

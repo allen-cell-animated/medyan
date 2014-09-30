@@ -144,6 +144,7 @@ public:
 #endif
 #if defined(MECHANICS)
             _mController.run();
+            o.printSnapshot(0);
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
         }

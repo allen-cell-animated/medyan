@@ -326,19 +326,23 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
-            SpeciesFilament* sf = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
+            SpeciesFilament* sf =
+                c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
             m->addSpeciesFilament(sf);
         }
         for (auto &b : _speciesBound) {
-            SpeciesBound* sb = c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
+            SpeciesBound* sb =
+                c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
             m->addSpeciesBound(sb);
         }
         for (auto &p : _speciesPlusEnd) {
-            SpeciesPlusEnd* sp = c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
+            SpeciesPlusEnd* sp =
+                c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
-            SpeciesMinusEnd* smi = c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
+            SpeciesMinusEnd* smi =
+                c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
             m->addSpeciesMinusEnd(smi);
         }
         

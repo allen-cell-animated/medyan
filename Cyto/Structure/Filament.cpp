@@ -39,11 +39,18 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
 }
 
 
-Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads, int ID) : _ID(ID) {
+Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads, int ID, std::string projectionType) : _ID(ID) {
 
     _pSubSystem = ps;
+    vector<vector<double> > tmpBeadsCoord;
     
-    vector<vector<double> > tmpBeadsCoord = StraightFilamentProjection(position, numBeads);
+    if(projectionType == "STRAIGHT")
+        tmpBeadsCoord = StraightFilamentProjection(position, numBeads);
+    else if(projectionType == "ZIGZAG")
+        tmpBeadsCoord = ZigZagFilamentProjection(position, numBeads);
+//    else if(projectionType == "ARC")
+//        tmpBeadsCoord = ArcFilamentProjection(position, numBeads);
+    else {}
     //this function calculate coordinates for all beads on the line separated by a segment length.
    
     ///Create beads, cylinders
@@ -218,6 +225,38 @@ vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<doubl
     }
     return coordinate;
 }
+
+vector<vector<double> > Filament::ZigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+    
+    vector<vector<double>> coordinate;
+    vector<double> tmpVec (3, 0);
+    vector<double> tau (3, 0);
+    double invD = 1/TwoPointDistance(v[1], v[0]);
+    tau[0] = invD * ( v[1][0] - v[0][0] );
+    tau[1] = invD * ( v[1][1] - v[0][1] );
+    tau[2] = invD * ( v[1][2] - v[0][2] );
+    
+    vector<double> perptau = {-tau[1], tau[0], tau[2]};
+    
+    
+    for (int i = 0; i<numBeads; i++) {
+        
+        if(i%2 == 0) {
+            tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * tau[0];
+            tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * tau[1];
+            tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * tau[2];
+        }
+        else {
+            tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * perptau[0];
+            tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * perptau[1];
+            tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * perptau[2];
+        }
+        
+        coordinate.push_back(tmpVec);
+    }
+    return coordinate;
+}
+
 
 
 void Filament::DeleteBead(Bead*){

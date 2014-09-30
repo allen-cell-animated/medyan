@@ -308,13 +308,6 @@ TEST(ReactionTest, ReactionCloning) {
 }
 
 
-TEST(ReactionTemplateTest, ForwardPolymerization) {
-    
-    
-    
-    
-}
-
 
 
 #endif // DO_THIS_REACTION_TEST

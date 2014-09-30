@@ -14,6 +14,8 @@
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
 		F733507819DAD8CE001A0533 /* CMonomer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F733507719DAD8CE001A0533 /* CMonomer.cpp */; };
+		F733507B19DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F733507919DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp */; };
+		F733507C19DB3B2A001A0533 /* BoundaryRepulsionMixed.h in Headers */ = {isa = PBXBuildFile; fileRef = F733507A19DB3B2A001A0533 /* BoundaryRepulsionMixed.h */; };
 		F741A62819D9BAD8006B2351 /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62619D9BAD8006B2351 /* test_boundaries.cpp */; };
 		F741A62B19D9E00F006B2351 /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62919D9E00F006B2351 /* test_ccylinders.cpp */; };
 		F7603ED219C08D5700775874 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372C19BE1F7C006FAB85 /* Parser.cpp */; };
@@ -229,6 +231,8 @@
 		F722372C19BE1F7C006FAB85 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		F722372D19BE1F7C006FAB85 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		F733507719DAD8CE001A0533 /* CMonomer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CMonomer.cpp; path = Cyto/Structure/CMonomer.cpp; sourceTree = SOURCE_ROOT; };
+		F733507919DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsionMixed.cpp; sourceTree = "<group>"; };
+		F733507A19DB3B2A001A0533 /* BoundaryRepulsionMixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsionMixed.h; sourceTree = "<group>"; };
 		F7358498198990E60026E1B6 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
 		F7358499198990E60026E1B6 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		F741A62619D9BAD8006B2351 /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_boundaries.cpp; path = Cyto/TESTS/test_boundaries.cpp; sourceTree = SOURCE_ROOT; };
@@ -617,6 +621,8 @@
 				B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */,
 				B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */,
 				B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */,
+				F733507919DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp */,
+				F733507A19DB3B2A001A0533 /* BoundaryRepulsionMixed.h */,
 				F777FA2719C1F3A800D2850A /* VolRepulsion.h */,
 				F777FA2819C1F3A800D2850A /* VolRepulsionEnergy.cpp */,
 				F777FA2919C1F3A800D2850A /* VolRepulsionForce.cpp */,
@@ -704,6 +710,7 @@
 				F777FA3419C1F3A800D2850A /* FilamentBendingHarmonic.h in Headers */,
 				F777F9F519C1F35200D2850A /* MotorGhost.h in Headers */,
 				F777FA3819C1F3A800D2850A /* FilamentInteractions.h in Headers */,
+				F733507C19DB3B2A001A0533 /* BoundaryRepulsionMixed.h in Headers */,
 				F7D1395E19D07520007FC395 /* ReactionTemplate.h in Headers */,
 				F777FA9219C1F40A00D2850A /* MathFunctions.h in Headers */,
 				F777FA0619C1F35200D2850A /* SpeciesContainer.h in Headers */,
@@ -951,6 +958,7 @@
 				F777FA9F19C1FDB200D2850A /* SubSystem.cpp in Sources */,
 				F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */,
 				F777FA3319C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */,
+				F733507B19DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp in Sources */,
 				F777FA5B19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */,
 				B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */,
 				F777F9C919C1F35200D2850A /* BoundaryElementDB.cpp in Sources */,

@@ -15,11 +15,14 @@ TODO                                                                        COMP
     -Filament input file                                                        X
     -Out of bounds management                                                   X
     -Moving cylinders, placing new cylinders                                    XX
-    -Boundary hard wall potential                                               X
     -SpeciesBulk implementation                                                 X
     -Depolymerizing front / back?                                               X
     -Callback transfer when copying reactions                                   X
     -Excluded volume force field
+    -Boundary Force Field
+    -Bead indices relative to filament
+    -Moving front/back beads
+    -More detailed output
 3) TESTING!!!!
     -Boundary elements/surfaces                                                 X
     -SpeciesBulk                                                                X
@@ -27,10 +30,9 @@ TODO                                                                        COMP
     -Reaction cloning                                                           X
     -CMonomers / CCylinders (structure, cloning, reactions, etc)                X
     -Chemical parsers                                                           X
-    -Filament chemistry (poly, depoly, etc)
-    -Filament mechanics (poly, depoly)
+    -Filament (initialization, poly, depoly)
     -All databases
-    -Force Fields (filament stretching, bending, etc)
+    -All FF's
 4) Simple use cases
     -Polymer melt
     -Basic actin network?

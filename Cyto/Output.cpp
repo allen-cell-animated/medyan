@@ -7,6 +7,9 @@
 //
 
 #include "Output.h"
+#include "MathFunctions.h"
+
+using namespace mathfunc;
 
 ///Print basic information about filaments
 void Output::printSnapshot(int step) {
@@ -37,5 +40,19 @@ void Output::printSnapshot(int step) {
         filament->resetDeltaMinusEnd();
         
     }
+//    
+//    ///print cylinder lengths
+//    for(auto &cylinder : *CylinderDB::Instance(CylinderDBKey())) {
+//        
+//        if(!cylinder->IfLast()) {
+//            auto x1 = cylinder->getMCylinder()->GetFirstBead()->coordinate;
+//            auto x2 = cylinder->getMCylinder()->GetSecondBead()->coordinate;
+//            
+//            std::cout << TwoPointDistance(x2, x1) << std::endl;
+//        }
+//        
+//    }
+//    
+    
     _outputFile <<std::endl;
 }
