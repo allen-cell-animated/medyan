@@ -10,6 +10,7 @@
 
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
 {
+    
     ///copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));

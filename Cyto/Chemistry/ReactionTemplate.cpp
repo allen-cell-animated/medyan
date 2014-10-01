@@ -76,7 +76,9 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
             }
         }
         
-        FilamentExtensionFrontCallback callback(pf);
+        FilamentExtensionFrontCallback extCallback(pf);
+        FilamentPolymerizationFrontCallback polyCallback(pf);
+        
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
@@ -84,7 +86,9 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ReactionBase* r = new Reaction<2, 3>(species, _rate);
 
         if(i == maxlength - 2)
-            boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
+            boost::signals2::shared_connection_block rcb(r->connect(extCallback,false));
+        else
+            boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
         
         cc->addReaction(r);
     }
@@ -156,7 +160,8 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
             }
         }
         
-        FilamentExtensionBackCallback callback(pf);
+        FilamentExtensionBackCallback extCallback(pf);
+        FilamentPolymerizationBackCallback polyCallback(pf);
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
@@ -164,7 +169,9 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ReactionBase* r = new Reaction<2, 3>(species, _rate);
         
         if(i == 1)
-            boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
+            boost::signals2::shared_connection_block rcb(r->connect(extCallback,false));
+        else
+            boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
         
         cc->addReaction(r);
     }
@@ -173,7 +180,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
 
 
 
-void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -232,17 +239,21 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) 
         }
     }
     
+    FilamentPolymerizationFrontCallback polyCallback(pf);
+    
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* r = new Reaction<2, 3>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
     
     cc1->addFrontReaction(r, true);
     cc2->addBackReaction(r);
 
 }
 
-void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
     CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -301,10 +312,14 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2)
         }
     }
     
+    FilamentPolymerizationBackCallback polyCallback(pf);
+    
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* r = new Reaction<2, 3>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
     
     cc2->addBackReaction(r, true);
     cc1->addFrontReaction(r);
@@ -377,7 +392,8 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
             }
         }
         
-        FilamentRetractionFrontCallback callback(pf);
+        FilamentRetractionFrontCallback retCallback(pf);
+        FilamentDepolymerizationFrontCallback depolyCallback(pf);
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
@@ -385,7 +401,9 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ReactionBase* r = new Reaction<3, 2>(species, _rate);
         
         if(i == maxlength - 1)
-            boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
+            boost::signals2::shared_connection_block rcb(r->connect(retCallback,false));
+        else
+            boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
         
         cc->addReaction(r);
     }
@@ -458,7 +476,8 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
             }
         }
         
-        FilamentRetractionBackCallback callback(pf);
+        FilamentRetractionBackCallback retCallback(pf);
+        FilamentDepolymerizationBackCallback depolyCallback(pf);
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
@@ -466,7 +485,10 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
         ReactionBase* r = new Reaction<3, 2>(species, _rate);
         
         if(i == 0)
-            boost::signals2::shared_connection_block rcb1(r->connect(callback,false));
+            boost::signals2::shared_connection_block rcb(r->connect(retCallback,false));
+        else
+            boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
+            
         
         cc->addReaction(r);
     }
@@ -475,7 +497,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
 
 
 
-void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
 
     CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
@@ -535,11 +557,14 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
             default: {}
         }
     }
+    FilamentDepolymerizationFrontCallback depolyCallback(pf);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* r = new Reaction<3, 2>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
     
     cc2->addBackReaction(r, true);
     cc1->addFrontReaction(r);
@@ -547,7 +572,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
 
 }
 
-void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -607,10 +632,14 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
         }
     }
     
+    FilamentDepolymerizationBackCallback depolyCallback(pf);
+    
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* r = new Reaction<3, 2>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
     
     cc1->addFrontReaction(r, true);
     cc2->addBackReaction(r);

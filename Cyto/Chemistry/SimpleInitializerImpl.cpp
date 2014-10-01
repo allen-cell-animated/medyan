@@ -353,27 +353,26 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     for(auto &r : _reactionFilamentTemplates) { r->addReaction(cc, pf); }
     
     ///get last ccylinder
-    CCylinder* lastcc; Cylinder* lastc;
+    CCylinder* lastcc;
  
     ///extension of front
     if(extensionFront) {
-        lastcc = pf->getLastCylinder()->getCCylinder();
-        for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc);
+        lastcc = pf->getCylinderVector().back()->getCCylinder();
+        for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc, pf);
     }
     ///extension of back
     else if(extensionBack) {
-        lastcc = pf->getCylinderVector()[0]->getCCylinder();
-        for(auto &r : _reactionFilamentTemplates) r->addReaction(cc, lastcc);
+        lastcc = pf->getCylinderVector().front()->getCCylinder();
+        for(auto &r : _reactionFilamentTemplates) r->addReaction(cc, lastcc, pf);
     }
 
     ///Base case, initialization
     else {
         ///Check if this is the first cylinder
-        lastc = pf->getLastCylinder();
-        if(lastc != nullptr) {
+        if(pf->getCylinderVector().size() != 0) {
             
             ///remove plus end from last, add to this.
-            lastcc = lastc->getCCylinder();
+            lastcc = pf->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->size() - 2);
             m1->speciesPlusEnd(0)->getRSpecies().setN(0);
             
@@ -393,9 +392,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
             
-            for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc);
-            
-            //lastcc->printCCylinder();
+            for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc, pf);
             
         }
         ///this is first one
@@ -439,20 +436,14 @@ void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, 
     if(retractionFront) {
         
         ///remove front reactions from previous cylinder
-        CCylinder* prevcc = pf->getCylinderVector()[pf->getCylinderVector().size() - 1]->getCCylinder();
+        CCylinder* prevcc = pf->getCylinderVector().back()->getCCylinder();
         prevcc->clearFrontReactions();
         
     }
     if(retractionBack) {
-
         ///remove back reactions from previous cylinder
-        CCylinder* prevcc;
-        if(pf->getCylinderVector().size() > 1)
-            prevcc = pf->getCylinderVector()[1]->getCCylinder();
-        else
-            prevcc = pf->getLastCylinder()->getCCylinder();
+        CCylinder* prevcc = pf->getCylinderVector().front()->getCCylinder();
         prevcc->clearBackReactions();
-
     }
 } 
 

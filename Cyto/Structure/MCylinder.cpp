@@ -6,31 +6,36 @@
 //  Copyright (c) 2014 Konstantin Popov. All rights reserved.
 //
 #include <vector>
+#include "MathFunctions.h"
 #include "MCylinder.h"
+#include "Bead.h"
 #include "SystemParameters.h"
 
-MCylinder::MCylinder(Filament* pf, Bead* pb){
+using namespace mathfunc;
+
+MCylinder::MCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, double eqLength){
     
-    _eqLength = SystemParameters::Mechanics().FStretchingL;
-    _eqAngle = SystemParameters::Mechanics().FBendingTheta;
-    _eqAngleTwist = SystemParameters::Mechanics().FTwistingPhi;
-    _kStretch = SystemParameters::Mechanics().FStretchingK;
-    _kBend = SystemParameters::Mechanics().FBendingK;
-    _kTwist = SystemParameters::Mechanics().FTwistingK;
+    ///Set equilibrium length relative to current length
+    SetEqLength(eqLength);
     
-    _pSecond = NULL;
-    
-    _pFirst = pb;
+    _pSecond = secondBead;
+    _pFirst = firstBead;
     _NeighbourList.assign (0, NULL);
 }
-
-
-void MCylinder::SetSecondBead(Bead *pb) {_pSecond = pb;}
 
 Bead* MCylinder::GetFirstBead() { return _pFirst;}
 Bead* MCylinder::GetSecondBead() { return _pSecond;}
 
-void MCylinder::SetEqLength(double l) {_eqLength = l;}
+void MCylinder::SetEqLength(double l) {
+    _eqLength = l;
+#ifdef MECHANICS
+    //recalculate other constants
+    _kStretch = SystemParameters::Mechanics().FStretchingK * SystemParameters::Geometry().cylinderSize / l;
+    _kBend = SystemParameters::Mechanics().FBendingK * SystemParameters::Geometry().cylinderSize / l;
+    _kTwist = SystemParameters::Mechanics().FTwistingK * SystemParameters::Geometry().cylinderSize / l;
+#endif
+}
+
 double MCylinder::GetEqLength() {return _eqLength;}
 
 void MCylinder::SetAngle(double alpha) {_eqAngle = alpha;}

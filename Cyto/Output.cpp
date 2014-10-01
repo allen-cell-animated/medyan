@@ -32,8 +32,6 @@ void Output::printSnapshot(int step) {
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
-        auto x = filament->getLastCylinder()->getMCylinder()->GetFirstBead()->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<std::endl;
         
         ///Reset deltas for this filament
         filament->resetDeltaPlusEnd();

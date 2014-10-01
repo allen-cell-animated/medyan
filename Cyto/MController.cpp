@@ -49,25 +49,8 @@ void MController::updateBeads() {
 }
 
 void MController::updateCylinders() {
-    
-#ifdef CHEMISTRY
+
     ///Update cylinder positions (ALSO VERY INEFFICIENT)
-    for(auto &f : *FilamentDB::Instance(FilamentDBKey())) {
-        
-        for(auto &Cyl : f->getCylinderVector()) {
-            std::vector<double> midpoint = mathfunc::MidPointCoordinate(Cyl->getMCylinder()->GetFirstBead()->coordinate,
-                                                                        Cyl->getMCylinder()->GetSecondBead()->coordinate,
-                                                                        0.5);
-            Compartment* c;
-            try {c = GController::getCompartment(midpoint);}
-            catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-            
-            CCylinder* cCyl = Cyl->getCCylinder();
-            if(c != cCyl->getCompartment()) {
-                CCylinder* clone = cCyl->clone(c);
-                Cyl->setCCylinder(clone);
-            }
-        }
-    }
-#endif
+    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
 }
+

@@ -46,15 +46,13 @@ private:
 public:
     
     ///Constructor and destructor
-    MCylinder(Filament* pf, Bead* firstBead);
+    MCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, double eqLength);
     virtual ~MCylinder() {}
     
     ///Other setter and getter functions:
     
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
-    
-    void SetSecondBead(Bead *pb);
     
     Bead* GetFirstBead();
     Bead* GetSecondBead();

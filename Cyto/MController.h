@@ -25,6 +25,7 @@
 #include "ConjugateGradient.h"
 
 #include "FilamentDB.h"
+#include "CylinderDB.h"
 
 #include <iostream>
 #include <vector>

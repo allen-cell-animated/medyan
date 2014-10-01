@@ -27,7 +27,7 @@ struct FilamentExtensionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->PolymerizeFront();
+        _filament->ExtendFront();
     }
 };
 
@@ -42,7 +42,7 @@ struct FilamentExtensionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->PolymerizeBack();
+        _filament->ExtendBack();
     }
 };
 
@@ -57,7 +57,7 @@ struct FilamentRetractionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->DepolymerizeFront();
+        _filament->RetractFront();
     }
 };
 
@@ -72,10 +72,68 @@ struct FilamentRetractionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        _filament->DepolymerizeBack();
+        _filament->RetractBack();
     }
 };
 
+///Polymerization/depolymerization callbacks
+struct FilamentPolymerizationFrontCallback {
+    
+    //members
+    Filament* _filament;
+    
+    ///Constructor, sets members
+    FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
+    
+    ///Callback
+    void operator() (ReactionBase *r){
+        _filament->PolymerizeFront();
+    }
+};
+
+struct FilamentPolymerizationBackCallback {
+    
+    //members
+    Filament* _filament;
+    
+    ///Constructor, sets members
+    FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
+    
+    ///Callback
+    void operator() (ReactionBase *r){
+        _filament->PolymerizeBack();
+    }
+};
+
+///Retraction callback
+struct FilamentDepolymerizationFrontCallback {
+    
+    //members
+    Filament* _filament;
+    
+    ///Constructor, sets members
+    FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
+    
+    ///Callback
+    void operator() (ReactionBase *r){
+        _filament->DepolymerizeFront();
+    }
+};
+
+///Retraction callback
+struct FilamentDepolymerizationBackCallback {
+    
+    //members
+    Filament* _filament;
+    
+    ///Constructor, sets members
+    FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
+    
+    ///Callback
+    void operator() (ReactionBase *r){
+        _filament->DepolymerizeBack();
+    }
+};
 
 
 #endif /* defined(__Cyto__Callback__) */

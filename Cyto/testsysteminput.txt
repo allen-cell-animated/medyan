@@ -10,11 +10,10 @@ MD:
 
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                1.0
-FSTRETCHINGL:                5.0
 
 FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   10.0
-FBENDINGTHETA:               180.00
+FBENDINGTHETA:
 
 FTWISTINGTYPE:
 FTWISTINGK:
@@ -83,8 +82,8 @@ CYLINDERSIZE:                5.0
 CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    1000
-NUMSTEPSPERM:                5
+NUMSTEPS:                    10
+NUMSTEPSPERM:                1
 
 ##################################################
 ################### FILAMENTS ####################

@@ -17,7 +17,6 @@ struct MechanicsParameters {
     
     ///Filament parameters
     double FStretchingK = 0;
-    double FStretchingL = 0;
     double FBendingK = 0;
     double FBendingTheta = 0;
     double FTwistingK = 0;

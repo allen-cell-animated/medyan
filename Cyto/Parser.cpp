@@ -305,17 +305,17 @@ void SystemParser::readMechanicsParameters() {
                 MParams.FStretchingK = std::atof(lineVector[1].c_str());
             }
         }
-        if (line.find("FSTRETCHINGL") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FStretchingL = std::atof(lineVector[1].c_str());
-            }
-        }
+//        if (line.find("FSTRETCHINGL") != std::string::npos) {
+//            
+//            std::vector<std::string> lineVector = split<std::string>(line);
+//            if(lineVector.size() > 2) {
+//                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+//                exit(EXIT_FAILURE);
+//            }
+//            else if (lineVector.size() == 2) {
+//                MParams.FStretchingL = std::atof(lineVector[1].c_str());
+//            }
+//        }
         
         ///Filament bending
         else if (line.find("FBENDINGK") != std::string::npos) {
@@ -473,7 +473,7 @@ void SystemParser::readMechanicsParameters() {
                 MParams.MBendingK = std::atof((lineVector[1].c_str()));
             }
         }
-        else if (line.find("FBENDINGTHETA") != std::string::npos) {
+        else if (line.find("MBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
