@@ -1,16 +1,33 @@
 //
-//  BoundaryRepulsionLJ.cpp
+//  BoundaryRepulsionMixed.cpp
 //  Cyto
 //
-//  Created by Konstantin Popov on 9/16/14.
+//  Created by James Komianos on 9/30/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "BoundaryRepulsionLJ.h"
+#include "BoundaryRepulsionMixed.h"
 #include "Bead.h"
 
-double BoundaryRepulsionLJ::ComputeEnergy(Bead* pb, double r, double k_rep)
+double BoundaryRepulsionMixed::ComputeEnergy(Bead* pb, double r, double k_rep)
 {
+//    double r0;
+//    
+//    if (r > r0){
+//        double inv_r4 = 1/r;// * 1/r * 1/r * 1/r;
+//        return k_rep * inv_r4;
+//    }
+//    
+//    else if (r >= 0 && r <= r0){
+//        return 3*k_rep;
+//    }
+//    
+//    if (r < 0){
+//        
+//        return 0.5* k_rep * r*r;
+//    }
+//    
+    
     assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
     
     double inv_r4 = 1/r;// * 1/r * 1/r * 1/r;
@@ -19,7 +36,7 @@ double BoundaryRepulsionLJ::ComputeEnergy(Bead* pb, double r, double k_rep)
     std::cout << "r = " << r << std::endl;
 }
 
-void BoundaryRepulsionLJ::ComputeForces(Bead* pb, double r, std::vector<double>& norm, double k_rep){
+void BoundaryRepulsionMixed::ComputeForces(Bead* pb, double r, std::vector<double>& norm, double k_rep){
     
     assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
     
@@ -39,7 +56,7 @@ void BoundaryRepulsionLJ::ComputeForces(Bead* pb, double r, std::vector<double>&
     
 }
 
-void BoundaryRepulsionLJ::ComputeForcesAux(Bead* pb, double r, std::vector<double>& norm,  double k_rep){
+void BoundaryRepulsionMixed::ComputeForcesAux(Bead* pb, double r, std::vector<double>& norm,  double k_rep){
     
     assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
     

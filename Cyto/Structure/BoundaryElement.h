@@ -67,6 +67,11 @@ public:
         auto it = std::find(_neighbors.begin(), _neighbors.end(), b);
         if(it != _neighbors.end()) _neighbors.erase(it);
     }
+    //Check if this boundary element is a neighbor of another
+    bool isNeighbor(BoundaryElement* b) {
+        auto it = std::find(b->neighbors().begin(), b->neighbors().end(), this);
+        return (it != b->neighbors().end());
+    }
     
     ///Set the current compartment that this boundary element is in
     void setCompartment() {
@@ -99,6 +104,8 @@ public:
     const std::vector<double>& normal() {return _normal;}
     ///return vector of beads
     const std::vector<Bead*>& beads() {return _beads;}
+    ///return vector of neighbors
+    const std::vector<BoundaryElement*>& neighbors() {return _neighbors;}
     
     ///Implement for all boundary elements
     virtual double distance(const std::vector<double>& point) = 0;

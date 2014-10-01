@@ -55,13 +55,13 @@ public:
         
         if (numSegment == 0){
             
-            Filament* pf = new Filament(s, v[0], tau); //create a filament with only two beads
+            Filament* pf = new Filament(s, v[0], tau, _currentFilamentID++); //create a filament with only two beads
             push_back(pf);
             std::cout<<"short filament created"<<std::endl;
             return pf;}
         
         else {
-            Filament* pf = new Filament(s, v, numSegment + 1);  //Create a long filament with numSeg.
+            Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++);  //Create a long filament with numSeg.
             push_back(pf);
             std::cout<<"long filament created"<<std::endl;
             
@@ -72,10 +72,11 @@ public:
     void RemoveFilament(Filament* f) {};
     
 private:
+    ///To assign filament ids
+    static int _currentFilamentID;
+
     static FilamentDB* _instance;
     FilamentDB() {};
-    
-    
     
 };
 

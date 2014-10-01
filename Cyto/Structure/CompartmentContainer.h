@@ -17,6 +17,7 @@
 ///Key to access instance of CompartmentGrid
 class CompartmentGridKey {friend class ChemInitializerImpl;
                           friend class GController;
+                          friend class ReactionFilamentTemplate;
 #ifdef TESTING
                           public:
 #endif //TESTING
@@ -43,9 +44,9 @@ class CompartmentGridKey {friend class ChemInitializerImpl;
  *  g.initializeGrid(3, {50, 50, 50}, {5000.0, 5000.0, 5000.0});
  *
  *  Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
- *  Species *M1 = Cproto.addSpecies("Myosin",1U);
+ *  Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
  *  Cproto.setDiffusionRate(M1,2000);
- *  Species *M2 = Cproto.addSpecies("Fascin",6U);
+ *  Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
  *  Cproto.setDiffusionRate(M2,2000);
  *
  *  Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);

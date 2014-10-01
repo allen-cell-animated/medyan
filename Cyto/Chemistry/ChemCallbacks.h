@@ -28,8 +28,6 @@ struct FilamentExtensionFrontCallback {
     ///Callback
     void operator() (ReactionBase *r){
         _filament->PolymerizeFront();
-       // _filament->printChemComposition();
-        
     }
 };
 
@@ -44,57 +42,40 @@ struct FilamentExtensionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        std::cout << "Polymerizing back" << std::endl;
         _filament->PolymerizeBack();
     }
 };
 
 ///Retraction callback
-struct FilamentRetractionCallback {
+struct FilamentRetractionFrontCallback {
     
     //members
     Filament* _filament;
     
     ///Constructor, sets members
-    FilamentRetractionCallback(Filament* filament) : _filament(filament) {};
+    FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
     void operator() (ReactionBase *r){
-        //_filament->
+        _filament->DepolymerizeFront();
     }
 };
 
-
-///General polymerization callback
-struct FilamentPolyCallback {
-    
+///Retraction callback
+struct FilamentRetractionBackCallback {
     
     //members
     Filament* _filament;
     
-    FilamentPolyCallback(Filament* filament) : _filament(filament) {};
+    ///Constructor, sets members
+    FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
     
-    //Callback
+    ///Callback
     void operator() (ReactionBase *r){
-        //_filament->
+        _filament->DepolymerizeBack();
     }
-    
 };
 
-///General depolymerization callback
-struct FilamentDepolyCallback {
-    
-    //members
-    Filament* _filament;
-    
-    FilamentDepolyCallback(Filament* filament) : _filament(filament) {};
-    
-    //Callback
-    void operator() (ReactionBase *r){
-        //_filament->
-    }
-    
-};
 
 
 #endif /* defined(__Cyto__Callback__) */

@@ -13,6 +13,7 @@
 #include <fstream>
 #include "common.h"
 #include "FilamentDB.h"
+#include "CylinderDB.h"
 #include "Bead.h"
 
 class Output {
@@ -32,23 +33,7 @@ public:
     ~Output() {_outputFile.close();}
     
     ///Print basic information about filaments
-    void printFilaments() {
-        
-        _outputFile.precision(15);
-        
-        for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
-            
-            for (auto cylinder : filament->getCylinderVector()){
-                
-                auto x = cylinder->getMCylinder()->GetFirstBead()->coordinate;
-                _outputFile<<x[0]<<","<<x[1]<<","<<x[2]<<"  ";
-                
-            }
-            auto x = filament->getLastCylinder()->getMCylinder()->GetFirstBead()->coordinate;
-            _outputFile<<x[0]<<","<<x[1]<<","<<x[2]<<std::endl;
-        }
-        _outputFile <<std::endl;
-    }
+    void printSnapshot(int step);
 
 };
 

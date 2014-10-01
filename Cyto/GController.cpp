@@ -32,6 +32,12 @@ void GController::initializeGrid() {
         exit(EXIT_FAILURE);
     }
     
+    if(SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize < 4) {
+        
+        std::cout << "There must be at least 4 monomers per cylinder. Exiting" << std::endl;
+        exit(EXIT_FAILURE); 
+    }
+    
     _nDim = nDim;
     
     /// set up

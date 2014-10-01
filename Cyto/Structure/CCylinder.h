@@ -13,12 +13,13 @@
 
 #include "common.h"
 #include "Compartment.h"
-#include "CFilamentElement.h"
+#include "CMonomer.h"
+#include "SystemParameters.h"
 
 class ChemSimReactionKey;
 class Cylinder;
 
-/// CCylinder class holds all Monomers and Bounds
+/// CCylinder class holds all CMonomers
 /*! 
  *  The CCylinder Class is an template class that has lists of the monomers and bounds that it contains.
  *  it has functionality to print the current composition.
@@ -28,11 +29,17 @@ class CCylinder {
     
 protected:
     std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder
-    std::vector<std::unique_ptr<CBound>> _bounds; ///< list of bound species in this ccylinder
-    std::vector<ReactionBase*> _reactions;///< list of reactions associated with ccylinder
-    Compartment* _compartment; ///< compartment this ccylinder is in
     
+    ///REACTION CONTAINERS
+    std::vector<ReactionBase*> _reactions;///< list of reactions associated with ccylinder
+    std::vector<ReactionBase*> _frontReactions; ///< list of reactions involving the next ccylinder
+    std::vector<ReactionBase*> _backReactions; ///< list of reactions involving the previous ccylinder
+    
+    Compartment* _compartment; ///< compartment this ccylinder is in
+
     Cylinder* _pCylinder;
+    
+    short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize;
 
 public:
     ///Default constructor, sets compartment
@@ -42,41 +49,13 @@ public:
     /// @note This constructor will create a new ccylinder with different species and reactions
     /// within the compartment that is chosen as a parameter to the constructor. The copied and
     /// original ccylinders will not share reactions or species, but will be copied into a new compartment.
-    CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
-    {
-        ///copy all monomers, bounds
-        for(auto &m : rhs._monomers)
-            _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
-        for(auto &b : rhs._bounds)
-            _bounds.push_back(std::unique_ptr<CBound>(b->clone(c)));
-        
-        ///copy all reactions
-        for(auto &r: rhs._reactions) {
-            ReactionBase *R = _compartment->addInternalReactionUnique(
-                                std::unique_ptr<ReactionBase>(r->clone(c->speciesContainer())));
-            _reactions.push_back(R);
-        }
-    }
+    CCylinder(const CCylinder& rhs, Compartment* c);
     
     /// Assignment is not allowed
     CCylinder& operator=(CCylinder &rhs) = delete;
     
     ///Default destructor, explicitly removes monomers and bounds (including their species, rxns)
-    ~CCylinder()
-    {
-        ///Remove all reactions
-        for(auto &r: _reactions)
-            _compartment->removeInternalReaction(r);
-        
-        ///Remove all species
-        for(auto &m: _monomers)
-            for(auto &s : m->species())
-                _compartment->removeSpecies(s);
-
-        for(auto &b : _bounds)
-            for(auto &s : b->species())
-                _compartment->removeSpecies(s);
-    }
+    ~CCylinder();
     
     ///Clone, calls copy constructor
     virtual CCylinder* clone(Compartment* c) {
@@ -92,58 +71,48 @@ public:
     Cylinder* getCylinder() {return _pCylinder;}
     
     ///Add a monomer to this CCylinder
-    virtual void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));}
-    ///Add a bound to this CCylinder
-    virtual void addCBound(CBound* bound) {_bounds.emplace_back(std::unique_ptr<CBound>(bound));}
-    
+    void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));}
     ///Get monomer at an index
     ///@note no check on index
-    virtual CMonomer* getCMonomer(int index) {return _monomers[index].get();}
-    ///Get bound at an index
-    ///@note no check on index
-    virtual CBound* getCBound(int index) {return _bounds[index].get();}
+    CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
-    ///Add a filament reaction to this CCylinder
-    virtual void addReaction(ReactionBase* r) {_reactions.push_back(r);}
+    ///Add a reaction to this CCylinder
+    void addReaction(ReactionBase* r);
+    ///Add a reaction with the front ccylinderto this CCylinder
+    ///@note manage decides whether this reaction adding will also
+    ///add to the chemsim and compartment.
+    void addFrontReaction(ReactionBase* r, bool manage=false);
+    ///Add a reaction with the back ccylinderto this CCylinder
+    ///@note manage decides whether this reaction adding will also
+    ///add to the chemsim and compartment.
+    void addBackReaction(ReactionBase* r, bool manage=false);
+    
+    ///remove a filament reaction from this system
+    ///@note no check on whether r is in the reactions list
+    void removeReaction(ReactionBase* r);
+    
+    ///clear all filament reactions from front
+    ///typically called when depolymerizing
+    void clearFrontReactions() {_frontReactions.clear();}
+    ///clear all filament reactions from back
+    ///typically called when depolymerizing
+    void clearBackReactions() {_backReactions.clear();}
+    
     ///Get list of reactions associated with this CCylinder
     std::vector<ReactionBase*>& getReactions() {return _reactions;}
-    
-    ///Add all reactions associated with this CCylinder
-    virtual void addChemSimReactions()
-    {
-        for (auto &r: _reactions)
-            ChemSim::addReaction(ChemSimReactionKey(), r);
-    }
+    ///Get list of reactions associated with this CCylinder and next
+    std::vector<ReactionBase*>& getFrontReactions() {return _frontReactions;}
+    ///Get list of reactions associated with this CCylinder and previous
+    std::vector<ReactionBase*>& getBackReactions() {return _backReactions;}
     
     ///Update all reactions associated with this CCylinder
-    virtual void updateReactions()
-    {
-        ///loop through all reactions, passivate/activate
-        for(auto &r : _reactions) {
-            
-            if(r->getProductOfReactants() == 0)
-                r->passivateReaction();
-            else
-                r->activateReaction();
-        }
-    }
+    void updateReactions();
     
     ///Print CCylinder
-    virtual void printCCylinder()
-    {
-        std::cout << "Compartment:" << _compartment << std::endl;
-        
-        std::cout << "Composition of CCylinder: " << std::endl;
-        for (auto &m : _monomers){
-            m->print();
-            std::cout << ":";
-        }
-        std::cout << std::endl << "Bounds of CCylinder: " <<std::endl;
-        for (auto &b : _bounds) {
-            b->print();
-            std::cout << ":";
-        }
-    }
+    virtual void printCCylinder();
+    
+    ///get size of this ccylinder in number of monomers
+    short size() {return _size;}
 };
 
 

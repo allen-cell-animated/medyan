@@ -29,20 +29,25 @@ class SubSystem;
 class Filament {
 
 private:
-    std::deque<Cylinder*> _pCylinderVector; //< Vector of cylinders;
+    std::deque<Cylinder*> _pCylinderVector; ///< Vector of cylinders;
     Cylinder* _pLastCylinder = nullptr;
     SubSystem* _pSubSystem;
+    
+    int _ID; ///< unique integer id of this filament
+    
+    short _deltaPlusEnd = 0;   ///< change in filament at plus end since last snapshot
+    short _deltaMinusEnd = 0; ///< change in filament at minus end since last snapshot
     
 public:
     /// This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an
     /// input, second is set up by using an input direction and a coarsegrain length L. Using all this, two constructors
     /// for beads are called.
-	Filament(SubSystem* ps, std::vector<double>& position, std::vector<double>& direction);
+	Filament(SubSystem* ps, std::vector<double>& position, std::vector<double>& direction, int ID);
     /// This constructor is called to create a longer filament. It creates a filament with a number of beads numBeads.
     /// Filaments starts and ends in the point determined by position vector and has a direction direction. Number of
     /// beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be
     /// pushed to cylinder vector, but will be stored in the _pLastCylinder;
-    Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads);
+    Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads, int ID, std::string projectionType = "STRAIGHT");
     
     void PolymerizeFront();  // Polymerization of a new cylinder (with the first bead = new bead b and last bead = empty: before: --x---x---o, after --x---x---[x---o]). Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further polymerization, not initiation.
     void PolymerizeBack();  // Same as Polymerization front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first.
@@ -59,12 +64,22 @@ public:
     
     ///More getters
     Cylinder* getLastCylinder() {return _pLastCylinder;}
-    
     std::deque<Cylinder*>& getCylinderVector() {return _pCylinderVector;}
+    
+    ///getters and resetters for deltas
+    void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
+    void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
+    
+    short getDeltaPlusEnd() {return _deltaPlusEnd;}
+    short getDeltaMinusEnd() {return _deltaMinusEnd;}
+    
+    ///get ID
+    int getID() {return _ID;}
     
     //just for example, will rewrite this function, so it not returns anything
     std:: vector<double> NextBeadProjection(Bead* pb, double d, std::vector<double> director);
     std::vector<std::vector<double> > StraightFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
+    std::vector<std::vector<double> > ZigZagFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
     std:: vector<std::vector<double> > ArcFilamentProjection(std::vector<std::vector<double>>& v, int numBeads);
     
     ///Print chemical composition of filament (for debugging only)

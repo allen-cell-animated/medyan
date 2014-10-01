@@ -64,29 +64,39 @@ public:
         GController::initializeGrid();
         std::cout << "Done." << std::endl;
 
-        ///Initialize chemical controller
 #ifdef CHEMISTRY
+         ///Initialize chemical controller
         std::cout << "Initializing chemistry...";
-        
         ///read algorithm
         CAlgorithm = p.readChemistryAlgorithm();
+        ChemistrySetup CSetup = p.readChemistrySetup();
+        
+        //num steps for sim
         _numSteps = CAlgorithm.numSteps;
         _numStepsPerMech = CAlgorithm.numStepsPerMech;
         
+        ChemistrySpeciesAndReactions chemSR;
         
-        _cController.initialize(CAlgorithm.algorithm, CAlgorithm.setup);
+        if(CSetup.inputFile != "") {
+            ChemistryParser cp(CSetup.inputFile);
+            chemSR = cp.readChemistryInput();
+        }
+        else {
+            std::cout << "Need to specify a chemical input file. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        _cController.initialize(CAlgorithm.algorithm, "SIMPLE", chemSR);
         ChemSim::printReactions();
         std::cout << "Done." <<std::endl;
 #endif
 #ifdef MECHANICS
         ///Initialize Mechanical controller
         std::cout << "Initializing mechanics...";
-        ///Initialize mcontroller
         _mController.initialize(MTypes, MAlgorithm);
         std::cout << "Done." <<std::endl;
 
-        std::cout << "Initializing boundary...";
         ///Initialize boundary
+        std::cout << "Initializing boundary...";
         if(BTypes.boundaryShape == "CUBIC") {
             _subSystem->AddBoundary(new BoundaryCubic());
         }
@@ -113,27 +123,29 @@ public:
         ///Create filaments
         _subSystem->AddNewFilaments(filamentData);
         std::cout << "Done." <<std::endl;
+        
+        
+        //ChemSim::printReactions();
     }
 
     void run() {
         
         ///Set up filament output file
         Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-        o.printFilaments();
+        o.printSnapshot(0);
         
 #if defined(MECHANICS) && defined(CHEMISTRY)
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
             _cController.run(_numStepsPerMech);
-            o.printFilaments();
+            o.printSnapshot(i);
 #elif defined(CHEMISTRY)
             _cController.run(_numSteps);
-            o.printFilaments();
+            o.printSnapshot(_numSteps);
 #endif
 #if defined(MECHANICS)
             _mController.run();
+            o.printSnapshot(0);
 #endif
-        ///Filament output
-        o.printFilaments();
 #if defined(MECHANICS) && defined(CHEMISTRY)
         }
 #endif

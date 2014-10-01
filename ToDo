@@ -8,27 +8,31 @@ TODO                                                                        COMP
     -Organizing code into folders                                               X
     -Clean up output of controller                                              X
 
-2a) Chemical input file
+2a) Chemical input file                                                         X
 
 2b) Finishing touches
     -Combine common files                                                       X
     -Filament input file                                                        X
     -Out of bounds management                                                   X
     -Moving cylinders, placing new cylinders                                    XX
-    -Boundary hard wall potential
     -SpeciesBulk implementation                                                 X
-    -Depolymerizing front / back?
+    -Depolymerizing front / back?                                               X
     -Callback transfer when copying reactions                                   X
+    -Excluded volume force field
+    -Boundary Force Field
+    -Bead indices relative to filament
+    -Moving front/back beads
+    -More detailed output
 3) TESTING!!!!
-    -Reaction cloning
-    -Boundary elements/surfaces                                                           
+    -Boundary elements/surfaces                                                 X
     -SpeciesBulk                                                                X
     -Geometry                                                                   X
-    -FilamentElement / Cylinders (structure, cloning, etc)
-    -Chem initializer
-    -Filaments (polymerize, depolymerize, intialization)
+    -Reaction cloning                                                           X
+    -CMonomers / CCylinders (structure, cloning, reactions, etc)                X
+    -Chemical parsers                                                           X
+    -Filament (initialization, poly, depoly)
     -All databases
-    -Mechanics (filament stretching, bending, etc)
+    -All FF's
 4) Simple use cases
     -Polymer melt
     -Basic actin network?

@@ -68,6 +68,9 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
+        
         if (line.find("CALGORITHM") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -77,18 +80,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.algorithm = lineVector[1];
-            }
-        }
-        
-        if (line.find("SETUP") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.setup = lineVector[1];
             }
         }
         if (line.find("NUMSTEPS:") != std::string::npos) {
@@ -119,6 +110,35 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     return CAlgorithm;
 }
 
+///CHEMISTRY SETUP PARSER
+ChemistrySetup SystemParser::readChemistrySetup() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    ChemistrySetup CSetup;
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
+        if(line.find("CHEMISTRYFILE") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "Error reading chemistry input file. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                CSetup.inputFile = lineVector[1];
+            else {}
+        }
+    }
+    return CSetup;
+}
+
+
 ///Mechanics force field types
 MechanicsFFType SystemParser::readMechanicsFFType() {
     
@@ -129,6 +149,8 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         if (line.find("FSTRETCHINGTYPE") != std::string::npos) {
             
@@ -268,6 +290,8 @@ void SystemParser::readMechanicsParameters() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         ///Filament stretching
         if (line.find("FSTRETCHINGK") != std::string::npos) {
@@ -513,6 +537,8 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("CONJUGATEGRADIENT") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -550,6 +576,8 @@ void SystemParser::readBoundaryParameters() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
         
         if (line.find("BCUTOFF") != std::string::npos) {
             
@@ -594,6 +622,8 @@ BoundaryType SystemParser::readBoundaryType() {
     std::string line;
     while(getline(_inputFile, line)) {
         
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("BOUNDARYSHAPE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -627,6 +657,9 @@ void SystemParser::readGeometryParameters() {
     //find grid size lines
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if (line.find("NX") != std::string::npos
             || line.find("NY") != std::string::npos
             || line.find("NZ") != std::string::npos) {
@@ -719,6 +752,9 @@ FilamentSetup SystemParser::readFilamentSetup() {
     
     std::string line;
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         if(line.find("FILAMENTFILE") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -755,6 +791,9 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
     std::string line;
     
     while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
         std::vector<std::string> lineVector = split<std::string>(line);
         if(lineVector.size() == 7) {
             std::vector<double> coord1;
@@ -770,6 +809,122 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
         }
     }
     return returnVector;
+}
+
+///CHEMISTRY INPUT PARSER
+ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    ChemistrySpeciesAndReactions chemSR;
+    std::string line;
+
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
+        if(line.find("SPECIESBULK") != std::string::npos) {
+        
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  3) {
+                std::cout << "Error reading a bulk species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3)
+                chemSR.speciesBulk.push_back(std::tuple<std::string, int>(lineVector[1], std::atoi(lineVector[2].c_str())));
+            else {}
+        }
+        if(line.find("SPECIESDIFFUSING") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  4) {
+                std::cout << "Error reading a diffusing species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4)
+                chemSR.speciesDiffusing.push_back(std::tuple<std::string, int, double>
+                        (lineVector[1], std::atoi(lineVector[2].c_str()), std::atof(lineVector[3].c_str())));
+            else {}
+        }
+        
+        if(line.find("SPECIESFILAMENT") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesFilament.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESBOUND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament bound species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesBound.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESPLUSEND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament plus end species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesPlusEnd.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESMINUSEND") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament minus end species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesMinusEnd.push_back(lineVector[1]);
+            else {}
+        }
+        
+        ///loop through a reaction
+        if(line.find("REACTION") != std::string::npos) {
+            
+            std::vector<std::string> reactants;
+            std::vector<std::string> products;
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            
+            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+            
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chemSR.reactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
+                                        (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                std::cout << "Error reading reaction. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+    }
+    
+    return chemSR;
 }
 
 

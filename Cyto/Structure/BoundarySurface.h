@@ -41,6 +41,8 @@ public:
     
     ///Access for all implementations of BoundarySurface to the DB key
     BoundaryElementDBKey BEDBKey() {return BoundaryElementDBKey();}
+    ///Get boundary elements
+    const std::vector<std::unique_ptr<BoundaryElement>>& boundaryElements() {return _boundaryElements;}
     
 };
 

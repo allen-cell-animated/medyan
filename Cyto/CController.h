@@ -44,43 +44,7 @@ public:
     ///       could be: NRM, Gillespie, SimpleGillespie.
     ///@param chemInitializer - a string defining the chemical initializer used
     ///       could be: Simple.
-    void initialize(std::string& chemAlgorithm, std::string& chemInitializer) {
-        
-        ///Set instance of chemsim algorithm
-        ChemSimImpl* csi;
-        if(chemAlgorithm == "NRM")
-            csi = new ChemNRMImpl;
-        
-        else if(chemAlgorithm == "GILLESPIE")
-            csi = new ChemGillespieImpl;
-        
-        else if(chemAlgorithm == "SIMPLEGILLESPIE")
-            csi = new ChemSimpleGillespieImpl;
-        
-        else {
-            std::cout<< "Chem algorithm not found. Exiting." <<std::endl;
-            exit(EXIT_FAILURE);
-        }
-        ChemSim::setInstance(ChemSimInitKey(), csi);
-        
-        
-        ///Set the instance of the initializer
-        ChemInitializerImpl* cii;
-        if(chemInitializer == "SIMPLE") {
-            cii = new SimpleInitializerImpl;
-        }
-        else {
-            std::cout<< "Initializer type not found. Exiting." <<std::endl;
-            exit(EXIT_FAILURE);
-        }
-        ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
-        
-        ///initialize grid ...
-        ChemInitializer::initializeGrid(ChemInitializerGridKey());
-
-        ///initialize chemsim
-        ChemSim::initialize(ChemSimInitKey());
-    }
+    void initialize(std::string& chemAlgorithm, std::string chemInitializer, ChemistrySpeciesAndReactions& chemSR);
     
     ///Run a number of chemical steps
     bool run(int steps) { return ChemSim::run(ChemSimRunKey(), steps); }

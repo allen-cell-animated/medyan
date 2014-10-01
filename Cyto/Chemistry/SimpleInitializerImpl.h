@@ -12,137 +12,41 @@
 #include <iostream>
 
 #include "ChemInitializerImpl.h"
-#include "CFilamentElement.h"
+#include "ReactionTemplate.h"
+#include "CMonomer.h"
+#include "Parser.h"
 #include "common.h"
 
-///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class, which sets up CCylinders
-///to have simple actin network interactions
+///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class
 class SimpleInitializerImpl : public ChemInitializerImpl {
 
 private:
-    ///REACTION RATES
-    //basic
-    float _k_on_plus = 21.0;
-    float _k_on_minus = 0.0;
-    float _k_off_plus = 1.4;
-    float _k_off_minus = 1.4;
+    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _reactionFilamentTemplates; ///< list of reactions to add to every new CCylinder
     
-    //Diffusion rate
-    float _diffusion_rate = 2000.0;
+    ///Vectors of all filament, bound, and end species
+    std::vector<std::string> _speciesFilament;
+    std::vector<std::string> _speciesBound;
+    std::vector<std::string> _speciesPlusEnd;
+    std::vector<std::string> _speciesMinusEnd;
     
+    ///Set up all filament reaction templates from chemsetup struct
+    void createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
 public:
-    ///Initialize the compartment grid
-    virtual void initializeGrid();
+    ///initialize the chemical reaction templates and species in this system
+    ///@param chemSetup - chemistry setup struct from parsed input file
+    virtual void initialize(ChemistrySpeciesAndReactions& chemSR);
 
     ///Initializer
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
+    ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
+    /// vector. The active plus and minus end is set to be the first listed as well.
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack);
     
     ///Remove a CCylinder
     virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack);
     
-};
-
-///Basic monomer consisting of actin, formin, capping, and a virtual front/back
-class CMonomerBasic : public CMonomer {
-    
-public:
-    ///Constructor, initializes species container
-    CMonomerBasic(Compartment* c);
-    
-    ///Copy constructor, calls base class
-    CMonomerBasic(const CMonomerBasic &rhs, Compartment* c) : CMonomer(rhs, c) {};
-    
-    ///Destructor
-    ~CMonomerBasic() {};
-    
-    /// Move constructor
-    CMonomerBasic (CMonomerBasic &&rhs) noexcept : CMonomer(std::move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    CMonomerBasic& operator=(const CMonomerBasic& rhs) = delete;
-    
-    /// Move assignment
-    CMonomerBasic& operator=(CMonomerBasic&& rhs)
-    {
-        CMonomer::operator=(std::move(rhs));
-        return *this;
-    }
-    
-    virtual CMonomerBasic* clone(Compartment* c) {
-        return new CMonomerBasic(*this, c);
-    }
-    
-    ///Get a species
-    virtual SpeciesFilament* getActin() {return _species[0];}
-    
-    virtual SpeciesFilament* getFront() {return _species[1];}
-    
-    virtual SpeciesFilament* getBack() {return _species[2];}
-    
-    
-    ///Check if this monomer is valid
-    bool checkSpecies(int sum)
-    {
-        return true;
-        //            int currentSum = 0;
-        //            for(auto &s : _species)
-        //                currentSum += s->getN();
-        //            return currentSum = sum;
-    }
-     virtual void print();
-};
-
-///Basic bound consisting of myosin, myosin-actin, and a virtual empty species
-class CBoundBasic : public CBound {
-    
-public:
-    ///Constructor, initializes species container
-    CBoundBasic(Compartment* c);
-    
-    ///Copy constructor, calls base class
-    CBoundBasic(const CBoundBasic &rhs, Compartment* c) : CBound(rhs, c) {};
-    
-    ///Destructor
-    ~CBoundBasic() {};
-    
-    
-    /// Move constructor
-    CBoundBasic (CBoundBasic &&rhs) noexcept : CBound(std::move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    CBoundBasic& operator=(const CBoundBasic& rhs) = delete;
-    
-    /// Move assignment
-    CBoundBasic& operator=(CBoundBasic&& rhs)
-    {
-        CBound::operator=(std::move(rhs));
-        return *this;
-    }
-    
-    virtual CBoundBasic* clone(Compartment* c) {
-        return new CBoundBasic(*this, c);
-    }
-
-    ///Look up a species given a name
-    virtual SpeciesBound* getEmpty() {return _species[0];}
-
-    
-    ///Check if this monomer is valid
-    bool checkSpecies(int sum)
-    {
-        return true;
-        //        int currentSum = 0;
-        //        for(auto &s : _species)
-        //            currentSum += s->getN();
-        //        return currentSum = sum;
-    }
-    
-    virtual void print();
 };
 
 #endif /* defined(__Cyto__SimpleInitializerImpl__) */
