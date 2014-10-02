@@ -84,7 +84,7 @@ void Filament::ExtendFront(vector<double>& coordinates) {
     
     Cylinder* cBack = _pCylinderVector.back();
     
-    Bead* b2 = cBack->getMCylinder()->GetSecondBead();
+    Bead* b2 = cBack->GetSecondBead();
     
     ///create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
@@ -109,7 +109,7 @@ void Filament::ExtendFront(vector<double>& coordinates) {
 void Filament::ExtendBack(vector<double>& coordinates) {
 
     Cylinder* cFront = _pCylinderVector.front();
-    Bead* b2 = cFront->getMCylinder()->GetFirstBead();
+    Bead* b2 = cFront->GetFirstBead();
     
     //create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
@@ -134,8 +134,8 @@ void Filament::ExtendFront() {
     else{
         Cylinder* cBack = _pCylinderVector.back();
         
-        Bead* b1 = cBack->getMCylinder()->GetFirstBead();
-        Bead* b2 = cBack->getMCylinder()->GetSecondBead();
+        Bead* b1 = cBack->GetFirstBead();
+        Bead* b2 = cBack->GetSecondBead();
         
         ///move last bead of last cylinder forward
         auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
@@ -164,8 +164,8 @@ void Filament::ExtendBack() {
     else{
         Cylinder* cFront = _pCylinderVector.front();
         
-        Bead* b2 = cFront->getMCylinder()->GetFirstBead();
-        Bead* b1 = cFront->getMCylinder()->GetSecondBead();
+        Bead* b2 = cFront->GetFirstBead();
+        Bead* b1 = cFront->GetSecondBead();
         
         ///move last bead of last cylinder forward
         auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
@@ -178,7 +178,7 @@ void Filament::ExtendBack() {
         try {c = GController::getCompartment(npp);}
         catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         
-        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2, c, true);
+        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2, c, false, true);
         _pCylinderVector.push_front(c0);
         
         _deltaMinusEnd++;
@@ -194,7 +194,7 @@ void Filament::RetractFront() {
         Cylinder* retractionCylinder = _pCylinderVector.back();
         _pCylinderVector.pop_back();
         
-        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->getMCylinder()->GetSecondBead());
+        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->GetSecondBead());
         CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(retractionCylinder);
         
         _pCylinderVector.back()->SetLast(true);
@@ -211,7 +211,7 @@ void Filament::RetractBack() {
         Cylinder* retractionCylinder = _pCylinderVector.front();
         _pCylinderVector.pop_front();
         
-        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->getMCylinder()->GetFirstBead());
+        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->GetFirstBead());
         CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(retractionCylinder);
         
         _deltaMinusEnd--;
@@ -222,60 +222,68 @@ void Filament::PolymerizeFront() {
     
     Cylinder* cBack = _pCylinderVector.back();
     
-    Bead* b1 = cBack->getMCylinder()->GetFirstBead();
-    Bead* b2 = cBack->getMCylinder()->GetSecondBead();
+    Bead* b1 = cBack->GetFirstBead();
+    Bead* b2 = cBack->GetSecondBead();
     
     auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length, update
-    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength() + SystemParameters::Geometry().monomerSize);
-    cBack->updatePosition();
+#ifdef MECHANICS
+    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength()
+                                       + SystemParameters::Geometry().monomerSize);
+#endif
 }
 
 void Filament::PolymerizeBack() {
     
     Cylinder* cFront = _pCylinderVector.front();
     
-    Bead* b2 = cFront->getMCylinder()->GetFirstBead();
-    Bead* b1 = cFront->getMCylinder()->GetSecondBead();
+    Bead* b2 = cFront->GetFirstBead();
+    Bead* b1 = cFront->GetSecondBead();
 
     auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
 
     ///increase length
-    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength() + SystemParameters::Geometry().monomerSize);
-    cFront->updatePosition();
+#ifdef MECHANICS
+    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength()
+                                        + SystemParameters::Geometry().monomerSize);
+#endif
 }
 
 void Filament::DepolymerizeFront() {
     
     Cylinder* cBack = _pCylinderVector.back();
     
-    Bead* b1 = cBack->getMCylinder()->GetFirstBead();
-    Bead* b2 = cBack->getMCylinder()->GetSecondBead();
+    Bead* b1 = cBack->GetFirstBead();
+    Bead* b2 = cBack->GetSecondBead();
 
     auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length, update
-    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength() - SystemParameters::Geometry().monomerSize);
-    cBack->updatePosition();
+#ifdef MECHANICS
+    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength()
+                                       - SystemParameters::Geometry().monomerSize);
+#endif
 }
 
 void Filament::DepolymerizeBack() {
     
     Cylinder* cFront = _pCylinderVector.front();
     
-    Bead* b2 = cFront->getMCylinder()->GetFirstBead();
-    Bead* b1 = cFront->getMCylinder()->GetSecondBead();
+    Bead* b2 = cFront->GetFirstBead();
+    Bead* b1 = cFront->GetSecondBead();
     
     auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length
-    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength() - SystemParameters::Geometry().monomerSize);
-    cFront->updatePosition();
+#ifdef MECHANICS
+    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength()
+                                        - SystemParameters::Geometry().monomerSize);
+#endif
 }
 
 

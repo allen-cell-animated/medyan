@@ -25,13 +25,19 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment*
         ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, c, extensionFront, extensionBack));
     _cCylinder->setCylinder(this);
 #endif
-    
-    double eqLength = 0;
+
+#ifdef MECHANICS
+    double eqLength;
     if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
     else eqLength = SystemParameters::Geometry().cylinderSize;
     
-    _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(pf, firstBead, secondBead, eqLength));
+    _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
+#endif
+    
+    ///Set beads
+    _pFirst = firstBead;
+    _pSecond = secondBead;
     
 }
 
@@ -55,7 +61,7 @@ void Cylinder::updatePosition() {
 
 #ifdef CHEMISTRY
     ///check if were still in same compartment
-    auto midpoint = MidPointCoordinate(_mCylinder->GetFirstBead()->coordinate, _mCylinder->GetSecondBead()->coordinate, 0.5);
+    auto midpoint = MidPointCoordinate(_pFirst->coordinate, _pSecond->coordinate, 0.5);
     
     Compartment* c;
     try {c = GController::getCompartment(midpoint);}

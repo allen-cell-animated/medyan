@@ -13,27 +13,22 @@
 
 using namespace mathfunc;
 
-MCylinder::MCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, double eqLength){
+MCylinder::MCylinder(double eqLength){
     
-    ///Set equilibrium length relative to current length
+    ///Set equilibrium length relative to full cylinder length
     SetEqLength(eqLength);
     
-    _pSecond = secondBead;
-    _pFirst = firstBead;
     _NeighbourList.assign (0, NULL);
 }
 
-Bead* MCylinder::GetFirstBead() { return _pFirst;}
-Bead* MCylinder::GetSecondBead() { return _pSecond;}
-
 void MCylinder::SetEqLength(double l) {
     _eqLength = l;
-#ifdef MECHANICS
+    double fracCylinderSize = SystemParameters::Geometry().cylinderSize / l;
+    
     //recalculate other constants
-    _kStretch = SystemParameters::Mechanics().FStretchingK * SystemParameters::Geometry().cylinderSize / l;
-    _kBend = SystemParameters::Mechanics().FBendingK * SystemParameters::Geometry().cylinderSize / l;
-    _kTwist = SystemParameters::Mechanics().FTwistingK * SystemParameters::Geometry().cylinderSize / l;
-#endif
+    _kStretch = SystemParameters::Mechanics().FStretchingK * fracCylinderSize;
+    _kBend = SystemParameters::Mechanics().FBendingK * fracCylinderSize;
+    _kTwist = SystemParameters::Mechanics().FTwistingK * fracCylinderSize;
 }
 
 double MCylinder::GetEqLength() {return _eqLength;}

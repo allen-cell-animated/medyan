@@ -21,7 +21,9 @@ double MotorGhostStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, Bea
     auto v1 = MidPointCoordinate(pb1->coordinate, pb2->coordinate, position1);
     auto v2 = MidPointCoordinate(pb3->coordinate, pb4->coordinate, position2);
     
-    return 0.5 * kStr * ( TwoPointDistance(v1, v2) - L) * ( TwoPointDistance(v1, v2) - L) ;
+    double dist = TwoPointDistance(v1, v2) - L;
+    
+    return 0.5 * kStr * dist * dist ;
 }
 
 double MotorGhostStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4, double position1, double position2, double kStr, double L, double d ){
@@ -29,7 +31,9 @@ double MotorGhostStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, Bea
     auto v1 = MidPointCoordinateStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, position1, d);
     auto v2 = MidPointCoordinateStretched(pb3->coordinate, pb3->force, pb4->coordinate, pb4->force, position2, d);
     
-    return 0.5 * kStr * ( TwoPointDistance(v1, v2) - L) * ( TwoPointDistance(v1, v2) - L) ;
+    double dist = TwoPointDistance(v1, v2) - L;
+    
+    return 0.5 * kStr * dist * dist;
 }
 // Force calculation methods:
 void MotorGhostStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4, double position1, double position2, double kStr, double L ){
@@ -37,9 +41,10 @@ void MotorGhostStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, Bead*
     auto v1 = MidPointCoordinate(pb1->coordinate, pb2->coordinate, position1);
     auto v2 = MidPointCoordinate(pb3->coordinate, pb4->coordinate, position2);
     
-    double invL = 1/TwoPointDistance( v1, v2);
+    double dist = TwoPointDistance( v1, v2);
     
-    double f0 = kStr * ( TwoPointDistance( v1, v2) - L ) * invL;
+    double invL = 1 / dist;
+    double f0 = kStr * ( dist - L ) * invL;
     
     
     //force on i
@@ -85,9 +90,11 @@ void MotorGhostStretchingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, Bead* pb3, Be
     auto v1 = MidPointCoordinate(pb1->coordinate, pb2->coordinate, position1);
     auto v2 = MidPointCoordinate(pb3->coordinate, pb4->coordinate, position2);
     
-    double invL = 1/TwoPointDistance( v1, v2);
+    double dist = TwoPointDistance( v1, v2);
     
-    double f0 = kStr * ( TwoPointDistance( v1, v2) - L ) * invL;
+    double invL = 1 / dist;
+    
+    double f0 = kStr * ( dist - L ) * invL;
     
     
     //force on i

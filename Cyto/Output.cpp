@@ -28,7 +28,7 @@ void Output::printSnapshot(int step) {
         ///print coordinates
         for (auto cylinder : filament->getCylinderVector()){
             
-            auto x = cylinder->getMCylinder()->GetFirstBead()->coordinate;
+            auto x = cylinder->GetFirstBead()->coordinate;
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
@@ -38,19 +38,18 @@ void Output::printSnapshot(int step) {
         filament->resetDeltaMinusEnd();
         
     }
-//    
+    
 //    ///print cylinder lengths
-//    for(auto &cylinder : *CylinderDB::Instance(CylinderDBKey())) {
+//    for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
 //        
-//        if(!cylinder->IfLast()) {
-//            auto x1 = cylinder->getMCylinder()->GetFirstBead()->coordinate;
-//            auto x2 = cylinder->getMCylinder()->GetSecondBead()->coordinate;
+//        for(auto &cylinder : filament->getCylinderVector()) {
+//            auto x1 = cylinder->GetFirstBead()->coordinate;
+//            auto x2 = cylinder->GetSecondBead()->coordinate;
 //            
 //            std::cout << TwoPointDistance(x2, x1) << std::endl;
 //        }
-//        
 //    }
 //    
-    
+//    std::cout << std::endl;
     _outputFile <<std::endl;
 }

@@ -30,6 +30,8 @@ class Compartment;
 class Cylinder : public Composite {
     
 private:
+    Bead* _pFirst;  ///< Pointer to the first bead, associated with this cylinder ;
+    Bead* _pSecond; ///< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
     std::unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
     std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
@@ -56,6 +58,10 @@ public:
     Filament* getFilament() {return _pFilament;}
     ///set parent filament
     void setFilament(Filament* pf) {_pFilament = pf;}
+    
+    ///Get beads
+    Bead* GetFirstBead() {return _pFirst;}
+    Bead* GetSecondBead() {return _pSecond;}
     
     bool IfLast();
     void SetLast(bool);

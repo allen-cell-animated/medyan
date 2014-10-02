@@ -27,9 +27,6 @@ class Bead;
 class MCylinder {
 
 private:
-    Bead* _pFirst;  ///< Pointer to the first bead, associated with this cylinder ;
-    Bead* _pSecond; ///< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
-    
     Cylinder* _pCylinder;
     
 // Mechanical constants:
@@ -46,16 +43,12 @@ private:
 public:
     
     ///Constructor and destructor
-    MCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, double eqLength);
+    MCylinder(double eqLength);
     virtual ~MCylinder() {}
     
     ///Other setter and getter functions:
-    
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
-    
-    Bead* GetFirstBead();
-    Bead* GetSecondBead();
     
     void SetEqLength(double L);
     double GetEqLength();
