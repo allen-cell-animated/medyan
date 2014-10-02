@@ -4,7 +4,7 @@ from mayavi import mlab
 mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
 mlab.show()
 
-filename='filamentoutput.txt'
+filename='/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt'
 traj_file=open(filename)
 
 class FilamentSnapshot:

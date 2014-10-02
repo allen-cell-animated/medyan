@@ -32,6 +32,10 @@ void Output::printBasicSnapshot(int step) {
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
+        ///print last bead coord
+        auto x = filament->getCylinderVector().back()->GetSecondBead()->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
+        
         _outputFile << std::endl;
         
         ///Reset deltas for this filament
@@ -76,6 +80,9 @@ void Output::printSnapshot(int step) {
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
+        auto x = filament->getCylinderVector().back()->GetSecondBead()->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
+        
         _outputFile << std::endl;
     }
     _outputFile <<std::endl;
@@ -104,6 +111,8 @@ void Output::printBirthTimes(int step) {
             _outputFile<< b->getBirthTime() << " ";
             
         }
+        ///last bead
+        _outputFile<< filament->getCylinderVector().back()->GetSecondBead()->getBirthTime();
         _outputFile << std::endl;
     }
     _outputFile <<std::endl;
@@ -130,6 +139,8 @@ void Output::printForces(int step) {
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
+        auto x = filament->getCylinderVector().back()->GetSecondBead()->force;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         _outputFile << std::endl;
     }
     _outputFile <<std::endl;

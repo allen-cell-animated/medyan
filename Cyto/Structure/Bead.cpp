@@ -33,12 +33,16 @@ Bead::Bead (std::vector<double> v, int ID): coordinate(v), force(3, 0), forceAux
 void Bead::updateBoundaryElements() {
     
     ///First, update this bead's list
+    
+    std::vector<BoundaryElement*> _beToRemove;
     for(auto &be : _boundaryElements) {
         if (be->distance(coordinate) > SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.erase(std::find(_boundaryElements.begin(), _boundaryElements.end(), be));
-            be->removeBead(this);
+            _beToRemove.push_back(be); be->removeBead(this);
         }
     }
+    for(auto &be : _beToRemove) 
+        _boundaryElements.erase(std::find(_boundaryElements.begin(), _boundaryElements.end(), be));
+    
     
     ///add any new interacting boundary elements
     for(auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
