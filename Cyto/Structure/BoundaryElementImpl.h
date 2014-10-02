@@ -22,6 +22,7 @@ private:
     ///Parameters of equation (ax + by + cz + d = 0)
     double _a, _b, _c, _d;
     double _k_rep;
+    double _r0;
 
 public:
     ///Constructor, sets parameters of equation
@@ -33,8 +34,9 @@ public:
     ///Stretched distance to plane
     virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
     
-    ///get the repulsion constant for this plane
+    ///get the repulsion constant and screening length for this plane
     virtual double getRepulsionConst();
+    virtual double getScreeningLength();
 };
 
 class TriangleBoundaryElement : public BoundaryElement {

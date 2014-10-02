@@ -10,6 +10,9 @@
 		B580341719C3938F0017FEF4 /* BoundaryInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341619C3938F0017FEF4 /* BoundaryInteractions.h */; };
 		B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */; };
 		B580341C19C3A5460017FEF4 /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341919C3A5460017FEF4 /* BoundaryRepulsion.h */; };
+		B593704719DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */; };
+		B593704819DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */; };
+		B593704919DCA03C004E0D13 /* BoundaryRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F7123D841575217B008F64D1 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
@@ -225,6 +228,8 @@
 		B580341919C3A5460017FEF4 /* BoundaryRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsion.h; sourceTree = "<group>"; };
 		B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsionLJ.cpp; sourceTree = "<group>"; };
 		B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsionLJ.h; sourceTree = "<group>"; };
+		B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsionExp.cpp; sourceTree = "<group>"; };
+		B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsionExp.h; sourceTree = "<group>"; };
 		F7123D8115752161008F64D1 /* example_misc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example_misc; sourceTree = BUILT_PRODUCTS_DIR; };
 		F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryElementImpl.cpp; path = Cyto/Structure/BoundaryElementImpl.cpp; sourceTree = SOURCE_ROOT; };
 		F722372A19BE1728006FAB85 /* testsysteminput.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = testsysteminput.txt; path = Cyto/testsysteminput.txt; sourceTree = SOURCE_ROOT; };
@@ -621,6 +626,8 @@
 				B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */,
 				B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */,
 				B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */,
+				B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */,
+				B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */,
 				F733507919DB3B2A001A0533 /* BoundaryRepulsionMixed.cpp */,
 				F733507A19DB3B2A001A0533 /* BoundaryRepulsionMixed.h */,
 				F777FA2719C1F3A800D2850A /* VolRepulsion.h */,
@@ -744,6 +751,7 @@
 				F777F97F19C1F32E00D2850A /* ChemInitializerImpl.h in Headers */,
 				F777F9E319C1F35200D2850A /* CylinderDB.h in Headers */,
 				F777F9E019C1F35200D2850A /* Cylinder.h in Headers */,
+				B593704919DCA03C004E0D13 /* BoundaryRepulsionExp.h in Headers */,
 				F777FA6019C1F3A800D2850A /* VolumInter.h in Headers */,
 				F777FA0219C1F35200D2850A /* RSpecies.h in Headers */,
 				F777FA7319C1F3C900D2850A /* CGPolakRibiereMethod.h in Headers */,
@@ -966,6 +974,7 @@
 				F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */,
 				F777FA8919C1F40A00D2850A /* Component.cpp in Sources */,
 				F777F9D919C1F35200D2850A /* CompartmentContainer.cpp in Sources */,
+				B593704819DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */,
 				F777F9F119C1F35200D2850A /* MCylinder.cpp in Sources */,
 				F777F9D619C1F35200D2850A /* Compartment.cpp in Sources */,
 				F777F96719C1E71C00D2850A /* MController.cpp in Sources */,
@@ -1006,6 +1015,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F777FAA619C2294400D2850A /* Cyto.cpp in Sources */,
+				B593704719DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -111,6 +111,7 @@ public:
     virtual double distance(const std::vector<double>& point) = 0;
     virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) = 0;
     virtual double getRepulsionConst()  = 0;
+    virtual double getScreeningLength()  = 0;
  
 };
 

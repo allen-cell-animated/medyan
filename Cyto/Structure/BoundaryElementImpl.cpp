@@ -8,7 +8,7 @@
 
 #include "BoundaryElementImpl.h"
 
-PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst) : BoundaryElement(coords, normal), _k_rep(repulsConst) {
+PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double sceenLength) : BoundaryElement(coords, normal), _k_rep(repulsConst), _r0(sceenLength) {
     
     ///set parameters
     _a = normal[0];
@@ -35,4 +35,9 @@ double PlaneBoundaryElement::stretchedDistance(const std::vector<double>& point,
 double PlaneBoundaryElement::getRepulsionConst(){
     
     return _k_rep;
+}
+
+double PlaneBoundaryElement::getScreeningLength(){
+    
+    return _r0;
 }

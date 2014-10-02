@@ -9,6 +9,7 @@
 #include "BoundaryRepulsion.h"
 #include "BoundaryRepulsionLJ.h"
 #include "BoundaryRepulsionMixed.h"
+#include "BoundaryRepulsionExp.h"
 #include "BoundaryElement.h"
 #include "Bead.h"
 
@@ -57,3 +58,6 @@ template void BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeForcesAux(BoundaryE
 template double BoundaryRepulsion<BoundaryRepulsionMixed>::ComputeEnergy(BoundaryElement* pbe, double d);
 template void BoundaryRepulsion<BoundaryRepulsionMixed>::ComputeForces(BoundaryElement* pbe);
 template void BoundaryRepulsion<BoundaryRepulsionMixed>::ComputeForcesAux(BoundaryElement* pbe);
+template double BoundaryRepulsion<BoundaryRepulsionExp>::ComputeEnergy(BoundaryElement* pbe, double d);
+template void BoundaryRepulsion<BoundaryRepulsionExp>::ComputeForces(BoundaryElement* pbe);
+template void BoundaryRepulsion<BoundaryRepulsionExp>::ComputeForcesAux(BoundaryElement* pbe);
