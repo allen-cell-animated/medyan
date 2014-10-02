@@ -26,7 +26,7 @@ private:
 
 public:
     ///Constructor, sets parameters of equation
-    PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst);
+    PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double screenLength);
     
     ///Distance to this plane
     virtual double distance(const std::vector<double>& point);

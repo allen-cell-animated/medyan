@@ -63,6 +63,7 @@ struct BoundaryParameters {
     
     double boundaryCutoff = 0;
     double boundaryK = 0;
+    double screenLength = 0;
 };
 
 

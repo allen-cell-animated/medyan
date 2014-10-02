@@ -54,10 +54,11 @@ VOLUMEK:
 
 ### BOUNDARY ###
 
-BOUNDARYTYPE:                
+BOUNDARYTYPE:                REPULSIONEXP
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
-BINTERACTIONK:               10.0
+BINTERACTIONK:               0.25
+BSCREENLENGTH:               4.0
 
 ##################################################
 ##################### GEOMETRY ###################
@@ -70,7 +71,7 @@ NZ:                          1
 
 COMPARTMENTSIZEX:            100.0
 COMPARTMENTSIZEY:            100.0
-COMPARTMENTSIZEZ:            10000.0
+COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 1.0
 
@@ -82,8 +83,8 @@ CYLINDERSIZE:                5.0
 CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    1000
-NUMSTEPSPERM:                100
+NUMSTEPS:                    1
+NUMSTEPSPERM:                1
 
 ##################################################
 ################### FILAMENTS ####################

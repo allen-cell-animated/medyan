@@ -48,9 +48,9 @@ public:
     static BoundaryElementDB* Instance(BoundaryElementDBKey k);
     
     /// create a new plane boundary element
-    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double>& coords, std::vector<double>& normal, double repulsConst) {
+    BoundaryElement* CreatePlaneBoundaryElement(std::vector<double>& coords, std::vector<double>& normal, double repulsConst, double screenLength) {
         
-        BoundaryElement* b = new PlaneBoundaryElement(coords, normal, repulsConst);
+        BoundaryElement* b = new PlaneBoundaryElement(coords, normal, repulsConst, screenLength);
         push_back(b);
         return b ;
     }

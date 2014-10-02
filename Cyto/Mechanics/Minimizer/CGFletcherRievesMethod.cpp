@@ -21,7 +21,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 	double prevVal = curVal;
 	FFM.ComputeForces();
     
-    //PrintForces();
+    PrintForces();
     
     
 	double gradSquare = GradSquare();
@@ -36,12 +36,12 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 
         lambda = GoldenSection(FFM);
         cout<<"lambda= "<<lambda<<endl;
-		//PrintForces();
+		PrintForces();
         MoveBeads(lambda);
         //PrintForces();
         
         FFM.ComputeForcesAux();
-        //PrintForces();
+        PrintForces();
         
 		newGradSquare = GradSquare(1);
 		

@@ -19,8 +19,8 @@ class Bead;
 class BoundaryRepulsionLJ {
 
 public:
-    double ComputeEnergy(Bead*, double, double);
-    void ComputeForces(Bead*, double, std::vector<double>& norm, double );
-    void ComputeForcesAux(Bead*, double, std::vector<double>& norm, double );
+    double ComputeEnergy(Bead*, double, double, double);
+    void ComputeForces(Bead*, double, std::vector<double>& norm, double, double);
+    void ComputeForcesAux(Bead*, double, std::vector<double>& norm, double, double);
 };
 #endif /* defined(__Cyto__BoundaryRepulsionLJ__) */

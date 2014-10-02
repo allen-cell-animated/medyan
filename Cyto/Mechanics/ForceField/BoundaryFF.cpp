@@ -10,13 +10,13 @@
 
 #include "BoundaryRepulsion.h"
 #include "BoundaryRepulsionLJ.h"
-#include "BoundaryRepulsionMixed.h"
+#include "BoundaryRepulsionExp.h"
 #include "BoundaryElementDB.h"
 
 BoundaryFF::BoundaryFF (std::string Interaction1, std::string Interaction2, std::string Interaction3) {
     
     if (Interaction1 == "REPULSIONLJ") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionLJ>());}
-    if (Interaction1 == "REPULSIONMIXED") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionMixed>());}
+    if (Interaction1 == "REPULSIONEXP") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionExp>());}
 }
 
 

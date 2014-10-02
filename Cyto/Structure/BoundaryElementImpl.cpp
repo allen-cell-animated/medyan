@@ -8,7 +8,8 @@
 
 #include "BoundaryElementImpl.h"
 
-PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double sceenLength) : BoundaryElement(coords, normal), _k_rep(repulsConst), _r0(sceenLength) {
+PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double sceenLength)
+                                                                : BoundaryElement(coords, normal), _k_rep(repulsConst), _r0(sceenLength) {
     
     ///set parameters
     _a = normal[0];

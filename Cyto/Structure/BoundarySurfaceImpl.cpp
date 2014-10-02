@@ -16,5 +16,6 @@ Plane::Plane(std::vector<double> coords, std::vector<double> normal ) :
     _coords(coords), _normal(normal), BoundarySurface(3) {
     
     ///Create a plane boundary element (CHANGE REPULSION CONSTANT)
-    BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal, SystemParameters::Boundaries().boundaryK);
+        BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal,
+                SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength);
 }
