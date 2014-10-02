@@ -10,8 +10,11 @@
 #include "BoundaryElementDB.h"
 #include "SystemParameters.h"
 
-Bead::Bead (std::vector<double> v): coordinate(v), force(3, 0), forceAux(3, 0)
+Bead::Bead (std::vector<double> v, int ID): coordinate(v), force(3, 0), forceAux(3, 0), _ID(ID)
 {
+    ///set birth time
+    _birthTime = tau();
+    
     ///Find compartment, add this bead
     try {_compartment = GController::getCompartment(v);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}

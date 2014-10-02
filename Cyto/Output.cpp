@@ -12,7 +12,7 @@
 using namespace mathfunc;
 
 ///Print basic information about filaments
-void Output::printSnapshot(int step) {
+void Output::printBasicSnapshot(int step) {
     
     _outputFile.precision(10);
     
@@ -36,7 +36,6 @@ void Output::printSnapshot(int step) {
         ///Reset deltas for this filament
         filament->resetDeltaPlusEnd();
         filament->resetDeltaMinusEnd();
-        
     }
     
 //    ///print cylinder lengths
@@ -53,3 +52,84 @@ void Output::printSnapshot(int step) {
 //    std::cout << std::endl;
     _outputFile <<std::endl;
 }
+
+
+void Output::printSnapshot(int step) {
+    
+    _outputFile.precision(10);
+    
+    //print first line (step number, time, number of filaments
+    _outputFile << step << " " << tau() << " " << FilamentDB::Instance(FilamentDBKey())->size() << std::endl;
+    
+    for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
+        
+        ///print first line(Filament ID, length, index of first bead, index of last bead
+        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
+        << " " << filament->getCylinderVector().front()->GetFirstBead()->getID()
+        << " " << filament->getCylinderVector().back()->GetSecondBead()->getID() << std::endl;
+        
+        ///print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            auto x = cylinder->GetFirstBead()->coordinate;
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
+            
+        }
+    }
+    _outputFile <<std::endl;
+    
+}
+
+
+void Output::printBirthTimes(int step) {
+    
+    _outputFile.precision(10);
+    
+    //print first line (step number, time, number of filaments
+    _outputFile << step << " " << tau() << " " << FilamentDB::Instance(FilamentDBKey())->size() << std::endl;
+    
+    for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
+        
+        ///print first line(Filament ID, length, index of first bead, index of last bead
+        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
+        << " " << filament->getCylinderVector().front()->GetFirstBead()->getID()
+        << " " << filament->getCylinderVector().back()->GetSecondBead()->getID() << std::endl;
+        
+        ///print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            auto b = cylinder->GetFirstBead();
+            _outputFile<< b->getBirthTime() << " ";
+            
+        }
+    }
+    _outputFile <<std::endl;
+}
+
+void Output::printForces(int step) {
+    
+    _outputFile.precision(10);
+    
+    //print first line (step number, time, number of filaments
+    _outputFile << step << " " << tau() << " " << FilamentDB::Instance(FilamentDBKey())->size() << std::endl;
+    
+    for(auto &filament : *FilamentDB::Instance(FilamentDBKey())) {
+        
+        ///print first line(Filament ID, length, index of first bead, index of last bead
+        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
+        << " " << filament->getCylinderVector().front()->GetFirstBead()->getID()
+        << " " << filament->getCylinderVector().back()->GetSecondBead()->getID() << std::endl;
+        
+        ///print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            auto x = cylinder->GetFirstBead()->force;
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
+            
+        }
+    }
+    _outputFile <<std::endl;
+}
+
+void Output::printStresses(int step) {}
+

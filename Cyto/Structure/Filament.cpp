@@ -20,9 +20,9 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
     _pSubSystem = ps;
  
     ///Create beads
-    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position);
+    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position, _beadIDPlusEnd++);
     auto pos2 = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(pos2);
+    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(pos2, _beadIDPlusEnd++);
     
     ///Find correct compartment
     auto midpoint = MidPointCoordinate(position, pos2, 0.5);
@@ -58,8 +58,8 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
     ///Create beads
     
     auto direction = TwoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
-    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0]);
-    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[1]);
+    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0], _beadIDPlusEnd++);
+    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[1], _beadIDPlusEnd++);
     
     auto midpoint = MidPointCoordinate(tmpBeadsCoord[0], tmpBeadsCoord[1], 0.5);
     Compartment* c;
@@ -90,7 +90,7 @@ void Filament::ExtendFront(vector<double>& coordinates) {
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     
-    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords);
+    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDPlusEnd++);
     
     ///find compartment
     auto midpoint = MidPointCoordinate(b2->coordinate, newBeadCoords, 0.5);
@@ -114,7 +114,7 @@ void Filament::ExtendBack(vector<double>& coordinates) {
     //create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords);
+    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDMinusEnd--);
 
     ///find compartment
     auto midpoint = MidPointCoordinate(b2->coordinate, newBeadCoords, 0.5);
@@ -142,7 +142,7 @@ void Filament::ExtendFront() {
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp);
+        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDPlusEnd++);
         
         Compartment* c;
         try {c = GController::getCompartment(npp);}
@@ -172,7 +172,7 @@ void Filament::ExtendBack() {
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp);
+        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDMinusEnd--);
         
         Compartment* c;
         try {c = GController::getCompartment(npp);}
@@ -199,6 +199,7 @@ void Filament::RetractFront() {
         
         _pCylinderVector.back()->SetLast(true);
 
+        _beadIDPlusEnd--;
         _deltaPlusEnd--;
     }
     
@@ -214,6 +215,7 @@ void Filament::RetractBack() {
         BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->GetFirstBead());
         CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(retractionCylinder);
         
+        _beadIDMinusEnd++;
         _deltaMinusEnd--;
     }
 }

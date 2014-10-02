@@ -21,11 +21,9 @@
 class SubSystem;
 ///Filament class is used to store data about connectivity of cylinders
 /*!
- * This class contains information about beads connectivity. It iterates over the beads whithin itself
+ * This class contains information about beads and cylinders connectivity. It iterates over the beads whithin itself
  * and compute a bonded contribution to forces and energy of beads.
  */
-
-
 class Filament {
 
 private:
@@ -34,8 +32,11 @@ private:
     
     int _ID; ///< unique integer id of this filament
     
-    short _deltaPlusEnd = 0;   ///< change in filament at plus end since last snapshot
-    short _deltaMinusEnd = 0; ///< change in filament at minus end since last snapshot
+    short _deltaPlusEnd = 0;   ///< change in filament's cylinders at plus end since last snapshot
+    short _deltaMinusEnd = 0; ///< change in filament's cylinders at minus end since last snapshot
+    
+    short _beadIDPlusEnd = 0; ///< Bead ID to assign to next plus end bead
+    short _beadIDMinusEnd = -1;  ///< Bead ID to assign to next minus end bead
     
 public:
     /// This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an

@@ -32,9 +32,17 @@ public:
     }
     ~Output() {_outputFile.close();}
     
-    ///Print basic information about filaments
+    ///Print basic information about filaments (OLD)
+    void printBasicSnapshot(int step);
+    
+    ///NEW OUTPUT
     void printSnapshot(int step);
-
+    ///Print birth times of beads for each filament
+    void printBirthTimes(int step);
+    ///Print forces on beads for each filament
+    void printForces(int step);
+    ///Print stresses on beads for each filament
+    void printStresses(int step);
 };
 
 
