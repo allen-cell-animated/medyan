@@ -17,8 +17,8 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
     if (d == 0.0){
         for(auto it : pf->getCylinderVector()){
             
-            Bead* pb1 = it->getMCylinder()->GetFirstBead();
-            Bead* pb2 = it->getMCylinder()->GetSecondBead();
+            Bead* pb1 = it->GetFirstBead();
+            Bead* pb2 = it->GetSecondBead();
             double kStr = it->getMCylinder()->GetStretchingConst();
             double L = it->getMCylinder()->GetEqLength();
             U += _FFType.Energy(pb1, pb2, kStr, L);
@@ -26,8 +26,8 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
     }
     else {
         for(auto it : pf->getCylinderVector()){
-            Bead* pb1 = it->getMCylinder()->GetFirstBead();
-            Bead* pb2 = it->getMCylinder()->GetSecondBead();
+            Bead* pb1 = it->GetFirstBead();
+            Bead* pb2 = it->GetSecondBead();
             double kStr =it->getMCylinder()->GetStretchingConst();
             double L = it->getMCylinder()->GetEqLength();
             
@@ -41,10 +41,8 @@ template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForces(Filament* pf) {
    for(auto it : pf->getCylinderVector()){
        
-       Bead* pb1 = it->getMCylinder()->GetFirstBead();
-       Bead* pb2 = it->getMCylinder()->GetSecondBead();
-       
-
+       Bead* pb1 = it->GetFirstBead();
+       Bead* pb2 = it->GetSecondBead();
        
        double kStr =it->getMCylinder()->GetStretchingConst();
        double L = it->getMCylinder()->GetEqLength();
@@ -57,8 +55,8 @@ template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::ComputeForcesAux(Filament* pf) {/// Needed for Conjugated Gradient minimization;
     for(auto it : pf->getCylinderVector()){
         
-        Bead* pb1 = it->getMCylinder()->GetFirstBead();
-        Bead* pb2 = it->getMCylinder()->GetSecondBead();
+        Bead* pb1 = it->GetFirstBead();
+        Bead* pb2 = it->GetSecondBead();
         double kStr =it->getMCylinder()->GetStretchingConst();
         double L = it->getMCylinder()->GetEqLength();
         

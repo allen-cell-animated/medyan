@@ -19,7 +19,6 @@
 class Filament;
 class MCylinder;
 class CCylinder;
-class Bead;
 class Compartment;
 
 ///Cylinder class is a wrapper for a mechanical cylinder and chemical cylinder
@@ -31,17 +30,19 @@ class Compartment;
 class Cylinder : public Composite {
     
 private:
+    Bead* _pFirst;  ///< Pointer to the first bead, associated with this cylinder ;
+    Bead* _pSecond; ///< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
     std::unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
     std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
     
     Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
     int _positionFilament; ///< position on filament (1st, 2nd, ... etc)
-    bool _ifLast = true; ///< if the cylinder is last in the filament's cylinder list
+    bool _ifLast = false; ///< if the cylinder is last in the filament's cylinder list
     
 public:
     ///Constructor and destructor
-    Cylinder(Filament* pf, Bead* firstBead, Compartment* c, bool extensionFront, bool extensionBack);
+    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment* c, bool extensionFront, bool extensionBack);
     ~Cylinder();
     
     ///get mCylinder
@@ -58,8 +59,16 @@ public:
     ///set parent filament
     void setFilament(Filament* pf) {_pFilament = pf;}
     
+    ///Get beads
+    Bead* GetFirstBead() {return _pFirst;}
+    Bead* GetSecondBead() {return _pSecond;}
+    
     bool IfLast();
     void SetLast(bool);
+    
+    ///Update the position of this cylinder
+    ///@note - changes compartment of ccylinder if needed
+    void updatePosition();
     
 };
 

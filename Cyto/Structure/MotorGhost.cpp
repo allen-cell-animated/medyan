@@ -22,8 +22,8 @@ MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, double stretchConst, double
     _position1 = pos1;
     _position2 = pos2;
     
-    auto m1 = MidPointCoordinate(_pc1->getMCylinder()->GetFirstBead()->coordinate, _pc1->getMCylinder()->GetSecondBead()->coordinate, _position1 );
-    auto m2 = MidPointCoordinate(_pc2->getMCylinder()->GetFirstBead()->coordinate, _pc2->getMCylinder()->GetSecondBead()->coordinate, _position2 );
+    auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1 );
+    auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2 );
     
      _eqLength = TwoPointDistance(m1, m2);
 }

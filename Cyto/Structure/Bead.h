@@ -40,9 +40,9 @@ public:
     
     
     ///Main constructor
-    Bead (std::vector<double> v);
+    Bead (std::vector<double> v, int ID);
     ///Default constructor
-    Bead(): coordinate (3, 0), force(3, 0), forceAux(3, 0) {}
+    Bead(int ID): coordinate (3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
 
     ///Aux functions
     
@@ -77,11 +77,18 @@ public:
     
     ///update the boundary elements that interact with this bead
     void updateBoundaryElements();
+    
+    ///getters for bead data
+    int getID() {return _ID;}
+    float getBirthTime() {return _birthTime;}
 
     
 private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
     std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
+    
+    int _ID; ///Unique ID of the bead in this filament (relative to the filament)
+    float _birthTime; ///Time of birth of bead;
 };
 
 

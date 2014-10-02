@@ -132,21 +132,18 @@ public:
         
         ///Set up filament output file
         Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-        o.printSnapshot(0);
+        o.printBasicSnapshot(0);
         
-#if defined(MECHANICS) && defined(CHEMISTRY)
+#if defined(CHEMISTRY)
         for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
             _cController.run(_numStepsPerMech);
-            o.printSnapshot(i);
-#elif defined(CHEMISTRY)
-            _cController.run(_numSteps);
-            o.printSnapshot(_numSteps);
+            o.printBasicSnapshot(i);
 #endif
 #if defined(MECHANICS)
             _mController.run();
-            o.printSnapshot(0);
+            o.printBasicSnapshot(0);
 #endif
-#if defined(MECHANICS) && defined(CHEMISTRY)
+#if defined(CHEMISTRY)
         }
 #endif
         std::cout << "Done with simulation!" << std::endl;

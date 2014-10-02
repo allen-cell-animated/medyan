@@ -25,6 +25,7 @@
 #include "ConjugateGradient.h"
 
 #include "FilamentDB.h"
+#include "CylinderDB.h"
 
 #include <iostream>
 #include <vector>
@@ -69,7 +70,7 @@ public:
 
     ///Run minimization on the system using the chosen algorithm
     void run() {
-
+        
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
         
         updateBeads();

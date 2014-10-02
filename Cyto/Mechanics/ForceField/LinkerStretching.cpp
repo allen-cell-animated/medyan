@@ -14,15 +14,15 @@
 
 template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d) {
-    Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    
+    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
     double pos1 = pl->GetFirstPosition();
     double pos2 = pl->GetSecondPosition();
-    
     
     if (d == 0.0)
         return _FFType.Energy(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
@@ -33,10 +33,11 @@ double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, d
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl) {
-    Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    
+    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
     
@@ -51,10 +52,10 @@ void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl) {
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Linker* pl) { /// Needed for Conjugated Gradient minimization;
 
-    Bead* pb1 = pl->GetFirstCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->getMCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->getMCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->getMCylinder()->GetSecondBead();
+    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
     double kStretch = pl->GetStretchingConstant();
     double L = pl->GetEqLength();
     

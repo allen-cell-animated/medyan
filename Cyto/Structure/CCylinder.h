@@ -39,7 +39,7 @@ protected:
 
     Cylinder* _pCylinder;
     
-    short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize;
+    short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize; ///<max length of full cylinder
 
 public:
     ///Default constructor, sets compartment
@@ -113,8 +113,8 @@ public:
     
     ///get size of this ccylinder in number of monomers
     short size() {return _size;}
+    
 };
-
 
 
 #endif /* defined(__CytoSim__CCylinder__) */

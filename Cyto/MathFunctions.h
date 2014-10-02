@@ -23,7 +23,7 @@ namespace mathfunc {
     
     double TwoPointDistanceStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, double d );
     
-    ///Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z3);
+    ///Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2);
     std::vector<double> TwoPointDirection(const std::vector<double>& v1, const std::vector<double>& v2);
     
     ///Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and (x4-x3,y4-y3,z4-z3);
