@@ -1,3 +1,19 @@
+##################################################
+##################### GEOMETRY ###################
+
+NDIM:                        3
+
+NX:                          1
+NY:                          1
+NZ:                          1
+
+COMPARTMENTSIZEX:            100.0
+COMPARTMENTSIZEY:            100.0
+COMPARTMENTSIZEZ:            100.0
+
+MONOMERSIZE:                 1.0
+
+CYLINDERSIZE:                10.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -9,10 +25,10 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                10.0
+FSTRETCHINGK:                0.1
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   0.25
+FBENDINGK:                   0.1
 FBENDINGTHETA:
 
 FTWISTINGTYPE:
@@ -58,24 +74,7 @@ BOUNDARYTYPE:                REPULSIONEXP
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
 BINTERACTIONK:               0.25
-BSCREENLENGTH:               4.0
-
-##################################################
-##################### GEOMETRY ###################
-
-NDIM:                        3
-
-NX:                          1
-NY:                          1
-NZ:                          1
-
-COMPARTMENTSIZEX:            100.0
-COMPARTMENTSIZEY:            100.0
-COMPARTMENTSIZEZ:            100.0
-
-MONOMERSIZE:                 1.0
-
-CYLINDERSIZE:                5.0
+BSCREENLENGTH:               2.0
 
 ##################################################
 ################### CHEMISTRY ####################
@@ -83,7 +82,7 @@ CYLINDERSIZE:                5.0
 CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    1
+NUMSTEPS:                    10
 NUMSTEPSPERM:                1
 
 ##################################################

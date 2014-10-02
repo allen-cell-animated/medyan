@@ -19,10 +19,11 @@ TODO                                                                        COMP
     -Depolymerizing front / back?                                               X
     -Callback transfer when copying reactions                                   X
     -Excluded volume force field
-    -Boundary Force Field
-    -Bead indices relative to filament
-    -Moving front/back beads
-    -More detailed output
+    -Boundary Force Field                                                       X
+    -Bead indices relative to filament                                          X
+    -Moving front/back beads                                                    X
+    -More detailed output                                                       X
+    -Changing polymerization rates with forces
 3) TESTING!!!!
     -Boundary elements/surfaces                                                 X
     -SpeciesBulk                                                                X
