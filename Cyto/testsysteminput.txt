@@ -7,9 +7,9 @@ NX:                          1
 NY:                          1
 NZ:                          1
 
-COMPARTMENTSIZEX:            100.0
-COMPARTMENTSIZEY:            100.0
-COMPARTMENTSIZEZ:            100.0
+COMPARTMENTSIZEX:            10000.0
+COMPARTMENTSIZEY:            10000.0
+COMPARTMENTSIZEZ:            10000.0
 
 MONOMERSIZE:                 1.0
 
@@ -19,16 +19,16 @@ CYLINDERSIZE:                5.0
 ################### MECHANICS ####################
 
 ### ALGORITHM ###
-CONJUGATEGRADIENT:           FLETCHERRIEVES
+CONJUGATEGRADIENT:           POLAKRIBIERE
 MD:
 
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                0.1
+FSTRETCHINGK:                0.5
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   0.1
+FBENDINGK:                   0.5
 FBENDINGTHETA:
 
 FTWISTINGTYPE:
@@ -72,7 +72,7 @@ VOLUMEK:
 
 BOUNDARYTYPE:                REPULSIONEXP
 BOUNDARYSHAPE:               CUBIC
-BCUTOFF:                     100.0
+BCUTOFF:                     1000.0
 BINTERACTIONK:               0.1
 BSCREENLENGTH:               10.0
 
@@ -82,8 +82,8 @@ BSCREENLENGTH:               10.0
 CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    100
-NUMSTEPSPERM:                10
+NUMSTEPS:                    20
+NUMSTEPSPERM:                2
 
 ##################################################
 ################### FILAMENTS ####################

@@ -61,7 +61,7 @@ public:
             return pf;}
         
         else {
-            Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++);  //Create a long filament with numSeg.
+            Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++, "ZIGZAG");  //Create a long filament with numSeg.
             push_back(pf);
             std::cout<<"long filament created"<<std::endl;
             

@@ -8,12 +8,15 @@
 
 #include "CGFletcherRievesMethod.h"
 #include "ForceFieldManager.h"
+#include "Output.h"
 
 using namespace std;
 void FletcherRieves::Minimize(ForceFieldManager &FFM)
 {
 	
-	const double EPS = 1e-10;
+    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
+    o.printBasicSnapshot(0);
+	const double EPS = 1e-5;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); ///!!!!!! need to know
 	double curVal = FFM.ComputeEnergy(0.0);
@@ -34,11 +37,12 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
 
-        lambda = GoldenSection(FFM);
+        lambda = 0.01;//GoldenSection(FFM);
         cout<<"lambda= "<<lambda<<endl;
 		PrintForces();
         MoveBeads(lambda);
         //PrintForces();
+        o.printBasicSnapshot(numIter);
         
         FFM.ComputeForcesAux();
         PrintForces();
@@ -49,6 +53,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		else {
             if(gradSquare == 0) beta = 0;
             else beta = newGradSquare / gradSquare;
+            
         }
 		ShiftGradient(beta);
         
@@ -56,6 +61,8 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		curVal = FFM.ComputeEnergy(0.0);
         
 		gradSquare = newGradSquare;
+        cout<<"GradSq=  "<<gradSquare<<endl;
+        
 	}
 	while (gradSquare > EPS);
     

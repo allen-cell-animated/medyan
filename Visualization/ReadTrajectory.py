@@ -4,7 +4,7 @@ from mayavi import mlab
 mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
 mlab.show()
 
-filename='/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt'
+filename='/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt'
 traj_file=open(filename)
 
 class FilamentSnapshot:
@@ -91,7 +91,7 @@ def show_frame(frame_number=-1):
 	mlab.pipeline.surface(tube, color=(0.8, 0.3, 0.3))
 
 
-@mlab.animate(delay=25, ui=True)
+@mlab.animate(delay=10, ui=True)
 def anim():
 	for i in range(0,len(FrameList)):
 		show_frame(i)

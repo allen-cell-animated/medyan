@@ -8,9 +8,12 @@
 
 #include "CGMethod.h"
 #include "ForceFieldManager.h"
+#include <cmath>
 
 using namespace std;
 
+const double phi = (1 + sqrt(5)) / 2;
+const double resphi = 2 - phi;
 
 double CGMethod::GradSquare()
 {
@@ -66,11 +69,10 @@ void CGMethod::ShiftGradient(double d)
         (*it).force[0] = (*it).forceAux[0] + d* (*it).force[0];
         (*it).force[1] = (*it).forceAux[1] + d* (*it).force[1];
         (*it).force[2] = (*it).forceAux[2] + d* (*it).force[2];
-        
 	}
-    
-    
 }
+
+
 
 
 void CGMethod::PrintForces()
@@ -121,3 +123,40 @@ double CGMethod::GoldenSection(ForceFieldManager& FFM)
     
 	return (a + b)/2.0;
 }
+
+double CGMethod::GoldenSectionAlt(ForceFieldManager& FFM, double a, double b, double c, double tau)
+{
+    // a and c are the current bounds; the minimum is between them.
+    // b is a center point
+    // f(x) is some mathematical function elsewhere defined
+    // a corresponds to x1; b corresponds to x2; c corresponds to x3
+    // x corresponds to x4
+    // tau is a tolerance parameter; see above
+    double x;
+    if (c - b > b - a)
+        x = b + resphi * (c - b);
+    else
+        x = b - resphi * (b - a);
+    if (abs(c - a) < tau * (abs(b) + abs(x)))
+        return (c + a) / 2;
+    
+    double fx = FFM.ComputeEnergy(x);
+    double fb = FFM.ComputeEnergy(b);
+    
+    std::cout << "x = " << x << " b = " << b << std::endl;
+    std::cout << "fx = " << fx << " fb = " << fb << std::endl;
+    
+    assert(fx != fb);
+    
+    if (fx < fb) {
+        if (c - b > b - a) return GoldenSectionAlt(FFM, b, x, c, tau);
+        else return GoldenSectionAlt(FFM, a, x, b, tau);
+    }
+    else {
+        if (c - b > b - a) return GoldenSectionAlt(FFM, a, b, x, tau);
+        else return GoldenSectionAlt(FFM, x, b, c, tau);
+    }
+    
+}
+
+

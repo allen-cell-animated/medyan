@@ -26,6 +26,7 @@ protected:
     void ShiftGradient(double d);
     void PrintForces();
     double GoldenSection(ForceFieldManager &FFM);
+    double GoldenSectionAlt(ForceFieldManager &FFM, double a, double b, double c, double tau);
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     

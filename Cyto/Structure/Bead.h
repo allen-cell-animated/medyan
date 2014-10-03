@@ -38,7 +38,6 @@ public:
     ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
     std::vector<double> forceAux; ///< An Aux field neede during CG minimization.
     
-    
     ///Main constructor
     Bead (std::vector<double> v, int ID);
     ///Default constructor
