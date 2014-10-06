@@ -39,7 +39,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = GoldenSectionNew(FFM, 0, 20);
+        lambda = GoldenSectionNew(FFM, 0, 50);
         cout<<"lambda= "<<lambda<<endl;
 		PrintForces();
         
