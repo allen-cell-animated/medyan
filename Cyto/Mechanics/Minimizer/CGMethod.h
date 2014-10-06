@@ -27,6 +27,7 @@ protected:
     void PrintForces();
     double GoldenSection(ForceFieldManager &FFM);
     double GoldenSectionAlt(ForceFieldManager &FFM, double a, double b, double c, double tau);
+    double GoldenSectionNew(ForceFieldManager& FFM, double a, double b );
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     

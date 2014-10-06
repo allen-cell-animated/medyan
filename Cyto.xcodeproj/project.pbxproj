@@ -1281,18 +1281,12 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/jameskomianos/Code/googletest,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/lib/**",
-					/Users/jameskomianos/Code/googletest,
-				);
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
 					"-std=c++11",
 					"-lgsl",
@@ -1313,19 +1307,13 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/jameskomianos/Code/googletest,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/lib/**",
-					/Users/jameskomianos/Code/googletest,
-				);
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
 					"-std=c++11",
 					"-lgsl",

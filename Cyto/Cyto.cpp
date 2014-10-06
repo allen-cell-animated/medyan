@@ -46,7 +46,7 @@ int main(int argc, const char * argv[])
     SubSystem s;
     Controller c(&s);
     
-    c.initialize("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testsysteminput.txt");
+    c.initialize("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testsysteminput.txt");
     c.run();
 
 }

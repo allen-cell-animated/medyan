@@ -14,7 +14,7 @@ using namespace std;
 void FletcherRieves::Minimize(ForceFieldManager &FFM)
 {
 	
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
+    Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
     o.printBasicSnapshot(0);
 	const double EPS = 1e-5;
 	

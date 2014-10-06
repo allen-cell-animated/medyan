@@ -143,10 +143,10 @@ double CGMethod::GoldenSectionAlt(ForceFieldManager& FFM, double a, double b, do
     double fx = FFM.ComputeEnergy(x);
     double fb = FFM.ComputeEnergy(b);
     
-    std::cout << "x = " << x << " b = " << b << std::endl;
-    std::cout << "fx = " << fx << " fb = " << fb << std::endl;
+//    std::cout << "x = " << x << " b = " << b << std::endl;
+//    std::cout << "fx = " << fx << " fb = " << fb << std::endl;
     
-    assert(fx != fb);
+   // assert(fx != fb);
     
     if (fx < fb) {
         if (c - b > b - a) return GoldenSectionAlt(FFM, b, x, c, tau);
@@ -157,6 +157,21 @@ double CGMethod::GoldenSectionAlt(ForceFieldManager& FFM, double a, double b, do
         else return GoldenSectionAlt(FFM, x, b, c, tau);
     }
     
+}
+
+double CGMethod::GoldenSectionNew(ForceFieldManager& FFM, double a, double b )
+{
+    double phi = 0.5 * (1 + sqrt(5)) ;
+    double  eps = 0.001;
+    
+    while (fabs(b - a) > eps){
+        
+        double half_x1 = ((a + b)/2 - eps/4);
+        double half_x2 = ((a + b)/2 + eps/4);
+        if (FFM.ComputeEnergy(half_x1) <= FFM.ComputeEnergy(half_x2)) b = half_x2;
+        else a = half_x1;
+    }
+     return (a + b) / 2;
 }
 
 
