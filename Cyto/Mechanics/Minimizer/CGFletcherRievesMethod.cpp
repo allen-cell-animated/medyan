@@ -39,13 +39,13 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 
         lambda = 0.01;//GoldenSection(FFM);
         cout<<"lambda= "<<lambda<<endl;
-		PrintForces();
+		//PrintForces();
         MoveBeads(lambda);
         //PrintForces();
-        o.printBasicSnapshot(numIter);
+        //o.printBasicSnapshot(numIter);
         
         FFM.ComputeForcesAux();
-        PrintForces();
+        //PrintForces();
         
 		newGradSquare = GradSquare(1);
 		

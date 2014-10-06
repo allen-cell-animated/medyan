@@ -41,14 +41,14 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         lambda = GoldenSectionNew(FFM, 0, 50);
         cout<<"lambda= "<<lambda<<endl;
-		PrintForces();
+		//PrintForces();
         
         MoveBeads(lambda);
-        o.printBasicSnapshot(numIter);
+        //o.printBasicSnapshot(numIter);
         //PrintForces();
         
         FFM.ComputeForcesAux();
-        PrintForces();
+        //PrintForces();
         
 		newGradSquare = GradSquare(1);
 		
@@ -63,9 +63,9 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout << "Calling last compute energy in minimizer" << endl;
 		curVal = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
-        PrintForces();
+        //PrintForces();
 		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
+        //cout<<"GradSq before end=  "<<gradSquare<<endl;
 
         
 	}

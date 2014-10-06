@@ -74,8 +74,8 @@ public:
         _compartment = c; _compartment->addBead(this);
     }
     
-    ///update the boundary elements that interact with this bead
-    void updateBoundaryElements();
+    ///update the position of this bead (and interaction boundary elements)
+    void updatePosition();
     
     ///getters for bead data
     int getID() {return _ID;}

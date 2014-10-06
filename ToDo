@@ -24,6 +24,7 @@ TODO                                                                        COMP
     -Moving front/back beads                                                    X
     -More detailed output                                                       X
     -Changing polymerization rates with forces
+    -Linker motor chemistry and mechanics
 3) TESTING!!!!
     -Boundary elements/surfaces                                                 X
     -SpeciesBulk                                                                X
