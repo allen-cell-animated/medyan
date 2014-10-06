@@ -45,7 +45,7 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& Minimizers) {
 
 void MController::updateBeads() {
     ///Update bead-boundary interactions (VERY INEFFICIENT)
-    for(auto b : *BeadDB::Instance(BeadDBKey())) b->updateBoundaryElements();
+    for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
 }
 
 void MController::updateCylinders() {

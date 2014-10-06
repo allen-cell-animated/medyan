@@ -30,7 +30,7 @@ Bead::Bead (std::vector<double> v, int ID): coordinate(v), force(3, 0), forceAux
     }
 }
 
-void Bead::updateBoundaryElements() {
+void Bead::updatePosition() {
     
     ///First, update this bead's list
     
