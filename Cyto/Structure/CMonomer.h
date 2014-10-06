@@ -75,10 +75,10 @@ public:
     void print();
 
     ///Return all species vectors
-    std::vector<SpeciesFilament*>& speciesFilamentVector() {return _speciesFilament;}
-    std::vector<SpeciesBound*>& speciesBoundVector() {return _speciesBound;}
-    std::vector<SpeciesPlusEnd*>& speciesPlusEndVector() {return _speciesPlusEnd;}
-    std::vector<SpeciesMinusEnd*>& speciesMinusEndVector() {return _speciesMinusEnd;}
+    const std::vector<SpeciesFilament*>& speciesFilamentVector() {return _speciesFilament;}
+    const std::vector<SpeciesBound*>& speciesBoundVector() {return _speciesBound;}
+    const std::vector<SpeciesPlusEnd*>& speciesPlusEndVector() {return _speciesPlusEnd;}
+    const std::vector<SpeciesMinusEnd*>& speciesMinusEndVector() {return _speciesMinusEnd;}
     
     ///Get species at a specific index
     ///@note no check on this index. The index value of a species is stored in the chemical initializer

@@ -99,11 +99,11 @@ public:
     void clearBackReactions() {_backReactions.clear();}
     
     ///Get list of reactions associated with this CCylinder
-    std::vector<ReactionBase*>& getReactions() {return _reactions;}
+    const std::vector<ReactionBase*>& getReactions() {return _reactions;}
     ///Get list of reactions associated with this CCylinder and next
-    std::vector<ReactionBase*>& getFrontReactions() {return _frontReactions;}
+    const std::vector<ReactionBase*>& getFrontReactions() {return _frontReactions;}
     ///Get list of reactions associated with this CCylinder and previous
-    std::vector<ReactionBase*>& getBackReactions() {return _backReactions;}
+    const std::vector<ReactionBase*>& getBackReactions() {return _backReactions;}
     
     ///Update all reactions associated with this CCylinder
     void updateReactions();

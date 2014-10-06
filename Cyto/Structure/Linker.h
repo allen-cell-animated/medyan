@@ -33,8 +33,8 @@ private:
     Cylinder* _pc1; ///< first cylinder the linker is bound to
     Cylinder* _pc2; ///< second cylinder the linker is bound to
     
-    double _position1; ///position on first cylinder
-    double _position2; ///position on second cylinder
+    double _position1; ///< position on first cylinder
+    double _position2; ///< position on second cylinder
     
 public:
     Linker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1, double position2);
