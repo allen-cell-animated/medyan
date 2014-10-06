@@ -15,14 +15,14 @@
 template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, double d) {
     
-    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
-    double kStretch = pl->GetStretchingConstant();
-    double L = pl->GetEqLength();
-    double pos1 = pl->GetFirstPosition();
-    double pos2 = pl->GetSecondPosition();
+    Bead* pb1 = pl->getFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->getFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->getSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->getSecondCylinder()->GetSecondBead();
+    double kStretch = pl->getMLinker()->GetStretchingConstant();
+    double L = pl->getMLinker()->GetEqLength();
+    double pos1 = pl->getFirstPosition();
+    double pos2 = pl->getSecondPosition();
     
     if (d == 0.0)
         return _FFType.Energy(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
@@ -34,15 +34,15 @@ double LinkerStretching<LStretchingInteractionType>::ComputeEnergy(Linker* pl, d
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl) {
     
-    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
-    double kStretch = pl->GetStretchingConstant();
-    double L = pl->GetEqLength();
+    Bead* pb1 = pl->getFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->getFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->getSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->getSecondCylinder()->GetSecondBead();
+    double kStretch = pl->getMLinker()->GetStretchingConstant();
+    double L = pl->getMLinker()->GetEqLength();
     
-    double pos1 = pl->GetFirstPosition();
-    double pos2 = pl->GetSecondPosition();
+    double pos1 = pl->getFirstPosition();
+    double pos2 = pl->getSecondPosition();
     
     _FFType.Forces(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
     
@@ -52,15 +52,15 @@ void LinkerStretching<LStretchingInteractionType>::ComputeForces(Linker* pl) {
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::ComputeForcesAux(Linker* pl) { /// Needed for Conjugated Gradient minimization;
 
-    Bead* pb1 = pl->GetFirstCylinder()->GetFirstBead();
-    Bead* pb2 = pl->GetFirstCylinder()->GetSecondBead();
-    Bead* pb3 = pl->GetSecondCylinder()->GetFirstBead();
-    Bead* pb4 = pl->GetSecondCylinder()->GetSecondBead();
-    double kStretch = pl->GetStretchingConstant();
-    double L = pl->GetEqLength();
+    Bead* pb1 = pl->getFirstCylinder()->GetFirstBead();
+    Bead* pb2 = pl->getFirstCylinder()->GetSecondBead();
+    Bead* pb3 = pl->getSecondCylinder()->GetFirstBead();
+    Bead* pb4 = pl->getSecondCylinder()->GetSecondBead();
+    double kStretch = pl->getMLinker()->GetStretchingConstant();
+    double L = pl->getMLinker()->GetEqLength();
     
-    double pos1 = pl->GetFirstPosition();
-    double pos2 = pl->GetSecondPosition();
+    double pos1 = pl->getFirstPosition();
+    double pos2 = pl->getSecondPosition();
     
     _FFType.ForcesAux(pb1, pb2, pb3, pb4, pos1, pos2, kStretch, L);
     

@@ -21,7 +21,7 @@ class Cylinder;
 
 /// CCylinder class holds all CMonomers
 /*! 
- *  The CCylinder Class is an template class that has lists of the monomers and bounds that it contains.
+ *  The CCylinder class has lists of the monomers and bounds that it contains.
  *  it has functionality to print the current composition.
  *  Accessing a particular species in the CCylinder is possible as well.
  */

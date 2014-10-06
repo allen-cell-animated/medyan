@@ -17,8 +17,6 @@
 #include "CCylinder.h"
 
 class Filament;
-class MCylinder;
-class CCylinder;
 class Compartment;
 
 ///Cylinder class is a wrapper for a mechanical cylinder and chemical cylinder

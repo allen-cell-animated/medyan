@@ -43,14 +43,17 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& Minimizers) {
     }
 }
 
-void MController::updateBeads() {
+
+void MController::updatePositions() {
+
     ///Update bead-boundary interactions (VERY INEFFICIENT)
     for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
-}
-
-void MController::updateCylinders() {
-
+    
     ///Update cylinder positions (ALSO VERY INEFFICIENT)
     for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
+    
+    ///Update linker positions
+    for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
+    
 }
 

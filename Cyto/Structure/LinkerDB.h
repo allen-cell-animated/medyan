@@ -15,6 +15,8 @@
 #include "common.h"
 #include "Linker.h"
 
+class SpeciesBound;
+class Compartment;
 class Cylinder;
 
 ///Key to access instance of LinkerDB
@@ -49,9 +51,9 @@ public:
     
     static LinkerDB* Instance(LinkerDBKey k);
     
-    void CreateLinker(Cylinder* pc1, Cylinder* pc2, double k, double position1 = 0.5, double position2 = 0.5) {
+    void CreateLinker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1 = 0.5, double position2 = 0.5) {
         
-        Linker* pl = new Linker(pc1, pc2, k, position1, position2);
+        Linker* pl = new Linker(pc1, pc2, c, position1, position2);
         push_back(pl);
     }
 

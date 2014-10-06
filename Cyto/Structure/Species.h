@@ -30,6 +30,7 @@
 #include "RSpecies.h"
 
 class Composite;
+class CBound;
 
 /// SpeciesNamesDB class is used to associate unique integers with character based names of Species
 /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, for example
@@ -424,7 +425,12 @@ public:
 
 /// SpeciesBound should be used for species that can be bound to a filament.
 /// These species can not move cross-compartment.
+/// Contains a pointer to a CBound object that this represents.
 class SpeciesBound : public Species {
+    
+private:
+    CBound* _cBound = nullptr; ///< CBound object
+    
 public:
     /// Default constructor
     SpeciesBound()  : Species() {}
@@ -436,15 +442,16 @@ public:
     :  Species(name, n, ulim) {};
     
     /// Copy constructor
-    SpeciesBound (const SpeciesBound &rhs)  : Species(rhs) {}
+    SpeciesBound (const SpeciesBound &rhs)  : Species(rhs), _cBound(rhs._cBound) {}
     
     /// Move constructor
-    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(std::move(rhs)), _cBound(rhs._cBound) {
     }
     
     /// Regular Assignment
     SpeciesBound& operator=(const SpeciesBound& rhs)  {
         Species::operator=(rhs);
+        _cBound = rhs._cBound;
         return *this;
     }
     
@@ -464,6 +471,13 @@ public:
     
     /// Default destructor
     ~SpeciesBound () noexcept {};
+    
+    ///Setter and getter for CBound
+    void setCBound(CBound* cBound) {_cBound = cBound;}
+    CBound* getCBound() {return _cBound;}
+    
+    ///remove cBound ptr
+    void removeCBound() {_cBound = nullptr;}
 };
 
 /// SpeciesPlusEnd is for a plus end species on a filament

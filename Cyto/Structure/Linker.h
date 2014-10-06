@@ -1,49 +1,67 @@
 //
 //  Linker.h
-//  CytoMech
+//  Cyto
 //
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//  Created by James Komianos on 10/6/14.
+//  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __CytoMech__Linker__
-#define __CytoMech__Linker__
+#ifndef __Cyto__Linker__
+#define __Cyto__Linker__
 
 #include <iostream>
+#include "Composite.h"
+#include "CLinker.h"
+#include "MLinker.h"
+#include "Cylinder.h"
 
-#include "common.h"
+class Compartment;
+class SpeciesBound;
 
-class Cylinder;
-
-///Linker class represents a cross-link between filaments
+///Linker class is a wrapper for a chemical and mechanical linker
 /*!
- *  A linker represents a cross link between cylinders. It contains mechanical information, including
- *  constants and pointers to its respective cylinders.
+ * Linker class is used to create a chemical and mechanical linker when needed.
+ * It contains a constructor as well as getters for mlinker and clinker.
  */
-class Linker {
+
+class Linker : public Composite {
+
+private:
+    std::unique_ptr<MLinker> _mLinker; ///< ptr to mLinker
+    std::unique_ptr<CLinker> _cLinker; ///< ptr to cLinker
+    
+    Cylinder* _pc1; ///< first cylinder the linker is bound to
+    Cylinder* _pc2; ///< second cylinder the linker is bound to
+    
+    double _position1; ///position on first cylinder
+    double _position2; ///position on second cylinder
     
 public:
-    ///Main constructor
-    Linker(Cylinder* pc1, Cylinder* pc2, double stretchConst, double position1, double position2);
+    Linker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1, double position2);
+    ~Linker() {}
     
-    ///Getters for constants and cylinders
-    Cylinder* GetFirstCylinder(){return _pc1;}
-    Cylinder* GetSecondCylinder(){return _pc2;}
-    double GetStretchingConstant(){return _kStretch;}
-    double GetFirstPosition(){return  _position1;}
-    double GetSecondPosition(){return _position2;}
-    double GetEqLength(){return _eqLength;}
+    ///get cylinders
+    Cylinder* getFirstCylinder() {return _pc1;}
+    Cylinder* getSecondCylinder() {return _pc2;}
     
+    ///setter for mlinkers and clinkers
+    void setCLinker(CLinker* cLinker) {_cLinker = std::unique_ptr<CLinker>(cLinker);}
+    CLinker* getCLinker() {return _cLinker.get();}
     
-private:
-   
-    Cylinder* _pc1;
-    Cylinder* _pc2;
-    double _eqLength;
-    double _kStretch;
-    double _position1;
-    double _position2;
+    void setMLinker(MLinker* mLinker) {_mLinker = std::unique_ptr<MLinker>(mLinker);}
+    MLinker* getMLinker() {return _mLinker.get();}
+    
+    ///Getters and setters for position
+    double getFirstPosition() {return _position1;}
+    void setFirstPosition(double position1) {_position1 = position1;}
+    double getSecondPosition() {return _position2;}
+    void setSecondPosition(double position2) {_position2 = position2;}
+    
+    ///Update the position of this Linker
+    ///@note - changes compartment of clinker if needed
+    void updatePosition();
     
 };
 
-#endif /* defined(__CytoMech__Linker__) */
+
+#endif /* defined(__Cyto__Linker__) */

@@ -26,6 +26,7 @@
 
 #include "FilamentDB.h"
 #include "CylinderDB.h"
+#include "LinkerDB.h"
 
 #include <iostream>
 #include <vector>
@@ -55,8 +56,7 @@ private:
     void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
     
     ///Update elements after minimization
-    void updateBeads();
-    void updateCylinders();
+    void updatePositions();
     
 public:
     
@@ -70,11 +70,8 @@ public:
 
     ///Run minimization on the system using the chosen algorithm
     void run() {
-        
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
-        
-        updateBeads();
-        updateCylinders();
+        updatePositions();
     }
     
 };
