@@ -88,7 +88,7 @@ void CGMethod::PrintForces()
 
 
 
-double CGMethod::GoldenSection(ForceFieldManager& FFM)
+double CGMethod::GoldenSection1(ForceFieldManager& FFM)
 {
 	
     const double EPS = 1e-6;
@@ -104,19 +104,14 @@ double CGMethod::GoldenSection(ForceFieldManager& FFM)
 	while (abs(b - a) > EPS)
 	{
 		if (FFM.ComputeEnergy(x1) >= FFM.ComputeEnergy(x2) ){
-            
             a = x1;
             x1 = x2;
             x2 =a + inv_phi * (b - a);
         }
-		
         else {
-            
             b = x2;
-            
             x2 = x1;
             x1 = b - inv_phi * (b - a);
-            
         }
     }
     
@@ -124,7 +119,7 @@ double CGMethod::GoldenSection(ForceFieldManager& FFM)
 	return (a + b)/2.0;
 }
 
-double CGMethod::GoldenSectionAlt(ForceFieldManager& FFM, double a, double b, double c, double tau)
+double CGMethod::GoldenSection2(ForceFieldManager& FFM, double a, double b, double c, double tau)
 {
     // a and c are the current bounds; the minimum is between them.
     // b is a center point
@@ -149,19 +144,19 @@ double CGMethod::GoldenSectionAlt(ForceFieldManager& FFM, double a, double b, do
    // assert(fx != fb);
     
     if (fx < fb) {
-        if (c - b > b - a) return GoldenSectionAlt(FFM, b, x, c, tau);
-        else return GoldenSectionAlt(FFM, a, x, b, tau);
+        if (c - b > b - a) return GoldenSection2(FFM, b, x, c, tau);
+        else return GoldenSection2(FFM, a, x, b, tau);
     }
     else {
-        if (c - b > b - a) return GoldenSectionAlt(FFM, a, b, x, tau);
-        else return GoldenSectionAlt(FFM, x, b, c, tau);
+        if (c - b > b - a) return GoldenSection2(FFM, a, b, x, tau);
+        else return GoldenSection2(FFM, x, b, c, tau);
     }
     
 }
 
-double CGMethod::GoldenSectionNew(ForceFieldManager& FFM, double a, double b )
+double CGMethod::BinarySearch(ForceFieldManager& FFM, double a, double b )
 {
-    double phi = 0.5 * (1 + sqrt(5)) ;
+    //double phi = 0.5 * (1 + sqrt(5)) ;
     double  eps = 0.001;
     
     while (fabs(b - a) > eps){

@@ -101,7 +101,7 @@ void Controller::initialize(std::string inputFile) {
 void Controller::run() {
     
     ///Set up filament output file
-    Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/filamentoutput.txt");
+    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
     o.printBasicSnapshot(0);
     
 #if defined(CHEMISTRY)

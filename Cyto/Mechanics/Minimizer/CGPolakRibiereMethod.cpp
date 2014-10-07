@@ -17,7 +17,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 	//PrintForces();
     const double EPS = 1e-4;
 	
-    Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
+    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
     o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
@@ -39,7 +39,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = GoldenSectionNew(FFM, 0, 50);
+        lambda = BinarySearch(FFM, 0, 50);
         cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
@@ -65,7 +65,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        //cout<<"GradSq before end=  "<<gradSquare<<endl;
+        cout<<"GradSq before end=  "<<gradSquare<<endl;
 
         
 	}

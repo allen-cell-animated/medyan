@@ -25,9 +25,9 @@ protected:
     void MoveBeads(double d);
     void ShiftGradient(double d);
     void PrintForces();
-    double GoldenSection(ForceFieldManager &FFM);
-    double GoldenSectionAlt(ForceFieldManager &FFM, double a, double b, double c, double tau);
-    double GoldenSectionNew(ForceFieldManager& FFM, double a, double b );
+    double GoldenSection1(ForceFieldManager &FFM);
+    double GoldenSection2(ForceFieldManager &FFM, double a, double b, double c, double tau);
+    double BinarySearch(ForceFieldManager& FFM, double a, double b );
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     
