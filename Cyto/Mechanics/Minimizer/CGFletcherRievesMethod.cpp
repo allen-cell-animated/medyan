@@ -14,8 +14,8 @@ using namespace std;
 void FletcherRieves::Minimize(ForceFieldManager &FFM)
 {
 	
-    Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
-    o.printBasicSnapshot(0);
+    //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
+    //o.printBasicSnapshot(0);
 	const double EPS = 1e-5;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); ///!!!!!! need to know
@@ -37,8 +37,15 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
 
-        lambda = 0.01;//GoldenSection(FFM);
+        ///bracketing
+        double ax = 0, bx = 0.0001, cx, fa, fb, fc;
+        makeBracket(FFM, ax, bx, cx, fa, fb, fc);
+        
+        std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
+        
+        lambda = GoldenSection2(FFM, ax, bx, cx, 1e-6);
         cout<<"lambda= "<<lambda<<endl;
+        
 		//PrintForces();
         MoveBeads(lambda);
         //PrintForces();

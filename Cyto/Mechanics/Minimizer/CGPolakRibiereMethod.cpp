@@ -16,21 +16,20 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
     const double EPS = 1e-4;
-	
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
     o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curVal = FFM.ComputeEnergy(0.0);
-    //cout<<"Energy = "<< curVal <<endl;
+    cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;
 	FFM.ComputeForces();
     
-    PrintForces();
+    //PrintForces();
     
 	double gradSquare = GradSquare();
     
-    cout<<"GradSq=  "<<gradSquare<<endl;
+    //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
 	do
@@ -39,12 +38,18 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = BinarySearch(FFM, 0, 50);
-        cout<<"lambda= "<<lambda<<endl;
+        ///initial bracketing
+        double ax = 0, bx =0.0001 , cx=100, fa, fb, fc;
+        makeBracket(FFM, ax, bx, cx, fa, fb, fc);
+        
+        //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
+        
+        lambda = GoldenSection3(FFM, ax, bx, cx, EPS);
+        //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
         MoveBeads(lambda);
-        //o.printBasicSnapshot(numIter);
+        o.printBasicSnapshot(numIter);
         //PrintForces();
         
         FFM.ComputeForcesAux();
@@ -52,11 +57,14 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
 		newGradSquare = GradSquare(1);
 		
+        //cout << "Grad dot prod "<< GradDotProduct() << endl;
+        //cout << "New grad square = " << newGradSquare << endl;
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
             if(gradSquare == 0) beta = 0;
 			else beta = max(0.0, (newGradSquare - GradDotProduct()/ gradSquare));
         }
+        //cout << "beta = " << beta <<endl;
 		ShiftGradient(beta);
         
 		prevVal = curVal;
@@ -65,12 +73,11 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
+        //cout<<"GradSq before end=  "<<gradSquare<<endl;
 
         
 	}
 	while (gradSquare > EPS);
-    
     
 	std::cout << "Polak-Ribiere Method: " << std::endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;

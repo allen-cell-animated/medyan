@@ -15,33 +15,33 @@ using namespace mathfunc;
 
 double FilamentBendingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, double k_bend){
     
-    
     double L1 = sqrt(ScalarProduct(pb1->coordinate, pb2->coordinate, pb1->coordinate, pb2->coordinate));
     double L2 = sqrt(ScalarProduct(pb2->coordinate, pb3->coordinate, pb2->coordinate, pb3->coordinate));
     
     double L1L2 = L1*L2;
     
     double l1l2 = ScalarProduct(pb1->coordinate, pb2->coordinate, pb2->coordinate, pb3->coordinate);
-    
+
     return k_bend * ( 1 - l1l2 / L1L2 );
   
 }
 
 double FilamentBendingHarmonic::Energy(Bead* pb1, Bead* pb2, Bead* pb3, double k_bend, double d ){
     
-   
     double L1 = sqrt(ScalarProductStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d));
-    double L2 = sqrt(ScalarProductStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d));
+    double L2 = sqrt(ScalarProductStretched(pb2->coordinate, pb2->force, pb3->coordinate, pb3->force, pb2->coordinate, pb2->force, pb3->coordinate, pb3->force, d));
     
     double L1L2 = L1*L2;
     
-    double l1l2 = ScalarProductStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d);
+    double l1l2 = ScalarProductStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, pb2->coordinate, pb2->force, pb3->coordinate, pb3->force, d);
     
     return k_bend * ( 1 - l1l2 / L1L2 );
  
 }
 
 void FilamentBendingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, double k_bend ){
+    
+     //std::cout << "In bending forces"<< std::endl;
     
     double L1 = sqrt(ScalarProduct(pb1->coordinate, pb2->coordinate, pb1->coordinate, pb2->coordinate));
     double L2 = sqrt(ScalarProduct(pb2->coordinate, pb3->coordinate, pb2->coordinate, pb3->coordinate));

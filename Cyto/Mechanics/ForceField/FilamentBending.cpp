@@ -13,7 +13,7 @@
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, double d)
 {
-    if (pf->getCylinderVector().size()>2){
+    if (pf->getCylinderVector().size()>1){
     double U = 0.0;
     
         if (d == 0.0){
@@ -51,7 +51,7 @@ template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::ComputeForces(Filament* pf)
 {
     
-    if (pf->getCylinderVector().size()>2){
+    if (pf->getCylinderVector().size()>1){
         for (auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;
@@ -69,7 +69,7 @@ void FilamentBending<FBendingInteractionType>::ComputeForces(Filament* pf)
 template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
 {
-    if (pf->getCylinderVector().size()>2){
+    if (pf->getCylinderVector().size()>1){
         for (auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;

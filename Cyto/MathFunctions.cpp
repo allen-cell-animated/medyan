@@ -65,9 +65,9 @@ namespace mathfunc {
     
     double ScalarProductStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, const std::vector<double>& v3, const std::vector<double>& p3, const std::vector<double>& v4, const std::vector<double>& p4, double d){
         
-        double xx = ( (v2[0] - d*p2[0])-(v1[0] - d*p1[0]) )*( (v4[0] - d*p4[0])-(v3[0] - d*p3[0]) );
-        double yy = ( (v2[1] - d*p2[1])-(v1[1] - d*p1[1]) )*( (v4[1] - d*p4[1])-(v3[1] - d*p3[1]) );
-        double zz = ( (v2[2] - d*p2[2])-(v1[2] - d*p1[2]) )*( (v4[2] - d*p4[2])-(v3[2] - d*p3[2]) );
+        double xx = ( (v2[0] + d*p2[0])-(v1[0] + d*p1[0]) )*( (v4[0] + d*p4[0])-(v3[0] + d*p3[0]) );
+        double yy = ( (v2[1] + d*p2[1])-(v1[1] + d*p1[1]) )*( (v4[1] + d*p4[1])-(v3[1] + d*p3[1]) );
+        double zz = ( (v2[2] + d*p2[2])-(v1[2] + d*p1[2]) )*( (v4[2] + d*p4[2])-(v3[2] + d*p3[2]) );
         
         return xx + yy + zz;
         
@@ -88,9 +88,9 @@ namespace mathfunc {
         
         std::vector<double> v;
         
-        v.push_back( (v1[0] - d*p1[0])*(1.0 - alpha) + alpha*(v2[0] - d*p2[0]) );
-        v.push_back( (v1[1] - d*p1[1])*(1.0 - alpha) + alpha*(v2[1] - d*p2[1]) );
-        v.push_back( (v1[2] - d*p1[2])*(1.0 - alpha) + alpha*(v2[2] - d*p2[2]) );
+        v.push_back( (v1[0] + d*p1[0])*(1.0 - alpha) + alpha*(v2[0] + d*p2[0]) );
+        v.push_back( (v1[1] + d*p1[1])*(1.0 - alpha) + alpha*(v2[1] + d*p2[1]) );
+        v.push_back( (v1[2] + d*p1[2])*(1.0 - alpha) + alpha*(v2[2] + d*p2[2]) );
         return v;
     }
     
@@ -179,8 +179,8 @@ namespace mathfunc {
         
         // Compute sc and tc
         
-        sc = ( abs( sN ) < SMALL_NUM ? 0.0 : sN / sD);
-        tc = ( abs( tN ) < SMALL_NUM ? 0.0 : tN / tD);
+        sc = ( fabs( sN ) < SMALL_NUM ? 0.0 : sN / sD);
+        tc = ( fabs( tN ) < SMALL_NUM ? 0.0 : tN / tD);
     
        
         

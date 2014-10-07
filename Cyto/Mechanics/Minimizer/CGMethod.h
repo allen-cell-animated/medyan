@@ -11,25 +11,40 @@
 #include <iostream>
 #include <cmath>
 
-#include "common.h"
 #include "BeadDB.h"
+#include "common.h"
 
 class ForceFieldManager;
 
 class CGMethod {
     
 protected:
+    ///helpers for searching and bracketing
+    void swap(double &a, double &b);
+    void shift2(double &a, double &b, double c);
+    void shift3(double &a, double &b, double &c, double d);
+    double sign(double a, double b);
+    
+    ///bracketing function (from Numerical Recipes in C++, second edition)
+    void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
+    
+    ///Gradient calculations
     double GradSquare();
     double GradSquare(int i);
     double GradDotProduct();
     void MoveBeads(double d);
     void ShiftGradient(double d);
-    void PrintForces();
+    
+    ///various linear search methods
     double GoldenSection1(ForceFieldManager &FFM);
-    double GoldenSection2(ForceFieldManager &FFM, double a, double b, double c, double tau);
+    double GoldenSection2(ForceFieldManager &FFM, double ax, double bx, double cx, double tau);
+    double GoldenSection3(ForceFieldManager &FFM, double ax, double bx, double cx, double tol);
+    
     double BinarySearch(ForceFieldManager& FFM, double a, double b );
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
+    
+    void PrintForces();
     
 public:
     virtual void Minimize(ForceFieldManager &FFM) = 0;

@@ -87,8 +87,8 @@ TEST(ChemNRMTest, SimpleSteadyState) {
     double A1var = variance(accA1);
     double var_expected = double(Nstart)/2/2;
     double mean_error = sqrt(var_expected/N_SAMPLE_POINTS);
-    EXPECT_TRUE(abs(A1mean-Nstart/2)<10*mean_error);
-    EXPECT_TRUE(abs(var_expected-A1var)<0.1*var_expected);// within 10% of the expected variance
+    EXPECT_TRUE(fabs(A1mean-Nstart/2)<10*mean_error);
+    EXPECT_TRUE(fabs(var_expected-A1var)<0.1*var_expected);// within 10% of the expected variance
     EXPECT_FLOAT_EQ(-1.0,covariance(accCov)/(A1var));
     //    cout << "ChemNRMTest::SimpleSteadyState: " << A1mean << " vs " << double(Nstart)/2 << ", Expected error: " << mean_error << endl;
     //    cout << "ChemNRMTest::SimpleSteadyState: std= " << sqrt(A1var) << ", "  << covariance(accCov)/A1var << endl;
