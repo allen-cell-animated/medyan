@@ -20,15 +20,14 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
-	double curVal = FFM.ComputeEnergy(0.0);
-    cout<<"Energy = "<< curVal <<endl;
-	double prevVal = curVal;
+	double curEnergy = FFM.ComputeEnergy(0.0);
+    cout<<"Energy = "<< curEnergy <<endl;
+	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
     
     //PrintForces();
     
 	double gradSquare = GradSquare();
-    
     //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
@@ -39,16 +38,20 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		vector<double> newGrad;
         
         ///initial bracketing
-        double ax = 0, bx =0.0001 , cx=100, fa, fb, fc;
-        makeBracket(FFM, ax, bx, cx, fa, fb, fc);
+        //double ax = 0, bx =0.0001 , cx=100, fa, fb, fc;
+        //makeBracket(FFM, ax, bx, cx, fa, fb, fc);
         
         //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
         
-        lambda = GoldenSection3(FFM, ax, bx, cx, EPS);
-        //cout<<"lambda= "<<lambda<<endl;
+        lambda = GoldenSection1(FFM, EPS);
+        cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
+        cout<<"GradSq before move beads=  "<<gradSquare<<endl;
+        
         MoveBeads(lambda);
+        if (lambda > _lambdaMin) EnergyBacktracking(FFM, lambda, curEnergy);
+        
         o.printBasicSnapshot(numIter);
         //PrintForces();
         
@@ -67,14 +70,15 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout << "beta = " << beta <<endl;
 		ShiftGradient(beta);
         
-		prevVal = curVal;
+		prevEnergy = curEnergy;
         //cout << "Calling last compute energy in minimizer" << endl;
-		curVal = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
+		curEnergy = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        //cout<<"GradSq before end=  "<<gradSquare<<endl;
-
+        cout<<"GradSq before end=  "<<gradSquare<<endl;
+        cout << "Energy = " << curEnergy << endl;
+        cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
 	while (gradSquare > EPS);

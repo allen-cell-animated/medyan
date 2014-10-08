@@ -13,7 +13,7 @@
 using namespace std;
 
 const double phi = (1 + sqrt(5)) / 2;
-const double resphi = 2 - phi;
+//const double resphi = 2 - phi;
 const double r = 0.61803399;
 const double c = 1 - r;
 
@@ -164,7 +164,14 @@ void CGMethod::ShiftGradient(double d)
 }
 
 
-
+void CGMethod::EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy) {
+    
+    if(FFM.ComputeEnergy(0.0) > energy) {
+        cout << "Moved beads lambdaMin" << endl;
+        MoveBeads(-lambda + _lambdaMin*1);
+    }
+    
+}
 
 void CGMethod::PrintForces()
 {
@@ -178,12 +185,12 @@ void CGMethod::PrintForces()
 }
 
 
-double CGMethod::GoldenSection1(ForceFieldManager& FFM)
+double CGMethod::GoldenSection1(ForceFieldManager& FFM, double tol)
 {
-	
-    const double EPS = 1e-6;
+    
+    const double EPS = tol;
 	double a = 0;
-	double b = 15;
+	double b = 200;
     double phi = 0.5 * (1 + sqrt(5) );
     double inv_phi = 1/phi;
 	double x1 = b - inv_phi * (b - a);
@@ -202,34 +209,42 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM)
             x1 = b - inv_phi * (b - a);
         }
     }
-	return (a + b)/2.0;
+    double returnLambda = (a + b)/2.0;
+    ///check if return value is in bounds of lambda min and max
+    if (returnLambda > _lambdaMax) return _lambdaMax;
+    else if(returnLambda < _lambdaMin) return _lambdaMin;
+    else return returnLambda;
 }
 
-double CGMethod::GoldenSection2(ForceFieldManager& FFM, double ax, double bx, double cx, double tau)
-{
-    double x;
-    if (cx - bx > bx - ax)
-        x = bx + resphi * (cx - bx);
-    else
-        x = bx - resphi * (bx - ax);
-    if (fabs(cx - ax) < tau * (fabs(bx) + fabs(x)))
-        return (cx + ax) / 2;
-    
-    double fx = FFM.ComputeEnergy(x);
-    double fb = FFM.ComputeEnergy(bx);
-    
-    if (fx < fb) {
-        if (cx - bx > bx - ax) return GoldenSection2(FFM, bx, x, cx, tau);
-        else return GoldenSection2(FFM, ax, x, bx, tau);
-    }
-    else {
-        if (cx - bx > bx - ax) return GoldenSection2(FFM, ax, bx, x, tau);
-        else return GoldenSection2(FFM, x, bx, cx, tau);
-    }
-    
-}
+//double CGMethod::GoldenSection2(ForceFieldManager& FFM, double tol)
+//{
+//    double ax = 0, bx = 5, cx = 200;
+//    
+//    double x;
+//    if (cx - bx > bx - ax)
+//        x = bx + resphi * (cx - bx);
+//    else
+//        x = bx - resphi * (bx - ax);
+//    if (fabs(cx - ax) < tol * (fabs(bx) + fabs(x)))
+//        return (cx + ax) / 2;
+//    
+//    double fx = FFM.ComputeEnergy(x);
+//    double fb = FFM.ComputeEnergy(bx);
+//    
+//    if (fx < fb) {
+//        if (cx - bx > bx - ax) return GoldenSection2(FFM, bx, x, cx, tau);
+//        else return GoldenSection2(FFM, ax, x, bx, tau);
+//    }
+//    else {
+//        if (cx - bx > bx - ax) return GoldenSection2(FFM, ax, bx, x, tau);
+//        else return GoldenSection2(FFM, x, bx, cx, tau);
+//    }
+//    
+//}
 
-double CGMethod::GoldenSection3(ForceFieldManager& FFM, double ax, double bx, double cx, double tol) {
+double CGMethod::GoldenSection3(ForceFieldManager& FFM, double tol) {
+    
+    double ax = 0, bx = 5, cx = 200;
     
     double f1, f2, x0, x1, x2, x3;
     
@@ -256,9 +271,14 @@ double CGMethod::GoldenSection3(ForceFieldManager& FFM, double ax, double bx, do
             shift2(f2, f1, FFM.ComputeEnergy(x1));
         }
     }
+    double returnLambda;
+    if(f1 < f2) returnLambda = x1;
+    else returnLambda = x2;
     
-    if(f1 < f2) return x1;
-    else return x2;
+    ///check if return value is in bounds of lambda min and max
+    if (returnLambda > _lambdaMax) return _lambdaMax;
+    else if(returnLambda < _lambdaMin) return _lambdaMin;
+    else return returnLambda;
 }
 
 

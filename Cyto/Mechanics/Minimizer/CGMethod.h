@@ -19,6 +19,9 @@ class ForceFieldManager;
 class CGMethod {
     
 protected:
+    
+    const double _lambdaMin = 0.001, _lambdaMax =10;
+    
     ///helpers for searching and bracketing
     void swap(double &a, double &b);
     void shift2(double &a, double &b, double c);
@@ -35,11 +38,13 @@ protected:
     void MoveBeads(double d);
     void ShiftGradient(double d);
     
-    ///various linear search methods
-    double GoldenSection1(ForceFieldManager &FFM);
-    double GoldenSection2(ForceFieldManager &FFM, double ax, double bx, double cx, double tau);
-    double GoldenSection3(ForceFieldManager &FFM, double ax, double bx, double cx, double tol);
+    ///energy backtracking
+    void EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy);
     
+    ///various linear search methods
+    double GoldenSection1(ForceFieldManager &FFM, double tol);
+//    double GoldenSection2(ForceFieldManager &FFM, double tol);
+    double GoldenSection3(ForceFieldManager &FFM, double tol);
     double BinarySearch(ForceFieldManager& FFM, double a, double b );
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}

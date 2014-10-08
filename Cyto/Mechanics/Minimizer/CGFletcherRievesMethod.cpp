@@ -43,7 +43,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
         
         std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
         
-        lambda = GoldenSection2(FFM, ax, bx, cx, 1e-6);
+        lambda = GoldenSection1(FFM, 1e-6);
         cout<<"lambda= "<<lambda<<endl;
         
 		//PrintForces();
