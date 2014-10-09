@@ -16,8 +16,8 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
     const double EPS = 1e-4;
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
-    o.printBasicSnapshot(0);
+    //Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
+    //o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
@@ -25,7 +25,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
     
-    //PrintForces();
+    PrintForces();
     
 	double gradSquare = GradSquare();
     //cout<<"GradSq=  "<<gradSquare<<endl;
@@ -43,16 +43,16 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
         
-        lambda = GoldenSection1(FFM, EPS);
-        cout<<"lambda= "<<lambda<<endl;
+        lambda = 0.01;//GoldenSection1(FFM, EPS);
+        //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
-        cout<<"GradSq before move beads=  "<<gradSquare<<endl;
+        //cout<<"GradSq before move beads=  "<<gradSquare<<endl;
         
         MoveBeads(lambda);
         if (lambda > _lambdaMin) EnergyBacktracking(FFM, lambda, curEnergy);
         
-        o.printBasicSnapshot(numIter);
+        //o.printBasicSnapshot(numIter);
         //PrintForces();
         
         FFM.ComputeForcesAux();
@@ -76,9 +76,9 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
-        cout << "Energy = " << curEnergy << endl;
-        cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+        //cout<<"GradSq before end=  "<<gradSquare<<endl;
+        //cout << "Energy = " << curEnergy << endl;
+        //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
 	while (gradSquare > EPS);

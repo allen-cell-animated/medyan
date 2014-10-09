@@ -16,7 +16,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 	
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
     //o.printBasicSnapshot(0);
-	const double EPS = 1e-5;
+	const double EPS = 1e-4;
 	
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); ///!!!!!! need to know
 	double curVal = FFM.ComputeEnergy(0.0);
@@ -25,7 +25,6 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 	FFM.ComputeForces();
     
     PrintForces();
-    
     
 	double gradSquare = GradSquare();
     cout<<"GradSq=  "<<gradSquare<<endl;
@@ -38,13 +37,13 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		vector<double> newGrad;
 
         ///bracketing
-        double ax = 0, bx = 0.0001, cx, fa, fb, fc;
-        makeBracket(FFM, ax, bx, cx, fa, fb, fc);
+        //double ax = 0, bx = 0.0001, cx, fa, fb, fc;
+        //makeBracket(FFM, ax, bx, cx, fa, fb, fc);
         
-        std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
+        //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
         
-        lambda = GoldenSection1(FFM, 1e-6);
-        cout<<"lambda= "<<lambda<<endl;
+        lambda = 0.01;//GoldenSection1(FFM, 1e-6);
+        //cout<<"lambda= "<<lambda<<endl;
         
 		//PrintForces();
         MoveBeads(lambda);
@@ -68,11 +67,10 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		curVal = FFM.ComputeEnergy(0.0);
         
 		gradSquare = newGradSquare;
-        cout<<"GradSq=  "<<gradSquare<<endl;
+        //cout<<"GradSq=  "<<gradSquare<<endl;
         
 	}
 	while (gradSquare > EPS);
-    
     
 	std::cout << "Fletcher-Rieves Method: " << std::endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
