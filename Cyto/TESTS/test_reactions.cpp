@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_REACTION_TEST
+#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
@@ -304,7 +304,9 @@ TEST(ReactionTest, ReactionCloning) {
     ///Should keep cdiff3 in reactants
     EXPECT_TRUE(r4->containsSpecies(CDiff3));
     EXPECT_TRUE(r4->containsSpecies(ADiff1));
-
+    
+    ///Check reaction equality
+    EXPECT_TRUE(r3->is_equal(*r4));
 }
 
 

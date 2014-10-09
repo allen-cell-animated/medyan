@@ -63,6 +63,8 @@ public:
     CCylinder& operator=(CCylinder &rhs) = delete;
     
     ///Default destructor, explicitly removes monomers and bounds (including their species, rxns)
+    /// Removes all reactions associated with this ccylinder, including ones owned by this as well
+    /// as other ccylinders.
     ~CCylinder();
     
     ///Clone, calls copy constructor
@@ -87,9 +89,7 @@ public:
     ///Add an internal reaction to this CCylinder
     void addInternalReaction(ReactionBase* r);
     ///Add a reaction across this ccylinder and another ccylinder
-    ///Adds to this reaction map as well as the other ccylinder's reaction map
-    ///@note manage decides whether this reaction adding will also
-    ///add to the chemsim and compartment.
+    ///Adds to this reaction map as well as the other ccylinder's reacting cylinder list
     void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     ///Add a reacting ccylinder to this one
     void addReactingCylinder(CCylinder* other);
@@ -101,19 +101,24 @@ public:
     void removeAllInternalReactions();
     
     ///clear all reactions involving another ccylinder
-    ///@note also removes reaction from other ccylinder's map
+    ///@note also removes reaction from other ccylinder's reacting cylinder lsist
     void removeCrossCylinderReactions(CCylinder* other);
     ///clear all reactions involving other cylinders
-    ///@note also removes all reactions from other ccylinder's map
+    ///@note also removes all reactions from other ccylinder's reacting cylinder list
     void removeAllCrossCylinderReactions();
     
-    ///remove a reacting ccylinder from this one
+    ///remove a reacting ccylinder from this one,
+    ///@note - also removes the other's cross-cylinder reactions involving this ccylinder
     void removeReactingCylinder(CCylinder* other);
+    ///remove all reacting ccylinders reactions,
+    ///@note - similar to above but for all in reacting cylinder list
+    void removeAllReactingCylinders();
     
     ///Get list of reactions associated with this CCylinder
     const std::vector<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     ///Get map of reactions associated with this CCylinder and others
     std::map<CCylinder*, std::vector<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
+    const std::vector<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     
     ///Update all reactions associated with this CCylinder
     void updateReactions();

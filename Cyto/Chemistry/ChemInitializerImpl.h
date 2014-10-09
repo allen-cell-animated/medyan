@@ -38,9 +38,6 @@ public:
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack) = 0;
-    
-    ///Remove a CCylinder, based on the given simulation
-    virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack) = 0;
 
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };

@@ -44,9 +44,6 @@ public:
     /// vector. The active plus and minus end is set to be the first listed as well.
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack);
     
-    ///Remove a CCylinder
-    virtual void removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack);
-    
 };
 
 #endif /* defined(__Cyto__SimpleInitializerImpl__) */

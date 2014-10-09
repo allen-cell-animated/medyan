@@ -16,35 +16,39 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
         _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
     
     ///copy all reactions
-    for(auto &r: rhs._internalReactions)
-        addInternalReaction(r->clone(c->speciesContainer()));
-    
+    for(auto &r: rhs._internalReactions) addInternalReaction(r->clone(c->speciesContainer()));
     for(auto it = rhs._crossCylinderReactions.begin(); it != rhs._crossCylinderReactions.end(); it++) {
         ///Copy map
         for(auto &r : it->second) addCrossCylinderReaction(it->first, r->clone(c->speciesContainer()));
     }
-    ///Copy reacting cylinders
-    for(auto &c : rhs._reactingCylinders) addReactingCylinder(c);
     
+    ///Copy reacting cylinders, Clone reactions where this cylinder is involved
+    for(auto &ccyl : rhs._reactingCylinders) {
+        ///add as a reacting cylinder
+        addReactingCylinder(ccyl);
+        ///clone reactions
+        for(auto &r: ccyl->getCrossCylinderReactions()[const_cast<CCylinder*>(&rhs)])
+            ccyl->addCrossCylinderReaction(this, r->clone(c->speciesContainer()));
+    }
     
-
     ///Update and return
     this->updateReactions();
 }
 
 CCylinder::~CCylinder()
 {
-    ///Remove all reactions
-    for(auto &r: _internalReactions)
-        removeInternalReaction(r);
+    ///Remove all reactions owned by this ccylinder
+    removeAllInternalReactions();
+    removeAllCrossCylinderReactions();
     
-    
+    ///remove all reactions involving this ccylinder
+    removeAllReactingCylinders();
     
     ///Remove all species
     for(auto &m: _monomers) {
         for(auto &s : m->speciesFilamentVector()) _compartment->removeSpecies(s);
-        for(auto &s : m->speciesBoundVector())    _compartment->removeSpecies(s);
-        for(auto &s : m->speciesPlusEndVector())  _compartment->removeSpecies(s);
+        for(auto &s : m->speciesBoundVector()) _compartment->removeSpecies(s);
+        for(auto &s : m->speciesPlusEndVector()) _compartment->removeSpecies(s);
         for(auto &s : m->speciesMinusEndVector()) _compartment->removeSpecies(s);
     }
 }
@@ -103,7 +107,8 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     _crossCylinderReactions.erase(other);
     
     ///also remove from reacting list of other ccylinder
-    other->removeReactingCylinder(this);
+    auto it = std::find(other->_reactingCylinders.begin(), other->_reactingCylinders.end(), this);
+    if(it != other->_reactingCylinders.end()) _reactingCylinders.erase(it);
 }
 
 void CCylinder::removeAllCrossCylinderReactions() {
@@ -116,16 +121,16 @@ void CCylinder::removeAllCrossCylinderReactions() {
             ChemSim::removeReaction(ChemSimReactionKey(), r);
         }
         
-        ///also remove from map of other ccylinder
-        it->first->removeReactingCylinder(this);
+        ///also remove from list of other ccylinder
+        auto it2 = std::find(it->first->_reactingCylinders.begin(), it->first->_reactingCylinders.end(), this);
+        if(it2 != it->first->_reactingCylinders.end()) _reactingCylinders.erase(it2);
     }
     _crossCylinderReactions.clear();
 }
 
-void CCylinder::removeReactingCylinder(CCylinder* other) {
-    auto it = std::find(_reactingCylinders.begin(), _reactingCylinders.end(), other);
-    if (it != _reactingCylinders.end()) _reactingCylinders.erase(it);
-}
+void CCylinder::removeReactingCylinder(CCylinder* other) { other->removeCrossCylinderReactions(this); }
+
+void CCylinder::removeAllReactingCylinders() { for(auto &cc : _reactingCylinders) cc->removeCrossCylinderReactions(this); }
 
 
 void CCylinder::updateReactions()
@@ -147,6 +152,16 @@ void CCylinder::updateReactions()
                 r->activateReaction();
         }
     }
+    
+    for(auto &cc : _reactingCylinders) {
+        
+        for (auto &r : cc->_crossCylinderReactions[this]) {
+            if(r->getProductOfReactants() == 0)
+                r->passivateReaction();
+            else
+                r->activateReaction();
+        }
+    }
 }
 
 void CCylinder::printCCylinder()
@@ -158,6 +173,7 @@ void CCylinder::printCCylinder()
         m->print();
         std::cout << ":";
     }
+    std::cout << std::endl;
 }
 
 

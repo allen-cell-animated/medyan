@@ -353,7 +353,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     for(auto &r : _reactionFilamentTemplates) { r->addReaction(cc, pf); }
     
     ///get last ccylinder
-    CCylinder* lastcc;
+    CCylinder* lastcc = nullptr;
  
     ///extension of front
     if(extensionFront) {
@@ -423,30 +423,4 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///clean up and return
     return cc;
 }
-
-///Remove a cylinder
-void SimpleInitializerImpl::removeCCylinder(Filament* pf, bool retractionFront, bool retractionBack)
-{
-    
-    if(!retractionFront && !retractionBack) {
-        std::cout << "RemoveCCylinder : did not specify which filament end is retracting. Exiting" <<std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    if(retractionFront) {
-        
-        ///remove front reactions from previous cylinder
-        CCylinder* prevcc = pf->getCylinderVector().back()->getCCylinder();
-        prevcc->clearFrontReactions();
-        
-    }
-    if(retractionBack) {
-        ///remove back reactions from previous cylinder
-        CCylinder* prevcc = pf->getCylinderVector().front()->getCCylinder();
-        prevcc->clearBackReactions();
-    }
-} 
-
-
-
 

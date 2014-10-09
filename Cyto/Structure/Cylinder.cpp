@@ -41,13 +41,7 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment*
     
 }
 
-Cylinder::~Cylinder() {
-    
-#ifdef CHEMISTRY
-    ChemInitializer::removeCCylinder(ChemInitializerCylinderKey(), _pFilament, IfLast() , !IfLast());
-#endif
-    
-}
+Cylinder::~Cylinder() {}
 
 bool Cylinder::IfLast(){
     if (_ifLast) return true;

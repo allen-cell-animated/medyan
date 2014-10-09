@@ -28,8 +28,3 @@ CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filame
     return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack);
 }
 
-void ChemInitializer::removeCCylinder(ChemInitializerCylinderKey k, Filament* pf,
-                                                                    bool retractionFront, bool retractionBack)
-{
-    _pimpl->removeCCylinder(pf, retractionFront, retractionBack);
-}

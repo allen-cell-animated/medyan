@@ -13,7 +13,7 @@ COMPARTMENTSIZEZ:            10000.0
 
 MONOMERSIZE:                 1.0
 
-CYLINDERSIZE:                5.0
+CYLINDERSIZE:                10.0
 
 ##################################################
 ################### MECHANICS ####################

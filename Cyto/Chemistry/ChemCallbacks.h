@@ -14,6 +14,8 @@
 #include "Filament.h"
 #include "ReactionBase.h"
 
+using namespace std;
+
 ///REACTION CALLBACKS
 
 ///Extension callback
@@ -27,7 +29,9 @@ struct FilamentExtensionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        cout << "Extending Front" << std::endl;
         _filament->ExtendFront();
+        _filament->printChemComposition();
     }
 };
 
@@ -42,7 +46,9 @@ struct FilamentExtensionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        cout << "Extending back" << endl;
         _filament->ExtendBack();
+        _filament->printChemComposition();
     }
 };
 
@@ -87,7 +93,9 @@ struct FilamentPolymerizationFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
+        cout << "Polymerizing front" << endl;
         _filament->PolymerizeFront();
+        _filament->printChemComposition();
     }
 };
 

@@ -90,7 +90,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         else
             boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
         
-        cc->addReaction(r);
+        cc->addInternalReaction(r);
     }
 }
 
@@ -173,7 +173,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         else
             boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
         
-        cc->addReaction(r);
+        cc->addInternalReaction(r);
     }
 
 }
@@ -248,9 +248,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     
     boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
     
-    cc1->addFrontReaction(r, true);
-    cc2->addBackReaction(r);
-
+    cc1->addCrossCylinderReaction(cc2, r);
 }
 
 void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
@@ -321,10 +319,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2,
     
     boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
     
-    cc2->addBackReaction(r, true);
-    cc1->addFrontReaction(r);
-
-
+    cc2->addCrossCylinderReaction(cc1, r);
 }
 
 
@@ -405,7 +400,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         else
             boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
         
-        cc->addReaction(r);
+        cc->addInternalReaction(r);
     }
 
 
@@ -490,12 +485,9 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
             boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
             
         
-        cc->addReaction(r);
+        cc->addInternalReaction(r);
     }
-
 }
-
-
 
 void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
@@ -566,9 +558,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
     
     boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
     
-    cc2->addBackReaction(r, true);
-    cc1->addFrontReaction(r);
-
+    cc2->addCrossCylinderReaction(cc1, r);
 
 }
 
@@ -641,9 +631,6 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
     
     boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
     
-    cc1->addFrontReaction(r, true);
-    cc2->addBackReaction(r);
-
+    cc1->addCrossCylinderReaction(cc2, r);
 }
-
 

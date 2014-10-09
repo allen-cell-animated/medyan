@@ -62,10 +62,6 @@ public:
     static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
                                       Compartment* c, bool extensionFront, bool extensionBack);
     
-    ///Remove a CCylinder, based on the given simulation
-    static void removeCCylinder(ChemInitializerCylinderKey k, Filament* pf,
-                                     bool retractionFront, bool retractionBack);
-    
     
 private:
     static ChemInitializerImpl* _pimpl; ///< Store a pointer to a specific implementation of the initializer; no ownership
