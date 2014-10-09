@@ -19,8 +19,15 @@ class ForceFieldManager;
 class CGMethod {
     
 protected:
+    ///Energy counter
+    int _energyChangeCounter = 0;
+    const int _maxEnergyChangeIter = 20;
     
-    const double _lambdaMin = 0.001, _lambdaMax =10;
+    ///Lambda backtracking parameters
+    const double _lambdaMin = 0.001, _lambdaMax = 1, _maxDist = 10;
+    const double _lambdaReduce = 0.1, _backtrackSlope = 0.1;
+    ///Line search tolerance
+    const double _linSearchTol = 1e-5;
     
     ///helpers for searching and bracketing
     void swap(double &a, double &b);
@@ -37,15 +44,14 @@ protected:
     double GradDotProduct();
     void MoveBeads(double d);
     void ShiftGradient(double d);
-    
     ///energy backtracking
-    void EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy);
+//    void EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy);
     
     ///various linear search methods
-    double GoldenSection1(ForceFieldManager &FFM, double tol);
-//    double GoldenSection2(ForceFieldManager &FFM, double tol);
-    double GoldenSection3(ForceFieldManager &FFM, double tol);
-    double BinarySearch(ForceFieldManager& FFM, double a, double b );
+    double GoldenSection1(ForceFieldManager &FFM);
+    double GoldenSection2(ForceFieldManager &FFM);
+    double BinarySearch(ForceFieldManager& FFM);
+    double BacktrackingLineSearch(ForceFieldManager& FFM);
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     

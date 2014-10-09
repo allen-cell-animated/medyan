@@ -29,6 +29,8 @@ double BoundaryRepulsion<BRepulsionInteractionType>::ComputeEnergy(BoundaryEleme
             U+=_FFType.ComputeEnergy(pb, pbe->stretchedDistance(pb->coordinate, pb->force, d), k_rep, screenLength);
         }
     }
+    //std::cout << "Boundary Energy = " << U << std::endl;
+    
     return U;
 }
 

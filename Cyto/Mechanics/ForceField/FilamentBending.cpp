@@ -42,6 +42,8 @@ double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, dou
                 index++;
             }
         }
+        //std::cout << "Bending Energy = " << U << std::endl;
+        
         return U;
     }
     else return 0;

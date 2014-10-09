@@ -148,8 +148,8 @@ void CGMethod::MoveBeads(double d)
         (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
         (*it).coordinate[2] = (*it).coordinate[2] + d* (*it).force[2];
         
+        (*it).coordinateAux = (*it).coordinate;
 	}
-    
     
 }
 
@@ -163,15 +163,15 @@ void CGMethod::ShiftGradient(double d)
 	}
 }
 
-
-void CGMethod::EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy) {
-    
-    if(FFM.ComputeEnergy(0.0) > energy) {
-        cout << "Moved beads lambdaMin" << endl;
-        MoveBeads(-lambda + _lambdaMin*1);
-    }
-    
-}
+//
+//void CGMethod::EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy) {
+//    
+//    if(FFM.ComputeEnergy(0.0) > energy) {
+//        cout << "Moved beads lambdaMin" << endl;
+//        MoveBeads(-lambda + _lambdaMin*1);
+//    }
+//    
+//}
 
 void CGMethod::PrintForces()
 {
@@ -180,15 +180,12 @@ void CGMethod::PrintForces()
         
 		for (int i = 0; i<3; i++) { cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "<<(*it).forceAux[i]<<endl;}
 	}
-
     cout << "End of Print Forces" << endl;
 }
 
 
-double CGMethod::GoldenSection1(ForceFieldManager& FFM, double tol)
+double CGMethod::GoldenSection1(ForceFieldManager& FFM)
 {
-    
-    const double EPS = tol;
 	double a = 0;
 	double b = 200;
     double phi = 0.5 * (1 + sqrt(5) );
@@ -196,7 +193,7 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM, double tol)
 	double x1 = b - inv_phi * (b - a);
 	double x2 = a + inv_phi * (b - a);
     
-	while (fabs(b - a) > EPS)
+	while (fabs(b - a) > _linSearchTol)
 	{
 		if (FFM.ComputeEnergy(x1) >= FFM.ComputeEnergy(x2) ){
             a = x1;
@@ -216,33 +213,7 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM, double tol)
     else return returnLambda;
 }
 
-//double CGMethod::GoldenSection2(ForceFieldManager& FFM, double tol)
-//{
-//    double ax = 0, bx = 5, cx = 200;
-//    
-//    double x;
-//    if (cx - bx > bx - ax)
-//        x = bx + resphi * (cx - bx);
-//    else
-//        x = bx - resphi * (bx - ax);
-//    if (fabs(cx - ax) < tol * (fabs(bx) + fabs(x)))
-//        return (cx + ax) / 2;
-//    
-//    double fx = FFM.ComputeEnergy(x);
-//    double fb = FFM.ComputeEnergy(bx);
-//    
-//    if (fx < fb) {
-//        if (cx - bx > bx - ax) return GoldenSection2(FFM, bx, x, cx, tau);
-//        else return GoldenSection2(FFM, ax, x, bx, tau);
-//    }
-//    else {
-//        if (cx - bx > bx - ax) return GoldenSection2(FFM, ax, bx, x, tau);
-//        else return GoldenSection2(FFM, x, bx, cx, tau);
-//    }
-//    
-//}
-
-double CGMethod::GoldenSection3(ForceFieldManager& FFM, double tol) {
+double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
     
     double ax = 0, bx = 5, cx = 200;
     
@@ -261,7 +232,7 @@ double CGMethod::GoldenSection3(ForceFieldManager& FFM, double tol) {
     f1 = FFM.ComputeEnergy(x1);
     f2 = FFM.ComputeEnergy(x2);
     
-    while (fabs(x3 - x0) > tol * (fabs(x1) + fabs(x2))) {
+    while (fabs(x3 - x0) > _linSearchTol * (fabs(x1) + fabs(x2))) {
         if (f2 < f1) {
             shift3(x0, x1, x2, r * x2 + c * x3);
             shift2(f1, f2, FFM.ComputeEnergy(x2));
@@ -282,19 +253,75 @@ double CGMethod::GoldenSection3(ForceFieldManager& FFM, double tol) {
 }
 
 
-double CGMethod::BinarySearch(ForceFieldManager& FFM, double a, double b )
+double CGMethod::BinarySearch(ForceFieldManager& FFM)
 {
-    //double phi = 0.5 * (1 + sqrt(5)) ;
-    double  eps = 0.001;
-    
-    while (fabs(b - a) > eps){
+    double a = 0, b = 100;
+    while (fabs(b - a) > _linSearchTol){
         
-        double half_x1 = ((a + b)/2 - eps/4);
-        double half_x2 = ((a + b)/2 + eps/4);
+        double half_x1 = ((a + b)/2 - _linSearchTol/4);
+        double half_x2 = ((a + b)/2 + _linSearchTol/4);
         if (FFM.ComputeEnergy(half_x1) <= FFM.ComputeEnergy(half_x2)) b = half_x2;
         else a = half_x1;
     }
      return (a + b) / 2;
 }
+
+
+double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
+    
+    //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
+    
+    double directionDotForce = 0.0;
+    double maxDirection = 0.0;
+    
+    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+        
+        directionDotForce += it->CalcDotForceProduct();
+        for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
+    }
+    ///return error if in wrong direction
+    if(directionDotForce < 0.0)  return -1.0;
+    
+    ///return zero if no forces
+    if(maxDirection == 0.0) return 0.0;
+    
+    ///calculate first lambda. cannot be greater than lambda max
+    double lambda = min(_lambdaMax, _maxDist / maxDirection);
+    
+    ///backtracking loop
+    while(true) {
+        
+        double energy = FFM.ComputeEnergy(lambda);
+        double idealEnergyChange = -_backtrackSlope * lambda * directionDotForce;
+        double energyChange = energy - FFM.ComputeEnergy(0.0);
+        
+        if(energyChange <= idealEnergyChange) {
+            _energyChangeCounter = 0;
+            return lambda;
+        }
+        
+        lambda *= _lambdaReduce;
+        
+        //cout << "lambda reduced" << endl;
+        
+        if(lambda <= 0.0 || idealEnergyChange >= -_linSearchTol) {
+            
+            if(energyChange < 0.0) {
+                _energyChangeCounter = 0;
+                return lambda;
+            }
+            else {
+                if(energyChange <= _linSearchTol) {
+                    _energyChangeCounter++;
+                }
+                return 0.0;
+            }
+        }
+    }
+    
+    
+}
+
+
 
 

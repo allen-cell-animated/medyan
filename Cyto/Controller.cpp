@@ -100,6 +100,8 @@ void Controller::initialize(std::string inputFile) {
 
 void Controller::run() {
     
+    std::chrono::high_resolution_clock::time_point chk1, chk2;
+    chk1 = std::chrono::high_resolution_clock::now();
     ///Set up filament output file
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
     o.printBasicSnapshot(0);
@@ -113,13 +115,17 @@ void Controller::run() {
         o.printBasicSnapshot(i + _numStepsPerMech);
 #elif defined(MECHANICS)
         _mController.run();
-        o.printBasicSnapshot(0);
+        o.printBasicSnapshot(1);
 #else
         o.printBasicSnapshot(i);
 #endif
 #if defined(CHEMISTRY)
     }
 #endif
+    chk2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_run(chk2-chk1);
+    
+    std::cout << "Time elapsed for run: dt=" << elapsed_run.count() << std::endl;
     std::cout << "Done with simulation!" << std::endl;
 }
 

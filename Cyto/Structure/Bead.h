@@ -34,14 +34,15 @@ class Bead : public Component {
 public:
 
     std::vector<double> coordinate; ///< Coordinates of the bead
+    std::vector<double> coordinateAux; ///< An aux coordinate field needed during CG minimization
 	std::vector<double> force;
     ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
-    std::vector<double> forceAux; ///< An Aux field neede during CG minimization.
+    std::vector<double> forceAux; ///< An Aux field needed during CG minimization.
     
     ///Main constructor
     Bead (std::vector<double> v, int ID);
     ///Default constructor
-    Bead(int ID): coordinate (3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
+    Bead(int ID): coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
 
     ///Aux functions
     

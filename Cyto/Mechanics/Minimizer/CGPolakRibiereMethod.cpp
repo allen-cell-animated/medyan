@@ -21,12 +21,13 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
-    cout<<"Energy = "<< curEnergy <<endl;
+    //cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
     
-    PrintForces();
+    //PrintForces();
     
+    _energyChangeCounter = 0;
 	double gradSquare = GradSquare();
     //cout<<"GradSq=  "<<gradSquare<<endl;
     
@@ -43,14 +44,23 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
         
-        lambda = 0.01;//GoldenSection1(FFM, EPS);
+        lambda = BacktrackingLineSearch(FFM);
+        if(lambda < 0) {
+            std::cout << "Line search stopping." <<std::endl;
+            break;
+        }
+//        if(lambda == 0) {
+//            std::cout << "Lambda is zero." << std::endl;
+//            //break;
+//        }
+        
         //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
         //cout<<"GradSq before move beads=  "<<gradSquare<<endl;
         
         MoveBeads(lambda);
-        if (lambda > _lambdaMin) EnergyBacktracking(FFM, lambda, curEnergy);
+//        if (lambda > _lambdaMin) EnergyBacktracking(FFM, lambda, curEnergy);
         
         //o.printBasicSnapshot(numIter);
         //PrintForces();
@@ -69,6 +79,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         }
         //cout << "beta = " << beta <<endl;
 		ShiftGradient(beta);
+        if(GradDotProduct() <= 0.0) ShiftGradient(0);
         
 		prevEnergy = curEnergy;
         //cout << "Calling last compute energy in minimizer" << endl;
@@ -81,7 +92,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
-	while (gradSquare > EPS);
+	while (gradSquare > EPS && _energyChangeCounter <= _maxEnergyChangeIter);
     
 	std::cout << "Polak-Ribiere Method: " << std::endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
