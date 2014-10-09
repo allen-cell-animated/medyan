@@ -15,7 +15,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
-    const double EPS = 1e-4;
+    const double EPS = 1e-8;
     //Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
     //o.printBasicSnapshot(0);
     

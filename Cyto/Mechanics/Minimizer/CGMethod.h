@@ -27,7 +27,7 @@ protected:
     const double _lambdaMin = 0.001, _lambdaMax = 1, _maxDist = 10;
     const double _lambdaReduce = 0.1, _backtrackSlope = 0.1;
     ///Line search tolerance
-    const double _linSearchTol = 1e-5;
+    const double _linSearchTol = 1e-8;
     
     ///helpers for searching and bracketing
     void swap(double &a, double &b);
