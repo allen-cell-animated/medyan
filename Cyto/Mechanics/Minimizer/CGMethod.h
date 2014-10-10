@@ -30,7 +30,7 @@ private:
     
     ///Lambda parameters for use in linear search methods
     const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used only in golden section for now
-    const double LAMBDAMAX = 1; ///< Max lambda that can be returned, used in all methods
+    const double LAMBDAMAX = 10; ///< Max lambda that can be returned, used in all methods
     const double MAXDIST = 10; ///< Max distance beads can be moved, used only in backtracking line search
     
     ///Parameters used in backtracking line search
@@ -42,7 +42,7 @@ private:
     const double R = 0.61803399;
     const double C = 1 - R;
     
-    const double LSENERGYTOL = 1e-8; ///<Line search energy tolerance for all linesearch methods
+    const double LSENERGYTOL = 1e-6; ///<Line search energy tolerance for all linesearch methods
     
     ///helpers for searching and bracketing
     void swap(double &a, double &b);
@@ -72,7 +72,9 @@ protected:
     double GoldenSection1(ForceFieldManager &FFM);
     double GoldenSection2(ForceFieldManager &FFM);
     double BinarySearch(ForceFieldManager& FFM);
+    
     double BacktrackingLineSearch(ForceFieldManager& FFM);
+    double QuadraticLineSearch(ForceFieldManager& FFM);
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     
