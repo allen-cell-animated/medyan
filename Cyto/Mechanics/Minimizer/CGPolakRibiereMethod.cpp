@@ -34,7 +34,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = BacktrackingLineSearch(FFM);
+        lambda = QuadraticLineSearch(FFM);
         if(lambda < 0) break;
         
         //cout<<"lambda= "<<lambda<<endl;
@@ -47,7 +47,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         FFM.ComputeForcesAux();
         //PrintForces();
         
-		newGradSquare = GradSquare(1);
+		newGradSquare = GradAuxSquare();
 
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {

@@ -48,7 +48,7 @@ public:
     
     // Aux method for CG minimization
     double CalcForceSquare() {return force[0]*force[0] + force[1]*force[1] + force[2]*force[2]; }
-    double CalcForceSquare(int i) {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
+    double CalcForceAuxSquare() {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
     double CalcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
     
     ///Set and get compartment

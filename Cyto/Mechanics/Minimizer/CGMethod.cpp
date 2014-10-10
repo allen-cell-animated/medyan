@@ -112,12 +112,12 @@ double CGMethod::GradSquare()
     return g;
 }
 
-double CGMethod::GradSquare(int i)
+double CGMethod::GradAuxSquare()
 {
     double g = 0;
 	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
         
-        g += (*it).CalcForceSquare(i);
+        g += (*it).CalcForceAuxSquare();
 	}
     
     return g;
@@ -143,10 +143,21 @@ void CGMethod::MoveBeads(double d)
         (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
         (*it).coordinate[2] = (*it).coordinate[2] + d* (*it).force[2];
         
+        ///reset coord Aux
         (*it).coordinateAux = (*it).coordinate;
 	}
-    
 }
+
+void CGMethod::MoveBeadsAux(double d) {
+    
+    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+        
+        (*it).coordinateAux[0] = (*it).coordinateAux[0] + d* (*it).force[0];
+        (*it).coordinateAux[1] = (*it).coordinateAux[1] + d* (*it).force[1];
+        (*it).coordinateAux[2] = (*it).coordinateAux[2] + d* (*it).force[2];
+	}
+}
+
 
 void CGMethod::ShiftGradient(double d)
 {
@@ -255,7 +266,6 @@ double CGMethod::BinarySearch(ForceFieldManager& FFM)
 double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
     
     //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
-    
     double directionDotForce = 0.0;
     double maxDirection = 0.0;
     
@@ -265,6 +275,7 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
     ///return error if in wrong direction
+    //directionDotForce /= BeadDB::Instance(getBeadDBKey())->size();
     if(directionDotForce < 0.0)  return -1.0;
     
     ///return zero if no forces
@@ -272,13 +283,14 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
     
     ///calculate first lambda. cannot be greater than lambda max
     double lambda = min(LAMBDAMAX, MAXDIST / maxDirection);
+    double currentEnergy = FFM.ComputeEnergy(0.0);
     
     ///backtracking loop
     while(true) {
         
-        double energy = FFM.ComputeEnergy(lambda);
+        double energyLambda = FFM.ComputeEnergy(lambda);
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * directionDotForce;
-        double energyChange = energy - FFM.ComputeEnergy(0.0);
+        double energyChange = energyLambda - currentEnergy;
         
         if(energyChange <= idealEnergyChange) {
             _energyChangeCounter = 0;
@@ -304,8 +316,84 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
             }
         }
     }
+}
+
+
+double CGMethod::QuadraticLineSearch(ForceFieldManager& FFM) {
     
+    //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
+    double conjugateDirectionDotForce = 0.0;
+    double maxDirection = 0.0;
     
+    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+        
+        conjugateDirectionDotForce += it->CalcDotForceProduct();
+        for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
+    }
+    ///return error if in wrong direction
+    if(conjugateDirectionDotForce < 0.0)  return -1.0;
+    
+    ///return zero if no forces
+    if(maxDirection == 0.0) return 0.0;
+    
+    ///first lambda is lambda max
+    double lambda = LAMBDAMAX;
+    double conjugateDirectionDotForcePrev = conjugateDirectionDotForce;
+    double energyPrev = FFM.ComputeEnergy(0.0);
+    double lambdaPrev = 0.0;
+    
+    ///backtracking loop
+    while (true) {
+        
+        double energy = FFM.ComputeEnergy(lambda);
+        MoveBeadsAux(lambda);
+        conjugateDirectionDotForce = GradDotProduct();
+        
+        double deltaConjugateDirectionDotForce = conjugateDirectionDotForce - conjugateDirectionDotForcePrev;
+        
+        if(fabs(conjugateDirectionDotForce) < EPSQUAD
+           || fabs(deltaConjugateDirectionDotForce) < EPSQUAD ) { return -1.0; }
+        
+        double relativeErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
+                                  (conjugateDirectionDotForce + conjugateDirectionDotForcePrev)
+                                   + energy) / energyPrev);
+        double lambda0 = lambda - (lambda - lambdaPrev) *
+                         conjugateDirectionDotForce / deltaConjugateDirectionDotForce;
+        
+        if(relativeErr <= QUADRATICTOL && lambda0 > 0.0 && lambda0 < LAMBDAMAX ) {
+            _energyChangeCounter = 0;
+            return lambda;
+        }
+        
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjugateDirectionDotForce;
+        double energyChange = energy - energyPrev;
+        
+        if(energyChange <= idealEnergyChange) {
+            _energyChangeCounter = 0;
+            return lambda;
+        }
+        
+        conjugateDirectionDotForcePrev = conjugateDirectionDotForce;
+        energyPrev = energy;
+        lambdaPrev = lambda;
+        
+        ///reduce lambda
+        lambda *= LAMBDAREDUCE;
+        
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
+            
+            if(energyChange < 0.0) {
+                _energyChangeCounter = 0;
+                return lambda;
+            }
+            else {
+                if(energyChange <= LSENERGYTOL) {
+                    _energyChangeCounter++;
+                }
+                return 0.0;
+            }
+        }
+    }
 }
 
 

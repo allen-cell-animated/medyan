@@ -91,8 +91,8 @@ void LinkerStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4
 
 void LinkerStretchingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, Bead* pb3, Bead* pb4, double position1, double position2, double kStr, double L ){
     
-    auto v1 = MidPointCoordinate(pb1->coordinate, pb2->coordinate, position1);
-    auto v2 = MidPointCoordinate(pb3->coordinate, pb4->coordinate, position2);
+    auto v1 = MidPointCoordinate(pb1->coordinateAux, pb2->coordinateAux, position1);
+    auto v2 = MidPointCoordinate(pb3->coordinateAux, pb4->coordinateAux, position2);
     
     double dist = TwoPointDistance( v1, v2);
     
