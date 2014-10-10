@@ -44,7 +44,7 @@ public:
     
     ///Constructor and destructor
     MCylinder(double eqLength);
-    virtual ~MCylinder() {}
+    ~MCylinder() {}
     
     ///Other setter and getter functions:
     void setCylinder(Cylinder* c) {_pCylinder = c;}

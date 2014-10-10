@@ -114,8 +114,11 @@ public:
     RNodeNRM& operator=(RNodeNRM &rhs) = delete;
     
     /// Dtor: 1) Erases the corresponding PQNode element in the heap via the handle; 2) The RNode pointer of the 
-    /// tracked Reaction object is set to nullptr 
-    virtual ~RNodeNRM(); 
+    /// tracked Reaction object is set to nullptr
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    virtual ~RNodeNRM() noexcept;
     
     /// This methods recomputes the reaction propensity based on current coefficients and the rate,
     /// and then obtains a corresponding new tau drawn from an exponential distribution.

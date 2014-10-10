@@ -60,6 +60,9 @@ template <unsigned short M, unsigned short N>
 #endif
         /// Destructor
         /// Tell Rspecies to remove this Reaction from its internal lists of reactions
+        /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+        /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+        /// (as of gcc 4.703), and will presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
         for(auto i=0U; i<M; ++i)

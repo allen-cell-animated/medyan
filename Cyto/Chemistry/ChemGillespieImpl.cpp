@@ -18,7 +18,7 @@ _chem_Gillespie (chem_Gillespie), _react(r) {
     reset();
 }
 
-RNodeGillespie::~RNodeGillespie ()
+RNodeGillespie::~RNodeGillespie() noexcept
 {
     //    cout << "RNodeGillespie::~RNodeGillespie (): ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
     //    _react->printSelf();
@@ -71,7 +71,7 @@ void ChemGillespieImpl::initialize() {
 }
 
 
-ChemGillespieImpl::~ChemGillespieImpl() {
+ChemGillespieImpl::~ChemGillespieImpl() noexcept{
     _map_rnodes.clear();
 }
 
