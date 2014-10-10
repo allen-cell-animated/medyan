@@ -39,7 +39,10 @@ public:
     RNodeGillespie& operator=(RNodeGillespie &rhs) = delete;
     
     /// Dtor: The RNode pointer of the tracked Reaction object is set to nullptr
-    virtual ~RNodeGillespie();
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    virtual ~RNodeGillespie() noexcept;
             
     /// Returns a pointer to the Reaction which corresponds to this RNodeGillespie.
     ReactionBase* getReaction() const {return _react;};
@@ -123,7 +126,10 @@ public:
     ChemGillespieImpl& operator=(ChemGillespieImpl &rhs) = delete;
     
     ///Dtor: The reaction network is cleared. The RNodeGillespie objects will be destructed, but Reaction objects will stay intact.
-    virtual ~ChemGillespieImpl();
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    virtual ~ChemGillespieImpl() noexcept;
     
     /// Return the number of reactions in the network.
     size_t getSize() const {return _map_rnodes.size();}

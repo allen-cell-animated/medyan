@@ -43,6 +43,9 @@ public:
     }
     
     ///Destructor
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~BoundaryElement() noexcept {
         ///remove from compartment
         _compartment->removeBoundaryElement(this);

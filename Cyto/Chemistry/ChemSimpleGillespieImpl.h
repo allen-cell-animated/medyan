@@ -37,8 +37,11 @@ public:
     /// Assignment is not allowed
     ChemSimpleGillespieImpl& operator=(ChemSimpleGillespieImpl &rhs) = delete;
     
-    ///Dtor: The reaction network is cleared. 
-    virtual ~ChemSimpleGillespieImpl();
+    ///Dtor: The reaction network is cleared.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    virtual ~ChemSimpleGillespieImpl() noexcept;
     
     /// Return the number of reactions in the network.
     size_t getSize() const {return _reactions.size();}

@@ -34,6 +34,9 @@ public:
     Component() : _parent(nullptr) {}
     
     /// Virtual Destructor
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~Component() noexcept {};
     
     /// When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called,

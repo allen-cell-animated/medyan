@@ -77,7 +77,7 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm) : _chem_nrm (chem_nrm
     _a = _react->computePropensity ();
 }
 
-RNodeNRM::~RNodeNRM () 
+RNodeNRM::~RNodeNRM() noexcept
 {
 //    cout << "RNodeNRM::~RNodeNRM (): ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
 //    _react->printSelf();

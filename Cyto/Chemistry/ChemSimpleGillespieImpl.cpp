@@ -18,7 +18,7 @@ void ChemSimpleGillespieImpl::initialize() {
 }
 
 
-ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() {
+ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() noexcept {
     _reactions.clear();
 }
 

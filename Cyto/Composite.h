@@ -41,6 +41,9 @@ public:
     Composite() :  Component() {}
     
     /// Virtual Destructor does nothing.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~Composite() noexcept {}
     
     /// Implements the apply_if() method of the Component class by recursively applying it

@@ -19,7 +19,10 @@ class ReactionBase;
  */
 class ChemSimImpl {
 public:
-    virtual ~ChemSimImpl() {};
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    virtual ~ChemSimImpl() noexcept {};
     
     /// After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to invoking run() 
     virtual void initialize() = 0;
