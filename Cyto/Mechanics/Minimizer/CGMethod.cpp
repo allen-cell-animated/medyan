@@ -12,11 +12,6 @@
 
 using namespace std;
 
-const double phi = (1 + sqrt(5)) / 2;
-//const double resphi = 2 - phi;
-const double r = 0.61803399;
-const double c = 1 - r;
-
 inline void CGMethod::swap(double &a, double &b) {
     double tmp = a;
     a = b;
@@ -55,7 +50,7 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
     }
 
     //first guess
-    cx = bx + phi * (bx - ax);
+    cx = bx + PHI * (bx - ax);
     fc = FFM.ComputeEnergy(cx);
     
     while(fb > fc) {
@@ -80,14 +75,14 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
                 fc = fu;
                 return;
             }
-            u = cx + phi * (cx - bx);
+            u = cx + PHI * (cx - bx);
             fu = FFM.ComputeEnergy(u);
         }
         else if ((cx - u) * (u - ulim) > 0.0) {
             
             fu = FFM.ComputeEnergy(u);
             if (fu < fc) {
-                shift3(bx, cx, u, cx + phi * (cx - bx));
+                shift3(bx, cx, u, cx + PHI * (cx - bx));
                 shift3(fb, fc, fu, FFM.ComputeEnergy(u));
             }
         }
@@ -97,7 +92,7 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
             fu = FFM.ComputeEnergy(u);
         }
         else {
-            u = cx + phi * (cx - bx);
+            u = cx + PHI * (cx - bx);
             fu = FFM.ComputeEnergy(u);
         }
         shift3(ax, bx, cx, u);
@@ -163,16 +158,6 @@ void CGMethod::ShiftGradient(double d)
 	}
 }
 
-//
-//void CGMethod::EnergyBacktracking(ForceFieldManager &FFM, double lambda, double energy) {
-//    
-//    if(FFM.ComputeEnergy(0.0) > energy) {
-//        cout << "Moved beads lambdaMin" << endl;
-//        MoveBeads(-lambda + _lambdaMin*1);
-//    }
-//    
-//}
-
 void CGMethod::PrintForces()
 {
 	cout << "Print Forces" << endl;
@@ -193,7 +178,7 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM)
 	double x1 = b - inv_phi * (b - a);
 	double x2 = a + inv_phi * (b - a);
     
-	while (fabs(b - a) > _linSearchTol)
+	while (fabs(b - a) > LSENERGYTOL)
 	{
 		if (FFM.ComputeEnergy(x1) >= FFM.ComputeEnergy(x2) ){
             a = x1;
@@ -208,8 +193,8 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM)
     }
     double returnLambda = (a + b)/2.0;
     ///check if return value is in bounds of lambda min and max
-    if (returnLambda > _lambdaMax) return _lambdaMax;
-    else if(returnLambda < _lambdaMin) return _lambdaMin;
+    if (returnLambda > LAMBDAMAX) return LAMBDAMAX;
+    else if(returnLambda < LAMBDAMIN) return LAMBDAMIN;
     else return returnLambda;
 }
 
@@ -223,22 +208,22 @@ double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
     x3 = cx;
     if (fabs(cx - bx) > fabs(bx - ax)) {
         x1 = bx;
-        x2 = bx + c * (cx - bx);
+        x2 = bx + C * (cx - bx);
     }
     else {
         x2 = bx;
-        x1 = bx - c * (bx - ax);
+        x1 = bx - C * (bx - ax);
     }
     f1 = FFM.ComputeEnergy(x1);
     f2 = FFM.ComputeEnergy(x2);
     
-    while (fabs(x3 - x0) > _linSearchTol * (fabs(x1) + fabs(x2))) {
+    while (fabs(x3 - x0) > LSENERGYTOL * (fabs(x1) + fabs(x2))) {
         if (f2 < f1) {
-            shift3(x0, x1, x2, r * x2 + c * x3);
+            shift3(x0, x1, x2, R * x2 + C * x3);
             shift2(f1, f2, FFM.ComputeEnergy(x2));
         }
         else {
-            shift3(x3, x2, x1, r * x1 + c * x0);
+            shift3(x3, x2, x1, R * x1 + C * x0);
             shift2(f2, f1, FFM.ComputeEnergy(x1));
         }
     }
@@ -247,8 +232,8 @@ double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
     else returnLambda = x2;
     
     ///check if return value is in bounds of lambda min and max
-    if (returnLambda > _lambdaMax) return _lambdaMax;
-    else if(returnLambda < _lambdaMin) return _lambdaMin;
+    if (returnLambda > LAMBDAMAX) return LAMBDAMAX;
+    else if(returnLambda < LAMBDAMIN) return LAMBDAMIN;
     else return returnLambda;
 }
 
@@ -256,10 +241,10 @@ double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
 double CGMethod::BinarySearch(ForceFieldManager& FFM)
 {
     double a = 0, b = 100;
-    while (fabs(b - a) > _linSearchTol){
+    while (fabs(b - a) > LSENERGYTOL){
         
-        double half_x1 = ((a + b)/2 - _linSearchTol/4);
-        double half_x2 = ((a + b)/2 + _linSearchTol/4);
+        double half_x1 = ((a + b)/2 - LSENERGYTOL/4);
+        double half_x2 = ((a + b)/2 + LSENERGYTOL/4);
         if (FFM.ComputeEnergy(half_x1) <= FFM.ComputeEnergy(half_x2)) b = half_x2;
         else a = half_x1;
     }
@@ -286,13 +271,13 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
     if(maxDirection == 0.0) return 0.0;
     
     ///calculate first lambda. cannot be greater than lambda max
-    double lambda = min(_lambdaMax, _maxDist / maxDirection);
+    double lambda = min(LAMBDAMAX, MAXDIST / maxDirection);
     
     ///backtracking loop
     while(true) {
         
         double energy = FFM.ComputeEnergy(lambda);
-        double idealEnergyChange = -_backtrackSlope * lambda * directionDotForce;
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * directionDotForce;
         double energyChange = energy - FFM.ComputeEnergy(0.0);
         
         if(energyChange <= idealEnergyChange) {
@@ -300,18 +285,19 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
             return lambda;
         }
         
-        lambda *= _lambdaReduce;
+        ///reduce lambda
+        lambda *= LAMBDAREDUCE;
         
         //cout << "lambda reduced" << endl;
         
-        if(lambda <= 0.0 || idealEnergyChange >= -_linSearchTol) {
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
             
             if(energyChange < 0.0) {
                 _energyChangeCounter = 0;
                 return lambda;
             }
             else {
-                if(energyChange <= _linSearchTol) {
+                if(energyChange <= LSENERGYTOL) {
                     _energyChangeCounter++;
                 }
                 return 0.0;

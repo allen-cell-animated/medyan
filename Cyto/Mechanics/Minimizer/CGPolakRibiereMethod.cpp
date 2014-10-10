@@ -15,7 +15,6 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
-    const double EPS = 1e-8;
     //Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
     //o.printBasicSnapshot(0);
     
@@ -26,10 +25,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 	FFM.ComputeForces();
     
     //PrintForces();
-    
-    _energyChangeCounter = 0;
 	double gradSquare = GradSquare();
-    //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
 	do
@@ -38,30 +34,13 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        ///initial bracketing
-        //double ax = 0, bx =0.0001 , cx=100, fa, fb, fc;
-        //makeBracket(FFM, ax, bx, cx, fa, fb, fc);
-        
-        //std::cout << "Bracket chosen: ax = " << ax << ", bx = " << bx << ", cx = "<< cx << std::endl;
-        
         lambda = BacktrackingLineSearch(FFM);
-        if(lambda < 0) {
-            std::cout << "Line search stopping." <<std::endl;
-            break;
-        }
-//        if(lambda == 0) {
-//            std::cout << "Lambda is zero." << std::endl;
-//            //break;
-//        }
+        if(lambda < 0) break;
         
         //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
-        //cout<<"GradSq before move beads=  "<<gradSquare<<endl;
-        
         MoveBeads(lambda);
-//        if (lambda > _lambdaMin) EnergyBacktracking(FFM, lambda, curEnergy);
-        
         //o.printBasicSnapshot(numIter);
         //PrintForces();
         
@@ -69,9 +48,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //PrintForces();
         
 		newGradSquare = GradSquare(1);
-		
-        //cout << "Grad dot prod "<< GradDotProduct() << endl;
-        //cout << "New grad square = " << newGradSquare << endl;
+
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
             if(gradSquare == 0) beta = 0;
@@ -82,7 +59,6 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         if(GradDotProduct() <= 0.0) ShiftGradient(0);
         
 		prevEnergy = curEnergy;
-        //cout << "Calling last compute energy in minimizer" << endl;
 		curEnergy = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
         //PrintForces();
@@ -92,7 +68,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
-	while (gradSquare > EPS && _energyChangeCounter <= _maxEnergyChangeIter);
+	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
 	std::cout << "Polak-Ribiere Method: " << std::endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
