@@ -347,6 +347,7 @@ double CGMethod::QuadraticLineSearch(ForceFieldManager& FFM) {
         
         double energy = FFM.ComputeEnergy(lambda);
         MoveBeadsAux(lambda);
+        FFM.ComputeForcesAux();
         conjugateDirectionDotForce = GradDotProduct();
         
         double deltaConjugateDirectionDotForce = conjugateDirectionDotForce - conjugateDirectionDotForcePrev;
