@@ -34,6 +34,9 @@ double FilamentStretching<FStretchingInteractionType>::ComputeEnergy(Filament* p
             U += _FFType.Energy(pb1, pb2, kStr, L, d);   ///This type of function needed for conjugated gradient minimisation only;
         }
     }
+    
+    //std::cout << "Stretching Energy = " << U << std::endl;
+    
     return U;
 }
 

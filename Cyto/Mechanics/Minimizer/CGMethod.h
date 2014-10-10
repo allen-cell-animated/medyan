@@ -11,24 +11,72 @@
 #include <iostream>
 #include <cmath>
 
-#include "common.h"
 #include "BeadDB.h"
+#include "common.h"
 
 class ForceFieldManager;
 
+
+///CGMethod class is for performing a conjugate gradient method
+/*!
+ *  CGMethod is an abstract class that contains methods for conjugate gradient minimization. It has functions
+ *  for various line search techniques, including golden section, backtracking, and quadratic line search.
+ *  This base class also contains parameters for tolerance criterion and other helpful parameters.
+ */
+
 class CGMethod {
+
+private:
+    
+    ///Lambda parameters for use in linear search methods
+    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used only in golden section for now
+    const double LAMBDAMAX = 1; ///< Max lambda that can be returned, used in all methods
+    const double MAXDIST = 10; ///< Max distance beads can be moved, used only in backtracking line search
+    
+    ///Parameters used in backtracking line search
+    const double LAMBDAREDUCE = 0.1; ///< Lambda reduction parameter for backtracking
+    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
+    
+    ///Parameters used in golden section
+    const double PHI = (1 + sqrt(5)) / 2;
+    const double R = 0.61803399;
+    const double C = 1 - R;
+    
+    const double LSENERGYTOL = 1e-8; ///<Line search energy tolerance for all linesearch methods
+    
+    ///helpers for searching and bracketing
+    void swap(double &a, double &b);
+    void shift2(double &a, double &b, double c);
+    void shift3(double &a, double &b, double &c, double d);
+    double sign(double a, double b);
     
 protected:
+    
+    ///Energy counter, for use in linear search methods
+    int _energyChangeCounter = 0; ///<number of iterations where energy has not changed by an amount more than LSENERGYTOL
+    const int ENERGYCHANGEITER = 20; ///<max number of iterations allowed where """
+    
+    const double GRADTOL = 1e-8; ///< gradient minimization tolerance
+    
+    ///bracketing function (from Numerical Recipes in C++, second edition)
+    void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
+    
+    ///Gradient calculations
     double GradSquare();
     double GradSquare(int i);
     double GradDotProduct();
     void MoveBeads(double d);
     void ShiftGradient(double d);
-    void PrintForces();
-    double GoldenSection(ForceFieldManager &FFM);
-    double GoldenSectionAlt(ForceFieldManager &FFM, double a, double b, double c, double tau);
+    
+    ///various linear search methods
+    double GoldenSection1(ForceFieldManager &FFM);
+    double GoldenSection2(ForceFieldManager &FFM);
+    double BinarySearch(ForceFieldManager& FFM);
+    double BacktrackingLineSearch(ForceFieldManager& FFM);
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
+    
+    void PrintForces();
     
 public:
     virtual void Minimize(ForceFieldManager &FFM) = 0;

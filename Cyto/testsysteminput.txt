@@ -28,7 +28,7 @@ FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.5
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   0.5
+FBENDINGK:                   5.0
 FBENDINGTHETA:
 
 FTWISTINGTYPE:

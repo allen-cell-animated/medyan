@@ -10,7 +10,7 @@
 #include "BoundaryElementDB.h"
 #include "SystemParameters.h"
 
-Bead::Bead (std::vector<double> v, int ID): coordinate(v), force(3, 0), forceAux(3, 0), _ID(ID)
+Bead::Bead (std::vector<double> v, int ID): coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0), _ID(ID)
 {
     ///set birth time
     _birthTime = tau();

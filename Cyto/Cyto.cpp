@@ -39,6 +39,7 @@
 #include "common.h"
 
 using namespace std;
+using namespace mathfunc;
 
 int main(int argc, const char * argv[])
 {
