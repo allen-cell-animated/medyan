@@ -35,9 +35,12 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		vector<double> newGrad;
         
         lambda = QuadraticLineSearch(FFM);
-        if(lambda < 0) break;
+        if(lambda < 0) {
+            cout<<"Lambda < 0" <<endl;
+          break;
+        }
         
-        //cout<<"lambda= "<<lambda<<endl;
+        cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
         MoveBeads(lambda);
@@ -63,9 +66,9 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        //cout<<"GradSq before end=  "<<gradSquare<<endl;
-        //cout << "Energy = " << curEnergy << endl;
-        //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+        cout<<"GradSq before end=  "<<gradSquare<<endl;
+        cout << "Energy = " << curEnergy << endl;
+        cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
 	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
