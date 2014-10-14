@@ -911,7 +911,7 @@
 		F763ECFD1548FFC70069DA61 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "University of Maryland";
 			};
 			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "Cyto" */;
@@ -1144,6 +1144,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -1169,6 +1170,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -1299,12 +1301,18 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/jameskomianos/Code/googletest,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/Users/jameskomianos/Code/googletest,
+				);
 				OTHER_CFLAGS = (
 					"-std=c++11",
 					"-lgsl",
@@ -1325,13 +1333,19 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/jameskomianos/Code/googletest,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/Users/jameskomianos/Code/googletest,
+				);
 				OTHER_CFLAGS = (
 					"-std=c++11",
 					"-lgsl",

@@ -28,11 +28,11 @@ private:
 
 public:
     ///Default constructor and destructor
-    CLinker(Compartment* c) :CBound(c, nullptr, nullptr) {}
+    CLinker(Compartment* c) :CBound(c) {}
     ~CLinker() {}
     
     ///Copy constructor, standard
-    CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c, nullptr, nullptr) {}
+    CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c) {}
     
     /// Assignment is not allowed
     CLinker& operator=(CLinker &rhs) = delete;

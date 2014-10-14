@@ -238,18 +238,6 @@ public:
         return sp;
     }
     
-    /// Add a bound species to this compartment
-    /// @param args - any number of SpeciesBound objects
-    template<typename ...Args>
-    SpeciesBound* addSpeciesBound(Args&& ...args)
-    {
-        SpeciesBound *sp =
-            static_cast<SpeciesBound*>(_species.addSpecies<SpeciesBound>(std::forward<Args>(args)...));
-        sp->setParent(this);
-        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
-        return sp;
-    }
-    
     /// Add a plus end species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
@@ -269,6 +257,42 @@ public:
     {
         SpeciesMinusEnd *sp =
         static_cast<SpeciesMinusEnd*>(_species.addSpecies<SpeciesMinusEnd>(std::forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
+        return sp;
+    }
+    
+    /// Add a bound species to this compartment
+    /// @param args - any number of SpeciesBound objects
+    template<typename ...Args>
+    SpeciesBound* addSpeciesBound(Args&& ...args)
+    {
+        SpeciesBound *sp =
+        static_cast<SpeciesBound*>(_species.addSpecies<SpeciesBound>(std::forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
+        return sp;
+    }
+    
+    /// Add a linker species to this compartment
+    /// @param args - any number of SpeciesLinker objects
+    template<typename ...Args>
+    SpeciesLinker* addSpeciesLinker(Args&& ...args)
+    {
+        SpeciesLinker *sp =
+        static_cast<SpeciesLinker*>(_species.addSpecies<SpeciesLinker>(std::forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
+        return sp;
+    }
+    
+    /// Add a motor species to this compartment
+    /// @param args - any number of SpeciesMotor objects
+    template<typename ...Args>
+    SpeciesMotor* addSpeciesMotor(Args&& ...args)
+    {
+        SpeciesMotor *sp =
+        static_cast<SpeciesMotor*>(_species.addSpecies<SpeciesMotor>(std::forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
         return sp;

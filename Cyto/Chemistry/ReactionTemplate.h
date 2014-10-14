@@ -10,20 +10,12 @@
 #define __Cyto__ReactionTemplate__
 
 #include "Filament.h"
+
 #include <iostream>
 
-///Enumeration for species types
-enum SpeciesType {
-    BULK, DIFFUSING, FILAMENT, BOUND, PLUSEND, MINUSEND
-};
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
-};
-
-///Enumeration for type of reaction
-enum FilamentReactionType {
-    POLYMERIZATION, DEPOLYMERIZATION, BINDING, WALKING, CREATION, DESTRUCTION
 };
 
 ///ReactionFilamentTemplate is a class to store filament chemical reaction information read from an input file
@@ -70,8 +62,8 @@ class PolymerizationPlusEndTemplate : public ReactionFilamentTemplate {
 public:
     ///Default constructor and destructor
     PolymerizationPlusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                           std::vector<std::tuple<int, SpeciesType>> products,
-                           float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+                                  std::vector<std::tuple<int, SpeciesType>> products,
+                                  float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~PolymerizationPlusEndTemplate() {}
     
     ///to be implemented
@@ -85,8 +77,8 @@ class PolymerizationMinusEndTemplate : public ReactionFilamentTemplate {
 public:
     ///Default constructor and destructor
     PolymerizationMinusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                  std::vector<std::tuple<int, SpeciesType>> products,
-                                  float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+                                   std::vector<std::tuple<int, SpeciesType>> products,
+                                   float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~PolymerizationMinusEndTemplate() {}
     
     ///to be implemented
@@ -125,6 +117,92 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
+class LinkerUnbindingTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    LinkerUnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                            std::vector<std::tuple<int, SpeciesType>> products,
+                            float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~LinkerUnbindingTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
+};
+
+class MotorUnbindingTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    MotorUnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                           std::vector<std::tuple<int, SpeciesType>> products,
+                           float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~MotorUnbindingTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
+
+};
+
+
+///ReactionCrossFilamentTemplate is a class to store cross-filament reactions, including linker and motor binding/unbinding
+
+/*!
+ *  ReactionCrossFilamentTemplate is used to store a cross-filament reaction. It contains vectors of tuples that represent
+ *  the position in the CMonomer in which the species is stored (for products and reactants), as well as the rate
+ *  of the reaction and direction. The integer value that is the position of the species in the CMonomer vector
+ *  is held by the chemical initializer. Also contains the range of this reaction.
+ *
+ * @note if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the SpeciesNamesDB.
+ *
+ *  This class also has functions to add the filament reaction to two CCylinders
+ */
+
+class ReactionCrossFilamentTemplate {
+    
+protected:
+    ///Species identifier vectors
+    std::vector<std::tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
+    std::vector<std::tuple<int,SpeciesType>> _products; ///< products in this reaction
+    
+    float _rate; ///< rate of reaction
+    float _rMin; ///< minimum reaction range
+    float _rMax; ///< maximum reaction range
+
+public:
+    ///Default constructor and destructor
+    ReactionCrossFilamentTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                             std::vector<std::tuple<int, SpeciesType>> products,
+                             float rate, float rMin, float rMax) : _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax) {}
+    ~ReactionCrossFilamentTemplate() {}
+    
+    ///add this chemical reaction to two ccylinders if within the reaction range
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
+};
+
+class LinkerBindingTemplate : public ReactionCrossFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    LinkerBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                    std::vector<std::tuple<int, SpeciesType>> products,
+                    float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
+    ~LinkerBindingTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
+class MotorBindingTemplate : public ReactionCrossFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    MotorBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                          std::vector<std::tuple<int, SpeciesType>> products,
+                          float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
+    ~MotorBindingTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
 
 
 ///ReactionBulkTemplate is a class to store bulk chemical reaction information read from an input file

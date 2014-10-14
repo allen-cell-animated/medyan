@@ -40,8 +40,8 @@ protected:
     
     ///REACTION CONTAINERS
     std::vector<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
-    std::map<CCylinder*, std::vector<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     std::vector<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
+    std::map<CCylinder*, std::vector<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     
     Compartment* _compartment; ///< compartment this ccylinder is in
 
@@ -50,7 +50,7 @@ protected:
     short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize; ///<max length of full cylinder
 
 public:
-    ///Default constructor, sets compartment
+    ///Default constructor, sets compartment, init reaction containers
     CCylinder(Compartment* c) : _compartment(c) {}
     
     /// Copy constructor

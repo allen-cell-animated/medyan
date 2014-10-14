@@ -10,7 +10,6 @@
 
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c)
 {
-    
     ///copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
@@ -108,7 +107,7 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
     ///also remove from reacting list of other ccylinder
     auto it = std::find(other->_reactingCylinders.begin(), other->_reactingCylinders.end(), this);
-    if(it != other->_reactingCylinders.end()) _reactingCylinders.erase(it);
+    if(it != other->_reactingCylinders.end()) other->_reactingCylinders.erase(it);
 }
 
 void CCylinder::removeAllCrossCylinderReactions() {
@@ -123,7 +122,7 @@ void CCylinder::removeAllCrossCylinderReactions() {
         
         ///also remove from list of other ccylinder
         auto it2 = std::find(it->first->_reactingCylinders.begin(), it->first->_reactingCylinders.end(), this);
-        if(it2 != it->first->_reactingCylinders.end()) _reactingCylinders.erase(it2);
+        if(it2 != it->first->_reactingCylinders.end()) it->first->_reactingCylinders.erase(it2);
     }
     _crossCylinderReactions.clear();
 }

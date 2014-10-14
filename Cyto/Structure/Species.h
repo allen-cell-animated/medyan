@@ -32,6 +32,11 @@
 class Composite;
 class CBound;
 
+///Enumeration for species types
+enum SpeciesType {
+    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, PLUSEND, MINUSEND
+};
+
 /// SpeciesNamesDB class is used to associate unique integers with character based names of Species
 /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, for example
  *  in cytosol vs bound to a filament. The corresponding specific Species will be distinct, however,
@@ -479,6 +484,100 @@ public:
     ///remove cBound ptr
     void removeCBound() {_cBound = nullptr;}
 };
+
+/// SpeciesLinker should be used for linker species that can be bound to a filament.
+/// These species can not move cross-compartment.
+/// Contains a pointer to a CLinker object that this represents.
+class SpeciesLinker : public SpeciesBound {
+    
+public:
+    /// Default constructor
+    SpeciesLinker()  : SpeciesBound() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesLinker (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  SpeciesBound(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesLinker (const SpeciesLinker &rhs)  : SpeciesBound(rhs) {}
+    
+    /// Move constructor
+    SpeciesLinker (SpeciesLinker &&rhs) noexcept : SpeciesBound(std::move(rhs)){
+    }
+    
+    /// Regular Assignment
+    SpeciesLinker& operator=(const SpeciesLinker& rhs)  {
+        SpeciesBound::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesLinker& operator=(SpeciesLinker&& rhs)
+    {
+        SpeciesBound::operator=(std::move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesLinker* clone() {
+        return new SpeciesLinker(*this);
+    }
+    
+    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Linker}"
+    virtual std::string getFullName() const {return getName() + "{Linker}";}
+    
+    /// Default destructor
+    ~SpeciesLinker () noexcept {};
+};
+
+
+/// SpeciesMotor should be used for motor species that can be bound to a filament.
+/// These species can not move cross-compartment.
+/// Contains a pointer to a CLinker object that this represents.
+class SpeciesMotor : public SpeciesBound {
+    
+public:
+    /// Default constructor
+    SpeciesMotor()  : SpeciesBound() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesMotor (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  SpeciesBound(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesMotor (const SpeciesMotor &rhs)  : SpeciesBound(rhs) {}
+    
+    /// Move constructor
+    SpeciesMotor (SpeciesMotor &&rhs) noexcept : SpeciesBound(std::move(rhs)){
+    }
+    
+    /// Regular Assignment
+    SpeciesMotor& operator=(const SpeciesMotor& rhs)  {
+        SpeciesBound::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesMotor& operator=(SpeciesMotor&& rhs)
+    {
+        SpeciesBound::operator=(std::move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesMotor* clone() {
+        return new SpeciesMotor(*this);
+    }
+    
+    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Motor}"
+    virtual std::string getFullName() const {return getName() + "{Motor}";}
+    
+    /// Default destructor
+    ~SpeciesMotor () noexcept {};
+};
+
 
 /// SpeciesPlusEnd is for a plus end species on a filament
 /// This allows for various polymerization/depolymerization rates on filaments

@@ -36,10 +36,18 @@ struct ChemistryAlgorithm {
 struct ChemistrySpeciesAndReactions {
     
     ///Reactions parsed, in the form of a tuple which contains reactants, products and rate
-    ///Reactants and products are in the form:
+    ///For cross-filament reactions, also contains rMin, rMax denoting the reaction range
+    
+    /// Reactants and products for filament reactions are in the form:
     /// Actin:BULK, or Actin:PLUSEND:N, Actin:PLUSEND:N+1 where the first string denotes the species
     /// name, the second denotes the type and the third denotes the position on the filament (if applicable, only for plus/minus ends).
-    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> reactions = {};
+    
+    /// Reactants and products for cross-filament reactions are in the form:
+    /// Empty:BOUND:1 or Empty:BOUND:2 fhwere the first string denotes the species
+    /// name, the second denotes the type and the third denotes the filament number (filament 1, 2, etc)
+    
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> filamentReactions = {};
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> crossFilamentReactions = {};
     
     ///SpeciesBulk parsed, in the form of a tuple which contains the name and initial copy number
     std::vector<std::tuple<std::string, int>> speciesBulk = {};
@@ -51,6 +59,8 @@ struct ChemistrySpeciesAndReactions {
     ///All filament species parsed
     std::vector<std::string> speciesFilament = {};
     std::vector<std::string> speciesBound = {};
+    std::vector<std::string> speciesLinker = {};
+    std::vector<std::string> speciesMotor = {};
     std::vector<std::string> speciesPlusEnd = {};
     std::vector<std::string> speciesMinusEnd = {};
     

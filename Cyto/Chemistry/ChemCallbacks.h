@@ -13,10 +13,11 @@
 #include "common.h"
 #include "Filament.h"
 #include "ReactionBase.h"
+#include "SubSystem.h"
 
 using namespace std;
 
-///REACTION CALLBACKS
+///FILAMENT REACTION CALLBACKS
 
 ///Extension callback
 struct FilamentExtensionFrontCallback {
@@ -29,9 +30,7 @@ struct FilamentExtensionFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        cout << "Extending Front" << std::endl;
         _filament->ExtendFront();
-        _filament->printChemComposition();
     }
 };
 
@@ -46,9 +45,7 @@ struct FilamentExtensionBackCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        cout << "Extending back" << endl;
         _filament->ExtendBack();
-        _filament->printChemComposition();
     }
 };
 
@@ -93,9 +90,7 @@ struct FilamentPolymerizationFrontCallback {
     
     ///Callback
     void operator() (ReactionBase *r){
-        cout << "Polymerizing front" << endl;
         _filament->PolymerizeFront();
-        _filament->printChemComposition();
     }
 };
 
@@ -142,6 +137,43 @@ struct FilamentDepolymerizationBackCallback {
         _filament->DepolymerizeBack();
     }
 };
+
+///LINKER AND MOTOR CALLBACKS
+
+///Linker binding callback
+struct LinkerBindingCallback {
+    
+    ///members
+    SubSystem* _ps;
+    Cylinder* _c1;
+    Cylinder* _c2;
+    short _linkerType;
+
+    LinkerBindingCallback(SubSystem* ps, Cylinder* c1, Cylinder* c2, short linkerType)
+        : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType) {}
+    
+    void operator() (ReactionBase *r) {
+        
+        //find locations of two species
+        
+        
+        
+        
+        
+        
+        
+    }
+    
+    
+};
+
+
+
+
+
+
+
+
 
 
 #endif /* defined(__Cyto__Callback__) */

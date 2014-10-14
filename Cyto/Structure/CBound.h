@@ -31,10 +31,7 @@ protected:
     
 public:
     ///Constructor, just sets species
-    CBound(Compartment* c, SpeciesBound* firstSpecies, SpeciesBound* secondSpecies) : _compartment(c) {
-        setFirstSpecies(firstSpecies);
-        setSecondSpecies(secondSpecies);
-    }
+    CBound(Compartment* c) : _compartment(c) {}
     
     ///virtual destructor
     virtual ~CBound() noexcept {

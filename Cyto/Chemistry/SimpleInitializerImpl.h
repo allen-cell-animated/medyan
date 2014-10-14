@@ -22,15 +22,20 @@ class SimpleInitializerImpl : public ChemInitializerImpl {
 
 private:
     std::vector<std::unique_ptr<ReactionFilamentTemplate>> _reactionFilamentTemplates; ///< list of reactions to add to every new CCylinder
+    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _reactionCrossFilamentTemplates; ///<list of cross filament reactions to add to CCylinders
     
     ///Vectors of all filament, bound, and end species
     std::vector<std::string> _speciesFilament;
-    std::vector<std::string> _speciesBound;
     std::vector<std::string> _speciesPlusEnd;
     std::vector<std::string> _speciesMinusEnd;
     
-    ///Set up all filament reaction templates from chemsetup struct
+    std::vector<std::string> _speciesBound;
+    std::vector<std::string> _speciesLinker;
+    std::vector<std::string> _speciesMotor;
+    
+    ///Set up all reaction templates from chemsetup struct
     void createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    void createCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
 public:
     ///initialize the chemical reaction templates and species in this system
@@ -39,10 +44,12 @@ public:
 
     ///Initializer
     ///@param length - starting length of the CCylinder initialized
-    ///@param species - list of species to initialize in CCylinder
     ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
     /// vector. The active plus and minus end is set to be the first listed as well.
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack);
+    
+    ///add/update cross cylinder reactions that are within range
+    virtual void updateCCylinder(CCylinder* cc);
     
 };
 

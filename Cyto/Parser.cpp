@@ -8,54 +8,7 @@
 
 #include "SystemParameters.h"
 #include "Parser.h"
-//
-//bool SystemParser::mechanics() {
-//    
-//    _inputFile.clear();
-//    _inputFile.seekg(0);
-//    
-//    std::string line;
-//    while(getline(_inputFile, line)) {
-//        
-//        if (line.find("MECHANICS:") != std::string::npos) {
-//            
-//            std::vector<std::string> lineVector = split<std::string>(line);
-//            if(lineVector.size() != 2) {
-//                std::cout << "Need to specify Mechanics ON/OFF. Exiting" << std::endl;
-//                exit(EXIT_FAILURE);
-//            }
-//            else if (lineVector.size() == 2) {
-//                if(lineVector[1] == "ON") return true;
-//            }
-//        }
-//    }
-//    ///default is false
-//    return false;
-//}
-//
-//bool SystemParser::chemistry() {
-//    
-//    _inputFile.clear();
-//    _inputFile.seekg(0);
-//    
-//    std::string line;
-//    while(getline(_inputFile, line)) {
-//        
-//        if (line.find("CHEMISTRY:") != std::string::npos) {
-//            
-//            std::vector<std::string> lineVector = split<std::string>(line);
-//            if(lineVector.size() != 2) {
-//                std::cout << "Need to specify Chemistry ON/OFF. Exiting" << std::endl;
-//                exit(EXIT_FAILURE);
-//            }
-//            else if (lineVector.size() == 2) {
-//                if(lineVector[1] == "ON") return true;
-//            }
-//        }
-//    }
-//    ///default is false
-//    return false;
-//}
+
 
 ///CHEMISTRY PARSER
 ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
@@ -369,47 +322,41 @@ void SystemParser::readMechanicsParameters() {
         if (line.find("LSTRETCHINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LStretchingK = std::atof((lineVector[1].c_str()));
-            }
-        }
-        if (line.find("LSTRETCHINGL") != std::string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LStretchingL = std::atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LStretchingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
+//        if (line.find("LSTRETCHINGL") != std::string::npos) {
+//            
+//            std::vector<std::string> lineVector = split<std::string>(line);
+//            if(lineVector.size() > 2) {
+//                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
+//                exit(EXIT_FAILURE);
+//            }
+//            else if (lineVector.size() == 2) {
+//                MParams.LStretchingL = std::atof((lineVector[1].c_str()));
+//            }
+//        }
         
         ///Linker bending
         else if (line.find("LBENDINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LBendingK = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LBendingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("LBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LBendingTheta = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LBendingTheta.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         
@@ -417,23 +364,19 @@ void SystemParser::readMechanicsParameters() {
         else if (line.find("LTWISTINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LTwistingK = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LTwistingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("LTWISTINGPHI") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.LTwistingPhi = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LTwistingPhi.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         
@@ -441,47 +384,41 @@ void SystemParser::readMechanicsParameters() {
         if (line.find("MSTRETCHINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MStretchingK = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.MStretchingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
-        if (line.find("MSTRETCHINGL") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MStretchingL = std::atof((lineVector[1].c_str()));
-            }
-        }
+//        if (line.find("MSTRETCHINGL") != std::string::npos) {
+//            
+//            std::vector<std::string> lineVector = split<std::string>(line);
+//            if(lineVector.size() > 2) {
+//                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
+//                exit(EXIT_FAILURE);
+//            }
+//            else if (lineVector.size() == 2) {
+//                MParams.MStretchingL = std::atof((lineVector[1].c_str()));
+//            }
+//        }
         
         ///Motor bending
         else if (line.find("MBENDINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MBendingK = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.MBendingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("MBENDINGTHETA") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MBendingTheta = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.MBendingTheta.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         
@@ -489,23 +426,19 @@ void SystemParser::readMechanicsParameters() {
         else if (line.find("MTWISTINGK") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MTwistingK = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.LTwistingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("MTWISTINGPHI") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.MTwistingPhi = std::atof((lineVector[1].c_str()));
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.MTwistingK.push_back(std::atof((lineVector[i].c_str())));
             }
         }
         
@@ -882,6 +815,30 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                 chemSR.speciesBound.push_back(lineVector[1]);
             else {}
         }
+        
+        if(line.find("SPECIESLINKER") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament linker species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesLinker.push_back(lineVector[1]);
+            else {}
+        }
+        if(line.find("SPECIESMOTOR") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() !=  2) {
+                std::cout << "Error reading a filament linker species. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chemSR.speciesMotor.push_back(lineVector[1]);
+            else {}
+        }
+        
         if(line.find("SPECIESPLUSEND") != std::string::npos) {
             
             std::vector<std::string> lineVector = split<std::string>(line);
@@ -906,7 +863,7 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
         }
         
         ///loop through a reaction
-        if(line.find("REACTION") != std::string::npos) {
+        if(line.find("FILAMENTREACTION") != std::string::npos) {
             
             std::vector<std::string> reactants;
             std::vector<std::string> products;
@@ -924,16 +881,43 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.reactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
+                chemSR.filamentReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
                                         (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading reaction. Exiting" << std::endl;
+                std::cout << "Error reading filament reaction. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
         }
-        
+        if(line.find("CROSSFILAMENTREACTION") != std::string::npos) {
+            
+            std::vector<std::string> reactants;
+            std::vector<std::string> products;
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            
+            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+                
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chemSR.crossFilamentReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
+                       (reactants, products, std::atof(lineVector[lineVector.size() - 3].c_str()),
+                       std::atof(lineVector[lineVector.size() - 2].c_str()), std::atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                std::cout << "Error reading cross filament reaction. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        } 
     }
     
     return chemSR;

@@ -26,12 +26,15 @@
 #include "common.h"
 #include "Species.h"
 
-
 class RNode;
 class Composite;
 class ReactionBase;
 class SpeciesPtrContainerVector;
 
+///Enumeration for type of reaction
+enum ReactionType {
+    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION, LINKERBINDING, LINKERUNBINDING, MOTORBINDING, MOTORUNBINDING, MOTORWALKING, CREATION, DESTRUCTION
+};
 
 /// This is a ReactionBase signal object that may be called by a ReactionBase simulation algorithm
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
@@ -64,9 +67,7 @@ protected:
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
-    bool _is_poly_reaction = false; ///<polymerization identifier
-    
-    
+    ReactionType _reactionType; ///< Reaction type enumeration
     
 public:
     /// The main constructor:
@@ -100,11 +101,11 @@ public:
     /// the iteration limits). The corresponding std::array<RSpecies*> is defined by the derived classes.
     virtual RSpecies** rspecies() = 0;
     
-    /// Set this ReactionBase as a polymerization reaction
-    void setAsPolymerizationReaction() { _is_poly_reaction = true;}
+    ///Set reaction type
+    void setReactionType(ReactionType rxnType) {_reactionType = rxnType;}
     
-    /// Check if this ReactionBase is a polymerization reaction
-    bool isPolymerizationReaction() {return _is_poly_reaction;}
+    ///Get reaction type
+    ReactionType getReactionType() {return _reactionType;}
     
     /// Sets the ReactionBase rate to the parameter "rate"
     void setRate(float rate) {_rate=rate;}

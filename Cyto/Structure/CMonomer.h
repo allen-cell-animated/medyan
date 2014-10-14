@@ -24,10 +24,14 @@
  */
 class CMonomer {
     ///ALL SPECIES VECTORS
-    std::vector<SpeciesFilament*> _speciesFilament; ///<Filament species
-    std::vector<SpeciesBound*> _speciesBound;       ///<Bound species
-    std::vector<SpeciesPlusEnd*> _speciesPlusEnd;   ///<PlusEnd species
-    std::vector<SpeciesMinusEnd*> _speciesMinusEnd; ///<MinusEnd species
+    std::vector<SpeciesFilament*> _speciesFilament;    ///<Filament species
+    std::vector<SpeciesPlusEnd*>  _speciesPlusEnd;     ///<PlusEnd species
+    std::vector<SpeciesMinusEnd*> _speciesMinusEnd;    ///<MinusEnd species
+    
+    std::vector<SpeciesBound*>  _speciesBound;       ///<Bound species
+    std::vector<SpeciesLinker*> _speciesLinker;      ///<Linker species
+    std::vector<SpeciesMotor*>  _speciesMotor;       ///<Motor species
+    
 public:
     ///Constructor does nothing
     CMonomer() {};
@@ -45,51 +49,46 @@ public:
     /// Assignment is not allowed
     CMonomer& operator=(CMonomer &rhs) = delete;
     
-    ///Move constructor, simply copies species vectors
-    CMonomer(CMonomer &&rhs) noexcept : _speciesFilament(rhs._speciesFilament),
-                                        _speciesBound(rhs._speciesBound),
-                                        _speciesPlusEnd(rhs._speciesPlusEnd),
-                                        _speciesMinusEnd(rhs._speciesMinusEnd) {};
-    
-    ///Move assigment operator, same as move constructor
-    CMonomer& operator=(CMonomer&& rhs)  {
-        _speciesFilament = rhs._speciesFilament;
-        _speciesBound = rhs._speciesBound;
-        
-        _speciesPlusEnd = rhs._speciesPlusEnd;
-        _speciesMinusEnd = rhs._speciesMinusEnd;
-        return *this;
-    }
-    
     virtual CMonomer* clone(Compartment* c) {
         return new CMonomer(*this, c);
     }
     
     ///Add a species filament
     void addSpeciesFilament(SpeciesFilament* s) { _speciesFilament.push_back(s); }
-    ///Add a species bound
-    void addSpeciesBound(SpeciesBound* s) { _speciesBound.push_back(s); }
     ///Add a species minus end
     void addSpeciesPlusEnd(SpeciesPlusEnd* s) { _speciesPlusEnd.push_back(s); }
     ///Add a species plus end
     void addSpeciesMinusEnd(SpeciesMinusEnd* s) { _speciesMinusEnd.push_back(s); }
+    
+    ///Add a species bound
+    void addSpeciesBound(SpeciesBound* s) { _speciesBound.push_back(s); }
+    ///Add a species linker
+    void addSpeciesLinker(SpeciesLinker* s) { _speciesLinker.push_back(s); }
+    ///Add a species motor
+    void addSpeciesMotor(SpeciesMotor* s) { _speciesMotor.push_back(s); }
     
     ///Print the species in this filament element
     void print();
 
     ///Return all species vectors
     const std::vector<SpeciesFilament*>& speciesFilamentVector() {return _speciesFilament;}
-    const std::vector<SpeciesBound*>& speciesBoundVector() {return _speciesBound;}
     const std::vector<SpeciesPlusEnd*>& speciesPlusEndVector() {return _speciesPlusEnd;}
     const std::vector<SpeciesMinusEnd*>& speciesMinusEndVector() {return _speciesMinusEnd;}
+    
+    const std::vector<SpeciesBound*>& speciesBoundVector() {return _speciesBound;}
+    const std::vector<SpeciesLinker*>& speciesLinkerVector() {return _speciesLinker;}
+    const std::vector<SpeciesMotor*>& speciesMotorVector() {return _speciesMotor;}
     
     ///Get species at a specific index
     ///@note no check on this index. The index value of a species is stored in the chemical initializer
     ///when all reactions are initialized from the chemical input file
     SpeciesFilament* speciesFilament(int index) {return _speciesFilament[index];}
-    SpeciesBound* speciesBound(int index) {return _speciesBound[index];}
     SpeciesPlusEnd* speciesPlusEnd(int index) {return _speciesPlusEnd[index];}
     SpeciesMinusEnd* speciesMinusEnd(int index) {return _speciesMinusEnd[index];}
+    
+    SpeciesBound* speciesBound(int index) {return _speciesBound[index];}
+    SpeciesLinker* speciesLinker(int index) {return _speciesLinker[index];}
+    SpeciesMotor* speciesMotor(int index) {return _speciesMotor[index];}
     
     ///Check if this filament element is valid. Involves checking copy numbers
     virtual bool checkSpecies(int sum) {return true;}
