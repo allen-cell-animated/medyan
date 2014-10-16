@@ -38,16 +38,19 @@ struct ChemistrySpeciesAndReactions {
     ///Reactions parsed, in the form of a tuple which contains reactants, products and rate
     ///For cross-filament reactions, also contains rMin, rMax denoting the reaction range
     
-    /// Reactants and products for filament reactions are in the form:
-    /// Actin:BULK, or Actin:PLUSEND:N, Actin:PLUSEND:N+1 where the first string denotes the species
-    /// name, the second denotes the type and the third denotes the position on the filament (if applicable, only for plus/minus ends).
+    ///Reactions happening between bulk and diffusing species ONLY
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> generalReactions = {};
+    ///Polymerization reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> polymerizationReactions = {};
+    ///Depolymerization reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> depolymerizationReactions = {};
+    ///Binding reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> bindingReactions = {};
+    ///unbinding reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> unbindingReactions = {};
     
-    /// Reactants and products for cross-filament reactions are in the form:
-    /// Empty:BOUND:1 or Empty:BOUND:2 fhwere the first string denotes the species
-    /// name, the second denotes the type and the third denotes the filament number (filament 1, 2, etc)
-    
-    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> filamentReactions = {};
-    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> crossFilamentReactions = {};
+    ///Cross filament binding reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> crossFilamentBindingReactions = {};
     
     ///SpeciesBulk parsed, in the form of a tuple which contains the name and initial copy number
     std::vector<std::tuple<std::string, int>> speciesBulk = {};

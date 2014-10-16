@@ -27,9 +27,8 @@ class BoundaryElement {
     
 protected:
     
-    Compartment* _compartment = nullptr; ///< Compartment that this boundary element is currently in
-    std::vector<Bead*> _beads; ///< Beads that this boundary element could interact with
-    std::vector<BoundaryElement*> _neighbors; ///<neighbors of this boundary element
+    Compartment* _compartment; ///< Compartment that this boundary element is currently in
+    std::set<Bead*> _beads; ///< Beads that this boundary element could interact with
     
     std::vector<double> _coords; ///< coordinates of this boundary element
     std::vector<double> _normal; ///< normal vector to this boundary element
@@ -39,7 +38,8 @@ public:
     BoundaryElement(std::vector<double> coords, std::vector<double> normal) : _coords(coords), _normal(normal) {
     
         ///set the compartment given the initial coordinates
-        setCompartment();
+        try {_compartment = GController::getCompartment(coords);}
+        catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     }
     
     ///Destructor
@@ -54,49 +54,12 @@ public:
     }
     
     ///add a bead to list of interacting beads
-    void addBead(Bead* b) {_beads.push_back(b);}
+    void addBead(Bead* b) {_beads.insert(b);}
     ///Remove a bead from list of interacting beads
     ///@note does nothing if bead is not in interacting list already
     void removeBead(Bead* b) {
-        auto it = std::find(_beads.begin(), _beads.end(), b);
+        auto it = _beads.find(b);
         if(it != _beads.end()) _beads.erase(it);
-    }
-    
-    ///Add a boundary element neighbor to this element
-    void addNeighbor(BoundaryElement* b) {_neighbors.push_back(b);}
-    ///remove a boundary element neighbor
-    ///@note does nothing if boundary element is not in list already
-    void removeNeighbor(BoundaryElement* b) {
-        auto it = std::find(_neighbors.begin(), _neighbors.end(), b);
-        if(it != _neighbors.end()) _neighbors.erase(it);
-    }
-    //Check if this boundary element is a neighbor of another
-    bool isNeighbor(BoundaryElement* b) {
-        auto it = std::find(b->neighbors().begin(), b->neighbors().end(), this);
-        return (it != b->neighbors().end());
-    }
-    
-    ///Set the current compartment that this boundary element is in
-    void setCompartment() {
-        
-        ///remove from old compartment
-        if(_compartment != nullptr) _compartment->removeBoundaryElement(this);
-        
-        ///Add to new compartment
-        try {_compartment = GController::getCompartment(_coords);}
-        catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-        _compartment->addBoundaryElement(this);
-    }
-    
-    ///Alternate set compartment when compartment is known
-    void setCompartment(Compartment* c) {
-        
-        ///remove from old compartment
-        if(_compartment != nullptr) _compartment->removeBoundaryElement(this);
-        
-        ///add to new compartment
-        _compartment = c;
-        _compartment->addBoundaryElement(this);
     }
     
     ///Get the compartment that this element is in
@@ -105,10 +68,10 @@ public:
     ///return coordinates of boundary element
     const std::vector<double>& coords() {return _coords;}
     const std::vector<double>& normal() {return _normal;}
-    ///return vector of beads
-    const std::vector<Bead*>& beads() {return _beads;}
-    ///return vector of neighbors
-    const std::vector<BoundaryElement*>& neighbors() {return _neighbors;}
+    ///return set of beads
+    const std::set<Bead*>& beads() {return _beads;}
+    ///return set of neighbors
+    const std::set<BoundaryElement*>& neighbors() {return _neighbors;}
     
     ///Implement for all boundary elements
     virtual double distance(const std::vector<double>& point) = 0;

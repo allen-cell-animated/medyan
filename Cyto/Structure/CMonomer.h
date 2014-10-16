@@ -23,18 +23,19 @@
  *  as well as a filament element checker are provided.
  */
 class CMonomer {
-    ///ALL SPECIES VECTORS
-    std::vector<SpeciesFilament*> _speciesFilament;    ///<Filament species
-    std::vector<SpeciesPlusEnd*>  _speciesPlusEnd;     ///<PlusEnd species
-    std::vector<SpeciesMinusEnd*> _speciesMinusEnd;    ///<MinusEnd species
     
-    std::vector<SpeciesBound*>  _speciesBound;       ///<Bound species
-    std::vector<SpeciesLinker*> _speciesLinker;      ///<Linker species
-    std::vector<SpeciesMotor*>  _speciesMotor;       ///<Motor species
+    ///Species arrays
+    SpeciesFilament* _speciesFilament[NUMSPECIESFILAMENT];
+    SpeciesPlusEnd*  _speciesPlusEnd[NUMSPECIESPLUSEND];
+    SpeciesMinusEnd* _speciesMinusEnd[NUMSPECIESMINUSEND];
+    
+    SpeciesBound*  _speciesBound[NUMSPECIESBOUND];
+    SpeciesLinker* _speciesLinker[NUMSPECIESLINKER];
+    SpeciesMotor*  _speciesMotor[NUMSPECIESMOTOR];
     
 public:
-    ///Constructor does nothing
-    CMonomer() {};
+    ///Constructor does nothing but reset arrays
+    CMonomer();
     
     ///Default destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
@@ -52,33 +53,17 @@ public:
     virtual CMonomer* clone(Compartment* c) {
         return new CMonomer(*this, c);
     }
-    
-    ///Add a species filament
-    void addSpeciesFilament(SpeciesFilament* s) { _speciesFilament.push_back(s); }
-    ///Add a species minus end
-    void addSpeciesPlusEnd(SpeciesPlusEnd* s) { _speciesPlusEnd.push_back(s); }
-    ///Add a species plus end
-    void addSpeciesMinusEnd(SpeciesMinusEnd* s) { _speciesMinusEnd.push_back(s); }
-    
-    ///Add a species bound
-    void addSpeciesBound(SpeciesBound* s) { _speciesBound.push_back(s); }
-    ///Add a species linker
-    void addSpeciesLinker(SpeciesLinker* s) { _speciesLinker.push_back(s); }
-    ///Add a species motor
-    void addSpeciesMotor(SpeciesMotor* s) { _speciesMotor.push_back(s); }
+    ///Add a species
+    void addSpeciesFilament(SpeciesFilament* s);
+    void addSpeciesPlusEnd(SpeciesPlusEnd* s);
+    void addSpeciesMinusEnd(SpeciesMinusEnd* s);
+    void addSpeciesBound(SpeciesBound* s);
+    void addSpeciesLinker(SpeciesLinker* s);
+    void addSpeciesMotor(SpeciesMotor* s);
     
     ///Print the species in this filament element
     void print();
 
-    ///Return all species vectors
-    const std::vector<SpeciesFilament*>& speciesFilamentVector() {return _speciesFilament;}
-    const std::vector<SpeciesPlusEnd*>& speciesPlusEndVector() {return _speciesPlusEnd;}
-    const std::vector<SpeciesMinusEnd*>& speciesMinusEndVector() {return _speciesMinusEnd;}
-    
-    const std::vector<SpeciesBound*>& speciesBoundVector() {return _speciesBound;}
-    const std::vector<SpeciesLinker*>& speciesLinkerVector() {return _speciesLinker;}
-    const std::vector<SpeciesMotor*>& speciesMotorVector() {return _speciesMotor;}
-    
     ///Get species at a specific index
     ///@note no check on this index. The index value of a species is stored in the chemical initializer
     ///when all reactions are initialized from the chemical input file
@@ -98,4 +83,4 @@ public:
 
 
 
-#endif /* defined(__CytoSim__CFilamentElement__) */
+#endif /* defined(__CytoSim__CMonomer__) */

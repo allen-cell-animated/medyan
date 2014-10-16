@@ -22,13 +22,14 @@
 
 using namespace mathfunc;
 
+class Compartment;
+
 ///The Bead class represents a single coordinate and mechanical constants needed.
 /*!
  * The basic and simplest mechanical class. Contains information about a bead and some mecanical
  * constant needed to calculate interactions. Constants are local and related to a bond between i(curent)
  * and i-1 bead.
  */
-
 
 class Bead : public Component {
 public:
@@ -43,7 +44,8 @@ public:
     Bead (std::vector<double> v, int ID);
     ///Default constructor
     Bead(int ID): coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
-
+    ~Bead();
+    
     ///Aux functions
     
     // Aux method for CG minimization
@@ -53,27 +55,6 @@ public:
     
     ///Set and get compartment
     Compartment* getCompartment() {return _compartment;}
-    
-    ///Set the current compartment that this boundary element is in
-    void setCompartment() {
-        
-        ///remove from old compartment
-        if(_compartment != nullptr) _compartment->removeBead(this);
-        
-        ///Add to new compartment
-        try {_compartment =  GController::getCompartment(coordinate);}
-        catch (std::exception& e) {std::cout << e.what(); exit(EXIT_FAILURE);}
-        _compartment->addBead(this);
-    }
-    
-    ///Alternate set compartment when compartment is known
-    void setCompartment(Compartment* c) {
-        
-        ///remove from old compartment
-        if(_compartment != nullptr) _compartment->removeBead(this);
-        ///add to new compartment
-        _compartment = c; _compartment->addBead(this);
-    }
     
     ///update the position of this bead (and interaction boundary elements)
     void updatePosition();
@@ -85,7 +66,7 @@ public:
     
 private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
-    std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
+    std::set<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
     
     int _ID; ///Unique ID of the bead in this filament (relative to the filament)
     float _birthTime; ///Time of birth of bead;

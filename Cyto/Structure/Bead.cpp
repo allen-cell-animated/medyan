@@ -24,16 +24,36 @@ Bead::Bead (std::vector<double> v, int ID): coordinate(v), coordinateAux(v), for
     for (auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         ///If within cutoff, add bead to this boundary element interaction list
         if(be->distance(v) <= SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.push_back(be);
+            _boundaryElements.insert(be);
             be->addBead(this);
         }
     }
 }
 
+Bead::~Bead() {
+    ///remove from compartment
+    _compartment->removeBead(this);
+    
+    ///remove from boundary elements
+    for(auto &be : _boundaryElements) be->removeBead(this);
+}
+
 void Bead::updatePosition() {
     
-    ///First, update this bead's list
+    ///Update the compartment
     
+    Compartment* c;
+    try {c = GController::getCompartment(coordinate);}
+    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    
+    if(c != _compartment) {
+        ///remove from old compartment, add to new
+        _compartment->removeBead(this);
+        _compartment = c;
+        _compartment->addBead(this);
+    }
+    
+    ///Update this bead's list
     std::vector<BoundaryElement*> _beToRemove;
     for(auto &be : _boundaryElements) {
         if (be->distance(coordinate) > SystemParameters::Boundaries().boundaryCutoff) {
@@ -41,13 +61,13 @@ void Bead::updatePosition() {
         }
     }
     for(auto &be : _beToRemove) 
-        _boundaryElements.erase(std::find(_boundaryElements.begin(), _boundaryElements.end(), be));
+        _boundaryElements.erase(_boundaryElements.find(be));
     
     
     ///add any new interacting boundary elements
     for(auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         if(be->distance(coordinate) <= SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.push_back(be);
+            _boundaryElements.insert(be);
             be->addBead(this);
         }
     }

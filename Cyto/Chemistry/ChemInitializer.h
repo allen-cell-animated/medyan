@@ -61,6 +61,8 @@ public:
     ///@param species - list of species to initialize in CCylinder
     static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
                                       Compartment* c, bool extensionFront, bool extensionBack);
+    ///add/update cross cylinder reactions that are within range
+    static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc);
     
     
 private:

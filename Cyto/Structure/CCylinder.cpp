@@ -45,10 +45,31 @@ CCylinder::~CCylinder()
     
     ///Remove all species
     for(auto &m: _monomers) {
-        for(auto &s : m->speciesFilamentVector()) _compartment->removeSpecies(s);
-        for(auto &s : m->speciesBoundVector()) _compartment->removeSpecies(s);
-        for(auto &s : m->speciesPlusEndVector()) _compartment->removeSpecies(s);
-        for(auto &s : m->speciesMinusEndVector()) _compartment->removeSpecies(s);
+        
+        for(int i = 0; i < NUMSPECIESFILAMENT; i++) {
+            SpeciesFilament* s = m->speciesFilament(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        for(int i = 0; i < NUMSPECIESPLUSEND; i++) {
+            SpeciesPlusEnd* s = m->speciesPlusEnd(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        for(int i = 0; i < NUMSPECIESMINUSEND; i++) {
+            SpeciesMinusEnd* s = m->speciesMinusEnd(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        for(int i = 0; i < NUMSPECIESBOUND; i++) {
+            SpeciesBound* s = m->speciesBound(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        for(int i = 0; i < NUMSPECIESLINKER; i++) {
+            SpeciesLinker* s = m->speciesLinker(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        for(int i = 0; i < NUMSPECIESMOTOR; i++) {
+            SpeciesMotor* s = m->speciesMotor(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
     }
 }
 

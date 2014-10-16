@@ -16,13 +16,20 @@
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment* c, bool extensionFront, bool extensionBack) {
+Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack) {
     
     setFilament(pf);
     
+    ///check if were still in same compartment
+    auto midpoint = MidPointCoordinate(firstBead->coordinate, secondBead->coordinate, 0.5);
+
+    try {_compartment = GController::getCompartment(midpoint);}
+    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    
+    
 #ifdef CHEMISTRY
     _cCylinder = std::unique_ptr<CCylinder>(
-        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, c, extensionFront, extensionBack));
+        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack));
     _cCylinder->setCylinder(this);
 #endif
 
@@ -39,9 +46,15 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment*
     _pFirst = firstBead;
     _pSecond = secondBead;
     
+    ///add to compartment
+    _compartment->addCylinder(this);
 }
 
-Cylinder::~Cylinder() {}
+Cylinder::~Cylinder() {
+
+    ///remove from compartment
+    _compartment->removeCylinder(this);
+}
 
 bool Cylinder::IfLast(){
     if (_ifLast) return true;
@@ -53,7 +66,6 @@ void Cylinder::SetLast(bool b){ _ifLast = b;}
 
 void Cylinder::updatePosition() {
 
-#ifdef CHEMISTRY
     ///check if were still in same compartment
     auto midpoint = MidPointCoordinate(_pFirst->coordinate, _pSecond->coordinate, 0.5);
     
@@ -61,12 +73,20 @@ void Cylinder::updatePosition() {
     try {c = GController::getCompartment(midpoint);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
-    if(c != _cCylinder->getCompartment()) {
+    if(c != _compartment) {
+        
+        ///remove from old compartment, add to new
+        _compartment->removeCylinder(this);
+        _compartment = c;
+        _compartment->addCylinder(this);
+        
+#ifdef CHEMISTRY
         CCylinder* clone = _cCylinder->clone(c);
         setCCylinder(clone);
+#endif
+        
     }
     
-#endif
 }
 
 

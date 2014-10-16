@@ -24,14 +24,8 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
     auto pos2 = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
     Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(pos2, _beadIDPlusEnd++);
     
-    ///Find correct compartment
-    auto midpoint = MidPointCoordinate(position, pos2, 0.5);
-    Compartment* c;
-    try {c =  GController::getCompartment(midpoint);}
-    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-    
     ///create cylinder
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2, c);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
     _pCylinderVector.push_back(c0);
     
     ///extend front
@@ -61,12 +55,7 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
     Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0], _beadIDPlusEnd++);
     Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[1], _beadIDPlusEnd++);
     
-    auto midpoint = MidPointCoordinate(tmpBeadsCoord[0], tmpBeadsCoord[1], 0.5);
-    Compartment* c;
-    try {c = GController::getCompartment(midpoint);}
-    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-    
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2, c);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
     _pCylinderVector.push_back(c0);
     
     for (int i = 2; i<numBeads; i++) {
@@ -92,14 +81,8 @@ void Filament::ExtendFront(vector<double>& coordinates) {
     
     Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDPlusEnd++);
     
-    ///find compartment
-    auto midpoint = MidPointCoordinate(b2->coordinate, newBeadCoords, 0.5);
-    Compartment* c;
-    try {c = GController::getCompartment(midpoint);}
-    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-    
     ///create cylinder
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew, c);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew);
     c0->SetLast(true);
     _pCylinderVector.push_back(c0);
     
@@ -116,13 +99,7 @@ void Filament::ExtendBack(vector<double>& coordinates) {
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDMinusEnd--);
 
-    ///find compartment
-    auto midpoint = MidPointCoordinate(b2->coordinate, newBeadCoords, 0.5);
-    Compartment* c;
-    try {c = GController::getCompartment(midpoint);}
-    catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-    
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2, c);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2);
     _pCylinderVector.push_front(c0);
 
 }
@@ -144,11 +121,7 @@ void Filament::ExtendFront() {
         ///create a new bead in same place as b2
         Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDPlusEnd++);
         
-        Compartment* c;
-        try {c = GController::getCompartment(npp);}
-        catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-        
-        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew, c, true);
+        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew, true);
         _pCylinderVector.back()->SetLast(false);
         _pCylinderVector.push_back(c0);
         _pCylinderVector.back()->SetLast(true);
@@ -173,12 +146,8 @@ void Filament::ExtendBack() {
         
         ///create a new bead in same place as b2
         Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDMinusEnd--);
-        
-        Compartment* c;
-        try {c = GController::getCompartment(npp);}
-        catch (exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-        
-        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2, c, false, true);
+
+        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2,false, true);
         _pCylinderVector.push_front(c0);
         
         _deltaMinusEnd++;

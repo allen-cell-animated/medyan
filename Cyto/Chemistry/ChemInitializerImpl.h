@@ -42,6 +42,9 @@ public:
     ///@param species - list of species to initialize in CCylinder
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack) = 0;
 
+    ///add/update cross cylinder reactions that are within range
+    virtual void updateCCylinder(CCylinder* cc) = 0;
+    
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
 

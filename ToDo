@@ -46,3 +46,22 @@ WISH LIST
 -Preprocessor macros set at command input file?                                 X
 
 --------
+Goals for October 2014:
+--------
+
+
+1) More finishing touches
+    -CMonomer structure fixes                                                   X
+    -Compartments: contain sets of all elements                                 X
+    -Reaction parsing: create general reaction template, restructuring
+    -Finish linker chemistry (callbacks, updating reactions)
+    -Spherical boundary
+    -Changing of polymerization/depolymerization/binding rates
+    -Excluded volume force field
+
+2) Testing:
+    -Filament (initialization, poly, depoly) (general, chem)
+    -Linker/Motor (general, chem)
+    -Compartment (bead, cylinder, boundary element adding/removing, etc)
+    -All databases
+    -All FF's (Aravind?)

@@ -37,6 +37,9 @@ private:
     void createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     void createCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
+    ///Generate the general, non-filament reactions
+    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR);
+    
 public:
     ///initialize the chemical reaction templates and species in this system
     ///@param chemSetup - chemistry setup struct from parsed input file

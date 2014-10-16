@@ -12,6 +12,7 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
+#include <set>
 
 #include "common.h"
 #include "SpeciesContainer.h"
@@ -20,6 +21,7 @@
 #include "ChemSim.h"
 
 class Bead;
+class Cylinder;
 class BoundaryElement;
 
 /// Compartment class is a compartment for holding species and reactions
@@ -40,14 +42,18 @@ class BoundaryElement;
 class Compartment : public Composite {
 protected:
     ///Reaction-diffusion components
+    
     SpeciesPtrContainerVector _species;  ///< Container with all species in this compartment
     ReactionPtrContainerVector _internal_reactions; ///< Container with all internal reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
     std::vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     std::unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
     
-    std::vector<Bead*> _beads; ///<vector of beads that are in this compartment
-    std::vector<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
+    ///Element containers, makes it easy to generate neighbors lists for cylinders, beads, boundary elements
+    
+    std::set<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
+    std::set<Bead*> _beads; ///<vector of beads that are in this compartment
+    std::set<Cylinder*> _cylinders; ///vector of cylinders that are in this compartment
 
     bool _activated = false; ///< the compartment is activated for diffusion
     
@@ -327,38 +333,49 @@ public:
         r->setParent(this);
         return r;
     }
-    
-    
     ///Add a bead to this compartment
-    void addBead(Bead* b) {_beads.push_back(b);}
+    void addBead(Bead* b) {_beads.insert(b);}
     
     ///Remove a bead from this compartment
     ///@note does nothing if bead is not in compartment already
     void removeBead(Bead* b) {
-        auto it = std::find(_beads.begin(), _beads.end(), b);
+        auto it = _beads.find(b);
         if(it != _beads.end()) _beads.erase(it);
     }
     
     ///get the beads in this compartment
-    std::vector<Bead*>& getBeads() {return _beads;}
+    std::set<Bead*>& getBeads() {return _beads;}
+    
     
     ///Add a boundary element to this compartment
-    void addBoundaryElement(BoundaryElement* be) {_boundaryElements.push_back(be);}
+    void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
     
     ///Remove a boundary element from this compartment
     ///@note does nothing if boundary element is not in compartment
     void removeBoundaryElement(BoundaryElement* be) {
-        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        auto it = _boundaryElements.find(be);
         if(it != _boundaryElements.end()) _boundaryElements.erase(it);
     }
     ///Check if boundary element is in this container
     bool hasBoundaryElement(BoundaryElement* be) {
-        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        auto it = _boundaryElements.find(be);
         return (it != _boundaryElements.end());   
     }
-    
     ///get the boundary elements in this compartment
-    std::vector<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
+    std::set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
+    
+    ///Add a cylinder to this compartment
+    void addCylinder(Cylinder* c) {_cylinders.insert(c);}
+    
+    ///Remove a cylinder from this compartment
+    ///@note does nothing if cylinder is not in compartment already
+    void removeCylinder(Cylinder* c) {
+        auto it = _cylinders.find(c);
+        if(it != _cylinders.end()) _cylinders.erase(it);
+    }
+    ///get the cylinders in this compartment
+    std::set<Cylinder*>& getCylinders() {return _cylinders;}
+    
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

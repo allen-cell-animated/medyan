@@ -25,6 +25,14 @@
 //#define BOOST_MEM_POOL
 //#define BOOL_POOL_NSIZE 65536
 
+///Some constants for optimization of monomer containers
+#define NUMSPECIESFILAMENT          1
+#define NUMSPECIESPLUSEND           1
+#define NUMSPECIESMINUSEND          1
+#define NUMSPECIESBOUND             1
+#define NUMSPECIESLINKER            1
+#define NUMSPECIESMOTOR             1
+
 ///species constants
 typedef unsigned short species_copy_t;
 const species_copy_t max_ulim = 10000;

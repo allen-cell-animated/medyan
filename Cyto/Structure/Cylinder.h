@@ -38,9 +38,11 @@ private:
     int _positionFilament; ///< position on filament (1st, 2nd, ... etc)
     bool _ifLast = false; ///< if the cylinder is last in the filament's cylinder list
     
+    Compartment* _compartment; ///< compartment this cylinder is currently in
+    
 public:
     ///Constructor and destructor
-    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, Compartment* c, bool extensionFront, bool extensionBack);
+    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack);
     ~Cylinder();
     
     ///get mCylinder

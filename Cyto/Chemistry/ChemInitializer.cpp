@@ -28,3 +28,7 @@ CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filame
     return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack);
 }
 
+static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc) {
+    
+    _pimpl->updateCCylinder(cc);
+}
