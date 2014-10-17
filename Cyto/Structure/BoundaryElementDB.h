@@ -23,7 +23,10 @@ class BoundaryElementDBKey {friend class BoundarySurface;
                             BoundaryElementDBKey(){}; public: ~BoundaryElementDBKey(){};};
 
 
-/*! An Object Data Base singleton structure will be used as a container for all main objects: Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from std:: list and manage all creations and removing of objects, as well as some stabdart list functions and iterators.
+/*! An Object Data Base singleton structure will be used as a container for all main objects: 
+ *  Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from 
+ *  std:: list and manage all creations and removing of objects, as well as some stabdart
+ *  list functions and iterators.
  */
 
 

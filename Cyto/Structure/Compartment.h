@@ -68,6 +68,9 @@ public:
         C.cloneReactions(this);
         _diffusion_rates = C._diffusion_rates;
         _activated = C._activated;
+        
+        ///Should eventuall clone beads, cylinders, boundary elements.... not clear yet
+        
     }
     
     //Assignment operator
@@ -83,6 +86,9 @@ public:
         clearReactions();
         clearSpecies();
         removeFromNeighboursList();
+        
+        ///Should eventually delete beads, cylinders, boundary elements....not yet clear
+        
     }
     
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
@@ -343,7 +349,7 @@ public:
     }
     
     ///get the beads in this compartment
-    std::set<Bead*>& getBeads() {return _beads;}
+    std::unordered_set<Bead*>& getBeads() {return _beads;}
     
     
     ///Add a boundary element to this compartment
@@ -361,7 +367,7 @@ public:
         return (it != _boundaryElements.end());   
     }
     ///get the boundary elements in this compartment
-    std::set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
+    std::unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
     
     ///Add a cylinder to this compartment
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
@@ -373,7 +379,7 @@ public:
         if(it != _cylinders.end()) _cylinders.erase(it);
     }
     ///get the cylinders in this compartment
-    std::set<Cylinder*>& getCylinders() {return _cylinders;}
+    std::unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
     
     
     /// Get the diffusion rate of a species

@@ -19,6 +19,9 @@ Compartment& Compartment::operator=(const Compartment &other)
     _diffusion_rates = other._diffusion_rates;
     return *this;
     // Note that _neighbours is not copied
+    
+    ///Should copy cylinders, beads, etc in future... not clear yet
+    
 }
     
 bool Compartment::apply_impl(SpeciesVisitor &v)
