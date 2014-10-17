@@ -23,6 +23,7 @@
 using namespace mathfunc;
 
 class Compartment;
+class BoundaryElement;
 
 ///The Bead class represents a single coordinate and mechanical constants needed.
 /*!
@@ -53,6 +54,15 @@ public:
     double CalcForceSquare(int i) {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
     double CalcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
     
+    ///add a boundary element to list of interacting boundary elements
+    void addBoundaryElement(BoundaryElement* be) {_boundaryElements.push_back(be);}
+    ///Remove a boundary element from list of interacting boundary elements
+    ///@note does nothing if boundary element is not in interacting list already
+    void removeBoundaryElement(BoundaryElement* be) {
+        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        if(it != _boundaryElements.end()) _boundaryElements.erase(it);
+    }
+    
     ///Set and get compartment
     Compartment* getCompartment() {return _compartment;}
     
@@ -66,7 +76,7 @@ public:
     
 private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
-    std::set<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
+    std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
     
     int _ID; ///Unique ID of the bead in this filament (relative to the filament)
     float _birthTime; ///Time of birth of bead;

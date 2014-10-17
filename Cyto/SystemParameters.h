@@ -41,6 +41,22 @@ struct MechanicsParameters {
     double VolumeK = 0;
 };
 
+///Struct to hold the read chemistry parameters
+struct ChemistryParameters {
+    
+    ///number of general species
+    short numBulkSpecies = 0;
+    short numDiffusingSpecies = 0;
+    
+    ///number of filament related species
+    short numFilamentSpecies = 0;
+    short numPlusEndSpecies = 0;
+    short numMinusEndSpecies = 0;
+    short numBoundSpecies = 0;
+    short numLinkerSpecies = 0;
+    short numMotorSpecies = 0;
+};
+
 ///Struct to hold the read geometry parameters
 struct GeometryParameters {
     short nDim = 0;
@@ -74,12 +90,14 @@ friend class SystemParser;
 public:
 #endif
     static MechanicsParameters MParams; ///< mechanical parameters
+    static ChemistryParameters CParams; ///< chemistry parameters
     static GeometryParameters GParams;  ///< geometry parameters
     static BoundaryParameters BParams; ///< boundary parameters
     
 public:
     ///Const getters for all parameters
     static const MechanicsParameters& Mechanics() {return MParams;}
+    static const ChemistryParameters& Chemistry() {return CParams;}
     static const GeometryParameters& Geometry() {return GParams;}
     static const BoundaryParameters& Boundaries() {return BParams;}
 };

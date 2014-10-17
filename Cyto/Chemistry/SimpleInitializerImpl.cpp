@@ -10,7 +10,7 @@
 #include "SystemParameters.h"
 #include "ChemCallbacks.h"
 
-void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
+void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
     
     ///set up reaction templates
@@ -234,7 +234,7 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndR
         
         ///Checks on number of reactants, products
         if(reactants.size() != 3 || products.size() != 2) {
-            std::cout << "Invalid polymerization reaction. Exiting" << std::endl;
+            std::cout << "Invalid depolymerization reaction. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -438,7 +438,7 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndR
         
         ///Checks on number of reactants, products
         if(reactants.size() != 2 || products.size() != 1) {
-            std::cout << "Invalid polymerization reaction. Exiting" << std::endl;
+            std::cout << "Invalid binding reaction. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -546,7 +546,7 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndR
         
         ///Checks on number of reactants, products
         if(reactants.size() != 1 || products.size() != 2) {
-            std::cout << "Invalid polymerization reaction. Exiting" << std::endl;
+            std::cout << "Invalid unbinding reaction. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -632,7 +632,7 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndR
             }
         }
         else{
-            std::cout << "Third species listed in an unpolymerization reaction must be bound. Exiting" << std::endl;
+            std::cout << "Third species listed in an unbinding reaction must be bound. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -643,7 +643,7 @@ void SimpleInitializerImpl::createFilamentReactionTemplates(ChemistrySpeciesAndR
  
 }
 
-void SimpleInitializerImpl::createCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
+void SimpleInitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
     
     for(auto &r: chemSR.crossFilamentBindingReactions) {
@@ -655,103 +655,196 @@ void SimpleInitializerImpl::createCrossFilamentReactionTemplates(ChemistrySpecie
         std::vector<std::string> reactants = std::get<0>(r);
         std::vector<std::string> products = std::get<1>(r);
     
+        ///Checks on number of reactants, products
+        if(reactants.size() != 3 || products.size() != 2) {
+            std::cout << "Invalid cross filament binding reaction. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
         
-        
-        
-        
-        for(std::string& reactant : std::get<0>(r)) {
+        ///FIRST TWO SPECIES SHOULD BE BOUND
+        auto reactant = reactants[0];
+        if(reactant.find("BOUND") != std::string::npos) {
             
-            ///read strings, and look up type
-            if(reactant.find("BULK") != std::string::npos) {
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
                 
-                ///Look up species, make sure in list
-                std::string name = reactant.substr(0, reactant.find(":"));
-                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
-                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
-                
-                if(it == chemSR.speciesBulk.end()) {
-                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                ///get position of iterator
+                position = std::distance(_speciesBound.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
             }
-            
-            else if(reactant.find("DIFFUSING") != std::string::npos) {
-                
-                ///Look up species, make sure in list
-                std::string name = reactant.substr(0, reactant.find(":"));
-                auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
-                                       [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
-                if(it == chemSR.speciesDiffusing.end()) {
-                    std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            else {
+                std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
             }
+        }
+        else {
+            std::cout << "First species listed in a cross filament binding reaction must be bound. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        reactant = reactants[1];
+        if(reactant.find("BOUND") != std::string::npos) {
             
-            else if(reactant.find("BOUND") != std::string::npos) {
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
                 
-                ///look up species, make sure in list
-                std::string name = reactant.substr(0, reactant.find(":"));
-                auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
-                int position = 0;
+                ///get position of iterator
+                position = std::distance(_speciesBound.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+            }
+            else {
+                std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            std::cout << "Second species listed in a cross filament binding reaction must be bound. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
+        reactant = reactants[3];
+        if(reactant.find("BULK") != std::string::npos) {
+            
+            ///Look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
+                                   [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+            
+            if(it == chemSR.speciesBulk.end()) {
+                std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+        }
+        
+        else if(reactant.find("DIFFUSING") != std::string::npos) {
+            
+            ///Look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
+                                   [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
+            if(it == chemSR.speciesDiffusing.end()) {
+                std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+        }
+        else {
+            std::cout << "Third species listed in a cross filament binding reaction must be bulk or diffusing. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+
+        ///FIRST TWO SPECIES IN PRODUCTS MUST BE LINKER OR MOTOR
+        auto product = products[0];
+        
+        if(product.find("LINKER") != std::string::npos) {
+            
+            type = ReactionType::LINKERBINDING;
+            
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
+            int position = 0;
+            
+            if(it != _speciesLinker.end()) {
                 
-                if(it != _speciesBound.end()) {
-                    
-                    ///get position of iterator
-                    position = std::distance(_speciesBound.begin(), it);
-                    reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
-                }
-                else {
-                    std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
-                    exit(EXIT_FAILURE);
-                }
+                ///get position of iterator
+                position = std::distance(_speciesLinker.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::LINKER));
+            }
+            else {
+                std::cout << "A linker species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
             }
         }
         
-        for(std::string& product : std::get<1>(r)) {
+        else if(product.find("MOTOR") != std::string::npos) {
             
-            if(product.find("LINKER") != std::string::npos) {
+            type = ReactionType::MOTORBINDING;
+            
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMotor.end()) {
                 
-                type = ReactionType::LINKERBINDING;
-                
-                ///look up species, make sure in list
-                std::string name = product.substr(0, product.find(":"));
-                auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
-                int position = 0;
-                
-                if(it != _speciesLinker.end()) {
-                    
-                    ///get position of iterator
-                    position = std::distance(_speciesLinker.begin(), it);
-                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::LINKER));
-                }
-                else {
-                    std::cout << "A linker species that was included in a reaction was not initialized. Exiting." << std::endl;
-                    exit(EXIT_FAILURE);
-                }
+                ///get position of iterator
+                position = std::distance(_speciesMotor.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+            }
+            else {
+                std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        else {
+            std::cout << "Fourth species listed in a cross filament binding reaction must be linker or motor. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        product = products[1];
+        if(product.find("LINKER") != std::string::npos) {
+            
+            if(type != ReactionType::LINKERBINDING) {
+                std::cout << "Products in a cross-filament binding reaction must be the same. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
             }
             
-            if(product.find("MOTOR") != std::string::npos) {
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
+            int position = 0;
+            
+            if(it != _speciesLinker.end()) {
                 
-                type = ReactionType::MOTORBINDING;
-                
-                ///look up species, make sure in list
-                std::string name = product.substr(0, product.find(":"));
-                auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
-                int position = 0;
-                
-                if(it != _speciesMotor.end()) {
-                    
-                    ///get position of iterator
-                    position = std::distance(_speciesMotor.begin(), it);
-                    productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
-                }
-                else {
-                    std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
-                    exit(EXIT_FAILURE);
-                }
+                ///get position of iterator
+                position = std::distance(_speciesLinker.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::LINKER));
             }
+            else {
+                std::cout << "A linker species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        else if(product.find("MOTOR") != std::string::npos) {
+            
+            if(type != ReactionType::MOTORBINDING) {
+                std::cout << "Products in a cross-filament binding reaction must be the same. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMotor.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesMotor.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+            }
+            else {
+                std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        else {
+            std::cout << "Fifth species listed in a cross filament binding reaction must be linker or motor. Exiting" << std::endl;
+            exit(EXIT_FAILURE);
         }
     
         if(type == ReactionType::LINKERBINDING)
@@ -765,13 +858,125 @@ void SimpleInitializerImpl::createCrossFilamentReactionTemplates(ChemistrySpecie
 }
 
 
+void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment) {
+    
+     ///go through reactions, add each
+    for(auto &r: chemSR.generalReactions) {
+    
+        std::vector<Species*> reactantSpecies;
+        std::vector<Species*> productSpecies;
+        
+        std::vector<std::string> reactants = std::get<0>(r);
+        std::vector<std::string> products = std::get<1>(r);
+        
+        for(auto &reactant : reactants) {
+            if(reactant.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                
+                if(it == chemSR.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+            }
+            
+            else if(reactant.find("DIFFUSING") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
+                                       [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
+                if(it == chemSR.speciesDiffusing.end()) {
+                    std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(protoCompartment.findSpeciesByName(name));
+            }
+            else {
+                std::cout << "All reactants and products in a general reaction must be bulk or diffusing. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        for(auto &product : products) {
+            if(product.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                
+                if(it == chemSR.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+            }
+            
+            else if(product.find("DIFFUSING") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find_if(chemSR.speciesDiffusing.begin(), chemSR.speciesDiffusing.end(),
+                                       [name](std::tuple<std::string, int, double> element) { return std::get<0>(element) == name ? true : false; });
+                if(it == chemSR.speciesDiffusing.end()) {
+                    std::cout << "A diffusing species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                productSpecies.push_back(protoCompartment.findSpeciesByName(name));
+            }
+            else {
+                std::cout << "All reactants and products in a general reaction must be bulk or diffusing. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        ///add the reaction
+        std::vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        
+        ReactionBase* rxn;
+        ///create the reaction
+        if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
+            rxn = new Reaction<1,1>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
+            rxn = new Reaction<2,1>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
+            rxn = new Reaction<1,2>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
+            rxn = new Reaction<2,0>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 0 && productSpecies.size() == 2)
+            rxn = new Reaction<0,2>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
+            rxn = new Reaction<2,2>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
+            rxn = new Reaction<1,3>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
+            rxn = new Reaction<2,3>(species, std::get<2>(r));
+        else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
+            rxn = new Reaction<3,2>(species, std::get<2>(r));
+        else {
+            std::cout << "General reaction specified does not match any existing templates. Exiting" <<std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///add to chemsim
+        protoCompartment.addInternalReactionUnique(std::unique_ptr<ReactionBase>(rxn));
+        ChemSim::addReaction(ChemSimReactionKey(), rxn);
+    }
+
+}
+
+
 void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     
     ///Copy all species from chemSR struct
-    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd; _speciesMinusEnd = chemSR.speciesMinusEnd;
-    
-    ///add bound, linkers and motors
-    _speciesBound = chemSR.speciesBound; _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
+    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
+    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
+    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
@@ -781,7 +986,10 @@ void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     for(auto &sd : chemSR.speciesDiffusing)
         cProto.addSpeciesDiffusing(std::get<0>(sd), std::get<1>(sd), std::get<2>(sd));
     
-    ///initialize all compartments with species diffusing
+    ///add general reactions to protocompartment
+    generateGeneralReactions(chemSR, cProto);
+    
+    ///initialize all compartments equivalent to cproto
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         *C = cProto;
@@ -797,9 +1005,9 @@ void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     CompartmentGrid::Instance(compartmentGridKey())->addChemSimReactions();
     
     ///create filament reaction templates
-    createFilamentReactionTemplates(chemSR);
+    generateFilamentReactionTemplates(chemSR);
     ///create cross filament reaction templates
-    createCrossFilamentReactionTemplates(chemSR);
+    generateCrossFilamentReactionTemplates(chemSR);
 }
 
 CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,

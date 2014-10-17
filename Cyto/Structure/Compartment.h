@@ -42,7 +42,6 @@ class BoundaryElement;
 class Compartment : public Composite {
 protected:
     ///Reaction-diffusion components
-    
     SpeciesPtrContainerVector _species;  ///< Container with all species in this compartment
     ReactionPtrContainerVector _internal_reactions; ///< Container with all internal reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
@@ -51,9 +50,9 @@ protected:
     
     ///Element containers, makes it easy to generate neighbors lists for cylinders, beads, boundary elements
     
-    std::set<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
-    std::set<Bead*> _beads; ///<vector of beads that are in this compartment
-    std::set<Cylinder*> _cylinders; ///vector of cylinders that are in this compartment
+    std::unordered_set<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
+    std::unordered_set<Bead*> _beads; ///<vector of beads that are in this compartment
+    std::unordered_set<Cylinder*> _cylinders; ///vector of cylinders that are in this compartment
 
     bool _activated = false; ///< the compartment is activated for diffusion
     

@@ -28,7 +28,7 @@ class BoundaryElement {
 protected:
     
     Compartment* _compartment; ///< Compartment that this boundary element is currently in
-    std::set<Bead*> _beads; ///< Beads that this boundary element could interact with
+    std::vector<Bead*> _beads; ///< Beads that this boundary element could interact with
     
     std::vector<double> _coords; ///< coordinates of this boundary element
     std::vector<double> _normal; ///< normal vector to this boundary element
@@ -49,16 +49,14 @@ public:
     virtual ~BoundaryElement() noexcept {
         ///remove from compartment
         _compartment->removeBoundaryElement(this);
-        ///remove from neighbors
-        for (auto &be : _neighbors) be->removeNeighbor(this);
     }
     
     ///add a bead to list of interacting beads
-    void addBead(Bead* b) {_beads.insert(b);}
+    void addBead(Bead* b) {_beads.push_back(b);}
     ///Remove a bead from list of interacting beads
     ///@note does nothing if bead is not in interacting list already
     void removeBead(Bead* b) {
-        auto it = _beads.find(b);
+        auto it = std::find(_beads.begin(), _beads.end(), b);
         if(it != _beads.end()) _beads.erase(it);
     }
     
@@ -69,9 +67,7 @@ public:
     const std::vector<double>& coords() {return _coords;}
     const std::vector<double>& normal() {return _normal;}
     ///return set of beads
-    const std::set<Bead*>& beads() {return _beads;}
-    ///return set of neighbors
-    const std::set<BoundaryElement*>& neighbors() {return _neighbors;}
+    const std::vector<Bead*>& beads() {return _beads;}
     
     ///Implement for all boundary elements
     virtual double distance(const std::vector<double>& point) = 0;

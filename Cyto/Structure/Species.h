@@ -433,7 +433,7 @@ public:
 /// Contains a pointer to a CBound object that this represents.
 class SpeciesBound : public Species {
     
-private:
+protected:
     CBound* _cBound = nullptr; ///< CBound object
     
 public:

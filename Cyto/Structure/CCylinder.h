@@ -16,7 +16,6 @@
 #include "CMonomer.h"
 #include "SystemParameters.h"
 
-class ChemSimReactionKey;
 class Cylinder;
 
 /// CCylinder class holds all CMonomers and reactions associated with its species
@@ -39,9 +38,9 @@ protected:
     std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder
     
     ///REACTION CONTAINERS
-    std::vector<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
-    std::vector<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
-    std::map<CCylinder*, std::vector<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
+    std::unordered_set<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
+    std::unordered_set<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
+    std::unordered_map<CCylinder*, std::vector<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     
     Compartment* _compartment; ///< compartment this ccylinder is in
 
@@ -115,10 +114,10 @@ public:
     void removeAllReactingCylinders();
     
     ///Get list of reactions associated with this CCylinder
-    const std::vector<ReactionBase*>& getInternalReactions() {return _internalReactions;}
+    const std::unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
+    const std::unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     ///Get map of reactions associated with this CCylinder and others
-    std::map<CCylinder*, std::vector<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
-    const std::vector<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
+    std::unordered_map<CCylinder*, std::vector<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
     
     ///Update all reactions associated with this CCylinder
     void updateReactions();

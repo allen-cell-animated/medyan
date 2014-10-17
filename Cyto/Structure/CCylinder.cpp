@@ -46,27 +46,33 @@ CCylinder::~CCylinder()
     ///Remove all species
     for(auto &m: _monomers) {
         
-        for(int i = 0; i < NUMSPECIESFILAMENT; i++) {
+        short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+        for(int i = 0; i < numFilamentSpecies; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < NUMSPECIESPLUSEND; i++) {
+        short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+        for(int i = 0; i < numPlusEndSpecies; i++) {
             SpeciesPlusEnd* s = m->speciesPlusEnd(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < NUMSPECIESMINUSEND; i++) {
+        short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+        for(int i = 0; i < numMinusEndSpecies; i++) {
             SpeciesMinusEnd* s = m->speciesMinusEnd(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < NUMSPECIESBOUND; i++) {
+        short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+        for(int i = 0; i < numBoundSpecies; i++) {
             SpeciesBound* s = m->speciesBound(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < NUMSPECIESLINKER; i++) {
+        short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+        for(int i = 0; i < numLinkerSpecies; i++) {
             SpeciesLinker* s = m->speciesLinker(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < NUMSPECIESMOTOR; i++) {
+        short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+        for(int i = 0; i < numMotorSpecies; i++) {
             SpeciesMotor* s = m->speciesMotor(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
@@ -80,7 +86,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     ChemSim::addReaction(ChemSimReactionKey(), r);
     
     ///add to local reaction list
-    _internalReactions.push_back(r);
+    _internalReactions.insert(r);
 }
 
 void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
@@ -94,7 +100,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     other->addReactingCylinder(this);
 }
 
-void CCylinder::addReactingCylinder(CCylinder* other) { _reactingCylinders.push_back(other);}
+void CCylinder::addReactingCylinder(CCylinder* other) { _reactingCylinders.insert(other);}
 
 
 void CCylinder::removeInternalReaction(ReactionBase* r) {
@@ -103,7 +109,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
     ChemSim::removeReaction(ChemSimReactionKey(), r);
     
     ///remove from internal reaction list
-    auto it = std::find(_internalReactions.begin(), _internalReactions.end(), r);
+    auto it = _internalReactions.find(r);
     if (it != _internalReactions.end()) _internalReactions.erase(it);
 }
 
@@ -127,7 +133,7 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     _crossCylinderReactions.erase(other);
     
     ///also remove from reacting list of other ccylinder
-    auto it = std::find(other->_reactingCylinders.begin(), other->_reactingCylinders.end(), this);
+    auto it = other->_reactingCylinders.find(this);
     if(it != other->_reactingCylinders.end()) other->_reactingCylinders.erase(it);
 }
 
@@ -142,7 +148,7 @@ void CCylinder::removeAllCrossCylinderReactions() {
         }
         
         ///also remove from list of other ccylinder
-        auto it2 = std::find(it->first->_reactingCylinders.begin(), it->first->_reactingCylinders.end(), this);
+        auto it2 = it->first->_reactingCylinders.find(this);
         if(it2 != it->first->_reactingCylinders.end()) it->first->_reactingCylinders.erase(it2);
     }
     _crossCylinderReactions.clear();

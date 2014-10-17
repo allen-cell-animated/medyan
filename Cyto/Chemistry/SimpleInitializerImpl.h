@@ -34,11 +34,11 @@ private:
     std::vector<std::string> _speciesMotor;
     
     ///Set up all reaction templates from chemsetup struct
-    void createFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
-    void createCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    void generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    void generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
     ///Generate the general, non-filament reactions
-    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR);
+    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment);
     
 public:
     ///initialize the chemical reaction templates and species in this system

@@ -24,7 +24,7 @@ Bead::Bead (std::vector<double> v, int ID): coordinate(v), coordinateAux(v), for
     for (auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         ///If within cutoff, add bead to this boundary element interaction list
         if(be->distance(v) <= SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.insert(be);
+            addBoundaryElement(be);
             be->addBead(this);
         }
     }
@@ -60,14 +60,12 @@ void Bead::updatePosition() {
             _beToRemove.push_back(be); be->removeBead(this);
         }
     }
-    for(auto &be : _beToRemove) 
-        _boundaryElements.erase(_boundaryElements.find(be));
-    
-    
+    for(auto &be : _beToRemove)  removeBoundaryElement(be);
+
     ///add any new interacting boundary elements
     for(auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
         if(be->distance(coordinate) <= SystemParameters::Boundaries().boundaryCutoff) {
-            _boundaryElements.insert(be);
+            addBoundaryElement(be);
             be->addBead(this);
         }
     }

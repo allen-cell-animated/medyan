@@ -15,7 +15,7 @@
 #include "Species.h"
 #include "Compartment.h"
 
-/// CMonomer class represents a container template for all species that could be contained in a
+/// CMonomer class represents a container for all species that could be contained in a
 /// particular filament element at a given position.
 /*!
  *  CMonomer provides a container to hold all species that are possibly held at a given
@@ -25,16 +25,16 @@
 class CMonomer {
     
     ///Species arrays
-    SpeciesFilament* _speciesFilament[NUMSPECIESFILAMENT];
-    SpeciesPlusEnd*  _speciesPlusEnd[NUMSPECIESPLUSEND];
-    SpeciesMinusEnd* _speciesMinusEnd[NUMSPECIESMINUSEND];
+    SpeciesFilament** _speciesFilament;
+    SpeciesPlusEnd**  _speciesPlusEnd;
+    SpeciesMinusEnd** _speciesMinusEnd;
     
-    SpeciesBound*  _speciesBound[NUMSPECIESBOUND];
-    SpeciesLinker* _speciesLinker[NUMSPECIESLINKER];
-    SpeciesMotor*  _speciesMotor[NUMSPECIESMOTOR];
+    SpeciesBound**  _speciesBound;
+    SpeciesLinker** _speciesLinker;
+    SpeciesMotor**  _speciesMotor;
     
 public:
-    ///Constructor does nothing but reset arrays
+    ///Constructor does nothing but memset arrays
     CMonomer();
     
     ///Default destructor
@@ -54,6 +54,7 @@ public:
         return new CMonomer(*this, c);
     }
     ///Add a species
+    ///@note should only be called at initialization
     void addSpeciesFilament(SpeciesFilament* s);
     void addSpeciesPlusEnd(SpeciesPlusEnd* s);
     void addSpeciesMinusEnd(SpeciesMinusEnd* s);
@@ -70,7 +71,6 @@ public:
     SpeciesFilament* speciesFilament(int index) {return _speciesFilament[index];}
     SpeciesPlusEnd* speciesPlusEnd(int index) {return _speciesPlusEnd[index];}
     SpeciesMinusEnd* speciesMinusEnd(int index) {return _speciesMinusEnd[index];}
-    
     SpeciesBound* speciesBound(int index) {return _speciesBound[index];}
     SpeciesLinker* speciesLinker(int index) {return _speciesLinker[index];}
     SpeciesMotor* speciesMotor(int index) {return _speciesMotor[index];}

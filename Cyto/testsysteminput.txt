@@ -83,6 +83,16 @@ CALGORITHM:                  NRM
 NUMSTEPS:                    20
 NUMSTEPSPERM:                2
 
+NUMBULKSPECIES:              1
+NUMDIFFUSINGSPECIES:         1
+NUMFILAMENTSPECIES:          1
+NUMPLUSENDSPECIES:           1
+NUMMINUSENDSPECIES:          1
+NUMBOUNDSPECIES:             1
+NUMLINKERSPECIES:            1
+NUMMOTORSPECIES:             1
+
+
 ##################################################
 ################### FILAMENTS ####################
 

@@ -11,6 +11,118 @@
 
 
 ///CHEMISTRY PARSER
+
+void SystemParser::readChemistryParameters() {
+    
+
+    ChemistryParameters CParams;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    std::string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != std::string::npos) { continue; }
+        
+        if (line.find("NUMBULKSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numBulkSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+        
+        if (line.find("NUMDIFFUSINGSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numDiffusingSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+    
+        if (line.find("NUMFILAMENTSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numFilamentSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+    
+        if (line.find("NUMPLUSENDSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numPlusEndSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("NUMMINUSENDSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numMinusEndSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("NUMBOUNDSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numBoundSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("NUMLINKERSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numLinkerSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("NUMMOTORSPECIES") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CParams.numMotorSpecies = std::atof(lineVector[1].c_str());
+            }
+        }
+    }
+    ///set system parameters
+    SystemParameters::CParams = CParams;
+}
+
+
+
 ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     
     _inputFile.clear();
@@ -251,7 +363,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -275,7 +387,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -286,7 +398,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -299,7 +411,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -310,7 +422,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -447,7 +559,7 @@ void SystemParser::readMechanicsParameters() {
             
             std::vector<std::string> lineVector = split<std::string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Volume parameters. Exiting" << std::endl;
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -869,7 +981,7 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
             std::vector<std::string> products;
             
             std::vector<std::string> lineVector = split<std::string>(line);
-            
+   
             auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
             
@@ -882,7 +994,7 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                 }
                 
                 chemSR.generalReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                        (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {

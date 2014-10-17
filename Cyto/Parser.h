@@ -157,6 +157,7 @@ public:
     
     ///Parameter parsers. These read input directly into system parameters
     void readMechanicsParameters();
+    void readChemistryParameters();
     void readGeometryParameters();
     void readBoundaryParameters();
     
