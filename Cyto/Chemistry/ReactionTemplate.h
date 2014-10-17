@@ -117,27 +117,27 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
-class LinkerUnbindingTemplate : public ReactionFilamentTemplate {
+class BindingTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    LinkerUnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+    BindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
                             std::vector<std::tuple<int, SpeciesType>> products,
                             float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
-    ~LinkerUnbindingTemplate() {}
+    ~BindingTemplate() {}
     
     virtual void addReaction(CCylinder* cc1, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
 };
 
-class MotorUnbindingTemplate : public ReactionFilamentTemplate {
+class UnbindingTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    MotorUnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+    UnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
                            std::vector<std::tuple<int, SpeciesType>> products,
                            float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
-    ~MotorUnbindingTemplate() {}
+    ~UnbindingTemplate() {}
     
     virtual void addReaction(CCylinder* cc1, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};

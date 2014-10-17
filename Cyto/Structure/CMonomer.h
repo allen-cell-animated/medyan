@@ -41,7 +41,7 @@ public:
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
-    virtual ~CMonomer () noexcept {};
+    virtual ~CMonomer () noexcept;
     
     /// Copy constructor
     /// This constructor will create a new CMonomer, identical to the copied, in a new compartment. The

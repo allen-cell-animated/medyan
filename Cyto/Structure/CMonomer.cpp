@@ -37,6 +37,16 @@ CMonomer::CMonomer() {
 
 };
 
+CMonomer::~CMonomer() noexcept{
+    
+    delete[] _speciesFilament;
+    delete[] _speciesPlusEnd;
+    delete[] _speciesMinusEnd;
+    delete[] _speciesBound;
+    delete[] _speciesLinker;
+    delete[] _speciesMotor;
+}
+
 
 CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
     
