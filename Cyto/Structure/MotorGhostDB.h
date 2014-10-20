@@ -50,9 +50,9 @@ public:
     
     static MotorGhostDB* Instance(MotorGhostDBKey k);
     
-    void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2) {
+    void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1 = 0.5, double position2 = 0.5) {
     
-        MotorGhost* pmg = new MotorGhost(pc1, pc2, k, position1, position2);
+        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, position1, position2);
         push_back(pmg);
         
         //return pmg;

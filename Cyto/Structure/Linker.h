@@ -13,10 +13,6 @@
 #include "Composite.h"
 #include "CLinker.h"
 #include "MLinker.h"
-#include "Cylinder.h"
-
-class Compartment;
-class SpeciesBound;
 
 ///Linker class is a wrapper for a chemical and mechanical linker
 /*!
@@ -36,8 +32,13 @@ private:
     double _position1; ///< position on first cylinder
     double _position2; ///< position on second cylinder
     
+    short _linkerType; ///integer ID specifying the type of linker
+    
+    Compartment* _compartment; ///< Compartment that this linker is in
+    
+    
 public:
-    Linker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1, double position2);
+    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
     ~Linker() {}
     
     ///get cylinders

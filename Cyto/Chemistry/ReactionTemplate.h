@@ -18,6 +18,8 @@ enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
 };
 
+class SubSystem;
+
 ///ReactionFilamentTemplate is a class to store filament chemical reaction information read from an input file
 /*!
  *  ReactionFilamentTemplate is used to store a filament reaction. It contains vectors of tuples that represent
@@ -33,7 +35,11 @@ enum FilamentReactionDirection {
 
 class ReactionFilamentTemplate {
     
+    friend class SimpleInitializerImpl;
+    
 protected:
+    static SubSystem* _ps;
+    
     ///Species identifier vectors
     std::vector<std::tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
     std::vector<std::tuple<int,SpeciesType>> _products; ///< products in this reaction
@@ -117,14 +123,14 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
-class BindingTemplate : public ReactionFilamentTemplate {
+class BasicBindingTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    BindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                            std::vector<std::tuple<int, SpeciesType>> products,
-                            float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
-    ~BindingTemplate() {}
+    BasicBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                         std::vector<std::tuple<int, SpeciesType>> products,
+                         float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~BasicBindingTemplate() {}
     
     virtual void addReaction(CCylinder* cc1, Filament* pf);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
@@ -159,8 +165,12 @@ public:
  */
 
 class ReactionCrossFilamentTemplate {
+
+    friend class SimpleInitializerImpl;
     
 protected:
+    static SubSystem* _ps;
+    
     ///Species identifier vectors
     std::vector<std::tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
     std::vector<std::tuple<int,SpeciesType>> _products; ///< products in this reaction
@@ -204,9 +214,6 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-
-///ReactionBulkTemplate is a class to store bulk chemical reaction information read from an input file
-class ReactionBulkTemplate;
 
 
 #endif /* defined(__Cyto__ReactionTemplate__) */

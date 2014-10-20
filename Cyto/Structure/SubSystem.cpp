@@ -8,8 +8,6 @@
 
 #include "SubSystem.h"
 
-#include "BeadDB.h"
-#include "CylinderDB.h"
 #include "FilamentDB.h"
 #include "MotorGhostDB.h"
 #include "LinkerDB.h"
@@ -24,40 +22,33 @@ void SubSystem::AddNewFilaments(vector<vector<vector<double> >>& v){
 }
 
 /// Add many linkers:
-void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* >>& v){
+void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* >>& v, short linkerType){
     
     for (auto it: v) {
-        ///find compartment
-        auto m1 = MidPointCoordinate(it[0]->GetFirstBead()->coordinate, it[0]->GetSecondBead()->coordinate, 0.5);
-        auto m2 = MidPointCoordinate(it[1]->GetFirstBead()->coordinate, it[1]->GetSecondBead()->coordinate, 0.5);
-        auto position = MidPointCoordinate(m1, m2, 0.5);
-        
-        Compartment* c;
-        try {c = GController::getCompartment(position);}
-        catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
-        
         //Call Linkers constructor
-        LinkerDB::Instance(LinkerDBKey())->CreateLinker(it[0], it[1], c);
+        LinkerDB::Instance(LinkerDBKey())->CreateLinker(it[0], it[1], linkerType);
     }
     
 }
 /// Add a linker
-void SubSystem::AddNewLinker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1, double position2){
+void SubSystem::AddNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2){
     
-    LinkerDB::Instance(LinkerDBKey())->CreateLinker(pc1, pc2, c, position1, position2);  //Call Linker constructor
+    LinkerDB::Instance(LinkerDBKey())->CreateLinker(pc1, pc2, linkerType, position1, position2);  //Call Linker constructor
 }
 
 /// Add many motor ghosts:
-void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* >>& v, double k, double position1, double position2){
+void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* >>& v, short motorType){
     
-    for (auto it: v)
-        MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(it[0], it[1], k, position1, position2);
+    for (auto it: v) {
+        ///Call motors constructor
+        MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(it[0], it[1], motorType);
+    }
 
 }
 /// Add a motor ghost:
-void SubSystem::AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2){
+void SubSystem::AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2){
     
-    MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(pc1, pc2, k, position1, position2);
+    MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(pc1, pc2, motorType, position1, position2);
     
 }
 

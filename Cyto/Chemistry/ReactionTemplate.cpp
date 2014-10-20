@@ -16,6 +16,10 @@
 
 using namespace mathfunc;
 
+SubSystem* ReactionFilamentTemplate::_ps = 0;
+SubSystem* ReactionCrossFilamentTemplate::_ps = 0;
+
+
 void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
     
     ///loop through all monomers of filament
@@ -30,57 +34,53 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                
-                case SpeciesType::BULK: {
-                    reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                                         findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::PLUSEND: {
-                    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-                    break;
-                }
-                default: {}
-            }
-        }
+
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
         
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m1->speciesFilament(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::BOUND: {
-                    productSpecies.push_back(m2->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::PLUSEND: {
-                    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
-                    break;
-                }
-                    
-                default: {}
-            }
+        ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+        if (type == SpeciesType::BULK)
+            reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                                 findSpeciesBulkByMolecule(speciesInt));
+
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
-        
+    
+        ///SECOND REACTANT MUST BE PLUS END
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+    
+        reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+    
+    
+        ///FIRST PRODUCT MUST BE FILAMENT
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+
+        productSpecies.push_back(m1->speciesFilament(speciesInt));
+
+    
+        ///SECOND PRODUCT MUST BE BOUND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+
+        productSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    
+        ///THIRD PRODUCT MUST BE PLUS END
+        p = _products[2];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+    
+        productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+
+        ///callbacks
         FilamentExtensionFrontCallback extCallback(pf);
         FilamentPolymerizationFrontCallback polyCallback(pf);
         
@@ -88,15 +88,15 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<2, 3>(species, _rate);
+        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
 
         if(i == maxlength - 2)
-            boost::signals2::shared_connection_block rcb(r->connect(extCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::POLYMERIZATION);
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::POLYMERIZATION);
     }
 }
 
@@ -115,56 +115,52 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::BULK: {
-                    reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                              findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::MINUSEND: {
-                    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
-                    break;
-                }
-                default: {}
-            }
+        
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+        if (type == SpeciesType::BULK)
+            reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                      findSpeciesBulkByMolecule(speciesInt));
+        
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::FILAMENT: {
-                    productSpecies.push_back(m1->speciesFilament(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::BOUND: {
-                    productSpecies.push_back(m2->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::MINUSEND: {
-                    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
-                    break;
-                }
-                    
-                default: {}
-            }
-        }
+        ///SECOND REACTANT MUST BE MINUS END
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        
+        
+        ///FIRST PRODUCT MUST BE FILAMENT
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m1->speciesFilament(speciesInt));
+        
+        
+        ///SECOND PRODUCT MUST BE BOUND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m2->speciesBound(speciesInt));
+        
+        
+        ///THIRD PRODUCT MUST BE MINUS END
+        p = _products[2];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+        
         
         FilamentExtensionBackCallback extCallback(pf);
         FilamentPolymerizationBackCallback polyCallback(pf);
@@ -172,15 +168,15 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<2, 3>(species, _rate);
+        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
         
         if(i == 1)
-            boost::signals2::shared_connection_block rcb(r->connect(extCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::POLYMERIZATION);
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::POLYMERIZATION);
     }
 
 }
@@ -195,68 +191,65 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     std::vector<Species*> productSpecies;
     
     ///loop through reactants, products. find all species
-    for(auto &r : _reactants) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::BULK: {
-                reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                          findSpeciesBulkByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::DIFFUSING: {
-                Compartment* c = cc1->getCompartment();
-                reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::PLUSEND: {
-                reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-                break;
-            }
-            default: {}
-        }
+
+    
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+    if (type == SpeciesType::BULK)
+        reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                  findSpeciesBulkByMolecule(speciesInt));
+    
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc1->getCompartment();
+        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    for(auto &r: _products) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::FILAMENT: {
-                productSpecies.push_back(m1->speciesFilament(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::BOUND: {
-                productSpecies.push_back(m2->speciesBound(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::PLUSEND: {
-                productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
-                break;
-            }
-                
-            default: {}
-        }
-    }
+    ///SECOND REACTANT MUST BE PLUS END
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+    
+    
+    ///FIRST PRODUCT MUST BE FILAMENT
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m1->speciesFilament(speciesInt));
+    
+    
+    ///SECOND PRODUCT MUST BE BOUND
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    
+    ///THIRD PRODUCT MUST BE PLUS END
+    p = _products[2];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+
     
     FilamentPolymerizationFrontCallback polyCallback(pf);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* r = new Reaction<2, 3>(species, _rate);
+    ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
     
-    cc1->addCrossCylinderReaction(cc2, r);
-    r->setReactionType(ReactionType::POLYMERIZATION);
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::POLYMERIZATION);
 }
 
 void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
@@ -267,68 +260,62 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2,
     std::vector<Species*> productSpecies;
     
     ///loop through reactants, products. find all species
-    for(auto &r : _reactants) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::BULK: {
-                reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                          findSpeciesBulkByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::DIFFUSING: {
-                Compartment* c = cc2->getCompartment();
-                reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::MINUSEND: {
-                reactantSpecies.push_back(m2->speciesMinusEnd(speciesInt));
-                break;
-            }
-            default: {}
-        }
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+    if (type == SpeciesType::BULK)
+        reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                  findSpeciesBulkByMolecule(speciesInt));
+    
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc2->getCompartment();
+        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    for(auto &r: _products) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::FILAMENT: {
-                productSpecies.push_back(m2->speciesFilament(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::BOUND: {
-                productSpecies.push_back(m1->speciesBound(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::MINUSEND: {
-                productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
-                break;
-            }
-                
-            default: {}
-        }
-    }
+    ///SECOND REACTANT MUST BE MINUS END
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
     
+    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+    
+    
+    ///FIRST PRODUCT MUST BE FILAMENT
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m1->speciesFilament(speciesInt));
+    
+    
+    ///SECOND PRODUCT MUST BE BOUND
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    
+    ///THIRD PRODUCT MUST BE MINUS END
+    p = _products[2];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+
     FilamentPolymerizationBackCallback polyCallback(pf);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* r = new Reaction<2, 3>(species, _rate);
+    ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(r->connect(polyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
     
-    cc2->addCrossCylinderReaction(cc1, r);
-    r->setReactionType(ReactionType::POLYMERIZATION);
+    cc2->addCrossCylinderReaction(cc1, rxn);
+    rxn->setReactionType(ReactionType::POLYMERIZATION);
 }
 
 
@@ -346,55 +333,48 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::FILAMENT: {
-                    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::BOUND: {
-                    reactantSpecies.push_back(m1->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::PLUSEND: {
-                    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-                    break;
-                }
-                default: {}
-            }
+        
+        ///FIRST REACTANT  MUST BE FILAMENT
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+        
+        ///SECOND REACTANT MUST BE BOUND
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesBound(speciesInt));
+        
+        ///THIRD REACTANT MUST BE PLUSEND
+        r = _reactants[2];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+
+        reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+
+        
+        ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        if( type == SpeciesType::BULK)
+            productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                      findSpeciesBulkByMolecule(speciesInt));
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::BULK: {
-                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                              findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::PLUSEND: {
-                    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
-                    break;
-                }
-                default: {}
-            }
-        }
+        ///SECOND PRODUCT SPECIES MUST BE PLUS END
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
         
         FilamentRetractionFrontCallback retCallback(pf);
         FilamentDepolymerizationFrontCallback depolyCallback(pf);
@@ -402,15 +382,15 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<3, 2>(species, _rate);
+        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
         if(i == maxlength - 1)
-            boost::signals2::shared_connection_block rcb(r->connect(retCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
         
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::DEPOLYMERIZATION);
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
     }
 
 
@@ -430,56 +410,48 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
         std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::FILAMENT: {
-                    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::BOUND: {
-                    reactantSpecies.push_back(m1->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                case SpeciesType::MINUSEND: {
-                    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
-                    break;
-                }
-                default: {}
-            }
+ 
+        ///FIRST REACTANT  MUST BE FILAMENT
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+        
+        ///SECOND REACTANT MUST BE BOUND
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesBound(speciesInt));
+        
+        ///THIRD REACTANT MUST BE MINUSEND
+        r = _reactants[2];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        
+        
+        ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        if( type == SpeciesType::BULK)
+            productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                     findSpeciesBulkByMolecule(speciesInt));
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::BULK: {
-                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                             findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::MINUSEND: {
-                    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
-                    break;
-                }
-                    
-                default: {}
-            }
-        }
+        ///SECOND PRODUCT SPECIES MUST BE MINUSEND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
         FilamentRetractionBackCallback retCallback(pf);
         FilamentDepolymerizationBackCallback depolyCallback(pf);
@@ -487,16 +459,16 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<3, 2>(species, _rate);
+        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
         if(i == 0)
-            boost::signals2::shared_connection_block rcb(r->connect(retCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
+            boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
             
         
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::DEPOLYMERIZATION);
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
     }
 }
 
@@ -509,68 +481,61 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
     std::vector<Species*> productSpecies;
     
     ///loop through reactants, products. find all species
-    for(auto &r : _reactants) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::FILAMENT: {
-                reactantSpecies.push_back(m1->speciesFilament(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::BOUND: {
-                reactantSpecies.push_back(m2->speciesBound(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::PLUSEND: {
-                reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
-                break;
-            }
-            default: {}
-        }
+    
+    ///FIRST REACTANT  MUST BE FILAMENT
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+    
+    ///SECOND REACTANT MUST BE BOUND
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesBound(speciesInt));
+    
+    ///THIRD REACTANT MUST BE PLUSEND
+    r = _reactants[2];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+    
+    
+    ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    if( type == SpeciesType::BULK)
+        productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                 findSpeciesBulkByMolecule(speciesInt));
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc2->getCompartment();
+        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    for(auto &r: _products) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-                
-            case SpeciesType::BULK: {
-                productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                          findSpeciesBulkByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::DIFFUSING: {
-                Compartment* c = cc2->getCompartment();
-                productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::PLUSEND: {
-                productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-                break;
-            }
-                
-            default: {}
-        }
-    }
+    ///SECOND PRODUCT SPECIES MUST BE PLUS END
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+
+    
     FilamentDepolymerizationFrontCallback depolyCallback(pf);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* r = new Reaction<3, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
     
-    cc2->addCrossCylinderReaction(cc1, r);
-    r->setReactionType(ReactionType::DEPOLYMERIZATION);
+    cc2->addCrossCylinderReaction(cc1, rxn);
+    rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
 
 }
 
@@ -582,72 +547,63 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
     std::vector<Species*> productSpecies;
     
     ///loop through reactants, products. find all species
-    for(auto &r : _reactants) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-            case SpeciesType::FILAMENT: {
-                reactantSpecies.push_back(m2->speciesFilament(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::BOUND: {
-                reactantSpecies.push_back(m1->speciesBound(speciesInt));
-                break;
-            }
-                
-            case SpeciesType::MINUSEND: {
-                reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
-                break;
-            }
-            default: {}
-        }
+    ///FIRST REACTANT  MUST BE FILAMENT
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+    
+    ///SECOND REACTANT MUST BE BOUND
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesBound(speciesInt));
+    
+    ///THIRD REACTANT MUST BE MINUSEND
+    r = _reactants[2];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+    
+    
+    ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    if( type == SpeciesType::BULK)
+        productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                 findSpeciesBulkByMolecule(speciesInt));
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc1->getCompartment();
+        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    for(auto &r: _products) {
-        
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        switch(type) {
-                
-                
-            case SpeciesType::BULK: {
-                productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                         findSpeciesBulkByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::DIFFUSING: {
-                Compartment* c = cc1->getCompartment();
-                productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                break;
-            }
-            case SpeciesType::MINUSEND: {
-                productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
-                break;
-            }
-                
-            default: {}
-        }
-    }
+    ///SECOND PRODUCT SPECIES MUST BE MINUSEND
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
     
     FilamentDepolymerizationBackCallback depolyCallback(pf);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* r = new Reaction<3, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(r->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
     
-    cc1->addCrossCylinderReaction(cc2, r);
-    r->setReactionType(ReactionType::DEPOLYMERIZATION);
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
 }
 
-void LinkerUnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
+
+void BasicBindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
     
     ///loop through all monomers of filament
     int maxlength = cc->size();
@@ -658,114 +614,119 @@ void LinkerUnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         CMonomer* m1 = cc->getCMonomer(i);
         std::vector<Species*> reactantSpecies;
         std::vector<Species*> productSpecies;
+    
+        ///FIRST REACTANT SHOULD BE BOUND
+        auto r = _reactants[0];
+        auto type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesBound(speciesInt));
+        
+        ///SECOND REACTANT MUST BE BULK OR DIFFUSING
+        r = _reactants[0];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        if (type == SpeciesType::BULK)
+            reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                      findSpeciesBulkByMolecule(speciesInt));
+        
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        }
+        
+        ///FIRST PRODUCT MUST BE BOUND SPECIES
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m1->speciesBound(speciesInt));
+        
+    
+        ///Add the reaction
+        std::vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn = new Reaction<1, 2>(species, _rate);
+        
+        //boost::signals2::shared_connection_block rcb(rxn->connect(bindingCallback,false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::BASICBINDING);
+    }
+}
+
+
+void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
+    
+    ///loop through all monomers of filament
+    int maxlength = cc->size();
+    
+    ///loop through all monomers
+    for(int i = 0; i < maxlength - 1; i++) {
+        
+        SpeciesType boundType; ReactionType reactionType;
+        
+        CMonomer* m1 = cc->getCMonomer(i);
+        std::vector<Species*> reactantSpecies;
+        std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            int speciesInt = std::get<0>(r);
 
+        ///FIRST REACTANT SHOULD BE LINKER, MOTOR, OR BOUND
+        auto r = _reactants[0];
+        auto type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+
+        boundType = type;
+        
+        if(type == SpeciesType::LINKER) {
             reactantSpecies.push_back(m1->speciesLinker(speciesInt));
+            reactionType = ReactionType::LINKERUNBINDING;
         }
-        
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::BULK: {
-                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                             findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::BOUND: {
-                    productSpecies.push_back(m1->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                default: {}
-            }
-        }
-        LinkerUnbindingCallback unbindingCallback(cc);
-        
-        ///Add the reaction. If it needs a callback then attach
-        std::vector<Species*> species = reactantSpecies;
-        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<1, 2>(species, _rate);
-        
-        boost::signals2::shared_connection_block rcb(r->connect(unbindingCallback,false));
-        
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::LINKERUNBINDING);
-    }   
-}
-
-void MotorUnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
-    
-    ///loop through all monomers of filament
-    int maxlength = cc->size();
-    
-    ///loop through all monomers
-    for(int i = 0; i < maxlength - 1; i++) {
-        
-        CMonomer* m1 = cc->getCMonomer(i);
-        std::vector<Species*> reactantSpecies;
-        std::vector<Species*> productSpecies;
-        
-        ///loop through reactants, products. find all species
-        for(auto &r : _reactants) {
-            
-            int speciesInt = std::get<0>(r);
-            
+        else if(type == SpeciesType::MOTOR) {
             reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+            reactionType = ReactionType::MOTORUNBINDING;
+        }
+        else {
+            reactantSpecies.push_back(m1->speciesBound(speciesInt));
+            reactionType = ReactionType::BASICUNBINDING;
         }
         
-        for(auto &r: _products) {
-            
-            SpeciesType type = std::get<1>(r);
-            int speciesInt = std::get<0>(r);
-            
-            switch(type) {
-                    
-                case SpeciesType::BULK: {
-                    productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                             findSpeciesBulkByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::DIFFUSING: {
-                    Compartment* c = cc->getCompartment();
-                    productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                    break;
-                }
-                case SpeciesType::BOUND: {
-                    productSpecies.push_back(m1->speciesBound(speciesInt));
-                    break;
-                }
-                    
-                default: {}
-            }
+        ///FIRST PRODUCT SHOULD BE BULK OR DIFFUSING
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        if(type == SpeciesType::BULK)
+            productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                     findSpeciesBulkByMolecule(speciesInt));
+        
+        else if(type == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
-        MotorUnbindingCallback unbindingCallback(cc);
+        
+        ///SECOND PRODUCT SHOULD BE BOUND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m1->speciesBound(speciesInt));
+        
+        UnbindingCallback unbindingCallback(cc);
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* r = new Reaction<1, 2>(species, _rate);
+        ReactionBase* rxn = new Reaction<1, 2>(species, _rate);
         
-        boost::signals2::shared_connection_block rcb(r->connect(unbindingCallback,false));
+        boost::signals2::shared_connection_block rcb(rxn->connect(unbindingCallback,false));
         
-        cc->addInternalReaction(r);
-        r->setReactionType(ReactionType::MOTORUNBINDING);
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(reactionType);
     }   
 }
-
-
 
 
 void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -797,56 +758,63 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 std::vector<Species*> reactantSpecies;
                 std::vector<Species*> productSpecies;
                 
-                int firstBound = 0;
                 ///loop through reactants, products. find all species
-                for(auto &r : _reactants) {
-                    
-                    SpeciesType type = std::get<1>(r);
-                    int speciesInt = std::get<0>(r);
-                    
-                    switch(type) {
-                            
-                        case SpeciesType::BULK: {
-                            reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                                      findSpeciesBulkByMolecule(speciesInt));
-                            break;
-                        }
-                        case SpeciesType::DIFFUSING: {
-                            Compartment* c = cc1->getCompartment();
-                            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                            break;
-                        }
-                        case SpeciesType::BOUND: {
-                            
-                            if(firstBound == 0) reactantSpecies.push_back(m1->speciesBound(speciesInt));
-                            else reactantSpecies.push_back(m2->speciesBound(speciesInt));
-                            firstBound++;
-                            break;
-                        }
-                        default: {}
-                    }
-                }
-                firstBound = 0;
-                for(auto &r: _products) {
 
-                    int speciesInt = std::get<0>(r);
+                ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+                auto r = _reactants[0];
+                SpeciesType type = std::get<1>(r);
+                int speciesInt = std::get<0>(r);
+                
+                reactantSpecies.push_back(m1->speciesBound(speciesInt));
 
-                    if(firstBound == 0) productSpecies.push_back(m1->speciesBound(speciesInt));
-                    else productSpecies.push_back(m2->speciesBound(speciesInt));
+                r = _reactants[1];
+                type = std::get<1>(r);
+                speciesInt = std::get<0>(r);
+                
+                reactantSpecies.push_back(m2->speciesBound(speciesInt));
+                
+                ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+                
+                r = _reactants[2];
+                type = std::get<1>(r);
+                speciesInt = std::get<0>(r);
+
+                if(type == SpeciesType::BULK)
+                   reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                             findSpeciesBulkByMolecule(speciesInt));
+
+                else if(type == SpeciesType::DIFFUSING) {
+                    Compartment* c = cc1->getCompartment();
+                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                 }
+
+                
+                ///FIRST AND SECOND PRODUCT SHOULD BE LINKER
+                auto p = _products[0];
+                type = std::get<1>(p);
+                speciesInt = std::get<0>(p);
+                short linkerNumber = speciesInt;
+                
+                productSpecies.push_back(m1->speciesLinker(speciesInt));
+                
+                p = _products[1];
+                type = std::get<1>(p);
+                speciesInt = std::get<0>(p);
+                
+                productSpecies.push_back(m2->speciesLinker(speciesInt));
        
                 ///set up callbacks
-                LinkerBindingCallback lcallback(int linkerNumber, cc1, cc2, system);
+                LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(), linkerNumber, i, j, _ps);
                 
                 ///Add the reaction. If it needs a callback then attach
                 std::vector<Species*> species = reactantSpecies;
                 species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-                ReactionBase* r = new Reaction<3, 2>(species, _rate);
+                ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
                 
-                boost::signals2::shared_connection_block rcb(r->connect(lcallback,false));
+                boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
                 
-                cc1->addCrossCylinderReaction(cc2, r);
-                r->setReactionType(ReactionType::LINKERBINDING);
+                cc1->addCrossCylinderReaction(cc2, rxn);
+                rxn->setReactionType(ReactionType::LINKERBINDING);
             }
         }
     }
@@ -881,59 +849,67 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 std::vector<Species*> reactantSpecies;
                 std::vector<Species*> productSpecies;
                 
-                int firstBound = 0;
                 ///loop through reactants, products. find all species
-                for(auto &r : _reactants) {
-                    
-                    SpeciesType type = std::get<1>(r);
-                    int speciesInt = std::get<0>(r);
-                    
-                    switch(type) {
-                            
-                        case SpeciesType::BULK: {
-                            reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
-                                                      findSpeciesBulkByMolecule(speciesInt));
-                            break;
-                        }
-                        case SpeciesType::DIFFUSING: {
-                            Compartment* c = cc1->getCompartment();
-                            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-                            break;
-                        }
-                        case SpeciesType::BOUND: {
-                            
-                            if(firstBound == 0) reactantSpecies.push_back(m1->speciesBound(speciesInt));
-                            else reactantSpecies.push_back(m2->speciesBound(speciesInt));
-                            firstBound++;
-                            break;
-                        }
-                        default: {}
-                    }
-                }
-                firstBound = 0;
-                for(auto &r: _products) {
-                    
-                    int speciesInt = std::get<0>(r);
-                    
-                    if(firstBound == 0) productSpecies.push_back(m1->speciesBound(speciesInt));
-                    else productSpecies.push_back(m2->speciesBound(speciesInt));
+                
+                ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+                auto r = _reactants[0];
+                SpeciesType type = std::get<1>(r);
+                int speciesInt = std::get<0>(r);
+                
+                reactantSpecies.push_back(m1->speciesBound(speciesInt));
+                
+                r = _reactants[1];
+                type = std::get<1>(r);
+                speciesInt = std::get<0>(r);
+                
+                reactantSpecies.push_back(m2->speciesBound(speciesInt));
+                
+                ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+                
+                r = _reactants[2];
+                type = std::get<1>(r);
+                speciesInt = std::get<0>(r);
+                
+                if(type == SpeciesType::BULK)
+                    reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->
+                                              findSpeciesBulkByMolecule(speciesInt));
+                
+                else if(type == SpeciesType::DIFFUSING) {
+                    Compartment* c = cc1->getCompartment();
+                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                 }
                 
+                
+                ///FIRST AND SECOND PRODUCT SHOULD BE MOTOR
+                auto p = _products[0];
+                type = std::get<1>(p);
+                speciesInt = std::get<0>(p);
+                int linkerNumber = speciesInt;
+                
+                productSpecies.push_back(m1->speciesMotor(speciesInt));
+                
+                p = _products[1];
+                type = std::get<1>(p);
+                speciesInt = std::get<0>(p);
+                
+                productSpecies.push_back(m2->speciesMotor(speciesInt));
+                
                 ///set up callbacks
-                MotorBindingCallback lcallback(int linkerNumber, cc1, cc2, system);
+                MotorBindingCallback mcallback(linkerNumber, i, j, cc1, cc2, _ps);
                 
                 ///Add the reaction. If it needs a callback then attach
                 std::vector<Species*> species = reactantSpecies;
                 species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-                ReactionBase* r = new Reaction<3, 2>(species, _rate);
+                ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
                 
-                boost::signals2::shared_connection_block rcb(r->connect(lcallback,false));
+                boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
                 
-                cc1->addCrossCylinderReaction(cc2, r);
-                r->setReactionType(ReactionType::MOTORBINDING);
+                cc1->addCrossCylinderReaction(cc2, rxn);
+                rxn->setReactionType(ReactionType::MOTORBINDING);
             }
         }
     }
+    
 }
 
 

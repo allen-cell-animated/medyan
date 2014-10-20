@@ -31,16 +31,15 @@ public:
     /// Add new Filaments. v - coordinates of the first and last bead in the filament.
     void AddNewFilaments(std::vector<std::vector<std::vector<double>>>& v);
     
-    /// Add a linker conecting two beads at initialization
-    void AddNewLinkers(std::vector<std::vector<Cylinder*>> &v);
+    /// Add a linker at initialization
+    void AddNewLinkers(std::vector<std::vector<Cylinder*>> &v, short linkerType);
     /// Add a single linker during runtime
-    void AddNewLinker(Cylinder* pc1, Cylinder* pc2, Compartment* c, double position1, double position2);
+    void AddNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
     
-    /// Add a ghost motor connectind two CG segments (4 beads), providing a stretching constant, and positions
-    /// on each segment.
-    void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, double k, double position1, double position2);
-    //Add many motors. Input: vector of vectors(cyl1, cyl2), pair connected by a motor.
-    void AddNewMotorGhosts(std::vector<std::vector<Cylinder*>>& v, double k, double position1, double position2);
+    //Add many motors at initialization
+    void AddNewMotorGhosts(std::vector<std::vector<Cylinder*>>& v, short motorType);
+    /// Add a motor during runtime
+    void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2);
     
     //System related iterfaces:
     int getSystemSize(); //Return a number of beads;

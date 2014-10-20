@@ -31,7 +31,7 @@ void CController::initialize(std::string& chemAlgorithm, std::string chemInitial
     ///Set the instance of the initializer
     ChemInitializerImpl* cii;
     if(chemInitializer == "SIMPLE") {
-        cii = new SimpleInitializerImpl;
+        cii = new SimpleInitializerImpl(_subSystem);
     }
     else {
         std::cout<< "Initializer type not found. Exiting." <<std::endl;

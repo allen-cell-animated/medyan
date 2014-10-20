@@ -17,14 +17,18 @@
 #include "Parser.h"
 #include "common.h"
 
+class SubSystem;
+
 ///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class
 class SimpleInitializerImpl : public ChemInitializerImpl {
-
-private:
-    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _reactionFilamentTemplates; ///< list of reactions to add to every new CCylinder
-    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _reactionCrossFilamentTemplates; ///<list of cross filament reactions to add to CCylinders
     
-    ///Vectors of all filament, bound, and end species
+private:
+    SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
+    
+    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates; ///< list of reactions to add to every new CCylinder
+    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates; ///<list of cross filament reactions to add to CCylinders
+    
+    ///Vectors of all filament-related species in system
     std::vector<std::string> _speciesFilament;
     std::vector<std::string> _speciesPlusEnd;
     std::vector<std::string> _speciesMinusEnd;
@@ -41,6 +45,8 @@ private:
     void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment);
     
 public:
+    SimpleInitializerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
+    
     ///initialize the chemical reaction templates and species in this system
     ///@param chemSetup - chemistry setup struct from parsed input file
     virtual void initialize(ChemistrySpeciesAndReactions& chemSR);

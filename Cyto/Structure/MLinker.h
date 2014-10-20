@@ -16,9 +16,11 @@
 class Linker;
 
 ///MLinker class represents a cross-link between filaments
-/*!
- *  A MLinker represents a cross link between cylinders. It contains mechanical information, including
- *  constants and a back-pointer to the parent linker object.
+
+/*! The class describes interaction between 4 beads connected by a linker. Initial length of a linker is determinated by the 
+ *  condition of zero initial stress, i.e., it calculated within the constructor at initiation. 
+ *  A linker heads positions on a segment (between two consecutive beads on a filament)
+ *  determined by two numbers (0 to 1) position1 and position2.
  */
 class MLinker {
     

@@ -25,6 +25,10 @@
 		F7472F2619E2E9EA008DA03B /* Linker.h in Headers */ = {isa = PBXBuildFile; fileRef = F7472F2419E2E9EA008DA03B /* Linker.h */; };
 		F7603ED219C08D5700775874 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F722372C19BE1F7C006FAB85 /* Parser.cpp */; };
 		F7603ED319C0918000775874 /* SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */; };
+		F7642D5219F5963D00860365 /* MMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7642D5019F5963D00860365 /* MMotorGhost.cpp */; };
+		F7642D5319F5963D00860365 /* MMotorGhost.h in Headers */ = {isa = PBXBuildFile; fileRef = F7642D5119F5963D00860365 /* MMotorGhost.h */; };
+		F7642D5619F59EF800860365 /* CMotorGhost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7642D5419F59EF800860365 /* CMotorGhost.cpp */; };
+		F7642D5719F59EF800860365 /* CMotorGhost.h in Headers */ = {isa = PBXBuildFile; fileRef = F7642D5519F59EF800860365 /* CMotorGhost.h */; };
 		F777F96719C1E71C00D2850A /* MController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C690A198FEC6800760D20 /* MController.cpp */; };
 		F777F96919C1E71C00D2850A /* GController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F76C691119916CC300760D20 /* GController.cpp */; };
 		F777F97A19C1F32E00D2850A /* ChemGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F96A19C1F32E00D2850A /* ChemGillespieImpl.cpp */; };
@@ -250,6 +254,10 @@
 		F75AE13319BF6C6B00DD7919 /* SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemParameters.h; sourceTree = "<group>"; };
 		F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemParameters.cpp; sourceTree = "<group>"; };
 		F7603ED719C09A2B00775874 /* testfilamentinput.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = testfilamentinput.txt; path = Cyto/testfilamentinput.txt; sourceTree = "<group>"; };
+		F7642D5019F5963D00860365 /* MMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MMotorGhost.cpp; path = Cyto/Structure/MMotorGhost.cpp; sourceTree = SOURCE_ROOT; };
+		F7642D5119F5963D00860365 /* MMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMotorGhost.h; path = Cyto/Structure/MMotorGhost.h; sourceTree = SOURCE_ROOT; };
+		F7642D5419F59EF800860365 /* CMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CMotorGhost.cpp; path = Cyto/Structure/CMotorGhost.cpp; sourceTree = SOURCE_ROOT; };
+		F7642D5519F59EF800860365 /* CMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMotorGhost.h; path = Cyto/Structure/CMotorGhost.h; sourceTree = SOURCE_ROOT; };
 		F76C690A198FEC6800760D20 /* MController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MController.cpp; sourceTree = "<group>"; };
 		F76C690B198FEC6800760D20 /* MController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MController.h; sourceTree = "<group>"; };
 		F76C691119916CC300760D20 /* GController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GController.cpp; sourceTree = "<group>"; };
@@ -478,16 +486,16 @@
 				F777F99A19C1F35200D2850A /* BoundarySurfaceImpl.cpp */,
 				F777F99B19C1F35200D2850A /* BoundarySurfaceImpl.h */,
 				F7472F1E19E2DE66008DA03B /* CBound.h */,
-				F7472F2019E2E13D008DA03B /* CLinker.h */,
-				F7472F1F19E2E13D008DA03B /* CLinker.cpp */,
-				F777F99C19C1F35200D2850A /* CCylinder.h */,
-				F7D1395919D06F98007FC395 /* CCylinder.cpp */,
 				F733507719DAD8CE001A0533 /* CMonomer.cpp */,
 				F777F99D19C1F35200D2850A /* CMonomer.h */,
 				F777F99E19C1F35200D2850A /* Compartment.cpp */,
 				F777F99F19C1F35200D2850A /* Compartment.h */,
 				F777F9A019C1F35200D2850A /* CompartmentContainer.cpp */,
 				F777F9A119C1F35200D2850A /* CompartmentContainer.h */,
+				F777F99C19C1F35200D2850A /* CCylinder.h */,
+				F7D1395919D06F98007FC395 /* CCylinder.cpp */,
+				F777F9B019C1F35200D2850A /* MCylinder.cpp */,
+				F777F9B119C1F35200D2850A /* MCylinder.h */,
 				F777F9A419C1F35200D2850A /* Cylinder.cpp */,
 				F777F9A519C1F35200D2850A /* Cylinder.h */,
 				F777F9A619C1F35200D2850A /* CylinderDB.cpp */,
@@ -496,14 +504,18 @@
 				F777F9A919C1F35200D2850A /* Filament.h */,
 				F777F9AA19C1F35200D2850A /* FilamentDB.cpp */,
 				F777F9AB19C1F35200D2850A /* FilamentDB.h */,
+				F7472F2019E2E13D008DA03B /* CLinker.h */,
+				F7472F1F19E2E13D008DA03B /* CLinker.cpp */,
+				F777F9AC19C1F35200D2850A /* MLinker.cpp */,
+				F777F9AD19C1F35200D2850A /* MLinker.h */,
 				F7472F2319E2E9EA008DA03B /* Linker.cpp */,
 				F7472F2419E2E9EA008DA03B /* Linker.h */,
 				F777F9AE19C1F35200D2850A /* LinkerDB.cpp */,
 				F777F9AF19C1F35200D2850A /* LinkerDB.h */,
-				F777F9B019C1F35200D2850A /* MCylinder.cpp */,
-				F777F9B119C1F35200D2850A /* MCylinder.h */,
-				F777F9AC19C1F35200D2850A /* MLinker.cpp */,
-				F777F9AD19C1F35200D2850A /* MLinker.h */,
+				F7642D5419F59EF800860365 /* CMotorGhost.cpp */,
+				F7642D5519F59EF800860365 /* CMotorGhost.h */,
+				F7642D5019F5963D00860365 /* MMotorGhost.cpp */,
+				F7642D5119F5963D00860365 /* MMotorGhost.h */,
 				F777F9B219C1F35200D2850A /* MotorGhost.cpp */,
 				F777F9B319C1F35200D2850A /* MotorGhost.h */,
 				F777F9B419C1F35200D2850A /* MotorGhostDB.cpp */,
@@ -770,6 +782,7 @@
 				F777F97B19C1F32E00D2850A /* ChemGillespieImpl.h in Headers */,
 				F777F98619C1F32E00D2850A /* ChemSim.h in Headers */,
 				F777FA4719C1F3A800D2850A /* LinkerFF.h in Headers */,
+				F7642D5319F5963D00860365 /* MMotorGhost.h in Headers */,
 				F777FA5919C1F3A800D2850A /* VolRepulsion.h in Headers */,
 				F777F9F819C1F35200D2850A /* MotorGhostDB.h in Headers */,
 				F777F98719C1F32E00D2850A /* ChemSimImpl.h in Headers */,
@@ -778,6 +791,7 @@
 				F777FAA919C235D100D2850A /* utility.h in Headers */,
 				F777FA3B19C1F3A800D2850A /* FilamentStretching.h in Headers */,
 				F777FA7019C1F3C900D2850A /* CGMethod.h in Headers */,
+				F7642D5719F59EF800860365 /* CMotorGhost.h in Headers */,
 				F777FA8D19C1F40A00D2850A /* Composite.h in Headers */,
 				F777F9FB19C1F35200D2850A /* Reaction.h in Headers */,
 				F777F98219C1F32E00D2850A /* ChemNRMImpl.h in Headers */,
@@ -959,10 +973,12 @@
 				F777F98119C1F32E00D2850A /* ChemNRMImpl.cpp in Sources */,
 				F777F9E219C1F35200D2850A /* CylinderDB.cpp in Sources */,
 				F777F9F719C1F35200D2850A /* MotorGhostDB.cpp in Sources */,
+				F7642D5219F5963D00860365 /* MMotorGhost.cpp in Sources */,
 				F777F9FA19C1F35200D2850A /* Reaction.cpp in Sources */,
 				F777F9C119C1F35200D2850A /* Bead.cpp in Sources */,
 				F777FA3A19C1F3A800D2850A /* FilamentStretching.cpp in Sources */,
 				F777F9D119C1F35200D2850A /* BoundarySurfaceImpl.cpp in Sources */,
+				F7642D5619F59EF800860365 /* CMotorGhost.cpp in Sources */,
 				F7D1395D19D07520007FC395 /* ReactionTemplate.cpp in Sources */,
 				F777FA5F19C1F3A800D2850A /* VolumInter.cpp in Sources */,
 				F777FA4019C1F3A800D2850A /* FilamentTwisting.cpp in Sources */,

@@ -12,7 +12,6 @@
 
 void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
-    
     ///set up reaction templates
     for(auto &r: chemSR.polymerizationReactions) {
         
@@ -212,10 +211,10 @@ void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAn
         
         ///Add polymerization template
         if(d == FilamentReactionDirection::FORWARD)
-            _reactionFilamentTemplates.emplace_back(
+            _filamentReactionTemplates.emplace_back(
                 new PolymerizationPlusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
         else
-            _reactionFilamentTemplates.emplace_back(
+            _filamentReactionTemplates.emplace_back(
                 new PolymerizationMinusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
     }
     
@@ -418,10 +417,10 @@ void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAn
         
         ///Add depolymerization template
         if(d == FilamentReactionDirection::FORWARD)
-            _reactionFilamentTemplates.emplace_back(
+            _filamentReactionTemplates.emplace_back(
                      new DepolymerizationMinusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
         else
-            _reactionFilamentTemplates.emplace_back(
+            _filamentReactionTemplates.emplace_back(
                      new DepolymerizationPlusEndTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
     }
 
@@ -530,7 +529,7 @@ void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAn
     
     
         ///add reaction
-        _reactionFilamentTemplates.emplace_back(new BindingTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+        _filamentReactionTemplates.emplace_back(new BasicBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
     
     }
 
@@ -638,7 +637,7 @@ void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAn
         
         
         ///add reaction
-        _reactionFilamentTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+        _filamentReactionTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
     }
  
 }
@@ -848,11 +847,11 @@ void SimpleInitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpec
         }
     
         if(type == ReactionType::LINKERBINDING)
-            _reactionFilamentTemplates.emplace_back(
+            _crossFilamentReactionTemplates.emplace_back(
                 new LinkerBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r)));
         
         else if(type == ReactionType::MOTORBINDING)
-            _reactionFilamentTemplates.emplace_back(
+            _crossFilamentReactionTemplates.emplace_back(
                 new MotorBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r)));
     }
 }
@@ -940,22 +939,32 @@ void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReaction
         
         ReactionBase* rxn;
         ///create the reaction
+        
+        ///<1,1>
         if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
             rxn = new Reaction<1,1>(species, std::get<2>(r));
+        ///<2,1>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
             rxn = new Reaction<2,1>(species, std::get<2>(r));
+        ///<1,2>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
             rxn = new Reaction<1,2>(species, std::get<2>(r));
+        ///<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
             rxn = new Reaction<2,0>(species, std::get<2>(r));
+        ///<0,2>
         else if(reactantSpecies.size() == 0 && productSpecies.size() == 2)
             rxn = new Reaction<0,2>(species, std::get<2>(r));
+        ///<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
             rxn = new Reaction<2,2>(species, std::get<2>(r));
+        ///<1,3>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
             rxn = new Reaction<1,3>(species, std::get<2>(r));
+        ///<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
             rxn = new Reaction<2,3>(species, std::get<2>(r));
+        ///<3,2>
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
             rxn = new Reaction<3,2>(species, std::get<2>(r));
         else {
@@ -967,16 +976,21 @@ void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReaction
         protoCompartment.addInternalReactionUnique(std::unique_ptr<ReactionBase>(rxn));
         ChemSim::addReaction(ChemSimReactionKey(), rxn);
     }
-
 }
-
 
 void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     
+    ///set static system ptr
+    ReactionFilamentTemplate::_ps = _subSystem;
+    ReactionCrossFilamentTemplate::_ps = _subSystem;
+    
     ///Copy all species from chemSR struct
-    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
-    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
-    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
+    _speciesFilament   = chemSR.speciesFilament;
+    _speciesPlusEnd    = chemSR.speciesPlusEnd;
+    _speciesMinusEnd   = chemSR.speciesMinusEnd;
+    _speciesBound      = chemSR.speciesBound;
+    _speciesLinker     = chemSR.speciesLinker;
+    _speciesMotor      = chemSR.speciesMotor;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
@@ -1024,33 +1038,39 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
             SpeciesFilament* sf =
-                c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
+                c->addSpeciesFilament(
+                SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
             SpeciesPlusEnd* sp =
-                c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
+                c->addSpeciesPlusEnd(
+                SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
             SpeciesMinusEnd* smi =
-                c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
+                c->addSpeciesMinusEnd(
+                SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
             m->addSpeciesMinusEnd(smi);
         }
         
         for (auto &b : _speciesBound) {
             SpeciesBound* sb =
-                c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
+                c->addSpeciesBound(
+                SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
             SpeciesLinker* sl =
-                c->addSpeciesLinker(SpeciesNamesDB::Instance()->generateUniqueName(l), 0, 1);
+                c->addSpeciesLinker(
+                SpeciesNamesDB::Instance()->generateUniqueName(l), 0, 1);
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
             SpeciesMotor* sm =
-                c->addSpeciesMotor(SpeciesNamesDB::Instance()->generateUniqueName(mo), 0, 1);
+                c->addSpeciesMotor(
+                SpeciesNamesDB::Instance()->generateUniqueName(mo), 0, 1);
             m->addSpeciesMotor(sm);
         }
         
@@ -1058,7 +1078,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     }
     
     ///Add all reaction templates to this cylinder
-    for(auto &r : _reactionFilamentTemplates) { r->addReaction(cc, pf); }
+    for(auto &r : _filamentReactionTemplates) { r->addReaction(cc, pf); }
     
     ///get last ccylinder
     CCylinder* lastcc = nullptr;
@@ -1066,12 +1086,12 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///extension of front
     if(extensionFront) {
         lastcc = pf->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc, pf);
+        for(auto &r : _filamentReactionTemplates) r->addReaction(lastcc, cc, pf);
     }
     ///extension of back
     else if(extensionBack) {
         lastcc = pf->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _reactionFilamentTemplates) r->addReaction(cc, lastcc, pf);
+        for(auto &r : _filamentReactionTemplates) r->addReaction(cc, lastcc, pf);
     }
 
     ///Base case, initialization
@@ -1100,7 +1120,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
             
-            for(auto &r : _reactionFilamentTemplates) r->addReaction(lastcc, cc, pf);
+            for(auto &r : _filamentReactionTemplates) r->addReaction(lastcc, cc, pf);
             
         }
         ///this is first one

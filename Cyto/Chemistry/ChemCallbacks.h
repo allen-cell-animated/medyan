@@ -10,11 +10,11 @@
 #define __Cyto__ChemCallbacks__
 
 #include <iostream>
-#include "common.h"
-#include "Filament.h"
 #include "ReactionBase.h"
 #include "SubSystem.h"
 
+#include "common.h"
+#include "SystemParameters.h"
 using namespace std;
 
 ///FILAMENT REACTION CALLBACKS
@@ -145,19 +145,28 @@ struct LinkerBindingCallback {
     
     ///members
     SubSystem* _ps;
-    Cylinder* _c1;
-    Cylinder* _c2;
+    Cylinder* _c1, *_c2;
     short _linkerType;
+    short _position1, _position2;
 
-    LinkerBindingCallback(SubSystem* ps, Cylinder* c1, Cylinder* c2, short linkerType)
-        : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType) {}
+    LinkerBindingCallback(Cylinder* c1, Cylinder* c2, short linkerType, short position1, short position2, SubSystem* ps)
+        : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),  _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
         
-        //find locations of two species
+        ///Create a linker
+        int cylinderSize = SystemParameters::Geometry().cylinderSize /
+                           SystemParameters::Geometry().monomerSize;
         
+        double pos1 = double(_position1) / cylinderSize;
+        double pos2 = double(_position2) / cylinderSize;
         
+        _ps->AddNewLinker(_c1, _c2, _linkerType, pos1, pos2);
         
+        Linker* newLinker = LinkerDB::Instance(LinkerDBKey())->back();
+        
+        ///attach species
+        //SpeciesBound* s1 = r->
         
         
         
