@@ -16,7 +16,7 @@
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack) {
+Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool init) {
     
     setFilament(pf);
     
@@ -29,11 +29,14 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     
 #ifdef CHEMISTRY
     _cCylinder = std::unique_ptr<CCylinder>(
-        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack));
+        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack, init));
     _cCylinder->setCylinder(this);
 #endif
 
 #ifdef MECHANICS
+    ////CHANGE FOR INIT AS WELL
+    
+    
     double eqLength;
     if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
     else eqLength = SystemParameters::Geometry().cylinderSize;

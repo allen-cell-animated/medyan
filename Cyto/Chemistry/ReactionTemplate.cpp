@@ -672,7 +672,8 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         std::vector<Species*> productSpecies;
         
         ///loop through reactants, products. find all species
-
+        UnbindingCallback unbindingCallback(nullptr, _ps);
+        
         ///FIRST REACTANT SHOULD BE LINKER, MOTOR, OR BOUND
         auto r = _reactants[0];
         auto type = std::get<1>(r);
@@ -682,14 +683,17 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         
         if(type == SpeciesType::LINKER) {
             reactantSpecies.push_back(m1->speciesLinker(speciesInt));
+            unbindingCallback._s1 = m1->speciesLinker(speciesInt);
             reactionType = ReactionType::LINKERUNBINDING;
         }
         else if(type == SpeciesType::MOTOR) {
             reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+            unbindingCallback._s1 = m1->speciesMotor(speciesInt);
             reactionType = ReactionType::MOTORUNBINDING;
         }
         else {
             reactantSpecies.push_back(m1->speciesBound(speciesInt));
+            unbindingCallback._s1 = m1->speciesBound(speciesInt);
             reactionType = ReactionType::BASICUNBINDING;
         }
         
@@ -713,8 +717,6 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         speciesInt = std::get<0>(p);
         
         productSpecies.push_back(m1->speciesBound(speciesInt));
-        
-        UnbindingCallback unbindingCallback(cc);
         
         ///Add the reaction. If it needs a callback then attach
         std::vector<Species*> species = reactantSpecies;
@@ -884,7 +886,7 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 auto p = _products[0];
                 type = std::get<1>(p);
                 speciesInt = std::get<0>(p);
-                int linkerNumber = speciesInt;
+                int motorNumber = speciesInt;
                 
                 productSpecies.push_back(m1->speciesMotor(speciesInt));
                 
@@ -895,7 +897,7 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 productSpecies.push_back(m2->speciesMotor(speciesInt));
                 
                 ///set up callbacks
-                MotorBindingCallback mcallback(linkerNumber, i, j, cc1, cc2, _ps);
+                MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(), motorNumber, i, j, _ps);
                 
                 ///Add the reaction. If it needs a callback then attach
                 std::vector<Species*> species = reactantSpecies;

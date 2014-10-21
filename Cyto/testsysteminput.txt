@@ -5,15 +5,15 @@ NDIM:                        3
 
 NX:                          1
 NY:                          1
-NZ:                          1
+NZ:                          2
 
 COMPARTMENTSIZEX:            10000.0
 COMPARTMENTSIZEY:            10000.0
 COMPARTMENTSIZEZ:            10000.0
 
-MONOMERSIZE:                 1.0
+MONOMERSIZE:                 2.7
 
-CYLINDERSIZE:                10.0
+CYLINDERSIZE:                27.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -83,14 +83,14 @@ CALGORITHM:                  NRM
 NUMSTEPS:                    20
 NUMSTEPSPERM:                2
 
-NUMBULKSPECIES:              1
-NUMDIFFUSINGSPECIES:         1
-NUMFILAMENTSPECIES:          1
-NUMPLUSENDSPECIES:           1
-NUMMINUSENDSPECIES:          1
-NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             1
+NUMBULKSPECIES:              3
+NUMDIFFUSINGSPECIES:         0
+NUMFILAMENTSPECIES:          0
+NUMPLUSENDSPECIES:           0
+NUMMINUSENDSPECIES:          0
+NUMBOUNDSPECIES:             0
+NUMLINKERSPECIES:            0
+NUMMOTORSPECIES:             0
 
 
 ##################################################

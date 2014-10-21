@@ -39,7 +39,9 @@ struct ChemistrySpeciesAndReactions {
     ///For cross-filament reactions, also contains rMin, rMax denoting the reaction range
     
     ///Reactions happening between bulk and diffusing species ONLY
-    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> generalReactions = {};
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> genReactions = {};
+    ///Reactions happening between bulk species ONLY
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> bulkReactions = {};
     ///Polymerization reactions
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> polymerizationReactions = {};
     ///Depolymerization reactions

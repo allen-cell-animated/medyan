@@ -60,7 +60,7 @@ public:
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
     static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
-                                      Compartment* c, bool extensionFront, bool extensionBack);
+                                      Compartment* c, bool extensionFront, bool extensionBack, bool init);
     ///add/update cross cylinder reactions that are within range
     static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc);
     

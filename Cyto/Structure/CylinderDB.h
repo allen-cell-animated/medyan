@@ -54,9 +54,9 @@ public:
     static CylinderDB* Instance(CylinderDBKey k);
     
     // create new empty cylinder
-    Cylinder* CreateCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront = false, bool extensionBack = false) {
+    Cylinder* CreateCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront = false, bool extensionBack = false, bool init = false) {
         
-        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, extensionFront, extensionBack);
+        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, extensionFront, extensionBack, init);
         push_back(pc);
         return pc ;}
     

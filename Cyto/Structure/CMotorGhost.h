@@ -31,7 +31,11 @@ public:
     ~CMotorGhost() {}
     
     ///Copy constructor, standard
-    CMotorGhost(const CMotorGhost& rhs, Compartment* c) : _pMotorGhost(rhs._pMotorGhost), CBound(c) {}
+    CMotorGhost(const CMotorGhost& rhs, Compartment* c) : _pMotorGhost(rhs._pMotorGhost), CBound(c) {
+        
+        setFirstSpecies(rhs._firstSpecies);
+        setSecondSpecies(rhs._secondSpecies);
+    }
     
     /// Assignment is not allowed
     CMotorGhost& operator=(CMotorGhost &rhs) = delete;

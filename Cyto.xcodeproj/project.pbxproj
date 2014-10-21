@@ -10,7 +10,6 @@
 		B580341719C3938F0017FEF4 /* BoundaryInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341619C3938F0017FEF4 /* BoundaryInteractions.h */; };
 		B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341819C3A5460017FEF4 /* BoundaryRepulsion.cpp */; };
 		B580341C19C3A5460017FEF4 /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341919C3A5460017FEF4 /* BoundaryRepulsion.h */; };
-		B593704719DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */; };
 		B593704819DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */; };
 		B593704919DCA03C004E0D13 /* BoundaryRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
@@ -44,8 +43,8 @@
 		F777F98719C1F32E00D2850A /* ChemSimImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F97419C1F32E00D2850A /* ChemSimImpl.h */; };
 		F777F98919C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */; };
 		F777F98A19C1F32E00D2850A /* ChemSimpleGillespieImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */; };
-		F777F98C19C1F32E00D2850A /* SimpleInitializerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F97719C1F32E00D2850A /* SimpleInitializerImpl.cpp */; };
-		F777F98D19C1F32E00D2850A /* SimpleInitializerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F97819C1F32E00D2850A /* SimpleInitializerImpl.h */; };
+		F777F98C19C1F32E00D2850A /* InitializerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F97719C1F32E00D2850A /* InitializerImpl.cpp */; };
+		F777F98D19C1F32E00D2850A /* InitializerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F97819C1F32E00D2850A /* InitializerImpl.h */; };
 		F777F9C119C1F35200D2850A /* Bead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F98E19C1F35200D2850A /* Bead.cpp */; };
 		F777F9C219C1F35200D2850A /* Bead.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F98F19C1F35200D2850A /* Bead.h */; };
 		F777F9C419C1F35200D2850A /* BeadDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F99019C1F35200D2850A /* BeadDB.cpp */; };
@@ -276,8 +275,8 @@
 		F777F97419C1F32E00D2850A /* ChemSimImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
 		F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSimpleGillespieImpl.cpp; sourceTree = "<group>"; };
 		F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSimpleGillespieImpl.h; sourceTree = "<group>"; };
-		F777F97719C1F32E00D2850A /* SimpleInitializerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleInitializerImpl.cpp; sourceTree = "<group>"; };
-		F777F97819C1F32E00D2850A /* SimpleInitializerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleInitializerImpl.h; sourceTree = "<group>"; };
+		F777F97719C1F32E00D2850A /* InitializerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitializerImpl.cpp; sourceTree = "<group>"; };
+		F777F97819C1F32E00D2850A /* InitializerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitializerImpl.h; sourceTree = "<group>"; };
 		F777F98E19C1F35200D2850A /* Bead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bead.cpp; path = Cyto/Structure/Bead.cpp; sourceTree = SOURCE_ROOT; };
 		F777F98F19C1F35200D2850A /* Bead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bead.h; path = Cyto/Structure/Bead.h; sourceTree = SOURCE_ROOT; };
 		F777F99019C1F35200D2850A /* BeadDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BeadDB.cpp; path = Cyto/Structure/BeadDB.cpp; sourceTree = SOURCE_ROOT; };
@@ -584,11 +583,13 @@
 		F763ED091548FFC70069DA61 /* Chemistry */ = {
 			isa = PBXGroup;
 			children = (
-				F777F96A19C1F32E00D2850A /* ChemGillespieImpl.cpp */,
-				F777F96B19C1F32E00D2850A /* ChemGillespieImpl.h */,
+				F777F97719C1F32E00D2850A /* InitializerImpl.cpp */,
+				F777F97819C1F32E00D2850A /* InitializerImpl.h */,
 				F777F96C19C1F32E00D2850A /* ChemInitializer.cpp */,
 				F777F96D19C1F32E00D2850A /* ChemInitializer.h */,
 				F777F96E19C1F32E00D2850A /* ChemInitializerImpl.h */,
+				F777F96A19C1F32E00D2850A /* ChemGillespieImpl.cpp */,
+				F777F96B19C1F32E00D2850A /* ChemGillespieImpl.h */,
 				F777F96F19C1F32E00D2850A /* ChemNRMImpl.cpp */,
 				F777F97019C1F32E00D2850A /* ChemNRMImpl.h */,
 				F777F97119C1F32E00D2850A /* ChemRNode.h */,
@@ -597,8 +598,6 @@
 				F777F97419C1F32E00D2850A /* ChemSimImpl.h */,
 				F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */,
 				F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */,
-				F777F97719C1F32E00D2850A /* SimpleInitializerImpl.cpp */,
-				F777F97819C1F32E00D2850A /* SimpleInitializerImpl.h */,
 				F777FA9819C1FC2D00D2850A /* ChemCallbacks.h */,
 				F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */,
 				F7D1395C19D07520007FC395 /* ReactionTemplate.h */,
@@ -776,7 +775,7 @@
 				F7472F2219E2E13D008DA03B /* CLinker.h in Headers */,
 				F777FA0219C1F35200D2850A /* RSpecies.h in Headers */,
 				F777FA7319C1F3C900D2850A /* CGPolakRibiereMethod.h in Headers */,
-				F777F98D19C1F32E00D2850A /* SimpleInitializerImpl.h in Headers */,
+				F777F98D19C1F32E00D2850A /* InitializerImpl.h in Headers */,
 				F777FA0519C1F35200D2850A /* Species.h in Headers */,
 				F777FA4B19C1F3A800D2850A /* LinkerStretching.h in Headers */,
 				F777F97B19C1F32E00D2850A /* ChemGillespieImpl.h in Headers */,
@@ -965,7 +964,7 @@
 				F777F98519C1F32E00D2850A /* ChemSim.cpp in Sources */,
 				F777FA7219C1F3C900D2850A /* CGPolakRibiereMethod.cpp in Sources */,
 				F777FA9119C1F40A00D2850A /* MathFunctions.cpp in Sources */,
-				F777F98C19C1F32E00D2850A /* SimpleInitializerImpl.cpp in Sources */,
+				F777F98C19C1F32E00D2850A /* InitializerImpl.cpp in Sources */,
 				F777FA4D19C1F3A800D2850A /* LinkerStretchingHarmonic.cpp in Sources */,
 				F777F9FD19C1F35200D2850A /* ReactionBase.cpp in Sources */,
 				F7472F2519E2E9EA008DA03B /* Linker.cpp in Sources */,
@@ -1041,7 +1040,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F777FAA619C2294400D2850A /* Cyto.cpp in Sources */,
-				B593704719DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

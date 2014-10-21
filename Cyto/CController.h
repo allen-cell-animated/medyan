@@ -18,7 +18,7 @@
 #include "ChemNRMImpl.h"
 #include "ChemGillespieImpl.h"
 #include "ChemSimpleGillespieImpl.h"
-#include "SimpleInitializerImpl.h"
+#include "InitializerImpl.h"
 
 ///CController class is used to intialize, control, and run the chemical components of a simulation
 

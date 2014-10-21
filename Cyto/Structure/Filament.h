@@ -16,7 +16,6 @@
 
 #include "common.h"
 #include "Cylinder.h"
-#include "CCylinder.h"
 
 class SubSystem;
 ///Filament class is used to store data about connectivity of cylinders
@@ -48,6 +47,10 @@ public:
     /// beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be
     /// pushed to cylinder vector, but will be stored in the _pLastCylinder;
     Filament(SubSystem* ps, std::vector<std::vector<double>>& position, int numBeads, int ID, std::string projectionType = "STRAIGHT");
+    
+    ///This destructor is called when a filament is to be removed from the system. Removes all cylinders
+    ///and beads associated with the filament
+    ~Filament();
     
     void ExtendFront();  // Addition of a new cylinder (with the first bead = new bead b and last bead = empty: before: --x---x---o, after --x---x---[x---o]). Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further extension, not initiation.
     void ExtendBack();  // Same as extension front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first.

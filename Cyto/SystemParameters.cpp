@@ -8,5 +8,6 @@
 
 #include "SystemParameters.h"
 MechanicsParameters SystemParameters::MParams;
+ChemistryParameters SystemParameters::CParams;
 GeometryParameters SystemParameters::GParams;
 BoundaryParameters SystemParameters::BParams;

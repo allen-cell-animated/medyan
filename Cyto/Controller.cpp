@@ -55,8 +55,7 @@ void Controller::initialize(std::string inputFile) {
         std::cout << "Need to specify a chemical input file. Exiting" << std::endl;
         exit(EXIT_FAILURE);
     }
-    _cController.initialize(CAlgorithm.algorithm, "SIMPLE", chemSR);
-    ChemSim::printReactions();
+    _cController.initialize(CAlgorithm.algorithm, "", chemSR);
     std::cout << "Done." <<std::endl;
 #endif
 #ifdef MECHANICS
@@ -94,8 +93,8 @@ void Controller::initialize(std::string inputFile) {
     _subSystem->AddNewFilaments(filamentData);
     std::cout << "Done." <<std::endl;
     
-    
-    //ChemSim::printReactions();
+    std::cout << "PRINTING REACTIONS" << std::endl;
+    ChemSim::printReactions();
 }
 
 void Controller::run() {

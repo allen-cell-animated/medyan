@@ -30,13 +30,13 @@ void CController::initialize(std::string& chemAlgorithm, std::string chemInitial
     
     ///Set the instance of the initializer
     ChemInitializerImpl* cii;
-    if(chemInitializer == "SIMPLE") {
-        cii = new SimpleInitializerImpl(_subSystem);
-    }
-    else {
-        std::cout<< "Initializer type not found. Exiting." <<std::endl;
-        exit(EXIT_FAILURE);
-    }
+//    if(chemInitializer == "BASIC") {
+        cii = new InitializerImpl(_subSystem);
+//    }
+//    else {
+//        std::cout<< "Initializer type not found. Exiting." <<std::endl;
+//        exit(EXIT_FAILURE);
+//    }
     ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
     
     ///initialize grid ...

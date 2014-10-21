@@ -1,5 +1,5 @@
 //
-//  SimpleInitializerImpl.h
+//  InitializerImpl.h
 //  Cyto
 //
 //  Created by James Komianos on 7/30/14.
@@ -19,8 +19,8 @@
 
 class SubSystem;
 
-///SimpleInitializer is a concrete implementation of the ChemInitailizerImpl class
-class SimpleInitializerImpl : public ChemInitializerImpl {
+///InitializerImpl is a concrete implementation of the ChemInitailizerImpl class
+class InitializerImpl : public ChemInitializerImpl {
     
 private:
     SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
@@ -29,13 +29,7 @@ private:
     std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates; ///<list of cross filament reactions to add to CCylinders
     
     ///Vectors of all filament-related species in system
-    std::vector<std::string> _speciesFilament;
-    std::vector<std::string> _speciesPlusEnd;
-    std::vector<std::string> _speciesMinusEnd;
-    
-    std::vector<std::string> _speciesBound;
-    std::vector<std::string> _speciesLinker;
-    std::vector<std::string> _speciesMotor;
+    std::vector<std::string> _speciesFilament, _speciesPlusEnd, _speciesMinusEnd, _speciesBound, _speciesLinker, _speciesMotor;
     
     ///Set up all reaction templates from chemsetup struct
     void generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
@@ -43,9 +37,11 @@ private:
     
     ///Generate the general, non-filament reactions
     void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment);
+    ///Generate bulk reactions
+    void generateBulkReactions(ChemistrySpeciesAndReactions& chemSR);
     
 public:
-    SimpleInitializerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
+    InitializerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
     
     ///initialize the chemical reaction templates and species in this system
     ///@param chemSetup - chemistry setup struct from parsed input file
@@ -55,11 +51,11 @@ public:
     ///@param length - starting length of the CCylinder initialized
     ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
     /// vector. The active plus and minus end is set to be the first listed as well.
-    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack);
+    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool init);
     
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc);
     
 };
 
-#endif /* defined(__Cyto__SimpleInitializerImpl__) */
+#endif /* defined(__Cyto__InitializerImpl__) */

@@ -68,9 +68,8 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
         int molec = rs->getSpecies().getMolecule();
         
         ///If species bulk, just add it
-        Species* s = &rs->getSpecies();
-        if(dynamic_cast<SpeciesBulk*>(s) != nullptr)
-            species.push_back(s);
+        Species s = rs->getSpecies();
+        if(dynamic_cast<SpeciesBulk*>(&s)) species.push_back(&s);
         
         ///otherwise, check if that species exists in the compartment
         else {

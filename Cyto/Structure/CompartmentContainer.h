@@ -58,6 +58,8 @@ class CompartmentGrid : public Composite {
 private:
     Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
     SpeciesContainerVector<SpeciesBulk> _bulkSpecies; ///<Bulk species in this grid
+    ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
+    
     int _numCompartments; ///<num compartments in the grid
     
     static CompartmentGrid* _instance; ///singleton instance
@@ -111,6 +113,10 @@ public:
             Compartment*C = static_cast<Compartment*>(c.get());
             C->addChemSimReactions();
         }
+        
+        for(auto &r : _bulkReactions.reactions())
+            ChemSim::addReaction(ChemSimReactionKey(), r.get());
+        
     }
     
     /// Print properties of this grid
@@ -136,6 +142,42 @@ public:
     ///Bulk species finder functions
     SpeciesBulk& findSpeciesBulkByName(const std::string& name) {return _bulkSpecies.findSpecies(name);}
     SpeciesBulk& findSpeciesBulkByMolecule(int molecule) {return _bulkSpecies.findSpeciesByMolecule(molecule);}
+    
+    
+    /// Add a bulk reaction to this compartment grid
+    template<unsigned short M, unsigned short N, typename ...Args>
+    ReactionBase* addBulkReaction (Args&& ...args)
+    {
+        //            std::cout << "Compartment::addReaction()..." << std::endl;
+        ReactionBase *r = _bulkReactions.addReaction<M,N>(std::forward<Args>(args)...);
+        r->setParent(this);
+        return r;
+    }
+    
+    /// Add an bulk reaction to this compartment grid
+    /// @param species, rate - specifying the species and rate that should be assigned
+    template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
+    ReactionBase* addBulk(std::initializer_list<Species*> species, float rate)
+    {
+        ReactionBase *r = _bulkReactions.add<RXN,M,N>(species,rate);
+        r->setParent(this);
+        return r;
+    }
+    
+    /// Add a unique bulk reaction pointer to this compartment
+    ReactionBase* addBulkReactionUnique (std::unique_ptr<ReactionBase> &&reaction)
+    {
+        ReactionBase *r = _bulkReactions.addReactionUnique(std::move(reaction));
+        r->setParent(this);
+        return r;
+    }
+    
+    /// Remove all bulk reactions that have a given species
+    /// @param s - species whose reactions should be removed
+    virtual void removeBulkReactions (Species* s) {_bulkReactions.removeReactions(s);}
+
+    /// Remove a bulk reaction
+    virtual void removeBulkReaction(ReactionBase *r) {_bulkReactions.removeReaction(r);}
     
 
 };

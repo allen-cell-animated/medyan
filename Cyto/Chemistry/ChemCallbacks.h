@@ -29,9 +29,7 @@ struct FilamentExtensionFrontCallback {
     FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->ExtendFront();
-    }
+    void operator() (ReactionBase *r){ _filament->ExtendFront(); }
 };
 
 ///Extension callback
@@ -44,9 +42,7 @@ struct FilamentExtensionBackCallback {
     FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->ExtendBack();
-    }
+    void operator() (ReactionBase *r){ _filament->ExtendBack(); }
 };
 
 ///Retraction callback
@@ -59,9 +55,7 @@ struct FilamentRetractionFrontCallback {
     FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->RetractFront();
-    }
+    void operator() (ReactionBase *r){ _filament->RetractFront(); }
 };
 
 ///Retraction callback
@@ -74,9 +68,7 @@ struct FilamentRetractionBackCallback {
     FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->RetractBack();
-    }
+    void operator() (ReactionBase *r){ _filament->RetractBack(); }
 };
 
 ///Polymerization/depolymerization callbacks
@@ -89,9 +81,7 @@ struct FilamentPolymerizationFrontCallback {
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->PolymerizeFront();
-    }
+    void operator() (ReactionBase *r){ _filament->PolymerizeFront(); }
 };
 
 struct FilamentPolymerizationBackCallback {
@@ -103,9 +93,7 @@ struct FilamentPolymerizationBackCallback {
     FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->PolymerizeBack();
-    }
+    void operator() (ReactionBase *r){ _filament->PolymerizeBack(); }
 };
 
 ///Retraction callback
@@ -118,9 +106,7 @@ struct FilamentDepolymerizationFrontCallback {
     FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->DepolymerizeFront();
-    }
+    void operator() (ReactionBase *r){ _filament->DepolymerizeFront(); }
 };
 
 ///Retraction callback
@@ -133,9 +119,7 @@ struct FilamentDepolymerizationBackCallback {
     FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
     
     ///Callback
-    void operator() (ReactionBase *r){
-        _filament->DepolymerizeBack();
-    }
+    void operator() (ReactionBase *r){ _filament->DepolymerizeBack(); }
 };
 
 ///LINKER AND MOTOR CALLBACKS
@@ -162,21 +146,58 @@ struct LinkerBindingCallback {
         double pos2 = double(_position2) / cylinderSize;
         
         _ps->AddNewLinker(_c1, _c2, _linkerType, pos1, pos2);
-        
-        Linker* newLinker = LinkerDB::Instance(LinkerDBKey())->back();
-        
-        ///attach species
-        //SpeciesBound* s1 = r->
-        
-        
-        
-        
     }
+};
+
+///Motor binding callback
+struct MotorBindingCallback {
     
+    ///members
+    SubSystem* _ps;
+    Cylinder* _c1, *_c2;
+    short _motorType;
+    short _position1, _position2;
     
+    MotorBindingCallback(Cylinder* c1, Cylinder* c2, short motorType, short position1, short position2, SubSystem* ps)
+    : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),  _position1(position1), _position2(position2){}
+    
+    void operator() (ReactionBase *r) {
+        
+        ///Create a linker
+        int cylinderSize = SystemParameters::Geometry().cylinderSize /
+        SystemParameters::Geometry().monomerSize;
+        
+        double pos1 = double(_position1) / cylinderSize;
+        double pos2 = double(_position2) / cylinderSize;
+        
+        _ps->AddNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
+    }
 };
 
 
+///unbinding callback
+struct UnbindingCallback {
+    
+    ///members
+    SubSystem* _ps;
+    SpeciesBound* _s1;
+    
+    UnbindingCallback(SpeciesBound* s1, SubSystem* ps) : _s1(s1), _ps(ps) {}
+    
+    void operator() (ReactionBase *r) {
+        
+        //check if we have a basic bound element, linker, or motor
+        CBound* cBound = _s1->getCBound();
+        
+        if(cBound != nullptr) {
+            if(dynamic_cast<CLinker*>(cBound))
+                _ps->RemoveLinker(static_cast<CLinker*>(cBound)->getLinker());
+
+            else if(dynamic_cast<CMotorGhost*>(cBound))
+                _ps->RemoveMotorGhost(static_cast<CMotorGhost*>(cBound)->getMotorGhost());
+        }
+    }
+};
 
 
 

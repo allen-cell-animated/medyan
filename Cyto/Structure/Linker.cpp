@@ -25,6 +25,31 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1,
 #ifdef CHEMISTRY
     _cLinker = std::unique_ptr<CLinker>(new CLinker(_compartment));
     _cLinker->setLinker(this);
+        
+        
+    ///Find species on cylinder that should be marked. If initialization, this should be done. But,
+    ///if this is because of a reaction callback, it will have already been done.
+        
+    int pos1 = int(position1 * SystemParameters::Geometry().cylinderSize);
+    int pos2 = int(position2 * SystemParameters::Geometry().cylinderSize);
+    
+    SpeciesLinker* sl1 = pc1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
+    SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+    SpeciesLinker* sl2 = pc2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
+    SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+        
+    if(sl1->getN() != 1) {
+        sl1->getRSpecies().up();
+        se1->getRSpecies().down();
+    }
+    if(sl2->getN() != 1) {
+        sl2->getRSpecies().up();
+        se2->getRSpecies().down();
+    }
+        
+    ///attach this linker to the species
+    sl1->setCBound(this->getCLinker());
+    sl2->setCBound(this->getCLinker());
 #endif
     
 #ifdef MECHANICS
@@ -34,9 +59,35 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1,
                                         pc2->GetFirstBead()->coordinate, pc2->GetSecondBead()->coordinate));
     _mLinker->setLinker(this);
 #endif
-    
-
 }
+
+Linker::~Linker() {
+    
+#ifdef CHEMISTRY
+    ///Find species on cylinder that should be unmarked. This should be done if deleting because
+    ///of a reaction callback, but needs to be done if deleting for other reasons
+
+    int pos1 = int(_position1 * SystemParameters::Geometry().cylinderSize);
+    int pos2 = int(_position2 * SystemParameters::Geometry().cylinderSize);
+    
+    SpeciesLinker* sl1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesLinker(_linkerType);
+    SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+    SpeciesLinker* sl2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesLinker(_linkerType);
+    SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+    
+    if(sl1->getN() != 0) {
+        sl1->getRSpecies().down();
+        se1->getRSpecies().up();
+    }
+    if(sl2->getN() != 0) {
+        sl2->getRSpecies().down();
+        se2->getRSpecies().up();
+    }
+    
+#endif //CHEMISTRY
+    
+}
+
 
 void Linker::updatePosition() {
     
@@ -54,6 +105,10 @@ void Linker::updatePosition() {
         _compartment = c;
 #ifdef CHEMISTRY
         CLinker* clone = _cLinker->clone(c);
+        
+        clone->setFirstSpecies(_cLinker->getFirstSpecies());
+        clone->setSecondSpecies(_cLinker->getSecondSpecies());
+        
         setCLinker(clone);
 #endif
     }

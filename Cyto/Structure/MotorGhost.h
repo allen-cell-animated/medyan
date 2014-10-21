@@ -42,7 +42,7 @@ private:
     
 public:
     MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2);
-    ~MotorGhost() {}
+    ~MotorGhost();
     
     ///get cylinders
     Cylinder* getFirstCylinder() {return _pc1;}

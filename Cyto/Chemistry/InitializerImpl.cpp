@@ -1,16 +1,16 @@
 //
-//  SimpleInitializerImpl.cpp
+//  InitializerImpl.cpp
 //  Cyto
 //
 //  Created by James Komianos on 7/30/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "SimpleInitializerImpl.h"
+#include "InitializerImpl.h"
 #include "SystemParameters.h"
 #include "ChemCallbacks.h"
 
-void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
+void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
     ///set up reaction templates
     for(auto &r: chemSR.polymerizationReactions) {
@@ -642,7 +642,7 @@ void SimpleInitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAn
  
 }
 
-void SimpleInitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
+void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
     
     for(auto &r: chemSR.crossFilamentBindingReactions) {
@@ -857,10 +857,10 @@ void SimpleInitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpec
 }
 
 
-void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment) {
+void InitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment) {
     
      ///go through reactions, add each
-    for(auto &r: chemSR.generalReactions) {
+    for(auto &r: chemSR.genReactions) {
     
         std::vector<Species*> reactantSpecies;
         std::vector<Species*> productSpecies;
@@ -952,9 +952,6 @@ void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReaction
         ///<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
             rxn = new Reaction<2,0>(species, std::get<2>(r));
-        ///<0,2>
-        else if(reactantSpecies.size() == 0 && productSpecies.size() == 2)
-            rxn = new Reaction<0,2>(species, std::get<2>(r));
         ///<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
             rxn = new Reaction<2,2>(species, std::get<2>(r));
@@ -972,36 +969,126 @@ void SimpleInitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReaction
             exit(EXIT_FAILURE);
         }
         
-        ///add to chemsim
+        ///add to compartment
         protoCompartment.addInternalReactionUnique(std::unique_ptr<ReactionBase>(rxn));
-        ChemSim::addReaction(ChemSimReactionKey(), rxn);
     }
 }
 
-void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
+void InitializerImpl::generateBulkReactions(ChemistrySpeciesAndReactions& chemSR) {
+    
+    ///go through reactions, add each
+    for(auto &r: chemSR.bulkReactions) {
+        
+        std::vector<Species*> reactantSpecies;
+        std::vector<Species*> productSpecies;
+        
+        std::vector<std::string> reactants = std::get<0>(r);
+        std::vector<std::string> products = std::get<1>(r);
+        
+        for(auto &reactant : reactants) {
+            if(reactant.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = reactant.substr(0, reactant.find(":"));
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                
+                if(it == chemSR.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+            }
+            else {
+                std::cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        for(auto &product : products) {
+            if(product.find("BULK") != std::string::npos) {
+                
+                ///Look up species, make sure in list
+                std::string name = product.substr(0, product.find(":"));
+                auto it = std::find_if(chemSR.speciesBulk.begin(), chemSR.speciesBulk.end(),
+                                       [name](std::tuple<std::string, int> element) { return std::get<0>(element) == name ? true : false; });
+                
+                if(it == chemSR.speciesBulk.end()) {
+                    std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                productSpecies.push_back(&CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+            }
+            else {
+                std::cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        ///add the reaction
+        std::vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        
+        ReactionBase* rxn;
+        ///create the reaction
+        
+        ///<1,1>
+        if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
+            rxn = new Reaction<1,1>(species, std::get<2>(r));
+        ///<2,1>
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
+            rxn = new Reaction<2,1>(species, std::get<2>(r));
+        ///<1,2>
+        else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
+            rxn = new Reaction<1,2>(species, std::get<2>(r));
+        ///<2,0>
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
+            rxn = new Reaction<2,0>(species, std::get<2>(r));
+        ///<2,2>
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
+            rxn = new Reaction<2,2>(species, std::get<2>(r));
+        ///<1,3>
+        else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
+            rxn = new Reaction<1,3>(species, std::get<2>(r));
+        ///<2,2>
+        else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
+            rxn = new Reaction<2,3>(species, std::get<2>(r));
+        ///<3,2>
+        else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
+            rxn = new Reaction<3,2>(species, std::get<2>(r));
+        else {
+            std::cout << "Bulk reaction specified does not match any existing templates. Exiting" <<std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///add to grid
+        CompartmentGrid::Instance(compartmentGridKey())->addBulkReactionUnique(std::unique_ptr<ReactionBase>(rxn));
+    }
+}
+
+
+
+void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     
     ///set static system ptr
     ReactionFilamentTemplate::_ps = _subSystem;
     ReactionCrossFilamentTemplate::_ps = _subSystem;
-    
-    ///Copy all species from chemSR struct
-    _speciesFilament   = chemSR.speciesFilament;
-    _speciesPlusEnd    = chemSR.speciesPlusEnd;
-    _speciesMinusEnd   = chemSR.speciesMinusEnd;
-    _speciesBound      = chemSR.speciesBound;
-    _speciesLinker     = chemSR.speciesLinker;
-    _speciesMotor      = chemSR.speciesMotor;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
     for(auto &sb : chemSR.speciesBulk)
         CompartmentGrid::Instance(compartmentGridKey())->addSpeciesBulk(std::get<0>(sb), std::get<1>(sb));
-    for(auto &sd : chemSR.speciesDiffusing)
-        cProto.addSpeciesDiffusing(std::get<0>(sd), std::get<1>(sd), std::get<2>(sd));
+
+    for(auto &sd : chemSR.speciesDiffusing) {
+        std::cout << std::get<2>(sd) << std::endl;
+        SpeciesDiffusing* s = new SpeciesDiffusing(std::get<0>(sd), std::get<1>(sd));
+        cProto.addSpeciesUnique(std::unique_ptr<Species>(s), std::get<2>(sd));
+    }
     
-    ///add general reactions to protocompartment
+    ///add reactions to protocompartment
     generateGeneralReactions(chemSR, cProto);
+    ///generate any bulk reactions
+    generateBulkReactions(chemSR);
     
     ///initialize all compartments equivalent to cproto
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
@@ -1022,11 +1109,21 @@ void SimpleInitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     generateFilamentReactionTemplates(chemSR);
     ///create cross filament reaction templates
     generateCrossFilamentReactionTemplates(chemSR);
+    
+    ///Copy all species from chemSR struct
+    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
+    
+    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
+    
+    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
 }
 
-CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
-                                                  bool extensionFront, bool extensionBack)
+CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
+                                                  bool extensionFront, bool extensionBack, bool init)
 {
+    
+    ///ADD INIT CASE
+    
     CCylinder* cc = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
@@ -1039,38 +1136,38 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         for(auto &f : _speciesFilament) {
             SpeciesFilament* sf =
                 c->addSpeciesFilament(
-                SpeciesNamesDB::Instance()->generateUniqueName(f), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
             SpeciesPlusEnd* sp =
                 c->addSpeciesPlusEnd(
-                SpeciesNamesDB::Instance()->generateUniqueName(p), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
             SpeciesMinusEnd* smi =
                 c->addSpeciesMinusEnd(
-                SpeciesNamesDB::Instance()->generateUniqueName(mi), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
         
         for (auto &b : _speciesBound) {
             SpeciesBound* sb =
                 c->addSpeciesBound(
-                SpeciesNamesDB::Instance()->generateUniqueName(b), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
             SpeciesLinker* sl =
                 c->addSpeciesLinker(
-                SpeciesNamesDB::Instance()->generateUniqueName(l), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
             SpeciesMotor* sm =
                 c->addSpeciesMotor(
-                SpeciesNamesDB::Instance()->generateUniqueName(mo), 0, 1);
+                SpeciesNamesDB::Instance()->generateUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1151,4 +1248,7 @@ CCylinder* SimpleInitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///clean up and return
     return cc;
 }
+
+void InitializerImpl::updateCCylinder(CCylinder* cc) {}
+
 

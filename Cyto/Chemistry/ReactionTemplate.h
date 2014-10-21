@@ -35,7 +35,7 @@ class SubSystem;
 
 class ReactionFilamentTemplate {
     
-    friend class SimpleInitializerImpl;
+    friend class InitializerImpl;
     
 protected:
     static SubSystem* _ps;
@@ -74,6 +74,7 @@ public:
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
@@ -89,6 +90,7 @@ public:
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
@@ -105,6 +107,7 @@ public:
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
@@ -120,6 +123,7 @@ public:
     
     ///to be implemented
     virtual void addReaction(CCylinder* cc, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
 };
 
@@ -133,6 +137,7 @@ public:
     ~BasicBindingTemplate() {}
     
     virtual void addReaction(CCylinder* cc1, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
 };
 
@@ -146,6 +151,7 @@ public:
     ~UnbindingTemplate() {}
     
     virtual void addReaction(CCylinder* cc1, Filament* pf);
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
 
 };
@@ -166,7 +172,7 @@ public:
 
 class ReactionCrossFilamentTemplate {
 
-    friend class SimpleInitializerImpl;
+    friend class InitializerImpl;
     
 protected:
     static SubSystem* _ps;
@@ -199,6 +205,7 @@ public:
                     float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
     ~LinkerBindingTemplate() {}
     
+    ///to be implemented
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
@@ -211,6 +218,7 @@ public:
                           float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
     ~MotorBindingTemplate() {}
     
+    ///to be implemented
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 

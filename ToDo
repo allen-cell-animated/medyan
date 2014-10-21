@@ -55,6 +55,7 @@ Goals for October 2014:
     -Compartments: contain sets of all elements                                 X
     -Reaction parsing: create general reaction template, restructuring
     -Finish linker chemistry (callbacks, updating reactions)
+    -Filament creation and destruction?
     -Spherical boundary
     -Changing of polymerization/depolymerization/binding rates
     -Excluded volume force field

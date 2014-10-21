@@ -25,7 +25,7 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
     Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(pos2, _beadIDPlusEnd++);
     
     ///create cylinder
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
+    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2, false, false, true);
     _pCylinderVector.push_back(c0);
     
     ///extend front
@@ -67,6 +67,20 @@ Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBead
     for(auto &c : _pCylinderVector) { c->getCCylinder()->updateReactions(); }
 #endif ///CHEMISTRY
 }
+
+Filament::~Filament() {
+    
+    ///remove cylinders, beads from system
+    for(auto &c : _pCylinderVector) {
+        //remove first bead
+        BeadDB::Instance(BeadDBKey())->RemoveBead(c->GetFirstBead());
+        //remove second bead if last
+        if(c->IfLast()) BeadDB::Instance(BeadDBKey())->RemoveBead(c->GetSecondBead());
+        //remove cylinder
+        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(c);
+    }
+}
+
 
 ///Extend front for initialization
 void Filament::ExtendFront(vector<double>& coordinates) {

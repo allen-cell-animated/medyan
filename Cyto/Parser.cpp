@@ -975,7 +975,7 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
         }
         
         ///loop through a reaction
-        if(line.find("GENERALREACTION") != std::string::npos) {
+        if(line.find("GENREACTION") != std::string::npos) {
             
             std::vector<std::string> reactants;
             std::vector<std::string> products;
@@ -993,12 +993,40 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.generalReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
+                chemSR.genReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
                                                   (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
                 std::cout << "Error reading a general reaction. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        if(line.find("BULKREACTION") != std::string::npos) {
+            
+            std::vector<std::string> reactants;
+            std::vector<std::string> products;
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            
+            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+                
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chemSR.bulkReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
+                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                std::cout << "Error reading a bulk reaction. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
         }
