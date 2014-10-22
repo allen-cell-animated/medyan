@@ -52,7 +52,10 @@ struct ChemistrySpeciesAndReactions {
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> unbindingReactions = {};
     
     ///Cross filament binding reactions
-    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> crossFilamentBindingReactions = {};
+    ///Linker binding
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> linkerBindingReactions = {};
+    ///Motor binding
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> motorBindingReactions = {};
     
     ///SpeciesBulk parsed, in the form of a tuple which contains the name and initial copy number
     std::vector<std::tuple<std::string, int>> speciesBulk = {};

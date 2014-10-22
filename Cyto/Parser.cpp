@@ -888,8 +888,9 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                 std::cout << "Error reading a bulk species. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
                 chemSR.speciesBulk.push_back(std::tuple<std::string, int>(lineVector[1], std::atoi(lineVector[2].c_str())));
+            }
             else {}
         }
         if(line.find("SPECIESDIFFUSING") != std::string::npos) {
@@ -899,9 +900,10 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                 std::cout << "Error reading a diffusing species. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 4)
+            else if (lineVector.size() == 4) {
                 chemSR.speciesDiffusing.push_back(std::tuple<std::string, int, double>
                         (lineVector[1], std::atoi(lineVector[2].c_str()), std::atof(lineVector[3].c_str())));
+            }
             else {}
         }
         
@@ -984,11 +986,9 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
    
             auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
-            
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
-                
                 for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
@@ -1145,7 +1145,7 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
         }
         
         
-        if(line.find("CROSSFILAMENTBINDINGREACTION") != std::string::npos) {
+        if(line.find("LINKERBINDINGREACTION") != std::string::npos) {
             
             std::vector<std::string> reactants;
             std::vector<std::string> products;
@@ -1159,17 +1159,46 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.crossFilamentBindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
+                chemSR.linkerBindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
                        (reactants, products, std::atof(lineVector[lineVector.size() - 3].c_str()),
                        std::atof(lineVector[lineVector.size() - 2].c_str()), std::atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a cross-filament binding reaction. Exiting" << std::endl;
+                std::cout << "Error reading a linker binding reaction. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        if(line.find("MOTORBINDINGREACTION") != std::string::npos) {
+            
+            std::vector<std::string> reactants;
+            std::vector<std::string> products;
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            
+            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+                
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chemSR.motorBindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
+                                                        (reactants, products, std::atof(lineVector[lineVector.size() - 3].c_str()),
+                                                         std::atof(lineVector[lineVector.size() - 2].c_str()), std::atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                std::cout << "Error reading a motor binding reaction. Exiting" << std::endl;
                 exit(EXIT_FAILURE);
             }
         }

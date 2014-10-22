@@ -57,7 +57,7 @@ class CompartmentGridKey {friend class ChemInitializerImpl;
 class CompartmentGrid : public Composite {
 private:
     Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
-    SpeciesContainerVector<SpeciesBulk> _bulkSpecies; ///<Bulk species in this grid
+    SpeciesPtrContainerVector _bulkSpecies; ///<Bulk species in this grid
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
     int _numCompartments; ///<num compartments in the grid
@@ -130,19 +130,21 @@ public:
     
     ///Add a bulk species to this grid
     template<typename ...Args>
-    SpeciesBulk& addSpeciesBulk (Args&& ...args) {
-        _bulkSpecies.addSpecies(std::forward<Args>(args)...);
-        return _bulkSpecies.findSpecies(_bulkSpecies.size() - 1);
+    SpeciesBulk* addSpeciesBulk (Args&& ...args) {
+        _bulkSpecies.addSpecies<SpeciesBulk>(std::forward<Args>(args)...);
+        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
     }
     
     ///Remove bulk species
-    void removeSpeciesBulk(int index) {_bulkSpecies.removeSpecies(index);}
     void removeSpeciesBulk(const std::string& name) {_bulkSpecies.removeSpecies(name);}
     
     ///Bulk species finder functions
-    SpeciesBulk& findSpeciesBulkByName(const std::string& name) {return _bulkSpecies.findSpecies(name);}
-    SpeciesBulk& findSpeciesBulkByMolecule(int molecule) {return _bulkSpecies.findSpeciesByMolecule(molecule);}
-    
+    SpeciesBulk* findSpeciesBulkByName(const std::string& name) {
+        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByName(name));
+    }
+    SpeciesBulk* findSpeciesBulkByMolecule(int molecule) {
+        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByMolecule(molecule));
+    }
     
     /// Add a bulk reaction to this compartment grid
     template<unsigned short M, unsigned short N, typename ...Args>

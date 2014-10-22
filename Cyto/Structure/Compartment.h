@@ -229,9 +229,10 @@ public:
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>
-    Species* addSpeciesDiffusing(Args&& ...args)
+    SpeciesDiffusing* addSpeciesDiffusing(Args&& ...args)
     {
-        Species *sp = _species.addSpecies<SpeciesDiffusing>(std::forward<Args>(args)...);
+        SpeciesDiffusing *sp =
+            static_cast<SpeciesDiffusing*>(_species.addSpecies<SpeciesDiffusing>(std::forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0; // not clear yet how to add diff_rate as an argument to this method
         return sp;

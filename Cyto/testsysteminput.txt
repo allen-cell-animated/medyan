@@ -7,9 +7,9 @@ NX:                          1
 NY:                          1
 NZ:                          2
 
-COMPARTMENTSIZEX:            10000.0
-COMPARTMENTSIZEY:            10000.0
-COMPARTMENTSIZEZ:            10000.0
+COMPARTMENTSIZEX:            1000.0
+COMPARTMENTSIZEY:            1000.0
+COMPARTMENTSIZEZ:            1000.0
 
 MONOMERSIZE:                 2.7
 
@@ -85,9 +85,11 @@ NUMSTEPSPERM:                2
 
 NUMBULKSPECIES:              3
 NUMDIFFUSINGSPECIES:         0
+
 NUMFILAMENTSPECIES:          0
 NUMPLUSENDSPECIES:           0
 NUMMINUSENDSPECIES:          0
+
 NUMBOUNDSPECIES:             0
 NUMLINKERSPECIES:            0
 NUMMOTORSPECIES:             0

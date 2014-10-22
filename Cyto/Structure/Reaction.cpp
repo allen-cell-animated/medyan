@@ -67,22 +67,16 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
         
-        ///If species bulk, just add it
-        Species s = rs->getSpecies();
-        if(dynamic_cast<SpeciesBulk*>(&s)) species.push_back(&s);
-        
-        ///otherwise, check if that species exists in the compartment
+        ///check if that species exists in the compartment
+        auto vit = std::find_if(spcv.species().cbegin(),spcv.species().cend(),
+                                [molec](const std::unique_ptr<Species> &us){return us->getMolecule()==molec;});
+        ///if we didn't find it, use the old species
+        if(vit==spcv.species().cend()) {
+            species.push_back(&rs->getSpecies());
+            //throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
+        }
         else {
-            auto vit = std::find_if(spcv.species().cbegin(),spcv.species().cend(),
-                                    [molec](const std::unique_ptr<Species> &us){return us->getMolecule()==molec;});
-            ///if we didn't find it, use the old species
-            if(vit==spcv.species().cend()) {
-                species.push_back(&rs->getSpecies());
-                //throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
-            }
-            else {
-                species.push_back(vit->get());
-            }
+            species.push_back(vit->get());
         }
     }
     ///Create new reaction, copy ownership of signal

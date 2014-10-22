@@ -265,5 +265,6 @@ void ChemNRMImpl::printReactions() const {
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
         rn->printSelf();
+        //rn->printDependents();
     }
 }
