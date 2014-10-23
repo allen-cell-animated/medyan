@@ -35,6 +35,9 @@ void Controller::initialize(std::string inputFile) {
     std::cout << "Done." << std::endl;
     
 #ifdef CHEMISTRY
+    ///read parameters
+    p.readChemistryParameters();
+    
     ///Initialize chemical controller
     std::cout << "Initializing chemistry...";
     ///read algorithm
@@ -93,8 +96,11 @@ void Controller::initialize(std::string inputFile) {
     _subSystem->AddNewFilaments(filamentData);
     std::cout << "Done." <<std::endl;
     
-    std::cout << "PRINTING REACTIONS" << std::endl;
-    ChemSim::printReactions();
+    ///Update positions of cylinders (HERE FOR NOW, SHOULD BE MOVED)
+    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
+    
+    //std::cout << "PRINTING REACTIONS" << std::endl;
+    //ChemSim::printReactions();
 }
 
 void Controller::run() {
@@ -103,7 +109,6 @@ void Controller::run() {
     chk1 = std::chrono::high_resolution_clock::now();
     ///Set up filament output file
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
-    o.printBasicSnapshot(0);
     
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {

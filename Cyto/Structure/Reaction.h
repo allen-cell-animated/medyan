@@ -29,7 +29,7 @@ template <unsigned short M, unsigned short N>
         /// The main constructor:
         /// @param species - are reactants and products put together into a single list (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
-        Reaction(std::initializer_list<Species*> species, float rate = 0.0) : ReactionBase(rate)
+        Reaction(std::initializer_list<Species*> species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
         {
             //            std::cout << "Reaction<M,N>(std::initializer_list<Species*> species, float rate) called..." << std::endl;
             initializeSpecies(species);
@@ -40,7 +40,7 @@ template <unsigned short M, unsigned short N>
         /// @param it_end - an iterator to the end of an RSpecies* container
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
-        Reaction(const InputContainer &species, float rate = 0.0) : ReactionBase(rate)
+        Reaction(const InputContainer &species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
         {
             //            std::cout << "Reaction<M,N>(const std::vector<Species*> &species, float rate) called..." << std::endl;
             initializeSpecies(species);
@@ -66,9 +66,9 @@ template <unsigned short M, unsigned short N>
         virtual ~Reaction() noexcept
         {
         for(auto i=0U; i<M; ++i)
-            _rspecies[i]->removeAsReactant(this);
+            if(!_isProtoCompartment) _rspecies[i]->removeAsReactant(this);
         for(auto i=M; i<(M+N); ++i)
-            _rspecies[i]->removeAsProduct(this);
+            if(!_isProtoCompartment) _rspecies[i]->removeAsProduct(this);
 
         }
         
@@ -111,9 +111,9 @@ template <unsigned short M, unsigned short N>
             for(auto &d : tempDependents) { if(!d->isPassivated()) _dependents.push_back(d); }
             
             for(auto i=0U; i<M; ++i)
-                _rspecies[i]->addAsReactant(this);
+                if(!_isProtoCompartment) _rspecies[i]->addAsReactant(this);
             for(auto i=M; i<(M+N); ++i)
-                _rspecies[i]->addAsProduct(this);
+                if(!_isProtoCompartment) _rspecies[i]->addAsProduct(this);
 
         }
         

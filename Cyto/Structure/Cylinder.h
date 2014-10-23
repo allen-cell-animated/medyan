@@ -42,7 +42,7 @@ private:
     
 public:
     ///Constructor and destructor
-    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool init);
+    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool creation);
     ~Cylinder();
     
     ///get mCylinder

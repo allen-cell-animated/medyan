@@ -7,8 +7,13 @@
 //
 
 #include "InitializerImpl.h"
-#include "SystemParameters.h"
 #include "ChemCallbacks.h"
+#include "Bead.h"
+
+#include "SystemParameters.h"
+#include "MathFunctions.h"
+
+using namespace mathfunc;
 
 void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
@@ -549,7 +554,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             exit(EXIT_FAILURE);
         }
         
-        ///FIRST REACTANT SPECIES MUST BE BOUND
+        ///FIRST REACTANT SPECIES MUST BE BOUND, LINKER, MOTOR
         auto reactant = reactants[0];
         ///read strings, and look up type
         if(reactant.find("BOUND") != std::string::npos) {
@@ -570,13 +575,49 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
                 exit(EXIT_FAILURE);
             }
         }
+        else if(reactant.find("LINKER") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
+            int position = 0;
+            
+            if(it != _speciesLinker.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesLinker.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::LINKER));
+            }
+            else {
+                std::cout << "A linker species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if(reactant.find("MOTOR") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMotor.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesMotor.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+            }
+            else {
+                std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
         else{
-            std::cout << "First species listed in an unbinding reaction must be bound. Exiting" << std::endl;
+            std::cout << "First species listed in an unbinding reaction must be bound, linker, or motor. Exiting" << std::endl;
             exit(EXIT_FAILURE);
         }
         
         ///FIRST PRODUCT SPECIES MUST BE BULK OR DIFFUSING
-        auto product = products[1];
+        auto product = products[0];
         if(product.find("BULK") != std::string::npos) {
             
             ///Look up species, make sure in list
@@ -709,7 +750,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
         
         ///THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
-        reactant = reactants[3];
+        reactant = reactants[2];
         if(reactant.find("BULK") != std::string::npos) {
             
             ///Look up species, make sure in list
@@ -868,7 +909,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
         
         ///THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
-        reactant = reactants[3];
+        reactant = reactants[2];
         if(reactant.find("BULK") != std::string::npos) {
             
             ///Look up species, make sure in list
@@ -988,7 +1029,7 @@ void InitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& che
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+                reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName(name));
             }
             
             else if(reactant.find("DIFFUSING") != std::string::npos) {
@@ -1021,7 +1062,7 @@ void InitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& che
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+                productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName(name));
             }
             
             else if(product.find("DIFFUSING") != std::string::npos) {
@@ -1051,28 +1092,28 @@ void InitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& che
         
         ///<1,1>
         if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
-            rxn = new Reaction<1,1>(species, std::get<2>(r));
+            rxn = new Reaction<1,1>(species, std::get<2>(r), true);
         ///<2,1>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
-            rxn = new Reaction<2,1>(species, std::get<2>(r));
+            rxn = new Reaction<2,1>(species, std::get<2>(r), true);
         ///<1,2>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
-            rxn = new Reaction<1,2>(species, std::get<2>(r));
+            rxn = new Reaction<1,2>(species, std::get<2>(r), true);
         ///<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
-            rxn = new Reaction<2,0>(species, std::get<2>(r));
+            rxn = new Reaction<2,0>(species, std::get<2>(r), true);
         ///<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
-            rxn = new Reaction<2,2>(species, std::get<2>(r));
+            rxn = new Reaction<2,2>(species, std::get<2>(r), true);
         ///<1,3>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
-            rxn = new Reaction<1,3>(species, std::get<2>(r));
+            rxn = new Reaction<1,3>(species, std::get<2>(r), true);
         ///<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
-            rxn = new Reaction<2,3>(species, std::get<2>(r));
+            rxn = new Reaction<2,3>(species, std::get<2>(r), true);
         ///<3,2>
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
-            rxn = new Reaction<3,2>(species, std::get<2>(r));
+            rxn = new Reaction<3,2>(species, std::get<2>(r), true);
         else {
             std::cout << "General reaction specified does not match any existing templates. Exiting" <<std::endl;
             exit(EXIT_FAILURE);
@@ -1106,7 +1147,7 @@ void InitializerImpl::generateBulkReactions(ChemistrySpeciesAndReactions& chemSR
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+                reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName(name));
             }
             else {
                 std::cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << std::endl;
@@ -1126,7 +1167,7 @@ void InitializerImpl::generateBulkReactions(ChemistrySpeciesAndReactions& chemSR
                     std::cout << "A bulk species that was included in a reaction was not initialized. Exiting." << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->findSpeciesBulkByName(name));
+                productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->findSpeciesBulkByName(name));
             }
             else {
                 std::cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << std::endl;
@@ -1182,6 +1223,11 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     ReactionFilamentTemplate::_ps = _subSystem;
     ReactionCrossFilamentTemplate::_ps = _subSystem;
     
+    ///Copy all species from chemSR struct
+    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
+    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
+    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
+    
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
     
@@ -1216,19 +1262,11 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     generateFilamentReactionTemplates(chemSR);
     ///create cross filament reaction templates
     generateCrossFilamentReactionTemplates(chemSR);
-    
-    ///Copy all species from chemSR struct
-    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
-    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
-    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
 }
 
 CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
-                                                  bool extensionFront, bool extensionBack, bool init)
+                                            bool extensionFront, bool extensionBack, bool creation)
 {
-    
-    ///ADD INIT CASE
-    
     CCylinder* cc = new CCylinder(c);
     
     ///maxlength is same length as mcylinder
@@ -1296,6 +1334,14 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         for(auto &r : _filamentReactionTemplates) r->addReaction(cc, lastcc, pf);
     }
 
+    else if(creation) {
+        
+        CMonomer* m2 = lastcc->getCMonomer(int(cc->size() / 2));
+        CMonomer* m1 = lastcc->getCMonomer(int(cc->size() / 2) - 1);
+        m2->speciesPlusEnd(0)->getRSpecies().setN(1);
+        m1->speciesMinusEnd(0)->getRSpecies().setN(1);
+    }
+    
     ///Base case, initialization
     else {
         ///Check if this is the first cylinder
@@ -1347,13 +1393,43 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     //update all reactions added
     cc->updateReactions();
     
-    ///cc->printCCylinder();
-    //std::cout <<std::endl;
-
     ///clean up and return
     return cc;
 }
 
-void InitializerImpl::updateCCylinder(CCylinder* cc) {}
+void InitializerImpl::updateCCylinder(CCylinder* cc) {
+
+    ///get location of this ccylinder
+    auto pos1 = MidPointCoordinate(cc->getCylinder()->GetFirstBead()->coordinate,
+                                   cc->getCylinder()->GetFirstBead()->coordinate, 0.5);
+    
+    ///loop through the cylinders reaction map, and remove any that are out of range.
+    auto ccReactions = cc->getCrossCylinderReactions();
+    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
+        
+        ///calculate distance from this CCylinder to the one in the map
+        auto pos2 = MidPointCoordinate(it->first->getCylinder()->GetFirstBead()->coordinate,
+                                       it->first->getCylinder()->GetFirstBead()->coordinate, 0.5);
+        double dist = TwoPointDistance(pos1, pos2);
+        
+        for(auto &r : it->second) {
+            ///if out of range, remove it
+            if(r->getRMin() > dist || r->getRMax() < dist)
+                cc->removeCrossCylinderReaction(it->first, r);
+        }
+        
+        ///If the number of reactions between this cylinder and the other has dropped to
+        ///zero, remove the key/value as well as this reacting cylinder in other
+        if(it->second.size() == 0)
+            it->first->removeReactingCylinder(cc);
+    }
+    
+    
+    ///Now, loop through all cylinders in the same compartment, and add reactions
+    Compartment* compartment = cc->getCompartment();
+    for(auto &c : compartment->getCylinders())
+        for(auto &r : _crossFilamentReactionTemplates) r->addReaction(cc, c->getCCylinder());
+
+}
 
 

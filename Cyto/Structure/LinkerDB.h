@@ -22,7 +22,7 @@ class Cylinder;
 ///Key to access instance of LinkerDB
 class LinkerDBKey {friend class SubSystem;
                    friend class LinkerFF;
-                   friend struct LinkerBindingCallback;
+                   friend class MController;
 #ifdef TESTING
                    public:
 #endif //TESTING
@@ -52,13 +52,16 @@ public:
     
     static LinkerDB* Instance(LinkerDBKey k);
     
-    void CreateLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1 = 0.5, double position2 = 0.5) {
+    void CreateLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
         
-        Linker* pl = new Linker(pc1, pc2, linkerType, position1, position2);
+        Linker* pl = new Linker(pc1, pc2, linkerType, position1, position2, creation);
         push_back(pl);
     }
 
-    void RemoveLinker(Linker* pl) {};
+    void RemoveLinker(Linker* pl) {
+        delete pl;
+        remove(pl);
+    };
     
 private:
     static LinkerDB* _instance;

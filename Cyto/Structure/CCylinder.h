@@ -40,7 +40,7 @@ protected:
     ///REACTION CONTAINERS
     std::unordered_set<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
     std::unordered_set<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
-    std::unordered_map<CCylinder*, std::vector<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
+    std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     
     Compartment* _compartment; ///< compartment this ccylinder is in
 
@@ -99,6 +99,8 @@ public:
     ///remove all internal reactions from this ccylinder
     void removeAllInternalReactions();
     
+    ///Remove a specific cross cylinder reaction from 
+    void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     ///clear all reactions involving another ccylinder
     ///@note also removes reaction from other ccylinder's reacting cylinder lsist
     void removeCrossCylinderReactions(CCylinder* other);
@@ -117,7 +119,7 @@ public:
     const std::unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     const std::unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     ///Get map of reactions associated with this CCylinder and others
-    std::unordered_map<CCylinder*, std::vector<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
+    std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
     
     ///Update all reactions associated with this CCylinder
     void updateReactions();

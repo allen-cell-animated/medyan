@@ -53,14 +53,17 @@ Goals for October 2014:
 1) More finishing touches
     -CMonomer structure fixes                                                   X
     -Compartments: contain sets of all elements                                 X
-    -Reaction parsing: create general reaction template, restructuring
-    -Finish linker chemistry (callbacks, updating reactions)
+    -Reaction parsing: create general reaction template, restructuring          X
+    -Finish linker chemistry (callbacks, updating reactions)                    X
+    -Motor walking reaction and callback
     -Filament creation and destruction?
     -Spherical boundary
     -Changing of polymerization/depolymerization/binding rates
     -Excluded volume force field
+    -Optimize movement updates?
 
 2) Testing:
+    -Cylinder reaction management
     -Filament (initialization, poly, depoly) (general, chem)
     -Linker/Motor (general, chem)
     -Compartment (bead, cylinder, boundary element adding/removing, etc)

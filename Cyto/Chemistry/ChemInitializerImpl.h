@@ -40,7 +40,7 @@ public:
     ///Initializer, based on the given simulation
     ///@param length - starting length of the CCylinder initialized
     ///@param species - list of species to initialize in CCylinder
-    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool init) = 0;
+    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool creation) = 0;
 
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc) = 0;

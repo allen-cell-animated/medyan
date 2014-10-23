@@ -20,6 +20,7 @@ class Cylinder;
 ///Key to access instance of MotorGhostDB
 class MotorGhostDBKey {friend class SubSystem;
                        friend class MotorGhostFF;
+                       friend class MController;
 #ifdef TESTING
                        public:
 #endif //TESTING
@@ -50,15 +51,18 @@ public:
     
     static MotorGhostDB* Instance(MotorGhostDBKey k);
     
-    void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1 = 0.5, double position2 = 0.5) {
+    void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
     
-        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, position1, position2);
+        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, position1, position2, creation);
         push_back(pmg);
         
         //return pmg;
     }
     
-    void RemoveMotorGhost(MotorGhost* pmg) {};
+    void RemoveMotorGhost(MotorGhost* pmg) {
+        delete pmg;
+        remove(pmg);
+    };
     
 private:
     static MotorGhostDB* _instance;

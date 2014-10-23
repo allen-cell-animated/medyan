@@ -11,7 +11,7 @@
 #include "Cylinder.h"
 #include "SystemParameters.h"
 
-Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2) :
+Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2, bool creation) :
     _pc1(pc1), _pc2(pc2), _linkerType(linkerType), _position1(position1), _position2(position2) {
 
     ///Find compartment
@@ -30,26 +30,28 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1,
     ///Find species on cylinder that should be marked. If initialization, this should be done. But,
     ///if this is because of a reaction callback, it will have already been done.
         
-    int pos1 = int(position1 * SystemParameters::Geometry().cylinderSize);
-    int pos2 = int(position2 * SystemParameters::Geometry().cylinderSize);
+    int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
+    int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
     SpeciesLinker* sl1 = pc1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
-    SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
     SpeciesLinker* sl2 = pc2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
-    SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
         
-    if(sl1->getN() != 1) {
-        sl1->getRSpecies().up();
-        se1->getRSpecies().down();
-    }
-    if(sl2->getN() != 1) {
-        sl2->getRSpecies().up();
-        se2->getRSpecies().down();
+    if(!creation) {
+        if(sl1->getN() != 1) {
+            SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+            sl1->getRSpecies().up();
+            se1->getRSpecies().down();
+        }
+        if(sl2->getN() != 1) {
+            SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+            sl2->getRSpecies().up();
+            se2->getRSpecies().down();
+        }
     }
         
     ///attach this linker to the species
-    sl1->setCBound(this->getCLinker());
-    sl2->setCBound(this->getCLinker());
+    _cLinker->setFirstSpecies(sl1);
+    _cLinker->setSecondSpecies(sl2);
 #endif
     
 #ifdef MECHANICS
@@ -67,8 +69,8 @@ Linker::~Linker() {
     ///Find species on cylinder that should be unmarked. This should be done if deleting because
     ///of a reaction callback, but needs to be done if deleting for other reasons
 
-    int pos1 = int(_position1 * SystemParameters::Geometry().cylinderSize);
-    int pos2 = int(_position2 * SystemParameters::Geometry().cylinderSize);
+    int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
+    int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
     
     SpeciesLinker* sl1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesLinker(_linkerType);
     SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);

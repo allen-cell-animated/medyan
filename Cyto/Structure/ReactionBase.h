@@ -68,11 +68,15 @@ protected:
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
     ReactionType _reactionType; ///< Reaction type enumeration
+    bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
+    
+    double _rMin = 0.0; /// minimum radius of reaction (only used for linker and motor binding)
+    double _rMax = 0.0; /// maximum radius of reaction (only used for
     
 public:
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
-    ReactionBase (float rate);
+    ReactionBase (float rate, bool isProtoCompartment);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -119,6 +123,16 @@ public:
     
     /// Returns the bare rate associated with this ReacitonBase
     float getBareRate() const {return _rate_bare;}
+    
+    /// Set rMin for linker and motor reactions
+    void setRMin(double rMin) {_rMin = rMin;}
+    
+    /// Set rMax for linker and motor reactions
+    void setRMax(double rMax) {_rMax = rMax;}
+    
+    ///getters for rMin and rMax
+    double getRMin() {return _rMin;}
+    double getRMax() {return _rMax;}
     
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}

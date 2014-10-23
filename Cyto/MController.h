@@ -27,6 +27,7 @@
 #include "FilamentDB.h"
 #include "CylinderDB.h"
 #include "LinkerDB.h"
+#include "MotorGhostDB.h"
 
 #include <iostream>
 #include <vector>

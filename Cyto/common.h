@@ -10,11 +10,11 @@
 #define CytoSim_Experimenting_common_h
 
 ///Will eventually be command line macros
-//#define MECHANICS
+#define MECHANICS
 #define CHEMISTRY
 
 ///If compiling for testing
-#define TESTING
+//#define TESTING
 
 ///Other chemistry macros
 #define TRACK_DEPENDENTS

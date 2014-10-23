@@ -69,7 +69,10 @@ public:
         }
     }
 
-    void RemoveFilament(Filament* f) {};
+    void RemoveFilament(Filament* f) {
+        delete f;
+        remove(f);
+    };
     
 private:
     ///To assign filament ids

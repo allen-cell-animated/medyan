@@ -10,6 +10,7 @@
 #define __Cyto__ReactionTemplate__
 
 #include "Filament.h"
+#include "CompartmentContainer.h"
 
 #include <iostream>
 
@@ -60,6 +61,8 @@ public:
     ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf ) = 0;
     
+    ///return compartment grid key
+    CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
 
 ///Template for polymerization at plus end
@@ -194,6 +197,9 @@ public:
     
     ///add this chemical reaction to two ccylinders if within the reaction range
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
+    
+    ///return compartment grid key
+    CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
 
 class LinkerBindingTemplate : public ReactionCrossFilamentTemplate {

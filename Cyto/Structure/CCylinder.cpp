@@ -95,7 +95,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     ChemSim::addReaction(ChemSimReactionKey(), r);
     
     ///add to this reaction map
-    _crossCylinderReactions[other].push_back(r);
+    _crossCylinderReactions[other].insert(r);
     ///add to others reacting cylinders list
     other->addReactingCylinder(this);
 }
@@ -122,6 +122,16 @@ void CCylinder:: removeAllInternalReactions() {
     }
     _internalReactions.clear();
 }
+
+void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
+
+    auto it = _crossCylinderReactions[other].find(r);
+    if(it != _crossCylinderReactions[other].end()) _crossCylinderReactions[other].erase(it);
+    
+    _compartment->removeInternalReaction(r);
+    ChemSim::removeReaction(ChemSimReactionKey(), r);
+}
+
 
 void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     

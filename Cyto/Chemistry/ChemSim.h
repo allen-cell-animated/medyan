@@ -26,6 +26,7 @@ class ChemSimInitKey { friend class CController;
 ///Key for adding and removing reactions
 class ChemSimReactionKey {friend class CCylinder;
                           friend class Compartment;
+                          friend class CompartmentGrid;
 #ifdef TESTING
                           public:
 #endif //TESTING

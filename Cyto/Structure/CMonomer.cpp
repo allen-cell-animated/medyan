@@ -12,28 +12,22 @@
 CMonomer::CMonomer() {
     
     short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
-    _speciesFilament = new SpeciesFilament*[numFilamentSpecies];
-    memset(_speciesFilament, 0, numFilamentSpecies);
+    _speciesFilament = new SpeciesFilament*[numFilamentSpecies]();
     
     short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
-    _speciesPlusEnd = new SpeciesPlusEnd*[numPlusEndSpecies];
-    memset(_speciesPlusEnd, 0, numPlusEndSpecies);
+    _speciesPlusEnd = new SpeciesPlusEnd*[numPlusEndSpecies]();
     
     short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
-    _speciesMinusEnd = new SpeciesMinusEnd*[numMinusEndSpecies];
-    memset(_speciesMinusEnd, 0, numMinusEndSpecies);
+    _speciesMinusEnd = new SpeciesMinusEnd*[numMinusEndSpecies]();
     
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
-    _speciesBound = new SpeciesBound*[numBoundSpecies];
-    memset(_speciesBound, 0, numBoundSpecies);
+    _speciesBound = new SpeciesBound*[numBoundSpecies]();
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
-    _speciesLinker = new SpeciesLinker*[numLinkerSpecies];
-    memset(_speciesLinker, 0, numLinkerSpecies);
+    _speciesLinker = new SpeciesLinker*[numLinkerSpecies]();
     
     short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
-    _speciesMotor = new SpeciesMotor*[numMotorSpecies];
-    memset(_speciesMotor, 0, numMotorSpecies);
+    _speciesMotor = new SpeciesMotor*[numMotorSpecies]();
 
 };
 
@@ -105,7 +99,7 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
     
     short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
-        if(_speciesFilament[i] == nullptr) {
+        if(_speciesFilament[i] == 0) {
             _speciesFilament[i] = s;
             return;
         }
@@ -121,7 +115,7 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
     
     short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
-        if(_speciesPlusEnd[i] == nullptr) {
+        if(_speciesPlusEnd[i] == 0) {
             _speciesPlusEnd[i] = s;
             return;
         }
@@ -137,7 +131,7 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
     
     short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
-        if(_speciesMinusEnd[i] == nullptr) {
+        if(_speciesMinusEnd[i] == 0) {
             _speciesMinusEnd[i] = s;
             return;
         }
@@ -153,7 +147,7 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
     
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
-        if(_speciesBound[i] == nullptr) {
+        if(_speciesBound[i] == 0) {
             _speciesBound[i] = s;
             return;
         }
@@ -169,7 +163,7 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
-        if(_speciesLinker[i] == nullptr) {
+        if(_speciesLinker[i] == 0) {
             _speciesLinker[i] = s;
             return;
         }
@@ -184,7 +178,7 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
-        if(_speciesMotor[i] == nullptr) {
+        if(_speciesMotor[i] == 0) {
             _speciesMotor[i] = s;
             return;
         }

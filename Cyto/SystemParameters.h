@@ -71,6 +71,7 @@ struct GeometryParameters {
     
     double monomerSize = 0;
     double cylinderSize = 0;
+    int cylinderIntSize = 0;
 };
 
 ///Struct to hold the read boundary parameters

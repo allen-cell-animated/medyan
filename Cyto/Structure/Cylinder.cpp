@@ -16,8 +16,11 @@
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool init) {
+Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool creation) {
     
+    ///Set beads
+    _pFirst = firstBead;
+    _pSecond = secondBead;
     setFilament(pf);
     
     ///check if were still in same compartment
@@ -29,25 +32,24 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     
 #ifdef CHEMISTRY
     _cCylinder = std::unique_ptr<CCylinder>(
-        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack, init));
+        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack, creation));
     _cCylinder->setCylinder(this);
+    
+    ///Update filament reactions, only if not initialization
+    if(!(!creation && !extensionFront && !extensionBack))
+        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
+    
 #endif
 
 #ifdef MECHANICS
-    ////CHANGE FOR INIT AS WELL
-    
-    
     double eqLength;
     if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
+    else if(creation) eqLength = SystemParameters::Geometry().monomerSize * 2;
     else eqLength = SystemParameters::Geometry().cylinderSize;
     
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
 #endif
-    
-    ///Set beads
-    _pFirst = firstBead;
-    _pSecond = secondBead;
     
     ///add to compartment
     _compartment->addCylinder(this);
@@ -87,8 +89,13 @@ void Cylinder::updatePosition() {
         CCylinder* clone = _cCylinder->clone(c);
         setCCylinder(clone);
 #endif
-        
     }
+    ///Update filament reactions
+#ifdef CHEMISTRY
+    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
+    _cCylinder->updateReactions();
+#endif
+    
     
 }
 

@@ -171,6 +171,7 @@ bool ChemNRMImpl::makeStep()
 //    chk1 = std::chrono::system_clock::now();
 
     RNodeNRM *rn = _heap.top()._rn;
+    //rn->printSelf();
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;

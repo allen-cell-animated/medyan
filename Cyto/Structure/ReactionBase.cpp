@@ -11,8 +11,8 @@
 
 using namespace std;
 
-ReactionBase::ReactionBase (float rate) :
-_rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate)
+ReactionBase::ReactionBase (float rate, bool isProtoCompartment) :
+_rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate), _isProtoCompartment(isProtoCompartment)
 {
 #ifdef REACTION_SIGNALING
     _signal=nullptr;

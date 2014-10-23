@@ -18,6 +18,7 @@
 class CompartmentGridKey {friend class ChemInitializerImpl;
                           friend class GController;
                           friend class ReactionFilamentTemplate;
+                          friend class ReactionCrossFilamentTemplate;
 #ifdef TESTING
                           public:
 #endif //TESTING

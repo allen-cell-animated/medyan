@@ -32,7 +32,7 @@ void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* >>& v, short lin
 }
 void SubSystem::AddNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2){
     
-    LinkerDB::Instance(LinkerDBKey())->CreateLinker(pc1, pc2, linkerType, position1, position2);
+    LinkerDB::Instance(LinkerDBKey())->CreateLinker(pc1, pc2, linkerType, position1, position2, true);
 }
 
 void SubSystem::RemoveLinker(Linker* l) {
@@ -47,7 +47,7 @@ void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* >>& v, short
 }
 void SubSystem::AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2){
     
-    MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(pc1, pc2, motorType, position1, position2);
+    MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(pc1, pc2, motorType, position1, position2, true);
 }
 
 void SubSystem::RemoveMotorGhost(MotorGhost* m) {

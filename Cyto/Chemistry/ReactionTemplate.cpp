@@ -41,7 +41,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         
         ///FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                                  findSpeciesBulkByMolecule(speciesInt));
 
         else if(type == SpeciesType::DIFFUSING) {
@@ -122,7 +122,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         
         ///FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                       findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -199,7 +199,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     
     ///FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+        reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {
@@ -266,7 +266,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2,
     
     ///FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+        reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {
@@ -362,7 +362,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         speciesInt = std::get<0>(p);
         
         if( type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                       findSpeciesBulkByMolecule(speciesInt));
         else if(type == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -439,7 +439,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
         speciesInt = std::get<0>(p);
         
         if( type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                      findSpeciesBulkByMolecule(speciesInt));
         else if(type == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -510,7 +510,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
     speciesInt = std::get<0>(p);
     
     if( type == SpeciesType::BULK)
-        productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+        productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                  findSpeciesBulkByMolecule(speciesInt));
     else if(type == SpeciesType::DIFFUSING) {
         Compartment* c = cc2->getCompartment();
@@ -575,7 +575,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
     speciesInt = std::get<0>(p);
     
     if( type == SpeciesType::BULK)
-        productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+        productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                  findSpeciesBulkByMolecule(speciesInt));
     else if(type == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
@@ -623,12 +623,12 @@ void BasicBindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         reactantSpecies.push_back(m1->speciesBound(speciesInt));
         
         ///SECOND REACTANT MUST BE BULK OR DIFFUSING
-        r = _reactants[0];
+        r = _reactants[1];
         type = std::get<1>(r);
         speciesInt = std::get<0>(r);
         
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                       findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -647,7 +647,7 @@ void BasicBindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         ///Add the reaction
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<1, 2>(species, _rate);
+        ReactionBase* rxn = new Reaction<2, 1>(species, _rate);
         
         //boost::signals2::shared_connection_block rcb(rxn->connect(bindingCallback,false));
         
@@ -703,7 +703,7 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         speciesInt = std::get<0>(p);
         
         if(type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                      findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -744,11 +744,11 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     double dist = TwoPointDistance(cc1Position, cc2Position);
     
-    if(_rMin <= dist && dist <= _rMax) {
+    if(_rMin <= dist && dist <= _rMax && cc1->getCylinder()->getFilament() != cc2->getCylinder()->getFilament()) {
 
         ///Add reaction to middle of both cylinders
         int i, j;
-        i = j = int(0.5 * SystemParameters::Geometry().cylinderSize);
+        i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
         
         CMonomer* m1 = cc1->getCMonomer(i);
         CMonomer* m2 = cc2->getCMonomer(j);
@@ -777,7 +777,7 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         speciesInt = std::get<0>(r);
 
         if(type == SpeciesType::BULK)
-           reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+           reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                      findSpeciesBulkByMolecule(speciesInt));
 
         else if(type == SpeciesType::DIFFUSING) {
@@ -807,6 +807,8 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+        rxn->setRMin(_rMin);
+        rxn->setRMax(_rMax);
         
         boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
         
@@ -829,11 +831,11 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     double dist = TwoPointDistance(cc1Position, cc2Position);
     
-    if(_rMin <= dist && dist <= _rMax) {
+    if(_rMin <= dist && dist <= _rMax && cc1->getCylinder()->getFilament() != cc2->getCylinder()->getFilament()) {
         
         ///Add reaction to middle of both cylinders
         int i, j;
-        i = j = int(0.5 * SystemParameters::Geometry().cylinderSize);
+        i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
         
         CMonomer* m1 = cc1->getCMonomer(i);
         CMonomer* m2 = cc2->getCMonomer(j);
@@ -862,7 +864,7 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         speciesInt = std::get<0>(r);
         
         if(type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::Instance(CompartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
                                       findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -892,6 +894,8 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         std::vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+        rxn->setRMin(_rMin);
+        rxn->setRMax(_rMax);
         
         boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
         

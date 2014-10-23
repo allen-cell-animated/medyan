@@ -22,10 +22,10 @@ void ChemInitializer::initialize(ChemInitializerGridKey k, ChemistrySpeciesAndRe
 }
 
 CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,
-                                                                          bool extensionFront, bool extensionBack, bool init)
+                                                                          bool extensionFront, bool extensionBack, bool creation)
 
 {
-    return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, init);
+    return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, creation);
 }
 
 void ChemInitializer::updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc) {

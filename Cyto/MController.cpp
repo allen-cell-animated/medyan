@@ -55,5 +55,8 @@ void MController::updatePositions() {
     ///Update linker positions
     for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
     
+    ///update motor positions
+    for(auto &m : *MotorGhostDB::Instance(MotorGhostDBKey())) m->updatePosition();
+
 }
 

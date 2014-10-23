@@ -139,8 +139,7 @@ struct LinkerBindingCallback {
     void operator() (ReactionBase *r) {
         
         ///Create a linker
-        int cylinderSize = SystemParameters::Geometry().cylinderSize /
-                           SystemParameters::Geometry().monomerSize;
+        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
@@ -164,8 +163,7 @@ struct MotorBindingCallback {
     void operator() (ReactionBase *r) {
         
         ///Create a linker
-        int cylinderSize = SystemParameters::Geometry().cylinderSize /
-        SystemParameters::Geometry().monomerSize;
+        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;

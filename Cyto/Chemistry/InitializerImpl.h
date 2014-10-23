@@ -51,7 +51,7 @@ public:
     ///@param length - starting length of the CCylinder initialized
     ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
     /// vector. The active plus and minus end is set to be the first listed as well.
-    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool init);
+    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc);

@@ -38,7 +38,7 @@ private:
     
     
 public:
-    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
+    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2, bool creation);
     ~Linker();
     
     ///get cylinders
