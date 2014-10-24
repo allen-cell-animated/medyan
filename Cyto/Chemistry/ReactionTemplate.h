@@ -159,6 +159,36 @@ public:
 
 };
 
+class MotorWalkingForwardTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    MotorWalkingForwardTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                                std::vector<std::tuple<int, SpeciesType>> products,
+                                float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~MotorWalkingForwardTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+
+};
+
+class MotorWalkingBackwardTemplate : public ReactionFilamentTemplate {
+    
+public:
+    ///default constructor and destructor
+    MotorWalkingBackwardTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
+                                std::vector<std::tuple<int, SpeciesType>> products,
+                                float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
+    ~MotorWalkingBackwardTemplate() {}
+    
+    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    
+};
+
 
 ///ReactionCrossFilamentTemplate is a class to store cross-filament reactions, including linker and motor binding/unbinding
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#ifndef __Cyto__SimpleInitializerImpl__
-#define __Cyto__SimpleInitializerImpl__
+#ifndef __Cyto__InitializerImpl__
+#define __Cyto__InitializerImpl__
 
 #include <iostream>
 

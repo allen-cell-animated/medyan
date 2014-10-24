@@ -191,8 +191,6 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     std::vector<Species*> productSpecies;
     
     ///loop through reactants, products. find all species
-
-    
     auto r = _reactants[0];
     SpeciesType type = std::get<1>(r);
     int speciesInt = std::get<0>(r);
@@ -729,6 +727,76 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
         rxn->setReactionType(reactionType);
     }   
 }
+
+void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
+    
+    ///loop through all monomers of filament
+    int maxlength = cc->size();
+    
+    ///loop through all monomers
+    for(int i = 0; i < maxlength - 1; i++) {
+        
+        CMonomer* m1 = cc->getCMonomer(i);
+        CMonomer* m2 = cc->getCMonomer(i+1);
+        std::vector<Species*> reactantSpecies;
+        std::vector<Species*> productSpecies;
+        
+        ///loop through reactants, products. find all species
+        
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        ///FIRST REACTANT MUST BE MOTOR
+        reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+        
+        
+        ///SECOND REACTANT MUST BE BOUND
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m2->speciesBound(speciesInt));
+        
+        
+        ///FIRST PRODUCT MUST BE MOTOR
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m2->speciesMotor(speciesInt));
+        
+        ///SECOND PRODUCT MUST BE BOUND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m1->speciesBound(speciesInt));
+        
+//        ///callbacks
+//        FilamentExtensionFrontCallback extCallback(pf);
+//        
+//        ///Add the reaction. If it needs a callback then attach
+//        std::vector<Species*> species = reactantSpecies;
+//        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+//        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
+//        
+//        if(i == maxlength - 2)
+//            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+//        else
+//            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+//        
+//        cc->addInternalReaction(rxn);
+//        rxn->setReactionType(ReactionType::POLYMERIZATION);
+    }
+}
+
+void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) { }
+
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) { }
+
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) { }
+
 
 
 void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {

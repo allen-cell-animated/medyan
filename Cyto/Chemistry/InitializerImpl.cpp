@@ -30,7 +30,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         
         ///Checks on number of reactants, products
         if(reactants.size() != 2 || products.size() != 3) {
-            std::cout << "Invalid polymerization reaction. Exiting" << std::endl;
+            std::cout << "Invalid polymerization reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -63,7 +63,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting" << std::endl;
+            std::cout << "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -112,7 +112,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         }
         else {
             
-            std::cout << "Second species listed in a polymerization reaction must be either plusend or minusend. Exiting" << std::endl;
+            std::cout << "Second species listed in a polymerization reaction must be either plusend or minusend. Exiting." << std::endl;
             exit(EXIT_FAILURE);
             
         }
@@ -138,7 +138,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else {
-            std::cout << "Third species listed in a polymerization reaction must be filament. Exiting" << std::endl;
+            std::cout << "Third species listed in a polymerization reaction must be filament. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -164,7 +164,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "Fourth species listed in a polymerization reaction must be bound. Exiting" << std::endl;
+            std::cout << "Fourth species listed in a polymerization reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
             
         }
@@ -210,7 +210,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else {
-            std::cout << "Fifth species listed in a polymerization reaction must be either plusend or minusend. Exiting" << std::endl;
+            std::cout << "Fifth species listed in a polymerization reaction must be either plusend or minusend. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -238,7 +238,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         
         ///Checks on number of reactants, products
         if(reactants.size() != 3 || products.size() != 2) {
-            std::cout << "Invalid depolymerization reaction. Exiting" << std::endl;
+            std::cout << "Invalid depolymerization reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -263,7 +263,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else {
-            std::cout << "First species listed in a depolymerization reaction must be filament. Exiting" << std::endl;
+            std::cout << "First species listed in a depolymerization reaction must be filament. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -289,7 +289,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "Second species listed in a depolymerization reaction must be bound. Exiting" << std::endl;
+            std::cout << "Second species listed in a depolymerization reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
             
         }
@@ -338,7 +338,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else {
-            std::cout << "Third species listed in a depolymerization reaction must be either plusend or minusend. Exiting" << std::endl;
+            std::cout << "Third species listed in a depolymerization reaction must be either plusend or minusend. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -372,7 +372,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             productTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "Fourth species listed in a depolymerization reaction must be either bulk or diffusing. Exiting" << std::endl;
+            std::cout << "Fourth species listed in a depolymerization reaction must be either bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -416,7 +416,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else {
-            std::cout << "Fifth species listed in a depolymerization reaction must be either plusend or minusend. Exiting" << std::endl;
+            std::cout << "Fifth species listed in a depolymerization reaction must be either plusend or minusend. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -442,7 +442,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         
         ///Checks on number of reactants, products
         if(reactants.size() != 2 || products.size() != 1) {
-            std::cout << "Invalid binding reaction. Exiting" << std::endl;
+            std::cout << "Invalid binding reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -468,7 +468,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "First species listed in a binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "First species listed in a binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -501,7 +501,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "Second species listed in a binding reaction must be either bulk or diffusing. Exiting" << std::endl;
+            std::cout << "Second species listed in a binding reaction must be either bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -528,7 +528,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "Third species listed in a binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "Third species listed in a binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
     
@@ -550,7 +550,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         
         ///Checks on number of reactants, products
         if(reactants.size() != 1 || products.size() != 2) {
-            std::cout << "Invalid unbinding reaction. Exiting" << std::endl;
+            std::cout << "Invalid unbinding reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -612,7 +612,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "First species listed in an unbinding reaction must be bound, linker, or motor. Exiting" << std::endl;
+            std::cout << "First species listed in an unbinding reaction must be bound, linker, or motor. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -645,7 +645,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             productTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "Second species listed in an unbinding reaction must be either bulk or diffusing. Exiting" << std::endl;
+            std::cout << "Second species listed in an unbinding reaction must be either bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -672,13 +672,151 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
             }
         }
         else{
-            std::cout << "Third species listed in an unbinding reaction must be bound. Exiting" << std::endl;
+            std::cout << "Third species listed in an unbinding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
         
         ///add reaction
         _filamentReactionTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+    }
+    
+    
+    for(auto &r: chemSR.motorWalkingReactions) {
+        
+        std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
+        std::vector<std::tuple<int, SpeciesType>> productTemplate;
+        
+        std::vector<std::string> reactants = std::get<0>(r);
+        std::vector<std::string> products = std::get<1>(r);
+        ///read strings, and look up type
+        ReactionType type;
+        std::string species1;
+        
+        ///Checks on number of reactants, products
+        if(reactants.size() != 2 || products.size() != 2) {
+            std::cout << "Invalid motor walking reaction. Exiting." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///FIRST REACTANT SPECIES MUST BE MOTOR
+        auto reactant = reactants[0];
+        if(reactant.find("MOTOR") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMotor.end()) {
+                
+                species1 = name;
+                
+                if(reactant.find("N+1")) type = ReactionType::MOTORWALKINGBACKWARD;
+                else type = ReactionType::MOTORWALKINGFORWARD;
+                
+                ///get position of iterator
+                position = std::distance(_speciesMotor.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+            }
+            else {
+                std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            std::cout << "First species listed in a motor walking reaction must be motor. Exiting." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        
+        ///SECOND REACTANT SPECIES MUST BE BOUND
+        reactant = reactants[1];
+        ///read strings, and look up type
+        if(reactant.find("BOUND") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = reactant.substr(0, reactant.find(":"));
+            auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesBound.begin(), it);
+                reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+            }
+            else {
+                std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            std::cout << "Second species listed in a motor walking reaction must be bound. Exiting." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+   
+        ///FIRST PRODUCT SPECIES MUST BE MOTOR
+        auto product = products[0];
+        if(product.find("MOTOR") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            int position = 0;
+            
+            if(name != species1) {
+                std::cout << "Motor species in reactants and products of motor walking reaction must be same. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            if(it != _speciesMotor.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesMotor.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+            }
+            else {
+                std::cout << "A motor species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            std::cout << "Third species listed in a motor walking reaction must be motor. Exiting." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        ///SECOND PRODUCT SPECIES MUST BE BOUND
+        ///read strings, and look up type
+        product = products[1];
+        if(product.find("BOUND") != std::string::npos) {
+            
+            ///look up species, make sure in list
+            std::string name = product.substr(0, product.find(":"));
+            auto it = std::find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
+                
+                ///get position of iterator
+                position = std::distance(_speciesBound.begin(), it);
+                productTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+            }
+            else {
+                std::cout << "A bound species that was included in a reaction was not initialized. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            std::cout << "Fourth species listed in a motor walking reaction must be bound. Exiting." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        ///add reaction
+        if(type == ReactionType::MOTORWALKINGFORWARD)
+            _filamentReactionTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+        else
+            _filamentReactionTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
     }
  
 }
@@ -691,13 +829,14 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
         std::vector<std::tuple<int, SpeciesType>> productTemplate;
         ReactionType type;
+        std::string species1;
         
         std::vector<std::string> reactants = std::get<0>(r);
         std::vector<std::string> products = std::get<1>(r);
     
         ///Checks on number of reactants, products
         if(reactants.size() != 3 || products.size() != 2) {
-            std::cout << "Invalid linker binding reaction. Exiting" << std::endl;
+            std::cout << "Invalid linker binding reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -722,7 +861,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "First species listed in a linker binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "First species listed in a linker binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         reactant = reactants[1];
@@ -745,7 +884,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "Second species listed in a linker binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "Second species listed in a linker binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -778,7 +917,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "Third species listed in a linker binding reaction must be bulk or diffusing. Exiting" << std::endl;
+            std::cout << "Third species listed in a linker binding reaction must be bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -795,6 +934,8 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
             int position = 0;
             
+            species1 = name;
+            
             if(it != _speciesLinker.end()) {
                 
                 ///get position of iterator
@@ -807,23 +948,23 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "Fourth species listed in a linker binding reaction must be linker. Exiting" << std::endl;
+            std::cout << "Fourth species listed in a linker binding reaction must be linker. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
         product = products[1];
         if(product.find("LINKER") != std::string::npos) {
             
-            if(type != ReactionType::LINKERBINDING) {
-                std::cout << "Products in a linker binding reaction must be the same. Exiting." << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            
             ///look up species, make sure in list
             std::string name = product.substr(0, product.find(":"));
             auto it = std::find(_speciesLinker.begin(), _speciesLinker.end(), name);
             int position = 0;
             
+            if(name != species1) {
+                std::cout << "Linker species in reactants and products of linker binding reaction must be same. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        
             if(it != _speciesLinker.end()) {
                 
                 ///get position of iterator
@@ -837,7 +978,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
         
         else {
-            std::cout << "Fifth species listed in a linker binding reaction must be linker. Exiting" << std::endl;
+            std::cout << "Fifth species listed in a linker binding reaction must be linker. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
     
@@ -850,13 +991,14 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
         std::vector<std::tuple<int, SpeciesType>> productTemplate;
         ReactionType type;
+        std::string species1;
         
         std::vector<std::string> reactants = std::get<0>(r);
         std::vector<std::string> products = std::get<1>(r);
         
         ///Checks on number of reactants, products
         if(reactants.size() != 3 || products.size() != 2) {
-            std::cout << "Invalid motor binding reaction. Exiting" << std::endl;
+            std::cout << "Invalid motor binding reaction. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -881,7 +1023,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "First species listed in a motor binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "First species listed in a motor binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         reactant = reactants[1];
@@ -904,7 +1046,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "Second species listed in a motor binding reaction must be bound. Exiting" << std::endl;
+            std::cout << "Second species listed in a motor binding reaction must be bound. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -937,7 +1079,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             reactantTemplate.push_back(std::tuple<int, SpeciesType>(SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
-            std::cout << "Third species listed in a cross filament binding reaction must be bulk or diffusing. Exiting" << std::endl;
+            std::cout << "Third species listed in a cross filament binding reaction must be bulk or diffusing. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -954,6 +1096,8 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
             int position = 0;
             
+            species1 = name;
+            
             if(it != _speciesMotor.end()) {
                 
                 ///get position of iterator
@@ -966,23 +1110,23 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
             }
         }
         else {
-            std::cout << "Fourth species listed in a motor binding reaction must be motor. Exiting" << std::endl;
+            std::cout << "Fourth species listed in a motor binding reaction must be motor. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
         product = products[1];
         if(product.find("MOTOR") != std::string::npos) {
             
-            if(type != ReactionType::MOTORBINDING) {
-                std::cout << "Products in a motor binding reaction must be the same. Exiting." << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            
             ///look up species, make sure in list
             std::string name = product.substr(0, product.find(":"));
             auto it = std::find(_speciesMotor.begin(), _speciesMotor.end(), name);
             int position = 0;
             
+            if(name != species1) {
+                std::cout << "Motor species in reactants and products of motor binding reaction must be same. Exiting." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+ 
             if(it != _speciesMotor.end()) {
                 
                 ///get position of iterator
@@ -996,7 +1140,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
         
         else {
-            std::cout << "Fifth species listed in a motor binding reaction must be motor. Exiting" << std::endl;
+            std::cout << "Fifth species listed in a motor binding reaction must be motor. Exiting." << std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -1115,7 +1259,7 @@ void InitializerImpl::generateGeneralReactions(ChemistrySpeciesAndReactions& che
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
             rxn = new Reaction<3,2>(species, std::get<2>(r), true);
         else {
-            std::cout << "General reaction specified does not match any existing templates. Exiting" <<std::endl;
+            std::cout << "General reaction specified does not match any existing templates. Exiting." <<std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -1206,7 +1350,7 @@ void InitializerImpl::generateBulkReactions(ChemistrySpeciesAndReactions& chemSR
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
             rxn = new Reaction<3,2>(species, std::get<2>(r));
         else {
-            std::cout << "Bulk reaction specified does not match any existing templates. Exiting" <<std::endl;
+            std::cout << "Bulk reaction specified does not match any existing templates. Exiting." <<std::endl;
             exit(EXIT_FAILURE);
         }
         
@@ -1224,9 +1368,17 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     ReactionCrossFilamentTemplate::_ps = _subSystem;
     
     ///Copy all species from chemSR struct
-    _speciesFilament = chemSR.speciesFilament; _speciesPlusEnd = chemSR.speciesPlusEnd;
-    _speciesMinusEnd = chemSR.speciesMinusEnd; _speciesBound = chemSR.speciesBound;
-    _speciesLinker = chemSR.speciesLinker; _speciesMotor = chemSR.speciesMotor;
+    _speciesFilament = chemSR.speciesFilament;
+    
+    _speciesPlusEnd = chemSR.speciesPlusEnd;
+    
+    _speciesMinusEnd = chemSR.speciesMinusEnd;
+    
+    _speciesBound =  chemSR.speciesBound;
+    
+    _speciesLinker = chemSR.speciesLinker;
+    
+    _speciesMotor =  chemSR.speciesMotor;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();

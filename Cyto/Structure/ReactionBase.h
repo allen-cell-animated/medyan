@@ -33,7 +33,10 @@ class SpeciesPtrContainerVector;
 
 ///Enumeration for type of reaction
 enum ReactionType {
-    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION, BASICBINDING, LINKERBINDING, MOTORBINDING, BASICUNBINDING, LINKERUNBINDING, MOTORUNBINDING, CREATION, DESTRUCTION
+    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION, BASICBINDING,
+    LINKERBINDING, MOTORBINDING, BASICUNBINDING, LINKERUNBINDING, MOTORUNBINDING,
+    MOTORWALKINGFORWARD, MOTORWALKINGBACKWARD,
+    CREATION, DESTRUCTION
 };
 
 /// This is a ReactionBase signal object that may be called by a ReactionBase simulation algorithm
@@ -71,7 +74,7 @@ protected:
     bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
     
     double _rMin = 0.0; /// minimum radius of reaction (only used for linker and motor binding)
-    double _rMax = 0.0; /// maximum radius of reaction (only used for
+    double _rMax = 0.0; /// maximum radius of reaction (only used for linker and motor binding)
     
 public:
     /// The main constructor:

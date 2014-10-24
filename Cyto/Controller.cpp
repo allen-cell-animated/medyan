@@ -109,6 +109,7 @@ void Controller::run() {
     chk1 = std::chrono::high_resolution_clock::now();
     ///Set up filament output file
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
+    o.printBasicSnapshot(0);
     
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
@@ -121,7 +122,7 @@ void Controller::run() {
         _mController.run();
         o.printBasicSnapshot(1);
 #else
-        o.printBasicSnapshot(i);
+        o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
 #if defined(CHEMISTRY)
     }

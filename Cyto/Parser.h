@@ -35,13 +35,12 @@ struct ChemistryAlgorithm {
 ///Struct to hold chemical species and reactions in system
 struct ChemistrySpeciesAndReactions {
     
-    ///Reactions parsed, in the form of a tuple which contains reactants, products and rate
-    ///For cross-filament reactions, also contains rMin, rMax denoting the reaction range
-    
     ///Reactions happening between bulk and diffusing species ONLY
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> genReactions = {};
     ///Reactions happening between bulk species ONLY
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> bulkReactions = {};
+    
+    ///Filament reactions
     ///Polymerization reactions
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> polymerizationReactions = {};
     ///Depolymerization reactions
@@ -56,6 +55,9 @@ struct ChemistrySpeciesAndReactions {
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> linkerBindingReactions = {};
     ///Motor binding
     std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>> motorBindingReactions = {};
+
+    ///Motor walking reactions
+    std::vector<std::tuple<std::vector<std::string>, std::vector<std::string>, double>> motorWalkingReactions = {};
     
     ///SpeciesBulk parsed, in the form of a tuple which contains the name and initial copy number
     std::vector<std::tuple<std::string, int>> speciesBulk = {};
