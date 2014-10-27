@@ -36,3 +36,15 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     _boundarySurfaces.emplace_back(new Plane({sysX / 2, sysY / 2, sysZ}, {0, 0, -1}));
     
 }
+
+BoundarySpherical::BoundarySpherical() : Boundary(3, BoundaryShape::Sphere) {
+    
+    
+    double sysX = SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX;
+    double sysY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY;
+    double sysZ = SystemParameters::Geometry().compartmentSizeZ * SystemParameters::Geometry().NZ;
+    
+    _boundarySurfaces.emplace_back(new Sphere({sysX / 2, sysY / 2, sysZ / 2}, sysX / 2));
+}
+
+

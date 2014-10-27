@@ -31,11 +31,10 @@ protected:
     std::vector<Bead*> _beads; ///< Beads that this boundary element could interact with
     
     std::vector<double> _coords; ///< coordinates of this boundary element
-    std::vector<double> _normal; ///< normal vector to this boundary element
     
 public:
     ///Default constructor
-    BoundaryElement(std::vector<double> coords, std::vector<double> normal) : _coords(coords), _normal(normal) {
+    BoundaryElement(std::vector<double> coords) : _coords(coords) {
     
         ///set the compartment given the initial coordinates
         try {_compartment = GController::getCompartment(coords);}
@@ -65,13 +64,14 @@ public:
     
     ///return coordinates of boundary element
     const std::vector<double>& coords() {return _coords;}
-    const std::vector<double>& normal() {return _normal;}
     ///return set of beads
     const std::vector<Bead*>& beads() {return _beads;}
     
     ///Implement for all boundary elements
     virtual double distance(const std::vector<double>& point) = 0;
     virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) = 0;
+    virtual const std::vector<double> normal(const std::vector<double> &point) = 0;
+    
     virtual double getRepulsionConst() = 0;
     virtual double getScreeningLength() = 0;
  

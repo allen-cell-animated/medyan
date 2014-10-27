@@ -198,10 +198,126 @@ struct UnbindingCallback {
 };
 
 
+///motor walking forward callback
+struct MotorWalkingForwardCallback {
+    
+    ///members
+    SpeciesMotor* _sm1;
+    SpeciesMotor* _sm2;
+    
+    MotorWalkingForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
+        :_sm1(sm1), _sm2(sm2) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        
+        ///shift the position of one side of the motor forward
+        double shift = 1 / SystemParameters::Geometry().cylinderIntSize;
+        double newPosition;
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            newPosition = m->getFirstPosition() + shift;
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(_sm2);
+        }
+        else {
+            newPosition = m->getSecondPosition() + shift;
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(_sm2);
+        }
+    }
+};
+
+///motor walking backward callback
+struct MotorWalkingBackwardCallback {
+    
+    ///members
+    SpeciesMotor* _sm1;
+    SpeciesMotor* _sm2;
+    
+    MotorWalkingBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
+        :_sm1(sm1), _sm2(sm2) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        
+        ///shift the position of one side of the motor forward
+        double shift = 1 / SystemParameters::Geometry().cylinderIntSize;
+        double newPosition;
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            newPosition = m->getFirstPosition() - shift;
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(_sm2);
+        }
+        else {
+            newPosition = m->getSecondPosition() - shift;
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(_sm2);
+        }
+    }
+};
+
+///motor moving cylinder forward callback
+struct MotorMovingCylinderForwardCallback {
+    
+    ///members
+    SpeciesMotor* _sm1;
+    SpeciesMotor* _sm2;
+    
+    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
+        : _sm1(sm1), _sm2(sm2) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        
+        ///shift the position of one side of the motor forward
+        double newPosition = 1 / SystemParameters::Geometry().cylinderIntSize;
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(_sm2);
+        }
+        else {
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(_sm2);
+        }
+    }
+};
+
+
+///motor moving cylinder backward callback
+struct MotorMovingCylinderBackwardCallback {
+    
+    ///members
+    SpeciesMotor* _sm1;
+    SpeciesMotor* _sm2;
+    
+    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
+        : _sm1(sm1), _sm2(sm2) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        
+        ///shift the position of one side of the motor forward
+        double newPosition = 1.0;
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(_sm2);
+        }
+        else {
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(_sm2);
+        }
+    }
+};
 
 
 
 
-
-
-#endif /* defined(__Cyto__Callback__) */
+#endif /* defined(__Cyto__ChemCallbacks__) */

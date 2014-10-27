@@ -7,9 +7,12 @@
 //
 
 #include "BoundaryElementImpl.h"
+#include "MathFunctions.h"
+
+using namespace mathfunc;
 
 PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double sceenLength)
-                                                                : BoundaryElement(coords, normal), _k_rep(repulsConst), _r0(sceenLength) {
+                                                                : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength) {
     
     ///set parameters
     _a = normal[0];
@@ -33,6 +36,11 @@ double PlaneBoundaryElement::stretchedDistance(const std::vector<double>& point,
     
 }
 
+const std::vector<double> PlaneBoundaryElement::normal(const std::vector<double>& point) {
+    
+    return std::vector<double>{_a, _b, _c};
+}
+
 double PlaneBoundaryElement::getRepulsionConst(){
     
     return _k_rep;
@@ -42,3 +50,36 @@ double PlaneBoundaryElement::getScreeningLength(){
     
     return _r0;
 }
+
+SphereBoundaryElement::SphereBoundaryElement(std::vector<double> coords, double radius, double repulsConst, double sceenLength)
+                                                    : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius) {}
+
+double SphereBoundaryElement::distance(const std::vector<double>& point) {
+    
+    return - (TwoPointDistance(_coords, point) - _radius);
+}
+
+double SphereBoundaryElement::stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) {
+    
+    std::vector<double> stretchedPoint{point[0] + d * force[0], point[1] + d * force[1], point[2] + d * force[2]};
+    return - (TwoPointDistance(_coords, stretchedPoint) - _radius);
+    
+}
+
+const std::vector<double> SphereBoundaryElement::normal(const std::vector<double>& point) {
+    
+    return TwoPointDirection(point, _coords);
+}
+
+double SphereBoundaryElement::getRepulsionConst(){
+    
+    return _k_rep;
+}
+
+double SphereBoundaryElement::getScreeningLength(){
+    
+    return _r0;
+}
+
+
+

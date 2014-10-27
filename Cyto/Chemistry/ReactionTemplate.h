@@ -9,10 +9,9 @@
 #ifndef __Cyto__ReactionTemplate__
 #define __Cyto__ReactionTemplate__
 
-#include "Filament.h"
-#include "CompartmentContainer.h"
-
 #include <iostream>
+#include <vector>
+#include "CompartmentContainer.h"
 
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
@@ -20,6 +19,8 @@ enum FilamentReactionDirection {
 };
 
 class SubSystem;
+class Filament;
+class CCylinder;
 
 ///ReactionFilamentTemplate is a class to store filament chemical reaction information read from an input file
 /*!

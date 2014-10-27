@@ -55,14 +55,16 @@ Goals for October 2014:
     -Compartments: contain sets of all elements                                 X
     -Reaction parsing: create general reaction template, restructuring          X
     -Finish linker chemistry (callbacks, updating reactions)                    X
-    -Motor walking reaction and callback
+    -Motor walking reaction and callback                                        X
     -Filament creation and destruction?
-    -Spherical boundary
+    -Compartment activation for compartments within boundary                    
+    -Spherical boundary                                                         X
     -Changing of polymerization/depolymerization/binding rates
     -Excluded volume force field
     -Optimize movement updates?
 
 2) Testing:
+    -Spherical boundary
     -Cylinder reaction management
     -Filament (initialization, poly, depoly) (general, chem)
     -Linker/Motor (general, chem)

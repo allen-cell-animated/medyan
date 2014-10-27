@@ -72,6 +72,9 @@ void Controller::initialize(std::string inputFile) {
     if(BTypes.boundaryShape == "CUBIC") {
         _subSystem->AddBoundary(new BoundaryCubic());
     }
+    if(BTypes.boundaryShape == "SPHERICAL") {
+        _subSystem->AddBoundary(new BoundarySpherical());
+    }
     else{
         std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
         exit(EXIT_FAILURE);
@@ -108,7 +111,7 @@ void Controller::run() {
     std::chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = std::chrono::high_resolution_clock::now();
     ///Set up filament output file
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
+    Output o("/Users/jimmy/Code/Cyto/Cyto/filamentoutput.txt");
     o.printBasicSnapshot(0);
     
 #if defined(CHEMISTRY)

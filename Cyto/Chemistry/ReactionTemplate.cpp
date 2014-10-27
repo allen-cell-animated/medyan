@@ -7,9 +7,9 @@
 //
 
 #include "ReactionTemplate.h"
-#include "CompartmentContainer.h"
 #include "ChemCallbacks.h"
 #include "Bead.h"
+#include "Filament.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
@@ -741,6 +741,9 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
         std::vector<Species*> reactantSpecies;
         std::vector<Species*> productSpecies;
         
+        SpeciesMotor* sm1;
+        SpeciesMotor* sm2;
+        
         ///loop through reactants, products. find all species
         
         auto r = _reactants[0];
@@ -748,7 +751,8 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
         int speciesInt = std::get<0>(r);
         
         ///FIRST REACTANT MUST BE MOTOR
-        reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+        sm1 = m1->speciesMotor(speciesInt);
+        reactantSpecies.push_back(sm1);
         
         
         ///SECOND REACTANT MUST BE BOUND
@@ -764,7 +768,8 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
         type = std::get<1>(p);
         speciesInt = std::get<0>(p);
         
-        productSpecies.push_back(m2->speciesMotor(speciesInt));
+        sm2 = m2->speciesMotor(speciesInt);
+        productSpecies.push_back(sm2);
         
         ///SECOND PRODUCT MUST BE BOUND
         p = _products[1];
@@ -773,31 +778,199 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
         
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
-//        ///callbacks
-//        FilamentExtensionFrontCallback extCallback(pf);
-//        
-//        ///Add the reaction. If it needs a callback then attach
-//        std::vector<Species*> species = reactantSpecies;
-//        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-//        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
-//        
-//        if(i == maxlength - 2)
-//            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
-//        else
-//            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
-//        
-//        cc->addInternalReaction(rxn);
-//        rxn->setReactionType(ReactionType::POLYMERIZATION);
+        ///callbacks
+        MotorWalkingForwardCallback motorMoveCallback(sm1, sm2);
+        
+        ///Add the reaction. If it needs a callback then attach
+        std::vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+        
+        boost::signals2::shared_connection_block rcb(rxn->connect(motorMoveCallback, false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
     }
 }
 
-void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) { }
+void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) { }
+    CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
+    CMonomer* m2 = cc2->getCMonomer(0);
+    std::vector<Species*> reactantSpecies;
+    std::vector<Species*> productSpecies;
+    
+    SpeciesMotor* sm1;
+    SpeciesMotor* sm2;
+    
+    ///loop through reactants, products. find all species
+    
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    ///FIRST REACTANT MUST BE MOTOR
+    sm1 = m1->speciesMotor(speciesInt);
+    reactantSpecies.push_back(sm1);
+    
+    ///SECOND REACTANT MUST BE BOUND
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    ///FIRST PRODUCT MUST BE MOTOR
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    sm2 = m2->speciesMotor(speciesInt);
+    productSpecies.push_back(sm2);
+    
+    ///SECOND PRODUCT MUST BE BOUND
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m1->speciesBound(speciesInt));
+    
+    ///callbacks
+    MotorMovingCylinderForwardCallback motorChangeCallback(sm1, sm2);
+    
+    ///Add the reaction. If it needs a callback then attach
+    std::vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(rxn->connect(motorChangeCallback, false));
+    
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
+}
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) { }
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
 
+    
+    ///loop through all monomers of filament
+    int maxlength = cc->size();
+    
+    ///loop through all monomers
+    for(int i = maxlength - 1; i > 0; i--) {
+        
+        CMonomer* m1 = cc->getCMonomer(i);
+        CMonomer* m2 = cc->getCMonomer(i-1);
+        std::vector<Species*> reactantSpecies;
+        std::vector<Species*> productSpecies;
+        
+        SpeciesMotor* sm1;
+        SpeciesMotor* sm2;
+        
+        ///loop through reactants, products. find all species
+        
+        auto r = _reactants[0];
+        SpeciesType type = std::get<1>(r);
+        int speciesInt = std::get<0>(r);
+        
+        ///FIRST REACTANT MUST BE MOTOR
+        sm1 = m1->speciesMotor(speciesInt);
+        reactantSpecies.push_back(sm1);
+        
+        
+        ///SECOND REACTANT MUST BE BOUND
+        r = _reactants[1];
+        type = std::get<1>(r);
+        speciesInt = std::get<0>(r);
+        
+        reactantSpecies.push_back(m2->speciesBound(speciesInt));
+        
+        
+        ///FIRST PRODUCT MUST BE MOTOR
+        auto p = _products[0];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        sm2 = m2->speciesMotor(speciesInt);
+        productSpecies.push_back(sm2);
+        
+        ///SECOND PRODUCT MUST BE BOUND
+        p = _products[1];
+        type = std::get<1>(p);
+        speciesInt = std::get<0>(p);
+        
+        productSpecies.push_back(m1->speciesBound(speciesInt));
+        
+        ///callbacks
+        MotorWalkingBackwardCallback motorMoveCallback(sm1, sm2);
+        
+        ///Add the reaction. If it needs a callback then attach
+        std::vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+        
+        boost::signals2::shared_connection_block rcb(rxn->connect(motorMoveCallback, false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+    }
+}
 
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+    
+    CMonomer* m1 = cc1->getCMonomer(0);
+    CMonomer* m2 = cc2->getCMonomer(cc2->size() - 1);
+    std::vector<Species*> reactantSpecies;
+    std::vector<Species*> productSpecies;
+    
+    SpeciesMotor* sm1;
+    SpeciesMotor* sm2;
+    
+    ///loop through reactants, products. find all species
+    
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    ///FIRST REACTANT MUST BE MOTOR
+    sm1 = m1->speciesMotor(speciesInt);
+    reactantSpecies.push_back(sm1);
+    
+    ///SECOND REACTANT MUST BE BOUND
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    ///FIRST PRODUCT MUST BE MOTOR
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    sm2 = m2->speciesMotor(speciesInt);
+    productSpecies.push_back(sm2);
+    
+    ///SECOND PRODUCT MUST BE BOUND
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m1->speciesBound(speciesInt));
+    
+    ///callbacks
+    MotorMovingCylinderBackwardCallback motorChangeCallback(sm1, sm2);
+    
+    ///Add the reaction. If it needs a callback then attach
+    std::vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(rxn->connect(motorChangeCallback, false));
+    
+    cc2->addCrossCylinderReaction(cc1, rxn);
+    rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+
+}
 
 void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     

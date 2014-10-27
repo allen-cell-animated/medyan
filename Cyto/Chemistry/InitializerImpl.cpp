@@ -712,7 +712,8 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
                 
                 species1 = name;
                 
-                if(reactant.find("N+1")) type = ReactionType::MOTORWALKINGBACKWARD;
+                if(reactant.find("N+1") != std::string::npos)
+                    type = ReactionType::MOTORWALKINGBACKWARD;
                 else type = ReactionType::MOTORWALKINGFORWARD;
                 
                 ///get position of iterator
@@ -813,10 +814,14 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         }
 
         ///add reaction
-        if(type == ReactionType::MOTORWALKINGFORWARD)
+        if(type == ReactionType::MOTORWALKINGFORWARD) {
+            std::cout << "Walking forward reaction created" << std::endl;
             _filamentReactionTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
-        else
+        }
+        else {
+            std::cout << "Walking backward reaction created" << std::endl;
             _filamentReactionTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
+        }
     }
  
 }
@@ -1368,17 +1373,13 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     ReactionCrossFilamentTemplate::_ps = _subSystem;
     
     ///Copy all species from chemSR struct
-    _speciesFilament = chemSR.speciesFilament;
+    _speciesFilament =  chemSR.speciesFilament;
+    _speciesPlusEnd  =  chemSR.speciesPlusEnd;
+    _speciesMinusEnd =  chemSR.speciesMinusEnd;
     
-    _speciesPlusEnd = chemSR.speciesPlusEnd;
-    
-    _speciesMinusEnd = chemSR.speciesMinusEnd;
-    
-    _speciesBound =  chemSR.speciesBound;
-    
-    _speciesLinker = chemSR.speciesLinker;
-    
-    _speciesMotor =  chemSR.speciesMotor;
+    _speciesBound  =  chemSR.speciesBound;
+    _speciesLinker =  chemSR.speciesLinker;
+    _speciesMotor  =  chemSR.speciesMotor;
     
     ///Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::Instance(compartmentGridKey())->getProtoCompartment();
@@ -1402,6 +1403,7 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     }
     ///activate all compartments for diffusion, set up diffusion reactions
     CompartmentGrid::Instance(compartmentGridKey())->activateAll();
+    
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         C->generateAllDiffusionReactions();

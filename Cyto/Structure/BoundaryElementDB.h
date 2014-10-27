@@ -58,6 +58,14 @@ public:
         return b ;
     }
     
+    ///create a spherical boundary element
+    BoundaryElement* CreateSphereBoundaryElement(std::vector<double>& coords, double radius, double repulsConst, double screenLength) {
+        
+        BoundaryElement* b = new SphereBoundaryElement(coords, radius, repulsConst, screenLength);
+        push_back(b);
+        return b ;
+    }
+    
     // Remove boundary element
     void RemoveBoundaryElement(BoundaryElement* pb){
         

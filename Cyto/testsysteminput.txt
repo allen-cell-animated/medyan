@@ -77,7 +77,7 @@ BSCREENLENGTH:               10.0
 ##################################################
 ################### CHEMISTRY ####################
 
-CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
+CHEMISTRYFILE:              /Users/jimmy/Code/Cyto/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMSTEPS:                    101
@@ -98,7 +98,7 @@ NUMMOTORSPECIES:             1
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
+FILAMENTFILE:                /Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 

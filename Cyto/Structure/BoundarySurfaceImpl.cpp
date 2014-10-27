@@ -16,6 +16,14 @@ Plane::Plane(std::vector<double> coords, std::vector<double> normal ) :
     _coords(coords), _normal(normal), BoundarySurface(3) {
     
     ///Create a plane boundary element (CHANGE REPULSION CONSTANT)
-        BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal,
-                SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength);
+    BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal,
+            SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength);
+}
+
+Sphere::Sphere(std::vector<double> coords, double radius) : _coords(coords), _radius(radius), BoundarySurface(3){
+    
+    ///Create a sphere boundary element
+    BoundaryElementDB::Instance(BEDBKey())->CreateSphereBoundaryElement(coords, radius,
+        SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength);
+    
 }

@@ -24,13 +24,16 @@ public:
     BoundaryCubic();
 };
 
-///Cylindrical boundary implementation
-class BoundaryCylindrical: public Boundary {
-    ///not yet implemented
-};
-
 ///Spherical boundary implementation
 class BoundarySpherical: public Boundary {
+    
+public:
+    ///Default constructor, will create an ellipse with axes equal in length to current grid
+    BoundarySpherical();
+};
+
+///Cylindrical boundary implementation
+class BoundaryCylindrical: public Boundary {
     ///not yet implemented
 };
 

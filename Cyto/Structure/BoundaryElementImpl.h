@@ -34,15 +34,38 @@ public:
     ///Stretched distance to plane
     virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
     
+    ///normal to plane
+    virtual const std::vector<double> normal(const std::vector<double>& point);
+    
     ///get the repulsion constant and screening length for this plane
     virtual double getRepulsionConst();
     virtual double getScreeningLength();
 };
 
-class TriangleBoundaryElement : public BoundaryElement {
+class SphereBoundaryElement : public BoundaryElement {
     
-    ///not yet implemented
-
+private:
+    double _radius;
+    double _k_rep;
+    double _r0;
+    
+public:
+    ///Constructor, sets parameters of equation
+    SphereBoundaryElement(std::vector<double> coords, double radius, double repulsConst, double screenLength);
+    
+    ///Distance to this sphere
+    virtual double distance(const std::vector<double>& point);
+    
+    ///Stretched distance to sphere
+    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
+    
+    ///normal to sphere
+    virtual const std::vector<double> normal(const std::vector<double>& point);
+    
+    ///get the repulsion constant and screening length for this plane
+    virtual double getRepulsionConst();
+    virtual double getScreeningLength();
+    
 };
 
 
