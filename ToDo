@@ -57,6 +57,7 @@ Goals for October 2014:
     -Finish linker chemistry (callbacks, updating reactions)                    X
     -Motor walking reaction and callback                                        X
     -Filament creation and destruction?
+    -Linker/motor input file and output file
     -Compartment activation for compartments within boundary                    
     -Spherical boundary                                                         X
     -Changing of polymerization/depolymerization/binding rates

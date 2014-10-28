@@ -223,7 +223,8 @@ public:
     ///Default constructor and destructor
     ReactionCrossFilamentTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
                              std::vector<std::tuple<int, SpeciesType>> products,
-                             float rate, float rMin, float rMax) : _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax) {}
+                             float rate, float rMin, float rMax)
+                             : _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax) {}
     ~ReactionCrossFilamentTemplate() {}
     
     ///add this chemical reaction to two ccylinders if within the reaction range
@@ -239,7 +240,8 @@ public:
     ///default constructor and destructor
     LinkerBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
                     std::vector<std::tuple<int, SpeciesType>> products,
-                    float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
+                    float rate, float rMin, float rMax)
+                    : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
     ~LinkerBindingTemplate() {}
     
     ///to be implemented
@@ -251,8 +253,9 @@ class MotorBindingTemplate : public ReactionCrossFilamentTemplate {
 public:
     ///default constructor and destructor
     MotorBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                          std::vector<std::tuple<int, SpeciesType>> products,
-                          float rate, float rMin, float rMax) : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
+                         std::vector<std::tuple<int, SpeciesType>> products,
+                         float rate, float rMin, float rMax)
+                         : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax) {}
     ~MotorBindingTemplate() {}
     
     ///to be implemented
