@@ -197,7 +197,7 @@ struct MotorWalkingForwardCallback {
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
-        double shift = 1 / SystemParameters::Geometry().cylinderIntSize;
+        double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
         double newPosition;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
@@ -228,7 +228,7 @@ struct MotorWalkingBackwardCallback {
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
-        double shift = 1 / SystemParameters::Geometry().cylinderIntSize;
+        double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
         double newPosition;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
@@ -259,7 +259,7 @@ struct MotorMovingCylinderForwardCallback {
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
-        double newPosition = 1 / SystemParameters::Geometry().cylinderIntSize;
+        double newPosition = 1.0 / SystemParameters::Geometry().cylinderIntSize;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
             m->setFirstPosition(newPosition);

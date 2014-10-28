@@ -3,13 +3,13 @@
 
 NDIM:                        3
 
-NX:                          100
+NX:                          1
 NY:                          1
 NZ:                          1
 
-COMPARTMENTSIZEX:            1000.0
-COMPARTMENTSIZEY:            1000.0
-COMPARTMENTSIZEZ:            1000.0
+COMPARTMENTSIZEX:            1100.0
+COMPARTMENTSIZEY:            1100.0
+COMPARTMENTSIZEZ:            1100.0
 
 MONOMERSIZE:                 2.7
 
@@ -69,19 +69,19 @@ VOLUMEK:
 ### BOUNDARY ###
 
 BOUNDARYTYPE:                REPULSIONEXP
-BOUNDARYSHAPE:               CUBIC
+BOUNDARYSHAPE:               SPHERICAL
 BCUTOFF:                     1000.0
-BINTERACTIONK:               0.1
+BINTERACTIONK:               0.0
 BSCREENLENGTH:               10.0
 
 ##################################################
 ################### CHEMISTRY ####################
 
-CHEMISTRYFILE:              /Users/jimmy/Code/Cyto/Cyto/testchemistryinput.txt
+CHEMISTRYFILE:              /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    101
-NUMSTEPSPERM:                100
+NUMSTEPS:                    30
+NUMSTEPSPERM:                30
 
 NUMBULKSPECIES:              5
 NUMDIFFUSINGSPECIES:         1
@@ -98,7 +98,7 @@ NUMMOTORSPECIES:             1
 ##################################################
 ################### FILAMENTS ####################
 
-FILAMENTFILE:                /Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt
+FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
 
 NUMFILAMENTS:                
 

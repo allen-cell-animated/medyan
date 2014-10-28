@@ -54,8 +54,8 @@ void BoundaryRepulsion<BRepulsionInteractionType>::ComputeForcesAux(BoundaryElem
     double screenLength = pbe->getScreeningLength();
     
     for (auto pb: pbe->beads()){
-        auto normal = pbe->normal(pb->coordinate);
-        _FFType.ComputeForcesAux(pb, pbe->distance(pb->coordinate), normal, k_rep, screenLength);
+        auto normal = pbe->normal(pb->coordinateAux);
+        _FFType.ComputeForcesAux(pb, pbe->distance(pb->coordinateAux), normal, k_rep, screenLength);
     }
 }
 

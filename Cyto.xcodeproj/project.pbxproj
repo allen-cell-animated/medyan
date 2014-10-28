@@ -829,8 +829,8 @@
 			projectRoot = "";
 			targets = (
 				F7954C48197D98BE00074A12 /* Cyto */,
-				F771ADBA15655CD70010B123 /* cyto */,
 				F7C7A0DD15FFBA3D00DF9838 /* TestSuite */,
+				F771ADBA15655CD70010B123 /* cyto */,
 			);
 		};
 /* End PBXProject section */
