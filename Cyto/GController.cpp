@@ -5,9 +5,10 @@
 //  Created by James Komianos on 8/5/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
+#include "GController.h"
 
 #include "common.h"
-#include "GController.h"
+#include "Boundary.h"
 #include "SystemParameters.h"
 #include "Parser.h"
 
@@ -31,13 +32,6 @@ void GController::initializeGrid() {
         std::cout << "Grid parameters are invalid. Exiting" << std::endl;
         exit(EXIT_FAILURE);
     }
-    
-    if(SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize < 4) {
-        
-        std::cout << "There must be at least 4 monomers per cylinder. Exiting" << std::endl;
-        exit(EXIT_FAILURE); 
-    }
-    
     _nDim = nDim;
     
     /// set up
@@ -67,6 +61,7 @@ void GController::initializeGrid() {
     
     ///Create connections based on dimensionality
     generateConnections();
+
 }
 
 
@@ -84,6 +79,11 @@ void GController::generateConnections()
                 {
                     std::vector<size_t> indices{i,j,k};
                     Compartment *target = getCompartment(indices);
+                    
+                    std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                                                       indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2,
+                                                       indices[2] * _compartmentSize[2] + _compartmentSize[2] / 2};
+                    target->setCoordinates(coordinates);
                     
                     for(int ii: {-1,1})
                     {
@@ -127,6 +127,11 @@ void GController::generateConnections()
                 std::vector<size_t> indices{i,j};
                 Compartment *target = getCompartment(indices);
                 
+                std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                                                   indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2};
+                target->setCoordinates(coordinates);
+                
+                
                 for(int ii: {-1,1})
                 {
                     int iprime = i+ii;
@@ -157,6 +162,9 @@ void GController::generateConnections()
             std::vector<size_t> indices{i};
             Compartment *target = getCompartment(indices);
             
+            std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2};
+            target->setCoordinates(coordinates);
+  
             for(int ii: {-1,1})
             {
                 int iprime = i+ii;
@@ -169,6 +177,16 @@ void GController::generateConnections()
         }
     }
 }
+
+void GController::activateCompartments(Boundary* boundary) {
+    
+    ///initialize all compartments equivalent to cproto
+    for(auto &c : CompartmentGrid::Instance(CompartmentGridKey())->children()) {
+        Compartment *C = static_cast<Compartment*>(c.get());
+        if(boundary->within(C->coordinates())) C->activate();
+    }
+}
+
 
 short GController::_nDim = 0;
 std::vector<int> GController::_grid = {};

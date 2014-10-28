@@ -11,9 +11,11 @@
 #include "Cylinder.h"
 #include "SystemParameters.h"
 
-Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2, bool creation) :
-    _pc1(pc1), _pc2(pc2), _linkerType(linkerType), _position1(position1), _position2(position2) {
-
+Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, int linkerID, double position1, double position2, bool creation) :
+    _pc1(pc1), _pc2(pc2), _linkerType(linkerType), _linkerID(linkerID), _position1(position1), _position2(position2) {
+        
+    _birthTime = tau();
+        
     ///Find compartment
     auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2);

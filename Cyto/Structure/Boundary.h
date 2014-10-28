@@ -42,6 +42,8 @@ public:
     ///get boundary surfaces
     const std::vector<std::unique_ptr<BoundarySurface>>& boundarySurfaces() {return _boundarySurfaces;}
     
+    ///Check if coordinates are within boundary 
+    virtual bool within(const std::vector<double> coordinates) = 0;
 };
 
 

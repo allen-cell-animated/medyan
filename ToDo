@@ -57,8 +57,8 @@ Goals for October 2014:
     -Finish linker chemistry (callbacks, updating reactions)                    X
     -Motor walking reaction and callback                                        X
     -Filament creation and destruction?
-    -Linker/motor input file and output file
-    -Compartment activation for compartments within boundary                    
+    -Linker/motor output file                                                   X
+    -Compartment activation for compartments within boundary                    X
     -Spherical boundary                                                         X
     -Changing of polymerization/depolymerization/binding rates
     -Excluded volume force field
@@ -70,5 +70,6 @@ Goals for October 2014:
     -Filament (initialization, poly, depoly) (general, chem)
     -Linker/Motor (general, chem)
     -Compartment (bead, cylinder, boundary element adding/removing, etc)
+    -Neighbors lists
     -All databases
     -All FF's (Aravind?)

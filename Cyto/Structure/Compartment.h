@@ -54,6 +54,8 @@ protected:
     std::unordered_set<Bead*> _beads; ///<vector of beads that are in this compartment
     std::unordered_set<Cylinder*> _cylinders; ///vector of cylinders that are in this compartment
 
+    ///coordinates
+    std::vector<double> _coords;
     bool _activated = false; ///< the compartment is activated for diffusion
     
 public:
@@ -107,6 +109,10 @@ public:
     
     ///Check if compartment is activated
     virtual bool isActivated() {return _activated;}
+    
+    ///Setter and getter for coordinates
+    virtual void setCoordinates(std::vector<double> coords) {_coords = coords;}
+    virtual const std::vector<double>& coordinates() {return _coords;}
     
     /// Removes all reactions from this compartment, diffusing and internal
     virtual void clearReactions()

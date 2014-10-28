@@ -59,6 +59,8 @@ public:
     int getSystemSize(); //Return a number of beads;
     double getSubSystemEnergy(); // Return a value of the parameter _energy (NOT COMPUTIN!).
     
+    Boundary* getBoundary() {return _boundary;}
+    
     void setSubSystemEnergy(double energy); //set energy of subsystem
 private:
     double _energy = 0; ///< energy of subsystem

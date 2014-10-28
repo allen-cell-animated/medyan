@@ -12,8 +12,12 @@
 #include <iostream>
 #include <fstream>
 #include "common.h"
+
 #include "FilamentDB.h"
 #include "CylinderDB.h"
+#include "LinkerDB.h"
+#include "MotorGhostDB.h"
+
 #include "Bead.h"
 
 class Output {
@@ -32,7 +36,7 @@ public:
     }
     ~Output() {_outputFile.close();}
     
-    ///Print basic information about filaments (OLD)
+    ///Print basic information about filaments, linkers, motors (OLD)
     void printBasicSnapshot(int step);
     
     ///NEW OUTPUT

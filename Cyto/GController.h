@@ -47,6 +47,9 @@ public:
     ///initialize the grid based on input parameters
     static void initializeGrid();
     
+    ///Activate compartments
+    static void activateCompartments(Boundary* boundary);
+    
     /// Get compartment from the grid
     /// @param - args, the indices in n-dimensions of the compartment
 //    template<typename ...Args>
@@ -109,6 +112,7 @@ public:
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
+    
 };
 
 

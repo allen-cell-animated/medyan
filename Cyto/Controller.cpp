@@ -34,7 +34,24 @@ void Controller::initialize(std::string inputFile) {
     GController::initializeGrid();
     std::cout << "Done." << std::endl;
     
+    ///Initialize boundary
+    std::cout << "Initializing boundary...";
+    if(BTypes.boundaryShape == "CUBIC") {
+        _subSystem->AddBoundary(new BoundaryCubic());
+    }
+    else if(BTypes.boundaryShape == "SPHERICAL") {
+        _subSystem->AddBoundary(new BoundarySpherical());
+    }
+    else{
+        std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "Done." <<std::endl;
+    
 #ifdef CHEMISTRY
+    ///Activate necessary compartments for diffusion
+    GController::activateCompartments(_subSystem->getBoundary());
+    
     ///read parameters
     p.readChemistryParameters();
     
@@ -67,19 +84,6 @@ void Controller::initialize(std::string inputFile) {
     _mController.initialize(MTypes, MAlgorithm);
     std::cout << "Done." <<std::endl;
     
-    ///Initialize boundary
-    std::cout << "Initializing boundary...";
-    if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->AddBoundary(new BoundaryCubic());
-    }
-    if(BTypes.boundaryShape == "SPHERICAL") {
-        _subSystem->AddBoundary(new BoundarySpherical());
-    }
-    else{
-        std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::cout << "Done." <<std::endl;
 #endif
     
     ///Read filament setup, parse filament input file if needed

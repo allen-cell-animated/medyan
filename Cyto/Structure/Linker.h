@@ -32,13 +32,16 @@ private:
     double _position1; ///< position on first cylinder
     double _position2; ///< position on second cylinder
     
-    short _linkerType; ///integer ID specifying the type of linker
+    short _linkerType; ///integer specifying the type of linker
+    int _linkerID; ///integer ID of this specific linker
+    
+    float _birthTime; ///Birth time of this linker
     
     Compartment* _compartment; ///< Compartment that this linker is in
     
     
 public:
-    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2, bool creation);
+    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, int linkerID, double position1, double position2, bool creation);
     ~Linker();
     
     ///get cylinders
@@ -57,6 +60,9 @@ public:
     void setFirstPosition(double position1) {_position1 = position1;}
     double getSecondPosition() {return _position2;}
     void setSecondPosition(double position2) {_position2 = position2;}
+    
+    short getLinkerType() {return _linkerType;}
+    int getLinkerID() {return _linkerID;}
     
     ///Update the position of this Linker
     ///@note - changes compartment of clinker if needed

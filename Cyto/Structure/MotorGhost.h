@@ -35,13 +35,16 @@ private:
     double _position1; ///< position on first cylinder
     double _position2; ///< position on second cylinder
     
-    short _motorType; ///integer ID specifying the type of linker
+    short _motorType; ///integer specifying the type of linker
+    int _motorID; ///integer ID of this motor
+    
+    float _birthTime; ///< birth time of this motor
     
     Compartment* _compartment; ///< Compartment that this linker is in
     
     
 public:
-    MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2, bool creation);
+    MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorID, double position1, double position2, bool creation);
     ~MotorGhost();
     
     ///get cylinders
@@ -60,6 +63,9 @@ public:
     void setFirstPosition(double position1) {_position1 = position1;}
     double getSecondPosition() {return _position2;}
     void setSecondPosition(double position2) {_position2 = position2;}
+    
+    short getMotorType() {return _motorType;}
+    int getMotorID() {return _motorID;}
     
     ///Update the position of this Linker
     ///@note - changes compartment of clinker if needed

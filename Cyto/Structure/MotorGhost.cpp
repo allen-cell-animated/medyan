@@ -13,7 +13,10 @@
 
 using namespace mathfunc;
 
-MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2, bool creation) : _pc1(pc1), _pc2(pc2), _motorType(motorType), _position1(position1), _position2(position2) {
+MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorID, double position1, double position2, bool creation)
+    : _pc1(pc1), _pc2(pc2), _motorType(motorType), _motorID(motorID), _position1(position1), _position2(position2) {
+    
+    _birthTime = tau();
     
     ///Find compartment
     auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);

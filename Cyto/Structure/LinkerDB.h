@@ -23,6 +23,7 @@ class Cylinder;
 class LinkerDBKey {friend class SubSystem;
                    friend class LinkerFF;
                    friend class MController;
+                   friend class Output;
 #ifdef TESTING
                    public:
 #endif //TESTING
@@ -54,7 +55,7 @@ public:
     
     void CreateLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
         
-        Linker* pl = new Linker(pc1, pc2, linkerType, position1, position2, creation);
+        Linker* pl = new Linker(pc1, pc2, linkerType, _currentLinkerID++, position1, position2, creation);
         push_back(pl);
     }
 
@@ -64,6 +65,9 @@ public:
     };
     
 private:
+    ///To assign linker IDs
+    static int _currentLinkerID;
+    
     static LinkerDB* _instance;
     LinkerDB() {};
     

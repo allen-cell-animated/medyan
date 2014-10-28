@@ -8,6 +8,7 @@
 
 #include "LinkerDB.h"
 
+int LinkerDB::_currentLinkerID = 0;
 LinkerDB* LinkerDB::_instance = 0;
 
 LinkerDB* LinkerDB::Instance(LinkerDBKey k) {

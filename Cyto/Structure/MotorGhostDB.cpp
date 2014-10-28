@@ -8,6 +8,7 @@
 
 #include "MotorGhostDB.h"
 
+int MotorGhostDB::_currentMotorID = 0;
 MotorGhostDB* MotorGhostDB::_instance = 0;
 
 MotorGhostDB* MotorGhostDB::Instance(MotorGhostDBKey k) {

@@ -814,14 +814,10 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
         }
 
         ///add reaction
-        if(type == ReactionType::MOTORWALKINGFORWARD) {
-            std::cout << "Walking forward reaction created" << std::endl;
+        if(type == ReactionType::MOTORWALKINGFORWARD)
             _filamentReactionTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
-        }
-        else {
-            std::cout << "Walking backward reaction created" << std::endl;
+        else
             _filamentReactionTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, std::get<2>(r)));
-        }
     }
  
 }
@@ -1401,9 +1397,6 @@ void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
         Compartment *C = static_cast<Compartment*>(c.get());
         *C = cProto;
     }
-    ///activate all compartments for diffusion, set up diffusion reactions
-    CompartmentGrid::Instance(compartmentGridKey())->activateAll();
-    
     for(auto &c : CompartmentGrid::Instance(compartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         C->generateAllDiffusionReactions();

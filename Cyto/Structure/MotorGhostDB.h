@@ -21,6 +21,7 @@ class Cylinder;
 class MotorGhostDBKey {friend class SubSystem;
                        friend class MotorGhostFF;
                        friend class MController;
+                       friend class Output;
 #ifdef TESTING
                        public:
 #endif //TESTING
@@ -53,7 +54,7 @@ public:
     
     void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
     
-        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, position1, position2, creation);
+        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, _currentMotorID++, position1, position2, creation);
         push_back(pmg);
         
         //return pmg;
@@ -65,6 +66,9 @@ public:
     };
     
 private:
+    //To assign motor IDs
+    static int _currentMotorID;
+    
     static MotorGhostDB* _instance;
     MotorGhostDB() {};
 };
