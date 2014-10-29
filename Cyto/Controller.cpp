@@ -103,7 +103,7 @@ void Controller::run() {
     std::chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = std::chrono::high_resolution_clock::now();
     ///Set up filament output file
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
+    Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/filamentoutput.txt");
     o.printBasicSnapshot(0);
     
 #if defined(CHEMISTRY)

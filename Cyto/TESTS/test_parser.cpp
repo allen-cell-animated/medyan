@@ -58,7 +58,7 @@ TEST(FilamentParserTest, Main) {
 
 TEST(ChemParserTest, Main) {
     
-    ChemistryParser p("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt");
+    ChemistryParser p("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testchemistryinput.txt");
     
     ChemistrySpeciesAndReactions chemSR = p.readChemistryInput();
     EXPECT_EQ("A", std::get<0>(chemSR.speciesBulk[0]));

@@ -30,8 +30,8 @@ private:
     
     ///Lambda parameters for use in linear search methods
     const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used only in golden section for now
-    const double LAMBDAMAX = 5; ///< Max lambda that can be returned, used in all methods
-    const double MAXDIST = 10; ///< Max distance beads can be moved, used only in backtracking line search
+    const double LAMBDAMAX = 1; ///< Max lambda that can be returned, used in all methods
+    const double MAXDIST = 1; ///< Max distance beads can be moved, used only in backtracking line search
     
     ///Parameters used in backtracking line search
     const double LAMBDAREDUCE = 0.1; ///< Lambda reduction parameter for backtracking
