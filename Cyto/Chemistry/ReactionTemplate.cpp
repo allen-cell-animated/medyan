@@ -973,178 +973,148 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, F
 }
 
 void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+
+    ///Add reaction to middle of both cylinders
+    int i, j;
+    i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
     
-    ///check if reaction should be added, i.e. if cc1 and cc2 are within reaction range
-    auto c1b1 = cc1->getCylinder()->GetFirstBead()->coordinate;
-    auto c1b2 = cc1->getCylinder()->GetSecondBead()->coordinate;
-    auto cc1Position = MidPointCoordinate(c1b1, c1b2, 0.5);
+    CMonomer* m1 = cc1->getCMonomer(i);
+    CMonomer* m2 = cc2->getCMonomer(j);
+    std::vector<Species*> reactantSpecies;
+    std::vector<Species*> productSpecies;
     
-    auto c2b1 = cc2->getCylinder()->GetFirstBead()->coordinate;
-    auto c2b2 = cc2->getCylinder()->GetSecondBead()->coordinate;
-    auto cc2Position = MidPointCoordinate(c2b1, c2b2, 0.5);
+    ///loop through reactants, products. find all species
+
+    ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
     
-    double dist = TwoPointDistance(cc1Position, cc2Position);
+    reactantSpecies.push_back(m1->speciesBound(speciesInt));
+
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
     
-    if(_rMin <= dist && dist <= _rMax && cc1->getCylinder()->getFilament() != cc2->getCylinder()->getFilament()) {
+    reactantSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+    
+    r = _reactants[2];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
 
-        ///Add reaction to middle of both cylinders
-        int i, j;
-        i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
-        
-        CMonomer* m1 = cc1->getCMonomer(i);
-        CMonomer* m2 = cc2->getCMonomer(j);
-        std::vector<Species*> reactantSpecies;
-        std::vector<Species*> productSpecies;
-        
-        ///loop through reactants, products. find all species
+    if(type == SpeciesType::BULK)
+       reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
+                                 findSpeciesBulkByMolecule(speciesInt));
 
-        ///FIRST AND SECOND REACTANT SHOULD BE BOUND
-        auto r = _reactants[0];
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesBound(speciesInt));
-
-        r = _reactants[1];
-        type = std::get<1>(r);
-        speciesInt = std::get<0>(r);
-        
-        reactantSpecies.push_back(m2->speciesBound(speciesInt));
-        
-        ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
-        
-        r = _reactants[2];
-        type = std::get<1>(r);
-        speciesInt = std::get<0>(r);
-
-        if(type == SpeciesType::BULK)
-           reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
-                                     findSpeciesBulkByMolecule(speciesInt));
-
-        else if(type == SpeciesType::DIFFUSING) {
-            Compartment* c = cc1->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-        }
-
-        
-        ///FIRST AND SECOND PRODUCT SHOULD BE LINKER
-        auto p = _products[0];
-        type = std::get<1>(p);
-        speciesInt = std::get<0>(p);
-        short linkerNumber = speciesInt;
-        
-        productSpecies.push_back(m1->speciesLinker(speciesInt));
-        
-        p = _products[1];
-        type = std::get<1>(p);
-        speciesInt = std::get<0>(p);
-        
-        productSpecies.push_back(m2->speciesLinker(speciesInt));
-
-        ///set up callbacks
-        LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(), linkerNumber, i, j, _ps);
-        
-        ///Add the reaction. If it needs a callback then attach
-        std::vector<Species*> species = reactantSpecies;
-        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
-        rxn->setRMin(_rMin);
-        rxn->setRMax(_rMax);
-        
-        boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
-        
-        cc1->addCrossCylinderReaction(cc2, rxn);
-        rxn->setReactionType(ReactionType::LINKERBINDING);
-        
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc1->getCompartment();
+        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
+
+    
+    ///FIRST AND SECOND PRODUCT SHOULD BE LINKER
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    short linkerNumber = speciesInt;
+    
+    productSpecies.push_back(m1->speciesLinker(speciesInt));
+    
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesLinker(speciesInt));
+
+    ///set up callbacks
+    LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(), linkerNumber, i, j, _ps);
+    
+    ///Add the reaction. If it needs a callback then attach
+    std::vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+    rxn->setRMin(_rMin);
+    rxn->setRMax(_rMax);
+    
+    boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
+    
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::LINKERBINDING);
 }
 
 void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    ///check if reaction should be added, i.e. if cc1 and cc2 are within reaction range
-    auto c1b1 = cc1->getCylinder()->GetFirstBead()->coordinate;
-    auto c1b2 = cc1->getCylinder()->GetSecondBead()->coordinate;
-    auto cc1Position = MidPointCoordinate(c1b1, c1b2, 0.5);
+    ///Add reaction to middle of both cylinders
+    int i, j;
+    i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
     
-    auto c2b1 = cc2->getCylinder()->GetFirstBead()->coordinate;
-    auto c2b2 = cc2->getCylinder()->GetSecondBead()->coordinate;
-    auto cc2Position = MidPointCoordinate(c2b1, c2b2, 0.5);
+    CMonomer* m1 = cc1->getCMonomer(i);
+    CMonomer* m2 = cc2->getCMonomer(j);
+    std::vector<Species*> reactantSpecies;
+    std::vector<Species*> productSpecies;
     
-    double dist = TwoPointDistance(cc1Position, cc2Position);
+    ///loop through reactants, products. find all species
     
-    if(_rMin <= dist && dist <= _rMax && cc1->getCylinder()->getFilament() != cc2->getCylinder()->getFilament()) {
-        
-        ///Add reaction to middle of both cylinders
-        int i, j;
-        i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
-        
-        CMonomer* m1 = cc1->getCMonomer(i);
-        CMonomer* m2 = cc2->getCMonomer(j);
-        std::vector<Species*> reactantSpecies;
-        std::vector<Species*> productSpecies;
-        
-        ///loop through reactants, products. find all species
-        
-        ///FIRST AND SECOND REACTANT SHOULD BE BOUND
-        auto r = _reactants[0];
-        SpeciesType type = std::get<1>(r);
-        int speciesInt = std::get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesBound(speciesInt));
-        
-        r = _reactants[1];
-        type = std::get<1>(r);
-        speciesInt = std::get<0>(r);
-        
-        reactantSpecies.push_back(m2->speciesBound(speciesInt));
-        
-        ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
-        
-        r = _reactants[2];
-        type = std::get<1>(r);
-        speciesInt = std::get<0>(r);
-        
-        if(type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
-                                      findSpeciesBulkByMolecule(speciesInt));
-        
-        else if(type == SpeciesType::DIFFUSING) {
-            Compartment* c = cc1->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-        }
-        
-        
-        ///FIRST AND SECOND PRODUCT SHOULD BE MOTOR
-        auto p = _products[0];
-        type = std::get<1>(p);
-        speciesInt = std::get<0>(p);
-        int motorNumber = speciesInt;
-        
-        productSpecies.push_back(m1->speciesMotor(speciesInt));
-        
-        p = _products[1];
-        type = std::get<1>(p);
-        speciesInt = std::get<0>(p);
-        
-        productSpecies.push_back(m2->speciesMotor(speciesInt));
-        
-        ///set up callbacks
-        MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(), motorNumber, i, j, _ps);
-        
-        ///Add the reaction. If it needs a callback then attach
-        std::vector<Species*> species = reactantSpecies;
-        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
-        rxn->setRMin(_rMin);
-        rxn->setRMax(_rMax);
-        
-        boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
-        
-        cc1->addCrossCylinderReaction(cc2, rxn);
-        rxn->setReactionType(ReactionType::MOTORBINDING);
-
-
+    ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+    auto r = _reactants[0];
+    SpeciesType type = std::get<1>(r);
+    int speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m1->speciesBound(speciesInt));
+    
+    r = _reactants[1];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    reactantSpecies.push_back(m2->speciesBound(speciesInt));
+    
+    ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+    
+    r = _reactants[2];
+    type = std::get<1>(r);
+    speciesInt = std::get<0>(r);
+    
+    if(type == SpeciesType::BULK)
+        reactantSpecies.push_back(CompartmentGrid::Instance(compartmentGridKey())->
+                                  findSpeciesBulkByMolecule(speciesInt));
+    
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc1->getCompartment();
+        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
+    
+    
+    ///FIRST AND SECOND PRODUCT SHOULD BE MOTOR
+    auto p = _products[0];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    int motorNumber = speciesInt;
+    
+    productSpecies.push_back(m1->speciesMotor(speciesInt));
+    
+    p = _products[1];
+    type = std::get<1>(p);
+    speciesInt = std::get<0>(p);
+    
+    productSpecies.push_back(m2->speciesMotor(speciesInt));
+    
+    ///set up callbacks
+    MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(), motorNumber, i, j, _ps);
+    
+    ///Add the reaction. If it needs a callback then attach
+    std::vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+    rxn->setRMin(_rMin);
+    rxn->setRMax(_rMax);
+    
+    boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
+    
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::MOTORBINDING);
+
 }
 
 

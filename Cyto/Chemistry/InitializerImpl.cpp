@@ -1546,6 +1546,12 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
 
 void InitializerImpl::updateCCylinder(CCylinder* cc) {
 
+    /// loop through all cylinders in the same compartment, and add reactions
+    Compartment* compartment = cc->getCompartment();
+    for(auto &c : compartment->getCylinders()) {
+        for(auto &r : _crossFilamentReactionTemplates) r->addReaction(cc, c->getCCylinder());
+    }
+    
     ///get location of this ccylinder
     auto pos1 = MidPointCoordinate(cc->getCylinder()->GetFirstBead()->coordinate,
                                    cc->getCylinder()->GetFirstBead()->coordinate, 0.5);
@@ -1561,7 +1567,7 @@ void InitializerImpl::updateCCylinder(CCylinder* cc) {
         
         for(auto &r : it->second) {
             ///if out of range, remove it
-            if(r->getRMin() > dist || r->getRMax() < dist)
+            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
                 cc->removeCrossCylinderReaction(it->first, r);
         }
         
@@ -1571,11 +1577,7 @@ void InitializerImpl::updateCCylinder(CCylinder* cc) {
             it->first->removeReactingCylinder(cc);
     }
     
-    
-    ///Now, loop through all cylinders in the same compartment, and add reactions
-    Compartment* compartment = cc->getCompartment();
-    for(auto &c : compartment->getCylinders())
-        for(auto &r : _crossFilamentReactionTemplates) r->addReaction(cc, c->getCCylinder());
+    cc->updateReactions();
 
 }
 

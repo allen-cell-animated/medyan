@@ -83,6 +83,12 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     Reaction* newReaction = new Reaction<M,N>(species,_rate);
     newReaction->_signal = _signal;
 
+    ///clone rMin, rMax
+    newReaction->_rMin = _rMin;
+    newReaction->_rMax = _rMax;
+    
+    ///Copy reaction type
+    newReaction->_reactionType = _reactionType;
     return newReaction;
 }
     

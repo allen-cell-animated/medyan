@@ -65,11 +65,8 @@ template <unsigned short M, unsigned short N>
         /// (as of gcc 4.703), and will presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
-        for(auto i=0U; i<M; ++i)
-            if(!_isProtoCompartment) _rspecies[i]->removeAsReactant(this);
-        for(auto i=M; i<(M+N); ++i)
-            if(!_isProtoCompartment) _rspecies[i]->removeAsProduct(this);
-
+            for(auto i=0U; i<M; ++i) _rspecies[i]->removeAsReactant(this);
+            for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }
         
         /// Returns a pointer to the first element of std::array<RSpecies*, M+N>
@@ -105,15 +102,15 @@ template <unsigned short M, unsigned short N>
             std::transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             
-            auto tempDependents = getAffectedReactions();
-            
-            //loop through these dependents, remove passivated
-            for(auto &d : tempDependents) { if(!d->isPassivated()) _dependents.push_back(d); }
-            
-            for(auto i=0U; i<M; ++i)
-                if(!_isProtoCompartment) _rspecies[i]->addAsReactant(this);
-            for(auto i=M; i<(M+N); ++i)
-                if(!_isProtoCompartment) _rspecies[i]->addAsProduct(this);
+            if(!_isProtoCompartment) {
+                auto tempDependents = getAffectedReactions();
+                
+                //loop through these dependents, remove passivated
+                for(auto &d : tempDependents) { if(!d->isPassivated()) _dependents.push_back(d); }
+                
+                for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
+                for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
+            }
 
         }
         

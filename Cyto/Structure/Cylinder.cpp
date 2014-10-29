@@ -93,7 +93,6 @@ void Cylinder::updatePosition() {
     ///Update filament reactions
 #ifdef CHEMISTRY
     ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
-    _cCylinder->updateReactions();
 #endif
     
     

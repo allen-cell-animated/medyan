@@ -123,6 +123,9 @@ public:
     
     ///Update all reactions associated with this CCylinder
     void updateReactions();
+    ///Passivate all reactions associated with this CCylinder
+    void passivateReactions();
+    
     ///Print CCylinder
     virtual void printCCylinder();
     
