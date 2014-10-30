@@ -252,8 +252,8 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
 
 void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
-    CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
-    CMonomer* m2 = cc2->getCMonomer(0);
+    CMonomer* m1 = cc2->getCMonomer(0);
+    CMonomer* m2 = cc1->getCMonomer(cc1->size() - 1);
     std::vector<Species*> reactantSpecies;
     std::vector<Species*> productSpecies;
     
@@ -473,8 +473,8 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
 void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
 
-    CMonomer* m1 = cc1->getCMonomer(cc1->size() - 1);
-    CMonomer* m2 = cc2->getCMonomer(0);
+    CMonomer* m1 = cc2->getCMonomer(0);
+    CMonomer* m2 = cc1->getCMonomer(cc1->size() - 1);
     std::vector<Species*> reactantSpecies;
     std::vector<Species*> productSpecies;
     
@@ -917,8 +917,8 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
 
 void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
     
-    CMonomer* m1 = cc1->getCMonomer(0);
-    CMonomer* m2 = cc2->getCMonomer(cc2->size() - 1);
+    CMonomer* m1 = cc2->getCMonomer(0);
+    CMonomer* m2 = cc1->getCMonomer(cc2->size() - 1);
     std::vector<Species*> reactantSpecies;
     std::vector<Species*> productSpecies;
     

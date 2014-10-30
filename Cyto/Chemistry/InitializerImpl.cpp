@@ -330,10 +330,10 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
                 ///get position of iterator
                 position = std::distance(_speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(std::tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
-                d = FilamentReactionDirection::BACKWARD;
+                d = FilamentReactionDirection::FORWARD;
             }
             else {
-                std::cout << "A plusend species that was included in a reaction was not initialized. Exiting." << std::endl;
+                std::cout << "A minusend species that was included in a reaction was not initialized. Exiting." << std::endl;
                 exit(EXIT_FAILURE);
             }
         }

@@ -140,7 +140,7 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
     ///Remove from this map
     for(auto &r : _crossCylinderReactions[other]) {
-        other->getCompartment()->removeInternalReaction(r);
+        _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(ChemSimReactionKey(), r);
     }
     _crossCylinderReactions.erase(other);
@@ -156,7 +156,7 @@ void CCylinder::removeAllCrossCylinderReactions() {
         
         ///Remove from this map
         for(auto &r : it->second) {
-            it->first->getCompartment()->removeInternalReaction(r);
+            _compartment->removeInternalReaction(r);
             ChemSim::removeReaction(ChemSimReactionKey(), r);
         }
         

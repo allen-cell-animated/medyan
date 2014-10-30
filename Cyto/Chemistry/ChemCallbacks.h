@@ -71,7 +71,7 @@ struct FilamentPolymerizationFrontCallback {
     ///Constructor, sets members
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->PolymerizeFront(); }
+    void operator() (ReactionBase *r){ _filament->PolymerizeFront();}
 };
 
 struct FilamentPolymerizationBackCallback {
