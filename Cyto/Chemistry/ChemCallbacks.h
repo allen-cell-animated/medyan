@@ -250,22 +250,25 @@ struct MotorMovingCylinderForwardCallback {
     ///members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
+    CCylinder* _newCCylinder;
     
-    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-        : _sm1(sm1), _sm2(sm2) {}
+    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
+        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
-        double newPosition = 1.0 / SystemParameters::Geometry().cylinderIntSize;
+        double newPosition = 0.0;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            m->setFirstCylinder(_newCCylinder->getCylinder());
             m->setFirstPosition(newPosition);
             m->getCMotorGhost()->setFirstSpecies(_sm2);
         }
         else {
+            m->setSecondCylinder(_newCCylinder->getCylinder());
             m->setSecondPosition(newPosition);
             m->getCMotorGhost()->setSecondSpecies(_sm2);
         }
@@ -279,22 +282,25 @@ struct MotorMovingCylinderBackwardCallback {
     ///members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
+    CCylinder* _newCCylinder;
     
-    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-        : _sm1(sm1), _sm2(sm2) {}
+    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
+        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
-        double newPosition = 1.0;
+        double newPosition = 1.0 - 1.0 / SystemParameters::Geometry().cylinderIntSize;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+            m->setFirstCylinder(_newCCylinder->getCylinder());
             m->setFirstPosition(newPosition);
             m->getCMotorGhost()->setFirstSpecies(_sm2);
         }
         else {
+            m->setSecondCylinder(_newCCylinder->getCylinder());
             m->setSecondPosition(newPosition);
             m->getCMotorGhost()->setSecondSpecies(_sm2);
         }

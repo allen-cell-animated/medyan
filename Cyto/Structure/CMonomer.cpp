@@ -187,8 +187,8 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
 ///Add a species motor
 void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
     
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
-    for(int i = 0; i < numLinkerSpecies; i++) {
+    short numMotorSpecies= SystemParameters::Chemistry().numMotorSpecies;
+    for(int i = 0; i < numMotorSpecies; i++) {
         if(_speciesMotor[i] == 0) {
             _speciesMotor[i] = s;
             return;

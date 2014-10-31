@@ -232,6 +232,11 @@ public:
     
     ///return compartment grid key
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
+    
+    ///Getters for rmin and rmax
+    float getRMin() {return _rMin;}
+    float getRMax() {return _rMax;}
+    
 };
 
 class LinkerBindingTemplate : public ReactionCrossFilamentTemplate {

@@ -36,8 +36,8 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     _cCylinder->setCylinder(this);
     
     ///Update filament reactions, only if not initialization
-    if(!(!creation && !extensionFront && !extensionBack))
-        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
+//    if(!(!creation && !extensionFront && !extensionBack))
+//        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
     
 #endif
 

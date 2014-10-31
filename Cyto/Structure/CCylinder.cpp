@@ -131,8 +131,9 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) _crossCylinderReactions[other].erase(it);
     
-    other->getCompartment()->removeInternalReaction(r);
+    _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(ChemSimReactionKey(), r);
+    
 }
 
 

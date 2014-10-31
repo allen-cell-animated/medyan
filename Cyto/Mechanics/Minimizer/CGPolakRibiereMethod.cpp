@@ -20,7 +20,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
-    //cout<<"Energy = "<< curEnergy <<endl;
+    cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
     

@@ -836,7 +836,7 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Fi
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
     ///callbacks
-    MotorMovingCylinderForwardCallback motorChangeCallback(sm1, sm2);
+    MotorMovingCylinderForwardCallback motorChangeCallback(sm1, sm2, cc2);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;
@@ -958,7 +958,7 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, F
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
     ///callbacks
-    MotorMovingCylinderBackwardCallback motorChangeCallback(sm1, sm2);
+    MotorMovingCylinderBackwardCallback motorChangeCallback(sm1, sm2, cc1);
     
     ///Add the reaction. If it needs a callback then attach
     std::vector<Species*> species = reactantSpecies;

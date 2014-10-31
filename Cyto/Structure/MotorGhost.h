@@ -51,6 +51,10 @@ public:
     Cylinder* getFirstCylinder() {return _pc1;}
     Cylinder* getSecondCylinder() {return _pc2;}
     
+    ///set cylinders
+    void setFirstCylinder(Cylinder* cylinder) {_pc1 = cylinder;}
+    void setSecondCylinder(Cylinder* cylinder) {_pc2 = cylinder;}
+    
     ///setter for mlinkers and clinkers
     void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = std::unique_ptr<CMotorGhost>(cMotorGhost);}
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}

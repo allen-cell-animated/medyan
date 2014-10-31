@@ -50,22 +50,6 @@ public:
     ///Activate compartments
     static void activateCompartments(Boundary* boundary);
     
-    /// Get compartment from the grid
-    /// @param - args, the indices in n-dimensions of the compartment
-//    template<typename ...Args>
-//    static Compartment* getCompartment(Args&& ...args)
-//    {
-//        size_t index = 0;
-//        size_t i = _nDim-1;
-//        for(auto x: {args...})
-//        {
-//            index+= x * std::pow(_grid[i],i);
-//            --i;
-//        }
-//        //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
-//        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
-//    }
-    
     /// Alternate getter from the grid
     static Compartment* getCompartment(const std::vector<size_t> &indices)
     {
@@ -112,6 +96,11 @@ public:
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
+    
+    /// Get all compartments within a given range from the specified compartment
+    /// @param ccheck - compartment to check. when initially calling this function, ccheck should be the same as c
+    /// @param compartments - list of compartments that are within range. This will be populated by the function
+    static void findCompartments(Compartment* c, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments);
     
 };
 
