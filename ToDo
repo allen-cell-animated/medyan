@@ -61,12 +61,13 @@ Goals for October 2014:
     -Compartment activation for compartments within boundary                    X
     -Spherical boundary                                                         X
     -Changing of polymerization/depolymerization/binding rates
-    -Excluded volume force field
+    -Excluded volume force field                                                X
     -Optimize movement updates?
 
 2) Testing:
     -Spherical boundary
     -Cylinder reaction management
+    -Geometry findCompartments
     -Filament (initialization, poly, depoly) (general, chem)
     -Linker/Motor (general, chem)
     -Compartment (bead, cylinder, boundary element adding/removing, etc)

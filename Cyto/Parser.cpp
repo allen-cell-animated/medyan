@@ -568,6 +568,18 @@ void SystemParser::readMechanicsParameters() {
                 MParams.VolumeK = std::atof((lineVector[1].c_str()));
             }
         }
+        
+        else if (line.find("VOLUMECUTOFF") != std::string::npos) {
+            
+            std::vector<std::string> lineVector = split<std::string>(line);
+            if(lineVector.size() > 2) {
+                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.VolumeCutoff = std::atof((lineVector[1].c_str()));
+            }
+        }
         else {}
     }
     ///Set system parameters
@@ -806,6 +818,11 @@ void SystemParser::readGeometryParameters() {
     if(compartmentTemp.size() >= 1) GParams.compartmentSizeX = compartmentTemp[0];
     if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
+    
+    ///find max compartment side
+    if(GParams.compartmentSizeX > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeX;
+    if(GParams.compartmentSizeY > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeY;
+    if(GParams.compartmentSizeZ > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeZ;
     
     SystemParameters::GParams = GParams;
 }

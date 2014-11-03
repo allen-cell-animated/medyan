@@ -3,13 +3,13 @@
 
 NDIM:                        3
 
-NX:                          1
-NY:                          1
-NZ:                          1
+NX:                          20
+NY:                          20
+NZ:                          20
 
-COMPARTMENTSIZEX:            2000.0
-COMPARTMENTSIZEY:            2000.0
-COMPARTMENTSIZEZ:            2000.0
+COMPARTMENTSIZEX:            100.0
+COMPARTMENTSIZEY:            100.0
+COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 2.7
 
@@ -61,10 +61,11 @@ MTWISTINGTYPE:
 MTWISTINGK:
 MTWISTINGPHI:
 
-### VOLUME ###
+### EXCLUDED VOLUME ###
 
 VOLUMETYPE:
-VOLUMEK:
+VOLUMEK:                     0.0
+VOLUMECUTOFF:                10.0
 
 ### BOUNDARY ###
 
@@ -92,7 +93,7 @@ NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             2
 NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             2
+NUMMOTORSPECIES:             1
 
 
 ##################################################

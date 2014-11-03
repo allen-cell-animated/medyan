@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include "CompartmentContainer.h"
+#include "SystemParameters.h"
 
 ///Exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public std::exception {
@@ -35,20 +36,21 @@ class Boundary;
 class GController {
     
 private:
-    static short _nDim; ///<grid dimensionality
-    static std::vector<int> _grid; ///< grid dimensions (in units of compartments)
-    static std::vector<double> _compartmentSize; ///< compartment size in nm
+    ///local parameters stored for efficiency
+    static short _nDim;
+    static std::vector<int> _grid;
+    static std::vector<double> _compartmentSize;
     
     ///Generate all neighbors lists for each compartment
-    static void generateConnections();
+    void generateConnections();
     
 public:
     
     ///initialize the grid based on input parameters
-    static void initializeGrid();
+    void initializeGrid();
     
     ///Activate compartments
-    static void activateCompartments(Boundary* boundary);
+    void activateCompartments(Boundary* boundary);
     
     /// Alternate getter from the grid
     static Compartment* getCompartment(const std::vector<size_t> &indices)
@@ -57,19 +59,23 @@ public:
         size_t i = 0;
         for(auto x: indices)
         {
-            if(x >= _grid[i]) { throw OutOfBoundsException();}
             
             ///Flatten the indices to 1D
-            if(i == 0)
+            if(i == 0) {
+                if(x >= _grid[0]) { throw OutOfBoundsException();}
                 index += x;
-            else if(i == 1)
-                index += x * _grid[0];
-            else
+            }
+            else if(i == 1) {
+                if(x >= _grid[1]) { throw OutOfBoundsException();}
+                index += x * _grid[1];
+            }
+            else {
+                if(x >= _grid[2]) { throw OutOfBoundsException();}
                 index += x * _grid[0] * _grid[1];
+            }
             
             i++;
         }
-        //            std::cout << "CompartmentGrid::getCompartment(): index=" << index << std::endl;
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
     }
     
@@ -81,17 +87,25 @@ public:
         size_t i = 0;
         for(auto x: coords)
         {
-            if(x < 0 || x >= (_compartmentSize[i] * _grid[i])) {
-                throw OutOfBoundsException();
-            }
-            
             ///Flatten the coordinates to 1D, get integer index
-            if(i == 0)
+            if(i == 0) {
+                if(x < 0 || x >= (_compartmentSize[0] * _grid[0])) {
+                    throw OutOfBoundsException();
+                }
                 index += int(x / _compartmentSize[0]);
-            else if(i == 1)
+            }
+            else if(i == 1) {
+                if(x < 0 || x >= (_compartmentSize[1] * _grid[1])) {
+                    throw OutOfBoundsException();
+                }
                 index += int(x / _compartmentSize[1]) * _grid[0];
-            else
+            }
+            else {
+                if(x < 0 || x >= (_compartmentSize[2] * _grid[2])) {
+                    throw OutOfBoundsException();
+                }
                 index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
+            }
             i++;
         }
         return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
@@ -100,7 +114,7 @@ public:
     /// Get all compartments within a given range from the specified compartment
     /// @param ccheck - compartment to check. when initially calling this function, ccheck should be the same as c
     /// @param compartments - list of compartments that are within range. This will be populated by the function
-    static void findCompartments(Compartment* c, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments);
+    static void findCompartments(const std::vector<double>& coords, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments);
     
 };
 

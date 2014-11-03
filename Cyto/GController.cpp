@@ -10,14 +10,14 @@
 #include "common.h"
 #include "Boundary.h"
 #include "Parser.h"
-#include "SystemParameters.h"
+
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
 void GController::generateConnections()
 {
-    
+
     //Three dimensional
     if (_nDim == 3) {
         
@@ -132,45 +132,29 @@ void GController::generateConnections()
 void GController::initializeGrid() {
     
     ///Initial parameters of system
-    short nDim = SystemParameters::Geometry().nDim;
-    std::vector<int> grid = {SystemParameters::Geometry().NX,
-        SystemParameters::Geometry().NY,
-        SystemParameters::Geometry().NZ};
-    std::vector<double> compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
-        SystemParameters::Geometry().compartmentSizeY,
-        SystemParameters::Geometry().compartmentSizeZ};
+    _nDim = SystemParameters::Geometry().nDim;
+    
+    _grid = {SystemParameters::Geometry().NX,
+                             SystemParameters::Geometry().NY,
+                             SystemParameters::Geometry().NZ};
+    
+    _compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
+                        SystemParameters::Geometry().compartmentSizeY,
+                        SystemParameters::Geometry().compartmentSizeZ};
     
     ///Check that grid and compartmentSize match nDim
-    if((nDim == 1 && grid[0] != 0 && grid[1] == 0 && grid[2]==0 && compartmentSize[0] != 0 && compartmentSize[1] == 0 && compartmentSize[2] == 0)
-           || (nDim == 2 && grid[0] != 0 && grid[1] != 0 && grid[2]==0 && compartmentSize[0] != 0 && compartmentSize[1] != 0 && compartmentSize[2] == 0)
-           || (nDim == 3 && grid[0] != 0 && grid[1] != 0 && grid[2]!=0 && compartmentSize[0] != 0 && compartmentSize[1] != 0 && compartmentSize[2] != 0)){
+    if((_nDim == 1 && _grid[0] != 0 && _grid[1] == 0 && _grid[2]==0 && _compartmentSize[0] != 0 && _compartmentSize[1] == 0 && _compartmentSize[2] == 0)
+           || (_nDim == 2 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]==0 && _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] == 0)
+           || (_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] != 0)){
     }
     else {
         std::cout << "Grid parameters are invalid. Exiting" << std::endl;
         exit(EXIT_FAILURE);
     }
-    _nDim = nDim;
-    
-    /// set up
-    if(_nDim == 1) {
-        _grid = {grid[0]};
-        _compartmentSize = {compartmentSize[0]};
-    }
-    else if(_nDim == 2) {
-        _grid = {grid[0], grid[1]};
-        _compartmentSize = {compartmentSize[0], compartmentSize[1]};
-        
-    }
-    else {
-        _grid = {grid[0], grid[1], grid[2]};
-        _compartmentSize = {compartmentSize[0], compartmentSize[1], compartmentSize[2]};
-    }
     
     int size = 1;
-    int i = 0;
     for(auto x: _grid) {
-        size*=x;
-        i++;
+        if(x != 0) size*=x;
     }
     
     ///Set the instance of this grid with given parameters
@@ -190,24 +174,21 @@ void GController::activateCompartments(Boundary* boundary) {
     }
 }
 
-static void findCompartments(Compartment* c, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments) {
-    
-    ///base case : first call, recursively call for all neighbors of c
-    if(c == ccheck) { for(auto &n : c->neighbours()) findCompartments(c, n, dist, compartments); }
+void GController::findCompartments(const std::vector<double>& coords, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments) {
     
     ///base case : if c and ccheck are not within range, return
-    if(TwoPointDistance(c->coordinates(), ccheck->coordinates()) <= dist) return;
+    if(TwoPointDistance(coords, ccheck->coordinates()) > dist ) return;
     
-    ///typical case, c and ccheck are in range. recursively call for all neighbors
+    ///recursive case, c and ccheck are in range. call for all neighbors
     else {
         //if not already in list, add it
-        if(std::find(compartments.begin(), compartments.end(), ccheck) != compartments.end()) compartments.push_back(ccheck);
-
-        //recursively call for all neighbors
-        for(auto &n : c->neighbours()) findCompartments(c, n, dist, compartments);
+        if(std::find(compartments.begin(), compartments.end(), ccheck) == compartments.end()) {
+            compartments.push_back(ccheck);
+            //recursively call for all neighbors
+            for(auto &n : ccheck->neighbours())  findCompartments(coords, n, dist, compartments);
+        }
     }
 }
-
 short GController::_nDim = 0;
 std::vector<int> GController::_grid = {};
 std::vector<double> GController::_compartmentSize = {};

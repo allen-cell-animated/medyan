@@ -19,9 +19,9 @@ Linker::Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, int linkerID, dou
     ///Find compartment
     auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2);
-    auto position = MidPointCoordinate(m1, m2, 0.5);
+    coordinate = MidPointCoordinate(m1, m2, 0.5);
 
-    try {_compartment = GController::getCompartment(position);}
+    try {_compartment = GController::getCompartment(coordinate);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
         
 #ifdef CHEMISTRY
@@ -98,10 +98,10 @@ void Linker::updatePosition() {
     ///check if were still in same compartment
     auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2);
-    auto position = MidPointCoordinate(m1, m2, 0.5);
+    coordinate = MidPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;
-    try {c = GController::getCompartment(position);}
+    try {c = GController::getCompartment(coordinate);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     if(c != _compartment) {

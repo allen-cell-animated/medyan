@@ -1575,14 +1575,12 @@ void InitializerImpl::updateCCylinder(CCylinder* cc) {
     Compartment* compartment = cc->getCompartment();
     
     ///get location of this ccylinder
-    auto pos1 = MidPointCoordinate(cc->getCylinder()->GetFirstBead()->coordinate,
-                                   cc->getCylinder()->GetFirstBead()->coordinate, 0.5);
+    auto pos1 = cc->getCylinder()->coordinate;
     
     for(auto &c : compartment->getCylinders()) {
         
         ///calculate distance from this CCylinder to the one in the map
-        auto pos2 = MidPointCoordinate(c->GetFirstBead()->coordinate,
-                                       c->GetFirstBead()->coordinate, 0.5);
+        auto pos2 = c->coordinate;
         double dist = TwoPointDistance(pos1, pos2);
         
         for(auto &r : _crossFilamentReactionTemplates) {

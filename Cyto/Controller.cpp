@@ -31,7 +31,7 @@ void Controller::initialize(std::string inputFile) {
     ///CALLING ALL CONTROLLERS TO INITIALIZE
     ///Initialize geometry controller
     std::cout << "Initializing geometry...";
-    GController::initializeGrid();
+    _gController.initializeGrid();
     std::cout << "Done." << std::endl;
     
     ///Initialize boundary
@@ -50,7 +50,7 @@ void Controller::initialize(std::string inputFile) {
     
 #ifdef CHEMISTRY
     ///Activate necessary compartments for diffusion
-    GController::activateCompartments(_subSystem->getBoundary());
+    _gController.activateCompartments(_subSystem->getBoundary());
     
     ///read parameters
     p.readChemistryParameters();
@@ -103,12 +103,28 @@ void Controller::initialize(std::string inputFile) {
     _subSystem->AddNewFilaments(filamentData);
     std::cout << "Done." <<std::endl;
     
-    ///Update positions of cylinders (HERE FOR NOW, SHOULD BE MOVED)
-    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
+    ///Update positions of all elements initially
+    updatePositions();
     
     //std::cout << "PRINTING REACTIONS" << std::endl;
     //ChemSim::printReactions();
 }
+
+void Controller::updatePositions() {
+    
+    ///Update bead-boundary interactions (VERY INEFFICIENT)
+    for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
+    
+    ///Update cylinder positions (ALSO VERY INEFFICIENT)
+    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
+    
+    ///Update linker positions (ALSO VERY INEFFICIENT)
+    for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
+    
+    ///update motor positions (ALSO VERY INEFFICIENT)
+    for(auto &m : *MotorGhostDB::Instance(MotorGhostDBKey())) m->updatePosition();
+}
+
 
 void Controller::run() {
     
@@ -131,6 +147,8 @@ void Controller::run() {
 #else
         o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
+        updatePositions();
+        
 #if defined(CHEMISTRY)
     }
 #endif

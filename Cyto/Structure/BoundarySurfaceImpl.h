@@ -31,7 +31,7 @@ public:
 
 
 ///Sphere is a simple implementation of the BoundarySurface class
-///@note this represents a half-ellipsoid. To create a full ellipsoid, one must define two of these objects.
+///@note this represents a full sphere, not just a half
 class Sphere: public BoundarySurface {
     
 private:

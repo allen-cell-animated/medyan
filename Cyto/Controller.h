@@ -14,6 +14,7 @@
 #include "MController.h"
 #include "GController.h"
 #include "CController.h"
+
 #include "Parser.h"
 #include "BoundaryImpl.h"
 #include "Output.h"
@@ -28,17 +29,20 @@ private:
 
     MController _mController; ///< Chemical Controller
     CController _cController; ///< Mechanical Controller
+    GController _gController; ///< Geometry controller
     
     int _numSteps; ///< number of chemical steps we are running
     int _numStepsPerMech; ///<number of chemical steps before mechanical equilibration
 
 public:
     ///Default constructor and destructor
-    Controller(SubSystem* s) : _mController(s), _cController(s), _subSystem(s) { };
+    Controller(SubSystem* s) : _mController(s), _cController(s), _gController(), _subSystem(s) { };
     ~Controller() {};
     
     ///Initialize the system
     void initialize(std::string inputFile);
+    ///update positions of all elements in system
+    void updatePositions();
     ///Run the simulation
     void run();
     

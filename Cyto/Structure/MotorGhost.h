@@ -44,6 +44,8 @@ private:
     
     
 public:
+    std::vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    
     MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorID, double position1, double position2, bool creation);
     ~MotorGhost();
     
@@ -59,7 +61,6 @@ public:
     void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = std::unique_ptr<CMotorGhost>(cMotorGhost);}
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}
     
-    void setMMotorGhost(MMotorGhost* mMotorGhost) {_mMotorGhost = std::unique_ptr<MMotorGhost>(mMotorGhost);}
     MMotorGhost* getMMotorGhost() {return _mMotorGhost.get();}
     
     ///Getters and setters for position

@@ -24,9 +24,9 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     setFilament(pf);
     
     ///check if were still in same compartment
-    auto midpoint = MidPointCoordinate(firstBead->coordinate, secondBead->coordinate, 0.5);
+    coordinate = MidPointCoordinate(firstBead->coordinate, secondBead->coordinate, 0.5);
 
-    try {_compartment = GController::getCompartment(midpoint);}
+    try {_compartment = GController::getCompartment(coordinate);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     
@@ -43,12 +43,16 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
 
 #ifdef MECHANICS
     double eqLength;
+    
+    ///set eqLength according to cylinder size
     if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
     else if(creation) eqLength = SystemParameters::Geometry().monomerSize * 2;
     else eqLength = SystemParameters::Geometry().cylinderSize;
     
     _mCylinder = std::unique_ptr<MCylinder>(new MCylinder(eqLength));
+    
     _mCylinder->setCylinder(this);
+    _mCylinder->setCoordinate(coordinate);
 #endif
     
     ///add to compartment
@@ -71,11 +75,11 @@ void Cylinder::SetLast(bool b){ _ifLast = b;}
 
 void Cylinder::updatePosition() {
 
-    ///check if were still in same compartment
-    auto midpoint = MidPointCoordinate(_pFirst->coordinate, _pSecond->coordinate, 0.5);
+    ///check if were still in same compartment, set new position
+    coordinate = MidPointCoordinate(_pFirst->coordinate, _pSecond->coordinate, 0.5);
     
     Compartment* c;
-    try {c = GController::getCompartment(midpoint);}
+    try {c = GController::getCompartment(coordinate);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
     if(c != _compartment) {
@@ -90,11 +94,29 @@ void Cylinder::updatePosition() {
         setCCylinder(clone);
 #endif
     }
+    
     ///Update filament reactions
 #ifdef CHEMISTRY
     ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
 #endif
     
+    ///update exvol neighbors list
+#ifdef MECHANICS
+    _mCylinder->setCoordinate(coordinate);
+    
+    ///Find mcylinders that are in surrounding compartments
+    std::vector<MCylinder*> nearbyMCylinders;
+    
+    ///Find surrounding compartments
+    std::vector<Compartment*> compartments;
+    GController::findCompartments(coordinate, _compartment,
+        SystemParameters::Mechanics().VolumeCutoff + SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
+    
+    for(auto &c : compartments) {
+        for(auto &cyl : c->getCylinders()) nearbyMCylinders.push_back(cyl->getMCylinder());
+    }
+    _mCylinder->updateExVolNeighborsList(nearbyMCylinders);
+#endif
     
 }
 

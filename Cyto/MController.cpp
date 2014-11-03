@@ -43,20 +43,3 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& Minimizers) {
     }
 }
 
-
-void MController::updatePositions() {
-
-    ///Update bead-boundary interactions (VERY INEFFICIENT)
-    for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
-    
-    ///Update cylinder positions (ALSO VERY INEFFICIENT)
-    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
-    
-    ///Update linker positions
-    for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
-    
-    ///update motor positions
-    for(auto &m : *MotorGhostDB::Instance(MotorGhostDBKey())) m->updatePosition();
-
-}
-

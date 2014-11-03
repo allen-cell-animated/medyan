@@ -39,8 +39,9 @@ private:
     
     Compartment* _compartment; ///< Compartment that this linker is in
     
-    
 public:
+    std::vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    
     Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, int linkerID, double position1, double position2, bool creation);
     ~Linker();
     
@@ -52,7 +53,6 @@ public:
     void setCLinker(CLinker* cLinker) {_cLinker = std::unique_ptr<CLinker>(cLinker);}
     CLinker* getCLinker() {return _cLinker.get();}
     
-    void setMLinker(MLinker* mLinker) {_mLinker = std::unique_ptr<MLinker>(mLinker);}
     MLinker* getMLinker() {return _mLinker.get();}
     
     ///Getters and setters for position

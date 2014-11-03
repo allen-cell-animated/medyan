@@ -41,6 +41,8 @@ private:
     Compartment* _compartment; ///< compartment this cylinder is currently in
     
 public:
+    std::vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
+    
     ///Constructor and destructor
     Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool creation);
     ~Cylinder();

@@ -73,8 +73,8 @@ protected:
     ReactionType _reactionType; ///< Reaction type enumeration
     bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
     
-    double _rMin = 0.0; /// minimum radius of reaction (only used for linker and motor binding)
-    double _rMax = 0.0; /// maximum radius of reaction (only used for linker and motor binding)
+    float _rMin = 0.0;
+    float _rMax = 0.0;
     
 public:
     /// The main constructor:

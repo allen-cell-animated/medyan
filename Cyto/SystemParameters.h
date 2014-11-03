@@ -39,6 +39,7 @@ struct MechanicsParameters {
     
     ///Volume parameters
     double VolumeK = 0;
+    double VolumeCutoff = 0;
 };
 
 ///Struct to hold the read chemistry parameters
@@ -69,9 +70,12 @@ struct GeometryParameters {
     double compartmentSizeY = 0;
     double compartmentSizeZ = 0;
     
+    double largestCompartmentSide = 0;
+    
     double monomerSize = 0;
     double cylinderSize = 0;
     int cylinderIntSize = 0;
+    
 };
 
 ///Struct to hold the read boundary parameters

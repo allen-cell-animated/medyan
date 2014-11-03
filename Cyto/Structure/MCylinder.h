@@ -29,26 +29,31 @@ class MCylinder {
 private:
     Cylinder* _pCylinder;
     
-// Mechanical constants:
+/// Mechanical constants:
+    double _eqLength;   ///< Lenght of unstertched cylinder;
+    double _eqAngle;   ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS;
+    double _kStretch;  ///< Local stretching constant, describes axial stretching of a single cylinder;
+    double _kBend;  ///< Local bending constant, which describes bending interaction between current and PREVIOUS cylinders;
+    double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
+    double _kExVol; ///< Local excluded volume constant, which describes excluded volume interactions between cylinders
     
-    double _eqLength;   //< Lenght of unstertched cylinder;
-    double _eqAngle;   //< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS;
-    double _eqAngleTwist;
-    double _kStretch;  //< Local stretching constant, describes axial stretching of a single cylinder;
-    double _kBend;  //< Local bending constant, which describes bendinig interaction between current and PREVIOUS cylinders;
-    double _kTwist;
-    
-    std::vector<MCylinder*> _NeighbourList;
+    std::vector<MCylinder*> _exVolNeighborsList; ///< list of interacting cylinders for excluded volume.
 
+    std::vector<double> _coordinate; ///< coordinate of this MCylinder
 public:
     
     ///Constructor and destructor
     MCylinder(double eqLength);
     ~MCylinder() {}
     
+    ///update excluded volume neighbors list
+    void updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinders);
+    
     ///Other setter and getter functions:
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
+    
+    void setCoordinate(std::vector<double> coordinate) {_coordinate = coordinate;}
     
     void SetEqLength(double L);
     double GetEqLength();
@@ -65,9 +70,8 @@ public:
     void SetTwistingConst(double k);
     double GetTwistingConst();
     
-//  void DeleteBead(Bead*) {std::cout<<"not implemented"<<std::endl;}
-    
-    
+    void SetExVolConst(double k);
+    double GetExVolConst();
 };
 
 #endif /* defined(__CytoMech__MCylinder__) */

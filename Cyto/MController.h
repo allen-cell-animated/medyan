@@ -56,11 +56,8 @@ private:
     void initializeFF (MechanicsFFType& forceFields);
     void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
     
-    ///Update elements after minimization
-    void updatePositions();
     
 public:
-    
     MController(SubSystem* s) {_subSystem = s;}
     
     void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers )
@@ -72,7 +69,6 @@ public:
     ///Run minimization on the system using the chosen algorithm
     void run() {
         _minimizerAlgorithms[0]->Equlibrate(_FFManager);
-        updatePositions();
     }
     
 };
