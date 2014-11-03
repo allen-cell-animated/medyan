@@ -17,7 +17,7 @@
 #include "Cylinder.h"
 
 ///Key to access instance of CylinderDB
-class CylinderDBKey {friend class Filament;
+class CylinderDBKey {friend class Filament, friend class VolumeCylindricalFF;
 #ifdef TESTING
                      public:
 #endif //TESTING
