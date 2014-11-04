@@ -17,8 +17,8 @@ double CylinderExclVolume<CVolumeInteractionType>::ComputeEnergy(Cylinder* pc1, 
     
     Bead* pb1 = pc1->GetFirstBead();
     Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc1->GetFirstBead();
-    Bead* pb4 = pc1->GetSecondBead();
+    Bead* pb3 = pc2->GetFirstBead();
+    Bead* pb4 = pc2->GetSecondBead();
     double kRepuls = pc1->getMCylinder()->GetExVolConst();
     
     
@@ -34,8 +34,8 @@ void CylinderExclVolume<CVolumeInteractionType>::ComputeForces(Cylinder* pc1, Cy
 
     Bead* pb1 = pc1->GetFirstBead();
     Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc1->GetFirstBead();
-    Bead* pb4 = pc1->GetSecondBead();
+    Bead* pb3 = pc2->GetFirstBead();
+    Bead* pb4 = pc2->GetSecondBead();
     double kRepuls = pc1->getMCylinder()->GetExVolConst();
 
     
@@ -50,8 +50,8 @@ void CylinderExclVolume<CVolumeInteractionType>::ComputeForcesAux(Cylinder* pc1,
     
     Bead* pb1 = pc1->GetFirstBead();
     Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc1->GetFirstBead();
-    Bead* pb4 = pc1->GetSecondBead();
+    Bead* pb3 = pc2->GetFirstBead();
+    Bead* pb4 = pc2->GetSecondBead();
     double kRepuls = pc1->getMCylinder()->GetExVolConst();
     
     

@@ -35,18 +35,18 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = QuadraticLineSearch(FFM);
+        lambda = 0.1;//QuadraticLineSearch(FFM);
         if(lambda < 0) {
             cout<<"Lambda < 0" <<endl;
           break;
         }
         
         cout<<"lambda= "<<lambda<<endl;
-		//PrintForces();
+		PrintForces();
         
         MoveBeads(lambda);
         o.printBasicSnapshot(numIter);
-        //PrintForces();
+        PrintForces();
         
         FFM.ComputeForcesAux();
         //PrintForces();

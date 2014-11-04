@@ -28,10 +28,6 @@ Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& dire
     Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
     _pCylinderVector.push_back(c0);
     
-    ///extend front
-    auto newpoint = NextPointProjection(pos2, SystemParameters::Geometry().cylinderSize, direction);
-    ExtendFront( newpoint );
-    
 #ifdef CHEMISTRY
     ///Update cylinder reactions
     for(auto &c : _pCylinderVector) { c->getCCylinder()->updateReactions(); }

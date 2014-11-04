@@ -7,9 +7,9 @@ NX:                          1
 NY:                          1
 NZ:                          1
 
-COMPARTMENTSIZEX:            10000.0
-COMPARTMENTSIZEY:            10000.0
-COMPARTMENTSIZEZ:            10000.0
+COMPARTMENTSIZEX:            1000.0
+COMPARTMENTSIZEY:            1000.0
+COMPARTMENTSIZEZ:            1000.0
 
 MONOMERSIZE:                 2.7
 
@@ -27,7 +27,7 @@ MD:
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.5
 
-FBENDINGTYPE:                HARMONIC
+FBENDINGTYPE:
 FBENDINGK:                   5.0
 FBENDINGTHETA:
 
@@ -64,12 +64,12 @@ MTWISTINGPHI:
 ### EXCLUDED VOLUME ###
 
 VOLUMETYPE:                  REPULSION
-VOLUMEK:                     1.0
+VOLUMEK:                     5.0
 VOLUMECUTOFF:                27.0
 
 ### BOUNDARY ###
 
-BOUNDARYTYPE:                REPULSIONEXP
+BOUNDARYTYPE:
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     1000.0
 BINTERACTIONK:               0.0

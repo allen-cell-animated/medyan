@@ -30,7 +30,7 @@ double VolumeCylindricalFF::ComputeEnergy(double d) {
             }
         }
     }
-    return U_cyl;
+    return 0.5*U_cyl;
 }
 
 void VolumeCylindricalFF::ComputeForces() {
