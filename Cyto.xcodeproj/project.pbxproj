@@ -12,6 +12,16 @@
 		B580341C19C3A5460017FEF4 /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341919C3A5460017FEF4 /* BoundaryRepulsion.h */; };
 		B593704819DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */; };
 		B593704919DCA03C004E0D13 /* BoundaryRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */; };
+		B5BDA3C31A014DD3002CDE66 /* VolumeCylindricalFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3C11A014DD3002CDE66 /* VolumeCylindricalFF.cpp */; };
+		B5BDA3C41A014DD3002CDE66 /* VolumeCylindricalFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3C11A014DD3002CDE66 /* VolumeCylindricalFF.cpp */; };
+		B5BDA3C51A014DD3002CDE66 /* VolumeCylindricalFF.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3C21A014DD3002CDE66 /* VolumeCylindricalFF.h */; };
+		B5BDA3C71A014E31002CDE66 /* CylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3C61A014E31002CDE66 /* CylinderVolumeInteractions.h */; };
+		B5BDA3CF1A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3CD1A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp */; };
+		B5BDA3D01A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3CD1A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp */; };
+		B5BDA3D11A014EDC002CDE66 /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3CE1A014EDC002CDE66 /* CylinderExclVolRepulsion.h */; };
+		B5BDA3D41A03FD84002CDE66 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3D21A03FD84002CDE66 /* CylinderExclVolume.cpp */; };
+		B5BDA3D51A03FD84002CDE66 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3D21A03FD84002CDE66 /* CylinderExclVolume.cpp */; };
+		B5BDA3D61A03FD84002CDE66 /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3D31A03FD84002CDE66 /* CylinderExclVolume.h */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
 		F733507819DAD8CE001A0533 /* CMonomer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F733507719DAD8CE001A0533 /* CMonomer.cpp */; };
@@ -92,8 +102,6 @@
 		F777FA0419C1F35200D2850A /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F9BD19C1F35200D2850A /* Species.cpp */; };
 		F777FA0519C1F35200D2850A /* Species.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F9BE19C1F35200D2850A /* Species.h */; };
 		F777FA0619C1F35200D2850A /* SpeciesContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F777F9BF19C1F35200D2850A /* SpeciesContainer.h */; };
-		F777FA2D19C1F3A800D2850A /* ExclVol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA0819C1F3A800D2850A /* ExclVol.cpp */; };
-		F777FA2E19C1F3A800D2850A /* ExclVol.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA0919C1F3A800D2850A /* ExclVol.h */; };
 		F777FA3019C1F3A800D2850A /* FilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA0A19C1F3A800D2850A /* FilamentBending.cpp */; };
 		F777FA3119C1F3A800D2850A /* FilamentBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA0B19C1F3A800D2850A /* FilamentBending.h */; };
 		F777FA3319C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA0C19C1F3A800D2850A /* FilamentBendingHarmonic.cpp */; };
@@ -123,11 +131,6 @@
 		F777FA5519C1F3A800D2850A /* MotorGhostStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA2419C1F3A800D2850A /* MotorGhostStretching.h */; };
 		F777FA5719C1F3A800D2850A /* MotorGhostStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA2519C1F3A800D2850A /* MotorGhostStretchingHarmonic.cpp */; };
 		F777FA5819C1F3A800D2850A /* MotorGhostStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA2619C1F3A800D2850A /* MotorGhostStretchingHarmonic.h */; };
-		F777FA5919C1F3A800D2850A /* VolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA2719C1F3A800D2850A /* VolRepulsion.h */; };
-		F777FA5B19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA2819C1F3A800D2850A /* VolRepulsionEnergy.cpp */; };
-		F777FA5D19C1F3A800D2850A /* VolRepulsionForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA2919C1F3A800D2850A /* VolRepulsionForce.cpp */; };
-		F777FA5F19C1F3A800D2850A /* VolumInter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA2A19C1F3A800D2850A /* VolumInter.cpp */; };
-		F777FA6019C1F3A800D2850A /* VolumInter.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA2B19C1F3A800D2850A /* VolumInter.h */; };
 		F777FA6C19C1F3C900D2850A /* CGFletcherRievesMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA6219C1F3C900D2850A /* CGFletcherRievesMethod.cpp */; };
 		F777FA6D19C1F3C900D2850A /* CGFletcherRievesMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA6319C1F3C900D2850A /* CGFletcherRievesMethod.h */; };
 		F777FA6F19C1F3C900D2850A /* CGMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA6419C1F3C900D2850A /* CGMethod.cpp */; };
@@ -294,8 +297,6 @@
 		F777F9BD19C1F35200D2850A /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Species.cpp; path = Cyto/Structure/Species.cpp; sourceTree = SOURCE_ROOT; };
 		F777F9BE19C1F35200D2850A /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Species.h; path = Cyto/Structure/Species.h; sourceTree = SOURCE_ROOT; };
 		F777F9BF19C1F35200D2850A /* SpeciesContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeciesContainer.h; path = Cyto/Structure/SpeciesContainer.h; sourceTree = SOURCE_ROOT; };
-		F777FA0819C1F3A800D2850A /* ExclVol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclVol.cpp; sourceTree = "<group>"; };
-		F777FA0919C1F3A800D2850A /* ExclVol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclVol.h; sourceTree = "<group>"; };
 		F777FA0A19C1F3A800D2850A /* FilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBending.cpp; sourceTree = "<group>"; };
 		F777FA0B19C1F3A800D2850A /* FilamentBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBending.h; sourceTree = "<group>"; };
 		F777FA0C19C1F3A800D2850A /* FilamentBendingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingHarmonic.cpp; sourceTree = "<group>"; };
@@ -325,11 +326,6 @@
 		F777FA2419C1F3A800D2850A /* MotorGhostStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostStretching.h; sourceTree = "<group>"; };
 		F777FA2519C1F3A800D2850A /* MotorGhostStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F777FA2619C1F3A800D2850A /* MotorGhostStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostStretchingHarmonic.h; sourceTree = "<group>"; };
-		F777FA2719C1F3A800D2850A /* VolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolRepulsion.h; sourceTree = "<group>"; };
-		F777FA2819C1F3A800D2850A /* VolRepulsionEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolRepulsionEnergy.cpp; sourceTree = "<group>"; };
-		F777FA2919C1F3A800D2850A /* VolRepulsionForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolRepulsionForce.cpp; sourceTree = "<group>"; };
-		F777FA2A19C1F3A800D2850A /* VolumInter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumInter.cpp; sourceTree = "<group>"; };
-		F777FA2B19C1F3A800D2850A /* VolumInter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumInter.h; sourceTree = "<group>"; };
 		F777FA6219C1F3C900D2850A /* CGFletcherRievesMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGFletcherRievesMethod.cpp; sourceTree = "<group>"; };
 		F777FA6319C1F3C900D2850A /* CGFletcherRievesMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFletcherRievesMethod.h; sourceTree = "<group>"; };
 		F777FA6419C1F3C900D2850A /* CGMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGMethod.cpp; sourceTree = "<group>"; };
@@ -549,8 +545,6 @@
 		F777FA0719C1F3A800D2850A /* ForceField */ = {
 			isa = PBXGroup;
 			children = (
-				F777FA0819C1F3A800D2850A /* ExclVol.cpp */,
-				F777FA0919C1F3A800D2850A /* ExclVol.h */,
 				F777FA1619C1F3A800D2850A /* ForceField.h */,
 				F777FA0E19C1F3A800D2850A /* FilamentFF.cpp */,
 				F777FA0F19C1F3A800D2850A /* FilamentFF.h */,
@@ -589,11 +583,13 @@
 				B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */,
 				B593704519DCA03C004E0D13 /* BoundaryRepulsionExp.cpp */,
 				B593704619DCA03C004E0D13 /* BoundaryRepulsionExp.h */,
-				F777FA2719C1F3A800D2850A /* VolRepulsion.h */,
-				F777FA2819C1F3A800D2850A /* VolRepulsionEnergy.cpp */,
-				F777FA2919C1F3A800D2850A /* VolRepulsionForce.cpp */,
-				F777FA2A19C1F3A800D2850A /* VolumInter.cpp */,
-				F777FA2B19C1F3A800D2850A /* VolumInter.h */,
+				B5BDA3C11A014DD3002CDE66 /* VolumeCylindricalFF.cpp */,
+				B5BDA3C21A014DD3002CDE66 /* VolumeCylindricalFF.h */,
+				B5BDA3C61A014E31002CDE66 /* CylinderVolumeInteractions.h */,
+				B5BDA3D21A03FD84002CDE66 /* CylinderExclVolume.cpp */,
+				B5BDA3D31A03FD84002CDE66 /* CylinderExclVolume.h */,
+				B5BDA3CD1A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp */,
+				B5BDA3CE1A014EDC002CDE66 /* CylinderExclVolRepulsion.h */,
 			);
 			name = ForceField;
 			path = Cyto/Mechanics/ForceField;
@@ -672,8 +668,8 @@
 			files = (
 				F777FA6D19C1F3C900D2850A /* CGFletcherRievesMethod.h in Headers */,
 				F777F9EF19C1F35200D2850A /* LinkerDB.h in Headers */,
-				F777FA2E19C1F3A800D2850A /* ExclVol.h in Headers */,
 				F777FA3419C1F3A800D2850A /* FilamentBendingHarmonic.h in Headers */,
+				B5BDA3C71A014E31002CDE66 /* CylinderVolumeInteractions.h in Headers */,
 				F777F9F519C1F35200D2850A /* MotorGhost.h in Headers */,
 				F777FA3819C1F3A800D2850A /* FilamentInteractions.h in Headers */,
 				F7D1395E19D07520007FC395 /* ReactionTemplate.h in Headers */,
@@ -698,6 +694,7 @@
 				F777FA8719C1F40A00D2850A /* common.h in Headers */,
 				F777FA8A19C1F40A00D2850A /* Component.h in Headers */,
 				F777F9C619C1F35200D2850A /* Boundary.h in Headers */,
+				B5BDA3D11A014EDC002CDE66 /* CylinderExclVolRepulsion.h in Headers */,
 				F777F9C219C1F35200D2850A /* Bead.h in Headers */,
 				F777F9FE19C1F35200D2850A /* ReactionBase.h in Headers */,
 				B580341C19C3A5460017FEF4 /* BoundaryRepulsion.h in Headers */,
@@ -746,7 +743,9 @@
 				F777F9C519C1F35200D2850A /* BeadDB.h in Headers */,
 				F777F98A19C1F32E00D2850A /* ChemSimpleGillespieImpl.h in Headers */,
 				F777FA5119C1F3A800D2850A /* MotorGhostFF.h in Headers */,
+				B5BDA3C51A014DD3002CDE66 /* VolumeCylindricalFF.h in Headers */,
 				F777FA5519C1F3A800D2850A /* MotorGhostStretching.h in Headers */,
+				B5BDA3D61A03FD84002CDE66 /* CylinderExclVolume.h in Headers */,
 				F777FA4E19C1F3A800D2850A /* LinkerStretchingHarmonic.h in Headers */,
 				F777FA4819C1F3A800D2850A /* LinkerInteractions.h in Headers */,
 				F777FA4419C1F3A800D2850A /* ForceFieldManager.h in Headers */,
@@ -858,7 +857,6 @@
 				F777F9D119C1F35200D2850A /* BoundarySurfaceImpl.cpp in Sources */,
 				F7642D5619F59EF800860365 /* CMotorGhost.cpp in Sources */,
 				F7D1395D19D07520007FC395 /* ReactionTemplate.cpp in Sources */,
-				F777FA5F19C1F3A800D2850A /* VolumInter.cpp in Sources */,
 				F777FA4019C1F3A800D2850A /* FilamentTwisting.cpp in Sources */,
 				F777FA3D19C1F3A800D2850A /* FilamentStretchingHarmonic.cpp in Sources */,
 				F777FA8C19C1F40A00D2850A /* Composite.cpp in Sources */,
@@ -870,20 +868,20 @@
 				F777FA9F19C1FDB200D2850A /* SubSystem.cpp in Sources */,
 				F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */,
 				F777FA3319C1F3A800D2850A /* FilamentBendingHarmonic.cpp in Sources */,
-				F777FA5B19C1F3A800D2850A /* VolRepulsionEnergy.cpp in Sources */,
 				B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */,
 				F777F9C919C1F35200D2850A /* BoundaryElementDB.cpp in Sources */,
 				F777FA5419C1F3A800D2850A /* MotorGhostStretching.cpp in Sources */,
 				F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */,
+				B5BDA3D51A03FD84002CDE66 /* CylinderExclVolume.cpp in Sources */,
 				F777FA8919C1F40A00D2850A /* Component.cpp in Sources */,
 				F777F9D919C1F35200D2850A /* CompartmentContainer.cpp in Sources */,
 				B593704819DCA03C004E0D13 /* BoundaryRepulsionExp.cpp in Sources */,
+				B5BDA3D01A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp in Sources */,
 				F777F9F119C1F35200D2850A /* MCylinder.cpp in Sources */,
 				F777F9D619C1F35200D2850A /* Compartment.cpp in Sources */,
 				F777F96719C1E71C00D2850A /* MController.cpp in Sources */,
 				F777FA8F19C1F40A00D2850A /* Cyto.cpp in Sources */,
 				F777FA4A19C1F3A800D2850A /* LinkerStretching.cpp in Sources */,
-				F777FA2D19C1F3A800D2850A /* ExclVol.cpp in Sources */,
 				F777FA6C19C1F3C900D2850A /* CGFletcherRievesMethod.cpp in Sources */,
 				F777F96919C1E71C00D2850A /* GController.cpp in Sources */,
 				F777F9E519C1F35200D2850A /* Filament.cpp in Sources */,
@@ -909,7 +907,6 @@
 				F7D1395A19D06F98007FC395 /* CCylinder.cpp in Sources */,
 				F777FA0119C1F35200D2850A /* RSpecies.cpp in Sources */,
 				F777F9C419C1F35200D2850A /* BeadDB.cpp in Sources */,
-				F777FA5D19C1F3A800D2850A /* VolRepulsionForce.cpp in Sources */,
 				F7D1396319D47739007FC395 /* BoundaryFF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -918,6 +915,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5BDA3CF1A014EDC002CDE66 /* CylinderExclVolRepulsion.cpp in Sources */,
 				F777FAA619C2294400D2850A /* Cyto.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

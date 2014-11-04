@@ -46,7 +46,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
         FFM.ComputeForcesAux();
         //PrintForces();
         
-		newGradSquare = GradSquare(1);
+		newGradSquare = GradAuxSquare();
 		
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
