@@ -72,6 +72,9 @@ public:
     
     void SetExVolConst(double k);
     double GetExVolConst();
+    
+    std::vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
+    
 };
 
 #endif /* defined(__CytoMech__MCylinder__) */

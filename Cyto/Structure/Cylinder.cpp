@@ -113,7 +113,9 @@ void Cylinder::updatePosition() {
         SystemParameters::Mechanics().VolumeCutoff + SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
     
     for(auto &c : compartments) {
-        for(auto &cyl : c->getCylinders()) nearbyMCylinders.push_back(cyl->getMCylinder());
+        for(auto &cyl : c->getCylinders()) {
+            if(_pFilament != cyl->getFilament()) nearbyMCylinders.push_back(cyl->getMCylinder());
+        }
     }
     _mCylinder->updateExVolNeighborsList(nearbyMCylinders);
 #endif

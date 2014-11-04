@@ -20,6 +20,7 @@
 class CylinderDBKey {friend class Filament;
                      friend class Controller;
                      friend class MController;
+                     friend class VolumeCylindricalFF;
 #ifdef TESTING
                      public:
 #endif //TESTING

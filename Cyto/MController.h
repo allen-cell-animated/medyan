@@ -19,6 +19,7 @@
 #include "ForceField.h"
 #include "FilamentFF.h"
 #include "LinkerFF.h"
+#include "VolumeCylindricalFF.h"
 #include "BoundaryFF.h"
 #include "MotorGhostFF.h"
 

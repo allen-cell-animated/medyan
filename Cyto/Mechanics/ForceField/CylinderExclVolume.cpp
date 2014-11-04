@@ -19,7 +19,7 @@ double CylinderExclVolume<CVolumeInteractionType>::ComputeEnergy(Cylinder* pc1, 
     Bead* pb2 = pc1->GetSecondBead();
     Bead* pb3 = pc1->GetFirstBead();
     Bead* pb4 = pc1->GetSecondBead();
-    double kRepuls = 1.0;
+    double kRepuls = pc1->getMCylinder()->GetExVolConst();
     
     
     if (d == 0.0)
@@ -36,7 +36,7 @@ void CylinderExclVolume<CVolumeInteractionType>::ComputeForces(Cylinder* pc1, Cy
     Bead* pb2 = pc1->GetSecondBead();
     Bead* pb3 = pc1->GetFirstBead();
     Bead* pb4 = pc1->GetSecondBead();
-    double kRepuls = 1.0;
+    double kRepuls = pc1->getMCylinder()->GetExVolConst();
 
     
     _FFType.Forces(pb1, pb2, pb3, pb4, kRepuls );
@@ -52,14 +52,14 @@ void CylinderExclVolume<CVolumeInteractionType>::ComputeForcesAux(Cylinder* pc1,
     Bead* pb2 = pc1->GetSecondBead();
     Bead* pb3 = pc1->GetFirstBead();
     Bead* pb4 = pc1->GetSecondBead();
-    double kRepuls = 1.0;
+    double kRepuls = pc1->getMCylinder()->GetExVolConst();
     
     
-    _FFType.Forces(pb1, pb2, pb3, pb4, kRepuls );
+    _FFType.ForcesAux(pb1, pb2, pb3, pb4, kRepuls );
 }
 
 ///Template specializations
-template double CylinderExclVolume::<CylinderExclVolRepulsion>::ComputeEnergy(Cylinder* pc1, Cylinder* pc2, double d);
-template void  CylinderExclVolume::<CylinderExclVolRepulsion>::ComputeForces(Cylinder* pc1, Cylinder* pc2);
-template void  CylinderExclVolume::<CylinderExclVolRepulsion>::ComputeForcesAux(Cylinder* pc1, Cylinder* pc2);
+template double CylinderExclVolume<CylinderExclVolRepulsion>::ComputeEnergy(Cylinder* pc1, Cylinder* pc2, double d);
+template void  CylinderExclVolume<CylinderExclVolRepulsion>::ComputeForces(Cylinder* pc1, Cylinder* pc2);
+template void  CylinderExclVolume<CylinderExclVolRepulsion>::ComputeForcesAux(Cylinder* pc1, Cylinder* pc2);
 

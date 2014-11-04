@@ -28,6 +28,10 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     if(forceFields.MBendingType != "") std::cout << "Bending: " << forceFields.MBendingType<< std::endl;
     if(forceFields.MTwistingType != "") std::cout << "Twisting: " << forceFields.MTwistingType <<std::endl;
     
+    _FFManager._forceFields.push_back(new VolumeCylindricalFF(forceFields.VolumeFFType) );
+    std::cout << "Volume force field initialized: " <<std::endl;
+    if(forceFields.VolumeFFType != "") std::cout << "Volume: " << forceFields.VolumeFFType << std::endl;
+    
     _FFManager._forceFields.push_back(new BoundaryFF(forceFields.BoundaryFFType, "", "") );
     std::cout << "Boundary force field initialized: " <<std::endl;
     if(forceFields.BoundaryFFType != "") std::cout << "Boundary: " << forceFields.BoundaryFFType << std::endl;
