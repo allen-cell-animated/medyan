@@ -65,7 +65,7 @@ Goals for October 2014:
     -Optimize movement updates?
 
 2) Testing:
-    -Spherical boundary
+    -Spherical boundary (within, etc)       
     -Cylinder reaction management
     -Geometry findCompartments
     -Filament (initialization, poly, depoly) (general, chem)

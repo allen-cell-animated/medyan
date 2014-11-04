@@ -138,7 +138,7 @@ public:
             activateAssocProductReactions();
 #endif
 #else
-_n-=1;
+        _n-=1;
 #endif
     }
     

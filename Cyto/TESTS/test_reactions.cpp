@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_REACTION_TEST
+//#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
@@ -158,6 +158,7 @@ TEST(ReactionTest, Dependents1) {
     // We run A->C 10 times, so A's copy number drops to 0. Hence, the reaction (1) & (3) should be passivated. 
     // In the context of this test, where we do not run a Gillespie-like algorithm, this should lead 
     // to reaction (2) not having (1) or (3) as dependents - the dependent count of (2) should become zero
+    
     for (int i=0; i<10; ++i){
         rxn3.makeStep();
         //        cout << RA.getN() << endl;

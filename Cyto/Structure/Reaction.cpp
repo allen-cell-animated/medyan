@@ -41,8 +41,7 @@ template <unsigned short M, unsigned short N>
 
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::passivateReactionImpl() {
-    if(isPassivated())
-        return;
+    if(isPassivated()) return;
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];

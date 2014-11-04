@@ -5,7 +5,7 @@
 //  Created by James Komianos on 9/29/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
-#define DO_THIS_CCYLINDERS_TEST
+//#define DO_THIS_CCYLINDERS_TEST
 
 #ifdef DO_THIS_CCYLINDERS_TEST
 
