@@ -1042,6 +1042,7 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::LINKERBINDING);
+    rxn->setReactionID(_reactionID);
 }
 
 void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -1114,6 +1115,7 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORBINDING);
+    rxn->setReactionID(_reactionID);
 
 }
 

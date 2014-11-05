@@ -62,7 +62,7 @@ public:
     static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
                                       Compartment* c, bool extensionFront, bool extensionBack, bool creation);
     ///add/update cross cylinder reactions that are within range
-    static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc);
+    static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, std::vector<CCylinder*>& cNeighbors);
     
     
 private:

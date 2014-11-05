@@ -40,14 +40,20 @@ private:
     std::vector<MCylinder*> _exVolNeighborsList; ///< list of interacting cylinders for excluded volume.
 
     std::vector<double> _coordinate; ///< coordinate of this MCylinder
+    
+    ///Functions to update neighbors lists
+    void addExVolNeighbor(MCylinder* neighbor);
+    void removeExVolNeighbor(MCylinder* neighbor);
+    
 public:
     
     ///Constructor and destructor
     MCylinder(double eqLength);
-    ~MCylinder() {}
+    ~MCylinder();
     
     ///update excluded volume neighbors list
     void updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinders);
+    std::vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
     
     ///Other setter and getter functions:
     void setCylinder(Cylinder* c) {_pCylinder = c;}
@@ -72,8 +78,6 @@ public:
     
     void SetExVolConst(double k);
     double GetExVolConst();
-    
-    std::vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
     
 };
 

@@ -287,4 +287,3 @@ template <unsigned short M, unsigned short N>
 #endif
 
 
-

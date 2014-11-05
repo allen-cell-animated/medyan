@@ -13,6 +13,14 @@
 
 using namespace mathfunc;
 
+void MCylinder::addExVolNeighbor(MCylinder* neighbor) { _exVolNeighborsList.push_back(neighbor);}
+
+void MCylinder::removeExVolNeighbor(MCylinder* neighbor) {
+    auto it = std::find(_exVolNeighborsList.begin(), _exVolNeighborsList.end(), neighbor);
+    if(it != _exVolNeighborsList.end()) _exVolNeighborsList.erase(it);
+}
+
+
 MCylinder::MCylinder(double eqLength){
     
     ///Set equilibrium length relative to full cylinder length
@@ -22,23 +30,23 @@ MCylinder::MCylinder(double eqLength){
     SetExVolConst(SystemParameters::Mechanics().VolumeK);
 }
 
+MCylinder::~MCylinder() {
+    ///Remove from current neighbors excluded volume list
+    for(auto &neighbor : _exVolNeighborsList) neighbor->removeExVolNeighbor(this);
+}
 
 void MCylinder::updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinders) {
-    
     
     ///Loop through current neighbors, remove any that are not within cutoff
     std::vector<MCylinder*> toRemove;
     for(auto &m : _exVolNeighborsList)
-        if(TwoPointDistance(m->_coordinate, _coordinate) >= SystemParameters::Mechanics().VolumeCutoff)
-            toRemove.push_back(m);
+        if(TwoPointDistance(m->_coordinate, _coordinate) >= SystemParameters::Mechanics().VolumeCutoff) toRemove.push_back(m);
     
-    for(auto &m : toRemove) _exVolNeighborsList.erase(std::find(_exVolNeighborsList.begin(), _exVolNeighborsList.end(), m));
+    for(auto &m : toRemove) removeExVolNeighbor(m);
     
     ///Add any that are within cutoff
-    for(auto &m : nearbyMCylinders) {
-        if(TwoPointDistance(m->_coordinate, _coordinate) < SystemParameters::Mechanics().VolumeCutoff)
-            _exVolNeighborsList.push_back(m);
-    }
+    for(auto &m : nearbyMCylinders)
+        if(TwoPointDistance(m->_coordinate, _coordinate) < SystemParameters::Mechanics().VolumeCutoff) addExVolNeighbor(m);
     
 }
 

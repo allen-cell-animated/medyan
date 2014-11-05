@@ -29,15 +29,20 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     try {_compartment = GController::getCompartment(coordinate);}
     catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
     
+    std::vector<Cylinder*> neighbors;
+    ///If not initaliziation, get a neighbors list
+    if(creation || extensionFront || extensionBack)  neighbors = findNearbyCylinders();
     
 #ifdef CHEMISTRY
     _cCylinder = std::unique_ptr<CCylinder>(
         ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack, creation));
     _cCylinder->setCylinder(this);
     
+    std::vector<CCylinder*> cNeighbors(neighbors.size());
+    std::transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
+    
     ///Update filament reactions, only if not initialization
-//    if(!(!creation && !extensionFront && !extensionBack))
-//        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
+    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
     
 #endif
 
@@ -53,6 +58,12 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     
     _mCylinder->setCylinder(this);
     _mCylinder->setCoordinate(coordinate);
+    
+    ///Update neighbors list
+    std::vector<MCylinder*> mNeighbors(neighbors.size());
+    std::transform(neighbors.begin(),neighbors.end(),mNeighbors.begin(), [](Cylinder *c){return c->getMCylinder();});
+    
+    _mCylinder->updateExVolNeighborsList(mNeighbors);
 #endif
     
     ///add to compartment
@@ -72,6 +83,24 @@ bool Cylinder::IfLast(){
 }
 
 void Cylinder::SetLast(bool b){ _ifLast = b;}
+
+
+std::vector<Cylinder*> Cylinder::findNearbyCylinders() {
+    
+    std::vector<Cylinder*> cylinders;
+    
+    ///Find surrounding compartments (For now its conservative, change soon)
+    std::vector<Compartment*> compartments;
+    GController::findCompartments(coordinate, _compartment,
+        SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
+    
+    for(auto &c : compartments)
+        for(auto &cyl : c->getCylinders())
+            if(_pFilament != cyl->getFilament()) cylinders.push_back(cyl);
+
+    return std::vector<Cylinder*>(cylinders.begin(), cylinders.end());
+}
+
 
 void Cylinder::updatePosition() {
 
@@ -94,30 +123,25 @@ void Cylinder::updatePosition() {
         setCCylinder(clone);
 #endif
     }
+    ///Get a neighbors list
+    auto neighbors = findNearbyCylinders();
     
     ///Update filament reactions
 #ifdef CHEMISTRY
-    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get());
+    std::vector<CCylinder*> cNeighbors(neighbors.size());
+    std::transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
+    
+    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
 #endif
     
     ///update exvol neighbors list
 #ifdef MECHANICS
     _mCylinder->setCoordinate(coordinate);
     
-    ///Find mcylinders that are in surrounding compartments
-    std::vector<MCylinder*> nearbyMCylinders;
+    std::vector<MCylinder*> mNeighbors(neighbors.size());
+    std::transform(neighbors.begin(),neighbors.end(),mNeighbors.begin(), [](Cylinder *c){return c->getMCylinder();});
     
-    ///Find surrounding compartments
-    std::vector<Compartment*> compartments;
-    GController::findCompartments(coordinate, _compartment,
-        SystemParameters::Mechanics().VolumeCutoff + SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
-    
-    for(auto &c : compartments) {
-        for(auto &cyl : c->getCylinders()) {
-            if(_pFilament != cyl->getFilament()) nearbyMCylinders.push_back(cyl->getMCylinder());
-        }
-    }
-    _mCylinder->updateExVolNeighborsList(nearbyMCylinders);
+    _mCylinder->updateExVolNeighborsList(mNeighbors);
 #endif
     
 }

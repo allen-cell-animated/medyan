@@ -3,9 +3,9 @@
 
 NDIM:                        3
 
-NX:                          1
-NY:                          1
-NZ:                          1
+NX:                          3
+NY:                          3
+NZ:                          3
 
 COMPARTMENTSIZEX:            1000.0
 COMPARTMENTSIZEY:            1000.0
@@ -27,7 +27,7 @@ MD:
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.5
 
-FBENDINGTYPE:
+FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
 FBENDINGTHETA:
 
@@ -63,7 +63,7 @@ MTWISTINGPHI:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:                  REPULSION
+VOLUMETYPE:
 VOLUMEK:                     5.0
 VOLUMECUTOFF:                27.0
 
@@ -85,7 +85,7 @@ CALGORITHM:                  NRM
 NUMSTEPS:                    100
 NUMSTEPSPERM:                1
 
-NUMBULKSPECIES:              5
+NUMBULKSPECIES:              2
 NUMDIFFUSINGSPECIES:         1
 
 NUMFILAMENTSPECIES:          1

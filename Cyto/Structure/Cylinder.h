@@ -40,6 +40,9 @@ private:
     
     Compartment* _compartment; ///< compartment this cylinder is currently in
     
+    ///Function to find nearby cylinders in the grid, used in updatePosition
+    std::vector<Cylinder*> findNearbyCylinders();
+    
 public:
     std::vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
     

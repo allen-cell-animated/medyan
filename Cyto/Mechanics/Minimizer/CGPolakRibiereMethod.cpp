@@ -16,12 +16,12 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
-    o.printBasicSnapshot(0);
+    //Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
+    //o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
-    cout<<"Energy = "<< curEnergy <<endl;
+    //cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
     
@@ -35,18 +35,18 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = 0.1;//QuadraticLineSearch(FFM);
+        lambda = BacktrackingLineSearch(FFM);
         if(lambda < 0) {
             cout<<"Lambda < 0" <<endl;
           break;
         }
         
-        cout<<"lambda= "<<lambda<<endl;
-		PrintForces();
+        //cout<<"lambda= "<<lambda<<endl;
+		//PrintForces();
         
         MoveBeads(lambda);
-        o.printBasicSnapshot(numIter);
-        PrintForces();
+        //o.printBasicSnapshot(numIter);
+        //PrintForces();
         
         FFM.ComputeForcesAux();
         //PrintForces();
@@ -67,9 +67,9 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
-        cout << "Energy = " << curEnergy << endl;
-        cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+        //cout<<"GradSq before end=  "<<gradSquare<<endl;
+        //cout << "Energy = " << curEnergy << endl;
+        //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
         
 	}
 	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);

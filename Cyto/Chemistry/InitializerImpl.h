@@ -54,7 +54,7 @@ public:
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
-    virtual void updateCCylinder(CCylinder* cc);
+    virtual void updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cNeighbors);
     
 };
 

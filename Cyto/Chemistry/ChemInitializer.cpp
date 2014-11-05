@@ -28,7 +28,7 @@ CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filame
     return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, creation);
 }
 
-void ChemInitializer::updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc) {
+void ChemInitializer::updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, std::vector<CCylinder*>& cNeighbors) {
     
-    _pimpl->updateCCylinder(cc);
+    _pimpl->updateCCylinder(cc, cNeighbors);
 }

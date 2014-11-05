@@ -112,16 +112,13 @@ void Controller::initialize(std::string inputFile) {
 
 void Controller::updatePositions() {
     
-    ///Update bead-boundary interactions (VERY INEFFICIENT)
+    ///Update bead-boundary interactions
     for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
-    
-    ///Update cylinder positions (ALSO VERY INEFFICIENT)
+    ///Update cylinder positions
     for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
-    
-    ///Update linker positions (ALSO VERY INEFFICIENT)
+    ///Update linker positions
     for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
-    
-    ///update motor positions (ALSO VERY INEFFICIENT)
+    ///update motor positions
     for(auto &m : *MotorGhostDB::Instance(MotorGhostDBKey())) m->updatePosition();
 }
 
@@ -141,14 +138,16 @@ void Controller::run() {
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
         _mController.run();
+        updatePositions();
         o.printBasicSnapshot(i + _numStepsPerMech);
 #elif defined(MECHANICS)
         _mController.run();
+        updatePositions();
         o.printBasicSnapshot(1);
 #else
+        updatePositions();
         o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
-        updatePositions();
         
 #if defined(CHEMISTRY)
     }

@@ -73,8 +73,11 @@ protected:
     ReactionType _reactionType; ///< Reaction type enumeration
     bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
     
-    float _rMin = 0.0;
+    ///For cross filament reactions only (should be moved to new class)
+    float _rMin = 0.0;  ///< Reaction range
     float _rMax = 0.0;
+    
+    short _reactionID = -1; ///<Unique id of this reaction
     
 public:
     /// The main constructor:
@@ -127,15 +130,20 @@ public:
     /// Returns the bare rate associated with this ReacitonBase
     float getBareRate() const {return _rate_bare;}
     
+    ///For cross filament reactions (SHOULD EVENTUALLY BE MOVED)
+    
     /// Set rMin for linker and motor reactions
     void setRMin(double rMin) {_rMin = rMin;}
-    
     /// Set rMax for linker and motor reactions
     void setRMax(double rMax) {_rMax = rMax;}
     
     ///getters for rMin and rMax
     double getRMin() {return _rMin;}
     double getRMax() {return _rMax;}
+    
+    ///Set and get ID
+    void setReactionID(int ID) {_reactionID = ID;}
+    int getReactionID() {return _reactionID;}
     
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}

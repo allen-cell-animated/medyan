@@ -824,7 +824,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistrySpeciesAndReact
 
 void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR) {
     
-    
+    int ID = 0;
     for(auto &r: chemSR.linkerBindingReactions) {
         
         std::vector<std::tuple<int, SpeciesType>> reactantTemplate;
@@ -984,7 +984,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
     
         _crossFilamentReactionTemplates.emplace_back(
-            new LinkerBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r)));
+            new LinkerBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r), ID++));
     }
     
     for(auto &r: chemSR.motorBindingReactions) {
@@ -1146,7 +1146,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistrySpeciesAnd
         }
         
         _crossFilamentReactionTemplates.emplace_back(
-           new MotorBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r)));
+           new MotorBindingTemplate(reactantTemplate, productTemplate, std::get<2>(r), std::get<3>(r), std::get<4>(r), ID++));
     }
 }
 
@@ -1544,48 +1544,44 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     return cc;
 }
 
-void InitializerImpl::updateCCylinder(CCylinder* cc) {
+void InitializerImpl::updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cNeighbors) {
     
-//    ///get location of this ccylinder
-//    auto pos1 = MidPointCoordinate(cc->getCylinder()->GetFirstBead()->coordinate,
-//                                   cc->getCylinder()->GetFirstBead()->coordinate, 0.5);
-//    
-//    ///loop through the cylinders reaction map, and remove any that are out of range.
-//    auto ccReactions = cc->getCrossCylinderReactions();
-//    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
-//        
-//        ///calculate distance from this CCylinder to the one in the map
-//        auto pos2 = MidPointCoordinate(it->first->getCylinder()->GetFirstBead()->coordinate,
-//                                       it->first->getCylinder()->GetFirstBead()->coordinate, 0.5);
-//        double dist = TwoPointDistance(pos1, pos2);
-//        
-//        for(auto &r : it->second) {
-//            ///if out of range, remove it
-//            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
-//                cc->removeCrossCylinderReaction(it->first, r);
-//        }
-//        
-//        ///If the number of reactions between this cylinder and the other has dropped to
-//        ///zero, remove the key/value as well as this reacting cylinder in other
-//        if(it->second.size() == 0)
-//            it->first->removeReactingCylinder(cc);
-//    }
-//    
-    /// loop through all cylinders in the same compartment, and add reactions
-    Compartment* compartment = cc->getCompartment();
-    
-    ///get location of this ccylinder
-    auto pos1 = cc->getCylinder()->coordinate;
-    
-    for(auto &c : compartment->getCylinders()) {
+    ///loop through the cylinders reaction map, and remove any that are out of range.
+    auto ccReactions = cc->getCrossCylinderReactions();
+    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
         
         ///calculate distance from this CCylinder to the one in the map
-        auto pos2 = c->coordinate;
-        double dist = TwoPointDistance(pos1, pos2);
+        double dist = TwoPointDistance(cc->getCylinder()->coordinate, it->first->getCylinder()->coordinate);
         
-        for(auto &r : _crossFilamentReactionTemplates) {
-            if((r->getRMin() < dist && r->getRMax() > dist) && (cc->getCylinder()->getFilament() != c->getFilament()))
-               r->addReaction(cc, c->getCCylinder());
+        for(auto &r : it->second) {
+            ///if out of range, remove it
+            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
+                cc->removeCrossCylinderReaction(it->first, r);
+        }
+        
+        ///If the number of reactions between this cylinder and the other has dropped to
+        ///zero, remove the key/value as well as this reacting cylinder in other
+        if(it->second.size() == 0)
+            it->first->removeReactingCylinder(cc);
+    }
+    
+    ///Now, add new cross filament reactions
+    for(auto &rTemplate : _crossFilamentReactionTemplates) {
+    
+        /// loop through all cylinders in range
+        for(auto &ccNeighbor : cNeighbors) {
+            double dist = TwoPointDistance(cc->getCylinder()->coordinate, ccNeighbor->getCylinder()->coordinate);
+                
+            ///Check if this cross filament reaction is already there. If not, add it
+            if(cc->getCylinder()->getFilament() != ccNeighbor->getCylinder()->getFilament()
+               && (rTemplate->getRMin() < dist && rTemplate->getRMax() > dist)) {
+                
+                bool hasRxn = false;
+                for(auto &r : cc->getCrossCylinderReactions()[ccNeighbor])
+                    if(r->getReactionID() == rTemplate->getReactionID()) { hasRxn = true; break;}
+
+                if(!hasRxn) rTemplate->addReaction(cc, ccNeighbor);
+            }
         }
     }
     cc->updateReactions();
