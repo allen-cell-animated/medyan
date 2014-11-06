@@ -5,11 +5,11 @@ NDIM:                        3
 
 NX:                          1
 NY:                          1
-NZ:                          3
+NZ:                          1
 
-COMPARTMENTSIZEX:            100.0
-COMPARTMENTSIZEY:            100.0
-COMPARTMENTSIZEZ:            100.0
+COMPARTMENTSIZEX:            1000.0
+COMPARTMENTSIZEY:            1000.0
+COMPARTMENTSIZEZ:            1000.0
 
 MONOMERSIZE:                 2.7
 
@@ -24,10 +24,10 @@ MD:
 
 ### FILAMENTS ###
 
-FSTRETCHINGTYPE:             HARMONIC
+FSTRETCHINGTYPE:
 FSTRETCHINGK:                0.5
 
-FBENDINGTYPE:                HARMONIC
+FBENDINGTYPE:
 FBENDINGK:                   5.0
 FBENDINGTHETA:
 
@@ -63,13 +63,13 @@ MTWISTINGPHI:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:
-VOLUMEK:                     5.0
+VOLUMETYPE:                  REPULSION
+VOLUMEK:                     1.0
 VOLUMECUTOFF:                27.0
 
 ### BOUNDARY ###
 
-BOUNDARYTYPE:                REPULSIONEXP
+BOUNDARYTYPE:                
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
 BINTERACTIONK:               1.0

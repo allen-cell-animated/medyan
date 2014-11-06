@@ -34,12 +34,15 @@ double VolumeCylindricalFF::ComputeEnergy(double d) {
 }
 
 void VolumeCylindricalFF::ComputeForces() {
+    
+    
     for ( auto it: *CylinderDB::Instance(CylinderDBKey()) ) {
         
         for(auto &neighbor : it->getMCylinder()->getExVolNeighborsList()) {
             //neighbour list iterator to find a pair for given cylinder.
             for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
                 
+                std::cout << "CALLING COMPUTE FORCES" <<std::endl;
                 cylinderVolInteraction->ComputeForces(it, neighbor->getCylinder());
             }
         }
