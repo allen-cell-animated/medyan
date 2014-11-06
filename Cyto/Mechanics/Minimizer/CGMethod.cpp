@@ -276,7 +276,8 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
     }
     ///return error if in wrong direction
     //directionDotForce /= BeadDB::Instance(getBeadDBKey())->size();
-    if(directionDotForce < 0.0)  return -1.0;
+    if(directionDotForce < 0.0)
+        return -1.0;
     
     ///return zero if no forces
     if(maxDirection == 0.0) return 0.0;
@@ -309,9 +310,7 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
                 return lambda;
             }
             else {
-                if(energyChange <= LSENERGYTOL) {
-                    _energyChangeCounter++;
-                }
+                if(energyChange <= LSENERGYTOL) _energyChangeCounter++;
                 return 0.0;
             }
         }
@@ -388,9 +387,7 @@ double CGMethod::QuadraticLineSearch(ForceFieldManager& FFM) {
                 return lambda;
             }
             else {
-                if(energyChange <= LSENERGYTOL) {
-                    _energyChangeCounter++;
-                }
+                if(energyChange <= LSENERGYTOL) _energyChangeCounter++;
                 return 0.0;
             }
         }

@@ -1537,8 +1537,8 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         }
     }
     
-    //update all reactions added
-    cc->updateReactions();
+    //update all reactions added if not initialization
+    if(creation || extensionFront || extensionBack) cc->updateReactions();
     
     ///clean up and return
     return cc;

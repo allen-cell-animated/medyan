@@ -70,7 +70,6 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout<<"GradSq before end=  "<<gradSquare<<endl;
         //cout << "Energy = " << curEnergy << endl;
         //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-        
 	}
 	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     

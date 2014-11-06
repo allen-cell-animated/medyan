@@ -63,6 +63,7 @@ public:
         else {
             Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++, "STRAIGHT");  //Create a long filament with numSeg.
             push_back(pf);
+            std::cout << "Filament ID = " << _currentFilamentID << std::endl;
             std::cout<<"long filament created"<<std::endl;
             
             return pf;

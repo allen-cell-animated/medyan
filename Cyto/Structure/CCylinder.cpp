@@ -36,9 +36,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
 
 CCylinder::~CCylinder()
 {
-    ///remove these reactions as dependents to other ccylinders
-    passivateReactions();
-    
     ///Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
     removeAllCrossCylinderReactions();
@@ -119,6 +116,8 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
 void CCylinder:: removeAllInternalReactions() {
     
     for (auto &r : _internalReactions) {
+        r->passivateReaction();
+        
         ///remove from compartment and chemsim
         _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(ChemSimReactionKey(), r);
@@ -131,6 +130,8 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) _crossCylinderReactions[other].erase(it);
     
+    r->passivateReaction();
+    
     _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(ChemSimReactionKey(), r);
     
@@ -141,6 +142,8 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
     ///Remove from this map
     for(auto &r : _crossCylinderReactions[other]) {
+        r->passivateReaction();
+        
         _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(ChemSimReactionKey(), r);
     }
@@ -157,6 +160,8 @@ void CCylinder::removeAllCrossCylinderReactions() {
         
         ///Remove from this map
         for(auto &r : it->second) {
+            r->passivateReaction();
+            
             _compartment->removeInternalReaction(r);
             ChemSim::removeReaction(ChemSimReactionKey(), r);
         }
@@ -199,19 +204,6 @@ void CCylinder::updateReactions()
             else r->activateReaction();
         }
     }
-}
-
-void CCylinder::passivateReactions()
-{
-    ///loop through all reactions, passivate/activate
-    for(auto &r : _internalReactions) r->passivateReaction();
-    
-    for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++)
-        for(auto &r : it->second) r->passivateReaction();
-    
-    for(auto &cc : _reactingCylinders)
-        for (auto &r : cc->_crossCylinderReactions[this]) r->passivateReaction();
-    
 }
 
 void CCylinder::printCCylinder()

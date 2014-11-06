@@ -99,7 +99,20 @@ void Controller::initialize(std::string inputFile) {
         std::cout<< std::endl << "Random filament distributions not yet implemented. Exiting" << std::endl;
         exit(EXIT_FAILURE);
     }
-    ///Create filaments
+    
+    ///Create random filaments
+    int numFilamentsX = 10;
+    int numFilamentsY = 10;
+    int distX = SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX / numFilamentsX;
+    int distY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY / numFilamentsY;
+    
+    for(int i = 0; i < numFilamentsX; i++) {
+        for(int j = 0; j < numFilamentsY; j++) {
+            filamentData.push_back({{1.0 + i * distX, 1.0 + j * distY, 20.0}, {1.0 + i * distX, 1.0 + j * distY, 90.0}});
+        }
+    }
+    
+    
     _subSystem->AddNewFilaments(filamentData);
     std::cout << "Done." <<std::endl;
     

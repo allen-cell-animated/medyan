@@ -38,11 +38,14 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
         ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), pf, _compartment, extensionFront, extensionBack, creation));
     _cCylinder->setCylinder(this);
     
-    std::vector<CCylinder*> cNeighbors(neighbors.size());
-    std::transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
     
-    ///Update filament reactions, only if not initialization
-    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
+    if(creation || extensionFront || extensionBack) {
+        std::vector<CCylinder*> cNeighbors(neighbors.size());
+        std::transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
+        
+        ///Update filament reactions, only if not initialization
+        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
+    }
     
 #endif
 
@@ -60,10 +63,12 @@ Cylinder::Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensi
     _mCylinder->setCoordinate(coordinate);
     
     ///Update neighbors list
-    std::vector<MCylinder*> mNeighbors(neighbors.size());
-    std::transform(neighbors.begin(),neighbors.end(),mNeighbors.begin(), [](Cylinder *c){return c->getMCylinder();});
-    
-    _mCylinder->updateExVolNeighborsList(mNeighbors);
+    if(creation || extensionFront || extensionBack) {
+        std::vector<MCylinder*> mNeighbors(neighbors.size());
+        std::transform(neighbors.begin(),neighbors.end(),mNeighbors.begin(), [](Cylinder *c){return c->getMCylinder();});
+        
+        _mCylinder->updateExVolNeighborsList(mNeighbors);
+    }
 #endif
     
     ///add to compartment
