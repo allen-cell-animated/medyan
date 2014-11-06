@@ -1425,39 +1425,33 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
             SpeciesFilament* sf =
-                c->addSpeciesFilament(
-                SpeciesNamesDB::Instance()->generateUniqueName(f));
+                c->addSpeciesFilament( SpeciesNamesDB::Instance()->generateUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
             SpeciesPlusEnd* sp =
-                c->addSpeciesPlusEnd(
-                SpeciesNamesDB::Instance()->generateUniqueName(p));
+                c->addSpeciesPlusEnd( SpeciesNamesDB::Instance()->generateUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
             SpeciesMinusEnd* smi =
-                c->addSpeciesMinusEnd(
-                SpeciesNamesDB::Instance()->generateUniqueName(mi));
+                c->addSpeciesMinusEnd( SpeciesNamesDB::Instance()->generateUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
         
         for (auto &b : _speciesBound) {
             SpeciesBound* sb =
-                c->addSpeciesBound(
-                SpeciesNamesDB::Instance()->generateUniqueName(b));
+                c->addSpeciesBound( SpeciesNamesDB::Instance()->generateUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
             SpeciesLinker* sl =
-                c->addSpeciesLinker(
-                SpeciesNamesDB::Instance()->generateUniqueName(l));
+                c->addSpeciesLinker( SpeciesNamesDB::Instance()->generateUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
             SpeciesMotor* sm =
-                c->addSpeciesMotor(
-                SpeciesNamesDB::Instance()->generateUniqueName(mo));
+                c->addSpeciesMotor( SpeciesNamesDB::Instance()->generateUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1584,7 +1578,6 @@ void InitializerImpl::updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cN
             }
         }
     }
-    cc->updateReactions();
 }
 
 

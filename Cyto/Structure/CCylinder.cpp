@@ -30,7 +30,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
             ccyl->addCrossCylinderReaction(this, r->clone(c->speciesContainer()));
     }
     
-    ///Update and return
+    ///Update reactions and return
     this->updateReactions();
 }
 
@@ -105,6 +105,8 @@ void CCylinder::addReactingCylinder(CCylinder* other) { _reactingCylinders.inser
 
 void CCylinder::removeInternalReaction(ReactionBase* r) {
     ///remove from compartment and chemsim
+    r->passivateReaction();
+    
     _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(ChemSimReactionKey(), r);
     
@@ -134,9 +136,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     
     _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(ChemSimReactionKey(), r);
-    
 }
-
 
 void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
@@ -184,26 +184,13 @@ void CCylinder::removeAllReactingCylinders() {
 void CCylinder::updateReactions()
 {
     ///loop through all reactions, passivate/activate
-    for(auto &r : _internalReactions) {
-        if(r->getProductOfReactants() == 0) r->passivateReaction();
-        else r->activateReaction();
-    }
+    for(auto &r : _internalReactions) r->activateReaction();
     
-    for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++) {
-        
-        for(auto &r : it->second) {
-            if(r->getProductOfReactants() == 0) r->passivateReaction();
-            else r->activateReaction();
-        }
-    }
+    for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++)
+        for(auto &r : it->second) r->activateReaction();
     
-    for(auto &cc : _reactingCylinders) {
-        
-        for (auto &r : cc->_crossCylinderReactions[this]) {
-            if(r->getProductOfReactants() == 0) r->passivateReaction();
-            else r->activateReaction();
-        }
-    }
+    for(auto &cc : _reactingCylinders)
+        for (auto &r : cc->_crossCylinderReactions[this]) r->activateReaction();
 }
 
 void CCylinder::printCCylinder()
