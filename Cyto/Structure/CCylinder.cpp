@@ -31,7 +31,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
     }
     
     ///Update reactions and return
-    this->updateReactions();
+    activateReactions();
 }
 
 CCylinder::~CCylinder()
@@ -78,7 +78,6 @@ CCylinder::~CCylinder()
         }
     }
 }
-
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
     //remove from compartment and chemsim
@@ -181,15 +180,15 @@ void CCylinder::removeAllReactingCylinders() {
 }
 
 
-void CCylinder::updateReactions()
+void CCylinder::activateReactions()
 {
-    ///loop through all reactions, passivate/activate
+    ///loop through all reactions, passivate/ activate
     for(auto &r : _internalReactions) r->activateReaction();
     
     for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++)
         for(auto &r : it->second) r->activateReaction();
     
-    for(auto &cc : _reactingCylinders)
+    for(auto &cc : _reactingCylinders) 
         for (auto &r : cc->_crossCylinderReactions[this]) r->activateReaction();
 }
 

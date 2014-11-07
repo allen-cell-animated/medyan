@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-//#define DO_THIS_REACTION_TEST
+#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
@@ -142,6 +142,10 @@ TEST(ReactionTest, Dependents1) {
     Reaction<1,1> rxn3 = { {&A,&C}, 10.0 };
     Reaction<1,1> rxn2 = { {&B,&A}, 10.0 };
     
+    rxn1.activateReaction();
+    rxn2.activateReaction();
+    rxn3.activateReaction();
+    
     // note: we have three reactions, (1) A->B, (2) B->A, (3) A->C
     // (1) affects (2) and (3)
     // (2) affects (1) and (3) 
@@ -197,6 +201,10 @@ TEST(ReactionTest, Dependents2) {
     Reaction<1,1> rxn3 = { {&C,&D}, 10.0 };
     Reaction<1,1> rxn2 = { {&E,&F}, 10.0 };
 
+    rxn1.activateReaction();
+    rxn2.activateReaction();
+    rxn3.activateReaction();
+    
     // Let's add artificial dependencies by hand
     rxn1.registerNewDependent(&rxn2);
     EXPECT_EQ(&rxn2, rxn1.dependents()[0]);

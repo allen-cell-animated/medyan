@@ -57,10 +57,8 @@ public:
     static void initialize(ChemInitializerGridKey k, ChemistrySpeciesAndReactions& chemSR);
     
     ///Initializer, based on the given simulation
-    ///@param length - starting length of the CCylinder initialized
-    ///@param species - list of species to initialize in CCylinder
-    static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf,
-                                      Compartment* c, bool extensionFront, bool extensionBack, bool creation);
+    static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,
+                                      bool extensionFront, bool extensionBack, bool creation);
     ///add/update cross cylinder reactions that are within range
     static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, std::vector<CCylinder*>& cNeighbors);
     

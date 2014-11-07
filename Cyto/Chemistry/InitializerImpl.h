@@ -25,18 +25,27 @@ class InitializerImpl : public ChemInitializerImpl {
 private:
     SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
     
-    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates; ///< list of reactions to add to every new CCylinder
-    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates; ///<list of cross filament reactions to add to CCylinders
+    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates;
+    ///< list of reactions to add to every new CCylinder
+    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates;
+    ///<list of cross filament reactions to add to CCylinders
     
     ///Vectors of all filament-related species in system
-    std::vector<std::string> _speciesFilament, _speciesPlusEnd, _speciesMinusEnd, _speciesBound, _speciesLinker, _speciesMotor;
+    std::vector<std::string> _speciesFilament,
+                             _speciesPlusEnd,
+                             _speciesMinusEnd,
+                             _speciesBound,
+                             _speciesLinker,
+                             _speciesMotor;
     
     ///Set up all reaction templates from chemsetup struct
     void generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    
     void generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
     
     ///Generate the general, non-filament reactions
-    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR, Compartment& protoCompartment);
+    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR,
+                                  Compartment& protoCompartment);
     ///Generate bulk reactions
     void generateBulkReactions(ChemistrySpeciesAndReactions& chemSR);
     
@@ -48,10 +57,10 @@ public:
     virtual void initialize(ChemistrySpeciesAndReactions& chemSR);
 
     ///Initializer
-    ///@param length - starting length of the CCylinder initialized
     ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
     /// vector. The active plus and minus end is set to be the first listed as well.
-    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c, bool extensionFront, bool extensionBack, bool creation);
+    virtual CCylinder* createCCylinder(Filament* pf, Compartment* c,
+                                       bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cNeighbors);

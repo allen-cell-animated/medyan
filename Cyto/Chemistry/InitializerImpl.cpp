@@ -1360,8 +1360,6 @@ void InitializerImpl::generateBulkReactions(ChemistrySpeciesAndReactions& chemSR
     }
 }
 
-
-
 void InitializerImpl::initialize(ChemistrySpeciesAndReactions& chemSR) {
     
     ///set static system ptr
@@ -1531,8 +1529,8 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
         }
     }
     
-    //update all reactions added if not initialization
-    if(creation || extensionFront || extensionBack) cc->updateReactions();
+    //update all reactions added
+    if(creation || extensionFront || extensionBack) cc->activateReactions();
     
     ///clean up and return
     return cc;
@@ -1578,6 +1576,7 @@ void InitializerImpl::updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cN
             }
         }
     }
+    cc->activateReactions();
 }
 
 
