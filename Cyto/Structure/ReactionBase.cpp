@@ -18,7 +18,7 @@ _rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate), _isProtoCompar
     _signal=nullptr;
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
-    _passivated=false;
+    _passivated=true;
 #endif
 }
 

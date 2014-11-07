@@ -116,6 +116,9 @@ void Controller::initialize(std::string inputFile) {
     _subSystem->AddNewFilaments(filamentData);
     std::cout << "Done." <<std::endl;
     
+    
+    
+    
     ///Update positions of all elements initially
     updatePositions();
     

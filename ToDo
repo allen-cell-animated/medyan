@@ -80,3 +80,24 @@ Goals for October 2014:
 WISH LIST
 -Get rid of chem initializer->put all in ccylinder!                             
 
+------
+Goals for November 2014
+------
+
+1) More features
+    -Fix reaction initialization / management                                   X
+    -Update position / neighbors list fix
+    -Get rid of chemIniitializer                                                
+    -Cylindrical + half sphere boundary
+    -Excluded volume working
+    -Add aging reaction + coupling to mechanics
+    -Add severing reaction + coupling to mechanics
+    -Add poly/depoly/unbinding + coupling to mechanics
+    -Timings for larger systems
+
+2) TESTING FROM OCTOBER!
+
+
+
+
+

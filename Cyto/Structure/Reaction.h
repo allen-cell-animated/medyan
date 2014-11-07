@@ -103,10 +103,8 @@ template <unsigned short M, unsigned short N>
                       [](Species *s){return &s->getRSpecies();});
             
             if(!_isProtoCompartment) {
-                auto tempDependents = getAffectedReactions();
-                
-                //loop through these dependents, remove passivated
-                for(auto &d : tempDependents) { if(!d->isPassivated()) _dependents.push_back(d); }
+                //add dependents
+                for(auto &d : getAffectedReactions()) { if(!d->isPassivated()) _dependents.push_back(d); }
                 
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);

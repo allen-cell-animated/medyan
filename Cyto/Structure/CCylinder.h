@@ -43,13 +43,12 @@ protected:
     std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     
     Compartment* _compartment; ///< compartment this ccylinder is in
-
     Cylinder* _pCylinder; ///< parent cylinder
     
     short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize; ///<max length of full cylinder
-
+    
 public:
-    ///Default constructor, sets compartment, init reaction containers
+    ///Default constructor, sets compartment, init reactions and monomers
     CCylinder(Compartment* c) : _compartment(c) {}
     
     /// Copy constructor
@@ -85,44 +84,29 @@ public:
     ///@note no check on index
     CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
-    ///Add an internal reaction to this CCylinder
-    void addInternalReaction(ReactionBase* r);
-    ///Add a reaction across this ccylinder and another ccylinder
-    ///Adds to this reaction map as well as the other ccylinder's reacting cylinder list
-    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
-    ///Add a reacting ccylinder to this one
-    void addReactingCylinder(CCylinder* other);
-    
-    ///remove an internal reaction from this ccylinder
-    ///@note no check on whether r is in the reactions list
-    void removeInternalReaction(ReactionBase* r);
-    ///remove all internal reactions from this ccylinder
-    void removeAllInternalReactions();
-    
-    ///Remove a specific cross cylinder reaction from 
-    void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
-    ///clear all reactions involving another ccylinder
-    ///@note also removes reaction from other ccylinder's reacting cylinder lsist
-    void removeCrossCylinderReactions(CCylinder* other);
-    ///clear all reactions involving other cylinders
-    ///@note also removes all reactions from other ccylinder's reacting cylinder list
-    void removeAllCrossCylinderReactions();
-    
-    ///remove a reacting ccylinder from this one,
-    ///@note - also removes the other's cross-cylinder reactions involving this ccylinder
-    void removeReactingCylinder(CCylinder* other);
-    ///remove all reacting ccylinders reactions,
-    ///@note - similar to above but for all in reacting cylinder list
-    void removeAllReactingCylinders();
-    
     ///Get list of reactions associated with this CCylinder
     const std::unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     const std::unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     ///Get map of reactions associated with this CCylinder and others
     std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
     
-    ///Update all reactions associated with this CCylinder
-    void updateReactions();
+    ///REACTION MANAGEMENT FUNCTIONS
+    void addInternalReaction(ReactionBase* r);
+    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
+    void addReactingCylinder(CCylinder* other);
+
+    void removeInternalReaction(ReactionBase* r);
+    void removeAllInternalReactions();
+    
+    void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
+    void removeCrossCylinderReactions(CCylinder* other);
+    void removeAllCrossCylinderReactions();
+    
+    void removeReactingCylinder(CCylinder* other);
+    void removeAllReactingCylinders();
+    
+    ///Activate all reactions associated with this CCylinder
+    void activateReactions();
     
     ///Print CCylinder
     virtual void printCCylinder();
