@@ -71,9 +71,9 @@ public:
     
     
     /// Remove bead:
-    void removeBead(Bead* pb){
-        delete pb;
-        remove(pb);
+    void removeBead(Bead* b){
+        delete b;
+        remove(b);
         
     }
 private:

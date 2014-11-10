@@ -1,12 +1,12 @@
 //
-//  InitializerImpl.cpp
+//  SimpleManagerImpl.cpp
 //  Cyto
 //
 //  Created by James Komianos on 7/30/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "InitializerImpl.h"
+#include "SimpleManagerImpl.h"
 
 #include "ChemCallbacks.h"
 #include "Bead.h"
@@ -16,7 +16,7 @@
 
 using namespace mathfunc;
 
-void InitializerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
+void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
     
     ///set up reaction templates
     for(auto &r: chem.polymerizationReactions) {
@@ -823,7 +823,7 @@ void InitializerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
  
 }
 
-void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistryData& chem) {
+void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& chem) {
     
     int ID = 0;
     for(auto &r: chem.linkerBindingReactions) {
@@ -1152,7 +1152,7 @@ void InitializerImpl::generateCrossFilamentReactionTemplates(ChemistryData& chem
 }
 
 
-void InitializerImpl::generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
+void SimpleManagerImpl::generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
     
      ///go through reactions, add each
     for(auto &r: chem.genReactions) {
@@ -1270,7 +1270,7 @@ void InitializerImpl::generateGeneralReactions(ChemistryData& chem, Compartment&
     }
 }
 
-void InitializerImpl::generateBulkReactions(ChemistryData& chem) {
+void SimpleManagerImpl::generateBulkReactions(ChemistryData& chem) {
     
     ///go through reactions, add each
     for(auto &r: chem.bulkReactions) {
@@ -1361,7 +1361,7 @@ void InitializerImpl::generateBulkReactions(ChemistryData& chem) {
     }
 }
 
-void InitializerImpl::initialize(ChemistryData& chem) {
+void SimpleManagerImpl::initialize(ChemistryData& chem) {
     
     ///set static system ptr
     ReactionFilamentTemplate::_ps = _subSystem;
@@ -1410,7 +1410,7 @@ void InitializerImpl::initialize(ChemistryData& chem) {
     generateCrossFilamentReactionTemplates(chem);
 }
 
-CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
+CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
                                             bool extensionFront, bool extensionBack, bool creation)
 {
     CCylinder* cc = new CCylinder(c);
@@ -1537,7 +1537,7 @@ CCylinder* InitializerImpl::createCCylinder(Filament *pf, Compartment* c,
     return cc;
 }
 
-void InitializerImpl::updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors) {
+void SimpleManagerImpl::updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors) {
     
     ///loop through the cylinders reaction map, and remove any that are out of range.
     auto ccReactions = cc->getCrossCylinderReactions();

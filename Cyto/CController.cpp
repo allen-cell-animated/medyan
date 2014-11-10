@@ -29,14 +29,14 @@ void CController::initialize(string& chemAlgorithm, string chemInitializer, Chem
     
     
     ///Set the instance of the initializer
-    ChemInitializerImpl* cii;
-    cii = new InitializerImpl(_subSystem);
+    ChemManagerImpl* cii;
+    cii = new SimpleManagerImpl(_subSystem);
 
 
-    ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
+    ChemManager::setInstance(ChemManagerInitKey(), cii);
     
     ///initialize grid ...
-    ChemInitializer::initialize(ChemInitializerGridKey(), chem);
+    ChemManager::initialize(ChemManagerGridKey(), chem);
     
     ///initialize chemsim
     ChemSim::initialize(ChemSimInitKey());

@@ -8,7 +8,7 @@
 #include <exception>
 #include "Cylinder.h"
 
-#include "ChemInitializer.h"
+#include "ChemManager.h"
 #include "Composite.h"
 #include "GController.h"
 #include "MathFunctions.h"
@@ -35,7 +35,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, bool extensionFront, bool ex
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(
-        ChemInitializer::createCCylinder(ChemInitializerCylinderKey(), f, _compartment, extensionFront, extensionBack, creation));
+        ChemManager::createCCylinder(ChemManagerCylinderKey(), f, _compartment, extensionFront, extensionBack, creation));
     _cCylinder->setCylinder(this);
     
     
@@ -44,7 +44,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, bool extensionFront, bool ex
         transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
         
         ///Update filament reactions, only if not initialization
-        ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
+        ChemManager::updateCCylinder(ChemManagerCylinderKey(), _cCylinder.get(), cNeighbors);
     }
     
 #endif
@@ -127,7 +127,7 @@ void Cylinder::updatePosition() {
     vector<CCylinder*> cNeighbors(neighbors.size());
     transform(neighbors.begin(),neighbors.end(),cNeighbors.begin(), [](Cylinder *c){return c->getCCylinder();});
     
-    ChemInitializer::updateCCylinder(ChemInitializerCylinderKey(), _cCylinder.get(), cNeighbors);
+    ChemManager::updateCCylinder(ChemManagerCylinderKey(), _cCylinder.get(), cNeighbors);
 #endif
     
     ///update exvol neighbors list

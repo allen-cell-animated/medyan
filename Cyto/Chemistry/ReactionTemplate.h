@@ -39,7 +39,7 @@ class CCylinder;
 
 class ReactionFilamentTemplate {
     
-    friend class InitializerImpl;
+    friend class SimpleManagerImpl;
     
 protected:
     static SubSystem* _ps;
@@ -208,7 +208,7 @@ public:
 
 class ReactionCrossFilamentTemplate {
 
-    friend class InitializerImpl;
+    friend class SimpleManagerImpl;
     
 protected:
     static SubSystem* _ps;

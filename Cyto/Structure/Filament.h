@@ -86,7 +86,7 @@ public:
     int getID() {return _ID;}
     
     //just for example, will rewrite this function, so it not returns anything
-    vector<double> nextBeadProjection(Bead* pb, double d, vector<double> director);
+    vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
     vector<vector<double> > straightFilamentProjection(vector<vector<double>>& v, int numBeads);
     vector<vector<double> > zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
     vector<vector<double> > arcFilamentProjection(vector<vector<double>>& v, int numBeads);

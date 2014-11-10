@@ -68,10 +68,10 @@ public:
     }
     
     // Remove boundary element
-    void removeBoundaryElement(BoundaryElement* pb){
+    void removeBoundaryElement(BoundaryElement* b){
         
-        remove(pb);
-        delete pb;
+        remove(b);
+        delete b;
         
     }
 private:
