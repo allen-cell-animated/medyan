@@ -8,7 +8,7 @@
 
 #include "CController.h"
 
-void CController::initialize(std::string& chemAlgorithm, std::string chemInitializer, ChemistrySpeciesAndReactions& chemSR) {
+void CController::initialize(string& chemAlgorithm, string chemInitializer, ChemistryData& chem) {
     
     ///Set instance of chemsim algorithm
     ChemSimImpl* csi;
@@ -22,7 +22,7 @@ void CController::initialize(std::string& chemAlgorithm, std::string chemInitial
         csi = new ChemSimpleGillespieImpl;
     
     else {
-        std::cout<< "Chem algorithm not found. Exiting." <<std::endl;
+        cout<< "Chem algorithm not found. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
     ChemSim::setInstance(ChemSimInitKey(), csi);
@@ -30,17 +30,13 @@ void CController::initialize(std::string& chemAlgorithm, std::string chemInitial
     
     ///Set the instance of the initializer
     ChemInitializerImpl* cii;
-//    if(chemInitializer == "BASIC") {
-        cii = new InitializerImpl(_subSystem);
-//    }
-//    else {
-//        std::cout<< "Initializer type not found. Exiting." <<std::endl;
-//        exit(EXIT_FAILURE);
-//    }
+    cii = new InitializerImpl(_subSystem);
+
+
     ChemInitializer::setInstance(ChemInitializerInitKey(), cii);
     
     ///initialize grid ...
-    ChemInitializer::initialize(ChemInitializerGridKey(), chemSR);
+    ChemInitializer::initialize(ChemInitializerGridKey(), chem);
     
     ///initialize chemsim
     ChemSim::initialize(ChemSimInitKey());

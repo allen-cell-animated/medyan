@@ -15,7 +15,7 @@
 #include "SystemParameters.h"
 
 ///Exception to be thrown when an index/coordinate is out of bounds of the grid
-class OutOfBoundsException : public std::exception {
+class OutOfBoundsException : public exception {
     
     virtual const char* what() const throw() {
         return "An element is out of the bounds of the grid.";
@@ -38,8 +38,8 @@ class GController {
 private:
     ///local parameters stored for efficiency
     static short _nDim;
-    static std::vector<int> _grid;
-    static std::vector<double> _compartmentSize;
+    static vector<int> _grid;
+    static vector<double> _compartmentSize;
     
     ///Generate all neighbors lists for each compartment
     void generateConnections();
@@ -53,7 +53,7 @@ public:
     void activateCompartments(Boundary* boundary);
     
     /// Alternate getter from the grid
-    static Compartment* getCompartment(const std::vector<size_t> &indices)
+    static Compartment* getCompartment(const vector<size_t> &indices)
     {
         size_t index = 0;
         size_t i = 0;
@@ -76,11 +76,11 @@ public:
             
             i++;
         }
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
+        return static_cast<Compartment*>(CompartmentGrid::instance(CompartmentGridKey())->children().at(index).get());
     }
     
     /// Get the compartment given a set of coordinates
-    static Compartment* getCompartment(const std::vector<double> &coords)
+    static Compartment* getCompartment(const vector<double> &coords)
     {
         ///Check if out of bounds
         size_t index = 0;
@@ -108,13 +108,13 @@ public:
             }
             i++;
         }
-        return static_cast<Compartment*>(CompartmentGrid::Instance(CompartmentGridKey())->children().at(index).get());
+        return static_cast<Compartment*>(CompartmentGrid::instance(CompartmentGridKey())->children().at(index).get());
     }
     
     /// Get all compartments within a given range from the specified compartment
     /// @param ccheck - compartment to check. when initially calling this function, ccheck should be the same as c
     /// @param compartments - list of compartments that are within range. This will be populated by the function
-    static void findCompartments(const std::vector<double>& coords, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments);
+    static void findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments);
     
 };
 

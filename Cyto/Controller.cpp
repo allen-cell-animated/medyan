@@ -8,7 +8,7 @@
 
 #include "Controller.h"
 
-void Controller::initialize(std::string inputFile) {
+void Controller::initialize(string inputFile) {
     
     ///Parse input, get parameters
     SystemParser p(inputFile);
@@ -30,23 +30,23 @@ void Controller::initialize(std::string inputFile) {
     
     ///CALLING ALL CONTROLLERS TO INITIALIZE
     ///Initialize geometry controller
-    std::cout << "Initializing geometry...";
+    cout << "Initializing geometry...";
     _gController.initializeGrid();
-    std::cout << "Done." << std::endl;
+    cout << "Done." << endl;
     
     ///Initialize boundary
-    std::cout << "Initializing boundary...";
+    cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->AddBoundary(new BoundaryCubic());
+        _subSystem->addBoundary(new BoundaryCubic());
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
-        _subSystem->AddBoundary(new BoundarySpherical());
+        _subSystem->addBoundary(new BoundarySpherical());
     }
     else{
-        std::cout << std::endl << "Given boundary not yet implemented. Exiting" <<std::endl;
+        cout << endl << "Given boundary not yet implemented. Exiting" <<endl;
         exit(EXIT_FAILURE);
     }
-    std::cout << "Done." <<std::endl;
+    cout << "Done." <<endl;
     
 #ifdef CHEMISTRY
     ///Activate necessary compartments for diffusion
@@ -56,7 +56,7 @@ void Controller::initialize(std::string inputFile) {
     p.readChemistryParameters();
     
     ///Initialize chemical controller
-    std::cout << "Initializing chemistry...";
+    cout << "Initializing chemistry...";
     ///read algorithm
     CAlgorithm = p.readChemistryAlgorithm();
     ChemistrySetup CSetup = p.readChemistrySetup();
@@ -65,38 +65,38 @@ void Controller::initialize(std::string inputFile) {
     _numSteps = CAlgorithm.numSteps;
     _numStepsPerMech = CAlgorithm.numStepsPerMech;
     
-    ChemistrySpeciesAndReactions chemSR;
+    ChemistryData chem;
     
     if(CSetup.inputFile != "") {
         ChemistryParser cp(CSetup.inputFile);
-        chemSR = cp.readChemistryInput();
+        chem = cp.readChemistryInput();
     }
     else {
-        std::cout << "Need to specify a chemical input file. Exiting" << std::endl;
+        cout << "Need to specify a chemical input file. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
-    _cController.initialize(CAlgorithm.algorithm, "", chemSR);
-    std::cout << "Done." <<std::endl;
+    _cController.initialize(CAlgorithm.algorithm, "", chem);
+    cout << "Done." <<endl;
 #endif
 #ifdef MECHANICS
     ///Initialize Mechanical controller
-    std::cout << "Initializing mechanics...";
+    cout << "Initializing mechanics...";
     _mController.initialize(MTypes, MAlgorithm);
-    std::cout << "Done." <<std::endl;
+    cout << "Done." <<endl;
     
 #endif
     
     ///Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
-    std::vector<std::vector<std::vector<double>>> filamentData;
-    std::cout << "Initializing filaments...";
+    vector<vector<vector<double>>> filamentData;
+    cout << "Initializing filaments...";
     
     if(FSetup.inputFile != "") {
         FilamentParser fp(FSetup.inputFile);
         filamentData = fp.readFilaments();
     }
     else {
-        std::cout<< std::endl << "Random filament distributions not yet implemented. Exiting" << std::endl;
+        cout<< endl << "Random filament distributions not yet implemented. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
     
@@ -113,8 +113,8 @@ void Controller::initialize(std::string inputFile) {
 //    }
     
     
-    _subSystem->AddNewFilaments(filamentData);
-    std::cout << "Done." <<std::endl;
+    _subSystem->addNewFilaments(filamentData);
+    cout << "Done." <<endl;
     
     
     
@@ -122,27 +122,27 @@ void Controller::initialize(std::string inputFile) {
     ///Update positions of all elements initially
     updatePositions();
     
-    //std::cout << "PRINTING REACTIONS" << std::endl;
+    //cout << "PRINTING REACTIONS" << endl;
     //ChemSim::printReactions();
 }
 
 void Controller::updatePositions() {
     
     ///Update bead-boundary interactions
-    for(auto b : *BeadDB::Instance(BeadDBKey())) b->updatePosition();
+    for(auto b : *BeadDB::instance(BeadDBKey())) b->updatePosition();
     ///Update cylinder positions
-    for(auto &c : *CylinderDB::Instance(CylinderDBKey())) c->updatePosition();
+    for(auto &c : *CylinderDB::instance(CylinderDBKey())) c->updatePosition();
     ///Update linker positions
-    for(auto &l : *LinkerDB::Instance(LinkerDBKey())) l->updatePosition();
+    for(auto &l : *LinkerDB::instance(LinkerDBKey())) l->updatePosition();
     ///update motor positions
-    for(auto &m : *MotorGhostDB::Instance(MotorGhostDBKey())) m->updatePosition();
+    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey())) m->updatePosition();
 }
 
 
 void Controller::run() {
     
-    std::chrono::high_resolution_clock::time_point chk1, chk2;
-    chk1 = std::chrono::high_resolution_clock::now();
+    chrono::high_resolution_clock::time_point chk1, chk2;
+    chk1 = chrono::high_resolution_clock::now();
     ///Set up filament output file
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/filamentoutput.txt");
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
@@ -168,11 +168,11 @@ void Controller::run() {
 #if defined(CHEMISTRY)
     }
 #endif
-    chk2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed_run(chk2-chk1);
+    chk2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(chk2-chk1);
     
-    std::cout << "Time elapsed for run: dt=" << elapsed_run.count() << std::endl;
-    std::cout << "Done with simulation!" << std::endl;
+    cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
+    cout << "Done with simulation!" << endl;
 }
 
 

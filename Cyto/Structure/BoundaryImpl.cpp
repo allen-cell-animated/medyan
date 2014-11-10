@@ -7,6 +7,7 @@
 //
 
 #include "BoundaryImpl.h"
+
 #include "BoundarySurfaceImpl.h"
 #include "SystemParameters.h"
 
@@ -37,7 +38,7 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     
 }
 
-bool BoundaryCubic::within(const std::vector<double> coordinates) {
+bool BoundaryCubic::within(const vector<double> coordinates) {
     
     ///check if all planes return positive distance (means in front of plane, relative to normal)
     for(auto &bs : _boundarySurfaces)
@@ -56,7 +57,7 @@ BoundarySpherical::BoundarySpherical() : Boundary(3, BoundaryShape::Sphere) {
     _boundarySurfaces.emplace_back(new Sphere({sysX / 2, sysY / 2, sysZ / 2}, sysX / 2));
 }
 
-bool BoundarySpherical::within(const std::vector<double> coordinates) {
+bool BoundarySpherical::within(const vector<double> coordinates) {
     
     BoundaryElement* sphereBoundaryElement = _boundarySurfaces[0]->boundaryElements()[0].get();
     return sphereBoundaryElement->distance(coordinates) > 0;

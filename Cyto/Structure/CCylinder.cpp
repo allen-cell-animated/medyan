@@ -12,13 +12,13 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
 {
     ///copy all monomers, bounds
     for(auto &m : rhs._monomers)
-        _monomers.push_back(std::unique_ptr<CMonomer>(m->clone(c)));
+        _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
     
     ///copy all reactions
-    for(auto &r: rhs._internalReactions) addInternalReaction(r->clone(c->speciesContainer()));
+    for(auto &r: rhs._internalReactions) addInternalReaction(r->clone(c->getSpeciesContainer()));
     for(auto it = rhs._crossCylinderReactions.begin(); it != rhs._crossCylinderReactions.end(); it++) {
         ///Copy map
-        for(auto &r : it->second) addCrossCylinderReaction(it->first, r->clone(c->speciesContainer()));
+        for(auto &r : it->second) addCrossCylinderReaction(it->first, r->clone(c->getSpeciesContainer()));
     }
     
     ///Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -27,7 +27,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
         addReactingCylinder(ccyl);
         ///clone reactions
         for(auto &r: ccyl->getCrossCylinderReactions()[const_cast<CCylinder*>(&rhs)])
-            ccyl->addCrossCylinderReaction(this, r->clone(c->speciesContainer()));
+            ccyl->addCrossCylinderReaction(this, r->clone(c->getSpeciesContainer()));
     }
     
     ///Update reactions and return
@@ -81,7 +81,7 @@ CCylinder::~CCylinder()
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
     //remove from compartment and chemsim
-    _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r));
+    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(ChemSimReactionKey(), r);
     
     ///add to local reaction list
@@ -90,7 +90,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
 
 void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(std::unique_ptr<ReactionBase>(r));
+    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(ChemSimReactionKey(), r);
     
     ///add to this reaction map
@@ -194,14 +194,14 @@ void CCylinder::activateReactions()
 
 void CCylinder::printCCylinder()
 {
-    std::cout << "Compartment:" << _compartment << std::endl;
+    cout << "Compartment:" << _compartment << endl;
     
-    std::cout << "Composition of CCylinder: " << std::endl;
+    cout << "Composition of CCylinder: " << endl;
     for (auto &m : _monomers){
         m->print();
-        std::cout << ":";
+        cout << ":";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 

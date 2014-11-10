@@ -24,14 +24,14 @@
 template <unsigned short M, unsigned short N>
     class Reaction : public ReactionBase {
     private:
-        std::array<RSpecies*, M+N> _rspecies;///< An array of RSpecies objects (reactants followed by products)
+        array<RSpecies*, M+N> _rspecies;///< An array of RSpecies objects (reactants followed by products)
     public:
         /// The main constructor:
         /// @param species - are reactants and products put together into a single list (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
-        Reaction(std::initializer_list<Species*> species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
+        Reaction(initializer_list<Species*> species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
         {
-            //            std::cout << "Reaction<M,N>(std::initializer_list<Species*> species, float rate) called..." << std::endl;
+            //            cout << "Reaction<M,N>(initializer_list<Species*> species, float rate) called..." << endl;
             initializeSpecies(species);
         }
         
@@ -42,7 +42,7 @@ template <unsigned short M, unsigned short N>
         template <typename InputContainer>
         Reaction(const InputContainer &species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
         {
-            //            std::cout << "Reaction<M,N>(const std::vector<Species*> &species, float rate) called..." << std::endl;
+            //            cout << "Reaction<M,N>(const vector<Species*> &species, float rate) called..." << endl;
             initializeSpecies(species);
         }
         
@@ -54,7 +54,7 @@ template <unsigned short M, unsigned short N>
 
 #ifdef BOOST_MEM_POOL
         /// Advanced memory management
-        void* operator new(std::size_t size);
+        void* operator new(size_t size);
         
         void operator delete(void* ptr) noexcept;
 #endif
@@ -69,28 +69,25 @@ template <unsigned short M, unsigned short N>
             for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }
         
-        /// Returns a pointer to the first element of std::array<RSpecies*, M+N>
+        /// Returns a pointer to the first element of array<RSpecies*, M+N>
         /// The type of the pointer is RSpecies**. In conjunction with getM() and getN(),
         /// this pointer can be used to iterate over RSpecies associated with this reaction.
         inline virtual RSpecies** rspecies() override {return &_rspecies[0];}
         
         /// Return a list of reactions which rates would be affected if this
         /// reaction were to be executed.
-        virtual std::vector<ReactionBase*> getAffectedReactions() override
+        virtual vector<ReactionBase*> getAffectedReactions() override
         {
-            std::unordered_set<ReactionBase*> rxns;
+            unordered_set<ReactionBase*> rxns;
             for(auto s : _rspecies){
-                //                std::cout << "std::vector<ReactionBase*> getAffectedReactions(): " << *s << std::endl;
                 
                 for(auto it = s->beginReactantReactions(); it != s->endReactantReactions(); it++) {
                     ReactionBase* r = (*it);
                     rxns.insert(r);
                 }
             }
-            //        std::sort(rxns.begin(),rxns.end());
-            //        rxns.erase(std::unique(rxns.begin(),rxns.end()), rxns.end());
             rxns.erase(this);
-            return std::vector<ReactionBase*>(rxns.begin(),rxns.end());
+            return vector<ReactionBase*>(rxns.begin(),rxns.end());
         }
         
     protected:
@@ -99,7 +96,7 @@ template <unsigned short M, unsigned short N>
         void initializeSpecies(const InputContainer &species)
         {
             assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
-            std::transform(species.begin(),species.end(),_rspecies.begin(),
+            transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             
             if(!_isProtoCompartment) {
@@ -126,7 +123,7 @@ template <unsigned short M, unsigned short N>
         {
             const Reaction<M,N> *a = this;
             const Reaction<M,N> *b = static_cast<const Reaction<M,N>*>(&other);
-            auto it_pair = std::mismatch(a->_rspecies.begin(),a->_rspecies.end(),b->_rspecies.begin(),
+            auto it_pair = mismatch(a->_rspecies.begin(),a->_rspecies.end(),b->_rspecies.begin(),
                                          [](RSpecies* A, RSpecies* B){return A->getSpecies()==B->getSpecies();});
             if(it_pair.first==a->_rspecies.end())
                 return true;
@@ -148,16 +145,10 @@ template <unsigned short M, unsigned short N>
         {
 #ifdef TRACK_UPPER_COPY_N
             if(this->Reaction<M,N>::getProductOfProductsImpl()==0){
-                //            std::cout << "Reaction::computePropensity() for the Reaction, " << (*this)
-                //            << " will return 0.0";
                 return float(0.0);
             }
 #endif
             return _rate*Reaction<M,N>::getProductOfReactantsImpl();
-//            int prod = 1;
-//            for(auto i=0U; i<M; ++i)
-//                prod*=_rspecies[i]->getN();
-//            return _rate*prod;
         }
         
         /// Implementation of getProductOfProducts()
@@ -167,7 +158,6 @@ template <unsigned short M, unsigned short N>
             int prod = 1;
             for(auto i=M; i<(M+N); ++i){
                 prod*=_rspecies[i]->getN()-_rspecies[i]->getUpperLimitForN();
-                //            std::cout << "getProductOfProducts(): " << (*this) << (*sit)->getN() << " " << (*sit)->getUpperLimitForN() << " " << ((*sit)->getN()-(*sit)->getUpperLimitForN()) << std::endl;
             }
             return prod;
 #else
@@ -178,7 +168,7 @@ template <unsigned short M, unsigned short N>
         /// Implementation of containsSpecies()
         inline virtual bool containsSpeciesImpl(Species *s) const override
         {
-            auto it = std::find_if(_rspecies.begin(), _rspecies.end(),
+            auto it = find_if(_rspecies.begin(), _rspecies.end(),
                                    [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
             return it!=_rspecies.end();
             
@@ -199,8 +189,8 @@ template <unsigned short M, unsigned short N>
         /// Implementation of passivateReaction()
         virtual void passivateReactionImpl() override;
         
-        /// Print information about this reaction to std::ostream
-        virtual void printToStream(std::ostream& os) const override
+        /// Print information about this reaction to ostream
+        virtual void printToStream(ostream& os) const override
         {
             unsigned char i=0;
             auto sit = _rspecies.cbegin();
@@ -251,7 +241,6 @@ template <unsigned short M, unsigned short N>
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline float Reaction<1,1>::computePropensityImpl() const
     {
-//        std::cout << "\ntemplate <> float Reaction<1,1>::computePropensityImpl() const: Partial specialization is used. " << std::endl;
 #ifdef TRACK_UPPER_COPY_N
         if(_rspecies[1]->getN()>=_rspecies[1]->getUpperLimitForN())
             return 0;
@@ -264,7 +253,6 @@ template <unsigned short M, unsigned short N>
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline void Reaction<1,1>::makeStepImpl()
     {
-//        std::cout << "\ntemplate <> void Reaction<1,1>::makeStepImpl(): Partial specialization is used. " << std::endl;
         _rspecies[0]->down();
         _rspecies[1]->up();
     }
@@ -273,7 +261,6 @@ template <unsigned short M, unsigned short N>
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <>  inline void Reaction<1,1>::broadcastRSpeciesSignals()
     {
-//        std::cout << "\ntemplate <>  void Reaction<1,1>::broadcastRSpeciesSignals(): Partial specialization is used. " << std::endl;
         if(_rspecies[0]->isSignaling())
             _rspecies[0]->emitSignal(-1);
         

@@ -14,13 +14,10 @@
 #include <list>
 
 #include "common.h"
+
 #include "Component.h"
 #include "Compartment.h"
-#include "MathFunctions.h"
 #include "GController.h"
-
-
-using namespace mathfunc;
 
 class Compartment;
 class BoundaryElement;
@@ -35,14 +32,14 @@ class BoundaryElement;
 class Bead : public Component {
 public:
 
-    std::vector<double> coordinate; ///< Coordinates of the bead
-    std::vector<double> coordinateAux; ///< An aux coordinate field needed during CG minimization
-	std::vector<double> force;
+    vector<double> coordinate; ///< Coordinates of the bead
+    vector<double> coordinateAux; ///< An aux coordinate field needed during CG minimization
+	vector<double> force;
     ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
-    std::vector<double> forceAux; ///< An Aux field needed during CG minimization.
+    vector<double> forceAux; ///< An Aux field needed during CG minimization.
     
     ///Main constructor
-    Bead (std::vector<double> v, int ID);
+    Bead (vector<double> v, int ID);
     ///Default constructor
     Bead(int ID): coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
     ~Bead();
@@ -50,16 +47,16 @@ public:
     ///Aux functions
     
     // Aux method for CG minimization
-    double CalcForceSquare() {return force[0]*force[0] + force[1]*force[1] + force[2]*force[2]; }
-    double CalcForceAuxSquare() {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
-    double CalcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
+    double calcForceSquare() {return force[0]*force[0] + force[1]*force[1] + force[2]*force[2]; }
+    double calcForceAuxSquare() {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
+    double calcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
     
     ///add a boundary element to list of interacting boundary elements
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.push_back(be);}
     ///Remove a boundary element from list of interacting boundary elements
     ///@note does nothing if boundary element is not in interacting list already
     void removeBoundaryElement(BoundaryElement* be) {
-        auto it = std::find(_boundaryElements.begin(), _boundaryElements.end(), be);
+        auto it = find(_boundaryElements.begin(), _boundaryElements.end(), be);
         if(it != _boundaryElements.end()) _boundaryElements.erase(it);
     }
     
@@ -76,7 +73,7 @@ public:
     
 private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
-    std::vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
+    vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
     
     int _ID; ///Unique ID of the bead in this filament (relative to the filament)
     float _birthTime; ///Time of birth of bead;

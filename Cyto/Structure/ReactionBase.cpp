@@ -9,8 +9,6 @@
 #include "ReactionBase.h"
 #include "Composite.h"
 
-using namespace std;
-
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment) :
 _rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate), _isProtoCompartment(isProtoCompartment)
 {
@@ -22,8 +20,7 @@ _rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate), _isProtoCompar
 #endif
 }
 
-Composite* ReactionBase::getRoot()
-{
+Composite* ReactionBase::getRoot() {
     if(hasParent())
         return this->getParent()->getRoot();
     return nullptr;
@@ -31,12 +28,12 @@ Composite* ReactionBase::getRoot()
 
 
 void ReactionBase::registerNewDependent(ReactionBase *r){
-    if(std::find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
+    if(find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
         _dependents.push_back(r);
 }
 
 void ReactionBase::unregisterDependent(ReactionBase *r){
-    auto it=std::find(_dependents.begin(),_dependents.end(),r);
+    auto it=find(_dependents.begin(),_dependents.end(),r);
     //    cout << "ReactionBase::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
     if(it!=_dependents.end())
         _dependents.erase(it);
@@ -44,14 +41,14 @@ void ReactionBase::unregisterDependent(ReactionBase *r){
 
 #ifdef REACTION_SIGNALING
 void ReactionBase::startSignaling () {
-    _signal = std::shared_ptr<ReactionEventSignal>(new ReactionEventSignal);
+    _signal = shared_ptr<ReactionEventSignal>(new ReactionEventSignal);
 }
 
 void ReactionBase::stopSignaling () {
     _signal = nullptr;
 }
 
-boost::signals2::connection ReactionBase::connect(std::function<void (ReactionBase *)> const &react_callback, int priority) {
+boost::signals2::connection ReactionBase::connect(function<void (ReactionBase *)> const &react_callback, int priority) {
     if (!isSignaling())
         startSignaling();
     return _signal->connect(priority, react_callback);

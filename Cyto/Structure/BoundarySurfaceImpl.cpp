@@ -7,23 +7,24 @@
 //
 
 #include "BoundarySurfaceImpl.h"
+
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-Plane::Plane(std::vector<double> coords, std::vector<double> normal ) :
+Plane::Plane(vector<double> coords, vector<double> normal ) :
     _coords(coords), _normal(normal), BoundarySurface(3) {
     
     ///Create a plane boundary element (CHANGE REPULSION CONSTANT)
-    _boundaryElements.emplace_back(BoundaryElementDB::Instance(BEDBKey())->CreatePlaneBoundaryElement(coords, normal,
+    _boundaryElements.emplace_back(BoundaryElementDB::instance(BEDBKey())->createPlaneBoundaryElement(coords, normal,
             SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength));
 }
 
-Sphere::Sphere(std::vector<double> coords, double radius) : _coords(coords), _radius(radius), BoundarySurface(3){
+Sphere::Sphere(vector<double> coords, double radius) : _coords(coords), _radius(radius), BoundarySurface(3){
     
     ///Create a sphere boundary element
-    _boundaryElements.emplace_back(BoundaryElementDB::Instance(BEDBKey())->CreateSphereBoundaryElement(coords, radius,
+    _boundaryElements.emplace_back(BoundaryElementDB::instance(BEDBKey())->createSphereBoundaryElement(coords, radius,
         SystemParameters::Boundaries().boundaryK, SystemParameters::Boundaries().screenLength));
     
 }

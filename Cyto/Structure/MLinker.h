@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include "common.h"
 
 class Linker;
@@ -29,12 +30,12 @@ public:
     ///@param position - position on cylinder 1 and 2, respectively
     ///@param coord - coordinates of cylinder1's bead 1, bead 2, etc
     MLinker(double stretchConst, double position1, double position2,
-            const std::vector<double>& coord11, const std::vector<double>& coord12,
-            const std::vector<double>& coord21, const std::vector<double>& coord22);
+            const vector<double>& coord11, const vector<double>& coord12,
+            const vector<double>& coord21, const vector<double>& coord22);
     
     ///Getters for constants
-    double GetStretchingConstant(){return _kStretch;}
-    double GetEqLength(){return _eqLength;}
+    double getStretchingConstant(){return _kStretch;}
+    double getEqLength(){return _eqLength;}
     
     ///Setter and getter for parent linker
     void setLinker(Linker* linker) {_pLinker = linker;}

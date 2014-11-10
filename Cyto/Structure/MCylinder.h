@@ -27,7 +27,7 @@ class Bead;
 class MCylinder {
 
 private:
-    Cylinder* _pCylinder;
+    Cylinder* _pCylinder;  ///< parent cylinder
     
 /// Mechanical constants:
     double _eqLength;   ///< Lenght of unstertched cylinder;
@@ -37,9 +37,9 @@ private:
     double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
     double _kExVol; ///< Local excluded volume constant, which describes excluded volume interactions between cylinders
     
-    std::vector<MCylinder*> _exVolNeighborsList; ///< list of interacting cylinders for excluded volume.
+    vector<MCylinder*> _exVolNeighborsList; ///< list of interacting cylinders for excluded volume.
 
-    std::vector<double> _coordinate; ///< coordinate of this MCylinder
+    vector<double> _coordinate; ///< coordinate of this MCylinder
     
     ///Functions to update neighbors lists
     void addExVolNeighbor(MCylinder* neighbor);
@@ -52,32 +52,33 @@ public:
     ~MCylinder();
     
     ///update excluded volume neighbors list
-    void updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinders);
-    std::vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
+    void updateExVolNeighborsList(vector<MCylinder*>& nearbyMCylinders);
+    vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
     
     ///Other setter and getter functions:
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
     
-    void setCoordinate(std::vector<double> coordinate) {_coordinate = coordinate;}
+    void setCoordinate(vector<double> coordinate) {_coordinate = coordinate;}
     
-    void SetEqLength(double L);
-    double GetEqLength();
+    ///Setters and getters for mechanical constants
+    void setEqLength(double L);
+    double getEqLength() {return _eqLength;}
     
-    void SetAngle(double alpha);
-    double GetAngle();
+    void setAngle(double alpha) {_eqAngle = alpha;}
+    double getAngle() {return _eqAngle;}
     
-    void SetStretchingConst(double k);
-    double GetStretchingConst();
+    void setStretchingConst(double k) {_kStretch = k;}
+    double getStretchingConst() {return _kStretch;}
     
-    void SetBendingConst(double k);
-    double GetBendingConst();
+    void setBendingConst(double k) {_kBend = k;}
+    double getBendingConst() {return _kBend;}
     
-    void SetTwistingConst(double k);
-    double GetTwistingConst();
+    void setTwistingConst(double k) {_kTwist = k;}
+    double getTwistingConst() {return _kTwist;}
     
-    void SetExVolConst(double k);
-    double GetExVolConst();
+    void setExVolConst(double k) {_kExVol = k;}
+    double getExVolConst() {return _kExVol;}
     
 };
 

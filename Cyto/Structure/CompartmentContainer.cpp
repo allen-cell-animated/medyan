@@ -17,7 +17,7 @@ void CompartmentGrid::setInstance(CompartmentGridKey k, int numCompartments)
     _instance = new CompartmentGrid(numCompartments);
 }
 
-CompartmentGrid* CompartmentGrid::Instance(CompartmentGridKey k) {
+CompartmentGrid* CompartmentGrid::instance(CompartmentGridKey k) {
     if(_instance==0)
         _instance = new CompartmentGrid(0);
     return _instance;

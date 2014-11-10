@@ -10,8 +10,9 @@
 #define CytoSim_ChemSim_h
 
 #include <memory>
-#include "Reaction.h"
+
 #include "common.h"
+#include "Reaction.h"
     
 ///forward delcarations
 class ChemSimImpl;

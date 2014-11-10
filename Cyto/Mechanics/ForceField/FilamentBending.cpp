@@ -11,38 +11,38 @@
 #include "Filament.h"
 
 template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, double d)
+double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, double d)
 {
-    if (pf->getCylinderVector().size()>1){
+    if (f->getCylinderVector().size()>1){
     double U = 0.0;
     
         if (d == 0.0){
-            for ( auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
+            for ( auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
                 
                 auto it2 = it - 1;
-                Bead* pb1 = (*it2)->GetFirstBead();
-                Bead* pb2 = (*it)->GetFirstBead();
-                Bead* pb3 = (*it)->GetSecondBead();
-                double k_bend = (*it)->getMCylinder()->GetBendingConst();
+                Bead* pb1 = (*it2)->getFirstBead();
+                Bead* pb2 = (*it)->getFirstBead();
+                Bead* pb3 = (*it)->getSecondBead();
+                double k_bend = (*it)->getMCylinder()->getBendingConst();
                 
-                U += _FFType.Energy( pb1, pb2, pb3, k_bend );
+                U += _FFType.energy( pb1, pb2, pb3, k_bend );
             }
         }
         else {
             int index = 0;
-            for ( auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
+            for ( auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
                 
                 auto it2 = it - 1;
-                Bead* pb1 = (*it2)->GetFirstBead();
-                Bead* pb2 = (*it)->GetFirstBead();
-                Bead* pb3 = (*it)->GetSecondBead();
-                double k_bend = (*it)->getMCylinder()->GetBendingConst();
+                Bead* pb1 = (*it2)->getFirstBead();
+                Bead* pb2 = (*it)->getFirstBead();
+                Bead* pb3 = (*it)->getSecondBead();
+                double k_bend = (*it)->getMCylinder()->getBendingConst();
                 
-                U += _FFType.Energy( pb1, pb2, pb3, k_bend, d );
+                U += _FFType.energy( pb1, pb2, pb3, k_bend, d );
                 index++;
             }
         }
-        //std::cout << "Bending Energy = " << U << std::endl;
+        //cout << "Bending Energy = " << U << endl;
         
         return U;
     }
@@ -50,43 +50,43 @@ double FilamentBending<FBendingInteractionType>::ComputeEnergy(Filament* pf, dou
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::ComputeForces(Filament* pf)
+void FilamentBending<FBendingInteractionType>::computeForces(Filament* f)
 {
     
-    if (pf->getCylinderVector().size()>1){
-        for (auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
+    if (f->getCylinderVector().size()>1){
+        for (auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;
-            Bead* pb1 = (*it2)->GetFirstBead();
-            Bead* pb2 = (*it)->GetFirstBead();
-            Bead* pb3 = (*it)->GetSecondBead();
-            double k_bend = (*it)->getMCylinder()->GetBendingConst();
+            Bead* pb1 = (*it2)->getFirstBead();
+            Bead* pb2 = (*it)->getFirstBead();
+            Bead* pb3 = (*it)->getSecondBead();
+            double k_bend = (*it)->getMCylinder()->getBendingConst();
             
             
-            _FFType.Forces( pb1, pb2, pb3, k_bend );
+            _FFType.forces( pb1, pb2, pb3, k_bend );
         }
     }
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::ComputeForcesAux(Filament* pf) /// Needed for Conjugated Gradient minimization;
+void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f) /// Needed for Conjugated Gradient minimization;
 {
-    if (pf->getCylinderVector().size()>1){
-        for (auto it = pf->getCylinderVector().begin()+1; it != pf->getCylinderVector().end(); it++){
+    if (f->getCylinderVector().size()>1){
+        for (auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;
-            Bead* pb1 = (*it2)->GetFirstBead();
-            Bead* pb2 = (*it)->GetFirstBead();
-            Bead* pb3 = (*it)->GetSecondBead();
-            double k_bend = (*it)->getMCylinder()->GetBendingConst();
+            Bead* pb1 = (*it2)->getFirstBead();
+            Bead* pb2 = (*it)->getFirstBead();
+            Bead* pb3 = (*it)->getSecondBead();
+            double k_bend = (*it)->getMCylinder()->getBendingConst();
 
-            _FFType.ForcesAux( pb1, pb2, pb3, k_bend );
+            _FFType.forcesAux( pb1, pb2, pb3, k_bend );
             
         }
     }
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::ComputeEnergy(Filament* pf, double d);
-template void  FilamentBending<FilamentBendingHarmonic>::ComputeForces(Filament* pf);
-template void  FilamentBending<FilamentBendingHarmonic>::ComputeForcesAux(Filament* pf);
+template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(Filament* f, double d);
+template void  FilamentBending<FilamentBendingHarmonic>::computeForces(Filament* f);
+template void  FilamentBending<FilamentBendingHarmonic>::computeForcesAux(Filament* f);

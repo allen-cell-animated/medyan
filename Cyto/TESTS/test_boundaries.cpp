@@ -6,13 +6,14 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_BOUNDARY_TEST
+//#define DO_THIS_BOUNDARY_TEST
 
 #ifdef DO_THIS_BOUNDARY_TEST
 
 #include <iostream>
 #include "gtest/gtest.h"
 
+#include "common.h"
 #include "BoundaryImpl.h"
 #include "SystemParameters.h"
 

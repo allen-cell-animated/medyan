@@ -41,8 +41,6 @@ class CompartmentGridKey {friend class ChemInitializerImpl;
  *  An example of such is below:
  *
  *  @code
- *  GController g;
- *  g.initializeGrid(3, {50, 50, 50}, {5000.0, 5000.0, 5000.0});
  *
  *  Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
  *  Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
@@ -71,7 +69,7 @@ private:
         ///add children
         for(size_t i=0; i<numCompartments; ++i)
         {
-            addChild(std::unique_ptr<Component>(new Compartment()));
+            addChild(unique_ptr<Component>(new Compartment()));
         }
     }
 public:
@@ -87,10 +85,10 @@ public:
     static void setInstance(CompartmentGridKey k, int numCompartments);
     
     ///Get instance of grid
-    static CompartmentGrid* Instance(CompartmentGridKey k);
+    static CompartmentGrid* instance(CompartmentGridKey k);
     
     /// Get name of this compartment grid
-    virtual std::string getFullName() const {return std::string("CompartmentGrid");};
+    virtual string getFullName() const {return string("CompartmentGrid");};
     
     ///Activate all compartments
     void activateAll()
@@ -123,8 +121,8 @@ public:
     /// Print properties of this grid
     virtual void printSelf()
     {
-        std::cout << getFullName() << std::endl;
-        std::cout << "Number of Compartment objects: " << numberOfChildren() << std::endl;
+        cout << getFullName() << endl;
+        cout << "Number of Compartment objects: " << numberOfChildren() << endl;
         for(auto &c : children())
             c->printSelf();
     }
@@ -132,15 +130,15 @@ public:
     ///Add a bulk species to this grid
     template<typename ...Args>
     SpeciesBulk* addSpeciesBulk (Args&& ...args) {
-        _bulkSpecies.addSpecies<SpeciesBulk>(std::forward<Args>(args)...);
+        _bulkSpecies.addSpecies<SpeciesBulk>(forward<Args>(args)...);
         return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
     }
     
     ///Remove bulk species
-    void removeSpeciesBulk(const std::string& name) {_bulkSpecies.removeSpecies(name);}
+    void removeSpeciesBulk(const string& name) {_bulkSpecies.removeSpecies(name);}
     
     ///Bulk species finder functions
-    SpeciesBulk* findSpeciesBulkByName(const std::string& name) {
+    SpeciesBulk* findSpeciesBulkByName(const string& name) {
         return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByName(name));
     }
     SpeciesBulk* findSpeciesBulkByMolecule(int molecule) {
@@ -151,8 +149,8 @@ public:
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addBulkReaction (Args&& ...args)
     {
-        //            std::cout << "Compartment::addReaction()..." << std::endl;
-        ReactionBase *r = _bulkReactions.addReaction<M,N>(std::forward<Args>(args)...);
+        //            cout << "Compartment::addReaction()..." << endl;
+        ReactionBase *r = _bulkReactions.addReaction<M,N>(forward<Args>(args)...);
         r->setParent(this);
         return r;
     }
@@ -160,7 +158,7 @@ public:
     /// Add an bulk reaction to this compartment grid
     /// @param species, rate - specifying the species and rate that should be assigned
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
-    ReactionBase* addBulk(std::initializer_list<Species*> species, float rate)
+    ReactionBase* addBulk(initializer_list<Species*> species, float rate)
     {
         ReactionBase *r = _bulkReactions.add<RXN,M,N>(species,rate);
         r->setParent(this);
@@ -168,9 +166,9 @@ public:
     }
     
     /// Add a unique bulk reaction pointer to this compartment
-    ReactionBase* addBulkReactionUnique (std::unique_ptr<ReactionBase> &&reaction)
+    ReactionBase* addBulkReactionUnique (unique_ptr<ReactionBase> &&reaction)
     {
-        ReactionBase *r = _bulkReactions.addReactionUnique(std::move(reaction));
+        ReactionBase *r = _bulkReactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;
     }

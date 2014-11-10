@@ -25,14 +25,14 @@
 class ForceFieldManager {
     
 public:
-     std::vector<ForceField*> _forceFields;
+     vector<ForceField*> _forceFields;
     
     //Compute the energy using all available force fields
     double ComputeEnergy(double d) {
         
         double energy = 0;
         for(auto &f : _forceFields)
-            energy += f->ComputeEnergy(d);
+            energy += f->computeEnergy(d);
         /// pass it to subsystem!!!
         return energy;
     }
@@ -40,9 +40,7 @@ public:
     ///Compute the forces of all force fields
     void ComputeForces() {
         ResetForces();
-        
-        for(auto &f : _forceFields)
-            f->ComputeForces();
+        for(auto &f : _forceFields) f->computeForces();
     }
     
     ///Compute the forcesAux of all force fields
@@ -50,13 +48,13 @@ public:
         ResetForcesAux();
         
         for(auto &f : _forceFields)
-            f->ComputeForcesAux();
+            f->computeForcesAux();
     }
     
     ///Reset the forces of all objects
     void ResetForces() {
         
-        for(auto it: *BeadDB::Instance(BeadDBKey())) {
+        for(auto it: *BeadDB::instance(BeadDBKey())) {
             it->force.assign (3, 0); //Set force to zero;
         }
     }
@@ -64,11 +62,10 @@ public:
     ///Reset the forcesAux of all objects
     void ResetForcesAux() {
         
-        for(auto it: *BeadDB::Instance(BeadDBKey())) {
+        for(auto it: *BeadDB::instance(BeadDBKey())) {
             it->forceAux.assign (3, 0); //Set forceAux to zero;
         }
     }
-    
     
 };
 

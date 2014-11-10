@@ -13,16 +13,15 @@
 #include <list>
 #include <vector>
 
-#include "FilamentDB.h"
-#include "MotorGhostDB.h"
-#include "LinkerDB.h"
-
 #include "common.h"
+
+#include "FilamentDB.h"
+#include "LinkerDB.h"
+#include "MotorGhostDB.h"
 
 class Boundary;
 class Cylinder;
 class Compartment;
-
 
 /*! This is the main class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
  */
@@ -31,28 +30,28 @@ public:
     // Interfaces to add new objects:
     
     ///Add a boundary to this subsystem
-    void AddBoundary(Boundary* boundary) {_boundary = boundary;}
+    void addBoundary(Boundary* boundary) {_boundary = boundary;}
     
     /// Add new Filaments. v - coordinates of the first and last bead in the filament.
-    void AddNewFilaments(std::vector<std::vector<std::vector<double>>>& v);
+    void addNewFilaments(vector<vector<vector<double>>>& v);
     /// Add a new filament at runtime
-    void AddNewFilament(std::vector<std::vector<double>>& v);
+    void addNewFilament(vector<vector<double>>& v);
     ///remove a filament from the system
-    void RemoveFilament(Filament* f);
+    void removeFilament(Filament* f);
     
     /// Add a linker at initialization
-    void AddNewLinkers(std::vector<std::vector<Cylinder*>> &v, short linkerType);
+    void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
     /// Add a single linker during runtime
-    void AddNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
+    void addNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
     /// remove a linker from the system
-    void RemoveLinker(Linker* l);
+    void removeLinker(Linker* l);
     
     //Add many motors at initialization
-    void AddNewMotorGhosts(std::vector<std::vector<Cylinder*>>& v, short motorType);
+    void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
     /// Add a motor during runtime
-    void AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2);
+    void addNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2);
     /// remove a motor ghost from the system
-    void RemoveMotorGhost(MotorGhost* m);
+    void removeMotorGhost(MotorGhost* m);
     
     
     //System related iterfaces:

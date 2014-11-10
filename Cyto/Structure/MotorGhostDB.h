@@ -31,12 +31,12 @@ class MotorGhostDBKey {friend class SubSystem;
 ///MotorGhostDB is used to store all MotorGhosts in the system
 
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers, 
- *  Boundary Elements, and Motors. This structure inherits from std:: list and manage all creations and removing 
+ *  Boundary Elements, and Motors. This structure inherits from  list and manage all creations and removing 
  *  of objects, as well as some stabdart list functions and iterators.
  */
-class MotorGhostDB: private std::list<MotorGhost*>
+class MotorGhostDB: private list<MotorGhost*>
 {
-    typedef std::list<MotorGhost*> mgdb;
+    typedef list<MotorGhost*> mgdb;
     
 public:
     using mgdb::size;
@@ -50,17 +50,17 @@ public:
     /// Assignment is not allowed
     MotorGhostDB& operator=(MotorGhostDB &rhs) = delete;
     
-    static MotorGhostDB* Instance(MotorGhostDBKey k);
+    static MotorGhostDB* instance(MotorGhostDBKey k);
     
-    void CreateMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
+    void createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
     
-        MotorGhost* pmg = new MotorGhost(pc1, pc2, motorType, _currentMotorID++, position1, position2, creation);
+        MotorGhost* pmg = new MotorGhost(c1, c2, motorType, _currentMotorID++, position1, position2, creation);
         push_back(pmg);
         
         //return pmg;
     }
     
-    void RemoveMotorGhost(MotorGhost* pmg) {
+    void removeMotorGhost(MotorGhost* pmg) {
         delete pmg;
         remove(pmg);
     };

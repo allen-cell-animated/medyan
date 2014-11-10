@@ -16,9 +16,9 @@ void ChemInitializer::setInstance(ChemInitializerInitKey k, ChemInitializerImpl 
     _pimpl=cii;
 }
 
-void ChemInitializer::initialize(ChemInitializerGridKey k, ChemistrySpeciesAndReactions& chemSR)
+void ChemInitializer::initialize(ChemInitializerGridKey k, ChemistryData& chem)
 {
-    _pimpl->initialize(chemSR);
+    _pimpl->initialize(chem);
 }
 
 CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,
@@ -28,7 +28,7 @@ CCylinder* ChemInitializer::createCCylinder(ChemInitializerCylinderKey k, Filame
     return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, creation);
 }
 
-void ChemInitializer::updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, std::vector<CCylinder*>& cNeighbors) {
+void ChemInitializer::updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, vector<CCylinder*>& cNeighbors) {
     
     _pimpl->updateCCylinder(cc, cNeighbors);
 }

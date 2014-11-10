@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
 #include "CompartmentContainer.h"
 
 ///Enumeration for direction of reaction
@@ -43,15 +45,15 @@ protected:
     static SubSystem* _ps;
     
     ///Species identifier vectors
-    std::vector<std::tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
-    std::vector<std::tuple<int,SpeciesType>> _products; ///< products in this reaction
+    vector<tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
+    vector<tuple<int,SpeciesType>> _products; ///< products in this reaction
     
     float _rate; ///< rate of reaction
     
 public:
     ///Default constructor and destructor
-    ReactionFilamentTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                             std::vector<std::tuple<int, SpeciesType>> products,
+    ReactionFilamentTemplate(vector<tuple<int, SpeciesType>> reactants,
+                             vector<tuple<int, SpeciesType>> products,
                              float rate) : _reactants(reactants), _products(products), _rate(rate) {}
     ~ReactionFilamentTemplate() {}
 
@@ -71,8 +73,8 @@ class PolymerizationPlusEndTemplate : public ReactionFilamentTemplate {
 
 public:
     ///Default constructor and destructor
-    PolymerizationPlusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                  std::vector<std::tuple<int, SpeciesType>> products,
+    PolymerizationPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                  vector<tuple<int, SpeciesType>> products,
                                   float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~PolymerizationPlusEndTemplate() {}
     
@@ -87,8 +89,8 @@ class PolymerizationMinusEndTemplate : public ReactionFilamentTemplate {
     
 public:
     ///Default constructor and destructor
-    PolymerizationMinusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                   std::vector<std::tuple<int, SpeciesType>> products,
+    PolymerizationMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                   vector<tuple<int, SpeciesType>> products,
                                    float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~PolymerizationMinusEndTemplate() {}
     
@@ -104,8 +106,8 @@ class DepolymerizationPlusEndTemplate : public ReactionFilamentTemplate {
     
 public:
     ///Default constructor and destructor
-    DepolymerizationPlusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                    std::vector<std::tuple<int, SpeciesType>> products,
+    DepolymerizationPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                    vector<tuple<int, SpeciesType>> products,
                                     float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~DepolymerizationPlusEndTemplate() {}
     
@@ -120,8 +122,8 @@ class DepolymerizationMinusEndTemplate : public ReactionFilamentTemplate {
     
 public:
     ///Default constructor and destructor
-    DepolymerizationMinusEndTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                     std::vector<std::tuple<int, SpeciesType>> products,
+    DepolymerizationMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                     vector<tuple<int, SpeciesType>> products,
                                      float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~DepolymerizationMinusEndTemplate() {}
     
@@ -135,8 +137,8 @@ class BasicBindingTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    BasicBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                         std::vector<std::tuple<int, SpeciesType>> products,
+    BasicBindingTemplate(vector<tuple<int, SpeciesType>> reactants,
+                         vector<tuple<int, SpeciesType>> products,
                          float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~BasicBindingTemplate() {}
     
@@ -149,8 +151,8 @@ class UnbindingTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    UnbindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                           std::vector<std::tuple<int, SpeciesType>> products,
+    UnbindingTemplate(vector<tuple<int, SpeciesType>> reactants,
+                           vector<tuple<int, SpeciesType>> products,
                            float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~UnbindingTemplate() {}
     
@@ -164,8 +166,8 @@ class MotorWalkingForwardTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkingForwardTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                std::vector<std::tuple<int, SpeciesType>> products,
+    MotorWalkingForwardTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                vector<tuple<int, SpeciesType>> products,
                                 float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~MotorWalkingForwardTemplate() {}
     
@@ -179,8 +181,8 @@ class MotorWalkingBackwardTemplate : public ReactionFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkingBackwardTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                                std::vector<std::tuple<int, SpeciesType>> products,
+    MotorWalkingBackwardTemplate(vector<tuple<int, SpeciesType>> reactants,
+                                vector<tuple<int, SpeciesType>> products,
                                 float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~MotorWalkingBackwardTemplate() {}
     
@@ -212,8 +214,8 @@ protected:
     static SubSystem* _ps;
     
     ///Species identifier vectors
-    std::vector<std::tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
-    std::vector<std::tuple<int,SpeciesType>> _products; ///< products in this reaction
+    vector<tuple<int,SpeciesType>> _reactants; ///< reactants in this reaction
+    vector<tuple<int,SpeciesType>> _products; ///< products in this reaction
     
     float _rate; ///< rate of reaction
     float _rMin; ///< minimum reaction range
@@ -223,8 +225,8 @@ protected:
 
 public:
     ///Default constructor and destructor
-    ReactionCrossFilamentTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                             std::vector<std::tuple<int, SpeciesType>> products, float rate, float rMin, float rMax, int ID)
+    ReactionCrossFilamentTemplate(vector<tuple<int, SpeciesType>> reactants,
+                             vector<tuple<int, SpeciesType>> products, float rate, float rMin, float rMax, int ID)
                              : _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax), _reactionID(ID) {}
     ~ReactionCrossFilamentTemplate() {}
     
@@ -247,8 +249,8 @@ class LinkerBindingTemplate : public ReactionCrossFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    LinkerBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                    std::vector<std::tuple<int, SpeciesType>> products,
+    LinkerBindingTemplate(vector<tuple<int, SpeciesType>> reactants,
+                    vector<tuple<int, SpeciesType>> products,
                     float rate, float rMin, float rMax, int ID)
                     : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax, ID) {}
     ~LinkerBindingTemplate() {}
@@ -261,8 +263,8 @@ class MotorBindingTemplate : public ReactionCrossFilamentTemplate {
     
 public:
     ///default constructor and destructor
-    MotorBindingTemplate(std::vector<std::tuple<int, SpeciesType>> reactants,
-                         std::vector<std::tuple<int, SpeciesType>> products,
+    MotorBindingTemplate(vector<tuple<int, SpeciesType>> reactants,
+                         vector<tuple<int, SpeciesType>> products,
                          float rate, float rMin, float rMax, int ID)
                          : ReactionCrossFilamentTemplate(reactants, products, rate, rMin, rMax, ID) {}
     ~MotorBindingTemplate() {}

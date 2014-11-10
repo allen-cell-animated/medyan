@@ -23,9 +23,9 @@ private:
     LStretchingInteractionType _FFType;
     
 public:
-    virtual double ComputeEnergy( Linker*, double d);
-    virtual void ComputeForces( Linker*);
-    virtual void ComputeForcesAux( Linker*);
+    virtual double computeEnergy(Linker*, double d);
+    virtual void computeForces(Linker*);
+    virtual void computeForcesAux(Linker*);
 };
 
-#endif /* defined(__Cyto__LinkerStratching__) */
+#endif /* defined(__Cyto__LinkerStretching__) */

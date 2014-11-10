@@ -24,18 +24,18 @@ struct MechanicsParameters {
     double FTwistingPhi = 0;
     
     ///Linker parameters
-    std::vector<double> LStretchingK = {};
-    std::vector<double> LBendingK = {};
-    std::vector<double> LBendingTheta = {};
-    std::vector<double> LTwistingK = {};
-    std::vector<double> LTwistingPhi = {};
+    vector<double> LStretchingK = {};
+    vector<double> LBendingK = {};
+    vector<double> LBendingTheta = {};
+    vector<double> LTwistingK = {};
+    vector<double> LTwistingPhi = {};
     
     ///Motor parameters
-    std::vector<double> MStretchingK = {};
-    std::vector<double> MBendingK = {};
-    std::vector<double> MBendingTheta = {};
-    std::vector<double> MTwistingK = {};
-    std::vector<double> MTwistingPhi = {};
+    vector<double> MStretchingK = {};
+    vector<double> MBendingK = {};
+    vector<double> MBendingTheta = {};
+    vector<double> MTwistingK = {};
+    vector<double> MTwistingPhi = {};
     
     ///Volume parameters
     double VolumeK = 0;

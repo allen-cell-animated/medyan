@@ -9,12 +9,11 @@
 #ifndef __Cyto__BoundaryImpl__
 #define __Cyto__BoundaryImpl__
 
-#include "common.h"
-#include "Boundary.h"
-
 #include <vector>
 #include <iostream>
 
+#include "common.h"
+#include "Boundary.h"
 
 ///Cubic boundary implementation
 class BoundaryCubic: public Boundary {
@@ -22,7 +21,7 @@ class BoundaryCubic: public Boundary {
 public:
     ///Default constructor, this will create a cube with given corners at edges of current grid
     BoundaryCubic();
-    virtual bool within(const std::vector<double> coordinates);
+    virtual bool within(const vector<double> coordinates);
 };
 
 ///Spherical boundary implementation
@@ -31,7 +30,7 @@ class BoundarySpherical: public Boundary {
 public:
     ///Default constructor, will create an ellipse with axes equal in length to current grid
     BoundarySpherical();
-    virtual bool within(const std::vector<double> coordinates);
+    virtual bool within(const vector<double> coordinates);
 };
 
 ///Cylindrical boundary implementation

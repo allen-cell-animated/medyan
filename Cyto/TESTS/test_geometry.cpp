@@ -17,8 +17,6 @@
 #include "GController.h"
 #include "SystemParameters.h"
 
-using namespace std;
-
 ///testing basic initialization and getters
 TEST(GeometryTest, Basic) {
 
@@ -38,11 +36,14 @@ TEST(GeometryTest, Basic) {
     GController::initializeGrid();
     
     ///checking out of bounds
-    EXPECT_ANY_THROW(GController::getCompartment(std::vector<double>{60.0,50.0,50.0}));
+    EXPECT_ANY_THROW(GController::getCompartment(vector<double>{60.0,50.0,50.0}));
     
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,0,0}), GController::getCompartment(std::vector<double>{5.0,5.0,5.0}));
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,1,0}), GController::getCompartment(std::vector<double>{5.0,15.0,5.0}));
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,1,1}), GController::getCompartment(std::vector<double>{5.0,15.0,15.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,0,0}),
+              GController::getCompartment(vector<double>{5.0,5.0,5.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,0}),
+              GController::getCompartment(vector<double>{5.0,15.0,5.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,1}),
+              GController::getCompartment(vector<double>{5.0,15.0,15.0}));
 }
 
 TEST(GeometryTest, NonCubicGrid) {
@@ -62,13 +63,16 @@ TEST(GeometryTest, NonCubicGrid) {
     
     GController::initializeGrid();
     
-    EXPECT_ANY_THROW(GController::getCompartment(std::vector<double>{60.0,50.0,1050.0}));
-    EXPECT_ANY_THROW(GController::getCompartment(std::vector<double>{200.0,50.0,900.0}));
-    EXPECT_ANY_THROW(GController::getCompartment(std::vector<double>{100.0,110.0,900.0}));
+    EXPECT_ANY_THROW(GController::getCompartment(vector<double>{60.0,50.0,1050.0}));
+    EXPECT_ANY_THROW(GController::getCompartment(vector<double>{200.0,50.0,900.0}));
+    EXPECT_ANY_THROW(GController::getCompartment(vector<double>{100.0,110.0,900.0}));
     
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,0,0}), GController::getCompartment(std::vector<double>{5.0,5.0,5.0}));
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,1,0}), GController::getCompartment(std::vector<double>{5.0,25.0,5.0}));
-    EXPECT_EQ(GController::getCompartment(std::vector<size_t>{0,1,1}), GController::getCompartment(std::vector<double>{5.0,30.0,190.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,0,0}),
+              GController::getCompartment(vector<double>{5.0,5.0,5.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,0}),
+              GController::getCompartment(vector<double>{5.0,25.0,5.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,1}),
+              GController::getCompartment(vector<double>{5.0,30.0,190.0}));
     
 }
 

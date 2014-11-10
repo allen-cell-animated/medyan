@@ -46,7 +46,7 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  A1->makeSignaling(sm);
  PrintRSpecies ps;
  ...
- std::function<void (RSpecies *, int)> psf(ps);
+ function<void (RSpecies *, int)> psf(ps);
  boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](RSpecies *s, int i){s->printSelf();}), true);
  // or   sm.connect(A1, print_RSpecies);
  // or  sm.connect(A1, PrintRSpecies());
@@ -64,50 +64,50 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ChemSignal {
 private:
-    std::unordered_map<RSpecies *, std::unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal;///< Keep track of signals corresponding to various RSpecies
-    std::unordered_map<ReactionBase *, std::unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal;///< Keep track of signals corresponding to various RSpecies
+    unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
 private:
-    /// Search the map for a signal corresponding to parameter, ReactionBase *r. Throw std::out_of_range exception if not found.
-    std::unordered_map<ReactionBase *, std::unique_ptr<ReactionEventSignal>>::const_iterator 
+    /// Search the map for a signal corresponding to parameter, ReactionBase *r. Throw out_of_range exception if not found.
+    unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>>::const_iterator 
     findSignal(ReactionBase *r) const {
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it==_map_reaction_signal.end())
-            throw std::out_of_range("ChemSignal::findSignal(ReactionBase *r) key error...");
+            throw out_of_range("ChemSignal::findSignal(ReactionBase *r) key error...");
         return sig_it;
     }
     
-    /// Search the map for a signal corresponding to parameter, RSpecies *s. Throw std::out_of_range exception if not found.
-    std::unordered_map<RSpecies *, std::unique_ptr<RSpeciesCopyNChangedSignal>>::const_iterator 
+    /// Search the map for a signal corresponding to parameter, RSpecies *s. Throw out_of_range exception if not found.
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>>::const_iterator 
     findSignal(RSpecies *s) const {
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it==_map_RSpecies_signal.end())
-            throw std::out_of_range("ChemSignal::findSignal(RSpecies *s) key error...");
+            throw out_of_range("ChemSignal::findSignal(RSpecies *s) key error...");
         return sig_it;
     }
     
-    /// Assert that a signal corresponding to ReactionBase *r does not exist or throw std::runtime_error.
+    /// Assert that a signal corresponding to ReactionBase *r does not exist or throw runtime_error.
     void assertSignalDoesNotExist (ReactionBase *r){
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it!=_map_reaction_signal.end())
-            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (ReactionBase *r) Reaction already present in the map...");
+            throw runtime_error("ChemSignal::assertSignalDoesNotExist (ReactionBase *r) Reaction already present in the map...");
     }
     
-    /// Assert that a signal corresponding to RSpecies *s does not exist or throw std::runtime_error.
+    /// Assert that a signal corresponding to RSpecies *s does not exist or throw runtime_error.
     void assertSignalDoesNotExist (RSpecies *s){
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it!=_map_RSpecies_signal.end())
-            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (RSpecies *s) RSpecies already present in the map...");
+            throw runtime_error("ChemSignal::assertSignalDoesNotExist (RSpecies *s) RSpecies already present in the map...");
     }
 
 public:
-    /// Broadcasts signal corresponding to ReactionBase *r. If the Reaction is not found, std::out_of_range exception will be thrown.
+    /// Broadcasts signal corresponding to ReactionBase *r. If the Reaction is not found, out_of_range exception will be thrown.
     /// This method is usally only called by the Gillespie-like algorithm, and not the outside code.
     void emitReactionSignal(ReactionBase *r) const {
         auto sig_it = findSignal(r);
         (*sig_it->second)(r);
     }
     
-    /// Broadcasts signal corresponding to RSpecies *s. If the Specis is not found, std::out_of_range exception will be thrown.
+    /// Broadcasts signal corresponding to RSpecies *s. If the Specis is not found, out_of_range exception will be thrown.
     /// This method is usally only called by the Gillespie-like algorithm, and not the outside code.
     void emitRSpeciesSignal(RSpecies *s, int delta) const {
         auto sig_it = findSignal(s);
@@ -131,21 +131,21 @@ public:
     
     /// Connect the callback, react_callback to a signal corresponding to ReactionBase *r.
     /// @param ReactionBase *r - the signal will correspond to this Reaction
-    /// @param std::function<void (ReactionBase *)> const &react_callback - a function object to be called (a slot)
+    /// @param function<void (ReactionBase *)> const &react_callback - a function object to be called (a slot)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
-    boost::signals2::connection connect(ReactionBase *r, std::function<void (ReactionBase *)> const &react_callback, int priority=5) {
+    boost::signals2::connection connect(ReactionBase *r, function<void (ReactionBase *)> const &react_callback, int priority=5) {
         auto sig_it = findSignal(r);
         return sig_it->second->connect(priority, react_callback);
     }
 
     /// Connect the callback, RSpecies_callback to a signal corresponding to RSpecies *s.
     /// @param RSpecies *s - the signal will correspond to this RSpecies
-    /// @param std::function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot). 
+    /// @param function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot). 
     ///        int here corresponds to delta, the change in copy number of the RSpecies (for which the signal was emitted)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
-    boost::signals2::connection connect(Species *s, std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
+    boost::signals2::connection connect(Species *s, function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
         RSpecies *rs = &s->getRSpecies();
         auto sig_it = findSignal(rs);
         return sig_it->second->connect(priority, RSpecies_callback);

@@ -12,39 +12,39 @@
 #include "LinkerStretchingHarmonic.h"
 #include "LinkerDB.h"
 
-LinkerFF::LinkerFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
+LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
-    if (Stretching == "HARMONIC") {_linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());}
+    if (stretching == "HARMONIC") {_linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());}
     //if (Bending == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerBending<FilamentBendingHarmonic>());}
     //if (Twisting == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerTwisting<FilamentTwistingHarmonic>());}
 }
 
-double LinkerFF::ComputeEnergy(double d) {
+double LinkerFF::computeEnergy(double d) {
     double U_linker = 0;
     
-    for ( auto it: *LinkerDB::Instance(LinkerDBKey()) ) {
+    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
         
         for (auto &linkerInteraction : _linkerInteractionVector)
-            U_linker += linkerInteraction.get()->ComputeEnergy(it, d);
+            U_linker += linkerInteraction.get()->computeEnergy(it, d);
     }
     return U_linker;
 }
 
-void LinkerFF::ComputeForces() {
+void LinkerFF::computeForces() {
     
-    for ( auto it: *LinkerDB::Instance(LinkerDBKey()) ) {
+    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
         
         for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->ComputeForces(it);
+            linkerInteraction.get()->computeForces(it);
     }
 }
 
-void LinkerFF::ComputeForcesAux() {
+void LinkerFF::computeForcesAux() {
     
-    for ( auto it: *LinkerDB::Instance(LinkerDBKey()) ) {
+    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
     
         for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->ComputeForcesAux(it);
+            linkerInteraction.get()->computeForcesAux(it);
     }
 }
 

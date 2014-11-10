@@ -10,8 +10,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 
 void ChemSimpleGillespieImpl::initialize() {
     resetTime();
@@ -40,11 +38,7 @@ double ChemSimpleGillespieImpl::computeTotalA(){
     return rates_sum;
 }
 
-bool ChemSimpleGillespieImpl::makeStep()
-{
-//        cout << "\n\n[ChemSimpleGillespieImpl::_makeStep(): Starting..." << endl;
-//        cout << "Size of the reaction network, "<< _reactions.size() << endl;
-//        printReactions();
+bool ChemSimpleGillespieImpl::makeStep() {
     
     double a_total = computeTotalA();
     
@@ -71,12 +65,8 @@ bool ChemSimpleGillespieImpl::makeStep()
     if(r_selected==nullptr){
         cout << "ChemSimpleGillespieImpl::makeStep() for loop: rates_sum=" << rates_sum << ", mu="
         << mu << ", a_total=" << a_total << endl;
-        throw std::runtime_error("ChemSimpleGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
+        throw runtime_error("ChemSimpleGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
     }
-    
-//        cout << "ChemSimpleGillespieImpl::makeStep(): mu=" << mu << ", rates_sum=" << rates_sum << ", a_total=" << a_total
-//        << ", r_selected*=" << (*r_selected) << endl;
-    
     r_selected->makeStep();
 
     // Send signals
@@ -84,28 +74,21 @@ bool ChemSimpleGillespieImpl::makeStep()
     r_selected->emitSignal();
 #endif
 #ifdef RSPECIES_SIGNALING
-//        for(auto sit = r_selected->beginReactants(); sit!=r_selected->endReactants(); ++sit){
-//            if((*sit)->isSignaling())
-//                (*sit)->emitSignal(-1);
-//        }
-//        for(auto sit = r_selected->beginProducts(); sit!=r_selected->endProducts(); ++sit){
-//            if((*sit)->isSignaling())
-//                (*sit)->emitSignal(1);
-//        }
+    r_selected->broadcastRSpeciesSignals();
 #endif
-//        cout << "ChemSimpleGillespieImpl::_makeStep(): Ending..., _a_total=" << a_total << "\n\n" << endl;
+
     syncGlobalTime();
     return true;
 }
 
 void ChemSimpleGillespieImpl::addReaction(ReactionBase *r) {
-    std::vector<ReactionBase*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
+    vector<ReactionBase*>::iterator vit = find(_reactions.begin(), _reactions.end(), r);
     if(vit==_reactions.end())
         _reactions.push_back(r);
 }
 
 void ChemSimpleGillespieImpl::removeReaction(ReactionBase *r) {
-    std::vector<ReactionBase*>::iterator vit = std::find(_reactions.begin(), _reactions.end(), r);
+    vector<ReactionBase*>::iterator vit = find(_reactions.begin(), _reactions.end(), r);
     if(vit!=_reactions.end())
         _reactions.erase(vit);
 }

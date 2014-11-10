@@ -11,7 +11,7 @@
 int LinkerDB::_currentLinkerID = 0;
 LinkerDB* LinkerDB::_instance = 0;
 
-LinkerDB* LinkerDB::Instance(LinkerDBKey k) {
+LinkerDB* LinkerDB::instance(LinkerDBKey k) {
     if(_instance==0)
         _instance = new LinkerDB;
     return _instance;

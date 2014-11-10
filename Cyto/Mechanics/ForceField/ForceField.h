@@ -10,6 +10,7 @@
 #define __Cyto__ForceField__
 
 #include <iostream>
+
 #include "common.h"
 
 ///ForceField is an abstract class to represent various force field calculations
@@ -20,13 +21,13 @@
 class ForceField {
 
 private:
-    std::string _name;
+    string _name;
     
 public:
-    const std::string& getName() {return _name;}
-    virtual double ComputeEnergy(double d) = 0;
-    virtual void ComputeForces() = 0;
-    virtual void ComputeForcesAux() = 0;
+    const string& getName() {return _name;}
+    virtual double computeEnergy(double d) = 0;
+    virtual void computeForces() = 0;
+    virtual void computeForcesAux() = 0;
 };
 
 

@@ -31,8 +31,6 @@ using namespace boost::accumulators;
 #include "ChemSimpleGillespieImpl.h"
 #include "ChemSim.h"
 
-using namespace std;
-
 vector<double> A1_A8_Network (int method)
 {
     const long long int N_SAMPLE_POINTS=pow(10,5);
@@ -93,10 +91,6 @@ vector<double> A1_A8_Network (int method)
     ChemSim::addReaction(ChemSimReactionKey(), &r2b);
 
     ChemSim::initialize(ChemSimInitKey());
-    //    chem.printReactions();
-    //    chem.run(20);
-    //    cout << endl;
-    //    chem.printReactions();
     
     vector<long long int> x_hist(NA1MAX+1);
     
@@ -114,7 +108,6 @@ vector<double> A1_A8_Network (int method)
         chem.initialize();
         long long int events=0;
         do {
-            //            cout << "chem.run(1) start, i= " << i << endl;
             x_pentult=A1.getN();
             bool success = ChemSim::run(ChemSimRunKey(), 1);
             if(!success){
@@ -122,13 +115,9 @@ vector<double> A1_A8_Network (int method)
                 ChemSim::printReactions();
                 break;
             }
-            //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
             ++events;
-            //            chem.printReactions();
-            //            cout << endl << endl;
         } while (tau()<tau_snapshot);
         ++x_hist[x_pentult];
-        //        cout << "1=" << n_a1_hist << ", 2=" << n_a2_hist << ", 3=" << n_a3_hist << endl;
         if(i%10000==0)
             cout << "For loop, i=" << i << ", events=" << events << endl;
     }
@@ -140,13 +129,6 @@ vector<double> A1_A8_Network (int method)
         double p_est=double(x_hist[n])/N_SAMPLE_POINTS;
         p_nrm.push_back(p_est);
     }
-    
-//    for(int n=0; n<(NA1MAX+1); ++n){
-//        cout << "P[" << n << "]=" << p_nrm[n] << endl;
-//    }
-//    
-//    
-//    cout << "A1_A8_Network(...) exited..." << endl;
     return p_nrm;
 }
 

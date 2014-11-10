@@ -9,24 +9,25 @@
 #ifndef __Cyto__BoundarySurfaceImpl__
 #define __Cyto__BoundarySurfaceImpl__
 
-#include "common.h"
-#include "BoundarySurface.h"
 #include <cmath>
 #include <iostream>
+
+#include "common.h"
+#include "BoundarySurface.h"
 
 ///BasicPlane is a simple implementation of the BoundarySurface class
 class Plane: public BoundarySurface {
     
 private:
-    std::vector<double> _coords; ///< coordinates of center
-    std::vector<double> _normal; ///< normal vector
+    vector<double> _coords; ///< coordinates of center
+    vector<double> _normal; ///< normal vector
     
 public:
     
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
     ///@param normal - normal vector to plane
-    Plane(std::vector<double> coords, std::vector<double> normal);
+    Plane(vector<double> coords, vector<double> normal);
 };
 
 
@@ -35,13 +36,13 @@ public:
 class Sphere: public BoundarySurface {
     
 private:
-    std::vector<double> _coords; ///< center of sphere
+    vector<double> _coords; ///< center of sphere
     double _radius; ///<radius of sphere
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
-    Sphere(std::vector<double> coords, double radius);
+    Sphere(vector<double> coords, double radius);
 };
 
 

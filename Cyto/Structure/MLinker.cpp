@@ -13,8 +13,8 @@
 using namespace mathfunc;
 
 MLinker::MLinker(double stretchConst, double position1, double position2,
-                 const std::vector<double>& coord11, const std::vector<double>& coord12,
-                 const std::vector<double>& coord21, const std::vector<double>& coord22) {
+                 const vector<double>& coord11, const vector<double>& coord12,
+                 const vector<double>& coord21, const vector<double>& coord22) {
     
     _kStretch = stretchConst;
     

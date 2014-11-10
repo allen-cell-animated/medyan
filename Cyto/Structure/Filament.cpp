@@ -7,166 +7,167 @@
 //
 
 #include "Filament.h"
-#include "SystemParameters.h"
+
 #include "Bead.h"
 #include "BeadDB.h"
 #include "CylinderDB.h"
 
-using namespace std;
+#include "SystemParameters.h"
+#include "MathFunctions.h"
+
 using namespace mathfunc;
 
-Filament::Filament(SubSystem* ps, vector<double>& position, vector<double>& direction, int ID) : _ID(ID) {
+Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direction, int ID) : _ID(ID) {
    
-    _pSubSystem = ps;
+    _subSystem = s;
  
     ///Create beads
-    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(position, _beadIDPlusEnd++);
+    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(position, _beadIDPlusEnd++);
     auto pos2 = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(pos2, _beadIDPlusEnd++);
+    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(pos2, _beadIDPlusEnd++);
     
     ///create cylinder
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
-    _pCylinderVector.push_back(c0);
+    Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b1, b2);
+    _cylinderVector.push_back(c0);
 }
 
 
-Filament::Filament(SubSystem* ps, vector<vector<double> >& position, int numBeads, int ID, std::string projectionType) : _ID(ID) {
+Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads, int ID, string projectionType) : _ID(ID) {
 
-    _pSubSystem = ps;
+    _subSystem = s;
     vector<vector<double> > tmpBeadsCoord;
     
     ///create a projection of beads
-    if(projectionType == "STRAIGHT") tmpBeadsCoord = StraightFilamentProjection(position, numBeads);
-    else if(projectionType == "ZIGZAG") tmpBeadsCoord = ZigZagFilamentProjection(position, numBeads);
+    if(projectionType == "STRAIGHT") tmpBeadsCoord = straightFilamentProjection(position, numBeads);
+    else if(projectionType == "ZIGZAG") tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
     else {}
    
     ///Create beads
     
     auto direction = TwoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
-    Bead* b1 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[0], _beadIDPlusEnd++);
-    Bead* b2 = BeadDB::Instance(BeadDBKey())->CreateBead(tmpBeadsCoord[1], _beadIDPlusEnd++);
+    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[0], _beadIDPlusEnd++);
+    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[1], _beadIDPlusEnd++);
     
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b1, b2);
-    _pCylinderVector.push_back(c0);
+    Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b1, b2);
+    _cylinderVector.push_back(c0);
     
     for (int i = 2; i<numBeads; i++) {
-        ExtendFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
+        extendFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
     }
 }
 
 Filament::~Filament() {
     
     ///remove cylinders, beads from system
-    for(auto &c : _pCylinderVector) {
+    for(auto &c : _cylinderVector) {
         //remove first bead
-        BeadDB::Instance(BeadDBKey())->RemoveBead(c->GetFirstBead());
+        BeadDB::instance(BeadDBKey())->removeBead(c->getFirstBead());
         //remove second bead if last
-        if(c->IfLast()) BeadDB::Instance(BeadDBKey())->RemoveBead(c->GetSecondBead());
+        if(c->last()) BeadDB::instance(BeadDBKey())->removeBead(c->getSecondBead());
         //remove cylinder
-        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(c);
+        CylinderDB::instance(CylinderDBKey())->removeCylinder(c);
     }
 }
 
 
 ///Extend front for initialization
-void Filament::ExtendFront(vector<double>& coordinates) {
+void Filament::extendFront(vector<double>& coordinates) {
     
-    Cylinder* cBack = _pCylinderVector.back();
-    
-    Bead* b2 = cBack->GetSecondBead();
+    Cylinder* cBack = _cylinderVector.back();
+    Bead* b2 = cBack->getSecondBead();
     
     ///create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     
-    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDPlusEnd++);
+    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords, _beadIDPlusEnd++);
     
     ///create cylinder
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew);
-    c0->SetLast(true);
-    _pCylinderVector.push_back(c0);
+    Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b2, bNew);
+    c0->setLast(true);
+    _cylinderVector.push_back(c0);
     
 }
 
 ///Extend front for initialization
-void Filament::ExtendBack(vector<double>& coordinates) {
+void Filament::extendBack(vector<double>& coordinates) {
 
-    Cylinder* cFront = _pCylinderVector.front();
-    Bead* b2 = cFront->GetFirstBead();
+    Cylinder* cFront = _cylinderVector.front();
+    Bead* b2 = cFront->getFirstBead();
     
     //create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(newBeadCoords, _beadIDMinusEnd--);
+    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords, _beadIDMinusEnd--);
 
-    Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2);
-    _pCylinderVector.push_front(c0);
+    Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, bNew, b2);
+    _cylinderVector.push_front(c0);
 
 }
 
 ///extend front at runtime
-void Filament::ExtendFront() {
-    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
+void Filament::extendFront() {
+    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else{
-        Cylinder* cBack = _pCylinderVector.back();
+        Cylinder* cBack = _cylinderVector.back();
         
-        Bead* b1 = cBack->GetFirstBead();
-        Bead* b2 = cBack->GetSecondBead();
+        Bead* b1 = cBack->getFirstBead();
+        Bead* b2 = cBack->getSecondBead();
         
         ///move last bead of last cylinder forward
         auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDPlusEnd++);
+        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp, _beadIDPlusEnd++);
         
-        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, b2, bNew, true);
-        _pCylinderVector.back()->SetLast(false);
-        _pCylinderVector.push_back(c0);
-        _pCylinderVector.back()->SetLast(true);
+        Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b2, bNew, true);
+        _cylinderVector.back()->setLast(false);
+        _cylinderVector.push_back(c0);
+        _cylinderVector.back()->setLast(true);
         
         _deltaPlusEnd++;
     }
 }
 
 ///extend back at runtime
-void Filament::ExtendBack() {
-    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
+void Filament::extendBack() {
+    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
     
     else{
-        Cylinder* cFront = _pCylinderVector.front();
+        Cylinder* cFront = _cylinderVector.front();
         
-        Bead* b2 = cFront->GetFirstBead();
-        Bead* b1 = cFront->GetSecondBead();
+        Bead* b2 = cFront->getFirstBead();
+        Bead* b1 = cFront->getSecondBead();
         
         ///move last bead of last cylinder forward
         auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::Instance(BeadDBKey())->CreateBead(npp, _beadIDMinusEnd--);
+        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp, _beadIDMinusEnd--);
 
-        Cylinder* c0 = CylinderDB::Instance(CylinderDBKey())->CreateCylinder(this, bNew, b2,false, true);
-        _pCylinderVector.push_front(c0);
+        Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, bNew, b2,false, true);
+        _cylinderVector.push_front(c0);
         
         _deltaMinusEnd++;
     }
 }
 
 ///Depolymerize front at runtime
-void Filament::RetractFront() {
-    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
+void Filament::retractFront() {
+    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else {
         
-        Cylinder* retractionCylinder = _pCylinderVector.back();
-        _pCylinderVector.pop_back();
+        Cylinder* retractionCylinder = _cylinderVector.back();
+        _cylinderVector.pop_back();
         
-        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->GetSecondBead());
-        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(retractionCylinder);
+        BeadDB::instance(BeadDBKey())->removeBead(retractionCylinder->getSecondBead());
+        CylinderDB::instance(CylinderDBKey())->removeCylinder(retractionCylinder);
         
-        _pCylinderVector.back()->SetLast(true);
+        _cylinderVector.back()->setLast(true);
 
         _beadIDPlusEnd--;
         _deltaPlusEnd--;
@@ -174,91 +175,87 @@ void Filament::RetractFront() {
     
 }
 
-void Filament::RetractBack() {
-    if (_pCylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
+void Filament::retractBack() {
+    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else {
-        Cylinder* retractionCylinder = _pCylinderVector.front();
-        _pCylinderVector.pop_front();
+        Cylinder* retractionCylinder = _cylinderVector.front();
+        _cylinderVector.pop_front();
         
-        BeadDB::Instance(BeadDBKey())->RemoveBead(retractionCylinder->GetFirstBead());
-        CylinderDB::Instance(CylinderDBKey())->RemoveCylinder(retractionCylinder);
+        BeadDB::instance(BeadDBKey())->removeBead(retractionCylinder->getFirstBead());
+        CylinderDB::instance(CylinderDBKey())->removeCylinder(retractionCylinder);
         
         _beadIDMinusEnd++;
         _deltaMinusEnd--;
     }
 }
 
-void Filament::PolymerizeFront() {
+void Filament::polymerizeFront() {
     
-    Cylinder* cBack = _pCylinderVector.back();
+    Cylinder* cBack = _cylinderVector.back();
     
-    Bead* b1 = cBack->GetFirstBead();
-    Bead* b2 = cBack->GetSecondBead();
+    Bead* b1 = cBack->getFirstBead();
+    Bead* b2 = cBack->getSecondBead();
     
     auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length, update
 #ifdef MECHANICS
-    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength()
-                                       + SystemParameters::Geometry().monomerSize);
+    cBack->getMCylinder()->setEqLength(cBack->getMCylinder()->getEqLength() + SystemParameters::Geometry().monomerSize);
 #endif
 }
 
-void Filament::PolymerizeBack() {
+void Filament::polymerizeBack() {
     
-    Cylinder* cFront = _pCylinderVector.front();
+    Cylinder* cFront = _cylinderVector.front();
     
-    Bead* b2 = cFront->GetFirstBead();
-    Bead* b1 = cFront->GetSecondBead();
+    Bead* b2 = cFront->getFirstBead();
+    Bead* b1 = cFront->getSecondBead();
 
     auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
 
     ///increase length
 #ifdef MECHANICS
-    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength()
-                                        + SystemParameters::Geometry().monomerSize);
+    cFront->getMCylinder()->setEqLength(cFront->getMCylinder()->getEqLength() + SystemParameters::Geometry().monomerSize);
 #endif
 }
 
-void Filament::DepolymerizeFront() {
+void Filament::depolymerizeFront() {
     
-    Cylinder* cBack = _pCylinderVector.back();
+    Cylinder* cBack = _cylinderVector.back();
     
-    Bead* b1 = cBack->GetFirstBead();
-    Bead* b2 = cBack->GetSecondBead();
+    Bead* b1 = cBack->getFirstBead();
+    Bead* b2 = cBack->getSecondBead();
 
     auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length, update
 #ifdef MECHANICS
-    cBack->getMCylinder()->SetEqLength(cBack->getMCylinder()->GetEqLength()
-                                       - SystemParameters::Geometry().monomerSize);
+    cBack->getMCylinder()->setEqLength(cBack->getMCylinder()->getEqLength() - SystemParameters::Geometry().monomerSize);
 #endif
 }
 
-void Filament::DepolymerizeBack() {
+void Filament::depolymerizeBack() {
     
-    Cylinder* cFront = _pCylinderVector.front();
+    Cylinder* cFront = _cylinderVector.front();
     
-    Bead* b2 = cFront->GetFirstBead();
-    Bead* b1 = cFront->GetSecondBead();
+    Bead* b2 = cFront->getFirstBead();
+    Bead* b1 = cFront->getSecondBead();
     
     auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     ///increase length
 #ifdef MECHANICS
-    cFront->getMCylinder()->SetEqLength(cFront->getMCylinder()->GetEqLength()
-                                        - SystemParameters::Geometry().monomerSize);
+    cFront->getMCylinder()->setEqLength(cFront->getMCylinder()->getEqLength() - SystemParameters::Geometry().monomerSize);
 #endif
 }
 
 
-vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double> > Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -279,7 +276,7 @@ vector<vector<double> > Filament::StraightFilamentProjection(vector<vector<doubl
     return coordinate;
 }
 
-vector<vector<double> > Filament::ZigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double> > Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -312,7 +309,7 @@ vector<vector<double> > Filament::ZigZagFilamentProjection(vector<vector<double>
 
 
 
-void Filament::DeleteBead(Bead*){
+void Filament::deleteBead(Bead*){
     
     cout<<"not implemented"<<endl;
 }

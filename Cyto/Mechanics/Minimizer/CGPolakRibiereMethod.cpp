@@ -7,11 +7,11 @@
 //
 
 #include "CGPolakRibiereMethod.h"
+
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-using namespace std;
-void PolakRibiere::Minimize(ForceFieldManager &FFM){
+void PolakRibiere::minimize(ForceFieldManager &FFM){
     
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
@@ -19,15 +19,15 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
     o.printBasicSnapshot(0);
     
-    int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); //// !!! change
+    int SpaceSize = 3 * BeadDB::instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
     //cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
-    PrintForces();
+    printForces();
     
     //PrintForces();
-	double gradSquare = GradSquare();
+	double gSquare = gradSquare();
     
 	int numIter = 0;
 	do
@@ -36,7 +36,7 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = BacktrackingLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         if(lambda < 0) {
             cout<<"Lambda < 0" <<endl;
           break;
@@ -45,36 +45,36 @@ void PolakRibiere::Minimize(ForceFieldManager &FFM){
         //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
         
-        MoveBeads(lambda);
+        moveBeads(lambda);
         o.printBasicSnapshot(numIter);
         //PrintForces();
         
         FFM.ComputeForcesAux();
         //PrintForces();
         
-		newGradSquare = GradAuxSquare();
+		newGradSquare = gradAuxSquare();
 
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
-            if(gradSquare == 0) beta = 0;
-			else beta = max(0.0, (newGradSquare - GradDotProduct()/ gradSquare));
+            if(gSquare == 0) beta = 0;
+			else beta = max(0.0, (newGradSquare - gradDotProduct()/ gSquare));
         }
         //cout << "beta = " << beta <<endl;
-		ShiftGradient(beta);
-        if(GradDotProduct() <= 0.0) ShiftGradient(0);
+		shiftGradient(beta);
+        if(gradDotProduct() <= 0.0) shiftGradient(0);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.ComputeEnergy(0.0); /// Change maybe it to just compute energy and update energy or compute energyAux
         
         //PrintForces();
-		gradSquare = newGradSquare;
-        cout<<"GradSq before end=  "<<gradSquare<<endl;
+		gSquare = newGradSquare;
+        cout<<"GradSq before end=  "<< gSquare <<endl;
         cout << "Energy = " << curEnergy << endl;
         cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
 	}
-	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
+	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
-	std::cout << "Polak-Ribiere Method: " << std::endl;
+	cout << "Polak-Ribiere Method: " << endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    PrintForces();
+    printForces();
 }

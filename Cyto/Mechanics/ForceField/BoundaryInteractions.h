@@ -16,15 +16,15 @@ class BoundaryElement;
 
 class BoundaryInteractions {
 private:
-    std::string _name;
+    string _name;
     
 public:
-    virtual double ComputeEnergy( BoundaryElement*,  double d) = 0;
-    virtual void ComputeForces(BoundaryElement*) = 0;
-    virtual void ComputeForcesAux(BoundaryElement*) = 0;
+    virtual double computeEnergy( BoundaryElement*,  double d) = 0;
+    virtual void computeForces(BoundaryElement*) = 0;
+    virtual void computeForcesAux(BoundaryElement*) = 0;
     
-    // std::string getName() {return _name;}
-    std::string getName() {return _name;}
+    // string getName() {return _name;}
+    string getName() {return _name;}
     
 };
 

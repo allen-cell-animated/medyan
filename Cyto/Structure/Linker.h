@@ -10,7 +10,10 @@
 #define __Cyto__Linker__
 
 #include <iostream>
+
+#include "common.h"
 #include "Composite.h"
+#include "Cylinder.h"
 #include "CLinker.h"
 #include "MLinker.h"
 
@@ -23,11 +26,11 @@
 class Linker : public Composite {
 
 private:
-    std::unique_ptr<MLinker> _mLinker; ///< ptr to mLinker
-    std::unique_ptr<CLinker> _cLinker; ///< ptr to cLinker
+    unique_ptr<MLinker> _mLinker; ///< ptr to mLinker
+    unique_ptr<CLinker> _cLinker; ///< ptr to cLinker
     
-    Cylinder* _pc1; ///< first cylinder the linker is bound to
-    Cylinder* _pc2; ///< second cylinder the linker is bound to
+    Cylinder* _c1; ///< first cylinder the linker is bound to
+    Cylinder* _c2; ///< second cylinder the linker is bound to
     
     double _position1; ///< position on first cylinder
     double _position2; ///< position on second cylinder
@@ -40,17 +43,17 @@ private:
     Compartment* _compartment; ///< Compartment that this linker is in
     
 public:
-    std::vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    Linker(Cylinder* pc1, Cylinder* pc2, short linkerType, int linkerID, double position1, double position2, bool creation);
+    Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, double position1, double position2, bool creation);
     ~Linker();
     
     ///get cylinders
-    Cylinder* getFirstCylinder() {return _pc1;}
-    Cylinder* getSecondCylinder() {return _pc2;}
+    Cylinder* getFirstCylinder() {return _c1;}
+    Cylinder* getSecondCylinder() {return _c2;}
     
     ///setter for mlinkers and clinkers
-    void setCLinker(CLinker* cLinker) {_cLinker = std::unique_ptr<CLinker>(cLinker);}
+    void setCLinker(CLinker* cLinker) {_cLinker = unique_ptr<CLinker>(cLinker);}
     CLinker* getCLinker() {return _cLinker.get();}
     
     MLinker* getMLinker() {return _mLinker.get();}
@@ -58,6 +61,7 @@ public:
     ///Getters and setters for position
     double getFirstPosition() {return _position1;}
     void setFirstPosition(double position1) {_position1 = position1;}
+    
     double getSecondPosition() {return _position2;}
     void setSecondPosition(double position2) {_position2 = position2;}
     

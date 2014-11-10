@@ -83,8 +83,6 @@ public:
             bool success = makeStep();
             if(!success)
                 return false;
-            //            if(i%1000000==0)
-            //                std::cout << "ChemSimpleGillespieImpl::run(): i=" << i << std::endl;
         }
         return true;
     }
@@ -96,10 +94,10 @@ private:
     /// This subroutine implements the vanilla version of the Gillespie algorithm
     bool makeStep();
 private:
-    std::vector<ReactionBase*> _reactions; ///< The database of Reaction objects, representing the reaction network
-    std::mt19937 _eng; ///< Random number generator
-    std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    std::uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution
+    vector<ReactionBase*> _reactions; ///< The database of Reaction objects, representing the reaction network
+    mt19937 _eng; ///< Random number generator
+    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
+    uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution
     double _t; ///< global time
 };
 

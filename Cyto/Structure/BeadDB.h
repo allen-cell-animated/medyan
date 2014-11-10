@@ -31,12 +31,12 @@ class BeadDBKey {friend class Filament;
 ///BeadDB class is a database for all beads in the system
 
 /*!  An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers
- *   Boundary Elements and Motors. This structure inherits from std:: list and manage all creations and removing of 
+ *   Boundary Elements and Motors. This structure inherits from list and manage all creations and removing of
  *   objects, as well as some stabdart list functions and iterators.
  */
-class BeadDB: private std::list<Bead*>
+class BeadDB: private list<Bead*>
 {
-    typedef std::list<Bead*> bdb;
+    typedef list<Bead*> bdb;
     
 public:
     
@@ -53,28 +53,25 @@ public:
     BeadDB& operator=(BeadDB &rhs) = delete;
     
     /// get the instance of this singleton
-    static BeadDB* Instance(BeadDBKey k);
+    static BeadDB* instance(BeadDBKey k);
     
     /// create a new bead with no ccordinates and
-    Bead* CreateBead(int ID) {
+    Bead* createBead(int ID) {
         
         Bead* b = new Bead(ID);
         push_back(b);
         return b ;}
     
     /// Create bead with a given coordinate on a given filament:
-    Bead* CreateBead(std::vector<double>& v, int ID) {
+    Bead* createBead(vector<double>& v, int ID) {
         
         Bead* b = new Bead(v, ID);
-        
         push_back(b);
-        //std::cout<<"bead created"<<std::endl;
         return b ;}
     
     
     /// Remove bead:
-    void RemoveBead(Bead* pb){
-        ///Also need to clean all neighbours lists!
+    void removeBead(Bead* pb){
         delete pb;
         remove(pb);
         

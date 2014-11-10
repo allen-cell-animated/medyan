@@ -60,7 +60,7 @@ public:
     /// Ctor
     /// @param *rnode is a pointer to the RNodeNRM instance which this PQNode tracks (no ownership - make sure it is not null)
     /// @note tau is set to infinity in the constructor
-    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (std::numeric_limits<double>::infinity()) {}
+    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (numeric_limits<double>::infinity()) {}
 
     /// Dtor: we only reassign _rn to null, the actual pointer needs to be deleted somewhere else to avoid memory leaks
     ~PQNode(){_rn=nullptr;}
@@ -75,7 +75,7 @@ public:
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_PQNODE
     /// Advanced memory management
-    void* operator new(std::size_t size);
+    void* operator new(size_t size);
     
     void operator delete(void* ptr) noexcept;
 #endif
@@ -179,7 +179,7 @@ public:
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
     /// Advanced memory management
-    void* operator new(std::size_t size);
+    void* operator new(size_t size);
     
     void operator delete(void* ptr) noexcept;
 #endif
@@ -256,8 +256,6 @@ public:
             bool success = makeStep();
             if(!success)
                 return false;
-//            if(i%1000000==0)
-//                std::cout << "ChemNRMImpl::run(): i=" << i << std::endl;
         }
         return true;
     }
@@ -276,10 +274,10 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
     bool makeStep();
 private:
-    std::unordered_map<ReactionBase*, std::unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects, representing the reaction network
+    unordered_map<ReactionBase*, unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects, representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm, containing PQNode elements
-    std::mt19937 _eng; ///< Random number generator
-    std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
+    mt19937 _eng; ///< Random number generator
+    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     double _t; ///< global time
     size_t _n_reacts; ///< number of reactions in the network
 };

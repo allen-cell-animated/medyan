@@ -87,7 +87,7 @@ Goals for November 2014
 1) More features
     -Fix reaction initialization / management                                   X
     -Update position / neighbors list fix
-    -Get rid of chemIniitializer                                                
+    -Get rid of chemIniitializer                                                will keep for now
     -Cylindrical + half sphere boundary
     -Excluded volume working
     -Add aging reaction + coupling to mechanics

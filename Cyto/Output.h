@@ -23,16 +23,16 @@
 class Output {
 
 private:
-    std::ofstream _outputFile; ///< output file being used
+    ofstream _outputFile; ///< output file being used
     
 public:
-    Output(std::string outputFileName) {
+    Output(string outputFileName) {
         _outputFile.open(outputFileName);
         if(!_outputFile.is_open()) {
-            std::cout << "There was an error opening file " << outputFileName << " for output. Exiting" << std::endl;
+            cout << "There was an error opening file " << outputFileName << " for output. Exiting" << endl;
             exit(EXIT_FAILURE);
         }
-        std::cout << "Opening file " << outputFileName << std::endl;
+        cout << "Opening file " << outputFileName << endl;
     }
     ~Output() {_outputFile.close();}
     

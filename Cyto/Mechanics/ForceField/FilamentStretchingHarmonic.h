@@ -16,10 +16,10 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    double Energy(Bead*, Bead*, double, double);
-    double Energy(Bead*, Bead*, double, double, double);
-    void Forces(Bead*, Bead*, double, double);
-    void ForcesAux(Bead*, Bead*, double, double);
+    double energy(Bead*, Bead*, double, double);
+    double energy(Bead*, Bead*, double, double, double);
+    void forces(Bead*, Bead*, double, double);
+    void forcesAux(Bead*, Bead*, double, double);
 };
 
 #endif /* defined(__Cyto__FilamentStretchingHarmonic__) */

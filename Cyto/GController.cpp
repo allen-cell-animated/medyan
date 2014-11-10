@@ -27,10 +27,10 @@ void GController::generateConnections()
                 
                 for(size_t k=0U; k<_grid[2]; ++k)
                 {
-                    std::vector<size_t> indices{i,j,k};
+                    vector<size_t> indices{i,j,k};
                     Compartment *target = getCompartment(indices);
                     
-                    std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                    vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
                         indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2,
                         indices[2] * _compartmentSize[2] + _compartmentSize[2] / 2};
                     target->setCoordinates(coordinates);
@@ -40,7 +40,7 @@ void GController::generateConnections()
                         int iprime = i+ii;
                         if(iprime<0 or iprime==int(_grid[0]))
                             continue;
-                        std::vector<size_t> currentIndices{size_t(iprime), j, k};
+                        vector<size_t> currentIndices{size_t(iprime), j, k};
                         Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
@@ -49,7 +49,7 @@ void GController::generateConnections()
                         int jprime = j+jj;
                         if(jprime<0 or jprime==int(_grid[1]))
                             continue;
-                        std::vector<size_t> currentIndices{i, size_t(jprime), k};
+                        vector<size_t> currentIndices{i, size_t(jprime), k};
                         Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
@@ -58,7 +58,7 @@ void GController::generateConnections()
                         int kprime = k+kk;
                         if(kprime<0 or kprime==int(_grid[2]))
                             continue;
-                        std::vector<size_t> currentIndices{i, j, size_t(kprime)};
+                        vector<size_t> currentIndices{i, j, size_t(kprime)};
                         Compartment *neighbor = getCompartment(currentIndices);
                         target->addNeighbour(neighbor);
                     }
@@ -74,10 +74,10 @@ void GController::generateConnections()
             
             for(size_t j=0U; j<_grid[1]; ++j) {
                 
-                std::vector<size_t> indices{i,j};
+                vector<size_t> indices{i,j};
                 Compartment *target = getCompartment(indices);
                 
-                std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
                     indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2};
                 target->setCoordinates(coordinates);
                 
@@ -87,7 +87,7 @@ void GController::generateConnections()
                     int iprime = i+ii;
                     if(iprime<0 or iprime==int(_grid[0]))
                         continue;
-                    std::vector<size_t> currentIndices{size_t(i), j};
+                    vector<size_t> currentIndices{size_t(i), j};
                     Compartment *neighbor = getCompartment(currentIndices);
                     target->addNeighbour(neighbor);
                 }
@@ -97,7 +97,7 @@ void GController::generateConnections()
                     int jprime = j+jj;
                     if(jprime<0 or jprime==int(_grid[1]))
                         continue;
-                    std::vector<size_t> currentIndices{i, size_t(j)};
+                    vector<size_t> currentIndices{i, size_t(j)};
                     Compartment *neighbor = getCompartment(currentIndices);
                     target->addNeighbour(neighbor);
                 }
@@ -109,10 +109,10 @@ void GController::generateConnections()
     else {
         for(size_t i=0U; i<_grid[0]; ++i) {
             
-            std::vector<size_t> indices{i};
+            vector<size_t> indices{i};
             Compartment *target = getCompartment(indices);
             
-            std::vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2};
+            vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2};
             target->setCoordinates(coordinates);
             
             for(int ii: {-1,1})
@@ -120,7 +120,7 @@ void GController::generateConnections()
                 int iprime = i+ii;
                 if(iprime<0 or iprime==int(_grid[0]))
                     continue;
-                std::vector<size_t> currentIndices{size_t(i)};
+                vector<size_t> currentIndices{size_t(i)};
                 Compartment *neighbor = getCompartment(currentIndices);
                 target->addNeighbour(neighbor);
             }
@@ -148,7 +148,7 @@ void GController::initializeGrid() {
            || (_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] != 0)){
     }
     else {
-        std::cout << "Grid parameters are invalid. Exiting" << std::endl;
+        cout << "Grid parameters are invalid. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
     
@@ -168,13 +168,13 @@ void GController::initializeGrid() {
 void GController::activateCompartments(Boundary* boundary) {
     
     ///initialize all compartments equivalent to cproto
-    for(auto &c : CompartmentGrid::Instance(CompartmentGridKey())->children()) {
+    for(auto &c : CompartmentGrid::instance(CompartmentGridKey())->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         if(boundary->within(C->coordinates())) C->activate();
     }
 }
 
-void GController::findCompartments(const std::vector<double>& coords, Compartment* ccheck, double dist, std::vector<Compartment*>& compartments) {
+void GController::findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments) {
     
     ///base case : if c and ccheck are not within range, return
     if(TwoPointDistance(coords, ccheck->coordinates()) > dist ) return;
@@ -182,15 +182,15 @@ void GController::findCompartments(const std::vector<double>& coords, Compartmen
     ///recursive case, c and ccheck are in range. call for all neighbors
     else {
         //if not already in list, add it
-        if(std::find(compartments.begin(), compartments.end(), ccheck) == compartments.end()) {
+        if(find(compartments.begin(), compartments.end(), ccheck) == compartments.end()) {
             compartments.push_back(ccheck);
             //recursively call for all neighbors
-            for(auto &n : ccheck->neighbours())  findCompartments(coords, n, dist, compartments);
+            for(auto &n : ccheck->getNeighbours())  findCompartments(coords, n, dist, compartments);
         }
     }
 }
 short GController::_nDim = 0;
-std::vector<int> GController::_grid = {};
-std::vector<double> GController::_compartmentSize = {};
+vector<int> GController::_grid = {};
+vector<double> GController::_compartmentSize = {};
 
 

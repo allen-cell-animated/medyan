@@ -20,18 +20,16 @@
 #include "Species.h"
 #include "SpeciesContainer.h"
 
-using namespace std;
-
 TEST(SpeciesNamesDBTest, All) {
     
     ///basic test
     SpeciesNamesDB::Instance()->clear();
     int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");
     EXPECT_EQ(0,y);
-    std::string x = SpeciesNamesDB::Instance()->intToString(y);
+    string x = SpeciesNamesDB::Instance()->intToString(y);
     EXPECT_EQ("Arp2/3",x);
     
-    EXPECT_THROW(SpeciesNamesDB::Instance()->intToString(1), std::out_of_range);
+    EXPECT_THROW(SpeciesNamesDB::Instance()->intToString(1), out_of_range);
 
     y = SpeciesNamesDB::Instance()->stringToInt("G-Actin");
     EXPECT_EQ(1,y);
@@ -40,9 +38,9 @@ TEST(SpeciesNamesDBTest, All) {
     EXPECT_NO_THROW(SpeciesNamesDB::Instance()->intToString(1));
     
     ///testing unique name generator
-    std::string a1 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
-    std::string a2 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
-    std::string a3 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    string a1 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    string a2 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
+    string a3 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
     
     EXPECT_FALSE(a1 == a2);
     EXPECT_FALSE(a2 == a3);
@@ -55,31 +53,25 @@ TEST(SpeciesTest, CTors) {
     SpeciesBulk X;
     EXPECT_EQ(0,X.getN());
     EXPECT_EQ("",X.getName());
-//    cout << X << endl;
 
     //CTor 1
     SpeciesBulk A{"Arp2/3",25};
     EXPECT_EQ(25,A.getN());
     EXPECT_EQ("Arp2/3",A.getName());
-//    cout << A << endl;
     
     //Copy Ctor
     SpeciesBulk B(A);
     EXPECT_EQ(A,B);
-//    cout << B << endl;
 
     
     //Move Assignment
     SpeciesBulk D{"G-Actin",300};
-//    cout << D << endl;
     D = [] () {SpeciesBulk Y("G-Actin",39); return Y;}();
-//    cout << D << endl;
     EXPECT_EQ(39,D.getN());
     EXPECT_EQ("G-Actin",D.getName());
     
     //Assignment operator
     SpeciesBulk F{"Myosin-X",112};
-//    cout << F << endl;
     F=A;
     EXPECT_EQ(A,F);
 
@@ -100,7 +92,7 @@ TEST(SpeciesTest, Iostream) {
     
     outStream << B;
     string res = outStream.str();
-    string b_fullname = B.getFullName() + "[" + std::to_string(B.getN()) + "]";
+    string b_fullname = B.getFullName() + "[" + to_string(B.getN()) + "]";
     EXPECT_EQ(b_fullname,res);
 }
 

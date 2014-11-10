@@ -7,11 +7,12 @@
 //
 
 #include "BoundaryElementImpl.h"
+
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double sceenLength)
+PlaneBoundaryElement::PlaneBoundaryElement(vector<double> coords, vector<double> normal, double repulsConst, double sceenLength)
                                                                 : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength) {
     
     ///set parameters
@@ -22,13 +23,13 @@ PlaneBoundaryElement::PlaneBoundaryElement(std::vector<double> coords, std::vect
     _d = -_a * _coords[0] - _b * _coords[1] - _c * _coords[2];
 }
 
-double PlaneBoundaryElement::distance(const std::vector<double>& point) {
+double PlaneBoundaryElement::distance(const vector<double>& point) {
     
     return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
                             sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
 }
 
-double PlaneBoundaryElement::stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) {
+double PlaneBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
     
     
     return (_a * (point[0] + d*force[0]) + _b * (point[1] + d*force[1]) + _c * (point[2] + d*force[2]) + _d) /
@@ -36,37 +37,30 @@ double PlaneBoundaryElement::stretchedDistance(const std::vector<double>& point,
     
 }
 
-const std::vector<double> PlaneBoundaryElement::normal(const std::vector<double>& point) {
-    
-    return std::vector<double>{_a, _b, _c};
+const vector<double> PlaneBoundaryElement::normal(const vector<double>& point) {
+    return vector<double>{_a, _b, _c};
 }
 
-double PlaneBoundaryElement::getRepulsionConst(){
-    
-    return _k_rep;
-}
+double PlaneBoundaryElement::getRepulsionConst(){ return _k_rep; }
 
-double PlaneBoundaryElement::getScreeningLength(){
-    
-    return _r0;
-}
+double PlaneBoundaryElement::getScreeningLength(){ return _r0; }
 
-SphereBoundaryElement::SphereBoundaryElement(std::vector<double> coords, double radius, double repulsConst, double sceenLength)
+SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radius, double repulsConst, double sceenLength)
                                                     : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius) {}
 
-double SphereBoundaryElement::distance(const std::vector<double>& point) {
+double SphereBoundaryElement::distance(const vector<double>& point) {
     
     return - (TwoPointDistance(_coords, point) - _radius);
 }
 
-double SphereBoundaryElement::stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) {
+double SphereBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
     
-    std::vector<double> stretchedPoint{point[0] + d * force[0], point[1] + d * force[1], point[2] + d * force[2]};
+    vector<double> stretchedPoint{point[0] + d * force[0], point[1] + d * force[1], point[2] + d * force[2]};
     return - (TwoPointDistance(_coords, stretchedPoint) - _radius);
     
 }
 
-const std::vector<double> SphereBoundaryElement::normal(const std::vector<double>& point) {
+const vector<double> SphereBoundaryElement::normal(const vector<double>& point) {
     
     return TwoPointDirection(point, _coords);
 }

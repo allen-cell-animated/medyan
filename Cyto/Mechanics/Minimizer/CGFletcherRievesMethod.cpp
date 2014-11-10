@@ -7,16 +7,16 @@
 //
 
 #include "CGFletcherRievesMethod.h"
+
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-using namespace std;
-void FletcherRieves::Minimize(ForceFieldManager &FFM)
+void FletcherRieves::minimize(ForceFieldManager &FFM)
 {
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
     //o.printBasicSnapshot(0);
     
-    int SpaceSize = 3 * BeadDB::Instance(getBeadDBKey())->size(); ///!!!!!! need to know
+    int SpaceSize = 3 * BeadDB::instance(getBeadDBKey())->size(); ///!!!!!! need to know
 	double curVal = FFM.ComputeEnergy(0.0);
     //cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;
@@ -24,7 +24,7 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
     
     //PrintForces();
     
-	double gradSquare = GradSquare();
+	double gSquare = gradSquare();
     //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
@@ -34,41 +34,41 @@ void FletcherRieves::Minimize(ForceFieldManager &FFM)
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
 
-        lambda = BacktrackingLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         if(lambda < 0) break;
         //cout<<"lambda= "<<lambda<<endl;
         
 		//PrintForces();
-        MoveBeads(lambda);
+        moveBeads(lambda);
         //PrintForces();
         //o.printBasicSnapshot(numIter);
         
         FFM.ComputeForcesAux();
         //PrintForces();
         
-		newGradSquare = GradAuxSquare();
+		newGradSquare = gradAuxSquare();
 		
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
-            if(gradSquare == 0) beta = 0;
-            else beta = newGradSquare / gradSquare;
+            if(gSquare == 0) beta = 0;
+            else beta = newGradSquare / gSquare;
             
         }
-		ShiftGradient(beta);
-        if(GradDotProduct() <= 0.0) ShiftGradient(0);
+		shiftGradient(beta);
+        if(gradDotProduct() <= 0.0) shiftGradient(0);
         
 		prevVal = curVal;
 		curVal = FFM.ComputeEnergy(0.0);
         
-		gradSquare = newGradSquare;
+		gSquare = newGradSquare;
         //cout<<"GradSq=  "<<gradSquare<<endl;
         
 	}
-	while (gradSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
+	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
-	std::cout << "Fletcher-Rieves Method: " << std::endl;
+	cout << "Fletcher-Rieves Method: " << endl;
     cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-	PrintForces();
+	printForces();
 	
 }
 

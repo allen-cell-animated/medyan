@@ -35,12 +35,12 @@ class Cylinder;
 class CCylinder {
     
 protected:
-    std::vector<std::unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder
+    vector<unique_ptr<CMonomer>> _monomers; ///< list of monomers in this ccylinder
     
     ///REACTION CONTAINERS
-    std::unordered_set<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
-    std::unordered_set<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
-    std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
+    unordered_set<ReactionBase*> _internalReactions;///< list of internal reactions associated with ccylinder
+    unordered_set<CCylinder*> _reactingCylinders; ///< vector of ccylinders that this ccylinder has reactions with, but not ownership
+    unordered_map<CCylinder*, unordered_set<ReactionBase*>> _crossCylinderReactions; ///< map of cross-cylinder reactions owned by this ccylinder
     
     Compartment* _compartment; ///< compartment this ccylinder is in
     Cylinder* _pCylinder; ///< parent cylinder
@@ -79,16 +79,16 @@ public:
     Cylinder* getCylinder() {return _pCylinder;}
     
     ///Add a monomer to this CCylinder
-    void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(std::unique_ptr<CMonomer>(monomer));}
+    void addCMonomer(CMonomer* monomer) { _monomers.emplace_back(unique_ptr<CMonomer>(monomer));}
     ///Get monomer at an index
     ///@note no check on index
     CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
     ///Get list of reactions associated with this CCylinder
-    const std::unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
-    const std::unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
+    const unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
+    const unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     ///Get map of reactions associated with this CCylinder and others
-    std::unordered_map<CCylinder*, std::unordered_set<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
+    unordered_map<CCylinder*, unordered_set<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
     
     ///REACTION MANAGEMENT FUNCTIONS
     void addInternalReaction(ReactionBase* r);
@@ -112,7 +112,7 @@ public:
     virtual void printCCylinder();
     
     ///get size of this ccylinder in number of monomers
-    short size() {return _size;}
+    short getSize() {return _size;}
     
 };
 

@@ -10,7 +10,6 @@
 #include <cmath>
 #include <vector>
 
-using namespace std;
 
 namespace mathfunc {
     
@@ -19,7 +18,7 @@ namespace mathfunc {
      */
     
     /// A function which calculates a nuber — distance between two points seted up by two vectors v1 = {x1, y1, z1} and v1 = {x2, y2, z2};
-    double TwoPointDistance(const std::vector<double>& v1, const std::vector<double>& v2) {
+    double TwoPointDistance(const vector<double>& v1, const vector<double>& v2) {
         
         double l= sqrt( (v2[0]-v1[0])*(v2[0]-v1[0]) + (v2[1]-v1[1])*(v2[1]-v1[1]) + (v2[2]-v1[2])*(v2[2]-v1[2]));
         
@@ -30,7 +29,7 @@ namespace mathfunc {
     
     /// A  auxilury function which calculates a nuber — distance between two points seted up by two vectors v1-d*p1 = {x1-d*px1, y1-d*py1, z1-d*pz1} and v2-d*p2 = {x2-d*px2, y2-d*py2, z2-d*pz2}; needed for Golden Section minimization;
     
-    double TwoPointDistanceStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, double d ){
+    double TwoPointDistanceStretched(const vector<double>& v1, const vector<double>& p1, const vector<double>& v2, const vector<double>& p2, double d ){
         
         double l= sqrt( ((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))*((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) + ((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))*((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) + ((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))*((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
         
@@ -39,7 +38,7 @@ namespace mathfunc {
     }
     
     
-    vector<double> TwoPointDirection(const std::vector<double>& v1, const std::vector<double>& v2) {
+    vector<double> TwoPointDirection(const vector<double>& v1, const vector<double>& v2) {
         vector<double> tau (3, 0);
         double invD = 1/TwoPointDistance(v1, v2);
         tau[0] = invD * ( v2[0] - v1[0] );
@@ -49,7 +48,7 @@ namespace mathfunc {
         
     }
     ///A function which returns coordinate for a next point projection based on initial coordinates and a diraction;
-    vector<double> NextPointProjection(const std::vector<double>& coordinate, double d, const std::vector<double>& tau){
+    vector<double> NextPointProjection(const vector<double>& coordinate, double d, const vector<double>& tau){
         
         vector<double> v;
         v.push_back(coordinate[0] + d * tau[0]);
@@ -61,9 +60,9 @@ namespace mathfunc {
         
     }
     
-    double ScalarProduct(const std::vector<double>& v1, const std::vector<double>& v2, const std::vector<double>& v3, const std::vector<double>& v4){ return ( (v2[0]-v1[0])*(v4[0]-v3[0]) + (v2[1]-v1[1])*(v4[1]-v3[1]) +(v2[2]-v1[2])*(v4[2]-v3[2]) );}
+    double ScalarProduct(const vector<double>& v1, const vector<double>& v2, const vector<double>& v3, const vector<double>& v4){ return ( (v2[0]-v1[0])*(v4[0]-v3[0]) + (v2[1]-v1[1])*(v4[1]-v3[1]) +(v2[2]-v1[2])*(v4[2]-v3[2]) );}
     
-    double ScalarProductStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, const std::vector<double>& v3, const std::vector<double>& p3, const std::vector<double>& v4, const std::vector<double>& p4, double d){
+    double ScalarProductStretched(const vector<double>& v1, const vector<double>& p1, const vector<double>& v2, const vector<double>& p2, const vector<double>& v3, const vector<double>& p3, const vector<double>& v4, const vector<double>& p4, double d){
         
         double xx = ( (v2[0] + d*p2[0])-(v1[0] + d*p1[0]) )*( (v4[0] + d*p4[0])-(v3[0] + d*p3[0]) );
         double yy = ( (v2[1] + d*p2[1])-(v1[1] + d*p1[1]) )*( (v4[1] + d*p4[1])-(v3[1] + d*p3[1]) );
@@ -73,8 +72,8 @@ namespace mathfunc {
         
     }
     
-    std::vector<double> MidPointCoordinate(const std::vector<double>& v1, const std::vector<double>& v2, double alpha){
-        std::vector<double> v;
+    vector<double> MidPointCoordinate(const vector<double>& v1, const vector<double>& v2, double alpha){
+        vector<double> v;
         
         v.push_back( v1[0]*(1.0 - alpha) + alpha*v2[0] );
         v.push_back( v1[1]*(1.0 - alpha) + alpha*v2[1] );
@@ -84,9 +83,9 @@ namespace mathfunc {
     }
     
     
-    std::vector<double> MidPointCoordinateStretched(const std::vector<double>& v1, const std::vector<double>& p1, const std::vector<double>& v2, const std::vector<double>& p2, double alpha , double d){
+    vector<double> MidPointCoordinateStretched(const vector<double>& v1, const vector<double>& p1, const vector<double>& v2, const vector<double>& p2, double alpha , double d){
         
-        std::vector<double> v;
+        vector<double> v;
         
         v.push_back( (v1[0] + d*p1[0])*(1.0 - alpha) + alpha*(v2[0] + d*p2[0]) );
         v.push_back( (v1[1] + d*p1[1])*(1.0 - alpha) + alpha*(v2[1] + d*p2[1]) );
@@ -94,7 +93,7 @@ namespace mathfunc {
         return v;
     }
     
-    double TwoSegmentDistance(const std::vector<double>& v1, const std::vector<double>& v2, const std::vector<double>& v3, const std::vector<double>& v4){
+    double TwoSegmentDistance(const vector<double>& v1, const vector<double>& v2, const vector<double>& v3, const vector<double>& v4){
         
         
 /*!         

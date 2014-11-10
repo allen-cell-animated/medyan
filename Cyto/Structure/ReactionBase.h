@@ -59,13 +59,13 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
 class ReactionBase {
 protected:
-    std::vector<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
+    vector<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     Composite *_parent; ///< A pointer to a Composite object to which this Reaction belongs
     float _rate; ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
-    std::shared_ptr<ReactionEventSignal> _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
+    shared_ptr<ReactionEventSignal> _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
@@ -106,9 +106,9 @@ public:
     /// (Private) implementation of the clone() method to be elaborated in derived classes
     virtual ReactionBase* cloneImpl(const SpeciesPtrContainerVector &spcv) = 0;
     
-    /// Returns a pointer to the first element of the std::array<RSpecies*>. This pointer can be used
+    /// Returns a pointer to the first element of the array<RSpecies*>. This pointer can be used
     /// to iterate over RSpecies* if necessary (also by relying on getM() and size() to determine
-    /// the iteration limits). The corresponding std::array<RSpecies*> is defined by the derived classes.
+    /// the iteration limits). The corresponding array<RSpecies*> is defined by the derived classes.
     virtual RSpecies** rspecies() = 0;
     
     ///Set reaction type
@@ -179,14 +179,6 @@ public:
     /// Get the root parent (i.e. follow the pointers of parentage until the root node in the Composition hieararchy)
     Composite* getRoot();
     
-    //    Composite* getParent() {return nullptr;}
-    //
-    //    void setParent (Composite *other) {}
-    //
-    //    bool hasParent() const {return false;}
-    //
-    //    Composite* getRoot() {return nullptr;}
-    
     /// Computes the product of the copy number of all reactant RSpecies.
     /// Can be used to quickly determine whether this ReactionBase should be allowed to activate - if one of the
     /// reactants has a copy number equal to zero, then zero is returned, indicating that
@@ -230,11 +222,11 @@ public:
     void stopSignaling ();
     
     /// Connect the callback, react_callback to a signal corresponding to ReactionBase *r.
-    /// @param std::function<void (ReactionBase *)> const &react_callback - a function object to be called (a slot)
+    /// @param function<void (ReactionBase *)> const &react_callback - a function object to be called (a slot)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2
     ///                       unless absolutely essential.
     /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
-    boost::signals2::connection connect(std::function<void (ReactionBase *)> const &react_callback, int priority=5);
+    boost::signals2::connection connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
     
     /// Broadcasts signal indicating that the ReactionBase event has taken place
     /// This method is only called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
@@ -253,7 +245,7 @@ public:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the
     /// dependencies, and 2) via dependents(), where dependencies stop being counted
     /// if the copy numbers of reactant species drop to 0.
-    const std::vector<ReactionBase*>& dependents() {return _dependents;}
+    const vector<ReactionBase*>& dependents() {return _dependents;}
     
     /// Returns true if two ReactionBase objects are equal.
     /// Two ReactionBase objects are equal if each of their reactants and products are equal
@@ -327,7 +319,7 @@ public:
     /// @return a vector of pointers to the affected ReactionBase objects
     /// @note This method is "expensive" because it computes from scratch the dependencies. Importantly, 
     /// the copy numbers of molecules do not influence the result of this function. \sa dependents()
-    virtual std::vector<ReactionBase*> getAffectedReactions() = 0;
+    virtual vector<ReactionBase*> getAffectedReactions() = 0;
     
     /// Request that the ReactionBase *r adds this ReactionBase to its list of dependents which it affects. 
     void registerNewDependent(ReactionBase *r);
@@ -340,10 +332,10 @@ public:
 //        ///Replace a given species with a new one. Registers and unregisters new dependents accordingly
 //        virtual void replaceRSpecies(RSpecies* oldRSpecies, RSpecies* newRSpecies) = 0;
     
-    virtual void printToStream(std::ostream& os) const = 0;
+    virtual void printToStream(ostream& os) const = 0;
     
     /// Print self into an iostream
-    friend std::ostream& operator<<(std::ostream& os, const ReactionBase& rr)
+    friend ostream& operator<<(ostream& os, const ReactionBase& rr)
     {
         rr.printToStream(os);
         return os;

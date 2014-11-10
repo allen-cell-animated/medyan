@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#define DO_THIS_REACTION_TEST
+//#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
@@ -21,23 +21,18 @@
 #include "Compartment.h"
 #include "ReactionTemplate.h"
 
-using namespace std;
-
 void rspecies_callback (RSpecies *r, int delta){
     r->getSpecies().setN(33);
-    //    cout << "reaction_callback was called by\n" << *r << endl;
 }
 
 void reaction_callback (ReactionBase *r){
     r->setRate(0.05);
-//    cout << "reaction_callback was called by\n" << *r << endl;
 }
 
 struct ReactionCallback {
     void operator() (ReactionBase *r){
         ++_count;
         r->setRate(1.05);
-//        cout << "ReactionCallback was called by\n" << *r << endl;
     }
     int _count;
 };
@@ -150,9 +145,9 @@ TEST(ReactionTest, Dependents1) {
     // (1) affects (2) and (3)
     // (2) affects (1) and (3) 
     // (3) affects (1)
-    std::vector<ReactionBase*> ar1 = rxn1.getAffectedReactions();
-    std::vector<ReactionBase*> ar2 = rxn2.getAffectedReactions();
-    std::vector<ReactionBase*> ar3 = rxn3.getAffectedReactions();
+    vector<ReactionBase*> ar1 = rxn1.getAffectedReactions();
+    vector<ReactionBase*> ar2 = rxn2.getAffectedReactions();
+    vector<ReactionBase*> ar3 = rxn3.getAffectedReactions();
     EXPECT_EQ(2U, ar1.size());
     EXPECT_EQ(2U, ar2.size());
     EXPECT_EQ(1U, ar3.size());
@@ -165,11 +160,9 @@ TEST(ReactionTest, Dependents1) {
     
     for (int i=0; i<10; ++i){
         rxn3.makeStep();
-        //        cout << RA.getN() << endl;
     }
     EXPECT_EQ(0U, A.getN());
-    //    for (auto &r : {&rxn1, &rxn2, &rxn3})
-    //        cout << (*r) << endl;
+
     EXPECT_EQ(0U, rxn2.dependents().size());
     
     // But not that the getAffectedReactions() still returns the original depedencices, ignoring the fact 
@@ -242,7 +235,7 @@ TEST(ReactionTest, ReactionSignaling) {
     // used later to temporarily block the callback or permanently disconnect it. See the 
     // boost documentation for signals2.
     
-    //  std::function<void (Reaction *)> rcb(reaction_callback);
+    //  function<void (Reaction *)> rcb(reaction_callback);
 
     boost::signals2::shared_connection_block rcb(rxn.connect(reaction_callback), false);
     rxn.emitSignal();
@@ -265,8 +258,6 @@ TEST(ReactionTest, ReactionSignaling) {
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-//    boost::signals2::connection c = rxn.connect([](Reaction *r){r->setRate(3.05);});
-    // using "auto" would make the code on the line above less verbose
     auto c = rxn.connect([](ReactionBase *r){r->setRate(3.05);});
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(3.05, rxn.getRate());

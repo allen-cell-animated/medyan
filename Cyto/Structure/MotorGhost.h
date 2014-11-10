@@ -26,11 +26,11 @@ class Cylinder;
 class MotorGhost : public Composite{
    
 private:
-    std::unique_ptr<MMotorGhost> _mMotorGhost; ///< ptr to mMotorGhost
-    std::unique_ptr<CMotorGhost> _cMotorGhost; ///< ptr to cMotorGhost
+    unique_ptr<MMotorGhost> _mMotorGhost; ///< ptr to mMotorGhost
+    unique_ptr<CMotorGhost> _cMotorGhost; ///< ptr to cMotorGhost
     
-    Cylinder* _pc1; ///< first cylinder the linker is bound to
-    Cylinder* _pc2; ///< second cylinder the linker is bound to
+    Cylinder* _c1; ///< first cylinder the linker is bound to
+    Cylinder* _c2; ///< second cylinder the linker is bound to
     
     double _position1; ///< position on first cylinder
     double _position2; ///< position on second cylinder
@@ -44,21 +44,21 @@ private:
     
     
 public:
-    std::vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorID, double position1, double position2, bool creation);
+    MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID, double position1, double position2, bool creation);
     ~MotorGhost();
     
     ///get cylinders
-    Cylinder* getFirstCylinder() {return _pc1;}
-    Cylinder* getSecondCylinder() {return _pc2;}
+    Cylinder* getFirstCylinder() {return _c1;}
+    Cylinder* getSecondCylinder() {return _c2;}
     
     ///set cylinders
-    void setFirstCylinder(Cylinder* cylinder) {_pc1 = cylinder;}
-    void setSecondCylinder(Cylinder* cylinder) {_pc2 = cylinder;}
+    void setFirstCylinder(Cylinder* cylinder) {_c1 = cylinder;}
+    void setSecondCylinder(Cylinder* cylinder) {_c2 = cylinder;}
     
     ///setter for mlinkers and clinkers
-    void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = std::unique_ptr<CMotorGhost>(cMotorGhost);}
+    void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = unique_ptr<CMotorGhost>(cMotorGhost);}
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}
     
     MMotorGhost* getMMotorGhost() {return _mMotorGhost.get();}

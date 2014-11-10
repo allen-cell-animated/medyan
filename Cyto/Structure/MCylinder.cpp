@@ -16,7 +16,7 @@ using namespace mathfunc;
 void MCylinder::addExVolNeighbor(MCylinder* neighbor) { _exVolNeighborsList.push_back(neighbor);}
 
 void MCylinder::removeExVolNeighbor(MCylinder* neighbor) {
-    auto it = std::find(_exVolNeighborsList.begin(), _exVolNeighborsList.end(), neighbor);
+    auto it = find(_exVolNeighborsList.begin(), _exVolNeighborsList.end(), neighbor);
     if(it != _exVolNeighborsList.end()) _exVolNeighborsList.erase(it);
 }
 
@@ -24,10 +24,10 @@ void MCylinder::removeExVolNeighbor(MCylinder* neighbor) {
 MCylinder::MCylinder(double eqLength){
     
     ///Set equilibrium length relative to full cylinder length
-    SetEqLength(eqLength);
+    setEqLength(eqLength);
     
     ///set excluded volume const
-    SetExVolConst(SystemParameters::Mechanics().VolumeK);
+    setExVolConst(SystemParameters::Mechanics().VolumeK);
 }
 
 MCylinder::~MCylinder() {
@@ -35,10 +35,10 @@ MCylinder::~MCylinder() {
     for(auto &neighbor : _exVolNeighborsList) neighbor->removeExVolNeighbor(this);
 }
 
-void MCylinder::updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinders) {
+void MCylinder::updateExVolNeighborsList(vector<MCylinder*>& nearbyMCylinders) {
     
     ///Loop through current neighbors, remove any that are not within cutoff
-    std::vector<MCylinder*> toRemove;
+    vector<MCylinder*> toRemove;
     for(auto &m : _exVolNeighborsList)
         if(TwoPointDistance(m->_coordinate, _coordinate) >= SystemParameters::Mechanics().VolumeCutoff) toRemove.push_back(m);
     
@@ -50,7 +50,7 @@ void MCylinder::updateExVolNeighborsList(std::vector<MCylinder*>& nearbyMCylinde
     
 }
 
-void MCylinder::SetEqLength(double l) {
+void MCylinder::setEqLength(double l) {
     _eqLength = l;
     double fracCylinderSize = SystemParameters::Geometry().cylinderSize / l;
     
@@ -59,20 +59,3 @@ void MCylinder::SetEqLength(double l) {
     _kBend = SystemParameters::Mechanics().FBendingK * fracCylinderSize;
     _kTwist = SystemParameters::Mechanics().FTwistingK * fracCylinderSize;
 }
-
-double MCylinder::GetEqLength() {return _eqLength;}
-
-void MCylinder::SetAngle(double alpha) {_eqAngle = alpha;}
-double MCylinder::GetAngle() {return _eqAngle;}
-
-void MCylinder::SetStretchingConst(double k) {_kStretch = k;}
-double MCylinder::GetStretchingConst() {return _kStretch;}
-
-void MCylinder::SetBendingConst(double k) {_kBend = k;}
-double MCylinder::GetBendingConst() {return _kBend;}
-
-void MCylinder::SetTwistingConst(double k) {_kTwist = k;}
-double MCylinder::GetTwistingConst() {return _kTwist;}
-
-void MCylinder::SetExVolConst(double k) {_kExVol = k;}
-double MCylinder::GetExVolConst() {return _kExVol;}

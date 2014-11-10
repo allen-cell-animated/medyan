@@ -18,8 +18,6 @@
 #include "common.h"
 #include "Composite.h"
 
-using namespace std;
-
 TEST(VisitorTest, Simple) {
 }
 

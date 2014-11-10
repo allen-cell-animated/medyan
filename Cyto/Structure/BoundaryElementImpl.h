@@ -26,16 +26,16 @@ private:
 
 public:
     ///Constructor, sets parameters of equation
-    PlaneBoundaryElement(std::vector<double> coords, std::vector<double> normal, double repulsConst, double screenLength);
+    PlaneBoundaryElement(vector<double> coords, vector<double> normal, double repulsConst, double screenLength);
     
     ///Distance to this plane
-    virtual double distance(const std::vector<double>& point);
+    virtual double distance(const vector<double>& point);
     
     ///Stretched distance to plane
-    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
     
     ///normal to plane
-    virtual const std::vector<double> normal(const std::vector<double>& point);
+    virtual const vector<double> normal(const vector<double>& point);
     
     ///get the repulsion constant and screening length for this plane
     virtual double getRepulsionConst();
@@ -51,16 +51,16 @@ private:
     
 public:
     ///Constructor, sets parameters of equation
-    SphereBoundaryElement(std::vector<double> coords, double radius, double repulsConst, double screenLength);
+    SphereBoundaryElement(vector<double> coords, double radius, double repulsConst, double screenLength);
     
     ///Distance to this sphere
-    virtual double distance(const std::vector<double>& point);
+    virtual double distance(const vector<double>& point);
     
     ///Stretched distance to sphere
-    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
     
     ///normal to sphere
-    virtual const std::vector<double> normal(const std::vector<double>& point);
+    virtual const vector<double> normal(const vector<double>& point);
     
     ///get the repulsion constant and screening length for this plane
     virtual double getRepulsionConst();

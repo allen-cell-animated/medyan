@@ -21,9 +21,9 @@ private:
     FBendingInteractionType _FFType;
     
 public:
-    virtual double ComputeEnergy( Filament*, double d);
-    virtual void ComputeForces( Filament*);
-    virtual void ComputeForcesAux( Filament*);
+    virtual double computeEnergy( Filament*, double d);
+    virtual void computeForces( Filament*);
+    virtual void computeForcesAux( Filament*);
 };
 
 #endif /* defined(__Cyto__FilamentBending__) */

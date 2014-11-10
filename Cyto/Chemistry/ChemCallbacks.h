@@ -10,12 +10,11 @@
 #define __Cyto__ChemCallbacks__
 
 #include <iostream>
-#include "ReactionBase.h"
-#include "SubSystem.h"
 
 #include "common.h"
+#include "ReactionBase.h"
+#include "SubSystem.h"
 #include "SystemParameters.h"
-using namespace std;
 
 ///FILAMENT REACTION CALLBACKS
 
@@ -27,7 +26,7 @@ struct FilamentExtensionFrontCallback {
     ///Constructor, sets members
     FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->ExtendFront(); }
+    void operator() (ReactionBase *r){ _filament->extendFront(); }
 };
 
 ///Extension callback
@@ -38,7 +37,7 @@ struct FilamentExtensionBackCallback {
     ///Constructor, sets members
     FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->ExtendBack(); }
+    void operator() (ReactionBase *r){ _filament->extendBack(); }
 };
 
 ///Retraction callback
@@ -49,7 +48,7 @@ struct FilamentRetractionFrontCallback {
     ///Constructor, sets members
     FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->RetractFront(); }
+    void operator() (ReactionBase *r){ _filament->retractFront(); }
 };
 
 ///Retraction callback
@@ -60,7 +59,7 @@ struct FilamentRetractionBackCallback {
     ///Constructor, sets members
     FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->RetractBack(); }
+    void operator() (ReactionBase *r){ _filament->retractBack(); }
 };
 
 ///Polymerization/depolymerization callbacks
@@ -71,7 +70,7 @@ struct FilamentPolymerizationFrontCallback {
     ///Constructor, sets members
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->PolymerizeFront();}
+    void operator() (ReactionBase *r){ _filament->polymerizeFront();}
 };
 
 struct FilamentPolymerizationBackCallback {
@@ -81,7 +80,7 @@ struct FilamentPolymerizationBackCallback {
     ///Constructor, sets members
     FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->PolymerizeBack(); }
+    void operator() (ReactionBase *r){ _filament->polymerizeBack(); }
 };
 
 ///Retraction callback
@@ -92,7 +91,7 @@ struct FilamentDepolymerizationFrontCallback {
     ///Constructor, sets members
     FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->DepolymerizeFront(); }
+    void operator() (ReactionBase *r){ _filament->depolymerizeFront(); }
 };
 
 ///Retraction callback
@@ -103,7 +102,7 @@ struct FilamentDepolymerizationBackCallback {
     ///Constructor, sets members
     FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
     ///Callback
-    void operator() (ReactionBase *r){ _filament->DepolymerizeBack(); }
+    void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
 };
 
 ///LINKER AND MOTOR CALLBACKS
@@ -128,7 +127,7 @@ struct LinkerBindingCallback {
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->AddNewLinker(_c1, _c2, _linkerType, pos1, pos2);
+        _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
     }
 };
 
@@ -152,7 +151,7 @@ struct MotorBindingCallback {
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->AddNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
+        _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
     }
 };
 
@@ -173,10 +172,10 @@ struct UnbindingCallback {
         
         if(cBound != nullptr) {
             if(dynamic_cast<CLinker*>(cBound))
-                _ps->RemoveLinker(static_cast<CLinker*>(cBound)->getLinker());
+                _ps->removeLinker(static_cast<CLinker*>(cBound)->getLinker());
 
             else if(dynamic_cast<CMotorGhost*>(cBound))
-                _ps->RemoveMotorGhost(static_cast<CMotorGhost*>(cBound)->getMotorGhost());
+                _ps->removeMotorGhost(static_cast<CMotorGhost*>(cBound)->getMotorGhost());
         }
     }
 };

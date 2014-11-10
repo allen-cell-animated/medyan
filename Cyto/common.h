@@ -9,9 +9,11 @@
 #ifndef CytoSim_Experimenting_common_h
 #define CytoSim_Experimenting_common_h
 
+#include <iostream>
+
 ///Will eventually be command line macros
 #define MECHANICS
-//#define CHEMISTRY
+#define CHEMISTRY
 
 ///If compiling for testing
 #define TESTING
@@ -32,5 +34,7 @@ extern double global_time;
 
 inline double tau() {return global_time;}
 
+///To use STL containers, libraries, etc
+using namespace std;
 
 #endif

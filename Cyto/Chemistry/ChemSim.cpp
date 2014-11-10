@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 University of Maryland. All rights reserved.
 //
 
-#include <iostream>
 #include "ChemSim.h"
+
 #include "ChemSimImpl.h"
 #include "utility.h"
     

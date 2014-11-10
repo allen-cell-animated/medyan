@@ -13,35 +13,35 @@
 #include "BoundaryRepulsionExp.h"
 #include "BoundaryElementDB.h"
 
-BoundaryFF::BoundaryFF (std::string Interaction1, std::string Interaction2, std::string Interaction3) {
+BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interaction3) {
     
-    if (Interaction1 == "REPULSIONLJ") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionLJ>());}
-    if (Interaction1 == "REPULSIONEXP") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionExp>());}
+    if (interaction1 == "REPULSIONLJ") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionLJ>());}
+    if (interaction1 == "REPULSIONEXP") {_BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionExp>());}
 }
 
 
-double BoundaryFF::ComputeEnergy(double d) {
+double BoundaryFF::computeEnergy(double d) {
     double U_bound = 0;
     
-    for ( auto it: *BoundaryElementDB::Instance(BoundaryElementDBKey()) ) {
+    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
         for (auto &boundaryInteraction : _BoundaryInteractionVector)
-            U_bound += boundaryInteraction.get()->ComputeEnergy(it, d);
+            U_bound += boundaryInteraction.get()->computeEnergy(it, d);
     }
     return U_bound;
 }
 
-void BoundaryFF::ComputeForces() {
-    for ( auto it: *BoundaryElementDB::Instance(BoundaryElementDBKey()) ) {
+void BoundaryFF::computeForces() {
+    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
         
         for (auto &boundaryInteraction : _BoundaryInteractionVector)
-            boundaryInteraction.get()->ComputeForces(it);
+            boundaryInteraction.get()->computeForces(it);
     }
 }
 
-void BoundaryFF::ComputeForcesAux() {
-    for ( auto it: *BoundaryElementDB::Instance(BoundaryElementDBKey()) ) {
+void BoundaryFF::computeForcesAux() {
+    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
         
         for (auto &boundaryInteraction : _BoundaryInteractionVector)
-           boundaryInteraction.get()->ComputeForcesAux(it);
+           boundaryInteraction.get()->computeForcesAux(it);
     }
 }

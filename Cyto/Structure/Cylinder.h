@@ -28,26 +28,27 @@ class Compartment;
 class Cylinder : public Composite {
     
 private:
-    Bead* _pFirst;  ///< Pointer to the first bead, associated with this cylinder ;
-    Bead* _pSecond; ///< Pointer to the end bead in the cylinder. Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
+    Bead* _b1;  ///< Pointer to the first bead, associated with this cylinder ;
+    Bead* _b2; ///< Pointer to the end bead in the cylinder.
+                       ///< Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
-    std::unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
-    std::unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
+    unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
+    unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
     
     Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
     int _positionFilament; ///< position on filament (1st, 2nd, ... etc)
-    bool _ifLast = false; ///< if the cylinder is last in the filament's cylinder list
+    bool _last = false; ///< if the cylinder is last in the filament's cylinder list
     
     Compartment* _compartment; ///< compartment this cylinder is currently in
     
     ///Function to find nearby cylinders in the grid, used in updatePosition
-    std::vector<Cylinder*> findNearbyCylinders();
+    vector<Cylinder*> findNearbyCylinders();
     
 public:
-    std::vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
+    vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
     
     ///Constructor and destructor
-    Cylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront, bool extensionBack, bool creation);
+    Cylinder(Filament* f, Bead* b1, Bead* b2, bool extensionFront, bool extensionBack, bool creation);
     ~Cylinder();
     
     ///get mCylinder
@@ -57,7 +58,7 @@ public:
     CCylinder* getCCylinder() {return _cCylinder.get();}
     ///set cCylinder
     ///@note: since this is a unique ptr, will implicitly delete old CCylinder
-    void setCCylinder(CCylinder* c) {_cCylinder = std::unique_ptr<CCylinder>(c);}
+    void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
     ///get parent filament
     Filament* getFilament() {return _pFilament;}
@@ -65,11 +66,11 @@ public:
     void setFilament(Filament* pf) {_pFilament = pf;}
     
     ///Get beads
-    Bead* GetFirstBead() {return _pFirst;}
-    Bead* GetSecondBead() {return _pSecond;}
+    Bead* getFirstBead() {return _b1;}
+    Bead* getSecondBead() {return _b2;}
     
-    bool IfLast();
-    void SetLast(bool);
+    bool last(){ return _last;}
+    void setLast(bool b){ _last = b;}
     
     ///Update the position of this cylinder
     ///@note - changes compartment of ccylinder if needed

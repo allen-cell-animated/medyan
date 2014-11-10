@@ -30,13 +30,13 @@ class CylinderDBKey {friend class Filament;
 ///CylinderDB class is used to store all Cylinders in the system
 
 /*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament,
- * Linkers, Boundary Elements and Motors. This structure inherits from std:: list and manage all creations
+ * Linkers, Boundary Elements and Motors. This structure inherits from  list and manage all creations
  * and removing of objects, as well as some stabdart list functions and iterators.
  */
 
-class CylinderDB: private std::list<Cylinder*>
+class CylinderDB: private list<Cylinder*>
 {
-    typedef std::list<Cylinder*> cdb;
+    typedef list<Cylinder*> cdb;
     
 public:
     
@@ -54,10 +54,11 @@ public:
     
     
     /// get the instance of this singleton
-    static CylinderDB* Instance(CylinderDBKey k);
+    static CylinderDB* instance(CylinderDBKey k);
     
     // create new empty cylinder
-    Cylinder* CreateCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, bool extensionFront = false, bool extensionBack = false, bool creation = false) {
+    Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead,
+                             bool extensionFront = false, bool extensionBack = false, bool creation = false) {
         
         Cylinder* pc = new Cylinder(pf, firstBead, secondBead, extensionFront, extensionBack, creation);
         push_back(pc);
@@ -65,7 +66,7 @@ public:
     
     
     // Remove Cylinder:
-    void RemoveCylinder(Cylinder* pc){
+    void removeCylinder(Cylinder* pc){
         delete pc;
         remove(pc);
     }

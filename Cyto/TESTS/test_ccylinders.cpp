@@ -74,11 +74,10 @@ TEST(CCylinder, Basic) {
     
     for(int i = 0; i < 10; i++) {
         
-        ///check species and reaction equality
-        //EXPECT_TRUE(ccylinder->getInternalReactions()[i]->is_equal(*ccylinderClone->getInternalReactions()[i]));
-        
-        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(0) == ccylinderClone->getCMonomer(i)->speciesFilament(0));
-        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(1) == ccylinderClone->getCMonomer(i)->speciesFilament(1));
+        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(0)
+                    == ccylinderClone->getCMonomer(i)->speciesFilament(0));
+        EXPECT_TRUE(ccylinderClone->getCMonomer(i)->speciesFilament(1)
+                    == ccylinderClone->getCMonomer(i)->speciesFilament(1));
     }
     
     ///check destructor
@@ -105,8 +104,10 @@ TEST(CCylinder, AdvancedCloning) {
     for(int i = 0; i < 10; i++) {
         
         CMonomer* m = new CMonomer;
-        SpeciesFilament* sf1 = c1->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
-        SpeciesFilament* sf2 = c1->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        SpeciesFilament* sf1 = c1->addSpeciesFilament(
+                               SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        SpeciesFilament* sf2 = c1->addSpeciesFilament(
+                               SpeciesNamesDB::Instance()->generateUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -117,8 +118,10 @@ TEST(CCylinder, AdvancedCloning) {
     for(int i = 0; i < 10; i++) {
         
         CMonomer* m = new CMonomer;
-        SpeciesFilament* sf1 = c2->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
-        SpeciesFilament* sf2 = c2->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        SpeciesFilament* sf1 = c2->addSpeciesFilament(
+                               SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        SpeciesFilament* sf2 = c2->addSpeciesFilament(
+                               SpeciesNamesDB::Instance()->generateUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -129,10 +132,12 @@ TEST(CCylinder, AdvancedCloning) {
     
     ///add cross-cylinder reactions
     cc1->addCrossCylinderReaction(cc2,
-        new Reaction<1,1>({cc1->getCMonomer(9)->speciesFilament(0), cc2->getCMonomer(0)->speciesFilament(0)}, 20.0));
+        new Reaction<1,1>({cc1->getCMonomer(9)->speciesFilament(0),
+                           cc2->getCMonomer(0)->speciesFilament(0)}, 20.0));
     
     cc2->addCrossCylinderReaction(cc1,
-        new Reaction<1,1>({cc2->getCMonomer(0)->speciesFilament(1), cc1->getCMonomer(9)->speciesFilament(1)}, 20.0));
+        new Reaction<1,1>({cc2->getCMonomer(0)->speciesFilament(1),
+                           cc1->getCMonomer(9)->speciesFilament(1)}, 20.0));
     
     
     EXPECT_EQ(20, c1->numberOfSpecies());
@@ -146,10 +151,6 @@ TEST(CCylinder, AdvancedCloning) {
     EXPECT_EQ(20, c3->numberOfSpecies());
     EXPECT_EQ(11, c3->numberOfReactions());
     
-    ///check cross cylinder reaction cloned correctly
-    //EXPECT_TRUE(cc3->getCrossCylinderReactions()[cc2][0]->is_equal(*cc1->getCrossCylinderReactions()[cc2][0]));
-    //EXPECT_TRUE(cc2->getCrossCylinderReactions()[cc1][0]->is_equal(*cc2->getCrossCylinderReactions()[cc3][0]));
-    
     ///now, delete cc1
     delete cc1;
     
@@ -159,7 +160,7 @@ TEST(CCylinder, AdvancedCloning) {
     ///reactions involving cc1 should be removed from cc3
     EXPECT_EQ(0, cc3->getCrossCylinderReactions()[cc1].size());
     EXPECT_EQ(cc3->getReactingCylinders().end(),
-              std::find(cc3->getReactingCylinders().begin(), cc3->getReactingCylinders().end(), cc1));
+              find(cc3->getReactingCylinders().begin(), cc3->getReactingCylinders().end(), cc1));
 
 }
 

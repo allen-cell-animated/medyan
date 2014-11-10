@@ -21,15 +21,15 @@ class FilamentInteractions;
 class FilamentFF : public ForceField {
  
 private:
-    std::vector<std::unique_ptr<FilamentInteractions>> _filamentInteractionVector;
+    vector<unique_ptr<FilamentInteractions>> _filamentInteractionVector;
     
 public:
-    FilamentFF(std::string& Stretching, std::string& Bending, std::string& Twisting);
+    FilamentFF(string& stretching, string& bending, string& twisting);
     
    // Public interfaecs to compute forces:
-    virtual double ComputeEnergy(double d);
-    virtual void ComputeForces();
-    virtual void ComputeForcesAux();
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
 };
 
 

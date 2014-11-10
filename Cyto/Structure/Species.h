@@ -44,12 +44,12 @@ enum SpeciesType {
  *  "Arp2/3" bound to filaments with diffusing "Arp2/3". SpeciesNamesDB associates a unique integer 
  *  with Species of the same type (e.g. "Arp2/3", regardless whether it is bound or not), and provides 
  *  conversion functions fron integer to 
- *  std::string (SpeciesNamesDB::intToString(int i)) and vice versa (SpeciesNamesDB::stringToInt (std::string name)). 
+ *  string (SpeciesNamesDB::intToString(int i)) and vice versa (SpeciesNamesDB::stringToInt (string name)). 
  *  class SpeciesNamesDB is a singleton, and should be used by first calling SpeciesNamesDB::Instance() method.
  *
  *  @code
  *  int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3"); // let's say y=2
- *  std::string x = SpeciesNamesDB::Instance()->intToString(2); // then x should be "Arp2/3"
+ *  string x = SpeciesNamesDB::Instance()->intToString(2); // then x should be "Arp2/3"
  *  @endcode
  *
  * SpeciesNamesDB also has a function to generate a unique name given a string seed. This is particularly
@@ -61,23 +61,23 @@ private:
     static SpeciesNamesDB* _instance; ///< the singleton instance
     SpeciesNamesDB() {}
 private: 
-    std::unordered_map<std::string,int> _map_string_int;
-    std::vector<std::string> _vec_int_string;
+    unordered_map<string,int> _map_string_int;
+    vector<string> _vec_int_string;
     unsigned long _num = 0; ///<used to generate unique names
 public:
     /// returns the unique instance of the singleton, which can be used to access the names DB
     static SpeciesNamesDB* Instance();
     
-    /// Given an integer "i", returns the std::string associated with that integer. Throws an out of range exception.  
-    std::string intToString(unsigned int i) const {
+    /// Given an integer "i", returns the string associated with that integer. Throws an out of range exception.  
+    string intToString(unsigned int i) const {
         if (i>=_vec_int_string.size())
-            throw std::out_of_range("SpeciesNamesDB::intToString(int i) index error:[" + std::to_string(i) +"], while the vector size is " + std::to_string(_vec_int_string.size()));
+            throw out_of_range("SpeciesNamesDB::intToString(int i) index error:[" + to_string(i) +"], while the vector size is " + to_string(_vec_int_string.size()));
         return _vec_int_string[i];
     }
     
-    /// Given a std::string "name", returns the unique integer associated with that string. If the 
+    /// Given a string "name", returns the unique integer associated with that string. If the 
     /// string does not exist yet, it is created.
-    int stringToInt (std::string name) {
+    int stringToInt (string name) {
         auto mit = _map_string_int.find(name);
         if(mit == _map_string_int.end()){
             _vec_int_string.push_back(name);
@@ -89,12 +89,12 @@ public:
     }
 
     ///Generate a unique name based on a seed name (just adds integer value to end of string)
-    std::string generateUniqueName(std::string name) {
-        std::string uniqueName = name + std::to_string(_num);
+    string generateUniqueName(string name) {
+        string uniqueName = name + to_string(_num);
         if(_map_string_int.find(uniqueName) != _map_string_int.end())
             return uniqueName;
         else
-            return name + std::to_string(++_num);
+            return name + to_string(++_num);
     }
 
     /// Clear the contents of the database
@@ -136,7 +136,7 @@ public:
     Species()  : _parent(nullptr) {
         _molecule=SpeciesNamesDB::Instance()->stringToInt("");
         _rspecies = new RSpecies(*this);
-//            std::cout << "Species(): Default ctor called, creating ptr=" << this << std::endl;
+//            cout << "Species(): Default ctor called, creating ptr=" << this << endl;
     }
     
     /// The constructor for this base class of Species should not be called directly - only by the concrete subclasses
@@ -144,11 +144,10 @@ public:
     /// @param type_enum - SType enum, such as SType::Diffusing
     /// @param n - copy number
     /// @param ulim - upper limit for this species' copy number
-    Species (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr)
+    Species (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr)
     {
         _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
         _rspecies = new RSpecies(*this, n, ulim);
-//            std::cout << "Species (const std::string &name, species_copy_t n=0): Main ctor called, creating ptr=" << this << std::endl;
         
     }
     
@@ -163,7 +162,6 @@ public:
 #else
         _rspecies = new RSpecies(*this, rhs.getN());
 #endif
-//            std::cout << "Species(const Species &rhs): copy constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
     }
     
     /// Move constructor - makes it possible to easily add Species to STL containers, such as vector<Species>
@@ -177,7 +175,6 @@ public:
     Species (Species &&rhs) noexcept
     : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent) {
         rhs._rspecies = nullptr;
-//            std::cout << "Species(Species &&rhs): move constructor called, old ptr=" << &rhs << ", new ptr=" << this << std::endl;
     }
     
     /// Assignment operator
@@ -185,7 +182,7 @@ public:
     /// them to a blank value (i.e. A won't be involced in any Reactions). B's Reaction interactions are not copied.
     /// The copy number of B is copied to A. The A Species parent attriute is not copied, but set to nullptr. 
     Species& operator=(const Species& rhs)  {
-//            std::cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << std::endl; 
+//            cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << endl; 
         _molecule = rhs._molecule;
 #ifdef TRACK_UPPER_COPY_N
         _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
@@ -199,7 +196,6 @@ public:
     /// Move assignment is needed for the same reasons as move constructor.
     /// @see Species (Species &&rhs)
     Species& operator=(Species&& rhs)  {
-//            std::cout << "Species& operator=(Species&& rhs):" << this << ", " << &rhs << std::endl; 
         _molecule = rhs._molecule;
         _rspecies = rhs._rspecies;
         rhs._rspecies = nullptr;
@@ -240,7 +236,7 @@ public:
 #endif
     
     /// Return this Species' name
-    std::string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
+    string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
     
     /// Return the molecule index associated with this Species' (as int)
     int getMolecule() const {return _molecule;}
@@ -258,11 +254,11 @@ public:
     void stopSignaling () {_rspecies->stopSignaling();}
     
     /// Connect the callback, rspecies_callback to a signal corresponding to RSpecies *s.
-    /// @param std::function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot)
+    /// @param function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
     /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
-    boost::signals2::connection connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
+    boost::signals2::connection connect(function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
 #endif
     
     /// Returns true if two Species objects are equal.
@@ -294,8 +290,8 @@ public:
             delete _rspecies;
     };
             
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    virtual std::string getFullName() const {return getName() + "{None}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
+    virtual string getFullName() const {return getName() + "{None}";}
     
     virtual size_t countSpecies() const {return 1;}
 };
@@ -309,13 +305,13 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesBulk (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
+    SpeciesBulk (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
     
     /// Move constructor
-    SpeciesBulk (SpeciesBulk &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesBulk (SpeciesBulk &&rhs) noexcept : Species(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -327,7 +323,7 @@ public:
     /// Move assignment
     SpeciesBulk& operator=(SpeciesBulk&& rhs) 
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -335,14 +331,15 @@ public:
         return new SpeciesBulk(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    virtual std::string getFullName() const {return getName() + "{Bulk}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
+    virtual string getFullName() const {return getName() + "{Bulk}";}
     
     /// Default destructor
     ~SpeciesBulk () noexcept {};
 };
 
-/// SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neighboring one (i.e. they are the stochastic analogue of determenistic reaction-diffusion processes)
+/// SpeciesDiffusing should be used for Species which can move spatially from one compartment to
+/// the neighboring one (i.e. they are the stochastic analogue of determenistic reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
 public:
     /// Default constructor
@@ -351,13 +348,13 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesDiffusing (const std::string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
+    SpeciesDiffusing (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}
     
     /// Move constructor
-    SpeciesDiffusing (SpeciesDiffusing &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesDiffusing (SpeciesDiffusing &&rhs) noexcept : Species(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -369,7 +366,7 @@ public:
     /// Move assignment
     SpeciesDiffusing& operator=(SpeciesDiffusing&& rhs) 
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -377,8 +374,8 @@ public:
         return new SpeciesDiffusing(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Diffusing}"
-    virtual std::string getFullName() const {return getName() + "{Diffusing}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Diffusing}"
+    virtual string getFullName() const {return getName() + "{Diffusing}";}
     
     /// Default destructor
     ~SpeciesDiffusing () noexcept {};
@@ -394,14 +391,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesFilament (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesFilament (const string &name, species_copy_t n=0, species_copy_t ulim=1)
         :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
     
     /// Move constructor
-    SpeciesFilament (SpeciesFilament &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesFilament (SpeciesFilament &&rhs) noexcept : Species(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -413,7 +410,7 @@ public:
     /// Move assignment
     SpeciesFilament& operator=(SpeciesFilament&& rhs)
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -421,8 +418,8 @@ public:
         return new SpeciesFilament(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Actin{Filament}"
-    virtual std::string getFullName() const {return getName() + "{Filament}";}
+    /// Return the full name of this Species in a string format (e.g. "Actin{Filament}"
+    virtual string getFullName() const {return getName() + "{Filament}";}
     
     /// Default destructor
     ~SpeciesFilament () noexcept {};
@@ -443,14 +440,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesBound (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1)
     :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs), _cBound(rhs._cBound) {}
     
     /// Move constructor
-    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(std::move(rhs)), _cBound(rhs._cBound) {
+    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)), _cBound(rhs._cBound) {
     }
     
     /// Regular Assignment
@@ -463,7 +460,7 @@ public:
     /// Move assignment
     SpeciesBound& operator=(SpeciesBound&& rhs)
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -471,8 +468,8 @@ public:
         return new SpeciesBound(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
-    virtual std::string getFullName() const {return getName() + "{Bound}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    virtual string getFullName() const {return getName() + "{Bound}";}
     
     /// Default destructor
     ~SpeciesBound () noexcept {};
@@ -497,14 +494,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesLinker (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesLinker (const string &name, species_copy_t n=0, species_copy_t ulim=1)
     :  SpeciesBound(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesLinker (const SpeciesLinker &rhs)  : SpeciesBound(rhs) {}
     
     /// Move constructor
-    SpeciesLinker (SpeciesLinker &&rhs) noexcept : SpeciesBound(std::move(rhs)){
+    SpeciesLinker (SpeciesLinker &&rhs) noexcept : SpeciesBound(move(rhs)){
     }
     
     /// Regular Assignment
@@ -516,7 +513,7 @@ public:
     /// Move assignment
     SpeciesLinker& operator=(SpeciesLinker&& rhs)
     {
-        SpeciesBound::operator=(std::move(rhs));
+        SpeciesBound::operator=(move(rhs));
         return *this;
     }
     
@@ -524,8 +521,8 @@ public:
         return new SpeciesLinker(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Linker}"
-    virtual std::string getFullName() const {return getName() + "{Linker}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Linker}"
+    virtual string getFullName() const {return getName() + "{Linker}";}
     
     /// Default destructor
     ~SpeciesLinker () noexcept {};
@@ -544,14 +541,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesMotor (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesMotor (const string &name, species_copy_t n=0, species_copy_t ulim=1)
     :  SpeciesBound(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesMotor (const SpeciesMotor &rhs)  : SpeciesBound(rhs) {}
     
     /// Move constructor
-    SpeciesMotor (SpeciesMotor &&rhs) noexcept : SpeciesBound(std::move(rhs)){
+    SpeciesMotor (SpeciesMotor &&rhs) noexcept : SpeciesBound(move(rhs)){
     }
     
     /// Regular Assignment
@@ -563,7 +560,7 @@ public:
     /// Move assignment
     SpeciesMotor& operator=(SpeciesMotor&& rhs)
     {
-        SpeciesBound::operator=(std::move(rhs));
+        SpeciesBound::operator=(move(rhs));
         return *this;
     }
     
@@ -571,8 +568,8 @@ public:
         return new SpeciesMotor(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Motor}"
-    virtual std::string getFullName() const {return getName() + "{Motor}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Motor}"
+    virtual string getFullName() const {return getName() + "{Motor}";}
     
     /// Default destructor
     ~SpeciesMotor () noexcept {};
@@ -590,14 +587,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesPlusEnd (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesPlusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
     :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : Species(rhs) {}
     
     /// Move constructor
-    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : Species(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -609,7 +606,7 @@ public:
     /// Move assignment
     SpeciesPlusEnd& operator=(SpeciesPlusEnd&& rhs)
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -617,8 +614,8 @@ public:
         return new SpeciesPlusEnd(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
-    virtual std::string getFullName() const {return getName() + "{PlusEnd}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    virtual string getFullName() const {return getName() + "{PlusEnd}";}
     
     /// Default destructor
     ~SpeciesPlusEnd () noexcept {};
@@ -635,14 +632,14 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesMinusEnd (const std::string &name, species_copy_t n=0, species_copy_t ulim=1)
+    SpeciesMinusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
     :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : Species(rhs) {}
     
     /// Move constructor
-    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : Species(std::move(rhs)) {
+    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : Species(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -654,7 +651,7 @@ public:
     /// Move assignment
     SpeciesMinusEnd& operator=(SpeciesMinusEnd&& rhs)
     {
-        Species::operator=(std::move(rhs));
+        Species::operator=(move(rhs));
         return *this;
     }
     
@@ -662,17 +659,14 @@ public:
         return new SpeciesMinusEnd(*this);
     }
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bound}"
-    virtual std::string getFullName() const {return getName() + "{MinusEnd}";}
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    virtual string getFullName() const {return getName() + "{MinusEnd}";}
     
     /// Default destructor
     ~SpeciesMinusEnd () noexcept {};
 };
 
-
-
-
 /// Print self into an iostream
-std::ostream& operator<<(std::ostream& os, const Species& s);
+ostream& operator<<(ostream& os, const Species& s);
 
 #endif

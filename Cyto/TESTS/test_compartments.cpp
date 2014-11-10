@@ -17,8 +17,6 @@
 #include "GController.h"
 #include "CompartmentContainer.h"
 
-using namespace std;
-
 //Testing neighbor capabilities
 TEST(CompartmentTest, Neighbors) {
 
@@ -129,13 +127,13 @@ TEST(CompartmentContainerTest, Main) {
     
     _numSpecies = CompartmentGrid::Instance(CompartmentGridKey())->countSpecies();
     
-    Compartment *C1 = GController::getCompartment(std::vector<size_t>{10U,10U,10U});
+    Compartment *C1 = GController::getCompartment(vector<size_t>{10U,10U,10U});
     
     EXPECT_EQ(6, C1->numberOfNeighbours());
     EXPECT_EQ(2, C1->numberOfSpecies());
     EXPECT_EQ(14, C1->numberOfReactions());
     
-    Compartment*C2 = GController::getCompartment(std::vector<size_t>{10U,11U,10U});
+    Compartment*C2 = GController::getCompartment(vector<size_t>{10U,11U,10U});
     C1->removeNeighbour(C2);
     
     EXPECT_EQ(5, C1->numberOfNeighbours());

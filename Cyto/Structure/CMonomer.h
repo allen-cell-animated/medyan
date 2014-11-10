@@ -55,12 +55,12 @@ public:
     }
     ///Add a species
     ///@note should only be called at initialization
-    void addSpeciesFilament(SpeciesFilament* s);
-    void addSpeciesPlusEnd(SpeciesPlusEnd* s);
-    void addSpeciesMinusEnd(SpeciesMinusEnd* s);
-    void addSpeciesBound(SpeciesBound* s);
-    void addSpeciesLinker(SpeciesLinker* s);
-    void addSpeciesMotor(SpeciesMotor* s);
+    void addSpeciesFilament (SpeciesFilament* s);
+    void addSpeciesPlusEnd  (SpeciesPlusEnd* s);
+    void addSpeciesMinusEnd (SpeciesMinusEnd* s);
+    void addSpeciesBound    (SpeciesBound* s);
+    void addSpeciesLinker   (SpeciesLinker* s);
+    void addSpeciesMotor    (SpeciesMotor* s);
     
     ///Print the species in this filament element
     void print();
@@ -68,12 +68,12 @@ public:
     ///Get species at a specific index
     ///@note no check on this index. The index value of a species is stored in the chemical initializer
     ///when all reactions are initialized from the chemical input file
-    SpeciesFilament* speciesFilament(int index) {return _speciesFilament[index];}
-    SpeciesPlusEnd* speciesPlusEnd(int index) {return _speciesPlusEnd[index];}
-    SpeciesMinusEnd* speciesMinusEnd(int index) {return _speciesMinusEnd[index];}
-    SpeciesBound* speciesBound(int index) {return _speciesBound[index];}
-    SpeciesLinker* speciesLinker(int index) {return _speciesLinker[index];}
-    SpeciesMotor* speciesMotor(int index) {return _speciesMotor[index];}
+    SpeciesFilament* speciesFilament (int index)  {return _speciesFilament[index];}
+    SpeciesPlusEnd*  speciesPlusEnd  (int index)  {return _speciesPlusEnd[index];}
+    SpeciesMinusEnd* speciesMinusEnd (int index)  {return _speciesMinusEnd[index];}
+    SpeciesBound*    speciesBound    (int index)  {return _speciesBound[index];}
+    SpeciesLinker*   speciesLinker   (int index)  {return _speciesLinker[index];}
+    SpeciesMotor*    speciesMotor    (int index)  {return _speciesMotor[index];}
     
     ///Check if this filament element is valid. Involves checking copy numbers
     virtual bool checkSpecies(int sum) {return true;}

@@ -11,10 +11,11 @@
 
 #include <iostream>
 
+#include "common.h"
 #include "CBound.h"
-#include "Compartment.h"
 
 class Linker;
+class Compartment;
 
 ///CLinker is a class to represent the chemical component of a Linker
 /*! 

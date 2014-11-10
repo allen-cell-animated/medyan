@@ -16,15 +16,15 @@ class Filament;
 
 class FilamentInteractions {
 private:
-    std::string _name;
+    string _name;
 
 public:
-    virtual double ComputeEnergy( Filament*,  double d) = 0;
-    virtual void ComputeForces(Filament*) = 0;
-    virtual void ComputeForcesAux(Filament*) = 0;
+    virtual double computeEnergy( Filament*,  double d) = 0;
+    virtual void computeForces(Filament*) = 0;
+    virtual void computeForcesAux(Filament*) = 0;
     
-   // std::string getName() {return _name;}
-    const std::string& getName() {return _name;}
+   // string getName() {return _name;}
+    const string& getName() {return _name;}
     
 };
 

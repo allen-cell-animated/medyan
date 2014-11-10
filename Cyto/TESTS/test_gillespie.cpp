@@ -29,9 +29,8 @@ using namespace boost::accumulators;
 #include "ChemGillespieImpl.h"
 #include "ChemSim.h"
 
-using namespace std;
-
-#ifdef TRACK_DEPENDENTS // the cached Gillespie algorithm fundamentally depends on the ability to track dependents
+#ifdef TRACK_DEPENDENTS 
+// the cached Gillespie algorithm fundamentally depends on the ability to track dependents
 
 TEST(ChemGillespieTest, StoichiometryInvariants) {
     SpeciesBulk A1("A1",  100);
@@ -48,9 +47,7 @@ TEST(ChemGillespieTest, StoichiometryInvariants) {
     ChemSim::addReaction(ChemSimReactionKey(), &r3);
 
     ChemSim::initialize(ChemSimInitKey());
-    //    chem.printReactions();
     ChemSim::run(ChemSimRunKey(), 30);
-    //    chem.printReactions();
     EXPECT_EQ(100,A1.getN()+A2.getN()+A3.getN());
 }
 
@@ -70,9 +67,7 @@ TEST(ChemGillespieTest, SimpleSteadyState) {
     
     ChemSim::initialize(ChemSimInitKey());
 
-    //    chem.printReactions();
     ChemSim::run(ChemSimRunKey(), 1000);
-    // chem.printReactions();
     
     accumulator_set<int, stats<tag::variance(immediate)>> accA1;    
     accumulator_set<int, stats<tag::mean>> accA2;    
@@ -80,7 +75,6 @@ TEST(ChemGillespieTest, SimpleSteadyState) {
     int N_SAMPLE_POINTS=1000;
     for(int i=0;i<N_SAMPLE_POINTS;++i){
         ChemSim::run(ChemSimRunKey(), 100);
-//        cout << "N= " << A1.getN() << ", " << A1.getN() << endl;
         accA1(A1.getN());
         accCov(A1.getN(), covariate1 = A2.getN());
     }
@@ -91,8 +85,6 @@ TEST(ChemGillespieTest, SimpleSteadyState) {
     EXPECT_TRUE(fabs(A1mean-Nstart/2)<10*mean_error);
     EXPECT_TRUE(fabs(var_expected-A1var)<0.1*var_expected);// within 10% of the expected variance
     EXPECT_FLOAT_EQ(-1.0,covariance(accCov)/(A1var));
-//    cout << "ChemGillespieTest::SimpleSteadyState: " << A1mean << " vs " << double(Nstart)/2 << ", Expected error: " << mean_error << endl;
-//    cout << "ChemGillespieTest::SimpleSteadyState: std= " << sqrt(A1var) << ", "  << covariance(accCov)/A1var << endl;
 }
 
 // Testing transient dynamics for A<->B 
@@ -100,7 +92,6 @@ TEST(ChemGillespieTest, SimpleTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);
     const long long int Nstart = 10;
     const double tau_snapshot = 0.48; //seconds
-    //long long int print_freq = pow(10,7);
     SpeciesBulk A1("A1",  Nstart);
     SpeciesBulk A2("A2", 0);
     // A1 <-> A2 with the same forward and backward rates; [A]~[B] at steady state
@@ -112,35 +103,21 @@ TEST(ChemGillespieTest, SimpleTransient) {
     ChemSim::addReaction(ChemSimReactionKey(), &r1);
     ChemSim::addReaction(ChemSimReactionKey(), &r2);
     
-    //    chem.printReactions();
-    // chem.printReactions();
     vector<long long int> n_hist(Nstart+1);
     
-    //int counter = 0;
     accumulator_set<double, stats<tag::mean>> accTau;
     long long int N_penultimate;
     for(long long int i=0;i<N_SAMPLE_POINTS;++i){
         A1.setN(Nstart);
         A2.setN(0);
         ChemSim::initialize(ChemSimInitKey());
-//        long long int events=0;
         do {
             N_penultimate=A1.getN();
              ChemSim::run(ChemSimRunKey(), 1);
-//            ++events;
         } while (tau()<tau_snapshot);
         ++n_hist[N_penultimate];
-//        ++n_hist[A1.getN()];
         accTau(tau());
-
-//        if(i%print_freq==0)
-//            cout << "i=" << i << endl;
      }
-    
-//    cout << "tau_mean=" << mean(accTau) << ", counter=" << N_SAMPLE_POINTS << endl;;
-//    for (long long int n=0; n<=Nstart; ++n){
-//        cout << "P[" << n << "]=" << double(n_hist[n])/N_SAMPLE_POINTS << endl;
-//    }
     
     double sum=0;
     for(auto num: n_hist)
@@ -152,7 +129,6 @@ TEST(ChemGillespieTest, SimpleTransient) {
     for(int n=0; n<(Nstart+1); ++n){
         double p_est=double(n_hist[n])/N_SAMPLE_POINTS;
         double p_analyt=n_hist_analyt[n];
-//        cout << "P[" << n << "]=" << p_est << " " << p_analyt << endl;
         EXPECT_NEAR(p_est,p_analyt,relative_error*p_analyt);
     }
     // Note that the error for P[0] is hard to converge, most likely because of P[0] being very small
@@ -163,7 +139,6 @@ TEST(ChemGillespieTest, SimpleTransient) {
 TEST(ChemGillespieTest, CyclicTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);
     const double tau_snapshot = 0.25; //seconds
-    //long long int print_freq = pow(10,7);
     SpeciesBulk A1("A1", 1, 1);
     SpeciesBulk A2("A2", 0, 1);
     SpeciesBulk A3("A3", 0, 1);
@@ -198,15 +173,11 @@ TEST(ChemGillespieTest, CyclicTransient) {
             n_a2_pentult=A2.getN();
             n_a3_pentult=A3.getN();
             ChemSim::run(ChemSimRunKey(), 1);
-            //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
             ++events;
-            //            chem.printReactions();
-            //            cout << endl << endl;
         } while (tau()<tau_snapshot);
         n_a1_hist+=n_a1_pentult;
         n_a2_hist+=n_a2_pentult;
         n_a3_hist+=n_a3_pentult;
-        //        cout << "1=" << n_a1_hist << ", 2=" << n_a2_hist << ", 3=" << n_a3_hist << endl;
     }
     
     double pa1=static_cast<double>(n_a1_hist)/N_SAMPLE_POINTS;
@@ -216,10 +187,6 @@ TEST(ChemGillespieTest, CyclicTransient) {
     double pa1_numeric = 0.33169986;
     double pa2_numeric = 0.47589009;
     double pa3_numeric = 0.19241006;
-    
-//    cout << "P1=" << pa1 << ", P1_numeric=" << pa1_numeric << endl
-//        << "P2=" << pa2 << ", P2_numeric=" << pa2_numeric << endl
-//        << "P3=" << pa3 << ", P3_numeric=" << pa3_numeric << endl;
     
     double relative_error=0.01; //i.e. allow a 1% relative error
     EXPECT_NEAR(pa1,pa1_numeric,relative_error*pa1_numeric);
@@ -278,7 +245,6 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
         ChemSim::initialize(ChemSimInitKey());
         long long int events=0;
         do {
-//            cout << "chem.run(1) start, i= " << i << endl;
             x_pentult=X.getN();
             n_a_pentult=A.getN();
             n_b_pentult=B.getN();
@@ -289,16 +255,13 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
                 ChemSim::printReactions();
                 break;
             }
-            //            cout << "Event [" << events << "], tau=" << tau() << ",  A1=" << A1.getN() << ", A2= " << A2.getN() << ", A3= " << A3.getN() << endl;
             ++events;
-            //            chem.printReactions();
-            //            cout << endl << endl;
+
         } while (tau()<tau_snapshot);
         ++x_hist[x_pentult];
         n_a1_hist+=n_a_pentult;
         n_a2_hist+=n_b_pentult;
         n_a3_hist+=n_c_pentult;
-        //        cout << "1=" << n_a1_hist << ", 2=" << n_a2_hist << ", 3=" << n_a3_hist << endl;
     }
     
     
@@ -321,7 +284,6 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
     double relative_error=0.05; //i.e. allow a 5% relative error
     
     for(int n=0; n<(Nstart+4); ++n){
-//        cout << "P[" << n << "]=" << p_nrm[n] << " " << p_numeric[n] << endl;
         EXPECT_NEAR(p_nrm[n],p_numeric[n],relative_error*p_numeric[n]);
     }
 }

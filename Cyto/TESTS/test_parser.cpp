@@ -51,44 +51,44 @@ TEST(FilamentParserTest, Main) {
     FilamentParser p("/Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt");
     
     auto filaments = p.readFilaments();
-    std::vector<std::vector<std::vector<double>>> expectedValues = { {{100.0,100.0,100.0},{200.0,200.0,200.0}}};
+    vector<vector<vector<double>>> expectedValues = { {{100.0,100.0,100.0},{200.0,200.0,200.0}}};
     
-    EXPECT_TRUE(std::equal(filaments.begin(), filaments.end(), expectedValues.begin()));
+    EXPECT_TRUE(equal(filaments.begin(), filaments.end(), expectedValues.begin()));
 }
 
 TEST(ChemParserTest, Main) {
     
     ChemistryParser p("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testchemistryinput.txt");
     
-    ChemistrySpeciesAndReactions chemSR = p.readChemistryInput();
-    EXPECT_EQ("A", std::get<0>(chemSR.speciesBulk[0]));
-    EXPECT_EQ(1000, std::get<1>(chemSR.speciesBulk[0]));
+    ChemistryData chem = p.readChemistryInput();
+    EXPECT_EQ("A", get<0>(chem.speciesBulk[0]));
+    EXPECT_EQ(1000, get<1>(chem.speciesBulk[0]));
     
-    EXPECT_EQ("A", chemSR.speciesFilament[0]);
-    EXPECT_EQ("E", chemSR.speciesBound[0]);
-    EXPECT_EQ("P", chemSR.speciesPlusEnd[0]);
-    EXPECT_EQ("M", chemSR.speciesMinusEnd[0]);
+    EXPECT_EQ("A", chem.speciesFilament[0]);
+    EXPECT_EQ("E", chem.speciesBound[0]);
+    EXPECT_EQ("P", chem.speciesPlusEnd[0]);
+    EXPECT_EQ("M", chem.speciesMinusEnd[0]);
     
-    EXPECT_EQ("A:BULK", std::get<0>(chemSR.reactions[0])[0]);
-    EXPECT_EQ("P:PLUSEND:N", std::get<0>(chemSR.reactions[0])[1]);
-    EXPECT_EQ("A:FILAMENT", std::get<1>(chemSR.reactions[0])[0]);
-    EXPECT_EQ("E:BOUND", std::get<1>(chemSR.reactions[0])[1]);
-    EXPECT_EQ("P:PLUSEND:N+1", std::get<1>(chemSR.reactions[0])[2]);
-    EXPECT_EQ(10.0, std::get<2>(chemSR.reactions[0]));
+    EXPECT_EQ("A:BULK", get<0>(chem.reactions[0])[0]);
+    EXPECT_EQ("P:PLUSEND:N", get<0>(chem.reactions[0])[1]);
+    EXPECT_EQ("A:FILAMENT", get<1>(chem.reactions[0])[0]);
+    EXPECT_EQ("E:BOUND", get<1>(chem.reactions[0])[1]);
+    EXPECT_EQ("P:PLUSEND:N+1", get<1>(chem.reactions[0])[2]);
+    EXPECT_EQ(10.0, get<2>(chem.reactions[0]));
     
-    EXPECT_EQ("A:BULK", std::get<0>(chemSR.reactions[1])[0]);
-    EXPECT_EQ("M:MINUSEND:N+1", std::get<0>(chemSR.reactions[1])[1]);
-    EXPECT_EQ("A:FILAMENT", std::get<1>(chemSR.reactions[1])[0]);
-    EXPECT_EQ("E:BOUND", std::get<1>(chemSR.reactions[1])[1]);
-    EXPECT_EQ("M:MINUSEND:N", std::get<1>(chemSR.reactions[1])[2]);
-    EXPECT_EQ(10.0, std::get<2>(chemSR.reactions[1]));
+    EXPECT_EQ("A:BULK", get<0>(chem.reactions[1])[0]);
+    EXPECT_EQ("M:MINUSEND:N+1", get<0>(chem.reactions[1])[1]);
+    EXPECT_EQ("A:FILAMENT", get<1>(chem.reactions[1])[0]);
+    EXPECT_EQ("E:BOUND", get<1>(chem.reactions[1])[1]);
+    EXPECT_EQ("M:MINUSEND:N", get<1>(chem.reactions[1])[2]);
+    EXPECT_EQ(10.0, get<2>(chem.reactions[1]));
     
-    EXPECT_EQ("A:BULK", std::get<1>(chemSR.reactions[2])[0]);
-    EXPECT_EQ("P:PLUSEND:N", std::get<1>(chemSR.reactions[2])[1]);
-    EXPECT_EQ("A:FILAMENT", std::get<0>(chemSR.reactions[2])[0]);
-    EXPECT_EQ("E:BOUND", std::get<0>(chemSR.reactions[2])[1]);
-    EXPECT_EQ("P:PLUSEND:N+1", std::get<0>(chemSR.reactions[2])[2]);
-    EXPECT_EQ(10.0, std::get<2>(chemSR.reactions[2]));
+    EXPECT_EQ("A:BULK", get<1>(chem.reactions[2])[0]);
+    EXPECT_EQ("P:PLUSEND:N", get<1>(chem.reactions[2])[1]);
+    EXPECT_EQ("A:FILAMENT", get<0>(chem.reactions[2])[0]);
+    EXPECT_EQ("E:BOUND", get<0>(chem.reactions[2])[1]);
+    EXPECT_EQ("P:PLUSEND:N+1", get<0>(chem.reactions[2])[2]);
+    EXPECT_EQ(10.0, get<2>(chem.reactions[2]));
     
 }
 

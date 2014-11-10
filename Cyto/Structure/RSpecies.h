@@ -31,12 +31,12 @@ class ReactionBase;
 class ChemSignal;
 
 /// vr stands for vector of Reactions
-typedef std::vector<ReactionBase*>::iterator vr_iterator; 
-typedef std::vector<ReactionBase*>::const_iterator vr_const_iterator; 
+typedef vector<ReactionBase*>::iterator vr_iterator; 
+typedef vector<ReactionBase*>::const_iterator vr_const_iterator; 
 
 /// vsp stands for vector of RSpecies
-typedef std::vector<RSpecies*>::iterator vrsp_iterator; 
-typedef std::vector<RSpecies*>::const_iterator vrsp_const_iterator; 
+typedef vector<RSpecies*>::iterator vrsp_iterator; 
+typedef vector<RSpecies*>::const_iterator vrsp_const_iterator; 
 
 /// This is a RSpecies signal object that can be used to signal when the copy number changes
 typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSignal;
@@ -47,17 +47,17 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
  *   RSpecies tracks the copy number of molecules and the [Reactions](@ref Reaction)
  *   in which it is involed (@see Reaction). 
  *   @note Each intantiation of RSpecies is unique, and hence, cannot be neither copied nor moved (C++11). 
- *   This has significant implications - e.g., RSpecies cannot be used in std::vector<RSpecies>. Instead, 
- *   one should use either std::vector<RSpecies*> if not owning the RSpecies pointers, or 
- *   std::vector<std::unique_ptr<RSpecies>> if owning the RSpecies pointers. A special allocator can 
+ *   This has significant implications - e.g., RSpecies cannot be used in vector<RSpecies>. Instead, 
+ *   one should use either vector<RSpecies*> if not owning the RSpecies pointers, or 
+ *   vector<unique_ptr<RSpecies>> if owning the RSpecies pointers. A special allocator can 
  *   be written such that dynamically allocated RSpecies (through new), are arranged contigiously in memory.
  */
 class RSpecies {
     friend Species;
     /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call        
 private: //Variables
-    std::vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
-    std::vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
+    vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
+    vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
     Species& _species; ///< reference to the **parent** Species object
     species_copy_t _n; ///< Current copy number of this RSpecies
 #ifdef TRACK_UPPER_COPY_N
@@ -155,7 +155,7 @@ public:
     void removeAsReactant(const ReactionBase *r) {
         
         if(!_as_reactants.empty()) {
-            auto rxit = std::find(_as_reactants.begin(),_as_reactants.end(),r);
+            auto rxit = find(_as_reactants.begin(),_as_reactants.end(),r);
             if(rxit!=_as_products.end()){
                 _as_reactants.erase(rxit);
             }
@@ -166,7 +166,7 @@ public:
     void removeAsProduct(const ReactionBase *r) {
         
         if (!_as_products.empty()) {
-            auto rxit = std::find(_as_products.begin(),_as_products.end(),r);
+            auto rxit = find(_as_products.begin(),_as_products.end(),r);
             if(rxit!=_as_products.end()){
                 _as_products.erase(rxit);
             }
@@ -205,7 +205,7 @@ public:
     /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
     ~RSpecies(){
         assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
-//            std::cout << "Destructor ~RSpecies() called on ptr=" << this << std::endl;
+//            cout << "Destructor ~RSpecies() called on ptr=" << this << endl;
 #ifdef RSPECIES_SIGNALING
         if(_signal!=nullptr)
             delete _signal;
@@ -233,45 +233,42 @@ public:
     /// return parent Species as a const reference
     inline const Species& getSpecies() const {return _species;}
     
-    /// Return the full name of this Species in a std::string format (e.g. "Arp2/3{Bulk}"
-    std::string getFullName() const;
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
+    string getFullName() const;
             
-    /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
+    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
     /// is involved as a Reactant
-    inline std::vector<ReactionBase *>& ReactantReactions(){return _as_reactants;}
+    inline vector<ReactionBase *>& ReactantReactions(){return _as_reactants;}
     
-    /// Return std::vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
+    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
     /// is involved as a Product
-    inline std::vector<ReactionBase *>& ProductReactions(){return _as_products;}
+    inline vector<ReactionBase *>& ProductReactions(){return _as_products;}
     
-    /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
+    /// Return vector<ReactionBase *>::iterator, which points to the beginning of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant
     inline vr_iterator beginReactantReactions() {return _as_reactants.begin();}
     
-    /// Return std::vector<ReactionBase *>::iterator, which points to the beginning of all 
+    /// Return vector<ReactionBase *>::iterator, which points to the beginning of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
     inline vr_iterator beginProductReactions() {return _as_products.begin();}
     
-    /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
+    /// Return vector<ReactionBase *>::iterator, which points to the end of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant    
     inline vr_iterator endReactantReactions() {return _as_reactants.end();}
     
-    /// Return std::vector<ReactionBase *>::iterator, which points to the end of all 
+    /// Return vector<ReactionBase *>::iterator, which points to the end of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
     inline vr_iterator endProductReactions() {return _as_products.end();}
-    
-//        /// Print self into an iostream
-//        friend std::ostream& operator<<(std::ostream& os, const RSpecies& s);
 
 #ifdef BOOST_MEM_POOL
     /// Advanced memory management
-    void* operator new(std::size_t size);
+    void* operator new(size_t size);
     
     void operator delete(void* ptr) noexcept;
 #endif
 };
 
 /// Print self into an iostream
-std::ostream& operator<<(std::ostream& os, const RSpecies& s);
+ostream& operator<<(ostream& os, const RSpecies& s);
 
 #endif

@@ -24,7 +24,7 @@
 class PolakRibiere : public CGMethod
 {
 public:
-    void Minimize(ForceFieldManager &FFM);
+    void minimize(ForceFieldManager &FFM);
 };
 
 #endif /* defined(__Cyto__CGPolakRibiereMethod__) */

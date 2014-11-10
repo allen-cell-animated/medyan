@@ -7,21 +7,25 @@
 //
 
 #include "Bead.h"
+
 #include "BoundaryElementDB.h"
+#include "MathFunctions.h"
 #include "SystemParameters.h"
 
-Bead::Bead (std::vector<double> v, int ID): coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0), _ID(ID)
+using namespace mathfunc;
+
+Bead::Bead (vector<double> v, int ID): coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0), _ID(ID)
 {
     ///set birth time
     _birthTime = tau();
     
     ///Find compartment, add this bead
     try {_compartment = GController::getCompartment(v);}
-    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     _compartment->addBead(this);
     
     ///Add to list of boundary elements
-    for (auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
+    for (auto &be : *BoundaryElementDB::instance(BoundaryElementDBKey())) {
         ///If within cutoff, add bead to this boundary element interaction list
         if(be->distance(v) <= SystemParameters::Boundaries().boundaryCutoff) {
             addBoundaryElement(be);
@@ -44,7 +48,7 @@ void Bead::updatePosition() {
     
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}
-    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     
     if(c != _compartment) {
         ///remove from old compartment, add to new
@@ -54,7 +58,7 @@ void Bead::updatePosition() {
     }
     
     ///Update this bead's list
-    std::vector<BoundaryElement*> _beToRemove;
+    vector<BoundaryElement*> _beToRemove;
     for(auto &be : _boundaryElements) {
         if (be->distance(coordinate) > SystemParameters::Boundaries().boundaryCutoff) {
             _beToRemove.push_back(be); be->removeBead(this);
@@ -63,7 +67,7 @@ void Bead::updatePosition() {
     for(auto &be : _beToRemove)  removeBoundaryElement(be);
 
     ///add any new interacting boundary elements
-    for(auto &be : *BoundaryElementDB::Instance(BoundaryElementDBKey())) {
+    for(auto &be : *BoundaryElementDB::instance(BoundaryElementDBKey())) {
         if(be->distance(coordinate) <= SystemParameters::Boundaries().boundaryCutoff) {
             addBoundaryElement(be);
             be->addBead(this);

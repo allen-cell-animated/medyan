@@ -26,19 +26,18 @@ class Bead;
 class BoundaryElement {
     
 protected:
-    
     Compartment* _compartment; ///< Compartment that this boundary element is currently in
-    std::vector<Bead*> _beads; ///< Beads that this boundary element could interact with
+    vector<Bead*> _beads; ///< Beads that this boundary element could interact with
     
-    std::vector<double> _coords; ///< coordinates of this boundary element
+    vector<double> _coords; ///< coordinates of this boundary element
     
 public:
     ///Default constructor
-    BoundaryElement(std::vector<double> coords) : _coords(coords) {
+    BoundaryElement(vector<double> coords) : _coords(coords) {
     
         ///set the compartment given the initial coordinates
         try {_compartment = GController::getCompartment(coords);}
-        catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+        catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     }
     
     ///Destructor
@@ -55,7 +54,7 @@ public:
     ///Remove a bead from list of interacting beads
     ///@note does nothing if bead is not in interacting list already
     void removeBead(Bead* b) {
-        auto it = std::find(_beads.begin(), _beads.end(), b);
+        auto it = find(_beads.begin(), _beads.end(), b);
         if(it != _beads.end()) _beads.erase(it);
     }
     
@@ -63,14 +62,14 @@ public:
     Compartment* getCompartment() {return _compartment;}
     
     ///return coordinates of boundary element
-    const std::vector<double>& coords() {return _coords;}
+    const vector<double>& getCoords() {return _coords;}
     ///return set of beads
-    const std::vector<Bead*>& beads() {return _beads;}
+    const vector<Bead*>& getBeads() {return _beads;}
     
     ///Implement for all boundary elements
-    virtual double distance(const std::vector<double>& point) = 0;
-    virtual double stretchedDistance(const std::vector<double>& point, const std::vector<double>& force, double d) = 0;
-    virtual const std::vector<double> normal(const std::vector<double> &point) = 0;
+    virtual double distance(const vector<double>& point) = 0;
+    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d) = 0;
+    virtual const vector<double> normal(const vector<double> &point) = 0;
     
     virtual double getRepulsionConst() = 0;
     virtual double getScreeningLength() = 0;

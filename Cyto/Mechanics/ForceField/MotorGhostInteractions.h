@@ -16,15 +16,14 @@ class MotorGhost;
 
 class MotorGhostInteractions {
 private:
-    std::string _name;
+    string _name;
     
 public:
-    virtual double ComputeEnergy( MotorGhost*,  double d) = 0;
-    virtual void ComputeForces(MotorGhost*) = 0;
-    virtual void ComputeForcesAux(MotorGhost*) = 0;
-    
-    // std::string getName() {return _name;}
-    const std::string& getName() {return _name;}
+    virtual double computeEnergy( MotorGhost*,  double d) = 0;
+    virtual void computeForces(MotorGhost*) = 0;
+    virtual void computeForcesAux(MotorGhost*) = 0;
+
+    const string& getName() {return _name;}
 };
 
 #endif /* defined(__Cyto__MotorGhostInteractions__) */

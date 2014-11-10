@@ -14,38 +14,38 @@
 #include "FilamentBendingHarmonic.h"
 #include "FilamentDB.h"
 
-FilamentFF::FilamentFF (std::string& Stretching, std::string& Bending, std::string& Twisting)
+FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting)
 {
-    if (Stretching == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentStretching<FilamentStretchingHarmonic>());}
-    if (Bending == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingHarmonic>());}
+    if (stretching == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentStretching<FilamentStretchingHarmonic>());}
+    if (bending == "HARMONIC") {_filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingHarmonic>());}
     //if (Twisting == "HARMONIC") {_filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());}
 }
 
 
-double FilamentFF::ComputeEnergy(double d) {
+double FilamentFF::computeEnergy(double d) {
     double U_fil = 0;
     
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
+    for ( auto it: *FilamentDB::instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-            U_fil += filamentInteraction.get()->ComputeEnergy(it, d);
+            U_fil += filamentInteraction.get()->computeEnergy(it, d);
     }
     return U_fil;
 }
 
-void FilamentFF::ComputeForces() {
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
+void FilamentFF::computeForces() {
+    for ( auto it: *FilamentDB::instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-          filamentInteraction.get()->ComputeForces(it);
+          filamentInteraction.get()->computeForces(it);
     }
 }
 
-void FilamentFF::ComputeForcesAux() {
+void FilamentFF::computeForcesAux() {
     
-    for ( auto it: *FilamentDB::Instance(FilamentDBKey()) ) {
+    for ( auto it: *FilamentDB::instance(FilamentDBKey()) ) {
         
         for (auto &filamentInteraction : _filamentInteractionVector)
-            filamentInteraction.get()->ComputeForcesAux(it);
+            filamentInteraction.get()->computeForcesAux(it);
     }
 }

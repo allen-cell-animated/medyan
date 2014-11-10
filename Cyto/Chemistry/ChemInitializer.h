@@ -17,7 +17,7 @@
 class Compartment;
 class Filament;
 class CCylinder;
-struct ChemistrySpeciesAndReactions;
+struct ChemistryData;
 
 ///Key for initialization of ChemInitializer
 class ChemInitializerInitKey { friend class CController;
@@ -54,13 +54,13 @@ public:
     static void setInstance(ChemInitializerInitKey k, ChemInitializerImpl *cii);
     
     ///Initialize the compartment grid, based on the given simulation
-    static void initialize(ChemInitializerGridKey k, ChemistrySpeciesAndReactions& chemSR);
+    static void initialize(ChemInitializerGridKey k, ChemistryData& chem);
     
     ///Initializer, based on the given simulation
     static CCylinder* createCCylinder(ChemInitializerCylinderKey k, Filament* pf, Compartment* c,
                                       bool extensionFront, bool extensionBack, bool creation);
     ///add/update cross cylinder reactions that are within range
-    static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, std::vector<CCylinder*>& cNeighbors);
+    static void updateCCylinder(ChemInitializerCylinderKey k, CCylinder* cc, vector<CCylinder*>& cNeighbors);
     
     
 private:

@@ -23,7 +23,7 @@ private:
     CGType _CGType;
     
 public:
-    void Equlibrate(ForceFieldManager &FFM) {_CGType.Minimize(FFM);}
+    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM);}
 };
 
 #endif /* defined(__Cyto__ConjugateGradient__) */

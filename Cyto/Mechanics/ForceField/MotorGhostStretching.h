@@ -23,9 +23,9 @@ private:
     MStretchingInteractionType _FFType;
 
 public:
-    virtual double ComputeEnergy( MotorGhost*, double d);
-    virtual void ComputeForces( MotorGhost*);
-    virtual void ComputeForcesAux( MotorGhost*);
+    virtual double computeEnergy(MotorGhost*, double d);
+    virtual void computeForces(MotorGhost*);
+    virtual void computeForcesAux(MotorGhost*);
 };
 
 

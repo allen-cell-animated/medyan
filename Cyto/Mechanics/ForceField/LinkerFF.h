@@ -20,15 +20,15 @@ class LinkerInteractions;
 class LinkerFF : public ForceField {
     
 private:
-    std::vector<std::unique_ptr<LinkerInteractions>> _linkerInteractionVector;
+    vector<unique_ptr<LinkerInteractions>> _linkerInteractionVector;
     
 public:
-    LinkerFF(std::string& Stretching, std::string& Bending, std::string& Twisting );
+    LinkerFF(string& stretching, string& bending, string& twisting );
     
     // Public interfaces to compute forces:
-    virtual double ComputeEnergy(double d);
-    virtual void ComputeForces();
-    virtual void ComputeForcesAux();
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
 };
 

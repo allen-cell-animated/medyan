@@ -21,15 +21,15 @@ class BoundaryInteractions;
 class BoundaryFF : public ForceField {
     
 private:
-    std::vector<std::unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector;
+    vector<unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector;
     
 public:
-    BoundaryFF( std::string Interaction1, std::string Interaction2, std::string Interaction3 );
+    BoundaryFF( string interaction1, string interaction2, string interaction3 );
     
-    // Public interfaecs to compute forces:
-    virtual double ComputeEnergy(double d);
-    virtual void ComputeForces();
-    virtual void ComputeForcesAux();
+    // Public interfaces to compute forces:
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
 };
 
 #endif /* defined(__Cyto__BoundaryFF__) */

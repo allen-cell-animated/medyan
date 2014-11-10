@@ -19,7 +19,7 @@ Compartment *C1 = new Compartment;
     C1->addInternalReaction<2,1>(vector<Species*>{actin,profilin,arp23}, 10.0);
     
     C1->printReactions();
-    cout << "Are all Species unique? " << std::boolalpha << C1->areAllSpeciesUnique() << endl;
+    cout << "Are all Species unique? " << boolalpha << C1->areAllSpeciesUnique() << endl;
     
     cout << sizeof(*actin) << ", " << sizeof(actin->getRSpecies()) << ", " << sizeof(*r1) << endl;
     
@@ -144,7 +144,7 @@ Compartment *C1 = new Compartment;
     cout << "tau=" << tau() <<endl;
     
     chrono::duration<double> elapsed_run(chk2-chk1); // duration in seconds
-    //long long int = std::chrono::duration_cast<std::chrono::nanoseconds>(chk2-chk1).count();
+    //long long int = chrono::duration_cast<chrono::nanoseconds>(chk2-chk1).count();
     
     cout << "Main Elapsed for ChemNRMImpl::run(...): dt=" << elapsed_run.count() << endl;
     
@@ -255,7 +255,7 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
  A1->makeSignaling(sm);
  PrintRSpecies ps;
  ...
- std::function<void (RSpecies *, int)> psf(ps);
+ function<void (RSpecies *, int)> psf(ps);
  boost::signals2::shared_connection_block conn_a1(sm.connect(A1, [](RSpecies *s, int i){s->printSelf();}), true);
  // or   sm.connect(A1, print_RSpecies);
  // or  sm.connect(A1, PrintRSpecies());
@@ -273,50 +273,50 @@ typedef boost::signals2::signal<void (Reaction *)> ReactionEventSignal;
  */
 class ChemSignal {
 private:
-    std::unordered_map<RSpecies *, std::unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal;///< Keep track of signals corresponding to various RSpecies
-    std::unordered_map<Reaction *, std::unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal;///< Keep track of signals corresponding to various RSpecies
+    unordered_map<Reaction *, unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
 private:
-    /// Search the map for a signal corresponding to parameter, Reaction *r. Throw std::out_of_range exception if not found.
-    std::unordered_map<Reaction *, std::unique_ptr<ReactionEventSignal>>::const_iterator 
+    /// Search the map for a signal corresponding to parameter, Reaction *r. Throw out_of_range exception if not found.
+    unordered_map<Reaction *, unique_ptr<ReactionEventSignal>>::const_iterator 
     findSignal(Reaction *r) const {
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it==_map_reaction_signal.end())
-            throw std::out_of_range("ChemSignal::findSignal(Reaction *r) key error...");
+            throw out_of_range("ChemSignal::findSignal(Reaction *r) key error...");
         return sig_it;
     }
     
-    /// Search the map for a signal corresponding to parameter, RSpecies *s. Throw std::out_of_range exception if not found.
-    std::unordered_map<RSpecies *, std::unique_ptr<RSpeciesCopyNChangedSignal>>::const_iterator 
+    /// Search the map for a signal corresponding to parameter, RSpecies *s. Throw out_of_range exception if not found.
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>>::const_iterator 
     findSignal(RSpecies *s) const {
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it==_map_RSpecies_signal.end())
-            throw std::out_of_range("ChemSignal::findSignal(RSpecies *s) key error...");
+            throw out_of_range("ChemSignal::findSignal(RSpecies *s) key error...");
         return sig_it;
     }
     
-    /// Assert that a signal corresponding to Reaction *r does not exist or throw std::runtime_error.
+    /// Assert that a signal corresponding to Reaction *r does not exist or throw runtime_error.
     void assertSignalDoesNotExist (Reaction *r){
         auto sig_it = _map_reaction_signal.find(r);
         if(sig_it!=_map_reaction_signal.end())
-            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (Reaction *r) Reaction already present in the map...");
+            throw runtime_error("ChemSignal::assertSignalDoesNotExist (Reaction *r) Reaction already present in the map...");
     }
     
-    /// Assert that a signal corresponding to RSpecies *s does not exist or throw std::runtime_error.
+    /// Assert that a signal corresponding to RSpecies *s does not exist or throw runtime_error.
     void assertSignalDoesNotExist (RSpecies *s){
         auto sig_it = _map_RSpecies_signal.find(s);
         if(sig_it!=_map_RSpecies_signal.end())
-            throw std::runtime_error("ChemSignal::assertSignalDoesNotExist (RSpecies *s) RSpecies already present in the map...");
+            throw runtime_error("ChemSignal::assertSignalDoesNotExist (RSpecies *s) RSpecies already present in the map...");
     }
 
 public:
-    /// Broadcasts signal corresponding to Reaction *r. If the Reaction is not found, std::out_of_range exception will be thrown.
+    /// Broadcasts signal corresponding to Reaction *r. If the Reaction is not found, out_of_range exception will be thrown.
     /// This method is usally only called by the Gillespie-like algorithm, and not the outside code.
     void emitReactionSignal(Reaction *r) const {
         auto sig_it = findSignal(r);
         (*sig_it->second)(r);
     }
     
-    /// Broadcasts signal corresponding to RSpecies *s. If the Specis is not found, std::out_of_range exception will be thrown.
+    /// Broadcasts signal corresponding to RSpecies *s. If the Specis is not found, out_of_range exception will be thrown.
     /// This method is usally only called by the Gillespie-like algorithm, and not the outside code.
     void emitRSpeciesSignal(RSpecies *s, int delta) const {
         auto sig_it = findSignal(s);
@@ -340,21 +340,21 @@ public:
     
     /// Connect the callback, react_callback to a signal corresponding to Reaction *r.
     /// @param Reaction *r - the signal will correspond to this Reaction
-    /// @param std::function<void (Reaction *)> const &react_callback - a function object to be called (a slot)
+    /// @param function<void (Reaction *)> const &react_callback - a function object to be called (a slot)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
-    boost::signals2::connection connect(Reaction *r, std::function<void (Reaction *)> const &react_callback, int priority=5) {
+    boost::signals2::connection connect(Reaction *r, function<void (Reaction *)> const &react_callback, int priority=5) {
         auto sig_it = findSignal(r);
         return sig_it->second->connect(priority, react_callback);
     }
 
     /// Connect the callback, RSpecies_callback to a signal corresponding to RSpecies *s.
     /// @param RSpecies *s - the signal will correspond to this RSpecies
-    /// @param std::function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot). 
+    /// @param function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot). 
     ///        int here corresponds to delta, the change in copy number of the RSpecies (for which the signal was emitted)
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
-    boost::signals2::connection connect(Species *s, std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
+    boost::signals2::connection connect(Species *s, function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
         RSpecies *rs = &s->getRSpecies();
         auto sig_it = findSignal(rs);
         return sig_it->second->connect(priority, RSpecies_callback);
@@ -383,39 +383,39 @@ public:
 ######################### 7/10/2012 ##########################
 from class Composite:
 
-    std::deque<std::unique_ptr<Species>> _species;
+    deque<unique_ptr<Species>> _species;
     
-        void pushBackSpeciesUnique(std::unique_ptr<Species> &&child_species) {
-        _species.push_back(std::move(child_species));
+        void pushBackSpeciesUnique(unique_ptr<Species> &&child_species) {
+        _species.push_back(move(child_species));
         _species.back()->setParent(this);
     }
     
     template<typename T, typename ...Args>
     void pushBackSpecies( Args&& ...args )
     {
-        _species.push_back(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
+        _species.push_back(unique_ptr<T>( new T( forward<Args>(args)...) ));
         _species.back()->setParent(this);
         //        _species.emplace_back(make_unique(Args...));
     }
     
-    void pushFrontSpeciesUnique(std::unique_ptr<Species> &&child_species) {
-        _species.push_front(std::move(child_species));
+    void pushFrontSpeciesUnique(unique_ptr<Species> &&child_species) {
+        _species.push_front(move(child_species));
         _species.front()->setParent(this);
     }
     
     template<typename T, typename ...Args>
     void pushFrontSpecies( Args&& ...args )
     {
-        _species.push_front(std::unique_ptr<T>( new T( std::forward<Args>(args)...) ));
+        _species.push_front(unique_ptr<T>( new T( forward<Args>(args)...) ));
         _species.front()->setParent(this);
         //        _species.emplace_front(make_unique(Args...));
     }
     
-        virtual std::deque<std::unique_ptr<Species>>& species() {
+        virtual deque<unique_ptr<Species>>& species() {
         return _species;
     }
     
-    virtual const std::deque<std::unique_ptr<Species>> & species() const {
+    virtual const deque<unique_ptr<Species>> & species() const {
         return _species;
     }
     
@@ -452,30 +452,30 @@ class ProtoFilament : public Composite {
 private:
     SpeciesDiffusing _proto_species;
 public:
-    ProtoFilament(const std::string &species_name, size_t len = 0) : Composite(), _proto_species(species_name) 
+    ProtoFilament(const string &species_name, size_t len = 0) : Composite(), _proto_species(species_name) 
     {
         for(size_t i=0; i<len; ++i){
-            auto species = std::unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
-            pushBackSpeciesUnique(std::move(species));
+            auto species = unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
+            pushBackSpeciesUnique(move(species));
             this->species().back()->setParent(this);
         }
     }
 
     virtual void growPlusEnd(size_t len) {
         for(size_t i=0; i<len; ++i){
-            auto species = std::unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
-            pushBackSpeciesUnique(std::move(species));
+            auto species = unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
+            pushBackSpeciesUnique(move(species));
         }
     }
     
     virtual void growMinusEnd(size_t len) {
         for(size_t i=0; i<len; ++i){
-            auto species = std::unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
-            pushFrontSpeciesUnique(std::move(species));
+            auto species = unique_ptr<SpeciesDiffusing>(new SpeciesDiffusing(_proto_species));
+            pushFrontSpeciesUnique(move(species));
         }
     }
     
-    virtual std::string getFullName() const {
+    virtual string getFullName() const {
         return "ProtoFilament:[" + _proto_species.getName() + "]";
     }
 
@@ -497,12 +497,12 @@ they are without polymorphic conversion. Us
 template<typename T1>
 struct isSame {
     template<typename T2>
-    bool operator() (const T2& t2, typename std::enable_if<std::is_same<T1, T2>::value>::type* p = nullptr){
+    bool operator() (const T2& t2, typename enable_if<is_same<T1, T2>::value>::type* p = nullptr){
         return true;
     }
     
     template<typename T2>
-    bool operator() (const T2& t2, typename std::enable_if<!std::is_same<T1, T2>::value>::type* p = nullptr) 
+    bool operator() (const T2& t2, typename enable_if<!is_same<T1, T2>::value>::type* p = nullptr) 
     { 
         return false;
     }                                                            
@@ -573,14 +573,14 @@ SpeciesType& operator=(SpeciesType other)
 friend void swap(SpeciesType& first, SpeciesType& second) // nothrow
 {
     // enable ADL (not necessary in our case, but good practice)
-    using std::swap; 
+    using swap; 
     swap(first._name, second._name); 
     swap(first._type, second._type);
 }
 
 ///Assignment operators copies all fields. May be needed for boost::flyweight?
 SpeciesType& operator=(SpeciesType&& st){
-    _name=std::move(st._name);
+    _name=move(st._name);
     _type=st._type;
     return *this;
 }
@@ -594,7 +594,7 @@ SpeciesType& operator=(SpeciesType&& st){
 Reaction (ARR_REAC_SPECIES &S, ARR_REAC_COEFF &c) : _id(_max_id++)
 {   _S.swap(S);
     _c.swap(c);      
-    std::cout << "Constructed" << std::endl;}
+    cout << "Constructed" << endl;}
 
 
 Species with an _id field (as shown, the class is packed into 64 bytes):
@@ -603,8 +603,8 @@ Species.h:
 
 class Species {
 private:
-    std::vector<reaction_num_t> _reactants;
-    std::vector<reaction_num_t> _products;
+    vector<reaction_num_t> _reactants;
+    vector<reaction_num_t> _products;
     const SpeciesType &_type;
     species_num_t _id;
     species_copy_t _n;
@@ -612,7 +612,7 @@ private:
 public:
     Species (SpeciesType &name) : _reactants(), _products(), _type(name),_id(_max_id++), _n(0) 
     {
-        //std::cout << "Species " << _id << ", Constructed" << std::endl;
+        //cout << "Species " << _id << ", Constructed" << endl;
     }
     Species (const Species &r) = delete;
     // Setters
@@ -622,7 +622,7 @@ public:
     species_num_t getSpecies() const {return _id;}
     species_copy_t getN() const {return _n;}
     void printSelf() const {
-        std::cout << "Species: " << _type.getName() << ", ID=" << _id << std::endl;
+        cout << "Species: " << _type.getName() << ", ID=" << _id << endl;
     }
 };
 

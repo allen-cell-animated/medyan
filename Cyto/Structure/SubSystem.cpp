@@ -8,51 +8,38 @@
 
 #include "SubSystem.h"
 
-using namespace std;
-
-void SubSystem::AddNewFilaments(vector<vector<vector<double> >>& v){
-    
-    for (auto it: v) FilamentDB::Instance(FilamentDBKey())->CreateFilament(this, it);
+void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
+    for (auto it: v) FilamentDB::instance(FilamentDBKey())->createFilament(this, it);
 }
 
-void SubSystem::AddNewFilament(vector<vector<double>>& v) {
-    
-    FilamentDB::Instance(FilamentDBKey())->CreateFilament(this, v);
+void SubSystem::addNewFilament(vector<vector<double>>& v) {
+    FilamentDB::instance(FilamentDBKey())->createFilament(this, v);
 }
 
-void SubSystem::RemoveFilament(Filament* f) {
-    
-    FilamentDB::Instance(FilamentDBKey())->RemoveFilament(f);
+void SubSystem::removeFilament(Filament* f) {
+    FilamentDB::instance(FilamentDBKey())->removeFilament(f);
 }
 
-void SubSystem::AddNewLinkers(std::vector<std::vector<Cylinder* >>& v, short linkerType){
-    
-    for (auto it: v) { LinkerDB::Instance(LinkerDBKey())->CreateLinker(it[0], it[1], linkerType); }
-    
+void SubSystem::addNewLinkers(vector<vector<Cylinder* >>& v, short linkerType) {
+    for (auto it: v) { LinkerDB::instance(LinkerDBKey())->createLinker(it[0], it[1], linkerType); }
 }
-void SubSystem::AddNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2){
-    
-    LinkerDB::Instance(LinkerDBKey())->CreateLinker(pc1, pc2, linkerType, position1, position2, true);
+void SubSystem::addNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2){
+    LinkerDB::instance(LinkerDBKey())->createLinker(pc1, pc2, linkerType, position1, position2, true);
 }
 
-void SubSystem::RemoveLinker(Linker* l) {
-    
-    LinkerDB::Instance(LinkerDBKey())->RemoveLinker(l);
+void SubSystem::removeLinker(Linker* l) {
+    LinkerDB::instance(LinkerDBKey())->removeLinker(l);
 }
 
-void SubSystem::AddNewMotorGhosts(std::vector<std::vector<Cylinder* >>& v, short motorType){
-    
-    for (auto it: v) { MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(it[0], it[1], motorType); }
-
+void SubSystem::addNewMotorGhosts(vector<vector<Cylinder* >>& v, short motorType) {
+    for (auto it: v) MotorGhostDB::instance(MotorGhostDBKey())->createMotorGhost(it[0], it[1], motorType);
 }
-void SubSystem::AddNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2){
-    
-    MotorGhostDB::Instance(MotorGhostDBKey())->CreateMotorGhost(pc1, pc2, motorType, position1, position2, true);
+void SubSystem::addNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2) {
+    MotorGhostDB::instance(MotorGhostDBKey())->createMotorGhost(pc1, pc2, motorType, position1, position2, true);
 }
 
-void SubSystem::RemoveMotorGhost(MotorGhost* m) {
-    
-    MotorGhostDB::Instance(MotorGhostDBKey())->RemoveMotorGhost(m);
+void SubSystem::removeMotorGhost(MotorGhost* m) {
+    MotorGhostDB::instance(MotorGhostDBKey())->removeMotorGhost(m);
 }
 
 double SubSystem::getSubSystemEnergy() {return _energy;}

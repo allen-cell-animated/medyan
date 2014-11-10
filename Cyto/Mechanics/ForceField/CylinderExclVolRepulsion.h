@@ -17,10 +17,10 @@ class Bead;
 class CylinderExclVolRepulsion {
     
 public:
-    double Energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    double Energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
-    void Forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    void ForcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls );
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
+    void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls );
 };
 
 

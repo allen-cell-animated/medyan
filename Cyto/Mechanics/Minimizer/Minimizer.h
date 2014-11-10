@@ -16,7 +16,7 @@ class ForceFieldManager;
 
 class Minimizer {
 public:
-    void virtual Equlibrate(ForceFieldManager &FFM) = 0;
+    void virtual equlibrate(ForceFieldManager &FFM) = 0;
 };
 
 #endif /* defined(__Cyto__Minimizer__) */

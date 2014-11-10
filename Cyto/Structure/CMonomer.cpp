@@ -7,6 +7,7 @@
 //
 
 #include "CMonomer.h"
+
 #include "SystemParameters.h"
 
 CMonomer::CMonomer() {
@@ -65,42 +66,42 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = rhs._speciesFilament[i];
         SpeciesFilament* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesFilament(sNew);
     }
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = rhs._speciesPlusEnd[i];
         SpeciesPlusEnd* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesPlusEnd(sNew);
     }
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = rhs._speciesMinusEnd[i];
         SpeciesMinusEnd* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesMinusEnd(sNew);
     }
     
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = rhs._speciesBound[i];
         SpeciesBound* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesBound(sNew);
     }
     
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = rhs._speciesLinker[i];
         SpeciesLinker* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesLinker(sNew);
     }
     
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = rhs._speciesMotor[i];
         SpeciesMotor* sNew = s->clone();
-        c->addSpeciesUnique(std::unique_ptr<Species>(sNew));
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesMotor(sNew);
     }
 }
@@ -116,8 +117,8 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add filament species to a monomer.\
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add filament species to a monomer.\
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -132,8 +133,8 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add plus end species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add plus end species to a monomer. \
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -148,8 +149,8 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add minus end species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add minus end species to a monomer. \
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -164,8 +165,8 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add bound species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add bound species to a monomer. \
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -180,8 +181,8 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add linker species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add linker species to a monomer. \
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 ///Add a species motor
@@ -195,8 +196,8 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
         }
     }
     ///return error if we get here
-    std::cout << "Could not add motor species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input Exiting" << std::endl;
+    cout << "Could not add motor species to a monomer. \
+        Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -206,37 +207,37 @@ void CMonomer::print()
     short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
     short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = _speciesPlusEnd[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
     short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = _speciesMinusEnd[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = _speciesLinker[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
     short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = _speciesMotor[i];
-        if(s != nullptr && s->getN() >= 1) std::cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
     }
     
 }

@@ -66,27 +66,27 @@ protected:
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
     
     ///Gradient calculations
-    double GradSquare();
-    double GradAuxSquare();
-    double GradDotProduct();
-    void MoveBeads(double d);
-    void MoveBeadsAux(double d);
-    void ShiftGradient(double d);
+    double gradSquare();
+    double gradAuxSquare();
+    double gradDotProduct();
+    void moveBeads(double d);
+    void moveBeadsAux(double d);
+    void shiftGradient(double d);
     
     ///various linear search methods
-    double GoldenSection1(ForceFieldManager &FFM);
-    double GoldenSection2(ForceFieldManager &FFM);
-    double BinarySearch(ForceFieldManager& FFM);
+    double goldenSection1(ForceFieldManager &FFM);
+    double goldenSection2(ForceFieldManager &FFM);
+    double binarySearch(ForceFieldManager& FFM);
     
-    double BacktrackingLineSearch(ForceFieldManager& FFM);
-    double QuadraticLineSearch(ForceFieldManager& FFM);
+    double backtrackingLineSearch(ForceFieldManager& FFM);
+    double quadraticLineSearch(ForceFieldManager& FFM);
     
     BeadDBKey getBeadDBKey() {return BeadDBKey();}
     
-    void PrintForces();
+    void printForces();
     
 public:
-    virtual void Minimize(ForceFieldManager &FFM) = 0;
+    virtual void minimize(ForceFieldManager &FFM) = 0;
 };
 
 

@@ -21,15 +21,15 @@ class CylinderVolumeInteractions;
 class VolumeCylindricalFF : public ForceField {
     
 private:
-    std::vector <std::unique_ptr<CylinderVolumeInteractions>> _cylinderVolInteractionVector;
+    vector <unique_ptr<CylinderVolumeInteractions>> _cylinderVolInteractionVector;
     
 public:
-    VolumeCylindricalFF(std::string& Interaction );
+    VolumeCylindricalFF(string& interaction );
     
-    // Public interfaecs to compute forces:
-    virtual double ComputeEnergy(double d);
-    virtual void ComputeForces();
-    virtual void ComputeForcesAux();
+    // Public interfaces to compute forces:
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
 };
 
 

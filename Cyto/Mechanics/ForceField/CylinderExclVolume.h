@@ -24,9 +24,9 @@ private:
     CVolumeInteractionType _FFType;
     
 public:
-    virtual double ComputeEnergy( Cylinder*, Cylinder*, double d);
-    virtual void ComputeForces( Cylinder*, Cylinder*);
-    virtual void ComputeForcesAux( Cylinder*, Cylinder* );
+    virtual double computeEnergy(Cylinder*, Cylinder*, double d);
+    virtual void computeForces(Cylinder*, Cylinder*);
+    virtual void computeForcesAux(Cylinder*, Cylinder* );
 };
 
 

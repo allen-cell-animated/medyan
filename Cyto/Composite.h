@@ -34,7 +34,7 @@ class ReactionVisitor;
  */    
 class Composite : public Component {
 private:
-    std::vector<std::unique_ptr<Component>> _children;///< Child node pointers of this Composite node
+    vector<unique_ptr<Component>> _children;///< Child node pointers of this Composite node
 
 public:
     /// Default Constructor does nothing.
@@ -62,29 +62,29 @@ public:
     virtual bool isComposite() const override {return true;}
     
     /// Returns the full name of this node.
-    virtual std::string getFullName() const override {return "Composite";}; 
+    virtual string getFullName() const override {return "Composite";}; 
     
     /// Adds a Component child to this Composite node
-    /// @param child - is a std::unique_ptr<Component>, hence, this node takes the memory ownership
+    /// @param child - is a unique_ptr<Component>, hence, this node takes the memory ownership
     /// of the corresponding child pointer.
-    /// @note the rvalue semantics - the std::unique_ptr<...> cannot be copied, but only can be moved
-    virtual void addChild (std::unique_ptr<Component> &&child) {
-        _children.push_back(std::move(child));
+    /// @note the rvalue semantics - the unique_ptr<...> cannot be copied, but only can be moved
+    virtual void addChild (unique_ptr<Component> &&child) {
+        _children.push_back(move(child));
         _children.back()->setParent(this);
     }
     
     
     /// Remove *child from this node's children. The child's destructor will be called and the memory will be freed.
     virtual void removeChild (Component* child) {
-        auto child_iter = std::find_if(_children.begin(),_children.end(),
-                    [&child](const std::unique_ptr<Component> &element)
+        auto child_iter = find_if(_children.begin(),_children.end(),
+                    [&child](const unique_ptr<Component> &element)
                      {
                          return element.get()==child ? true : false;
                      });
         if(child_iter!=_children.end())
             _children.erase(child_iter);
         else
-            throw std::out_of_range("Composite::removeChild(): The name child not found");
+            throw out_of_range("Composite::removeChild(): The name child not found");
     }
     
     
@@ -131,10 +131,10 @@ public:
     }
     
     /// Returns a reference to the container of Component children of this node
-    virtual std::vector<std::unique_ptr<Component>>& children () {return _children;}
+    virtual vector<unique_ptr<Component>>& children () {return _children;}
 
     /// Returns a const reference to the container of Component children of this node
-    virtual const std::vector<std::unique_ptr<Component>>& children () const {return _children;}
+    virtual const vector<unique_ptr<Component>>& children () const {return _children;}
 
     /// Returns a pointer to the i-th Component child of this node
     virtual Component* children (size_t i) {return _children[i].get();}

@@ -25,8 +25,8 @@ private:
     BRepulsionInteractionType _FFType;
     
 public:
-    virtual double ComputeEnergy( BoundaryElement*, double d);
-    virtual void ComputeForces( BoundaryElement*);
-    virtual void ComputeForcesAux( BoundaryElement*);
+    virtual double computeEnergy( BoundaryElement*, double d);
+    virtual void computeForces( BoundaryElement*);
+    virtual void computeForcesAux( BoundaryElement*);
 };
 #endif /* defined(__Cyto__BoundaryRepulsion__) */

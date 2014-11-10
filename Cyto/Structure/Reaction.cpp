@@ -16,7 +16,6 @@
 #include <boost/pool/pool_alloc.hpp>
 #endif
 
-using namespace std;
 
 template <unsigned short M, unsigned short N>
     void Reaction<M,N>::activateReactionUnconditionalImpl(){
@@ -62,17 +61,17 @@ void Reaction<M,N>::passivateReactionImpl() {
 template <unsigned short M, unsigned short N>
 Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 {
-    std::vector<Species*> species;
+    vector<Species*> species;
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
         
         ///check if that species exists in the compartment
-        auto vit = std::find_if(spcv.species().cbegin(),spcv.species().cend(),
-                                [molec](const std::unique_ptr<Species> &us){return us->getMolecule()==molec;});
+        auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
+                                [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
         ///if we didn't find it, use the old species
         if(vit==spcv.species().cend()) {
             species.push_back(&rs->getSpecies());
-            //throw std::runtime_error("ReactionBase::Clone(): Species is not present.");
+            //throw runtime_error("ReactionBase::Clone(): Species is not present.");
         }
         else {
             species.push_back(vit->get());
@@ -97,7 +96,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size)
 {
-    //    cout << "Reaction<M,N>::operator new(std::size_t size) called..." << endl;
+    //    cout << "Reaction<M,N>::operator new(size_t size) called..." << endl;
     //    void *ptr = allocator_ReactionBase.malloc();
     void *ptr = boost::fast_pool_allocator<Reaction<M,N>>::allocate();
     return ptr;

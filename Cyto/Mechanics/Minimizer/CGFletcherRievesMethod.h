@@ -19,10 +19,9 @@
 #include "common.h"
 #include "CGMethod.h"
 
-class FletcherRieves : public CGMethod
-{
+class FletcherRieves : public CGMethod {
 public:
-   void Minimize(ForceFieldManager &FFM);
+   void minimize(ForceFieldManager &FFM);
 };
 
 #endif /* defined(__Cyto__CGFletcherRievesMethod__) */

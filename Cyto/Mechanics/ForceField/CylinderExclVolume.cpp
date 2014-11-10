@@ -13,53 +13,53 @@
 #include "Bead.h"
 
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::ComputeEnergy(Cylinder* pc1, Cylinder* pc2, double d) {
+double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(Cylinder* c1, Cylinder* c2, double d) {
     
-    Bead* pb1 = pc1->GetFirstBead();
-    Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc2->GetFirstBead();
-    Bead* pb4 = pc2->GetSecondBead();
-    double kRepuls = pc1->getMCylinder()->GetExVolConst();
+    Bead* b1 = c1->getFirstBead();
+    Bead* b2 = c1->getSecondBead();
+    Bead* b3 = c2->getFirstBead();
+    Bead* b4 = c2->getSecondBead();
+    double kRepuls = c1->getMCylinder()->getExVolConst();
     
     
     if (d == 0.0)
-        return _FFType.Energy(pb1, pb2, pb3, pb4, kRepuls);
+        return _FFType.energy(b1, b2, b3, b4, kRepuls);
     else
-        return _FFType.Energy(pb1, pb2, pb3, pb4, kRepuls, d);   ///This type of function needed for conjugated gradient minimisation only;
+        return _FFType.energy(b1, b2, b3, b4, kRepuls, d);   ///This type of function needed for conjugated gradient minimisation only;
     
 }
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::ComputeForces(Cylinder* pc1, Cylinder* pc2) {
+void CylinderExclVolume<CVolumeInteractionType>::computeForces(Cylinder* c1, Cylinder* c2) {
 
-    Bead* pb1 = pc1->GetFirstBead();
-    Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc2->GetFirstBead();
-    Bead* pb4 = pc2->GetSecondBead();
-    double kRepuls = pc1->getMCylinder()->GetExVolConst();
+    Bead* b1 = c1->getFirstBead();
+    Bead* b2 = c1->getSecondBead();
+    Bead* b3 = c2->getFirstBead();
+    Bead* b4 = c2->getSecondBead();
+    double kRepuls = c1->getMCylinder()->getExVolConst();
 
     
-    _FFType.Forces(pb1, pb2, pb3, pb4, kRepuls );
+    _FFType.forces(b1, b2, b3, b4, kRepuls );
     
 }
 
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::ComputeForcesAux(Cylinder* pc1, Cylinder* pc2) {
+void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux(Cylinder* c1, Cylinder* c2) {
     /// Needed for Conjugated Gradient minimization;
     
-    Bead* pb1 = pc1->GetFirstBead();
-    Bead* pb2 = pc1->GetSecondBead();
-    Bead* pb3 = pc2->GetFirstBead();
-    Bead* pb4 = pc2->GetSecondBead();
-    double kRepuls = pc1->getMCylinder()->GetExVolConst();
+    Bead* b1 = c1->getFirstBead();
+    Bead* b2 = c1->getSecondBead();
+    Bead* b3 = c2->getFirstBead();
+    Bead* b4 = c2->getSecondBead();
+    double kRepuls = c1->getMCylinder()->getExVolConst();
     
     
-    _FFType.ForcesAux(pb1, pb2, pb3, pb4, kRepuls );
+    _FFType.forcesAux(b1, b2, b3, b4, kRepuls );
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::ComputeEnergy(Cylinder* pc1, Cylinder* pc2, double d);
-template void  CylinderExclVolume<CylinderExclVolRepulsion>::ComputeForces(Cylinder* pc1, Cylinder* pc2);
-template void  CylinderExclVolume<CylinderExclVolRepulsion>::ComputeForcesAux(Cylinder* pc1, Cylinder* pc2);
+template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(Cylinder* c1, Cylinder* c2, double d);
+template void  CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(Cylinder* c1, Cylinder* c2);
+template void  CylinderExclVolume<CylinderExclVolRepulsion>::computeForcesAux(Cylinder* c1, Cylinder* c2);
 

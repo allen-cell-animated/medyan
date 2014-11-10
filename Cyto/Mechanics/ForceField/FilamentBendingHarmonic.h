@@ -17,10 +17,10 @@ class Bead;
 class FilamentBendingHarmonic {
     
 public:
-    double Energy(Bead*, Bead*, Bead*, double);
-    double Energy(Bead*, Bead*, Bead*, double, double);
-    void Forces(Bead*, Bead*, Bead*, double);
-    void ForcesAux(Bead*, Bead*, Bead*, double);
+    double energy(Bead*, Bead*, Bead*, double);
+    double energy(Bead*, Bead*, Bead*, double, double);
+    void forces(Bead*, Bead*, Bead*, double);
+    void forcesAux(Bead*, Bead*, Bead*, double);
 };
 
 #endif /* defined(__Cyto__FilamentBendingHarmonic__) */

@@ -12,73 +12,59 @@
 
 using namespace mathfunc;
 
-double FilamentStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, double k_str, double L){
+double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2, double k_str, double L){
 
-    double dist = TwoPointDistance( pb1->coordinate, pb2->coordinate) - L;
+    double dist = TwoPointDistance( b1->coordinate, b2->coordinate) - L;
     return 0.5 * k_str* dist * dist;
     
 }
 
 
-double FilamentStretchingHarmonic::Energy(Bead* pb1, Bead* pb2, double k_str, double L, double d){
+double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2, double k_str, double L, double d){
 
-    double distStretched = TwoPointDistanceStretched(pb1->coordinate, pb1->force, pb2->coordinate, pb2->force, d) - L;
+    double distStretched = TwoPointDistanceStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, d) - L;
     return 0.5 * k_str * distStretched * distStretched;
     
 
 }
 
-void FilamentStretchingHarmonic::Forces(Bead* pb1, Bead* pb2, double k_str, double L ){
+void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2, double k_str, double L ){
     
-    double dist = TwoPointDistance( pb1->coordinate, pb2->coordinate);
+    double dist = TwoPointDistance( b1->coordinate, b2->coordinate);
     double invL = 1 / dist;
     
     double f0 = k_str * ( dist - L ) * invL;
     
     //force on i
-    
-    pb2->force[0] +=   f0 * ( pb1->coordinate[0] - pb2->coordinate[0] );
-    
-    pb2->force[1] +=   f0 * ( pb1->coordinate[1] - pb2->coordinate[1] );
-    
-    pb2->force[2] +=   f0 * ( pb1->coordinate[2] - pb2->coordinate[2] );
-    
+    b2->force[0] +=   f0 * ( b1->coordinate[0] - b2->coordinate[0] );
+    b2->force[1] +=   f0 * ( b1->coordinate[1] - b2->coordinate[1] );
+    b2->force[2] +=   f0 * ( b1->coordinate[2] - b2->coordinate[2] );
     
     // force i-1
-    
-    
-    pb1->force[0] +=   f0 * ( pb2->coordinate[0] - pb1->coordinate[0] );
-    
-    pb1->force[1] +=   f0 * ( pb2->coordinate[1] - pb1->coordinate[1] );
-    
-    pb1->force[2] +=  f0 * ( pb2->coordinate[2] - pb1->coordinate[2] );
+    b1->force[0] +=   f0 * ( b2->coordinate[0] - b1->coordinate[0] );
+    b1->force[1] +=   f0 * ( b2->coordinate[1] - b1->coordinate[1] );
+    b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
    
   
     
 }
 
-void FilamentStretchingHarmonic::ForcesAux(Bead* pb1, Bead* pb2, double k_str, double L ){
+void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, double k_str, double L ){
     
-    double dist = TwoPointDistance( pb1->coordinateAux, pb2->coordinateAux);
+    double dist = TwoPointDistance( b1->coordinateAux, b2->coordinateAux);
     double invL = 1 / dist;
     double f0 = k_str * ( dist - L ) * invL;
     
     
-    pb2->forceAux[0] +=   f0 * ( pb1->coordinateAux[0] - pb2->coordinateAux[0] );
-    
-    pb2->forceAux[1] +=   f0 * ( pb1->coordinateAux[1] - pb2->coordinateAux[1] );
-    
-    pb2->forceAux[2] +=   f0 * ( pb1->coordinateAux[2] - pb2->coordinateAux[2] );
+    b2->forceAux[0] +=   f0 * ( b1->coordinateAux[0] - b2->coordinateAux[0] );
+    b2->forceAux[1] +=   f0 * ( b1->coordinateAux[1] - b2->coordinateAux[1] );
+    b2->forceAux[2] +=   f0 * ( b1->coordinateAux[2] - b2->coordinateAux[2] );
     
     
     // force i-1
-    
-    
-    pb1->forceAux[0] +=   f0 * ( pb2->coordinateAux[0] - pb1->coordinateAux[0] );
-    
-    pb1->forceAux[1] +=   f0 * ( pb2->coordinateAux[1] - pb1->coordinateAux[1] );
-    
-    pb1->forceAux[2] +=  f0 * ( pb2->coordinateAux[2] - pb1->coordinateAux[2] );
+    b1->forceAux[0] +=   f0 * ( b2->coordinateAux[0] - b1->coordinateAux[0] );
+    b1->forceAux[1] +=   f0 * ( b2->coordinateAux[1] - b1->coordinateAux[1] );
+    b1->forceAux[2] +=  f0 * ( b2->coordinateAux[2] - b1->coordinateAux[2] );
     
 
 }

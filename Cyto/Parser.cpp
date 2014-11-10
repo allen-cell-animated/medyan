@@ -20,100 +20,100 @@ void SystemParser::readChemistryParameters() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("NUMBULKSPECIES") != std::string::npos) {
+        if (line.find("NUMBULKSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numBulkSpecies = std::atof(lineVector[1].c_str());
+                CParams.numBulkSpecies = atof(lineVector[1].c_str());
             }
         }
         
-        if (line.find("NUMDIFFUSINGSPECIES") != std::string::npos) {
+        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numDiffusingSpecies = std::atof(lineVector[1].c_str());
+                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
             }
         }
     
-        if (line.find("NUMFILAMENTSPECIES") != std::string::npos) {
+        if (line.find("NUMFILAMENTSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numFilamentSpecies = std::atof(lineVector[1].c_str());
+                CParams.numFilamentSpecies = atof(lineVector[1].c_str());
             }
         }
     
-        if (line.find("NUMPLUSENDSPECIES") != std::string::npos) {
+        if (line.find("NUMPLUSENDSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numPlusEndSpecies = std::atof(lineVector[1].c_str());
+                CParams.numPlusEndSpecies = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMMINUSENDSPECIES") != std::string::npos) {
+        if (line.find("NUMMINUSENDSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numMinusEndSpecies = std::atof(lineVector[1].c_str());
+                CParams.numMinusEndSpecies = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMBOUNDSPECIES") != std::string::npos) {
+        if (line.find("NUMBOUNDSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numBoundSpecies = std::atof(lineVector[1].c_str());
+                CParams.numBoundSpecies = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMLINKERSPECIES") != std::string::npos) {
+        if (line.find("NUMLINKERSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numLinkerSpecies = std::atof(lineVector[1].c_str());
+                CParams.numLinkerSpecies = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMMOTORSPECIES") != std::string::npos) {
+        if (line.find("NUMMOTORSPECIES") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numMotorSpecies = std::atof(lineVector[1].c_str());
+                CParams.numMotorSpecies = atof(lineVector[1].c_str());
             }
         }
     }
@@ -130,43 +130,43 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     
     ChemistryAlgorithm CAlgorithm;
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
         
-        if (line.find("CALGORITHM") != std::string::npos) {
+        if (line.find("CALGORITHM") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.algorithm = lineVector[1];
             }
         }
-        if (line.find("NUMSTEPS:") != std::string::npos) {
+        if (line.find("NUMSTEPS:") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numSteps = std::atoi(lineVector[1].c_str());
+                CAlgorithm.numSteps = atoi(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMSTEPSPERM:") != std::string::npos) {
+        if (line.find("NUMSTEPSPERM:") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Chemistry parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numStepsPerMech = std::atoi(lineVector[1].c_str());
+                CAlgorithm.numStepsPerMech = atoi(lineVector[1].c_str());
             }
         }
         
@@ -183,16 +183,16 @@ ChemistrySetup SystemParser::readChemistrySetup() {
     
     ChemistrySetup CSetup;
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if(line.find("CHEMISTRYFILE") != std::string::npos) {
+        if(line.find("CHEMISTRYFILE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "Error reading chemistry input file. Exiting" << std::endl;
+                cout << "Error reading chemistry input file. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -213,126 +213,126 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("FSTRETCHINGTYPE") != std::string::npos) {
+        if (line.find("FSTRETCHINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament stretching type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Filament stretching type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.FStretchingType = lineVector[1];
             }
         }
-        else if (line.find("FBENDINGTYPE") != std::string::npos) {
+        else if (line.find("FBENDINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament bending type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Filament bending type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.FBendingType = lineVector[1];
             }
         }
-        else if (line.find("FTWISTINGTYPE") != std::string::npos) {
+        else if (line.find("FTWISTINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Filament twisting type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Filament twisting type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.FTwistingType = lineVector[1];
             }
         }
-        else if (line.find("LSTRETCHINGTYPE") != std::string::npos) {
+        else if (line.find("LSTRETCHINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker stretching type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Linker stretching type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.LStretchingType = lineVector[1];
             }
         }
-        else if (line.find("LBENDINGTYPE") != std::string::npos) {
+        else if (line.find("LBENDINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker bending type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Linker bending type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.LBendingType = lineVector[1];
             }
         }
-        else if (line.find("LTWISTINGTYPE") != std::string::npos) {
+        else if (line.find("LTWISTINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Linker twisting type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Linker twisting type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.LTwistingType = lineVector[1];
             }
         }
-        else if (line.find("MSTRETCHINGTYPE") != std::string::npos) {
+        else if (line.find("MSTRETCHINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor stretching type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Motor stretching type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.MStretchingType = lineVector[1];
             }
         }
-        else if (line.find("MBENDINGTYPE") != std::string::npos) {
+        else if (line.find("MBENDINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor bending type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Motor bending type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.MBendingType = lineVector[1];
             }
         }
-        else if (line.find("MTWISTINGTYPE") != std::string::npos) {
+        else if (line.find("MTWISTINGTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Motor twisting type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Motor twisting type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.MTwistingType = lineVector[1];
             }
         }
-        else if (line.find("BOUNDARYTYPE") != std::string::npos) {
+        else if (line.find("BOUNDARYTYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Boundary type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Boundary type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.BoundaryFFType = lineVector[1];
             }
         }
-        else if (line.find("VOLUMETYPE") != std::string::npos) {
+        else if (line.find("VOLUMETYPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Volume type. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Volume type. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -354,230 +354,230 @@ void SystemParser::readMechanicsParameters() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
         ///Filament stretching
-        if (line.find("FSTRETCHINGK") != std::string::npos) {
+        if (line.find("FSTRETCHINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FStretchingK = std::atof(lineVector[1].c_str());
+                MParams.FStretchingK = atof(lineVector[1].c_str());
             }
         }
-//        if (line.find("FSTRETCHINGL") != std::string::npos) {
+//        if (line.find("FSTRETCHINGL") != string::npos) {
 //            
-//            std::vector<std::string> lineVector = split<std::string>(line);
+//            vector<string> lineVector = split<string>(line);
 //            if(lineVector.size() > 2) {
-//                std::cout << "There was an error parsing input file at Filament parameters. Exiting" << std::endl;
+//                cout << "There was an error parsing input file at Filament parameters. Exiting" << endl;
 //                exit(EXIT_FAILURE);
 //            }
 //            else if (lineVector.size() == 2) {
-//                MParams.FStretchingL = std::atof(lineVector[1].c_str());
+//                MParams.FStretchingL = atof(lineVector[1].c_str());
 //            }
 //        }
         
         ///Filament bending
-        else if (line.find("FBENDINGK") != std::string::npos) {
+        else if (line.find("FBENDINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FBendingK = std::atof((lineVector[1].c_str()));
+                MParams.FBendingK = atof((lineVector[1].c_str()));
             }
         }
-        else if (line.find("FBENDINGTHETA") != std::string::npos) {
+        else if (line.find("FBENDINGTHETA") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FBendingTheta = std::atof((lineVector[1].c_str()));
+                MParams.FBendingTheta = atof((lineVector[1].c_str()));
             }
         }
         
         ///Filament twisting
-        else if (line.find("FTWISTINGK") != std::string::npos) {
+        else if (line.find("FTWISTINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FTwistingK = std::atof((lineVector[1].c_str()));
+                MParams.FTwistingK = atof((lineVector[1].c_str()));
             }
         }
-        else if (line.find("FTWISTINGPHI") != std::string::npos) {
+        else if (line.find("FTWISTINGPHI") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.FTwistingPhi = std::atof((lineVector[1].c_str()));
+                MParams.FTwistingPhi = atof((lineVector[1].c_str()));
             }
         }
         
         ///Linker stretching
-        if (line.find("LSTRETCHINGK") != std::string::npos) {
+        if (line.find("LSTRETCHINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LStretchingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-//        if (line.find("LSTRETCHINGL") != std::string::npos) {
+//        if (line.find("LSTRETCHINGL") != string::npos) {
 //            
-//            std::vector<std::string> lineVector = split<std::string>(line);
+//            vector<string> lineVector = split<string>(line);
 //            if(lineVector.size() > 2) {
-//                std::cout << "There was an error parsing input file at Linker parameters. Exiting" << std::endl;
+//                cout << "There was an error parsing input file at Linker parameters. Exiting" << endl;
 //                exit(EXIT_FAILURE);
 //            }
 //            else if (lineVector.size() == 2) {
-//                MParams.LStretchingL = std::atof((lineVector[1].c_str()));
+//                MParams.LStretchingL = atof((lineVector[1].c_str()));
 //            }
 //        }
         
         ///Linker bending
-        else if (line.find("LBENDINGK") != std::string::npos) {
+        else if (line.find("LBENDINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LBendingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-        else if (line.find("LBENDINGTHETA") != std::string::npos) {
+        else if (line.find("LBENDINGTHETA") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LBendingTheta.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LBendingTheta.push_back(atof((lineVector[i].c_str())));
             }
             
         }
         
         ///Linker twisting
-        else if (line.find("LTWISTINGK") != std::string::npos) {
+        else if (line.find("LTWISTINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-        else if (line.find("LTWISTINGPHI") != std::string::npos) {
+        else if (line.find("LTWISTINGPHI") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingPhi.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LTwistingPhi.push_back(atof((lineVector[i].c_str())));
             }
         }
         
         ///Motor stretching
-        if (line.find("MSTRETCHINGK") != std::string::npos) {
+        if (line.find("MSTRETCHINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MStretchingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-//        if (line.find("MSTRETCHINGL") != std::string::npos) {
+//        if (line.find("MSTRETCHINGL") != string::npos) {
 //            
-//            std::vector<std::string> lineVector = split<std::string>(line);
+//            vector<string> lineVector = split<string>(line);
 //            if(lineVector.size() > 2) {
-//                std::cout << "There was an error parsing input file at Motor parameters. Exiting" << std::endl;
+//                cout << "There was an error parsing input file at Motor parameters. Exiting" << endl;
 //                exit(EXIT_FAILURE);
 //            }
 //            else if (lineVector.size() == 2) {
-//                MParams.MStretchingL = std::atof((lineVector[1].c_str()));
+//                MParams.MStretchingL = atof((lineVector[1].c_str()));
 //            }
 //        }
         
         ///Motor bending
-        else if (line.find("MBENDINGK") != std::string::npos) {
+        else if (line.find("MBENDINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MBendingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.MBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-        else if (line.find("MBENDINGTHETA") != std::string::npos) {
+        else if (line.find("MBENDINGTHETA") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MBendingTheta.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.MBendingTheta.push_back(atof((lineVector[i].c_str())));
             }
         }
         
         ///Motor twisting
-        else if (line.find("MTWISTINGK") != std::string::npos) {
+        else if (line.find("MTWISTINGK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-        else if (line.find("MTWISTINGPHI") != std::string::npos) {
+        else if (line.find("MTWISTINGPHI") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MTwistingK.push_back(std::atof((lineVector[i].c_str())));
+                    MParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
             }
         }
         
         ///Volume parameter
-        else if (line.find("VOLUMEK") != std::string::npos) {
+        else if (line.find("VOLUMEK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.VolumeK = std::atof((lineVector[1].c_str()));
+                MParams.VolumeK = atof((lineVector[1].c_str()));
             }
         }
         
-        else if (line.find("VOLUMECUTOFF") != std::string::npos) {
+        else if (line.find("VOLUMECUTOFF") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at Mechanics parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Mechanics parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.VolumeCutoff = std::atof((lineVector[1].c_str()));
+                MParams.VolumeCutoff = atof((lineVector[1].c_str()));
             }
         }
         else {}
@@ -593,27 +593,27 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     
     MechanicsAlgorithm MAlgorithm;
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("CONJUGATEGRADIENT") != std::string::npos) {
+        if (line.find("CONJUGATEGRADIENT") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A conjugate gradient method must be specified. Exiting" << std::endl;
+                cout << "A conjugate gradient method must be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MAlgorithm.ConjugateGradient = lineVector[1];
             }
         }
-        else if (line.find("MD") != std::string::npos) {
+        else if (line.find("MD") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "A Mechanics algorithm must be specified. Exiting" << std::endl;
+                cout << "A Mechanics algorithm must be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -633,47 +633,47 @@ void SystemParser::readBoundaryParameters() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("BCUTOFF") != std::string::npos) {
+        if (line.find("BCUTOFF") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Boundary parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryCutoff = std::atof((lineVector[1].c_str()));
+                BParams.boundaryCutoff = atof((lineVector[1].c_str()));
             }
             ///Default value to be half compartment size
             else {
                 BParams.boundaryCutoff = SystemParameters::Geometry().compartmentSizeX / 2;
             }
         }
-        else if (line.find("BINTERACTIONK") != std::string::npos) {
+        else if (line.find("BINTERACTIONK") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Boundary parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryK = std::atof((lineVector[1].c_str()));
+                BParams.boundaryK = atof((lineVector[1].c_str()));
             }
             else {}
         }
-        else if (line.find("BSCREENLENGTH") != std::string::npos) {
+        else if (line.find("BSCREENLENGTH") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "There was an error parsing input file at Boundary parameters. Exiting" << std::endl;
+                cout << "There was an error parsing input file at Boundary parameters. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.screenLength = std::atof((lineVector[1].c_str()));
+                BParams.screenLength = atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -690,16 +690,16 @@ BoundaryType SystemParser::readBoundaryType() {
     
     BoundaryType BType;
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("BOUNDARYSHAPE") != std::string::npos) {
+        if (line.find("BOUNDARYSHAPE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A boundary shape needs to be specified. Exiting" << std::endl;
+                cout << "A boundary shape needs to be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -719,81 +719,81 @@ void SystemParser::readGeometryParameters() {
     
     GeometryParameters GParams;
     
-    std::vector<double> gridTemp;
-    std::vector<double> compartmentTemp;
+    vector<double> gridTemp;
+    vector<double> compartmentTemp;
     double monomerSize = 0;
     double cylinderSize = 0;
     short nDim = 0;
     
     //find grid size lines
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("NX") != std::string::npos
-            || line.find("NY") != std::string::npos
-            || line.find("NZ") != std::string::npos) {
+        if (line.find("NX") != string::npos
+            || line.find("NY") != string::npos
+            || line.find("NZ") != string::npos) {
             
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at grid dimensions. Exiting" << std::endl;
+                cout << "There was an error parsing input file at grid dimensions. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2)
-                gridTemp.push_back(std::atof((lineVector[1].c_str())));
+                gridTemp.push_back(atof((lineVector[1].c_str())));
             else {}
         }
         
-        else if (line.find("COMPARTMENTSIZEX") != std::string::npos
-                 || line.find("COMPARTMENTSIZEY") != std::string::npos
-                 || line.find("COMPARTMENTSIZEZ") != std::string::npos) {
+        else if (line.find("COMPARTMENTSIZEX") != string::npos
+                 || line.find("COMPARTMENTSIZEY") != string::npos
+                 || line.find("COMPARTMENTSIZEZ") != string::npos) {
             
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "There was an error parsing input file at compartment size. Exiting" << std::endl;
+                cout << "There was an error parsing input file at compartment size. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                compartmentTemp.push_back(std::atof((lineVector[1].c_str())));
+                compartmentTemp.push_back(atof((lineVector[1].c_str())));
             else {}
         }
         
-        else if(line.find("MONOMERSIZE") != std::string::npos) {
+        else if(line.find("MONOMERSIZE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A monomer size needs to be specified. Exiting" << std::endl;
+                cout << "A monomer size needs to be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                monomerSize = std::atof(lineVector[1].c_str());
+                monomerSize = atof(lineVector[1].c_str());
             else {}
         }
         
-        else if(line.find("CYLINDERSIZE") != std::string::npos) {
+        else if(line.find("CYLINDERSIZE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                std::cout << "A cylinder size needs to be specified. Exiting" << std::endl;
+                cout << "A cylinder size needs to be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                cylinderSize = std::atof(lineVector[1].c_str());
+                cylinderSize = atof(lineVector[1].c_str());
             else {}
         }
         
-        else if(line.find("NDIM") != std::string::npos) {
+        else if(line.find("NDIM") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                std::cout << "Number of dimensions needs to be specified. Exiting" << std::endl;
+                cout << "Number of dimensions needs to be specified. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                nDim = short(std::atoi(lineVector[1].c_str()));
+                nDim = short(atoi(lineVector[1].c_str()));
             }
             else {}
         }
@@ -806,7 +806,7 @@ void SystemParser::readGeometryParameters() {
     
 #ifdef CHEMISTRY
     if(cylinderSize / monomerSize < 5) {
-        std::cout << "With chemistry, cylinder size specified needs to be at least 5 monomers long. Exiting" << std::endl;
+        cout << "With chemistry, cylinder size specified needs to be at least 5 monomers long. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
     GParams.cylinderIntSize = int(cylinderSize / monomerSize);
@@ -835,31 +835,31 @@ FilamentSetup SystemParser::readFilamentSetup() {
     
     FilamentSetup FSetup;
     
-    std::string line;
+    string line;
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        if(line.find("FILAMENTFILE") != std::string::npos) {
+        if(line.find("FILAMENTFILE") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "Error reading filament input file. Exiting" << std::endl;
+                cout << "Error reading filament input file. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
                 FSetup.inputFile = lineVector[1];
             else {}
         }
-        else if(line.find("NUMFILAMENTS") != std::string::npos) {
+        else if(line.find("NUMFILAMENTS") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                std::cout << "Error reading number of filaments. Exiting" << std::endl;
+                cout << "Error reading number of filaments. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.numFilaments = std::atoi(lineVector[1].c_str());
+                FSetup.numFilaments = atoi(lineVector[1].c_str());
             else {}
         }
     }
@@ -867,27 +867,27 @@ FilamentSetup SystemParser::readFilamentSetup() {
 }
 
 ///FILAMENT DATA PARSER
-std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
+vector<vector<vector<double>>> FilamentParser::readFilaments() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    std::vector<std::vector<std::vector<double>>> returnVector;
-    std::string line;
+    vector<vector<vector<double>>> returnVector;
+    string line;
     
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        std::vector<std::string> lineVector = split<std::string>(line);
+        vector<string> lineVector = split<string>(line);
         if(lineVector.size() == 7) {
-            std::vector<double> coord1;
-            std::vector<double> coord2;
+            vector<double> coord1;
+            vector<double> coord2;
             for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++) {
-                coord1.push_back(std::atof(((*it).c_str())));
+                coord1.push_back(atof(((*it).c_str())));
             }
             for(auto it = lineVector.begin() + 4; it != lineVector.end(); it++) {
-                coord2.push_back(std::atof(((*it).c_str())));
+                coord2.push_back(atof(((*it).c_str())));
             }
             
             returnVector.push_back({coord1, coord2});
@@ -897,122 +897,122 @@ std::vector<std::vector<std::vector<double>>> FilamentParser::readFilaments() {
 }
 
 ///CHEMISTRY INPUT PARSER
-ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
+ChemistryData ChemistryParser::readChemistryInput() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    ChemistrySpeciesAndReactions chemSR;
-    std::string line;
+    ChemistryData chem;
+    string line;
 
     while(getline(_inputFile, line)) {
         
-        if(line.find("#") != std::string::npos) { continue; }
+        if(line.find("#") != string::npos) { continue; }
         
-        else if(line.find("SPECIESBULK") != std::string::npos) {
+        else if(line.find("SPECIESBULK") != string::npos) {
         
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  3) {
-                std::cout << "Error reading a bulk species. Exiting" << std::endl;
+                cout << "Error reading a bulk species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-                chemSR.speciesBulk.push_back(std::tuple<std::string, int>(lineVector[1], std::atoi(lineVector[2].c_str())));
+                chem.speciesBulk.push_back(tuple<string, int>(lineVector[1], atoi(lineVector[2].c_str())));
             }
             else {}
         }
-        else if(line.find("SPECIESDIFFUSING") != std::string::npos) {
+        else if(line.find("SPECIESDIFFUSING") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  4) {
-                std::cout << "Error reading a diffusing species. Exiting" << std::endl;
+                cout << "Error reading a diffusing species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 4) {
-                chemSR.speciesDiffusing.push_back(std::tuple<std::string, int, double>
-                        (lineVector[1], std::atoi(lineVector[2].c_str()), std::atof(lineVector[3].c_str())));
+                chem.speciesDiffusing.push_back(tuple<string, int, double>
+                        (lineVector[1], atoi(lineVector[2].c_str()), atof(lineVector[3].c_str())));
             }
             else {}
         }
         
-        else if(line.find("SPECIESFILAMENT") != std::string::npos) {
+        else if(line.find("SPECIESFILAMENT") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament species. Exiting" << std::endl;
+                cout << "Error reading a filament species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chemSR.speciesFilament.push_back(lineVector[1]);
+                chem.speciesFilament.push_back(lineVector[1]);
             else {}
         }
-        else if(line.find("SPECIESBOUND") != std::string::npos) {
+        else if(line.find("SPECIESBOUND") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament bound species. Exiting" << std::endl;
+                cout << "Error reading a filament bound species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chemSR.speciesBound.push_back(lineVector[1]);
-            else {}
-        }
-        
-        else if(line.find("SPECIESLINKER") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament linker species. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                chemSR.speciesLinker.push_back(lineVector[1]);
-            else {}
-        }
-        else if(line.find("SPECIESMOTOR") != std::string::npos) {
-            
-            std::vector<std::string> lineVector = split<std::string>(line);
-            if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament linker species. Exiting" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                chemSR.speciesMotor.push_back(lineVector[1]);
+                chem.speciesBound.push_back(lineVector[1]);
             else {}
         }
         
-        else if(line.find("SPECIESPLUSEND") != std::string::npos) {
+        else if(line.find("SPECIESLINKER") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament plus end species. Exiting" << std::endl;
+                cout << "Error reading a filament linker species. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chem.speciesLinker.push_back(lineVector[1]);
+            else {}
+        }
+        else if(line.find("SPECIESMOTOR") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  2) {
+                cout << "Error reading a filament linker species. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chem.speciesMotor.push_back(lineVector[1]);
+            else {}
+        }
+        
+        else if(line.find("SPECIESPLUSEND") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  2) {
+                cout << "Error reading a filament plus end species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) 
-                chemSR.speciesPlusEnd.push_back(lineVector[1]);
+                chem.speciesPlusEnd.push_back(lineVector[1]);
             else {}
         }
-        else if(line.find("SPECIESMINUSEND") != std::string::npos) {
+        else if(line.find("SPECIESMINUSEND") != string::npos) {
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                std::cout << "Error reading a filament minus end species. Exiting" << std::endl;
+                cout << "Error reading a filament minus end species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chemSR.speciesMinusEnd.push_back(lineVector[1]);
+                chem.speciesMinusEnd.push_back(lineVector[1]);
             else {}
         }
         
         ///loop through a reaction
-       else if(line.find("GENREACTION") != std::string::npos) {
+       else if(line.find("GENREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
    
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
@@ -1021,24 +1021,24 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.genReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.genReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                  (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a general reaction. Exiting" << std::endl;
+                cout << "Error reading a general reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("BULKREACTION") != std::string::npos) {
+        else if(line.find("BULKREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1049,24 +1049,24 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.bulkReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.bulkReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                  (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a bulk reaction. Exiting" << std::endl;
+                cout << "Error reading a bulk reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("DEPOLYMERIZATIONREACTION") != std::string::npos) {
+        else if(line.find("DEPOLYMERIZATIONREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1077,24 +1077,24 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.depolymerizationReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                           (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.depolymerizationReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                           (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a depolymerization reaction. Exiting" << std::endl;
+                cout << "Error reading a depolymerization reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("POLYMERIZATIONREACTION") != std::string::npos) {
+        else if(line.find("POLYMERIZATIONREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1105,23 +1105,23 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.polymerizationReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.polymerizationReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                  (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a polymerization reaction. Exiting" << std::endl;
+                cout << "Error reading a polymerization reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
-        else if(line.find("LINKERBINDINGREACTION") != std::string::npos) {
+        else if(line.find("LINKERBINDINGREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1132,25 +1132,25 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.linkerBindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
-                                                        (reactants, products, std::atof(lineVector[lineVector.size() - 3].c_str()),
-                                                         std::atof(lineVector[lineVector.size() - 2].c_str()), std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.linkerBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
+                                                        (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
+                                                         atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a linker binding reaction. Exiting" << std::endl;
+                cout << "Error reading a linker binding reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("MOTORBINDINGREACTION") != std::string::npos) {
+        else if(line.find("MOTORBINDINGREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1161,26 +1161,26 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.motorBindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double, double, double>
-                                                       (reactants, products, std::atof(lineVector[lineVector.size() - 3].c_str()),
-                                                        std::atof(lineVector[lineVector.size() - 2].c_str()), std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.motorBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
+                                                       (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
+                                                        atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a motor binding reaction. Exiting" << std::endl;
+                cout << "Error reading a motor binding reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
         
-        else if(line.find("UNBINDINGREACTION") != std::string::npos) {
+        else if(line.find("UNBINDINGREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1191,24 +1191,24 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.unbindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                    (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.unbindingReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                    (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading an unbinding reaction. Exiting" << std::endl;
+                cout << "Error reading an unbinding reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("BINDINGREACTION") != std::string::npos) {
+        else if(line.find("BINDINGREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1219,24 +1219,24 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.bindingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                    (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.bindingReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                    (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a binding reaction. Exiting" << std::endl;
+                cout << "Error reading a binding reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("MOTORWALKINGREACTION") != std::string::npos) {
+        else if(line.find("MOTORWALKINGREACTION") != string::npos) {
             
-            std::vector<std::string> reactants;
-            std::vector<std::string> products;
+            vector<string> reactants;
+            vector<string> products;
             
-            std::vector<std::string> lineVector = split<std::string>(line);
+            vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = std::find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1247,18 +1247,18 @@ ChemistrySpeciesAndReactions ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chemSR.motorWalkingReactions.push_back(std::tuple<std::vector<std::string>, std::vector<std::string>, double>
-                                                  (reactants, products, std::atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.motorWalkingReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                                  (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                std::cout << "Error reading a motor walking reaction. Exiting" << std::endl;
+                cout << "Error reading a motor walking reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
     }
     
-    return chemSR;
+    return chem;
 }
 
 

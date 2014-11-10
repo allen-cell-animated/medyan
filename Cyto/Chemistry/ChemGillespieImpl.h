@@ -171,8 +171,6 @@ public:
             bool success = makeStep();
             if(!success)
                 return false;
-            //            if(i%1000000==0)
-            //                std::cout << "ChemGillespieImpl::run(): i=" << i << std::endl;
         }
         return true;
     }
@@ -192,10 +190,10 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
     bool makeStep();
 private:
-    std::unordered_map<ReactionBase*, std::unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
-    std::mt19937 _eng; ///< Random number generator
-    std::exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    std::uniform_real_distribution<double> _uniform_distr;
+    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
+    mt19937 _eng; ///< Random number generator
+    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
+    uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time
     double _a_total; 
     size_t _n_reacts; ///< number of reactions in the network

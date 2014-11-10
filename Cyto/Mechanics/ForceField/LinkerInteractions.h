@@ -16,16 +16,16 @@ class Linker;
 
 class LinkerInteractions {
 private:
-    std::string _name;
+    string _name;
     
 public:
-    virtual double ComputeEnergy( Linker*,  double d) = 0;
-    virtual void ComputeForces(Linker*) = 0;
-    virtual void ComputeForcesAux(Linker*) = 0;
+    virtual double computeEnergy( Linker*,  double d) = 0;
+    virtual void computeForces(Linker*) = 0;
+    virtual void computeForcesAux(Linker*) = 0;
     
-    // std::string getName() {return _name;}
+    // string getName() {return _name;}
     
-    const std::string& getName() {return _name;}
+    const string& getName() {return _name;}
     
 };
 

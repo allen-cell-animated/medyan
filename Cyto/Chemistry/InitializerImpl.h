@@ -25,13 +25,13 @@ class InitializerImpl : public ChemInitializerImpl {
 private:
     SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
     
-    std::vector<std::unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates;
+    vector<unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates;
     ///< list of reactions to add to every new CCylinder
-    std::vector<std::unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates;
+    vector<unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates;
     ///<list of cross filament reactions to add to CCylinders
     
     ///Vectors of all filament-related species in system
-    std::vector<std::string> _speciesFilament,
+    vector<string> _speciesFilament,
                              _speciesPlusEnd,
                              _speciesMinusEnd,
                              _speciesBound,
@@ -39,22 +39,22 @@ private:
                              _speciesMotor;
     
     ///Set up all reaction templates from chemsetup struct
-    void generateFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    void generateFilamentReactionTemplates(ChemistryData& chem);
     
-    void generateCrossFilamentReactionTemplates(ChemistrySpeciesAndReactions& chemSR);
+    void generateCrossFilamentReactionTemplates(ChemistryData& chem);
     
     ///Generate the general, non-filament reactions
-    void generateGeneralReactions(ChemistrySpeciesAndReactions& chemSR,
+    void generateGeneralReactions(ChemistryData& chem,
                                   Compartment& protoCompartment);
     ///Generate bulk reactions
-    void generateBulkReactions(ChemistrySpeciesAndReactions& chemSR);
+    void generateBulkReactions(ChemistryData& chem);
     
 public:
     InitializerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
     
     ///initialize the chemical reaction templates and species in this system
     ///@param chemSetup - chemistry setup struct from parsed input file
-    virtual void initialize(ChemistrySpeciesAndReactions& chemSR);
+    virtual void initialize(ChemistryData& chem);
 
     ///Initializer
     ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
@@ -63,7 +63,7 @@ public:
                                        bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
-    virtual void updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cNeighbors);
+    virtual void updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors);
     
 };
 

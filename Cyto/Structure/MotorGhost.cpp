@@ -7,27 +7,30 @@
 //
 
 #include "MotorGhost.h"
+
 #include "Bead.h"
 #include "Cylinder.h"
+
 #include "SystemParameters.h"
+#include "MathFunctions.h"
 
 using namespace mathfunc;
 
-MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorID, double position1, double position2, bool creation)
-    : _pc1(pc1), _pc2(pc2), _motorType(motorType), _motorID(motorID), _position1(position1), _position2(position2) {
+MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID, double position1, double position2, bool creation)
+    : _c1(c1), _c2(c2), _motorType(motorType), _motorID(motorID), _position1(position1), _position2(position2) {
     
     _birthTime = tau();
     
     ///Find compartment
-    auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2);
+    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);
     
     try {_compartment = GController::getCompartment(coordinate);}
-    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
 #ifdef CHEMISTRY
-    _cMotorGhost = std::unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
+    _cMotorGhost = unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
     _cMotorGhost->setMotorGhost(this);
     
     
@@ -37,16 +40,16 @@ MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorI
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
-    SpeciesMotor* sm1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesMotor* sm2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
+    SpeciesMotor* sm1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
+    SpeciesMotor* sm2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
     
     if(!creation) {
-        SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+        SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
         if(sm1->getN() != 0) {
             sm1->getRSpecies().up();
             se1->getRSpecies().down();
         }
-        SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+        SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
         if(sm2->getN() != 0) {
             sm2->getRSpecies().up();
             se2->getRSpecies().down();
@@ -60,10 +63,10 @@ MotorGhost::MotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, int motorI
 #endif
     
 #ifdef MECHANICS
-    _mMotorGhost = std::unique_ptr<MMotorGhost>(
+    _mMotorGhost = unique_ptr<MMotorGhost>(
             new MMotorGhost(SystemParameters::Mechanics().MStretchingK[motorType], position1, position2,
-                pc1->GetFirstBead()->coordinate, pc1->GetSecondBead()->coordinate,
-                pc2->GetFirstBead()->coordinate, pc2->GetSecondBead()->coordinate));
+                _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+                _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -78,10 +81,10 @@ MotorGhost::~MotorGhost() {
     int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
     
-    SpeciesMotor* sm1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesBound* se1 = _pc1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-    SpeciesMotor* sm2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
-    SpeciesBound* se2 = _pc2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+    SpeciesMotor* sm1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
+    SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+    SpeciesMotor* sm2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
+    SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
     
     if(sm1->getN() != 0) {
         sm1->getRSpecies().down();
@@ -100,13 +103,13 @@ MotorGhost::~MotorGhost() {
 void MotorGhost::updatePosition() {
     
     ///check if were still in same compartment
-    auto m1 = MidPointCoordinate(_pc1->GetFirstBead()->coordinate, _pc1->GetSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_pc2->GetFirstBead()->coordinate, _pc2->GetSecondBead()->coordinate, _position2);
+    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}
-    catch (std::exception& e) {std:: cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
     if(c != _compartment) {
         

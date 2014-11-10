@@ -9,9 +9,10 @@
 #ifndef __Cyto__BoundarySurface__
 #define __Cyto__BoundarySurface__
 
+#include <iostream>
+
 #include "common.h"
 #include "BoundaryElementDB.h"
-#include <iostream>
 
 /// BoundarySurface class is a boundary shape that holds boundary elements
 /*!
@@ -24,7 +25,7 @@
 class BoundarySurface {
     
 protected:
-    std::vector<std::unique_ptr<BoundaryElement>> _boundaryElements;
+    vector<unique_ptr<BoundaryElement>> _boundaryElements;
     ///<vector of boundary elements that make up this surface
     short _nDim; ///<dimensionality of surface
     
@@ -36,13 +37,13 @@ public:
     ~BoundarySurface() {
         //loop through boundary elements, remove from DB
         for (auto &b : _boundaryElements)
-            BoundaryElementDB::Instance(BEDBKey())->RemoveBoundaryElement(b.get());
+            BoundaryElementDB::instance(BEDBKey())->removeBoundaryElement(b.get());
     };
     
     ///Access for all implementations of BoundarySurface to the DB key
     BoundaryElementDBKey BEDBKey() {return BoundaryElementDBKey();}
     ///Get boundary elements
-    const std::vector<std::unique_ptr<BoundaryElement>>& boundaryElements() {return _boundaryElements;}
+    const vector<unique_ptr<BoundaryElement>>& boundaryElements() {return _boundaryElements;}
     
 };
 

@@ -9,11 +9,12 @@
 #ifndef CytoSim_Component_h
 #define CytoSim_Component_h
 
+#include "common.h"
+
 class Composite;
 class Visitor;
 class SpeciesVisitor;
 class ReactionVisitor;
-
 
 /// Component class is the base class for the Composite pattern hieararchy
 
@@ -94,8 +95,8 @@ public:
     /// belonging to children nodes, etc.
     virtual size_t numberOfReactions() const {return 0;}
 
-    /// Return a std::string indicating the full name of this node (presumably used mainly for debugging)
-    virtual std::string getFullName() const {return "Component";};
+    /// Return a string indicating the full name of this node (presumably used mainly for debugging)
+    virtual string getFullName() const {return "Component";};
     
     /// Return the total number of nodes contained under this node's hieararchy
     /// @note This is a recursive call, and all nodes under this node are visited.

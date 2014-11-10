@@ -10,8 +10,6 @@
 #include "ForceFieldManager.h"
 #include <cmath>
 
-using namespace std;
-
 inline void CGMethod::swap(double &a, double &b) {
     double tmp = a;
     a = b;
@@ -101,43 +99,43 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
 }
 
 
-double CGMethod::GradSquare()
+double CGMethod::gradSquare()
 {
     double g = 0;
-	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
-        g += (*it).CalcForceSquare();
+        g += (*it).calcForceSquare();
 	}
     
     return g;
 }
 
-double CGMethod::GradAuxSquare()
+double CGMethod::gradAuxSquare()
 {
     double g = 0;
-	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
-        g += (*it).CalcForceAuxSquare();
+        g += (*it).calcForceAuxSquare();
 	}
     
     return g;
 }
 
-double CGMethod::GradDotProduct()
+double CGMethod::gradDotProduct()
 {
     double g = 0;
-	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
-        g += (*it).CalcDotForceProduct();
+        g += (*it).calcDotForceProduct();
 	}
     
     return g;
 }
 
 
-void CGMethod::MoveBeads(double d)
+void CGMethod::moveBeads(double d)
 {
-	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
         (*it).coordinate[0] = (*it).coordinate[0] + d* (*it).force[0];
         (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
@@ -148,9 +146,9 @@ void CGMethod::MoveBeads(double d)
 	}
 }
 
-void CGMethod::MoveBeadsAux(double d) {
+void CGMethod::moveBeadsAux(double d) {
     
-    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
         (*it).coordinateAux[0] = (*it).coordinateAux[0] + d* (*it).force[0];
         (*it).coordinateAux[1] = (*it).coordinateAux[1] + d* (*it).force[1];
@@ -159,9 +157,9 @@ void CGMethod::MoveBeadsAux(double d) {
 }
 
 
-void CGMethod::ShiftGradient(double d)
+void CGMethod::shiftGradient(double d)
 {
-	for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
         (*it).force[0] = (*it).forceAux[0] + d* (*it).force[0];
         (*it).force[1] = (*it).forceAux[1] + d* (*it).force[1];
@@ -169,10 +167,10 @@ void CGMethod::ShiftGradient(double d)
 	}
 }
 
-void CGMethod::PrintForces()
+void CGMethod::printForces()
 {
 	cout << "Print Forces" << endl;
-    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
 		for (int i = 0; i<3; i++) { cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "<<(*it).forceAux[i]<<endl;}
 	}
@@ -180,7 +178,7 @@ void CGMethod::PrintForces()
 }
 
 
-double CGMethod::GoldenSection1(ForceFieldManager& FFM)
+double CGMethod::goldenSection1(ForceFieldManager& FFM)
 {
 	double a = 0;
 	double b = 200;
@@ -209,7 +207,7 @@ double CGMethod::GoldenSection1(ForceFieldManager& FFM)
     else return returnLambda;
 }
 
-double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
+double CGMethod::goldenSection2(ForceFieldManager& FFM) {
     
     double ax = 0, bx = 5, cx = 200;
     
@@ -249,7 +247,7 @@ double CGMethod::GoldenSection2(ForceFieldManager& FFM) {
 }
 
 
-double CGMethod::BinarySearch(ForceFieldManager& FFM)
+double CGMethod::binarySearch(ForceFieldManager& FFM)
 {
     double a = 0, b = 100;
     while (fabs(b - a) > LSENERGYTOL){
@@ -263,15 +261,15 @@ double CGMethod::BinarySearch(ForceFieldManager& FFM)
 }
 
 
-double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
+double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
     //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
     double directionDotForce = 0.0;
     double maxDirection = 0.0;
     
-    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
-        directionDotForce += it->CalcDotForceProduct();
+        directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
     ///return error if in wrong direction
@@ -318,15 +316,15 @@ double CGMethod::BacktrackingLineSearch(ForceFieldManager& FFM) {
 }
 
 
-double CGMethod::QuadraticLineSearch(ForceFieldManager& FFM) {
+double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     
     //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
     double conjugateDirectionDotForce = 0.0;
     double maxDirection = 0.0;
     
-    for(auto it: *BeadDB::Instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance(getBeadDBKey())) {
         
-        conjugateDirectionDotForce += it->CalcDotForceProduct();
+        conjugateDirectionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
     ///return error if in wrong direction
@@ -345,9 +343,9 @@ double CGMethod::QuadraticLineSearch(ForceFieldManager& FFM) {
     while (true) {
         
         double energy = FFM.ComputeEnergy(lambda);
-        MoveBeadsAux(lambda);
+        moveBeadsAux(lambda);
         FFM.ComputeForcesAux();
-        conjugateDirectionDotForce = GradDotProduct();
+        conjugateDirectionDotForce = gradDotProduct();
         
         double deltaConjugateDirectionDotForce = conjugateDirectionDotForce - conjugateDirectionDotForcePrev;
         

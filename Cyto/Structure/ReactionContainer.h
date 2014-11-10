@@ -22,7 +22,7 @@ public:
     virtual void clear() = 0;
     
     ///Add a unique reaction pointer to this container
-    virtual ReactionBase* addReactionUnique(std::unique_ptr<ReactionBase> &&Reaction) = 0;
+    virtual ReactionBase* addReactionUnique(unique_ptr<ReactionBase> &&Reaction) = 0;
     
     ///Remove a reaction from this container
     virtual void removeReaction(ReactionBase* Reaction) = 0;
@@ -35,10 +35,10 @@ public:
 };
 
 /// A concrete class implementing the ReactionPtrContainerIFace,
-/// using std::vector<std::unique_ptr<ReactionBase>> as the container implementation
+/// using vector<unique_ptr<ReactionBase>> as the container implementation
 class ReactionPtrContainerVector : public  ReactionPtrContainerIFace {
 protected:
-    std::vector<std::unique_ptr<ReactionBase>> _reactions;  ///Reaction ptr container
+    vector<unique_ptr<ReactionBase>> _reactions;  ///Reaction ptr container
 public:
     
     ///Default constructor
@@ -61,8 +61,8 @@ public:
     virtual void clear() {_reactions.clear();}
 
     ///Add a unique reaction ptr to this container
-    virtual ReactionBase* addReactionUnique (std::unique_ptr<ReactionBase> &&Reaction) {
-        _reactions.push_back(std::move(Reaction));
+    virtual ReactionBase* addReactionUnique (unique_ptr<ReactionBase> &&Reaction) {
+        _reactions.push_back(move(Reaction));
         return _reactions.back().get();
     }
     
@@ -70,24 +70,24 @@ public:
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addReaction( Args&& ...args )
     {
-        _reactions.push_back(std::unique_ptr<ReactionBase>( new Reaction<M,N>( std::forward<Args>(args)...) ));
+        _reactions.push_back(unique_ptr<ReactionBase>( new Reaction<M,N>( forward<Args>(args)...) ));
         //        _reactions.emplace_back(make_unique(Args...));
         return _reactions.back().get();
     }
     
     ///Add a general reaction class to this container
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
-    ReactionBase* add(std::initializer_list<Species*> species, float rate)
+    ReactionBase* add(initializer_list<Species*> species, float rate)
     {
-        _reactions.push_back(std::unique_ptr<ReactionBase>( new RXN<M,N>(species,rate) ));
+        _reactions.push_back(unique_ptr<ReactionBase>( new RXN<M,N>(species,rate) ));
         //        _reactions.emplace_back(make_unique(Args...));
         return _reactions.back().get();
     }
     
     ///Remove a reaction from this container
     virtual void removeReaction (ReactionBase* R) {
-        auto child_iter = std::find_if(_reactions.begin(),_reactions.end(),
-                                       [R](const std::unique_ptr<ReactionBase> &element)
+        auto child_iter = find_if(_reactions.begin(),_reactions.end(),
+                                       [R](const unique_ptr<ReactionBase> &element)
                                        {
                                            return element.get()==R ? true : false;
                                        });
@@ -114,23 +114,23 @@ public:
     }
     
     ///Get all reactions in vector form
-    std::vector<std::unique_ptr<ReactionBase>>& reactions() {return _reactions;}
-    const std::vector<std::unique_ptr<ReactionBase>>& reactions() const {return _reactions;}
+    vector<unique_ptr<ReactionBase>>& reactions() {return _reactions;}
+    const vector<unique_ptr<ReactionBase>>& reactions() const {return _reactions;}
     
     ///Print all reactions in this container
     virtual void printReactions() {
         for(auto &r : _reactions)
-            std::cout << (*r.get());
+            cout << (*r.get());
     }
     
     ///Find a similar reaction in this container (satistifes equality operator)
     ///@note returns the first similar reaction found
     virtual ReactionBase* findSimilarReaction (const ReactionBase &r) {
-        auto it = std::find_if(_reactions.begin(),_reactions.end(),
-                               [&r](const std::unique_ptr<ReactionBase> &element)
+        auto it = find_if(_reactions.begin(),_reactions.end(),
+                               [&r](const unique_ptr<ReactionBase> &element)
                                {return r==(*element);});
         if(it==_reactions.end())
-            throw std::out_of_range("Reaction::findSimilarReaction(): The analogous Reaction was not found");
+            throw out_of_range("Reaction::findSimilarReaction(): The analogous Reaction was not found");
         return it->get();
     }
 };

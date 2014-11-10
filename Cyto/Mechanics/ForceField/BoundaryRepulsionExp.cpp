@@ -10,36 +10,30 @@
 #include "Bead.h"
 #include <math.h>
 
-double BoundaryRepulsionExp::ComputeEnergy(Bead* pb, double r, double k_rep, double screenLength)
+double BoundaryRepulsionExp::computeEnergy(Bead* b, double r, double k_rep, double screenLength)
 {
     double R = -r/screenLength;
     return k_rep * exp(R);
-    
-//    std::cout << "r = " << r << std::endl;
 }
 
-void BoundaryRepulsionExp::ComputeForces(Bead* pb, double r, std::vector<double>& norm, double k_rep, double screenLength){
+void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm, double k_rep, double screenLength){
     
     double R = -r/screenLength;
     double f0 = k_rep * exp(R)/screenLength;
     
-    pb->force[0] +=  f0 *norm[0];
-    pb->force[1] +=  f0 *norm[1];
-    pb->force[2] +=  f0 *norm[2];
-    
-//    std::cout << "r = " << r << std::endl;
+    b->force[0] +=  f0 *norm[0];
+    b->force[1] +=  f0 *norm[1];
+    b->force[2] +=  f0 *norm[2];
     
 }
 
-void BoundaryRepulsionExp::ComputeForcesAux(Bead* pb, double r, std::vector<double>& norm,  double k_rep, double screenLength){
+void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,  double k_rep, double screenLength){
     
     double R = -r/screenLength;
     double f0 = k_rep * exp(R)/screenLength;
     
-    pb->forceAux[0] +=  f0 *norm[0];
-    pb->forceAux[1] +=  f0 *norm[1];
-    pb->forceAux[2] +=  f0 *norm[2];
-    
-//    std::cout << "r = " << r << std::endl;
+    b->forceAux[0] +=  f0 *norm[0];
+    b->forceAux[1] +=  f0 *norm[1];
+    b->forceAux[2] +=  f0 *norm[2];
     
 }

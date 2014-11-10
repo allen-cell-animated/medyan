@@ -10,6 +10,8 @@
 #define __Cyto__CBound__
 
 #include <iostream>
+
+#include "common.h"
 #include "Species.h"
 
 class Compartment;

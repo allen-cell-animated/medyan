@@ -13,56 +13,55 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BoundaryRepulsion<BRepulsionInteractionType>::ComputeEnergy(BoundaryElement* pbe, double d) {
+double BoundaryRepulsion<BRepulsionInteractionType>::computeEnergy(BoundaryElement* be, double d) {
     double U = 0.0;
-    double k_rep = pbe->getRepulsionConst();
-    double screenLength = pbe->getScreeningLength();
+    double k_rep = be->getRepulsionConst();
+    double screenLength = be->getScreeningLength();
     
     if (d == 0.0){
         
-        for (auto pb: pbe->beads()){
-           U+= _FFType.ComputeEnergy(pb, pbe->distance(pb->coordinate), k_rep, screenLength);
+        for (auto b: be->getBeads()){
+           U+= _FFType.computeEnergy(b, be->distance(b->coordinate), k_rep, screenLength);
         }
     }
     else {
-        for (auto pb: pbe->beads()){
-            U+=_FFType.ComputeEnergy(pb, pbe->stretchedDistance(pb->coordinate, pb->force, d), k_rep, screenLength);
+        for (auto b: be->getBeads()){
+            U+=_FFType.computeEnergy(b, be->stretchedDistance(b->coordinate, b->force, d), k_rep, screenLength);
         }
     }
-    //std::cout << "Boundary Energy = " << U << std::endl;
     
     return U;
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryRepulsion<BRepulsionInteractionType>::ComputeForces(BoundaryElement* pbe) {
+void BoundaryRepulsion<BRepulsionInteractionType>::computeForces(BoundaryElement* be) {
     
-    double k_rep = pbe->getRepulsionConst();
-    double screenLength = pbe->getScreeningLength();
+    double k_rep = be->getRepulsionConst();
+    double screenLength = be->getScreeningLength();
     
-    for (auto pb: pbe->beads()){
-        auto normal = pbe->normal(pb->coordinate);
-        _FFType.ComputeForces(pb, pbe->distance(pb->coordinate), normal, k_rep, screenLength);
+    for (auto b: be->getBeads()){
+        auto normal = be->normal(b->coordinate);
+        _FFType.computeForces(b, be->distance(b->coordinate), normal, k_rep, screenLength);
     }
 }
 
 
 template <class BRepulsionInteractionType>
-void BoundaryRepulsion<BRepulsionInteractionType>::ComputeForcesAux(BoundaryElement* pbe) { /// Needed for Conjugated Gradient minimization;
+void BoundaryRepulsion<BRepulsionInteractionType>::computeForcesAux(BoundaryElement* be) { /// Needed for Conjugated Gradient minimization;
     
-    double k_rep = pbe->getRepulsionConst();
-    double screenLength = pbe->getScreeningLength();
+    double k_rep = be->getRepulsionConst();
+    double screenLength = be->getScreeningLength();
     
-    for (auto pb: pbe->beads()){
-        auto normal = pbe->normal(pb->coordinateAux);
-        _FFType.ComputeForcesAux(pb, pbe->distance(pb->coordinateAux), normal, k_rep, screenLength);
+    for (auto b: be->getBeads()){
+        auto normal = be->normal(b->coordinateAux);
+        _FFType.computeForcesAux(b, be->distance(b->coordinateAux), normal, k_rep, screenLength);
     }
 }
 
 ///Template specializations
-template double BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeEnergy(BoundaryElement* pbe, double d);
-template void BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeForces(BoundaryElement* pbe);
-template void BoundaryRepulsion<BoundaryRepulsionLJ>::ComputeForcesAux(BoundaryElement* pbe);
-template double BoundaryRepulsion<BoundaryRepulsionExp>::ComputeEnergy(BoundaryElement* pbe, double d);
-template void BoundaryRepulsion<BoundaryRepulsionExp>::ComputeForces(BoundaryElement* pbe);
-template void BoundaryRepulsion<BoundaryRepulsionExp>::ComputeForcesAux(BoundaryElement* pbe);
+template double BoundaryRepulsion<BoundaryRepulsionLJ>::computeEnergy(BoundaryElement* be, double d);
+template void BoundaryRepulsion<BoundaryRepulsionLJ>::computeForces(BoundaryElement* be);
+template void BoundaryRepulsion<BoundaryRepulsionLJ>::computeForcesAux(BoundaryElement* be);
+template double BoundaryRepulsion<BoundaryRepulsionExp>::computeEnergy(BoundaryElement* be, double d);
+template void BoundaryRepulsion<BoundaryRepulsionExp>::computeForces(BoundaryElement* be);
+template void BoundaryRepulsion<BoundaryRepulsionExp>::computeForcesAux(BoundaryElement* be);

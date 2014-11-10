@@ -10,7 +10,7 @@
 
 CylinderDB* CylinderDB::_instance = 0;
 
-CylinderDB* CylinderDB::Instance(CylinderDBKey k) {
+CylinderDB* CylinderDB::instance(CylinderDBKey k) {
     if(_instance==0)
         _instance = new CylinderDB;
     return _instance;

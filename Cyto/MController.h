@@ -49,7 +49,7 @@ class MController {
     
 private:
     ForceFieldManager _FFManager;  ///<container and methods for all force fields in system
-    std::vector<Minimizer*> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
+    vector<Minimizer*> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
     SubSystem* _subSystem;
     
     ///Initialize the MController using a list of vector names
@@ -69,7 +69,7 @@ public:
 
     ///Run minimization on the system using the chosen algorithm
     void run() {
-        _minimizerAlgorithms[0]->Equlibrate(_FFManager);
+        _minimizerAlgorithms[0]->equlibrate(_FFManager);
     }
     
 };

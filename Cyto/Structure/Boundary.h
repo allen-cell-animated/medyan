@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include "BoundarySurface.h"
 #include "common.h"
+#include "BoundarySurface.h"
 
 ///Boundary type enumeration
 enum class BoundaryShape {Cube, Cylinder, Sphere};
@@ -25,7 +25,7 @@ enum class BoundaryShape {Cube, Cylinder, Sphere};
 class Boundary {
     
 protected:
-    std::vector<std::unique_ptr<BoundarySurface>> _boundarySurfaces;
+    vector<unique_ptr<BoundarySurface>> _boundarySurfaces;
     ///<vector of boundary surfaces (could be different implementations)
     BoundaryShape _shape; ///<Boundary type of this boundary
     short _nDim; ///<Dimensionality of this boundary
@@ -40,10 +40,10 @@ public:
     //get shape
     BoundaryShape getShape() {return _shape;}
     ///get boundary surfaces
-    const std::vector<std::unique_ptr<BoundarySurface>>& boundarySurfaces() {return _boundarySurfaces;}
+    const vector<unique_ptr<BoundarySurface>>& getBoundarySurfaces() {return _boundarySurfaces;}
     
     ///Check if coordinates are within boundary 
-    virtual bool within(const std::vector<double> coordinates) = 0;
+    virtual bool within(const vector<double> coordinates) = 0;
 };
 
 

@@ -21,7 +21,7 @@ SpeciesNamesDB* SpeciesNamesDB::Instance() {
 }
 
 #ifdef RSPECIES_SIGNALING
-boost::signals2::connection Species::connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
+boost::signals2::connection Species::connect(function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
 {
     if (!isSignaling())
         startSignaling(); 
@@ -48,14 +48,14 @@ Composite* Species::getRoot()
 //    Membrane ///< Species that diffuse within a membrane 
 //    };
         
-//std::vector<std::string> vec_type_name = {"None", "Bulk", "Diffusing", "Filament", "Walking", "Motors", "Membrane"};
+//vector<string> vec_type_name = {"None", "Bulk", "Diffusing", "Filament", "Walking", "Motors", "Membrane"};
 
-//std::string getTypeAsString (SType T) {
+//string getTypeAsString (SType T) {
 //    return vec_type_name[static_cast<int>(T)];
 //}
 
 /// Print self into an iostream
-std::ostream& operator<<(std::ostream& os, const Species& s){
+ostream& operator<<(ostream& os, const Species& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;
 }

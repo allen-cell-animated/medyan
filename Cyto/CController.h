@@ -44,7 +44,7 @@ public:
     ///       could be: NRM, Gillespie, SimpleGillespie.
     ///@param chemInitializer - a string defining the chemical initializer used
     ///       could be: Simple.
-    void initialize(std::string& chemAlgorithm, std::string chemInitializer, ChemistrySpeciesAndReactions& chemSR);
+    void initialize(string& chemAlgorithm, string chemInitializer, ChemistryData& chem);
     
     ///Run a number of chemical steps
     bool run(int steps) { return ChemSim::run(ChemSimRunKey(), steps); }

@@ -18,8 +18,6 @@
 #include "common.h"
 #include "Composite.h"
 
-using namespace std;
-
 TEST(ComponentTest, SimpleMethods) {
     Component cp;
     EXPECT_EQ(nullptr, cp.getParent());
@@ -71,7 +69,7 @@ TEST(CompositeTest, ChildrenMethods) {
     EXPECT_EQ(X.get(), chC->getParent());
     
     auto Y = make_unique<Composite>();
-    Y->addChild(std::move(X));
+    Y->addChild(move(X));
     Y->addChild(make_unique<Component>());
     Y->addChild(make_unique<Component>());
     EXPECT_EQ(3U, Y->numberOfChildren());

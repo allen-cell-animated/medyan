@@ -40,7 +40,7 @@ public:
     ~Controller() {};
     
     ///Initialize the system
-    void initialize(std::string inputFile);
+    void initialize(string inputFile);
     ///update positions of all elements in system
     void updatePositions();
     ///Run the simulation

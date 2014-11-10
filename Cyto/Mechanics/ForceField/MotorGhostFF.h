@@ -20,15 +20,15 @@ class MotorGhostInteractions;
 class MotorGhostFF : public ForceField {
     
 private:
-    std::vector <std::unique_ptr<MotorGhostInteractions>> _motorGhostInteractionVector;
+    vector <unique_ptr<MotorGhostInteractions>> _motorGhostInteractionVector;
     
 public:
-    MotorGhostFF(std::string& Stretching, std::string& Bending, std::string& Twisting );
+    MotorGhostFF(string& stretching, string& bending, string& twisting);
     
-    // Public interfaecs to compute forces:
-    virtual double ComputeEnergy(double d);
-    virtual void ComputeForces();
-    virtual void ComputeForcesAux();
+    // Public interfaces to compute forces:
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
 };
 
 

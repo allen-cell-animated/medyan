@@ -18,7 +18,7 @@
 class Filament;
 class CCylinder;
 class ReactionBase;
-struct ChemistrySpeciesAndReactions;
+struct ChemistryData;
 
 ///ChemInitializerImpl is an abstract base class for initialization of all chemistry in the system
 
@@ -35,14 +35,14 @@ public:
     virtual ~ChemInitializerImpl() noexcept{}
     
     ///Initialize the compartment grid, based on the given simulation
-    virtual void initialize(ChemistrySpeciesAndReactions& chemSR) = 0;
+    virtual void initialize(ChemistryData& chem) = 0;
     
     ///Initializer, based on the given simulation
     virtual CCylinder* createCCylinder(Filament* pf, Compartment* c,
                                        bool extensionFront, bool extensionBack, bool creation) = 0;
 
     ///add/update cross cylinder reactions that are within range
-    virtual void updateCCylinder(CCylinder* cc, std::vector<CCylinder*>& cNeighbors) = 0;
+    virtual void updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors) = 0;
     
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
