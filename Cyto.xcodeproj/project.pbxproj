@@ -24,6 +24,8 @@
 		F733507819DAD8CE001A0533 /* CMonomer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F733507719DAD8CE001A0533 /* CMonomer.cpp */; };
 		F741A62819D9BAD8006B2351 /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62619D9BAD8006B2351 /* test_boundaries.cpp */; };
 		F741A62B19D9E00F006B2351 /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62919D9E00F006B2351 /* test_ccylinders.cpp */; };
+		F746C4DB1A11596E0085E4BB /* NeighborsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */; };
+		F746C4DC1A11596E0085E4BB /* NeighborsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F746C4DA1A11596E0085E4BB /* NeighborsManager.h */; };
 		F7472F2119E2E13D008DA03B /* CLinker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7472F1F19E2E13D008DA03B /* CLinker.cpp */; };
 		F7472F2219E2E13D008DA03B /* CLinker.h in Headers */ = {isa = PBXBuildFile; fileRef = F7472F2019E2E13D008DA03B /* CLinker.h */; };
 		F7472F2519E2E9EA008DA03B /* Linker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7472F2319E2E9EA008DA03B /* Linker.cpp */; };
@@ -221,6 +223,8 @@
 		F7358499198990E60026E1B6 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		F741A62619D9BAD8006B2351 /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_boundaries.cpp; path = Cyto/TESTS/test_boundaries.cpp; sourceTree = SOURCE_ROOT; };
 		F741A62919D9E00F006B2351 /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_ccylinders.cpp; path = Cyto/TESTS/test_ccylinders.cpp; sourceTree = SOURCE_ROOT; };
+		F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NeighborsManager.cpp; path = Cyto/Structure/NeighborsManager.cpp; sourceTree = SOURCE_ROOT; };
+		F746C4DA1A11596E0085E4BB /* NeighborsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NeighborsManager.h; path = Cyto/Structure/NeighborsManager.h; sourceTree = SOURCE_ROOT; };
 		F7472F1E19E2DE66008DA03B /* CBound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CBound.h; path = Cyto/Structure/CBound.h; sourceTree = SOURCE_ROOT; };
 		F7472F1F19E2E13D008DA03B /* CLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLinker.cpp; path = Cyto/Structure/CLinker.cpp; sourceTree = SOURCE_ROOT; };
 		F7472F2019E2E13D008DA03B /* CLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLinker.h; path = Cyto/Structure/CLinker.h; sourceTree = SOURCE_ROOT; };
@@ -472,6 +476,8 @@
 				F777F9BD19C1F35200D2850A /* Species.cpp */,
 				F777F9BE19C1F35200D2850A /* Species.h */,
 				F777F9BF19C1F35200D2850A /* SpeciesContainer.h */,
+				F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */,
+				F746C4DA1A11596E0085E4BB /* NeighborsManager.h */,
 			);
 			name = Structure;
 			path = CytoMech;
@@ -536,8 +542,8 @@
 				F777F97219C1F32E00D2850A /* ChemSim.cpp */,
 				F777F97319C1F32E00D2850A /* ChemSim.h */,
 				F777F97419C1F32E00D2850A /* ChemSimImpl.h */,
-				F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */,
 				F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */,
+				F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */,
 				F777FA9819C1FC2D00D2850A /* ChemCallbacks.h */,
 				F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */,
 				F7D1395C19D07520007FC395 /* ReactionTemplate.h */,
@@ -688,6 +694,7 @@
 				F7472F2619E2E9EA008DA03B /* Linker.h in Headers */,
 				F777F9CF19C1F35200D2850A /* BoundarySurface.h in Headers */,
 				F777F9D419C1F35200D2850A /* CMonomer.h in Headers */,
+				F746C4DC1A11596E0085E4BB /* NeighborsManager.h in Headers */,
 				F777F9F219C1F35200D2850A /* MCylinder.h in Headers */,
 				F777FAA519C222E400D2850A /* Controller.h in Headers */,
 				F777FA3719C1F3A800D2850A /* FilamentFF.h in Headers */,
@@ -874,6 +881,7 @@
 				B580341B19C3A5460017FEF4 /* BoundaryRepulsion.cpp in Sources */,
 				F777F9C919C1F35200D2850A /* BoundaryElementDB.cpp in Sources */,
 				F777FA5419C1F3A800D2850A /* MotorGhostStretching.cpp in Sources */,
+				F746C4DB1A11596E0085E4BB /* NeighborsManager.cpp in Sources */,
 				F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */,
 				B5BDA3D51A03FD84002CDE66 /* CylinderExclVolume.cpp in Sources */,
 				F777FA8919C1F40A00D2850A /* Component.cpp in Sources */,

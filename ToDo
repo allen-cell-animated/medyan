@@ -77,16 +77,13 @@ Goals for October 2014:
     -All databases
     -All FF's (Aravind?)
 
-WISH LIST
--Get rid of chem initializer->put all in ccylinder!                             
-
 ------
 Goals for November 2014
 ------
 
 1) More features
     -Fix reaction initialization / management                                   X
-    -Update position / neighbors list fix
+    -New Neighbors list implementation
     -Get rid of chemIniitializer                                                will keep for now
     -Cylindrical + half sphere boundary
     -Excluded volume working
