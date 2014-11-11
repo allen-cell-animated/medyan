@@ -13,6 +13,7 @@
 #include <vector>
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class MotorGhost;
 
 ///MMotorGhost class represents a cross-link between filaments that can move across a filament

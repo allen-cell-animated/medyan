@@ -12,6 +12,7 @@
 #include "common.h"
 #include "FilamentInteractions.h"
 
+///FORWARD DECLARATIONS
 class Filament;
 
 template <class FBendingInteractionType>
@@ -21,7 +22,7 @@ private:
     FBendingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy( Filament*, double d);
+    virtual double computeEnergy(Filament*, double d);
     virtual void computeForces( Filament*);
     virtual void computeForcesAux( Filament*);
 };

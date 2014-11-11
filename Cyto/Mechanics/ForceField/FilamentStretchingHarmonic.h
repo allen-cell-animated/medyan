@@ -11,6 +11,7 @@
 
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Bead;
 
 class FilamentStretchingHarmonic {

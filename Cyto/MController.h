@@ -33,6 +33,8 @@
 #include <iostream>
 #include <vector>
 
+
+///FORWARD DECLARATIONS
 class PolakRibiere;
 class FletcherRieves;
 

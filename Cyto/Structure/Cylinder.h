@@ -16,6 +16,7 @@
 #include "MCylinder.h"
 #include "CCylinder.h"
 
+///FORWARD DECLARATIONS
 class Filament;
 class Compartment;
 
@@ -30,7 +31,7 @@ class Cylinder : public Composite {
 private:
     Bead* _b1;  ///< Pointer to the first bead, associated with this cylinder ;
     Bead* _b2; ///< Pointer to the end bead in the cylinder.
-                       ///< Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
+               ///< Either empty - last cylinder, or pointer to the first Bead in a next cylinder.
     
     unique_ptr<MCylinder> _mCylinder; ///< ptr to mcylinder
     unique_ptr<CCylinder> _cCylinder; ///< ptr to ccylinder
@@ -38,6 +39,8 @@ private:
     Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
     int _positionFilament; ///< position on filament (1st, 2nd, ... etc)
     bool _last = false; ///< if the cylinder is last in the filament's cylinder list
+    
+    int _ID; ///Unique ID of cylinder, managed by CylinderDB
     
     Compartment* _compartment; ///< compartment this cylinder is currently in
     
@@ -48,7 +51,7 @@ public:
     vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
     
     ///Constructor and destructor
-    Cylinder(Filament* f, Bead* b1, Bead* b2, bool extensionFront, bool extensionBack, bool creation);
+    Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront, bool extensionBack, bool creation);
     ~Cylinder();
     
     ///get mCylinder
@@ -69,8 +72,15 @@ public:
     Bead* getFirstBead() {return _b1;}
     Bead* getSecondBead() {return _b2;}
     
+    Compartment* getCompartment() {return _compartment;}
+    
+    const int getID() {return _ID;}
+    
     bool last(){ return _last;}
     void setLast(bool b){ _last = b;}
+    
+    void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
+    int getPositionFilament() {return _positionFilament;}
     
     ///Update the position of this cylinder
     ///@note - changes compartment of ccylinder if needed

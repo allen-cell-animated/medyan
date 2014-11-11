@@ -15,6 +15,7 @@
 #include "common.h"
 #include "BoundaryInteractions.h"
 
+///FORWARD DECLARATIONS
 class BoundaryElement;
 
 

@@ -33,6 +33,7 @@
 #define BOOST_POOL_MEM_RNODENRM
 #define BOOST_POOL_MEM_HEAP_ELEMENT
 
+///FORWARD DECLARATIONS
 class PQNode;
 class RNodeNRM;
 class ChemNRMImpl;

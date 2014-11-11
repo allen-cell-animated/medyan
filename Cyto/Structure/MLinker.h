@@ -14,6 +14,7 @@
 
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Linker;
 
 ///MLinker class represents a cross-link between filaments

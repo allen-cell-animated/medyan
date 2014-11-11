@@ -60,7 +60,7 @@ public:
     Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead,
                              bool extensionFront = false, bool extensionBack = false, bool creation = false) {
         
-        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, extensionFront, extensionBack, creation);
+        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, _currentCylinderID++, extensionFront, extensionBack, creation);
         push_back(pc);
         return pc ;}
     
@@ -72,6 +72,7 @@ public:
     }
     
 private:
+    int _currentCylinderID; ///current running cylinder ID
     
     static CylinderDB* _instance;
     CylinderDB() {};

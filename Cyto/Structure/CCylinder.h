@@ -16,6 +16,7 @@
 #include "CMonomer.h"
 #include "SystemParameters.h"
 
+///FORWARD DECLARATIONS
 class Cylinder;
 
 /// CCylinder class holds all CMonomers and reactions associated with its species

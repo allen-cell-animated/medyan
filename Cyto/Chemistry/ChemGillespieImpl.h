@@ -18,6 +18,7 @@
 #include "ChemRNode.h"
 #include "ChemSimImpl.h"
 
+///FORWARD DECLARATIONS
 class RNodeGillespie;
 class ChemGillespieImpl;
     

@@ -20,6 +20,7 @@ enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
 };
 
+///FORWARD DECLARATIONS
 class SubSystem;
 class Filament;
 class CCylinder;

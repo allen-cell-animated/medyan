@@ -20,6 +20,7 @@
 #include "Composite.h"
 #include "ChemSim.h"
 
+///FORWARD DECLARATIONS
 class Bead;
 class Cylinder;
 class BoundaryElement;

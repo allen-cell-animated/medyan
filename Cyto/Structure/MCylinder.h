@@ -14,6 +14,7 @@
 
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Cylinder;
 class Filament;
 class Bead;

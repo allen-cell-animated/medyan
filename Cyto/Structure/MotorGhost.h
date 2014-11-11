@@ -15,6 +15,7 @@
 #include "MMotorGhost.h"
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Cylinder;
 
 ///MotorGhost class is a wrapper for a chemical and mechanical motor

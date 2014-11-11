@@ -12,6 +12,7 @@
 #include "common.h"
 #include <iostream>
 
+///FORWARD DECLARATIONS
 class Linker;
 
 class LinkerInteractions {
@@ -19,7 +20,7 @@ private:
     string _name;
     
 public:
-    virtual double computeEnergy( Linker*,  double d) = 0;
+    virtual double computeEnergy(Linker*,  double d) = 0;
     virtual void computeForces(Linker*) = 0;
     virtual void computeForcesAux(Linker*) = 0;
     

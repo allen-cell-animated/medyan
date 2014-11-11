@@ -18,6 +18,7 @@
 #include "CMonomer.h"
 #include "Parser.h"
 
+///FORWARD DECLARATIONS
 class SubSystem;
 
 ///SimpleManagerImpl is a concrete implementation of the ChemInitailizerImpl class

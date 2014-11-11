@@ -26,6 +26,7 @@
 #include "common.h"
 #include "Species.h"
 
+///FORWARD DECLARATIONS
 class RNode;
 class Composite;
 class ReactionBase;

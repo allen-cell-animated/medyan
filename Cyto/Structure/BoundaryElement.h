@@ -15,6 +15,7 @@
 #include "common.h"
 #include "Gcontroller.h"
 
+///FORWARD DECLARATIONS
 class Bead;
 
 ///BoundaryElement class represents an element of a boundary surface

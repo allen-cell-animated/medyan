@@ -13,6 +13,7 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 
+///FORWARD DECLARATIONS
 class ForceFieldManager;
 class Minimizer;
 

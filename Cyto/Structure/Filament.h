@@ -17,7 +17,9 @@
 #include "common.h"
 #include "Cylinder.h"
 
+///FORWARD DECLARATIONS
 class SubSystem;
+
 ///Filament class is used to store data about connectivity of cylinders
 /*!
  * This class contains information about beads and cylinders connectivity. It iterates over the beads whithin itself

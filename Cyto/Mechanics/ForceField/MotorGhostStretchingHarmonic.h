@@ -12,8 +12,8 @@
 #include "common.h"
 #include <iostream>
 
+///FORWARD DECLARATIONS
 class Bead;
-
 
 class MotorGhostStretchingHarmonic {
     

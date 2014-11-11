@@ -12,26 +12,63 @@
 #include <stdio.h>
 
 #include "common.h"
-#include "Graph.h"
+#include "MathFunctions.h"
 
-struct CylinderProperties {
-    Cylinder* _cylinder; ///< ptr to the cylinder that this vertex represents
+#include "CylinderDB.h"
+#include "GController.h"
+
+using namespace mathfunc;
+
+///FORWARD DECLARATIONS
+class Cylinder;
+
+
+class NeighborList {
+    
+private:
+    unordered_map<Cylinder*, vector<Cylinder*>> _list; ///The neighbors list, as a hash map
+    float _rMax;
+    float _rMin;
+    
+    vector<Cylinder*> findNearbyCylinders(Cylinder* cylinder);
+    
+public:
+    
+    NeighborList(float rMax, float rMin) :  _rMax(rMax), _rMin(rMin) { reset(); }
+    ~NeighborList() {}
+    
+    void reset();
+    
 };
 
-struct PairProperties {
-    ///Nothing for now, could store distances....?
-};
 
-typedef Graph<CylinderProperties, PairProperties> NeighborList;
 
 
 class NeighborListManager {
     
 private:
-    std::vector<NeighborList> reactionNeighborLists;
-    std::vector<NeighborList> forceNeighborLists;
+    vector<NeighborList> _chemNeighborLists;
+    vector<NeighborList> _mechNeighborLists;
 
 public:
+    
+    NeighborListManager() {}
+    ~NeighborListManager() {}
+    
+
+    void addChemNeighborList(float rMax = 0.0, float rMin = 0.0) {
+        
+        _chemNeighborLists.emplace_back(rMax, rMin);
+    }
+    
+    void addMechNeighborList(float rMax = 0.0, float rMin = 0.0) {
+        
+        _mechNeighborLists.emplace_back(rMax, rMin);
+    }
+    
+    
+    
+
     
     
     

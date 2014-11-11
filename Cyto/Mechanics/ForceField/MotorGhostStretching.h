@@ -14,6 +14,7 @@
 #include "common.h"
 #include "MotorGhostInteractions.h"
 
+///FORWARD DECLARATIONS
 class MotorGhost;
 
 template <class MStretchingInteractionType>

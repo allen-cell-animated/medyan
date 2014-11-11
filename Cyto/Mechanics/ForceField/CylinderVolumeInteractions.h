@@ -13,6 +13,7 @@
 #include <iostream>
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Cylinder;
 
 class CylinderVolumeInteractions {

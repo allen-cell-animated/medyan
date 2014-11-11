@@ -19,6 +19,7 @@
 #include "BoundaryImpl.h"
 #include "Output.h"
 
+///FORWARD DECLARATIONS
 class SubSystem;
 
 ///Controller is used to initialize, manage, and run an entire simulation

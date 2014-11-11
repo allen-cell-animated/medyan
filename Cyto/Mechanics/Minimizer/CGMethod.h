@@ -14,6 +14,7 @@
 #include "BeadDB.h"
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class ForceFieldManager;
 
 

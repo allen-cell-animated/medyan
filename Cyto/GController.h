@@ -22,6 +22,7 @@ class OutOfBoundsException : public exception {
     }
 };
 
+///FORWARD DECLARATIONS
 class Boundary;
 
 /// GController class is used to control the geometry of the grid, as well as the geometry of entire system

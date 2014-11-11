@@ -19,6 +19,7 @@
 #include "LinkerDB.h"
 #include "MotorGhostDB.h"
 
+///FORWARD DECLARATIONS
 class Boundary;
 class Cylinder;
 class Compartment;

@@ -17,6 +17,7 @@
 #include "Component.h"
 #include "Species.h"
 
+///FORWARD DECLARATIONS
 class Visitor;
 class SpeciesVisitor;
 class ReactionVisitor;

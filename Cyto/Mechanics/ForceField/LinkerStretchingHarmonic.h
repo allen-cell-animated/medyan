@@ -12,6 +12,7 @@
 #include <iostream>
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Bead;
 
 class LinkerStretchingHarmonic {

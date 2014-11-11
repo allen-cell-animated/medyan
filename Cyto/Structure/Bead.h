@@ -19,6 +19,7 @@
 #include "Compartment.h"
 #include "GController.h"
 
+///FORWARD DECLARATIONS
 class Compartment;
 class BoundaryElement;
 

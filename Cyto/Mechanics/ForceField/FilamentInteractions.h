@@ -12,6 +12,7 @@
 #include <iostream>
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Filament;
 
 class FilamentInteractions {
@@ -19,7 +20,7 @@ private:
     string _name;
 
 public:
-    virtual double computeEnergy( Filament*,  double d) = 0;
+    virtual double computeEnergy(Filament*,  double d) = 0;
     virtual void computeForces(Filament*) = 0;
     virtual void computeForcesAux(Filament*) = 0;
     

@@ -14,6 +14,7 @@
 #include "common.h"
 #include "Species.h"
 
+///FORWARD DECLARATIONS
 class Compartment;
 
 ///CBound class represents a chemical object that is bound to a filament

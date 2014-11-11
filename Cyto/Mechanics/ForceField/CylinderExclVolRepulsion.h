@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class Bead;
 
 class CylinderExclVolRepulsion {

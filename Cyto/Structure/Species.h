@@ -26,9 +26,11 @@
 #include <type_traits>
 
 #include "common.h"
+
 #include "utility.h"
 #include "RSpecies.h"
 
+///FORWARD DECLARATIONS
 class Composite;
 class CBound;
 
@@ -258,7 +260,7 @@ public:
     /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
     ///                       unless absolutely essential.
     /// @return a connection object which can be used to later disconnect this particular slot or temporarily block it
-    boost::signals2::connection connect(function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
+    boost::signals2::connection connect(std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
 #endif
     
     /// Returns true if two Species objects are equal.

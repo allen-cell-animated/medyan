@@ -14,6 +14,7 @@
 #include "common.h"
 #include "CBound.h"
 
+///FORWARD DECLARATIONS
 class Linker;
 class Compartment;
 

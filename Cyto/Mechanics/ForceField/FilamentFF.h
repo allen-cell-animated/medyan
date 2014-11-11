@@ -16,6 +16,7 @@
 #include "common.h"
 #include "ForceField.h"
 
+///FORWARD DECLARATIONS
 class FilamentInteractions;
 
 class FilamentFF : public ForceField {

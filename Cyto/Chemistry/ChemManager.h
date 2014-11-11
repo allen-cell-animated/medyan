@@ -13,7 +13,7 @@
 #include "ChemManagerImpl.h"
 #include <iostream>
 
-///Forward declarations
+///FORWARD DECLARATIONS
 class Compartment;
 class Filament;
 class CCylinder;

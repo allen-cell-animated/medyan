@@ -12,6 +12,7 @@
 #include "common.h"
 #include <iostream>
 
+///FORWARD DECLARATIONS
 class BoundaryElement;
 
 class BoundaryInteractions {
@@ -19,7 +20,7 @@ private:
     string _name;
     
 public:
-    virtual double computeEnergy( BoundaryElement*,  double d) = 0;
+    virtual double computeEnergy(BoundaryElement*,  double d) = 0;
     virtual void computeForces(BoundaryElement*) = 0;
     virtual void computeForcesAux(BoundaryElement*) = 0;
     

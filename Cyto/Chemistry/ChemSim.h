@@ -14,7 +14,7 @@
 #include "common.h"
 #include "Reaction.h"
     
-///forward delcarations
+///FORWARD DECLARATIONS
 class ChemSimImpl;
 
 ///Key for initialization of ChemSim

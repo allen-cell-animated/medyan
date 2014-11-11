@@ -16,11 +16,12 @@
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, bool extensionFront, bool extensionBack, bool creation) {
+Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront, bool extensionBack, bool creation) {
     
     ///Set beads
     _b1 = b1;
     _b2 = b2;
+    _ID = ID;
     setFilament(f);
     
     ///check if were still in same compartment
