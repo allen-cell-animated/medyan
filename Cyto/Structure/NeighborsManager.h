@@ -10,16 +10,29 @@
 #define __Cyto__NeighborsManager__
 
 #include <stdio.h>
-#include <boost/graph/adjacency_list.hpp>
 
-using namespace boost;
+#include "common.h"
+#include "Graph.h"
 
-typedef adjacency_list<listS, hash_setS, undirectedS> NeighborList;
+struct CylinderProperties {
+    Cylinder* _cylinder; ///< ptr to the cylinder that this vertex represents
+};
+
+struct PairProperties {
+    ///Nothing for now, could store distances....?
+};
+
+typedef Graph<CylinderProperties, PairProperties> NeighborList;
 
 
-class NeighborsManager {
+class NeighborListManager {
     
 private:
+    std::vector<NeighborList> reactionNeighborLists;
+    std::vector<NeighborList> forceNeighborLists;
+
+public:
+    
     
     
     
@@ -28,20 +41,6 @@ private:
     
     
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

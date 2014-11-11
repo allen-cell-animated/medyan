@@ -26,6 +26,7 @@
 		F741A62B19D9E00F006B2351 /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F741A62919D9E00F006B2351 /* test_ccylinders.cpp */; };
 		F746C4DB1A11596E0085E4BB /* NeighborsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */; };
 		F746C4DC1A11596E0085E4BB /* NeighborsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F746C4DA1A11596E0085E4BB /* NeighborsManager.h */; };
+		F746C4E01A1277960085E4BB /* Graph.h in Headers */ = {isa = PBXBuildFile; fileRef = F746C4DE1A12685F0085E4BB /* Graph.h */; };
 		F7472F2119E2E13D008DA03B /* CLinker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7472F1F19E2E13D008DA03B /* CLinker.cpp */; };
 		F7472F2219E2E13D008DA03B /* CLinker.h in Headers */ = {isa = PBXBuildFile; fileRef = F7472F2019E2E13D008DA03B /* CLinker.h */; };
 		F7472F2519E2E9EA008DA03B /* Linker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7472F2319E2E9EA008DA03B /* Linker.cpp */; };
@@ -225,6 +226,7 @@
 		F741A62919D9E00F006B2351 /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_ccylinders.cpp; path = Cyto/TESTS/test_ccylinders.cpp; sourceTree = SOURCE_ROOT; };
 		F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NeighborsManager.cpp; path = Cyto/Structure/NeighborsManager.cpp; sourceTree = SOURCE_ROOT; };
 		F746C4DA1A11596E0085E4BB /* NeighborsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NeighborsManager.h; path = Cyto/Structure/NeighborsManager.h; sourceTree = SOURCE_ROOT; };
+		F746C4DE1A12685F0085E4BB /* Graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Graph.h; path = Cyto/Structure/Graph.h; sourceTree = SOURCE_ROOT; };
 		F7472F1E19E2DE66008DA03B /* CBound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CBound.h; path = Cyto/Structure/CBound.h; sourceTree = SOURCE_ROOT; };
 		F7472F1F19E2E13D008DA03B /* CLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLinker.cpp; path = Cyto/Structure/CLinker.cpp; sourceTree = SOURCE_ROOT; };
 		F7472F2019E2E13D008DA03B /* CLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLinker.h; path = Cyto/Structure/CLinker.h; sourceTree = SOURCE_ROOT; };
@@ -478,6 +480,7 @@
 				F777F9BF19C1F35200D2850A /* SpeciesContainer.h */,
 				F746C4D91A11596E0085E4BB /* NeighborsManager.cpp */,
 				F746C4DA1A11596E0085E4BB /* NeighborsManager.h */,
+				F746C4DE1A12685F0085E4BB /* Graph.h */,
 			);
 			name = Structure;
 			path = CytoMech;
@@ -747,6 +750,7 @@
 				F777FA7419C1F3C900D2850A /* ConjugateGradient.h in Headers */,
 				F777F9D319C1F35200D2850A /* CCylinder.h in Headers */,
 				F777F9FF19C1F35200D2850A /* ReactionContainer.h in Headers */,
+				F746C4E01A1277960085E4BB /* Graph.h in Headers */,
 				F777F9DA19C1F35200D2850A /* CompartmentContainer.h in Headers */,
 				F777F9CB19C1F35200D2850A /* BoundaryElementImpl.h in Headers */,
 				F777F9C519C1F35200D2850A /* BeadDB.h in Headers */,
