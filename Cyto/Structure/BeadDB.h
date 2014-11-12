@@ -32,7 +32,7 @@ class BeadDBKey {friend class Filament;
 
 /*!  An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers
  *   Boundary Elements and Motors. This structure inherits from list and manage all creations and removing of
- *   objects, as well as some stabdart list functions and iterators.
+ *   objects, as well as some standard list functions and iterators.
  */
 class BeadDB: private list<Bead*>
 {
@@ -56,16 +56,16 @@ public:
     static BeadDB* instance(BeadDBKey k);
     
     /// create a new bead with no ccordinates and
-    Bead* createBead(int ID) {
+    Bead* createBead() {
         
-        Bead* b = new Bead(ID);
+        Bead* b = new Bead();
         push_back(b);
         return b ;}
     
     /// Create bead with a given coordinate on a given filament:
-    Bead* createBead(vector<double>& v, int ID) {
+    Bead* createBead(vector<double>& v) {
         
-        Bead* b = new Bead(v, ID);
+        Bead* b = new Bead(v);
         push_back(b);
         return b ;}
     

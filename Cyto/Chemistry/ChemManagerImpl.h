@@ -39,10 +39,10 @@ public:
     
     ///Manager, based on the given simulation
     virtual CCylinder* createCCylinder(Filament* f, Compartment* c,
-                                       bool extensionFront, bool extensionBack, bool creation) = 0;
+            bool extensionFront, bool extensionBack, bool creation) = 0;
 
     ///add/update cross cylinder reactions that are within range
-    virtual void updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors) = 0;
+    virtual void updateCCylinder(CCylinder* cc) = 0;
     
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };

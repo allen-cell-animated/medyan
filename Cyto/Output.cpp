@@ -99,8 +99,8 @@ void Output::printSnapshot(int step) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getID()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getID() << endl;
+        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
         
         ///print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -130,8 +130,8 @@ void Output::printBirthTimes(int step) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getID()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getID() << endl;
+        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
         
         ///print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -158,8 +158,8 @@ void Output::printForces(int step) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getID()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getID() << endl;
+        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
         
         ///print coordinates
         for (auto cylinder : filament->getCylinderVector()){

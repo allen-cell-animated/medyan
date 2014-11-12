@@ -16,8 +16,6 @@
 
 ///FORWARD DECLARATIONS
 class Cylinder;
-class Filament;
-class Bead;
 
 ///MCylinder class is used to hold mechanical properties of a cylinder
 /*!
@@ -38,29 +36,15 @@ private:
     double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
     double _kExVol; ///< Local excluded volume constant, which describes excluded volume interactions between cylinders
     
-    vector<MCylinder*> _exVolNeighborsList; ///< list of interacting cylinders for excluded volume.
-
-    vector<double> _coordinate; ///< coordinate of this MCylinder
-    
-    ///Functions to update neighbors lists
-    void addExVolNeighbor(MCylinder* neighbor);
-    void removeExVolNeighbor(MCylinder* neighbor);
-    
 public:
     
     ///Constructor and destructor
     MCylinder(double eqLength);
-    ~MCylinder();
-    
-    ///update excluded volume neighbors list
-    void updateExVolNeighborsList(vector<MCylinder*>& nearbyMCylinders);
-    vector<MCylinder*>& getExVolNeighborsList() {return _exVolNeighborsList;}
-    
+    ~MCylinder() {};
+
     ///Other setter and getter functions:
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
-    
-    void setCoordinate(vector<double> coordinate) {_coordinate = coordinate;}
     
     ///Setters and getters for mechanical constants
     void setEqLength(double L);

@@ -36,9 +36,6 @@ private:
     short _deltaPlusEnd = 0;   ///< change in filament's cylinders at plus end since last snapshot
     short _deltaMinusEnd = 0; ///< change in filament's cylinders at minus end since last snapshot
     
-    short _beadIDPlusEnd = 0; ///< Bead ID to assign to next plus end bead
-    short _beadIDMinusEnd = -1;  ///< Bead ID to assign to next minus end bead
-    
 public:
     /// This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an
     /// input, second is set up by using an input direction and a coarsegrain length L. Using all this, two constructors

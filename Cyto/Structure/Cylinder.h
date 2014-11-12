@@ -13,8 +13,10 @@
 
 #include "common.h"
 #include "Composite.h"
+#include "Neighbor.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
+
 
 ///FORWARD DECLARATIONS
 class Filament;
@@ -26,7 +28,7 @@ class Compartment;
  * It contains a constructor as well as getters for mcylinder and ccylinders.
  */
 
-class Cylinder : public Composite {
+class Cylinder : public Composite, public Neighbor {
     
 private:
     Bead* _b1;  ///< Pointer to the first bead, associated with this cylinder ;
@@ -43,9 +45,6 @@ private:
     int _ID; ///Unique ID of cylinder, managed by CylinderDB
     
     Compartment* _compartment; ///< compartment this cylinder is currently in
-    
-    ///Function to find nearby cylinders in the grid, used in updatePosition
-    vector<Cylinder*> findNearbyCylinders();
     
 public:
     vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()

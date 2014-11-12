@@ -16,6 +16,7 @@
 #include "common.h"
 
 #include "Component.h"
+#include "Neighbor.h"
 #include "Compartment.h"
 #include "GController.h"
 
@@ -30,7 +31,7 @@ class BoundaryElement;
  * and i-1 bead.
  */
 
-class Bead : public Component {
+class Bead : public Component, public Neighbor {
 public:
 
     vector<double> coordinate; ///< Coordinates of the bead
@@ -40,9 +41,9 @@ public:
     vector<double> forceAux; ///< An Aux field needed during CG minimization.
     
     ///Main constructor
-    Bead (vector<double> v, int ID);
+    Bead (vector<double> v);
     ///Default constructor
-    Bead(int ID): coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0), _ID(ID) {}
+    Bead() :coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
     ~Bead();
     
     ///Aux functions
@@ -68,7 +69,9 @@ public:
     void updatePosition();
     
     ///getters for bead data
-    int getID() {return _ID;}
+    void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
+    int getPositionFilament() {return _positionFilament;}
+    
     float getBirthTime() {return _birthTime;}
 
     
@@ -76,7 +79,7 @@ private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
     vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
     
-    int _ID; ///Unique ID of the bead in this filament (relative to the filament)
+    int _positionFilament; ///Position of bead on filament
     float _birthTime; ///Time of birth of bead;
 };
 

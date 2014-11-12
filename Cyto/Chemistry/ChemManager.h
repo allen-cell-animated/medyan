@@ -58,9 +58,9 @@ public:
     
     ///Initializer, based on the given simulation
     static CCylinder* createCCylinder(ChemManagerCylinderKey k, Filament* f, Compartment* c,
-                                      bool extensionFront, bool extensionBack, bool creation);
+                                    bool extensionFront, bool extensionBack, bool creation);
     ///add/update cross cylinder reactions that are within range
-    static void updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc, vector<CCylinder*>& cNeighbors);
+    static void updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc);
     
     
 private:

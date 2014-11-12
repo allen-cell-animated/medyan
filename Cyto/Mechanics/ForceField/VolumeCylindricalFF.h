@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include "ForceField.h"
+#include "Cylinder.h"
 
 ///FORWARD DECLARATIONS
 class CylinderVolumeInteractions;

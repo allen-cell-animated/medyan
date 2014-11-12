@@ -32,8 +32,8 @@ class FilamentDBKey {friend class SubSystem;
 
 ///FilamentDB is used to store all filaments in the system
 /*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers,
- *  Boundary Elements, and Motors. This structure inherits from  list and manage all creations and removing 
- *  of objects, as well as some stabdart list functions and iterators.
+ *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing 
+ *  of objects, as well as some standard list functions and iterators.
  */
 class FilamentDB: private list<Filament*> {
     typedef list<Filament*> fdb;

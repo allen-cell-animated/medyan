@@ -8,6 +8,12 @@
 
 #include "Controller.h"
 
+#include "Parser.h"
+#include "Output.h"
+
+#include "BoundaryImpl.h"
+#include "NeighborListDB.h"
+
 void Controller::initialize(string inputFile) {
     
     ///Parse input, get parameters
@@ -100,33 +106,20 @@ void Controller::initialize(string inputFile) {
         exit(EXIT_FAILURE);
     }
     
-//    ///Create random filaments
-//    int numFilamentsX = 10;
-//    int numFilamentsY = 10;
-//    int distX = SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX / numFilamentsX;
-//    int distY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY / numFilamentsY;
-//    
-//    for(int i = 0; i < numFilamentsX; i++) {
-//        for(int j = 0; j < numFilamentsY; j++) {
-//            filamentData.push_back({{1.0 + i * distX, 1.0 + j * distY, 20.0}, {1.0 + i * distX, 1.0 + j * distY, 90.0}});
-//        }
-//    }
-    
-    
+    ///add filaments
     _subSystem->addNewFilaments(filamentData);
     cout << "Done." <<endl;
     
-    
-    
-    
-    ///Update positions of all elements initially
-    updatePositions();
-    
+    ///First update of neighbor lists
+    NeighborListDB::instance(NeighborListDBKey())->resetAll();
+
     //cout << "PRINTING REACTIONS" << endl;
     //ChemSim::printReactions();
 }
 
 void Controller::updatePositions() {
+    
+    NeighborListDB::instance(NeighborListDBKey())->resetAll();
     
     ///Update bead-boundary interactions
     for(auto b : *BeadDB::instance(BeadDBKey())) b->updatePosition();

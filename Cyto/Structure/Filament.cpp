@@ -22,13 +22,17 @@ Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direc
     _subSystem = s;
  
     ///Create beads
-    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(position, _beadIDPlusEnd++);
+    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(position);
+    b1->setPositionFilament(0);
+    
     auto pos2 = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(pos2, _beadIDPlusEnd++);
+    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(pos2);
+    b2->setPositionFilament(1);
     
     ///create cylinder
     Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b1, b2);
     _cylinderVector.push_back(c0);
+    c0->setPositionFilament(0);
 }
 
 
@@ -43,13 +47,16 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads
     else {}
    
     ///Create beads
-    
     auto direction = TwoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
-    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[0], _beadIDPlusEnd++);
-    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[1], _beadIDPlusEnd++);
+    Bead* b1 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[0]);
+    b1->setPositionFilament(0);
+    
+    Bead* b2 = BeadDB::instance(BeadDBKey())->createBead(tmpBeadsCoord[1]);
+    b2->setPositionFilament(1);
     
     Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b1, b2);
     _cylinderVector.push_back(c0);
+    c0->setPositionFilament(0);
     
     for (int i = 2; i<numBeads; i++) {
         extendFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
@@ -80,11 +87,13 @@ void Filament::extendFront(vector<double>& coordinates) {
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     
-    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords, _beadIDPlusEnd++);
+    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords);
+    bNew->setPositionFilament(b2->getPositionFilament() + 1);
     
     ///create cylinder
     Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b2, bNew);
     c0->setLast(true);
+    c0->setPositionFilament(_cylinderVector.size());
     _cylinderVector.push_back(c0);
     
 }
@@ -93,15 +102,18 @@ void Filament::extendFront(vector<double>& coordinates) {
 void Filament::extendBack(vector<double>& coordinates) {
 
     Cylinder* cFront = _cylinderVector.front();
+    int lastPositionFilament = cFront->getPositionFilament();
     Bead* b2 = cFront->getFirstBead();
     
     //create a new bead
     auto direction = TwoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
-    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords, _beadIDMinusEnd--);
-
+    Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(newBeadCoords);
+    bNew->setPositionFilament(b2->getPositionFilament() - 1);
+    
     Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, bNew, b2);
     _cylinderVector.push_front(c0);
+    c0->setPositionFilament(lastPositionFilament - 1);
 
 }
 
@@ -120,12 +132,14 @@ void Filament::extendFront() {
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp, _beadIDPlusEnd++);
+        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp);
+        bNew->setPositionFilament(b2->getPositionFilament() + 1);
         
         Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, b2, bNew, true);
         _cylinderVector.back()->setLast(false);
         _cylinderVector.push_back(c0);
         _cylinderVector.back()->setLast(true);
+        c0->setPositionFilament(_cylinderVector.size());
         
         _deltaPlusEnd++;
     }
@@ -137,6 +151,7 @@ void Filament::extendBack() {
     
     else{
         Cylinder* cFront = _cylinderVector.front();
+        int lastPositionFilament = cFront->getPositionFilament();
         
         Bead* b2 = cFront->getFirstBead();
         Bead* b1 = cFront->getSecondBead();
@@ -146,10 +161,12 @@ void Filament::extendBack() {
         auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         ///create a new bead in same place as b2
-        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp, _beadIDMinusEnd--);
+        Bead* bNew = BeadDB::instance(BeadDBKey())->createBead(npp);
+        bNew->setPositionFilament(b2->getPositionFilament() - 1);
 
         Cylinder* c0 = CylinderDB::instance(CylinderDBKey())->createCylinder(this, bNew, b2,false, true);
         _cylinderVector.push_front(c0);
+        c0->setPositionFilament(lastPositionFilament - 1);
         
         _deltaMinusEnd++;
     }
@@ -169,7 +186,6 @@ void Filament::retractFront() {
         
         _cylinderVector.back()->setLast(true);
 
-        _beadIDPlusEnd--;
         _deltaPlusEnd--;
     }
     
@@ -185,7 +201,6 @@ void Filament::retractBack() {
         BeadDB::instance(BeadDBKey())->removeBead(retractionCylinder->getFirstBead());
         CylinderDB::instance(CylinderDBKey())->removeCylinder(retractionCylinder);
         
-        _beadIDMinusEnd++;
         _deltaMinusEnd--;
     }
 }

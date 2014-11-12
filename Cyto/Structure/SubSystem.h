@@ -43,14 +43,14 @@ public:
     /// Add a linker at initialization
     void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
     /// Add a single linker during runtime
-    void addNewLinker(Cylinder* pc1, Cylinder* pc2, short linkerType, double position1, double position2);
+    void addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2);
     /// remove a linker from the system
     void removeLinker(Linker* l);
     
     //Add many motors at initialization
     void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
     /// Add a motor during runtime
-    void addNewMotorGhost(Cylinder* pc1, Cylinder* pc2, short motorType, double position1, double position2);
+    void addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2);
     /// remove a motor ghost from the system
     void removeMotorGhost(MotorGhost* m);
     

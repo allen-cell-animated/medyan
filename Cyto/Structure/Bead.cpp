@@ -14,7 +14,7 @@
 
 using namespace mathfunc;
 
-Bead::Bead (vector<double> v, int ID): coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0), _ID(ID)
+Bead::Bead (vector<double> v): coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0)
 {
     ///set birth time
     _birthTime = tau();

@@ -32,8 +32,8 @@ class LinkerDBKey {friend class SubSystem;
 
 ///LinkerDB class is used to store all linkers in the system
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 
- *  Boundary Elements, and Motors. This structure inherits from  list and manage all creations and removing
- *  of objects, as well as some stabdart list functions and iterators.
+ *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing
+ *  of objects, as well as some standard list functions and iterators.
  */
 class LinkerDB: private list<Linker*>
 {
@@ -59,9 +59,9 @@ public:
         push_back(pl);
     }
 
-    void removeLinker(Linker* pl) {
-        delete pl;
-        remove(pl);
+    void removeLinker(Linker* l) {
+        delete l;
+        remove(l);
     };
     
 private:

@@ -31,8 +31,8 @@ class MotorGhostDBKey {friend class SubSystem;
 ///MotorGhostDB is used to store all MotorGhosts in the system
 
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers, 
- *  Boundary Elements, and Motors. This structure inherits from  list and manage all creations and removing 
- *  of objects, as well as some stabdart list functions and iterators.
+ *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing 
+ *  of objects, as well as some standard list functions and iterators.
  */
 class MotorGhostDB: private list<MotorGhost*>
 {
@@ -60,9 +60,9 @@ public:
         //return pmg;
     }
     
-    void removeMotorGhost(MotorGhost* pmg) {
-        delete pmg;
-        remove(pmg);
+    void removeMotorGhost(MotorGhost* mg) {
+        delete mg;
+        remove(mg);
     };
     
 private:

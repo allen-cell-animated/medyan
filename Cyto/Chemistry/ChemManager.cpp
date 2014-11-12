@@ -28,7 +28,7 @@ CCylinder* ChemManager::createCCylinder(ChemManagerCylinderKey k, Filament* pf, 
     return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, creation);
 }
 
-void ChemManager::updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc, vector<CCylinder*>& cNeighbors) {
+void ChemManager::updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc) {
     
-    _pimpl->updateCCylinder(cc, cNeighbors);
+    _pimpl->updateCCylinder(cc);
 }

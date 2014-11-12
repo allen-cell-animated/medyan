@@ -26,7 +26,7 @@ class BoundaryElementDBKey {friend class BoundarySurface;
 
 /*! An Object Data Base singleton structure will be used as a container for all main objects: 
  *  Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from 
- *  list and manage all creations and removing of objects, as well as some stabdart
+ *  list and manage all creations and removing of objects, as well as some standard
  *  list functions and iterators.
  */
 

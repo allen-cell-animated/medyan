@@ -27,18 +27,15 @@ class SimpleManagerImpl : public ChemManagerImpl {
 private:
     SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
     
-    vector<unique_ptr<ReactionFilamentTemplate>> _filamentReactionTemplates;
+    vector<unique_ptr<ReactionFilamentTemplate>> _fRxnTemplates;
     ///< list of reactions to add to every new CCylinder
-    vector<unique_ptr<ReactionCrossFilamentTemplate>> _crossFilamentReactionTemplates;
+    vector<unique_ptr<ReactionCrossFilamentTemplate>> _cfRxnTemplates;
     ///<list of cross filament reactions to add to CCylinders
     
     ///Vectors of all filament-related species in system
-    vector<string> _speciesFilament,
-                   _speciesPlusEnd,
-                   _speciesMinusEnd,
-                   _speciesBound,
-                   _speciesLinker,
-                   _speciesMotor;
+    vector<string> _speciesFilament, _speciesPlusEnd,
+                   _speciesMinusEnd, _speciesBound,
+                   _speciesLinker, _speciesMotor;
     
     ///Set up all reaction templates from chemsetup struct
     void generateFilamentReactionTemplates(ChemistryData& chem);
@@ -58,13 +55,14 @@ public:
     virtual void initialize(ChemistryData& chem);
 
     ///SimpleManager
-    ///@note when initializing, the filaments are filled with the first species listed in the speciesFilament
-    /// vector. The active plus and minus end is set to be the first listed as well.
+    ///@note when initializing, the filaments are filled with the first species listed in
+    /// the speciesFilament vector. The active plus and minus end is set to be the first
+    /// listed as well.
     virtual CCylinder* createCCylinder(Filament* f, Compartment* c,
-                                       bool extensionFront, bool extensionBack, bool creation);
+           bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
-    virtual void updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors);
+    virtual void updateCCylinder(CCylinder* cc);
     
 };
 

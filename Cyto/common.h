@@ -13,7 +13,7 @@
 
 ///Will eventually be command line macros
 #define MECHANICS
-#define CHEMISTRY
+//#define CHEMISTRY
 
 ///If compiling for testing
 #define TESTING

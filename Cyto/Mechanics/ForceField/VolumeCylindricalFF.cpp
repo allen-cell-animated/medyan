@@ -10,7 +10,7 @@
 
 #include "CylinderExclVolume.h"
 #include "CylinderExclVolRepulsion.h"
-#include "CylinderDB.h"
+
 
 VolumeCylindricalFF::VolumeCylindricalFF (string& type)
 {
@@ -20,27 +20,34 @@ VolumeCylindricalFF::VolumeCylindricalFF (string& type)
 double VolumeCylindricalFF::computeEnergy(double d) {
     double U_cyl= 0;
     
-    for ( auto it: *CylinderDB::instance(CylinderDBKey()) ) {
+    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
         
-        for(auto &neighbor : it->getMCylinder()->getExVolNeighborsList()) {
-        //neighbour list iterator to find a pair for given cylinder.
-            for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
-                U_cyl += cylinderVolInteraction->computeEnergy(it, neighbor->getCylinder(), d);
+        auto neighborList = cylinderVolInteraction->getNeighborList()->getList();
+        for ( auto it = neighborList.begin(); it != neighborList.end(); it++) {
+        
+            for(auto &neighbor : it->second) {
+                //neighbour list iterator to find a pair for given cylinder.
+                Cylinder* c1 = static_cast<Cylinder*>(it->first);
+                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
+                U_cyl += cylinderVolInteraction->computeEnergy(c1, c2, d);
             }
         }
     }
-    return 0.5*U_cyl;
+    return U_cyl;
 }
 
 void VolumeCylindricalFF::computeForces() {
     
-    
-    for ( auto it: *CylinderDB::instance(CylinderDBKey()) ) {
+    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
         
-        for(auto &neighbor : it->getMCylinder()->getExVolNeighborsList()) {
-            //neighbour list iterator to find a pair for given cylinder.
-            for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
-                cylinderVolInteraction->computeForces(it, neighbor->getCylinder());
+        auto neighborList = cylinderVolInteraction->getNeighborList()->getList();
+        for ( auto it = neighborList.begin(); it != neighborList.end(); it++) {
+            
+            for(auto &neighbor : it->second) {
+                //neighbour list iterator to find a pair for given cylinder.
+                Cylinder* c1 = static_cast<Cylinder*>(it->first);
+                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
+                cylinderVolInteraction->computeForces(c1, c2);
             }
         }
     }
@@ -48,12 +55,16 @@ void VolumeCylindricalFF::computeForces() {
 
 void VolumeCylindricalFF::computeForcesAux() {
     
-    for ( auto it: *CylinderDB::instance(CylinderDBKey()) ) {
+    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
         
-        for(auto &neighbor : it->getMCylinder()->getExVolNeighborsList()) {
-            //neighbour list iterator to find a pair for given cylinder.
-            for (auto &cylinderVolInteraction : _cylinderVolInteractionVector){
-                cylinderVolInteraction->computeForcesAux(it, neighbor->getCylinder());
+        auto neighborList = cylinderVolInteraction->getNeighborList()->getList();
+        for ( auto it = neighborList.begin(); it != neighborList.end(); it++) {
+            
+            for(auto &neighbor : it->second) {
+                //neighbour list iterator to find a pair for given cylinder.
+                Cylinder* c1 = static_cast<Cylinder*>(it->first);
+                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
+                cylinderVolInteraction->computeForcesAux(c1, c2);
             }
         }
     }

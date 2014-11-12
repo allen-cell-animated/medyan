@@ -217,10 +217,10 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
         
         ///Add polymerization template
         if(d == FilamentReactionDirection::FORWARD)
-            _filamentReactionTemplates.emplace_back(
+            _fRxnTemplates.emplace_back(
                 new PolymerizationPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _filamentReactionTemplates.emplace_back(
+            _fRxnTemplates.emplace_back(
                 new PolymerizationMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
     
@@ -423,10 +423,10 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
         
         ///Add depolymerization template
         if(d == FilamentReactionDirection::FORWARD)
-            _filamentReactionTemplates.emplace_back(
+            _fRxnTemplates.emplace_back(
                      new DepolymerizationMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _filamentReactionTemplates.emplace_back(
+            _fRxnTemplates.emplace_back(
                      new DepolymerizationPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
 
@@ -535,7 +535,7 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
     
     
         ///add reaction
-        _filamentReactionTemplates.emplace_back(new BasicBindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        _fRxnTemplates.emplace_back(new BasicBindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
     
     }
 
@@ -679,7 +679,7 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
         
         
         ///add reaction
-        _filamentReactionTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        _fRxnTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     
@@ -816,9 +816,9 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
 
         ///add reaction
         if(type == ReactionType::MOTORWALKINGFORWARD)
-            _filamentReactionTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _fRxnTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _filamentReactionTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _fRxnTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
  
 }
@@ -984,7 +984,7 @@ void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& ch
             exit(EXIT_FAILURE);
         }
     
-        _crossFilamentReactionTemplates.emplace_back(
+        _cfRxnTemplates.emplace_back(
             new LinkerBindingTemplate(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
     }
     
@@ -1146,7 +1146,7 @@ void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& ch
             exit(EXIT_FAILURE);
         }
         
-        _crossFilamentReactionTemplates.emplace_back(
+        _cfRxnTemplates.emplace_back(
            new MotorBindingTemplate(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
     }
 }
@@ -1458,7 +1458,7 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     }
     
     ///Add all reaction templates to this cylinder
-    for(auto &r : _filamentReactionTemplates) { r->addReaction(cc, pf); }
+    for(auto &r : _fRxnTemplates) { r->addReaction(cc, pf); }
     
     ///get last ccylinder
     CCylinder* lastcc = nullptr;
@@ -1466,12 +1466,12 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///extension of front
     if(extensionFront) {
         lastcc = pf->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _filamentReactionTemplates) r->addReaction(lastcc, cc, pf);
+        for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc, pf);
     }
     ///extension of back
     else if(extensionBack) {
         lastcc = pf->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _filamentReactionTemplates) r->addReaction(cc, lastcc, pf);
+        for(auto &r : _fRxnTemplates) r->addReaction(cc, lastcc, pf);
     }
 
     else if(creation) {
@@ -1508,7 +1508,7 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
             
-            for(auto &r : _filamentReactionTemplates) r->addReaction(lastcc, cc, pf);
+            for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc, pf);
             
         }
         ///this is first one
@@ -1537,47 +1537,47 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     return cc;
 }
 
-void SimpleManagerImpl::updateCCylinder(CCylinder* cc, vector<CCylinder*>& cNeighbors) {
+void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
     
-    ///loop through the cylinders reaction map, and remove any that are out of range.
-    auto ccReactions = cc->getCrossCylinderReactions();
-    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
-        
-        ///calculate distance from this CCylinder to the one in the map
-        double dist = TwoPointDistance(cc->getCylinder()->coordinate, it->first->getCylinder()->coordinate);
-        
-        for(auto &r : it->second) {
-            ///if out of range, remove it
-            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
-                cc->removeCrossCylinderReaction(it->first, r);
-        }
-        
-        ///If the number of reactions between this cylinder and the other has dropped to
-        ///zero, remove the key/value as well as this reacting cylinder in other
-        if(it->second.size() == 0)
-            it->first->removeReactingCylinder(cc);
-    }
-    
-    ///Now, add new cross filament reactions
-    for(auto &rTemplate : _crossFilamentReactionTemplates) {
-    
-        /// loop through all cylinders in range
-        for(auto &ccNeighbor : cNeighbors) {
-            double dist = TwoPointDistance(cc->getCylinder()->coordinate, ccNeighbor->getCylinder()->coordinate);
-                
-            ///Check if this cross filament reaction is already there. If not, add it
-            if(cc->getCylinder()->getFilament() != ccNeighbor->getCylinder()->getFilament()
-               && (rTemplate->getRMin() < dist && rTemplate->getRMax() > dist)) {
-                
-                bool hasRxn = false;
-                for(auto &r : cc->getCrossCylinderReactions()[ccNeighbor])
-                    if(r->getReactionID() == rTemplate->getReactionID()) { hasRxn = true; break;}
-
-                if(!hasRxn) rTemplate->addReaction(cc, ccNeighbor);
-            }
-        }
-    }
-    cc->activateReactions();
+//    ///loop through the cylinders reaction map, and remove any that are out of range.
+//    auto ccReactions = cc->getCrossCylinderReactions();
+//    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
+//        
+//        ///calculate distance from this CCylinder to the one in the map
+//        double dist = TwoPointDistance(cc->getCylinder()->coordinate, it->first->getCylinder()->coordinate);
+//        
+//        for(auto &r : it->second) {
+//            ///if out of range, remove it
+//            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
+//                cc->removeCrossCylinderReaction(it->first, r);
+//        }
+//        
+//        ///If the number of reactions between this cylinder and the other has dropped to
+//        ///zero, remove the key/value as well as this reacting cylinder in other
+//        if(it->second.size() == 0)
+//            it->first->removeReactingCylinder(cc);
+//    }
+//    
+//    ///Now, add new cross filament reactions
+//    for(auto &rTemplate : _cfRxnTemplates) {
+//    
+//        /// loop through all cylinders in range
+//        for(auto &ccNeighbor : cNeighbors) {
+//            double dist = TwoPointDistance(cc->getCylinder()->coordinate, ccNeighbor->getCylinder()->coordinate);
+//                
+//            ///Check if this cross filament reaction is already there. If not, add it
+//            if(cc->getCylinder()->getFilament() != ccNeighbor->getCylinder()->getFilament()
+//               && (rTemplate->getRMin() < dist && rTemplate->getRMax() > dist)) {
+//                
+//                bool hasRxn = false;
+//                for(auto &r : cc->getCrossCylinderReactions()[ccNeighbor])
+//                    if(r->getReactionID() == rTemplate->getReactionID()) { hasRxn = true; break;}
+//
+//                if(!hasRxn) rTemplate->addReaction(cc, ccNeighbor);
+//            }
+//        }
+//    }
+//    cc->activateReactions();
 }
 
 
