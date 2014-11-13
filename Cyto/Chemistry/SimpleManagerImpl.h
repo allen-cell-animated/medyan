@@ -44,6 +44,7 @@ private:
     
     ///Generate the general, non-filament reactions
     void generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
+    
     ///Generate bulk reactions
     void generateBulkReactions(ChemistryData& chem);
     

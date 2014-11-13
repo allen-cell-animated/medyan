@@ -59,11 +59,11 @@ public:
     ~ReactionFilamentTemplate() {}
 
     ///Add this chemical reaction to a CCylinder. Adds all extension and retraction callbacks needed
-    virtual void addReaction(CCylinder* cc, Filament* pf) = 0;
+    virtual void addReaction(CCylinder* cc) = 0;
     
     ///Add this chemical reaction cross two CCylinders.
     ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf ) = 0;
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
     
     ///return compartment grid key
     CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
@@ -80,9 +80,9 @@ public:
     ~PolymerizationPlusEndTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 ///Template for polymerization at minus end
@@ -96,9 +96,9 @@ public:
     ~PolymerizationMinusEndTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 
@@ -113,9 +113,9 @@ public:
     ~DepolymerizationPlusEndTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 ///Template for depolymerization at minus end
@@ -129,9 +129,9 @@ public:
     ~DepolymerizationMinusEndTemplate() {}
     
     ///to be implemented
-    virtual void addReaction(CCylinder* cc, Filament* pf);
+    virtual void addReaction(CCylinder* cc);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 class BasicBindingTemplate : public ReactionFilamentTemplate {
@@ -143,9 +143,9 @@ public:
                          float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~BasicBindingTemplate() {}
     
-    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
 };
 
 class UnbindingTemplate : public ReactionFilamentTemplate {
@@ -157,9 +157,9 @@ public:
                            float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~UnbindingTemplate() {}
     
-    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {};
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
 
 };
 
@@ -172,9 +172,9 @@ public:
                                 float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~MotorWalkingForwardTemplate() {}
     
-    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 
 };
 
@@ -187,9 +187,9 @@ public:
                                 float rate) : ReactionFilamentTemplate(reactants, products, rate) {}
     ~MotorWalkingBackwardTemplate() {}
     
-    virtual void addReaction(CCylinder* cc1, Filament* pf);
+    virtual void addReaction(CCylinder* cc1);
     
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
     
 };
 
@@ -227,8 +227,10 @@ protected:
 public:
     ///Default constructor and destructor
     ReactionCrossFilamentTemplate(vector<tuple<int, SpeciesType>> reactants,
-                             vector<tuple<int, SpeciesType>> products, float rate, float rMin, float rMax, int ID)
-                             : _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax), _reactionID(ID) {}
+                                  vector<tuple<int, SpeciesType>> products,
+                                  float rate, float rMin, float rMax, int ID)
+                                  : _reactants(reactants), _products(products),
+                                    _rate(rate), _rMin(rMin), _rMax(rMax), _reactionID(ID) {}
     ~ReactionCrossFilamentTemplate() {}
     
     ///add this chemical reaction to two ccylinders if within the reaction range

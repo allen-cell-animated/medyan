@@ -13,15 +13,19 @@
 
 #include "common.h"
 
+///Neighbor class is a class that can be added/removed from a neighborlist
 class Neighbor {
-    ///nothing for now
     
+protected:
+    Neighbor() {} //Default constructor
     
 public:
-    Neighbor() {}
+    ///Destructor
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
+    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~Neighbor() noexcept {}
+    
 };
-
-
 
 #endif /* defined(__Cyto__Neighbor__) */

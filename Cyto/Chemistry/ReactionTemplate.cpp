@@ -21,11 +21,11 @@ SubSystem* ReactionFilamentTemplate::_ps = 0;
 SubSystem* ReactionCrossFilamentTemplate::_ps = 0;
 
 
-void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
-
+    
     ///loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
@@ -82,8 +82,8 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
         ///callbacks
-        FilamentExtensionFrontCallback extCallback(pf);
-        FilamentPolymerizationFrontCallback polyCallback(pf);
+        FilamentExtensionFrontCallback extCallback(cc->getCylinder()->getFilament());
+        FilamentPolymerizationFrontCallback polyCallback(cc->getCylinder()->getFilament());
         
         
         ///Add the reaction. If it needs a callback then attach
@@ -102,7 +102,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
 }
 
 
-void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -163,8 +163,8 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
         
-        FilamentExtensionBackCallback extCallback(pf);
-        FilamentPolymerizationBackCallback polyCallback(pf);
+        FilamentExtensionBackCallback extCallback(cc->getCylinder()->getFilament());
+        FilamentPolymerizationBackCallback polyCallback(cc->getCylinder()->getFilament());
         
         ///Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -184,7 +184,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
 
 
 
-void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -238,7 +238,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
     
-    FilamentPolymerizationFrontCallback polyCallback(pf);
+    FilamentPolymerizationFrontCallback polyCallback(cc1->getCylinder()->getFilament());
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -251,7 +251,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, 
     rxn->setReactionType(ReactionType::POLYMERIZATION);
 }
 
-void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
@@ -304,7 +304,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2,
     
     productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
 
-    FilamentPolymerizationBackCallback polyCallback(pf);
+    FilamentPolymerizationBackCallback polyCallback(cc1->getCylinder()->getFilament());
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -318,7 +318,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2,
 }
 
 
-void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -375,8 +375,8 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
         
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
         
-        FilamentRetractionFrontCallback retCallback(pf);
-        FilamentDepolymerizationFrontCallback depolyCallback(pf);
+        FilamentRetractionFrontCallback retCallback(cc->getCylinder()->getFilament());
+        FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder()->getFilament());
         
         ///Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -395,7 +395,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
 
 }
 
-void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
 
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -452,8 +452,8 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
         
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
-        FilamentRetractionBackCallback retCallback(pf);
-        FilamentDepolymerizationBackCallback depolyCallback(pf);
+        FilamentRetractionBackCallback retCallback(cc->getCylinder()->getFilament());
+        FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder()->getFilament());
         
         ///Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -471,7 +471,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc, Filament* pf) 
     }
 }
 
-void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
 
     CMonomer* m1 = cc2->getCMonomer(0);
@@ -524,7 +524,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
     productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
     
-    FilamentDepolymerizationFrontCallback depolyCallback(pf);
+    FilamentDepolymerizationFrontCallback depolyCallback(cc1->getCylinder()->getFilament());
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -538,7 +538,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
 
 }
 
-void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -588,7 +588,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
     
     productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
     
-    FilamentDepolymerizationBackCallback depolyCallback(pf);
+    FilamentDepolymerizationBackCallback depolyCallback(cc1->getCylinder()->getFilament());
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -602,7 +602,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
 }
 
 
-void BasicBindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void BasicBindingTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -656,7 +656,7 @@ void BasicBindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
 }
 
 
-void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void UnbindingTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -729,7 +729,7 @@ void UnbindingTemplate::addReaction(CCylinder* cc, Filament* pf) {
     }   
 }
 
-void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void MotorWalkingForwardTemplate::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -794,7 +794,7 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
     }
 }
 
-void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -850,7 +850,7 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Fi
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc) {
 
     
     ///loop through all monomers of filament
@@ -916,7 +916,7 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc, Filament* pf) {
     }
 }
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2, Filament* pf) {
+void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc2->getSize() - 1);
@@ -1117,7 +1117,6 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORBINDING);
     rxn->setReactionID(_reactionID);
-
 }
 
 

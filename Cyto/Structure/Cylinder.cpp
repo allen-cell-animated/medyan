@@ -22,11 +22,16 @@ using namespace mathfunc;
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront, bool extensionBack, bool creation)
                    : _pFilament(f), _b1(b1), _b2(b2), _ID(ID) {
     
-    ///check if were still in same compartment
+    ////Set coordinate
     coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+                   
+   ///add to compartment
+   _compartment->addCylinder(this);
+   ///add to neighbor lists
+   NeighborListDB::instance(NeighborListDBKey())->addNeighbor(this);
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(
@@ -34,11 +39,6 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront,
     _cCylinder->setCylinder(this);
     
     if(creation || extensionFront || extensionBack) {
-        
-        ///UPDATE NEIGHBORS LISTS
-        for(auto &nlist : *NeighborListDB::instance(NeighborListDBKey()))
-            nlist->addNeighbor(this);
-        
         ///Update filament reactions, only if not initialization
         ChemManager::updateCCylinder(ChemManagerCylinderKey(), _cCylinder.get());
     }
@@ -59,19 +59,14 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront,
     
 #endif
     
-    ///add to compartment
-    _compartment->addCylinder(this);
+
 }
 
 Cylinder::~Cylinder() {
-
     ///remove from compartment
     _compartment->removeCylinder(this);
-    
-    ///remove from all neighbor lists
-    for(auto &nlist : *NeighborListDB::instance(NeighborListDBKey()))
-        nlist->removeNeighbor(this);
-    
+    ///remove from neighbor lists
+    NeighborListDB::instance(NeighborListDBKey())->removeNeighbor(this);
 }
 
 void Cylinder::updatePosition() {

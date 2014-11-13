@@ -110,25 +110,27 @@ void Controller::initialize(string inputFile) {
     _subSystem->addNewFilaments(filamentData);
     cout << "Done." <<endl;
     
-    ///First update of neighbor lists
-    NeighborListDB::instance(NeighborListDBKey())->resetAll();
-
     //cout << "PRINTING REACTIONS" << endl;
     //ChemSim::printReactions();
 }
 
 void Controller::updatePositions() {
     
+    ///reset neighbor lists
     NeighborListDB::instance(NeighborListDBKey())->resetAll();
     
     ///Update bead-boundary interactions
-    for(auto b : *BeadDB::instance(BeadDBKey())) b->updatePosition();
+    for(auto b : *BeadDB::instance(BeadDBKey()))
+        b->updatePosition();
     ///Update cylinder positions
-    for(auto &c : *CylinderDB::instance(CylinderDBKey())) c->updatePosition();
+    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
+        c->updatePosition();
     ///Update linker positions
-    for(auto &l : *LinkerDB::instance(LinkerDBKey())) l->updatePosition();
+    for(auto &l : *LinkerDB::instance(LinkerDBKey()))
+        l->updatePosition();
     ///update motor positions
-    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey())) m->updatePosition();
+    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey()))
+        m->updatePosition();
 }
 
 

@@ -64,7 +64,7 @@ MTWISTINGPHI:
 ### EXCLUDED VOLUME ###
 
 VOLUMETYPE:                  REPULSION
-VOLUMEK:                     1.0
+VOLUMEK:                     20.0
 VOLUMECUTOFF:                27.0
 
 ### BOUNDARY ###

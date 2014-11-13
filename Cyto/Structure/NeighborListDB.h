@@ -48,23 +48,27 @@ public:
     
     static NeighborListDB* instance(NeighborListDBKey k);
     
-    NeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, int ID = 0, bool crossFilamentOnly = false) {
+    ///create a cylinder neighbor list
+    NeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
-        NeighborList* n = new CylinderNeighborList(rMax, rMin, ID, crossFilamentOnly);
+        NeighborList* n = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
         push_back(n);
         
         return n;
     }
     
+    ///remove a neighborlist
     void removeNeighborList(NeighborList* n) {
         delete n;
         remove(n);
     };
     
+    ///reset all neighbors lists
     void resetAll() { for(auto &nlist : *this) nlist->reset(); }
     
+    ///add a neighbor to the db. adds to all possible lists
     void addNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->addNeighbor(n); }
-
+    ///remove a neighbor from the db. removes from all possible lists
     void removeNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->removeNeighbor(n); }
     
 private:

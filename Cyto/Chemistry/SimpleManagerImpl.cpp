@@ -1458,7 +1458,7 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     }
     
     ///Add all reaction templates to this cylinder
-    for(auto &r : _fRxnTemplates) { r->addReaction(cc, pf); }
+    for(auto &r : _fRxnTemplates) { r->addReaction(cc); }
     
     ///get last ccylinder
     CCylinder* lastcc = nullptr;
@@ -1466,12 +1466,12 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///extension of front
     if(extensionFront) {
         lastcc = pf->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc, pf);
+        for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc);
     }
     ///extension of back
     else if(extensionBack) {
         lastcc = pf->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _fRxnTemplates) r->addReaction(cc, lastcc, pf);
+        for(auto &r : _fRxnTemplates) r->addReaction(cc, lastcc);
     }
 
     else if(creation) {
@@ -1508,7 +1508,7 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
             
-            for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc, pf);
+            for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc);
             
         }
         ///this is first one

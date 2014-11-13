@@ -15,30 +15,23 @@
 #include "common.h"
 
 #include "NeighborListContainer.h"
-#include "NeighborListDB.h"
-
 #include "SystemParameters.h"
 
 ///FORWARD DECLARATIONS
 class Cylinder;
 
-class CylinderVolumeInteractions : public NeighborListContainer {
+class CylinderVolumeInteractions : public CylinderNeighborListContainer {
 private:
     string _name;
     
 public:
-    
-    ///Constructor creates a neighborList
-    CylinderVolumeInteractions() {
-        _neighborList = NeighborListDB::instance(NeighborListDBKey())->
-                        createCylinderNeighborList(SystemParameters::Mechanics().VolumeCutoff);
-    }
+    ///Constructor
+    CylinderVolumeInteractions() : CylinderNeighborListContainer(SystemParameters::Mechanics().VolumeCutoff) {}
     
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;
     virtual void computeForces(Cylinder*, Cylinder*) = 0;
     virtual void computeForcesAux(Cylinder*, Cylinder*) = 0;
     
-    // string getName() {return _name;}
     const string& getName() {return _name;}
     
 };
