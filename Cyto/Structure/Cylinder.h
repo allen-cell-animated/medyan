@@ -13,12 +13,10 @@
 
 #include "common.h"
 #include "Composite.h"
-#include "Neighbor.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
 
-#include "NeighborListDB.h"
-
+#include "Neighbor.h"
 
 ///FORWARD DECLARATIONS
 class Filament;
@@ -86,6 +84,8 @@ public:
     ///Update the position of this cylinder
     ///@note - changes compartment of ccylinder if needed
     void updatePosition();
+    
+    
 
 };
 

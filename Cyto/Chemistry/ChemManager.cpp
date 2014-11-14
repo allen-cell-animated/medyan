@@ -21,11 +21,11 @@ void ChemManager::initialize(ChemManagerGridKey k, ChemistryData& chem)
     _pimpl->initialize(chem);
 }
 
-CCylinder* ChemManager::createCCylinder(ChemManagerCylinderKey k, Filament* pf, Compartment* c,
-                                        bool extensionFront, bool extensionBack, bool creation)
+void ChemManager::initializeCCylinder(ChemManagerCylinderKey k, CCylinder* cc, Filament* f,
+                                      bool extensionFront, bool extensionBack, bool creation)
 
 {
-    return _pimpl->createCCylinder(pf, c, extensionFront, extensionBack, creation);
+    _pimpl->initializeCCylinder(cc, f, extensionFront, extensionBack, creation);
 }
 
 void ChemManager::updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc) {

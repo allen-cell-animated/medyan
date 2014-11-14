@@ -15,10 +15,10 @@
 #include "Compartment.h"
 
 ///Key to access instance of CompartmentGrid
-class CompartmentGridKey {friend class ChemInitializerImpl;
+class CompartmentGridKey {friend class ChemManagerImpl;
                           friend class GController;
-                          friend class ReactionFilamentTemplate;
-                          friend class ReactionCrossFilamentTemplate;
+                          friend class InternalFilamentRxnManager;
+                          friend class CrossFilamentRxnManager;
 #ifdef TESTING
                           public:
 #endif //TESTING

@@ -22,7 +22,7 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     _list[cylinder].clear();
     
     ///Find surrounding compartments (For now its conservative, change soon)
-    vector<Cylinder*> nearbyCylinders; vector<Compartment*> compartments;
+    vector<Compartment*> compartments;
     
     GController::findCompartments(cylinder->coordinate, cylinder->getCompartment(),
             SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
@@ -30,24 +30,25 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     for(auto &c : compartments) {
         for(auto &nearbyCylinder : c->getCylinders()) {
             
-            ///dont add cylinders within 1 of this cylinder, on the same filament
+            ///Dont add if ID is more than cylinder
+            if(cylinder->getID() <= nearbyCylinder->getID()) continue;
+            
+            ///Don't add if on the same filament
             if(cylinder->getFilament() == nearbyCylinder->getFilament()) {
                 
-                if(_crossFilamentOnly) continue;
-                else if(abs(cylinder->getPositionFilament()
-                        - nearbyCylinder->getPositionFilament()) <= 1) continue; 
+                 ///if cross filament only interaction, dont add
+                 if(_crossFilamentOnly) continue;
+                
+                 ///if not cross filament, check if not neighboring
+                 else if(abs(cylinder->getPositionFilament() - nearbyCylinder->getPositionFilament()) <= 1) continue;
             }
-            nearbyCylinders.push_back(nearbyCylinder);
-        }
-    }
-
-    ///loop through nearby cylinders, add if needed
-    for(auto &nearbyCylinder : nearbyCylinders) {
-        
-        if(cylinder->getID() > nearbyCylinder->getID()) {
             
+            ///Dont add if not within range
             double dist = TwoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
-            if(dist < _rMax && dist > _rMin) _list[cylinder].push_back(nearbyCylinder);
+            if(dist > _rMax && dist < _rMin) continue;
+            
+            ///If we got through all of this, add it!
+            _list[cylinder].push_back(nearbyCylinder);
         }
     }
 }
@@ -66,13 +67,13 @@ void CylinderNeighborList::addNeighbor(Neighbor* n) {
     
     ///return if not a cylinder!
     if(!dynamic_cast<Cylinder*>(n)) return;
+    ///update neighbors
     updateNeighbors(n);
     
 }
 void CylinderNeighborList::removeNeighbor(Neighbor* n) {
 
-    ///return if not a cylinder!
-    if(!dynamic_cast<Cylinder*>(n)) return;
+    ///erase
     _list.erase(n);
 }
 

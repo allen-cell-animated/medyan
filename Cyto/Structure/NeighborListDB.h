@@ -17,7 +17,11 @@
 
 ///Key to access instance of NeighborListDB
 class NeighborListDBKey {friend class Controller;
-    
+                         friend class Neighbor;
+                         friend class NLContainer;
+                         friend class CylinderNLContainer;
+                         friend class Cylinder;
+                         friend class Bead;
 #ifdef TESTING
 public:
 #endif //TESTING

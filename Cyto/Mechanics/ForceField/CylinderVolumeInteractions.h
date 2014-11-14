@@ -20,13 +20,13 @@
 ///FORWARD DECLARATIONS
 class Cylinder;
 
-class CylinderVolumeInteractions : public CylinderNeighborListContainer {
+class CylinderVolumeInteractions : public CylinderNLContainer {
 private:
     string _name;
     
 public:
     ///Constructor
-    CylinderVolumeInteractions() : CylinderNeighborListContainer(SystemParameters::Mechanics().VolumeCutoff) {}
+    CylinderVolumeInteractions() : CylinderNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
     
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;
     virtual void computeForces(Cylinder*, Cylinder*) = 0;

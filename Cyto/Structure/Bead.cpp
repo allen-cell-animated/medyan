@@ -21,7 +21,7 @@ Bead::Bead (vector<double> v): coordinate(v), coordinateAux(v), force(3, 0), for
     ///set birth time
     _birthTime = tau();
     
-    ///Add to neighbor lists
+    ///add to neighbor list db
     NeighborListDB::instance(NeighborListDBKey())->addNeighbor(this);
     
     ///Find compartment, add this bead

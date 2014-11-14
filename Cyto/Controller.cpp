@@ -25,14 +25,17 @@ void Controller::initialize(string inputFile) {
     
 #ifdef MECHANICS
     ///read algorithm and types
-    MTypes = p.readMechanicsFFType(); BTypes = p.readBoundaryType();
+    MTypes = p.readMechanicsFFType();
     MAlgorithm = p.readMechanicsAlgorithm();
     
     ///read const parameters
-    p.readMechanicsParameters(); p.readBoundaryParameters();
+    p.readMechanicsParameters();
 #endif
     ///Always read geometry
     p.readGeometryParameters();
+    
+    BTypes = p.readBoundaryType();
+    p.readBoundaryParameters();
     
     ///CALLING ALL CONTROLLERS TO INITIALIZE
     ///Initialize geometry controller
@@ -105,19 +108,20 @@ void Controller::initialize(string inputFile) {
         cout<< endl << "Random filament distributions not yet implemented. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
-    
     ///add filaments
     _subSystem->addNewFilaments(filamentData);
     cout << "Done." <<endl;
     
+#ifdef CHEMISTRY
+    //Update filament reactions
+    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
+        ChemManager::updateCCylinder(ChemManagerCylinderKey(), c->getCCylinder());
+#endif
     //cout << "PRINTING REACTIONS" << endl;
     //ChemSim::printReactions();
 }
 
 void Controller::updatePositions() {
-    
-    ///reset neighbor lists
-    NeighborListDB::instance(NeighborListDBKey())->resetAll();
     
     ///Update bead-boundary interactions
     for(auto b : *BeadDB::instance(BeadDBKey()))
@@ -131,6 +135,16 @@ void Controller::updatePositions() {
     ///update motor positions
     for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey()))
         m->updatePosition();
+    
+    ///reset neighbor lists
+    NeighborListDB::instance(NeighborListDBKey())->resetAll();
+    
+#ifdef CHEMISTRY
+    //Update filament reactions
+    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
+        ChemManager::updateCCylinder(ChemManagerCylinderKey(), c->getCCylinder());
+#endif
+    
 }
 
 

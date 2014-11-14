@@ -18,7 +18,6 @@
 #include "common.h"
 
 ///FORWARD DECLARATIONS
-class Cylinder;
 class Neighbor;
 
 class NeighborList {

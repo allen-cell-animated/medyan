@@ -23,6 +23,7 @@ class Cylinder;
 class LinkerDBKey {friend class SubSystem;
                    friend class LinkerFF;
                    friend class MController;
+                   friend class Controller;
                    friend class Output;
 #ifdef TESTING
                    public:

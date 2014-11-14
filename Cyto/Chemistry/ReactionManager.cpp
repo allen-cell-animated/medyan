@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
 
-#include "ReactionTemplate.h"
+#include "ReactionManager.h"
 
 #include "ChemCallbacks.h"
 #include "Bead.h"
@@ -17,11 +17,11 @@
 
 using namespace mathfunc;
 
-SubSystem* ReactionFilamentTemplate::_ps = 0;
-SubSystem* ReactionCrossFilamentTemplate::_ps = 0;
+SubSystem* InternalFilamentRxnManager::_ps = 0;
+SubSystem* CrossFilamentRxnManager::_ps = 0;
 
 
-void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
+void PolyPlusEndManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -102,7 +102,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
 }
 
 
-void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
+void PolyMinusEndManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -184,7 +184,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
 
 
 
-void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -251,7 +251,7 @@ void PolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) 
     rxn->setReactionType(ReactionType::POLYMERIZATION);
 }
 
-void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
@@ -318,7 +318,7 @@ void PolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2)
 }
 
 
-void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
+void DepolyPlusEndManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -395,7 +395,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc) {
 
 }
 
-void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
+void DepolyMinusEndManager::addReaction(CCylinder* cc) {
 
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -471,7 +471,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc) {
     }
 }
 
-void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
 
     CMonomer* m1 = cc2->getCMonomer(0);
@@ -538,7 +538,7 @@ void DepolymerizationPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2
 
 }
 
-void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -602,7 +602,7 @@ void DepolymerizationMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc
 }
 
 
-void BasicBindingTemplate::addReaction(CCylinder* cc) {
+void BasicBindingManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -656,7 +656,7 @@ void BasicBindingTemplate::addReaction(CCylinder* cc) {
 }
 
 
-void UnbindingTemplate::addReaction(CCylinder* cc) {
+void UnbindingManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -729,7 +729,7 @@ void UnbindingTemplate::addReaction(CCylinder* cc) {
     }   
 }
 
-void MotorWalkingForwardTemplate::addReaction(CCylinder* cc) {
+void MotorWalkFManager::addReaction(CCylinder* cc) {
     
     ///loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -794,7 +794,7 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -850,7 +850,7 @@ void MotorWalkingForwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc) {
+void MotorWalkBManager::addReaction(CCylinder* cc) {
 
     
     ///loop through all monomers of filament
@@ -916,7 +916,7 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc2->getSize() - 1);
@@ -973,7 +973,7 @@ void MotorWalkingBackwardTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 }
 
-void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     ///Add reaction to middle of both cylinders
     int i, j;
@@ -1030,14 +1030,12 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m2->speciesLinker(speciesInt));
 
     ///set up callbacks
-    LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(), linkerNumber, i, j, _ps);
+    LinkerBindingCallback lcallback(cc1, cc2, linkerNumber, i, j, _ps);
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
-    rxn->setRMin(_rMin);
-    rxn->setRMax(_rMax);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
     
@@ -1046,7 +1044,7 @@ void LinkerBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionID(_reactionID);
 }
 
-void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ///Add reaction to middle of both cylinders
     int i, j;
@@ -1103,14 +1101,12 @@ void MotorBindingTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m2->speciesMotor(speciesInt));
     
     ///set up callbacks
-    MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(), motorNumber, i, j, _ps);
+    MotorBindingCallback mcallback(cc1, cc2, motorNumber, i, j, _ps);
     
     ///Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
-    rxn->setRMin(_rMin);
-    rxn->setRMax(_rMax);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
     

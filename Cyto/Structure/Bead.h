@@ -43,7 +43,7 @@ public:
     ///Main constructor
     Bead (vector<double> v);
     ///Default constructor
-    Bead() :coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
+    Bead() : coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
     ~Bead();
     
     ///Aux functions

@@ -21,6 +21,7 @@ class Cylinder;
 class MotorGhostDBKey {friend class SubSystem;
                        friend class MotorGhostFF;
                        friend class MController;
+                       friend class Controller;
                        friend class Output;
 #ifdef TESTING
                        public:

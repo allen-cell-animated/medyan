@@ -24,10 +24,10 @@ MD:
 
 ### FILAMENTS ###
 
-FSTRETCHINGTYPE:
+FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.5
 
-FBENDINGTYPE:
+FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   5.0
 FBENDINGTHETA:
 
@@ -38,7 +38,7 @@ FTWISTINGPHI:
 ### LINKERS ###
 
 LSTRETCHINGTYPE:             HARMONIC
-LSTRETCHINGK:                0.5
+LSTRETCHINGK:                5.0
 
 LBENDINGTYPE:
 LBENDINGK:
@@ -64,7 +64,7 @@ MTWISTINGPHI:
 ### EXCLUDED VOLUME ###
 
 VOLUMETYPE:                  REPULSION
-VOLUMEK:                     20.0
+VOLUMEK:                     1.0
 VOLUMECUTOFF:                27.0
 
 ### BOUNDARY ###
@@ -82,8 +82,8 @@ CHEMISTRYFILE:               /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testche
 #CHEMISTRYFILE:               /Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    100000
-NUMSTEPSPERM:                5
+NUMSTEPS:                    10
+NUMSTEPSPERM:                1
 
 NUMBULKSPECIES:              2
 NUMDIFFUSINGSPECIES:         1

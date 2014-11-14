@@ -112,12 +112,12 @@ struct LinkerBindingCallback {
     
     ///members
     SubSystem* _ps;
-    Cylinder* _c1, *_c2;
+    CCylinder* _cc1, *_cc2;
     short _linkerType;
     short _position1, _position2;
 
-    LinkerBindingCallback(Cylinder* c1, Cylinder* c2, short linkerType, short position1, short position2, SubSystem* ps)
-        : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),  _position1(position1), _position2(position2){}
+    LinkerBindingCallback(CCylinder* cc1, CCylinder* cc2, short linkerType, short position1, short position2, SubSystem* ps)
+        : _ps(ps), _cc1(cc1), _cc2(cc2), _linkerType(linkerType),  _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
         
@@ -127,7 +127,7 @@ struct LinkerBindingCallback {
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
+        _ps->addNewLinker(_cc1->getCylinder(), _cc2->getCylinder(), _linkerType, pos1, pos2);
     }
 };
 
@@ -136,12 +136,12 @@ struct MotorBindingCallback {
     
     ///members
     SubSystem* _ps;
-    Cylinder* _c1, *_c2;
+    CCylinder* _cc1, *_cc2;
     short _motorType;
     short _position1, _position2;
     
-    MotorBindingCallback(Cylinder* c1, Cylinder* c2, short motorType, short position1, short position2, SubSystem* ps)
-    : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),  _position1(position1), _position2(position2){}
+    MotorBindingCallback(CCylinder* cc1, CCylinder* cc2, short motorType, short position1, short position2, SubSystem* ps)
+    : _ps(ps), _cc1(cc1), _cc2(cc2), _motorType(motorType),  _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
         
@@ -151,7 +151,7 @@ struct MotorBindingCallback {
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
+        _ps->addNewMotorGhost(_cc1->getCylinder(), _cc2->getCylinder(), _motorType, pos1, pos2);
     }
 };
 

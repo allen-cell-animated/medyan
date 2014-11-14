@@ -28,10 +28,9 @@ class CMonomer {
     SpeciesFilament** _speciesFilament;
     SpeciesPlusEnd**  _speciesPlusEnd;
     SpeciesMinusEnd** _speciesMinusEnd;
-    
-    SpeciesBound**  _speciesBound;
-    SpeciesLinker** _speciesLinker;
-    SpeciesMotor**  _speciesMotor;
+    SpeciesBound**    _speciesBound;
+    SpeciesLinker**   _speciesLinker;
+    SpeciesMotor**    _speciesMotor;
     
 public:
     ///Constructor does nothing but memset arrays

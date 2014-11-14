@@ -10,7 +10,6 @@
 
 #include "ChemManager.h"
 #include "Bead.h"
-#include "Composite.h"
 #include "GController.h"
 #include "NeighborListDB.h"
 
@@ -30,13 +29,15 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront,
                    
    ///add to compartment
    _compartment->addCylinder(this);
-   ///add to neighbor lists
+                       
+   ///add to neighbor list db
    NeighborListDB::instance(NeighborListDBKey())->addNeighbor(this);
     
 #ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(
-        ChemManager::createCCylinder(ChemManagerCylinderKey(), f, _compartment, extensionFront, extensionBack, creation));
+    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
     _cCylinder->setCylinder(this);
+    ChemManager::initializeCCylinder(ChemManagerCylinderKey(), _cCylinder.get(), f,
+                                     extensionFront, extensionBack, creation);
     
     if(creation || extensionFront || extensionBack) {
         ///Update filament reactions, only if not initialization
@@ -58,15 +59,11 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront,
     _mCylinder->setCylinder(this);
     
 #endif
-    
-
 }
 
 Cylinder::~Cylinder() {
     ///remove from compartment
     _compartment->removeCylinder(this);
-    ///remove from neighbor lists
-    NeighborListDB::instance(NeighborListDBKey())->removeNeighbor(this);
 }
 
 void Cylinder::updatePosition() {
@@ -90,11 +87,6 @@ void Cylinder::updatePosition() {
         setCCylinder(clone);
 #endif
     }
-    
-///Update filament reactions
-#ifdef CHEMISTRY
-    ChemManager::updateCCylinder(ChemManagerCylinderKey(), _cCylinder.get());
-#endif
 
 }
 

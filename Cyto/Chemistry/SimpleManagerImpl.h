@@ -14,7 +14,7 @@
 #include "common.h"
 
 #include "ChemManagerImpl.h"
-#include "ReactionTemplate.h"
+#include "ReactionManager.h"
 #include "CMonomer.h"
 #include "Parser.h"
 
@@ -27,20 +27,20 @@ class SimpleManagerImpl : public ChemManagerImpl {
 private:
     SubSystem* _subSystem; ///< ptr to subsytem for creation of callbacks, etc
     
-    vector<unique_ptr<ReactionFilamentTemplate>> _fRxnTemplates;
     ///< list of reactions to add to every new CCylinder
-    vector<unique_ptr<ReactionCrossFilamentTemplate>> _cfRxnTemplates;
+    vector<unique_ptr<InternalFilamentRxnManager>> _IFRxnManagers;
     ///<list of cross filament reactions to add to CCylinders
+    vector<unique_ptr<CrossFilamentRxnManager>> _CFRxnManagers;
     
     ///Vectors of all filament-related species in system
     vector<string> _speciesFilament, _speciesPlusEnd,
                    _speciesMinusEnd, _speciesBound,
                    _speciesLinker, _speciesMotor;
     
-    ///Set up all reaction templates from chemsetup struct
-    void generateFilamentReactionTemplates(ChemistryData& chem);
+    ///Set up all reaction managers from chemsetup struct
+    void generateIFRxnManagers(ChemistryData& chem);
     
-    void generateCrossFilamentReactionTemplates(ChemistryData& chem);
+    void generateCFRxnManagers(ChemistryData& chem);
     
     ///Generate the general, non-filament reactions
     void generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
@@ -59,8 +59,8 @@ public:
     ///@note when initializing, the filaments are filled with the first species listed in
     /// the speciesFilament vector. The active plus and minus end is set to be the first
     /// listed as well.
-    virtual CCylinder* createCCylinder(Filament* f, Compartment* c,
-           bool extensionFront, bool extensionBack, bool creation);
+    virtual void initializeCCylinder(CCylinder* cc, Filament* f, 
+                                     bool extensionFront, bool extensionBack, bool creation);
     
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc);

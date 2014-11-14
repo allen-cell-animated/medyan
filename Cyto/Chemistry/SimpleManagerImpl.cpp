@@ -16,7 +16,7 @@
 
 using namespace mathfunc;
 
-void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
+void SimpleManagerImpl::generateIFRxnManagers(ChemistryData& chem) {
     
     ///set up reaction templates
     for(auto &r: chem.polymerizationReactions) {
@@ -215,13 +215,11 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         
-        ///Add polymerization template
+        ///Add polymerization managers
         if(d == FilamentReactionDirection::FORWARD)
-            _fRxnTemplates.emplace_back(
-                new PolymerizationPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new PolyPlusEndManager(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _fRxnTemplates.emplace_back(
-                new PolymerizationMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new PolyMinusEndManager(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     
@@ -421,13 +419,11 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         
-        ///Add depolymerization template
+        ///Add depolymerization managers
         if(d == FilamentReactionDirection::FORWARD)
-            _fRxnTemplates.emplace_back(
-                     new DepolymerizationMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new DepolyMinusEndManager(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _fRxnTemplates.emplace_back(
-                     new DepolymerizationPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new DepolyPlusEndManager(reactantTemplate, productTemplate, get<2>(r)));
     }
 
     
@@ -535,7 +531,7 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
     
     
         ///add reaction
-        _fRxnTemplates.emplace_back(new BasicBindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        _IFRxnManagers.emplace_back(new BasicBindingManager(reactantTemplate, productTemplate, get<2>(r)));
     
     }
 
@@ -679,7 +675,7 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
         
         
         ///add reaction
-        _fRxnTemplates.emplace_back(new UnbindingTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        _IFRxnManagers.emplace_back(new UnbindingManager(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     
@@ -816,14 +812,14 @@ void SimpleManagerImpl::generateFilamentReactionTemplates(ChemistryData& chem) {
 
         ///add reaction
         if(type == ReactionType::MOTORWALKINGFORWARD)
-            _fRxnTemplates.emplace_back(new MotorWalkingForwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new MotorWalkFManager(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _fRxnTemplates.emplace_back(new MotorWalkingBackwardTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            _IFRxnManagers.emplace_back(new MotorWalkBManager(reactantTemplate, productTemplate, get<2>(r)));
     }
  
 }
 
-void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& chem) {
+void SimpleManagerImpl::generateCFRxnManagers(ChemistryData& chem) {
     
     int ID = 0;
     for(auto &r: chem.linkerBindingReactions) {
@@ -984,8 +980,7 @@ void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& ch
             exit(EXIT_FAILURE);
         }
     
-        _cfRxnTemplates.emplace_back(
-            new LinkerBindingTemplate(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
+        _CFRxnManagers.emplace_back(new LinkerBindingManager(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
     }
     
     for(auto &r: chem.motorBindingReactions) {
@@ -1146,8 +1141,7 @@ void SimpleManagerImpl::generateCrossFilamentReactionTemplates(ChemistryData& ch
             exit(EXIT_FAILURE);
         }
         
-        _cfRxnTemplates.emplace_back(
-           new MotorBindingTemplate(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
+        _CFRxnManagers.emplace_back(new MotorBindingManager(reactantTemplate, productTemplate, get<2>(r), get<3>(r), get<4>(r), ID++));
     }
 }
 
@@ -1364,8 +1358,8 @@ void SimpleManagerImpl::generateBulkReactions(ChemistryData& chem) {
 void SimpleManagerImpl::initialize(ChemistryData& chem) {
     
     ///set static system ptr
-    ReactionFilamentTemplate::_ps = _subSystem;
-    ReactionCrossFilamentTemplate::_ps = _subSystem;
+    InternalFilamentRxnManager::_ps = _subSystem;
+    CrossFilamentRxnManager::_ps = _subSystem;
     
     ///Copy all species from chem struct
     _speciesFilament =  chem.speciesFilament;
@@ -1404,53 +1398,45 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     ///add reactions to chemsim
     CompartmentGrid::instance(compartmentGridKey())->addChemSimReactions();
     
-    ///create filament reaction templates
-    generateFilamentReactionTemplates(chem);
-    ///create cross filament reaction templates
-    generateCrossFilamentReactionTemplates(chem);
+    ///create internal filament reaction managers
+    generateIFRxnManagers(chem);
+    ///create cross filament reaction managers
+    generateCFRxnManagers(chem);
 }
 
-CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
+void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                                             bool extensionFront, bool extensionBack, bool creation)
 {
-    CCylinder* cc = new CCylinder(c);
-    
     ///maxlength is same length as mcylinder
     int maxlength = cc->getSize();
+    Compartment* c = cc->getCompartment();
     
     ///add monomers to cylinder
     for(int i = 0; i < maxlength; i++) {
         
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
-            SpeciesFilament* sf =
-                c->addSpeciesFilament( SpeciesNamesDB::Instance()->generateUniqueName(f));
+            SpeciesFilament* sf = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
-            SpeciesPlusEnd* sp =
-                c->addSpeciesPlusEnd( SpeciesNamesDB::Instance()->generateUniqueName(p));
+            SpeciesPlusEnd* sp = c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
-            SpeciesMinusEnd* smi =
-                c->addSpeciesMinusEnd( SpeciesNamesDB::Instance()->generateUniqueName(mi));
+            SpeciesMinusEnd* smi = c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
-        
         for (auto &b : _speciesBound) {
-            SpeciesBound* sb =
-                c->addSpeciesBound( SpeciesNamesDB::Instance()->generateUniqueName(b));
+            SpeciesBound* sb = c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
-            SpeciesLinker* sl =
-                c->addSpeciesLinker( SpeciesNamesDB::Instance()->generateUniqueName(l));
+            SpeciesLinker* sl = c->addSpeciesLinker(SpeciesNamesDB::Instance()->generateUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
-            SpeciesMotor* sm =
-                c->addSpeciesMotor( SpeciesNamesDB::Instance()->generateUniqueName(mo));
+            SpeciesMotor* sm = c->addSpeciesMotor(SpeciesNamesDB::Instance()->generateUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1458,20 +1444,20 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     }
     
     ///Add all reaction templates to this cylinder
-    for(auto &r : _fRxnTemplates) { r->addReaction(cc); }
+    for(auto &r : _IFRxnManagers) { r->addReaction(cc); }
     
     ///get last ccylinder
     CCylinder* lastcc = nullptr;
  
     ///extension of front
     if(extensionFront) {
-        lastcc = pf->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc);
+        lastcc = f->getCylinderVector().back()->getCCylinder();
+        for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
     }
     ///extension of back
     else if(extensionBack) {
-        lastcc = pf->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _fRxnTemplates) r->addReaction(cc, lastcc);
+        lastcc = f->getCylinderVector().front()->getCCylinder();
+        for(auto &r : _IFRxnManagers) r->addReaction(cc, lastcc);
     }
 
     else if(creation) {
@@ -1485,10 +1471,10 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     ///Base case, initialization
     else {
         ///Check if this is the first cylinder
-        if(pf->getCylinderVector().size() != 0) {
+        if(f->getCylinderVector().size() != 0) {
             
             ///remove plus end from last, add to this.
-            lastcc = pf->getCylinderVector().back()->getCCylinder();
+            lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 2);
             m1->speciesPlusEnd(0)->getRSpecies().setN(0);
             
@@ -1508,7 +1494,7 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
             
-            for(auto &r : _fRxnTemplates) r->addReaction(lastcc, cc);
+            for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
             
         }
         ///this is first one
@@ -1532,52 +1518,26 @@ CCylinder* SimpleManagerImpl::createCCylinder(Filament *pf, Compartment* c,
     
     //update all reactions added
     if(creation || extensionFront || extensionBack) cc->activateReactions();
-    
-    ///clean up and return
-    return cc;
 }
 
 void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
     
-//    ///loop through the cylinders reaction map, and remove any that are out of range.
-//    auto ccReactions = cc->getCrossCylinderReactions();
-//    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
-//        
-//        ///calculate distance from this CCylinder to the one in the map
-//        double dist = TwoPointDistance(cc->getCylinder()->coordinate, it->first->getCylinder()->coordinate);
-//        
-//        for(auto &r : it->second) {
-//            ///if out of range, remove it
-//            if((r->getRMin() > dist || r->getRMax() < dist) && (r->getRMin() != 0.0 && r->getRMax() != 0.0))
-//                cc->removeCrossCylinderReaction(it->first, r);
-//        }
-//        
-//        ///If the number of reactions between this cylinder and the other has dropped to
-//        ///zero, remove the key/value as well as this reacting cylinder in other
-//        if(it->second.size() == 0)
-//            it->first->removeReactingCylinder(cc);
-//    }
-//    
-//    ///Now, add new cross filament reactions
-//    for(auto &rTemplate : _cfRxnTemplates) {
-//    
-//        /// loop through all cylinders in range
-//        for(auto &ccNeighbor : cNeighbors) {
-//            double dist = TwoPointDistance(cc->getCylinder()->coordinate, ccNeighbor->getCylinder()->coordinate);
-//                
-//            ///Check if this cross filament reaction is already there. If not, add it
-//            if(cc->getCylinder()->getFilament() != ccNeighbor->getCylinder()->getFilament()
-//               && (rTemplate->getRMin() < dist && rTemplate->getRMax() > dist)) {
-//                
-//                bool hasRxn = false;
-//                for(auto &r : cc->getCrossCylinderReactions()[ccNeighbor])
-//                    if(r->getReactionID() == rTemplate->getReactionID()) { hasRxn = true; break;}
-//
-//                if(!hasRxn) rTemplate->addReaction(cc, ccNeighbor);
-//            }
-//        }
-//    }
-//    cc->activateReactions();
+    ///loop through all cross cylinder reactions, remove if cross filament
+    for(auto it = cc->getCrossCylinderReactions().begin(); it != cc->getCrossCylinderReactions().end(); it++) {
+        
+        auto ccOther = it->first;
+        if(ccOther->getCylinder()->getFilament() != cc->getCylinder()->getFilament())
+            cc->removeCrossCylinderReactions(ccOther);
+    }
+    
+    ///Add reactions from manager, using the local neighbor list
+    for(auto &r : _CFRxnManagers) {
+        
+        auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
+        for(auto &n : neighbors) r->addReaction(cc, static_cast<Cylinder*>(n)->getCCylinder());
+    }
+    
+    cc->activateReactions();
 }
 
 

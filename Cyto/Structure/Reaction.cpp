@@ -80,13 +80,9 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     ///Create new reaction, copy ownership of signal
     Reaction* newReaction = new Reaction<M,N>(species,_rate);
     newReaction->_signal = _signal;
-
-    ///clone rMin, rMax, ID
-    newReaction->_rMin = _rMin;
-    newReaction->_rMax = _rMax;
-    newReaction->_reactionID = _reactionID;
     
     ///Copy reaction type
+    newReaction->_reactionID = _reactionID;
     newReaction->_reactionType = _reactionType;
     return newReaction;
 }

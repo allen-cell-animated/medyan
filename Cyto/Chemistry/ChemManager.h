@@ -35,6 +35,7 @@ class ChemManagerGridKey { friend class CController;
 
 ///Key for the creation and destruction of CCylinders
 class ChemManagerCylinderKey {friend class Cylinder;
+                              friend class Controller;
 #ifdef TESTING
                                public:
 #endif //TESTING
@@ -57,7 +58,7 @@ public:
     static void initialize(ChemManagerGridKey k, ChemistryData& chem);
     
     ///Initializer, based on the given simulation
-    static CCylinder* createCCylinder(ChemManagerCylinderKey k, Filament* f, Compartment* c,
+    static void initializeCCylinder(ChemManagerCylinderKey k, CCylinder* cc, Filament* f,
                                     bool extensionFront, bool extensionBack, bool creation);
     ///add/update cross cylinder reactions that are within range
     static void updateCCylinder(ChemManagerCylinderKey k, CCylinder* cc);

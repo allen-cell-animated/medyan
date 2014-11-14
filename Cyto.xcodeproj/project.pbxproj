@@ -172,8 +172,8 @@
 		F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
 		F7D1395819CB47D5007FC395 /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */; };
 		F7D1395A19D06F98007FC395 /* CCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1395919D06F98007FC395 /* CCylinder.cpp */; };
-		F7D1395D19D07520007FC395 /* ReactionTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */; };
-		F7D1395E19D07520007FC395 /* ReactionTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F7D1395C19D07520007FC395 /* ReactionTemplate.h */; };
+		F7D1395D19D07520007FC395 /* ReactionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1395B19D07520007FC395 /* ReactionManager.cpp */; };
+		F7D1395E19D07520007FC395 /* ReactionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F7D1395C19D07520007FC395 /* ReactionManager.h */; };
 		F7D1396319D47739007FC395 /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1396119D47739007FC395 /* BoundaryFF.cpp */; };
 		F7D1396419D47739007FC395 /* BoundaryFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7D1396219D47739007FC395 /* BoundaryFF.h */; };
 		F7D1BE3E1A13ECE00066DEF1 /* NeighborList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1BE3C1A13ECE00066DEF1 /* NeighborList.cpp */; };
@@ -382,8 +382,8 @@
 		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7D1395919D06F98007FC395 /* CCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCylinder.cpp; path = Cyto/Structure/CCylinder.cpp; sourceTree = SOURCE_ROOT; };
-		F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionTemplate.cpp; sourceTree = "<group>"; };
-		F7D1395C19D07520007FC395 /* ReactionTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionTemplate.h; sourceTree = "<group>"; };
+		F7D1395B19D07520007FC395 /* ReactionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionManager.cpp; sourceTree = "<group>"; };
+		F7D1395C19D07520007FC395 /* ReactionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionManager.h; sourceTree = "<group>"; };
 		F7D1395F19D30F1B007FC395 /* testchemistryinput.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = testchemistryinput.txt; path = Cyto/testchemistryinput.txt; sourceTree = SOURCE_ROOT; };
 		F7D1396119D47739007FC395 /* BoundaryFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryFF.cpp; sourceTree = "<group>"; };
 		F7D1396219D47739007FC395 /* BoundaryFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryFF.h; sourceTree = "<group>"; };
@@ -486,13 +486,13 @@
 				F777F9BD19C1F35200D2850A /* Species.cpp */,
 				F777F9BE19C1F35200D2850A /* Species.h */,
 				F777F9BF19C1F35200D2850A /* SpeciesContainer.h */,
-				F746C4D91A11596E0085E4BB /* NeighborListDB.cpp */,
-				F746C4DA1A11596E0085E4BB /* NeighborListDB.h */,
+				F7D1BE411A140A110066DEF1 /* Neighbor.h */,
 				F7D1BE3C1A13ECE00066DEF1 /* NeighborList.cpp */,
 				F7D1BE3D1A13ECE00066DEF1 /* NeighborList.h */,
+				F746C4D91A11596E0085E4BB /* NeighborListDB.cpp */,
+				F746C4DA1A11596E0085E4BB /* NeighborListDB.h */,
 				F7D1BE441A140DEC0066DEF1 /* NeighborListContainer.cpp */,
 				F7D1BE451A140DEC0066DEF1 /* NeighborListContainer.h */,
-				F7D1BE411A140A110066DEF1 /* Neighbor.h */,
 			);
 			name = Structure;
 			path = CytoMech;
@@ -560,8 +560,8 @@
 				F777F97619C1F32E00D2850A /* ChemSimpleGillespieImpl.h */,
 				F777F97519C1F32E00D2850A /* ChemSimpleGillespieImpl.cpp */,
 				F777FA9819C1FC2D00D2850A /* ChemCallbacks.h */,
-				F7D1395B19D07520007FC395 /* ReactionTemplate.cpp */,
-				F7D1395C19D07520007FC395 /* ReactionTemplate.h */,
+				F7D1395B19D07520007FC395 /* ReactionManager.cpp */,
+				F7D1395C19D07520007FC395 /* ReactionManager.h */,
 			);
 			name = Chemistry;
 			path = Cyto/Chemistry;
@@ -698,7 +698,7 @@
 				F777F9F519C1F35200D2850A /* MotorGhost.h in Headers */,
 				F7D1BE471A140DEC0066DEF1 /* NeighborListContainer.h in Headers */,
 				F777FA3819C1F3A800D2850A /* FilamentInteractions.h in Headers */,
-				F7D1395E19D07520007FC395 /* ReactionTemplate.h in Headers */,
+				F7D1395E19D07520007FC395 /* ReactionManager.h in Headers */,
 				F777FA9219C1F40A00D2850A /* MathFunctions.h in Headers */,
 				F777FA0619C1F35200D2850A /* SpeciesContainer.h in Headers */,
 				F777FA9319C1F40A00D2850A /* Signaling.h in Headers */,
@@ -883,7 +883,7 @@
 				F777FA3A19C1F3A800D2850A /* FilamentStretching.cpp in Sources */,
 				F777F9D119C1F35200D2850A /* BoundarySurfaceImpl.cpp in Sources */,
 				F7642D5619F59EF800860365 /* CMotorGhost.cpp in Sources */,
-				F7D1395D19D07520007FC395 /* ReactionTemplate.cpp in Sources */,
+				F7D1395D19D07520007FC395 /* ReactionManager.cpp in Sources */,
 				F777FA4019C1F3A800D2850A /* FilamentTwisting.cpp in Sources */,
 				F777FA3D19C1F3A800D2850A /* FilamentStretchingHarmonic.cpp in Sources */,
 				F77C83D21A094FE7001D51DF /* SimpleManagerImpl.cpp in Sources */,
