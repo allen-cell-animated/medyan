@@ -14,6 +14,10 @@
 #include "BoundaryImpl.h"
 #include "NeighborListDB.h"
 
+#include "MathFunctions.h"
+
+using namespace mathfunc;
+
 void Controller::initialize(string inputFile) {
     
     ///Parse input, get parameters
@@ -105,18 +109,39 @@ void Controller::initialize(string inputFile) {
         filamentData = fp.readFilaments();
     }
     else {
-        cout<< endl << "Random filament distributions not yet implemented. Exiting" << endl;
-        exit(EXIT_FAILURE);
+        ///Create random distribution of filaments
+        default_random_engine generator;
+        uniform_real_distribution<double> d(0,1);
+        
+        for(int i = 0; i < FSetup.numFilaments; i++) {
+            
+            double firstX = d(generator) * SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX;
+            double firstY = d(generator) * SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY;
+            double firstZ = d(generator) * SystemParameters::Geometry().compartmentSizeZ * SystemParameters::Geometry().NZ;
+            
+            double directionX = d(generator);
+            double directionY = d(generator);
+            double directionZ = d(generator);
+            
+            ///Create a random filament vector one cylinder long
+            vector<double> firstPoint = {firstX, firstY, firstZ};
+            auto normFactor = sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
+            vector<double> direction = {directionX/normFactor, directionY/normFactor, directionZ/normFactor};
+            vector<double> secondPoint = NextPointProjection(firstPoint, (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            
+            if(_subSystem->getBoundary()->within(firstPoint) && _subSystem->getBoundary()->within(secondPoint)) {
+                filamentData.push_back({firstPoint, secondPoint});
+            }
+        }
     }
+    
     ///add filaments
     _subSystem->addNewFilaments(filamentData);
     cout << "Done." <<endl;
     
-#ifdef CHEMISTRY
-    //Update filament reactions
-    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
-        ChemManager::updateCCylinder(ChemManagerCylinderKey(), c->getCCylinder());
-#endif
+    ///First update of positions
+    updatePositions();
+    
     //cout << "PRINTING REACTIONS" << endl;
     //ChemSim::printReactions();
 }
@@ -146,7 +171,6 @@ void Controller::updatePositions() {
 #endif
     
 }
-
 
 void Controller::run() {
     

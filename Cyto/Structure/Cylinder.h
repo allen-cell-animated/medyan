@@ -50,7 +50,8 @@ public:
     vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
     
     ///Constructor and destructor
-    Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront, bool extensionBack, bool creation);
+    Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID, 
+             bool extensionFront, bool extensionBack, bool creation);
     ~Cylinder();
     
     ///get mCylinder

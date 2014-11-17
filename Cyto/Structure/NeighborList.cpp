@@ -40,12 +40,12 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
                  if(_crossFilamentOnly) continue;
                 
                  ///if not cross filament, check if not neighboring
-                 else if(abs(cylinder->getPositionFilament() - nearbyCylinder->getPositionFilament()) <= 1) continue;
+                 else if(abs(cylinder->getPositionFilament() - nearbyCylinder->getPositionFilament()) <= 2) continue;
             }
             
             ///Dont add if not within range
             double dist = TwoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
-            if(dist > _rMax && dist < _rMin) continue;
+            if(dist > _rMax || dist < _rMin) continue;
             
             ///If we got through all of this, add it!
             _list[cylinder].push_back(nearbyCylinder);

@@ -23,7 +23,6 @@ enum FilamentReactionDirection {
 
 ///FORWARD DECLARATIONS
 class SubSystem;
-class Filament;
 class CCylinder;
 
 ///InternalFilamentRxnManager is a class to store filament chemical reaction information read from an input file

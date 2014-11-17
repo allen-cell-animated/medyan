@@ -16,8 +16,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
-    o.printBasicSnapshot(0);
+    //Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/beadoutput.txt");
+    //o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::instance(getBeadDBKey())->size(); //// !!! change
 	double curEnergy = FFM.ComputeEnergy(0.0);
@@ -46,7 +46,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 		//PrintForces();
         
         moveBeads(lambda);
-        o.printBasicSnapshot(numIter);
+        //o.printBasicSnapshot(numIter);
         //PrintForces();
         
         FFM.ComputeForcesAux();

@@ -1416,27 +1416,33 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
-            SpeciesFilament* sf = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f));
+            SpeciesFilament* sf =
+                c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
-            SpeciesPlusEnd* sp = c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p));
+            SpeciesPlusEnd* sp =
+                c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
-            SpeciesMinusEnd* smi = c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi));
+            SpeciesMinusEnd* smi =
+                c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
         for (auto &b : _speciesBound) {
-            SpeciesBound* sb = c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b));
+            SpeciesBound* sb =
+                c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
-            SpeciesLinker* sl = c->addSpeciesLinker(SpeciesNamesDB::Instance()->generateUniqueName(l));
+            SpeciesLinker* sl =
+                c->addSpeciesLinker(SpeciesNamesDB::Instance()->generateUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
-            SpeciesMotor* sm = c->addSpeciesMotor(SpeciesNamesDB::Instance()->generateUniqueName(mo));
+            SpeciesMotor* sm =
+                c->addSpeciesMotor(SpeciesNamesDB::Instance()->generateUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1523,7 +1529,8 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
 void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
     
     ///loop through all cross cylinder reactions, remove if cross filament
-    for(auto it = cc->getCrossCylinderReactions().begin(); it != cc->getCrossCylinderReactions().end(); it++) {
+    auto ccReactions = cc->getCrossCylinderReactions();
+    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
         
         auto ccOther = it->first;
         if(ccOther->getCylinder()->getFilament() != cc->getCylinder()->getFilament())

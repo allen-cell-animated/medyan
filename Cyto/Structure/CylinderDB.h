@@ -57,12 +57,14 @@ public:
     static CylinderDB* instance(CylinderDBKey k);
     
     // create new empty cylinder
-    Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead,
+    Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, int positionFilament, 
                              bool extensionFront = false, bool extensionBack = false, bool creation = false) {
         
-        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, _currentCylinderID++, extensionFront, extensionBack, creation);
+        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, positionFilament, _currentCylinderID++,
+                                    extensionFront, extensionBack, creation);
         push_back(pc);
-        return pc ;}
+        return pc;
+    }
     
     
     // Remove Cylinder:

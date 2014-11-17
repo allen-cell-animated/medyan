@@ -18,8 +18,9 @@
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int ID, bool extensionFront, bool extensionBack, bool creation)
-                   : _pFilament(f), _b1(b1), _b2(b2), _ID(ID) {
+Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID, 
+                   bool extensionFront, bool extensionBack, bool creation)
+                   : _pFilament(f), _b1(b1), _b2(b2), _ID(ID), _positionFilament(positionFilament) {
     
     ////Set coordinate
     coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);

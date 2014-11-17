@@ -111,7 +111,6 @@
 		F777FA3B19C1F3A800D2850A /* FilamentStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA1219C1F3A800D2850A /* FilamentStretching.h */; };
 		F777FA3D19C1F3A800D2850A /* FilamentStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA1319C1F3A800D2850A /* FilamentStretchingHarmonic.cpp */; };
 		F777FA3E19C1F3A800D2850A /* FilamentStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA1419C1F3A800D2850A /* FilamentStretchingHarmonic.h */; };
-		F777FA4019C1F3A800D2850A /* FilamentTwisting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA1519C1F3A800D2850A /* FilamentTwisting.cpp */; };
 		F777FA4119C1F3A800D2850A /* ForceField.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA1619C1F3A800D2850A /* ForceField.h */; };
 		F777FA4319C1F3A800D2850A /* ForceFieldManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA1719C1F3A800D2850A /* ForceFieldManager.cpp */; };
 		F777FA4419C1F3A800D2850A /* ForceFieldManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA1819C1F3A800D2850A /* ForceFieldManager.h */; };
@@ -321,7 +320,6 @@
 		F777FA1219C1F3A800D2850A /* FilamentStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentStretching.h; sourceTree = "<group>"; };
 		F777FA1319C1F3A800D2850A /* FilamentStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F777FA1419C1F3A800D2850A /* FilamentStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentStretchingHarmonic.h; sourceTree = "<group>"; };
-		F777FA1519C1F3A800D2850A /* FilamentTwisting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentTwisting.cpp; sourceTree = "<group>"; };
 		F777FA1619C1F3A800D2850A /* ForceField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceField.h; sourceTree = "<group>"; };
 		F777FA1719C1F3A800D2850A /* ForceFieldManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceFieldManager.cpp; sourceTree = "<group>"; };
 		F777FA1819C1F3A800D2850A /* ForceFieldManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceFieldManager.h; sourceTree = "<group>"; };
@@ -582,7 +580,6 @@
 				F777FA0B19C1F3A800D2850A /* FilamentBending.h */,
 				F777FA0C19C1F3A800D2850A /* FilamentBendingHarmonic.cpp */,
 				F777FA0D19C1F3A800D2850A /* FilamentBendingHarmonic.h */,
-				F777FA1519C1F3A800D2850A /* FilamentTwisting.cpp */,
 				F777FA1719C1F3A800D2850A /* ForceFieldManager.cpp */,
 				F777FA1819C1F3A800D2850A /* ForceFieldManager.h */,
 				F777FA1919C1F3A800D2850A /* LinkerFF.cpp */,
@@ -884,7 +881,6 @@
 				F777F9D119C1F35200D2850A /* BoundarySurfaceImpl.cpp in Sources */,
 				F7642D5619F59EF800860365 /* CMotorGhost.cpp in Sources */,
 				F7D1395D19D07520007FC395 /* ReactionManager.cpp in Sources */,
-				F777FA4019C1F3A800D2850A /* FilamentTwisting.cpp in Sources */,
 				F777FA3D19C1F3A800D2850A /* FilamentStretchingHarmonic.cpp in Sources */,
 				F77C83D21A094FE7001D51DF /* SimpleManagerImpl.cpp in Sources */,
 				F777FA8C19C1F40A00D2850A /* Composite.cpp in Sources */,

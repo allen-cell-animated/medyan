@@ -57,16 +57,16 @@ public:
     static BeadDB* instance(BeadDBKey k);
     
     /// create a new bead with no ccordinates and
-    Bead* createBead() {
+    Bead* createBead(int positionFilament) {
         
-        Bead* b = new Bead();
+        Bead* b = new Bead(positionFilament);
         push_back(b);
         return b ;}
     
     /// Create bead with a given coordinate on a given filament:
-    Bead* createBead(vector<double>& v) {
+    Bead* createBead(vector<double>& v, int positionFilament) {
         
-        Bead* b = new Bead(v);
+        Bead* b = new Bead(v, positionFilament);
         push_back(b);
         return b ;}
     
