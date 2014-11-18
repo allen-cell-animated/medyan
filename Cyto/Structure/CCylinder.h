@@ -99,15 +99,14 @@ public:
     void removeInternalReaction(ReactionBase* r);
     void removeAllInternalReactions();
     
-    void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     void removeCrossCylinderReactions(CCylinder* other);
     void removeAllCrossCylinderReactions();
     
     void removeReactingCylinder(CCylinder* other);
     void removeAllReactingCylinders();
     
-    ///Activate all reactions associated with this CCylinder
-    void activateReactions();
+//    ///Activate all reactions associated with this CCylinder
+//    void activateReactions();
     
     ///Print CCylinder
     virtual void printCCylinder();

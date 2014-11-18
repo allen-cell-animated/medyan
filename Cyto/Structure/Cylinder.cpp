@@ -77,7 +77,7 @@ void Cylinder::updatePosition() {
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
     if(c != _compartment) {
-        
+
         ///remove from old compartment, add to new
         _compartment->removeCylinder(this);
         _compartment = c;

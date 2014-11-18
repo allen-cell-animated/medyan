@@ -205,8 +205,12 @@ public:
      /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
     /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
     ~RSpecies(){
-        assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
-//            cout << "Destructor ~RSpecies() called on ptr=" << this << endl;
+        
+        ///SHOULD BE UNCOMMENTED...
+        if(!(_as_reactants.empty() and _as_products.empty())) {
+            cout << "Major bug: RSpecies should not contain Reactions when being destroyed." << endl;
+        }
+        //assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
 #ifdef RSPECIES_SIGNALING
         if(_signal!=nullptr)
             delete _signal;

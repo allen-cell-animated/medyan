@@ -161,7 +161,6 @@ void Filament::retractFront() {
     if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  /// Delete later
     
     else {
-        
         Cylinder* retractionCylinder = _cylinderVector.back();
         _cylinderVector.pop_back();
         

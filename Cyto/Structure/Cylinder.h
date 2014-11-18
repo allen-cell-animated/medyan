@@ -44,7 +44,7 @@ private:
     
     int _ID; ///Unique ID of cylinder, managed by CylinderDB
     
-    Compartment* _compartment; ///< compartment this cylinder is currently in
+    Compartment* _compartment = nullptr; ///< compartment this cylinder is currently in
     
 public:
     vector<double> coordinate; ///< coordinates of midpoint of cylinder, updated with updatePosition()
@@ -79,7 +79,6 @@ public:
     bool last(){ return _last;}
     void setLast(bool b){ _last = b;}
     
-    void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
     int getPositionFilament() {return _positionFilament;}
     
     ///Update the position of this cylinder

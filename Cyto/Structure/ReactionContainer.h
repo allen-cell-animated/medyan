@@ -91,8 +91,9 @@ public:
                                        {
                                            return element.get()==R ? true : false;
                                        });
-        if(child_iter!=_reactions.end())
+        if(child_iter!=_reactions.end()) {
             _reactions.erase(child_iter);
+        }
     }
     
     ///Remove all reactions that contain a certain species from this container

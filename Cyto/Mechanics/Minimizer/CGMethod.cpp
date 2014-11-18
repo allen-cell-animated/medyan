@@ -308,7 +308,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
                 return lambda;
             }
             else {
-                if(energyChange <= LSENERGYTOL) _energyChangeCounter++;
+                _energyChangeCounter++;
                 return 0.0;
             }
         }
@@ -385,7 +385,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
                 return lambda;
             }
             else {
-                if(energyChange <= LSENERGYTOL) _energyChangeCounter++;
+                _energyChangeCounter++;
                 return 0.0;
             }
         }

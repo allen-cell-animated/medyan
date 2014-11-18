@@ -1448,10 +1448,6 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         
         cc->addCMonomer(m);
     }
-    
-    ///Add all reaction templates to this cylinder
-    for(auto &r : _IFRxnManagers) { r->addReaction(cc); }
-    
     ///get last ccylinder
     CCylinder* lastcc = nullptr;
  
@@ -1499,9 +1495,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                 cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
-            
             for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
-            
         }
         ///this is first one
         else {
@@ -1520,10 +1514,10 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
         }
-    }
-    
-    //update all reactions added
-    if(creation || extensionFront || extensionBack) cc->activateReactions();
+    }    
+    ///Add all reaction templates to this cylinder
+    for(auto &r : _IFRxnManagers) { r->addReaction(cc); }
+
 }
 
 void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
@@ -1543,8 +1537,6 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
         auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
         for(auto &n : neighbors) r->addReaction(cc, static_cast<Cylinder*>(n)->getCCylinder());
     }
-    
-    cc->activateReactions();
 }
 
 

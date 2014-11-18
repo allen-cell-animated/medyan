@@ -33,7 +33,8 @@ TEST(GeometryTest, Basic) {
     
     SystemParameters::GParams.nDim = 3;
     
-    GController::initializeGrid();
+    GController g;
+    g.initializeGrid();
     
     ///checking out of bounds
     EXPECT_ANY_THROW(GController::getCompartment(vector<double>{60.0,50.0,50.0}));
@@ -61,7 +62,8 @@ TEST(GeometryTest, NonCubicGrid) {
     
     SystemParameters::GParams.nDim = 3;
     
-    GController::initializeGrid();
+    GController g;
+    g.initializeGrid();
     
     EXPECT_ANY_THROW(GController::getCompartment(vector<double>{60.0,50.0,1050.0}));
     EXPECT_ANY_THROW(GController::getCompartment(vector<double>{200.0,50.0,900.0}));

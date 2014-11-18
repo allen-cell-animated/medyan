@@ -5,7 +5,7 @@
 //  Created by James Komianos on 9/29/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
-//#define DO_THIS_CCYLINDERS_TEST
+#define DO_THIS_CCYLINDERS_TEST
 
 #ifdef DO_THIS_CCYLINDERS_TEST
 
@@ -17,6 +17,8 @@
 #include "ChemSimpleGillespieImpl.h"
 
 TEST(CMonomer, Main) {
+    
+    SystemParameters::CParams.numFilamentSpecies = 2;
     
     CMonomer* m1 = new CMonomer;
     Compartment* c1 = new Compartment;
@@ -35,13 +37,15 @@ TEST(CMonomer, Main) {
     Species* sf4 = c2->findSimilarSpecies(*sf2);
     
     EXPECT_EQ(sf3, m2->speciesFilament(0));
-    EXPECT_EQ(sf4, m2->speciesFilament(0));
+    EXPECT_EQ(sf4, m2->speciesFilament(1));
     
     EXPECT_EQ(sf3, m2->speciesFilament(0));
     EXPECT_EQ(sf4, m2->speciesFilament(1));
 }
 
 TEST(CCylinder, Basic) {
+    
+    SystemParameters::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(ChemSimInitKey(), new ChemSimpleGillespieImpl);
     ChemSim::initialize(ChemSimInitKey());
@@ -87,6 +91,8 @@ TEST(CCylinder, Basic) {
 }
 
 TEST(CCylinder, AdvancedCloning) {
+    
+    SystemParameters::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(ChemSimInitKey(), new ChemSimpleGillespieImpl);
     ChemSim::initialize(ChemSimInitKey());
@@ -150,6 +156,22 @@ TEST(CCylinder, AdvancedCloning) {
     cc3 = cc1->clone(c3);
     EXPECT_EQ(20, c3->numberOfSpecies());
     EXPECT_EQ(11, c3->numberOfReactions());
+    
+    ///check cc3 cross cylinder reactions
+    auto it = cc2->getCrossCylinderReactions()[cc3].begin();
+    Reaction<1,1>* r1 = static_cast<Reaction<1,1>*>(*it);
+    
+    ///first species should be in c2, second in c3
+    EXPECT_EQ(c2, r1->rspecies()[0]->getSpecies().getParent());
+    EXPECT_EQ(c3, r1->rspecies()[1]->getSpecies().getParent());
+    
+    
+    auto it2 = cc3->getCrossCylinderReactions()[cc2].begin();
+    Reaction<1,1>* r2 = static_cast<Reaction<1,1>*>(*it2);
+    
+    ///first species should be in c3, second in c2
+    EXPECT_EQ(c3, r2->rspecies()[0]->getSpecies().getParent());
+    EXPECT_EQ(c2, r2->rspecies()[1]->getSpecies().getParent());
     
     ///now, delete cc1
     delete cc1;

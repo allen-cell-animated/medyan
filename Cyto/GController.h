@@ -68,7 +68,7 @@ public:
             }
             else if(i == 1) {
                 if(x >= _grid[1]) { throw OutOfBoundsException();}
-                index += x * _grid[1];
+                index += x * _grid[0];
             }
             else {
                 if(x >= _grid[2]) { throw OutOfBoundsException();}
