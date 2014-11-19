@@ -86,7 +86,7 @@ Goals for November 2014
     -Get rid of chemIniitializer, change to manager                             X
     -Database access : keys???
     -Add poly/depoly/unbinding + coupling to mechanics
-    -Cylindrical + half sphere boundary
+    -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
     -Add aging reaction + coupling to mechanics
     -Add severing reaction + coupling to mechanics

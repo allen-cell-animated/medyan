@@ -28,14 +28,18 @@ public:
 class BoundarySpherical: public Boundary {
     
 public:
-    ///Default constructor, will create an ellipse with axes equal in length to current grid
+    ///Default constructor, will create an sphere with axes equal in length to current grid
     BoundarySpherical();
     virtual bool within(const vector<double> coordinates);
 };
 
-///Cylindrical boundary implementation
-class BoundaryCylindrical: public Boundary {
-    ///not yet implemented
+//Capsule boundary implementation
+class BoundaryCapsule: public Boundary {
+    
+public:
+    ///Default constructor, will create a capsule with axes equal in length to current grid
+    BoundaryCapsule(double diameter);
+    virtual bool within(const vector<double> coordinates);
 };
 
 

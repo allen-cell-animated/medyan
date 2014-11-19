@@ -64,3 +64,30 @@ bool BoundarySpherical::within(const vector<double> coordinates) {
     
 }
 
+BoundaryCapsule::BoundaryCapsule(double diameter) : Boundary(3, BoundaryShape::Capsule) {
+    
+    double sysX = SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX;
+    double sysY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY;
+    double sysZ = SystemParameters::Geometry().compartmentSizeZ * SystemParameters::Geometry().NZ;
+
+    double height = sysZ - diameter;
+    
+    _boundarySurfaces.emplace_back(new CylinderZ({sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+    _boundarySurfaces.emplace_back(new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
+    _boundarySurfaces.emplace_back(new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
+}
+
+bool BoundaryCapsule::within(const vector<double> coordinates) {
+    
+    for(auto &bSurface : _boundarySurfaces) {
+        BoundaryElement* boundaryElement = bSurface->boundaryElements()[0].get();
+        double dist = boundaryElement->distance(coordinates);
+        std::cout << dist << endl;
+        if(dist == numeric_limits<double>::infinity() || dist <= 0) return false;
+    }
+    
+    return true;
+}
+
+
+

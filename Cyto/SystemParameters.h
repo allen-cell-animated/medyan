@@ -84,6 +84,9 @@ struct BoundaryParameters {
     double boundaryCutoff = 0;
     double boundaryK = 0;
     double screenLength = 0;
+    
+    ///for a capsule
+    double diameter = 0;
 };
 
 

@@ -67,6 +67,22 @@ public:
         return b ;
     }
     
+    /// create a cylindrical z boundary element
+    BoundaryElement* createCylindricalZBoundaryElement(vector<double> coords, double radius, double height, double repulsConst, double screenLength) {
+        
+        BoundaryElement* b = new CylindricalZBoundaryElement(coords, radius, height, repulsConst, screenLength);
+        push_back(b);
+        return b ;
+    }
+    
+    ///create a half sphere z boundary element
+    BoundaryElement* createHalfSphereZBoundaryElement(vector<double> coords, double radius, bool up, double repulsConst, double screenLength) {
+        
+        BoundaryElement* b = new HalfSphereZBoundaryElement(coords, radius, up, repulsConst, screenLength);
+        push_back(b);
+        return b ;
+    }
+    
     // Remove boundary element
     void removeBoundaryElement(BoundaryElement* b){
         

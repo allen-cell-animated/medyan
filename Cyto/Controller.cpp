@@ -13,6 +13,7 @@
 
 #include "BoundaryImpl.h"
 #include "NeighborListDB.h"
+#include "SystemParameters.h"
 
 #include "MathFunctions.h"
 
@@ -55,6 +56,9 @@ void Controller::initialize(string inputFile) {
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
         _subSystem->addBoundary(new BoundarySpherical());
+    }
+    else if(BTypes.boundaryShape == "CAPSULE") {
+        _subSystem->addBoundary(new BoundaryCapsule(SystemParameters::Boundaries().diameter));
     }
     else{
         cout << endl << "Given boundary not yet implemented. Exiting" <<endl;

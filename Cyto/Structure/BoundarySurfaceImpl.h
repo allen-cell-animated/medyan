@@ -46,6 +46,36 @@ public:
 };
 
 
+///CylinderZ
+class CylinderZ: public BoundarySurface {
+    
+private:
+    vector<double> _coords;
+    double _radius;
+    double _height;
+    
+public:
+    ///Constructor, creates boundary elements
+    ///@param coords - coordinates of center of cylinder
+    CylinderZ(vector<double> coords, double radius, double height);
+    
+};
+
+///Half Sphere Z
+class HalfSphereZ: public BoundarySurface {
+    
+private:
+    vector<double> _coords;
+    double _radius;
+    bool _up;
+    
+public:
+    ///Constructor, creates boundary elements
+    ///@param coords - coordinates of center of half sphere
+    HalfSphereZ(vector<double> coords, double radius, bool up);
+    
+};
+
 
 
 

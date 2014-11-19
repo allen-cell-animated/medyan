@@ -44,8 +44,6 @@ Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionF
 Bead::~Bead() {
     ///remove from compartment
     _compartment->removeBead(this);
-    ///remove from neighbor lists
-    NeighborListDB::instance(NeighborListDBKey())->addNeighbor(this);
     
     ///remove from boundary elements
     for(auto &be : _boundaryElements) be->removeBead(this);

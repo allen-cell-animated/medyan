@@ -15,7 +15,7 @@
 #include "BoundarySurface.h"
 
 ///Boundary type enumeration
-enum class BoundaryShape {Cube, Cylinder, Sphere};
+enum class BoundaryShape {Cube, Capsule, Sphere};
 
 ///Boundary class is to store all boundary surfaces that are in the system
 /*!

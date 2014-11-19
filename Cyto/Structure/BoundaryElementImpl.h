@@ -65,8 +65,61 @@ public:
     ///get the repulsion constant and screening length for this plane
     virtual double getRepulsionConst();
     virtual double getScreeningLength();
-    
 };
+
+class CylindricalZBoundaryElement : public BoundaryElement {
+    
+private:
+    double _radius;
+    double _height;
+    double _k_rep;
+    double _r0;
+    
+public:
+    ///Constructor, sets parameters of equation
+    CylindricalZBoundaryElement(vector<double> coords, double radius, double height, double repulsConst, double screenLength);
+    
+    ///Distance to this sphere
+    virtual double distance(const vector<double>& point);
+    
+    ///Stretched distance to sphere
+    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    
+    ///normal to sphere
+    virtual const vector<double> normal(const vector<double>& point);
+    
+    ///get the repulsion constant and screening length for this plane
+    virtual double getRepulsionConst();
+    virtual double getScreeningLength();
+};
+
+
+class HalfSphereZBoundaryElement : public BoundaryElement {
+    
+private:
+    double _radius;
+    bool _up; ///< whether the half sphere faces up or down
+    double _k_rep;
+    double _r0;
+    
+public:
+    ///Constructor, sets parameters of equation
+    HalfSphereZBoundaryElement(vector<double> coords, double radius, bool up, double repulsConst, double screenLength);
+    
+    ///Distance to this sphere
+    virtual double distance(const vector<double>& point);
+    
+    ///Stretched distance to sphere
+    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    
+    ///normal to sphere
+    virtual const vector<double> normal(const vector<double>& point);
+    
+    ///get the repulsion constant and screening length for this plane
+    virtual double getRepulsionConst();
+    virtual double getScreeningLength();
+};
+
 
 
 #endif /* defined(__Cyto__BoundaryElementImpl__) */

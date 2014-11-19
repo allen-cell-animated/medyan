@@ -70,8 +70,11 @@ VOLUMECUTOFF:                27.0
 ### BOUNDARY ###
 
 BOUNDARYTYPE:                REPULSIONEXP
-BOUNDARYSHAPE:               CUBIC
+
+BOUNDARYSHAPE:               CAPSULE
+BDIAMETER:                   300.0
 BCUTOFF:                     10.0
+
 BINTERACTIONK:               5.0
 BSCREENLENGTH:               10.0
 

@@ -16,7 +16,7 @@
 #define CHEMISTRY
 
 ///If compiling for testing
-//#define TESTING
+#define TESTING
 
 ///Other chemistry macros
 #define TRACK_DEPENDENTS

@@ -36,6 +36,8 @@ public:
     ///Default constructor
     BoundaryElement(vector<double> coords) : _coords(coords) {
     
+        cout << coords[0] << " " << coords[1] << " " << coords[2] << endl;
+        
         ///set the compartment given the initial coordinates
         try {_compartment = GController::getCompartment(coords);}
         catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
