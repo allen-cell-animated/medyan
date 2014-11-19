@@ -446,10 +446,10 @@ public:
     :  Species(name, n, ulim) {};
     
     /// Copy constructor
-    SpeciesBound (const SpeciesBound &rhs)  : Species(rhs), _cBound(rhs._cBound) {}
+    SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
     
     /// Move constructor
-    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)), _cBound(rhs._cBound) {
+    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)){
     }
     
     /// Regular Assignment

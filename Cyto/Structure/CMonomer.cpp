@@ -7,6 +7,7 @@
 //
 
 #include "CMonomer.h"
+#include "CBound.h"
 
 #include "SystemParameters.h"
 
@@ -43,26 +44,9 @@ CMonomer::~CMonomer() noexcept{
 }
 
 
-CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
-    
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
-    _speciesFilament = new SpeciesFilament*[numFilamentSpecies]();
-    
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
-    _speciesPlusEnd = new SpeciesPlusEnd*[numPlusEndSpecies]();
-    
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
-    _speciesMinusEnd = new SpeciesMinusEnd*[numMinusEndSpecies]();
-    
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
-    _speciesBound = new SpeciesBound*[numBoundSpecies]();
-    
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
-    _speciesLinker = new SpeciesLinker*[numLinkerSpecies]();
-    
-    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
-    _speciesMotor = new SpeciesMotor*[numMotorSpecies]();
+CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
 
+    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = rhs._speciesFilament[i];
         SpeciesFilament* sNew = s->clone();
@@ -70,6 +54,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
         addSpeciesFilament(sNew);
     }
     
+    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = rhs._speciesPlusEnd[i];
         SpeciesPlusEnd* sNew = s->clone();
@@ -77,6 +62,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
         addSpeciesPlusEnd(sNew);
     }
     
+    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = rhs._speciesMinusEnd[i];
         SpeciesMinusEnd* sNew = s->clone();
@@ -84,25 +70,51 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) {
         addSpeciesMinusEnd(sNew);
     }
     
+    ///For bound species, transfer the CBound (if any)
+    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = rhs._speciesBound[i];
         SpeciesBound* sNew = s->clone();
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesBound(sNew);
+        
+        ///update cbound
+        CBound* cBound = s->getCBound();
+        if(cBound != nullptr) {
+            if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
+            else cBound->setSecondSpecies(sNew);
+        }
+        
     }
     
+    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = rhs._speciesLinker[i];
         SpeciesLinker* sNew = s->clone();
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesLinker(sNew);
+        
+        ///update cbound
+        CBound* cBound = s->getCBound();
+        if(cBound != nullptr) {
+            if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
+            else cBound->setSecondSpecies(sNew);
+        }
     }
     
+    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = rhs._speciesMotor[i];
         SpeciesMotor* sNew = s->clone();
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesMotor(sNew);
+        
+        ///update cbound
+        CBound* cBound = s->getCBound();
+        if(cBound != nullptr) {
+            if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
+            else cBound->setSecondSpecies(sNew);
+        }
     }
 }
 

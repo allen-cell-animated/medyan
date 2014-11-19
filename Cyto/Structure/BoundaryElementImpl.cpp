@@ -12,6 +12,8 @@
 
 using namespace mathfunc;
 
+///PLANE BOUNDARY ELEMENT
+
 PlaneBoundaryElement::PlaneBoundaryElement(vector<double> coords, vector<double> normal, double repulsConst, double sceenLength)
                                                                 : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength) {
     
@@ -45,6 +47,9 @@ double PlaneBoundaryElement::getRepulsionConst(){ return _k_rep; }
 
 double PlaneBoundaryElement::getScreeningLength(){ return _r0; }
 
+
+///SPHERE BOUNDARY ELEMENT
+
 SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radius, double repulsConst, double sceenLength)
                                                     : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius) {}
 
@@ -65,15 +70,9 @@ const vector<double> SphereBoundaryElement::normal(const vector<double>& point) 
     return TwoPointDirection(point, _coords);
 }
 
-double SphereBoundaryElement::getRepulsionConst(){
-    
-    return _k_rep;
-}
+double SphereBoundaryElement::getRepulsionConst(){ return _k_rep; }
 
-double SphereBoundaryElement::getScreeningLength(){
-    
-    return _r0;
-}
+double SphereBoundaryElement::getScreeningLength(){ return _r0; }
 
 
 

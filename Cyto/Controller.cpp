@@ -31,17 +31,16 @@ void Controller::initialize(string inputFile) {
     
 #ifdef MECHANICS
     ///read algorithm and types
-    MTypes = p.readMechanicsFFType();
-    MAlgorithm = p.readMechanicsAlgorithm();
+    MTypes = p.readMechanicsFFType(); MAlgorithm = p.readMechanicsAlgorithm();
     
     ///read const parameters
     p.readMechanicsParameters();
 #endif
+    ///Always read boundary type
+    BTypes = p.readBoundaryType(); p.readBoundaryParameters();
+    
     ///Always read geometry
     p.readGeometryParameters();
-    
-    BTypes = p.readBoundaryType();
-    p.readBoundaryParameters();
     
     ///CALLING ALL CONTROLLERS TO INITIALIZE
     ///Initialize geometry controller
@@ -73,8 +72,7 @@ void Controller::initialize(string inputFile) {
     ///Initialize chemical controller
     cout << "Initializing chemistry...";
     ///read algorithm
-    CAlgorithm = p.readChemistryAlgorithm();
-    ChemistrySetup CSetup = p.readChemistrySetup();
+    CAlgorithm = p.readChemistryAlgorithm(); ChemistrySetup CSetup = p.readChemistrySetup();
     
     //num steps for sim
     _numSteps = CAlgorithm.numSteps;
@@ -113,25 +111,36 @@ void Controller::initialize(string inputFile) {
     else {
         ///Create random distribution of filaments
         default_random_engine generator;
-        uniform_real_distribution<double> d(0,1);
+        uniform_real_distribution<double> dU(0,1);
+        uniform_real_distribution<double> dUNeg(-1,1);
         
         for(int i = 0; i < FSetup.numFilaments; i++) {
             
-            double firstX = d(generator) * SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX;
-            double firstY = d(generator) * SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY;
-            double firstZ = d(generator) * SystemParameters::Geometry().compartmentSizeZ * SystemParameters::Geometry().NZ;
+            double firstX = dU(generator) * SystemParameters::Geometry().compartmentSizeX *
+                                            SystemParameters::Geometry().NX;
+            double firstY = dU(generator) * SystemParameters::Geometry().compartmentSizeY *
+                                            SystemParameters::Geometry().NY;
+            double firstZ = dU(generator) * SystemParameters::Geometry().compartmentSizeZ *
+                                            SystemParameters::Geometry().NZ;
             
-            double directionX = d(generator);
-            double directionY = d(generator);
-            double directionZ = d(generator);
+            double directionX = dUNeg(generator);
+            double directionY = dUNeg(generator);
+            double directionZ = dUNeg(generator);
             
             ///Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};
-            auto normFactor = sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
-            vector<double> direction = {directionX/normFactor, directionY/normFactor, directionZ/normFactor};
-            vector<double> secondPoint = NextPointProjection(firstPoint, (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            auto normFactor = sqrt(directionX * directionX +
+                                   directionY * directionY +
+                                   directionZ * directionZ);
             
-            if(_subSystem->getBoundary()->within(firstPoint) && _subSystem->getBoundary()->within(secondPoint)) {
+            vector<double> direction = {directionX/normFactor,
+                                        directionY/normFactor,
+                                        directionZ/normFactor};
+            vector<double> secondPoint = NextPointProjection(firstPoint,
+                    (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            
+            if(_subSystem->getBoundary()->within(firstPoint)
+               && _subSystem->getBoundary()->within(secondPoint)) {
                 filamentData.push_back({firstPoint, secondPoint});
             }
         }
@@ -142,25 +151,18 @@ void Controller::initialize(string inputFile) {
     
     ///First update of positions
     updatePositions();
-    
-    //cout << "PRINTING REACTIONS" << endl;
-    //ChemSim::printReactions();
 }
 
 void Controller::updatePositions() {
     
     ///Update bead-boundary interactions
-    for(auto b : *BeadDB::instance(BeadDBKey()))
-        b->updatePosition();
+    for(auto b : *BeadDB::instance(BeadDBKey())) b->updatePosition();
     ///Update cylinder positions
-    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
-        c->updatePosition();
+    for(auto &c : *CylinderDB::instance(CylinderDBKey())) c->updatePosition();
     ///Update linker positions
-    for(auto &l : *LinkerDB::instance(LinkerDBKey()))
-        l->updatePosition();
+    for(auto &l : *LinkerDB::instance(LinkerDBKey())) l->updatePosition();
     ///update motor positions
-    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey()))
-        m->updatePosition();
+    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey())) m->updatePosition();
     
     ///reset neighbor lists
     NeighborListDB::instance(NeighborListDBKey())->resetAll();
@@ -187,7 +189,7 @@ void Controller::run() {
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
         
-        cout << "Current simulation time =  "<< tau() << endl;
+        cout << "Current simulation time = "<< tau() << endl;
         _cController.run(_numStepsPerMech);
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
