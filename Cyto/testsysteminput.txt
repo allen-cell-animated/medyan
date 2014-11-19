@@ -73,7 +73,7 @@ BOUNDARYTYPE:                REPULSIONEXP
 BOUNDARYSHAPE:               CUBIC
 BCUTOFF:                     10.0
 BINTERACTIONK:               5.0
-BSCREENLENGTH:               2.0
+BSCREENLENGTH:               10.0
 
 ##################################################
 ################### CHEMISTRY ####################
