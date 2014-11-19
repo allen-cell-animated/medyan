@@ -157,7 +157,7 @@ public:
         
         if(!_as_reactants.empty()) {
             auto rxit = find(_as_reactants.begin(),_as_reactants.end(),r);
-            if(rxit!=_as_products.end()){
+            if(rxit!=_as_reactants.end()){
                 _as_reactants.erase(rxit);
             }
         }
@@ -204,18 +204,7 @@ public:
 public:
      /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
     /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
-    ~RSpecies(){
-        
-        ///SHOULD BE UNCOMMENTED...
-        if(!(_as_reactants.empty() and _as_products.empty())) {
-            cout << "Major bug: RSpecies should not contain Reactions when being destroyed." << endl;
-        }
-        //assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
-#ifdef RSPECIES_SIGNALING
-        if(_signal!=nullptr)
-            delete _signal;
-#endif
-    }
+    ~RSpecies();
     
 #ifdef RSPECIES_SIGNALING
     /// Broadcasts signal indicating that the copy number of this RSpecies has changed

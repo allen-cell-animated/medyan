@@ -14,6 +14,20 @@
     #include <boost/pool/pool_alloc.hpp>
 #endif
 
+RSpecies::~RSpecies(){
+    ///SHOULD BE UNCOMMENTED...
+    if(!(_as_reactants.empty() and _as_products.empty())) {
+        cout << "Major bug: RSpecies should not contain Reactions when being destroyed." << endl;
+    }
+    //assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
+
+#ifdef RSPECIES_SIGNALING
+    if(_signal!=nullptr)
+        delete _signal;
+#endif
+}
+
+
 /// Print self into an iostream
 ostream& operator<<(ostream& os, const RSpecies& s){
     os << s.getFullName() << "[" << s.getN() << "]";

@@ -20,6 +20,8 @@ using namespace mathfunc;
 
 void Controller::initialize(string inputFile) {
     
+    cout << "******************** CYTOSIM **********************" << endl;
+    
     ///Parse input, get parameters
     SystemParser p(inputFile);
     
@@ -134,10 +136,9 @@ void Controller::initialize(string inputFile) {
             }
         }
     }
-    
     ///add filaments
     _subSystem->addNewFilaments(filamentData);
-    cout << "Done." <<endl;
+    cout << "Done. " << filamentData.size() << " filaments created." << endl;
     
     ///First update of positions
     updatePositions();
@@ -181,8 +182,12 @@ void Controller::run() {
     Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
     o.printBasicSnapshot(0);
     
+    cout << "Starting simulation..." << endl;
+    
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
+        
+        cout << "Current simulation time =  "<< tau() << endl;
         _cController.run(_numStepsPerMech);
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
@@ -205,6 +210,7 @@ void Controller::run() {
     chrono::duration<double> elapsed_run(chk2-chk1);
     
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
+    cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;
 }
 

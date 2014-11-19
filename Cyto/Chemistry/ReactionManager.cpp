@@ -391,8 +391,6 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
     }
-
-
 }
 
 void DepolyMinusEndManager::addReaction(CCylinder* cc) {
@@ -970,7 +968,6 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
-
 }
 
 void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {

@@ -24,7 +24,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.ComputeForces();
-    printForces();
+    //printForces();
     
     //PrintForces();
 	double gSquare = gradSquare();
@@ -38,8 +38,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         
         lambda = backtrackingLineSearch(FFM);
         if(lambda < 0) {
-            cout<<"Lambda < 0" <<endl;
-          break;
+            //cout<<"Lambda < 0" <<endl;
+            break;
         }
         
         //cout<<"lambda= "<<lambda<<endl;
@@ -68,13 +68,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         
         //PrintForces();
 		gSquare = newGradSquare;
-        cout<<"GradSq before end=  "<< gSquare <<endl;
-        cout << "Energy = " << curEnergy << endl;
-        cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+        //cout<<"GradSq before end=  "<< gSquare <<endl;
+        //cout << "Energy = " << curEnergy << endl;
+        //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
 	}
 	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
-	cout << "Polak-Ribiere Method: " << endl;
-    cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    printForces();
+	//cout << "Polak-Ribiere Method: " << endl;
+    //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+    //printForces();
 }

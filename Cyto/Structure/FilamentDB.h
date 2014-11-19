@@ -57,16 +57,16 @@ public:
             
             Filament* pf = new Filament(s, v[0], tau, _currentFilamentID++); //create a filament with only two beads
             push_back(pf);
-            cout << "Filament ID = " << _currentFilamentID << endl;
-            cout<<"short filament created"<<endl;
+            //cout << "Filament ID = " << _currentFilamentID << endl;
+            //cout<<"short filament created"<<endl;
             return pf;
         }
         
         else {
             Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++, "STRAIGHT");  //Create a long filament with numSeg.
             push_back(pf);
-            cout << "Filament ID = " << _currentFilamentID << endl;
-            cout<<"long filament created"<<endl;
+            //cout << "Filament ID = " << _currentFilamentID << endl;
+            //cout<<"long filament created"<<endl;
             
             return pf;
         }
