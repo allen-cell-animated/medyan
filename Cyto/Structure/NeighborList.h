@@ -38,17 +38,24 @@ public:
     virtual ~NeighborList() noexcept {}
     
     ///re-initialize the neighborlist
-    virtual void reset() = 0;
+    virtual void reset() {
+        //loop through all neighbor keys
+        for(auto it = _list.begin(); it != _list.end(); it++) {
+            
+            it->second.clear(); ///clear vector of neighbors
+            updateNeighbors(it->first);
+        }
+    }
     
     ///add and remove a neighbor
-    virtual void addNeighbor(Neighbor* n) = 0;
-    virtual void removeNeighbor(Neighbor* n) = 0;
-    
-    ///Update neighbors
-    virtual void updateNeighbors(Neighbor* n) = 0;
+    virtual void removeNeighbor(Neighbor* n) {_list.erase(n);}
     
     ///get all neighbors of a given
-    virtual const vector<Neighbor*>& getNeighbors(Neighbor* n) = 0;
+    virtual const vector<Neighbor*>& getNeighbors(Neighbor* n) {return _list[n];}
+    
+    ///Add and update neighbors
+    virtual void addNeighbor(Neighbor* n) = 0;
+    virtual void updateNeighbors(Neighbor* n) = 0;
     
 };
 
@@ -63,19 +70,29 @@ public:
                          NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     ~CylinderNeighborList() {}
     
-    ///Re-initialize a neighbors list
-    virtual void reset();
-    
     ///add and remove a neighbor
     virtual void addNeighbor(Neighbor* n);
-    virtual void removeNeighbor(Neighbor* n);
     
     ///Update neighbors of a given neighbor
     virtual void updateNeighbors(Neighbor* n);
-    
-    virtual const vector<Neighbor*>& getNeighbors(Neighbor* n);
+
     
 };
+
+class BoundaryElementNeighborList : public NeighborList {
+    
+public:
+    ///Constructor and destructor
+    BoundaryElementNeighborList(float rMax, float rMin) : NeighborList(rMax, rMin){}
+    ~BoundaryElementNeighborList() {}
+    
+    ///add and remove a neighbor
+    virtual void addNeighbor(Neighbor* n);
+    
+    ///Update neighbors of a given neighbor
+    virtual void updateNeighbors(Neighbor* n);
+};
+
 
 
 #endif /* defined(__Cyto__NeighborList__) */

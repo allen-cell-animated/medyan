@@ -29,7 +29,7 @@ public:
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~Neighbor() noexcept {
         ///remove from neighbor lists
-        NeighborListDB::instance(NeighborListDBKey())->removeNeighbor(this);
+        NeighborListDB::instance()->removeNeighbor(this);
     }
     
 };

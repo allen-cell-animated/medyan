@@ -9,6 +9,9 @@
 #include "NeighborList.h"
 
 #include "Cylinder.h"
+#include "BoundaryElement.h"
+#include "BeadDB.h"
+
 #include "GController.h"
 
 #include "MathFunctions.h"
@@ -40,7 +43,8 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
                  if(_crossFilamentOnly) continue;
                 
                  ///if not cross filament, check if not neighboring
-                 else if(abs(cylinder->getPositionFilament() - nearbyCylinder->getPositionFilament()) <= 2) continue;
+                 else if(abs(cylinder->getPositionFilament()
+                             - nearbyCylinder->getPositionFilament()) <= 2) continue;
             }
             
             ///Dont add if not within range
@@ -53,16 +57,6 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     }
 }
 
-void CylinderNeighborList::reset() {
-    
-    //loop through all neighbor keys
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-        
-        it->second.clear(); ///clear vector of neighbors
-        updateNeighbors(it->first);
-    }
-}
-
 void CylinderNeighborList::addNeighbor(Neighbor* n) {
     
     ///return if not a cylinder!
@@ -71,14 +65,34 @@ void CylinderNeighborList::addNeighbor(Neighbor* n) {
     updateNeighbors(n);
     
 }
-void CylinderNeighborList::removeNeighbor(Neighbor* n) {
 
-    ///erase
-    _list.erase(n);
-}
-
-const vector<Neighbor*>& CylinderNeighborList::getNeighbors(Neighbor* n) {
+void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
     
-    return _list[n];
+    ///clear existing
+    BoundaryElement* be = static_cast<BoundaryElement*>(n);
+    _list[be].clear();
+    
+    ///loop through beads, add as
+    for (auto &b : *BeadDB::instance()) {
+        
+        double dist = be->distance(b->coordinate);
+        if(dist > _rMax || dist < _rMin) continue;
+        
+        ///If we got through this, add it!
+        _list[be].push_back(b);
+    }
 }
+
+
+void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
+    
+    ///return if not a cylinder!
+    if(!dynamic_cast<BoundaryElement*>(n)) return;
+    ///update neighbors
+    updateNeighbors(n);
+}
+
+
+
+
 

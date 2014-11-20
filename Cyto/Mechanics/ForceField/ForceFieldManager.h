@@ -54,7 +54,7 @@ public:
     ///Reset the forces of all objects
     void ResetForces() {
         
-        for(auto it: *BeadDB::instance(BeadDBKey())) {
+        for(auto it: *BeadDB::instance()) {
             it->force.assign (3, 0); //Set force to zero;
         }
     }
@@ -62,7 +62,7 @@ public:
     ///Reset the forcesAux of all objects
     void ResetForcesAux() {
         
-        for(auto it: *BeadDB::instance(BeadDBKey())) {
+        for(auto it: *BeadDB::instance()) {
             it->forceAux.assign (3, 0); //Set forceAux to zero;
         }
     }

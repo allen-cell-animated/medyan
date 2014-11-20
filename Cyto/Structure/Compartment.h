@@ -518,10 +518,8 @@ public:
     /// @param - chem, a ChemSim object that runs the reaction-diffusion algorithm
     virtual void addChemSimReactions()
     {
-        for(auto &r1 : _internal_reactions.reactions())
-            ChemSim::addReaction(ChemSimReactionKey(), r1.get());
-        for(auto &r2 : _diffusion_reactions.reactions())
-            ChemSim::addReaction(ChemSimReactionKey(), r2.get());
+        for(auto &r : _internal_reactions.reactions()) ChemSim::addReaction(r.get());
+        for(auto &r : _diffusion_reactions.reactions()) ChemSim::addReaction(r.get());
     }
     
     /// Print properties of this compartment

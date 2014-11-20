@@ -11,7 +11,7 @@
 int FilamentDB::_currentFilamentID = 0;
 FilamentDB* FilamentDB::_instance = 0;
 
-FilamentDB* FilamentDB::instance(FilamentDBKey k) {
+FilamentDB* FilamentDB::instance() {
     if(_instance==0)
         _instance = new FilamentDB;
     return _instance;

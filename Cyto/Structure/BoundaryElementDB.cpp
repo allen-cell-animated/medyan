@@ -10,7 +10,7 @@
 
 BoundaryElementDB* BoundaryElementDB::_instance = 0;
 
-BoundaryElementDB* BoundaryElementDB::instance(BoundaryElementDBKey k) {
+BoundaryElementDB* BoundaryElementDB::instance() {
     if(_instance==0)
         _instance = new BoundaryElementDB;
     return _instance;

@@ -17,10 +17,10 @@ void Output::printBasicSnapshot(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments, linkers, motors)
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance(FilamentDBKey())->size() <<
-    " " << LinkerDB::instance(LinkerDBKey())->size() << " " << MotorGhostDB::instance(MotorGhostDBKey())->size() << endl;
+    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() <<
+    " " << LinkerDB::instance()->size() << " " << MotorGhostDB::instance()->size() << endl;
     
-    for(auto &filament : *FilamentDB::instance(FilamentDBKey())) {
+    for(auto &filament : *FilamentDB::instance()) {
 
         ///print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " << filament->getCylinderVector().size() + 1
@@ -45,7 +45,7 @@ void Output::printBasicSnapshot(int step) {
     }
     
     
-    for(auto &linker : *LinkerDB::instance(LinkerDBKey())) {
+    for(auto &linker : *LinkerDB::instance()) {
         
         ///print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "L " << linker->getLinkerID()<< " " << linker->getLinkerType() << endl;
@@ -64,7 +64,7 @@ void Output::printBasicSnapshot(int step) {
         _outputFile << endl;
     }
 
-    for(auto &motor : *MotorGhostDB::instance(MotorGhostDBKey())) {
+    for(auto &motor : *MotorGhostDB::instance()) {
         
         ///print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "M " << motor->getMotorID() << " " << motor->getMotorType() << endl;
@@ -93,9 +93,9 @@ void Output::printSnapshot(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance(FilamentDBKey())->size() << endl;
+    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
     
-    for(auto &filament : *FilamentDB::instance(FilamentDBKey())) {
+    for(auto &filament : *FilamentDB::instance()) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
@@ -124,9 +124,9 @@ void Output::printBirthTimes(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance(FilamentDBKey())->size() << endl;
+    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
     
-    for(auto &filament : *FilamentDB::instance(FilamentDBKey())) {
+    for(auto &filament : *FilamentDB::instance()) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
@@ -152,9 +152,9 @@ void Output::printForces(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance(FilamentDBKey())->size() << endl;
+    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
     
-    for(auto &filament : *FilamentDB::instance(FilamentDBKey())) {
+    for(auto &filament : *FilamentDB::instance()) {
         
         ///print first line(Filament ID, length, index of first bead, index of last bead
         _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1

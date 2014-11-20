@@ -75,8 +75,8 @@ BOUNDARYSHAPE:               CAPSULE
 BDIAMETER:                   700.0
 BCUTOFF:                     10.0
 
-BINTERACTIONK:               5.0
-BSCREENLENGTH:               10.0
+BINTERACTIONK:               1.0
+BSCREENLENGTH:               5.0
 
 ##################################################
 ################### CHEMISTRY ####################

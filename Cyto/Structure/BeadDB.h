@@ -16,19 +16,6 @@
 #include "common.h"
 #include "Bead.h"
 
-///Key to access instance of BeadDB
-class BeadDBKey {friend class Filament;
-                 friend class CGMethod;
-                 friend class ForceFieldManager;
-                 friend class MController;
-                 friend class Controller;
-#ifdef TESTING
-                 public:
-#endif //TESTING
-                 BeadDBKey() {};
-                 public: ~BeadDBKey() {}; };
-
-
 ///BeadDB class is a database for all beads in the system
 
 /*!  An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers
@@ -54,7 +41,7 @@ public:
     BeadDB& operator=(BeadDB &rhs) = delete;
     
     /// get the instance of this singleton
-    static BeadDB* instance(BeadDBKey k);
+    static BeadDB* instance();
     
     /// create a new bead with no ccordinates and
     Bead* createBead(int positionFilament) {

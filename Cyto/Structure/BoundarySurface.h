@@ -36,12 +36,9 @@ public:
     
     ~BoundarySurface() {
         //loop through boundary elements, remove from DB
-        for (auto &b : _boundaryElements)
-            BoundaryElementDB::instance(BEDBKey())->removeBoundaryElement(b.get());
+        for (auto &b : _boundaryElements) BoundaryElementDB::instance()->removeBoundaryElement(b.get());
     };
-    
-    ///Access for all implementations of BoundarySurface to the DB key
-    BoundaryElementDBKey BEDBKey() {return BoundaryElementDBKey();}
+
     ///Get boundary elements
     const vector<unique_ptr<BoundaryElement>>& boundaryElements() {return _boundaryElements;}
     

@@ -47,7 +47,7 @@ public:
     void initialize(string& chemAlgorithm, string chemInitializer, ChemistryData& chem);
     
     ///Run a number of chemical steps
-    bool run(int steps) { return ChemSim::run(ChemSimRunKey(), steps); }
+    bool run(int steps) { return ChemSim::run(steps); }
 };
     
 

@@ -14,16 +14,6 @@
 #include "common.h"
 #include "BoundaryElementImpl.h"
 
-///Key to access instance of BoundaryElementDB
-class BoundaryElementDBKey {friend class BoundarySurface;
-                            friend class Bead;
-                            friend class BoundaryFF;
-#ifdef TESTING
-                            public:
-#endif //TESTING
-                            BoundaryElementDBKey(){}; public: ~BoundaryElementDBKey(){};};
-
-
 /*! An Object Data Base singleton structure will be used as a container for all main objects: 
  *  Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from 
  *  list and manage all creations and removing of objects, as well as some standard
@@ -49,7 +39,7 @@ public:
     BoundaryElementDB& operator=(BoundaryElementDB &rhs) = delete;
     
     /// get the instance of this singleton
-    static BoundaryElementDB* instance(BoundaryElementDBKey k);
+    static BoundaryElementDB* instance();
     
     /// create a new plane boundary element
     BoundaryElement* createPlaneBoundaryElement(vector<double>& coords, vector<double>& normal,

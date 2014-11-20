@@ -77,7 +77,7 @@ CCylinder::~CCylinder() {
 void CCylinder::addInternalReaction(ReactionBase* r) {
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
-    ChemSim::addReaction(ChemSimReactionKey(), r);
+    ChemSim::addReaction(r);
     
     ///add to local reaction list
     _internalReactions.insert(r);
@@ -89,7 +89,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
 void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
-    ChemSim::addReaction(ChemSimReactionKey(), r);
+    ChemSim::addReaction(r);
     
     ///add to this reaction map
     _crossCylinderReactions[other].insert(r);
@@ -108,7 +108,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
     
     ///remove from compartment and chemsim
     _compartment->removeInternalReaction(r);
-    ChemSim::removeReaction(ChemSimReactionKey(), r);
+    ChemSim::removeReaction(r);
     
     ///remove from internal reaction list
     auto it = _internalReactions.find(r);
@@ -123,7 +123,7 @@ void CCylinder:: removeAllInternalReactions() {
         
         ///remove from compartment and chemsim
         _compartment->removeInternalReaction(r);
-        ChemSim::removeReaction(ChemSimReactionKey(), r);
+        ChemSim::removeReaction(r);
     }
     _internalReactions.clear();
 }
@@ -136,7 +136,7 @@ void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
         
         ///remove from compartment and chemsim
         _compartment->removeInternalReaction(r);
-        ChemSim::removeReaction(ChemSimReactionKey(), r);
+        ChemSim::removeReaction(r);
     }
     _crossCylinderReactions.erase(other);
     
@@ -155,7 +155,7 @@ void CCylinder::removeAllCrossCylinderReactions() {
             
             ///remove from compartment and chemsim
             _compartment->removeInternalReaction(r);
-            ChemSim::removeReaction(ChemSimReactionKey(), r);
+            ChemSim::removeReaction(r);
         }
         
         ///also remove from list of other ccylinder

@@ -15,19 +15,6 @@
 #include "common.h"
 #include "NeighborList.h"
 
-///Key to access instance of NeighborListDB
-class NeighborListDBKey {friend class Controller;
-                         friend class Neighbor;
-                         friend class NLContainer;
-                         friend class CylinderNLContainer;
-                         friend class Cylinder;
-                         friend class Bead;
-#ifdef TESTING
-public:
-#endif //TESTING
-                         NeighborListDBKey(){};  ~NeighborListDBKey(){}; };
-
-
 ///NeighborListDB is used to store all NeighborLists in the system
 
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers,
@@ -50,7 +37,7 @@ public:
     /// Assignment is not allowed
     NeighborListDB& operator=(NeighborListDB &rhs) = delete;
     
-    static NeighborListDB* instance(NeighborListDBKey k);
+    static NeighborListDB* instance();
     
     ///create a cylinder neighbor list
     NeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
@@ -60,7 +47,15 @@ public:
         
         return n;
     }
-    
+    ///create a cylinder neighbor list
+    NeighborList* createBoundaryElementNeighborList(float rMax = 0.0, float rMin = 0.0) {
+        
+        NeighborList* n = new BoundaryElementNeighborList(rMax, rMin);
+        push_back(n);
+        
+        return n;
+    }
+
     ///remove a neighborlist
     void removeNeighborList(NeighborList* n) {
         delete n;

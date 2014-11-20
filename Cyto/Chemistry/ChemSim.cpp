@@ -13,25 +13,25 @@
     
 ChemSimImpl* ChemSim::_pimpl = 0;
     
-void ChemSim::setInstance(ChemSimInitKey k, ChemSimImpl *csi)
+void ChemSim::setInstance(ChemSimImpl *csi)
 {
     if (_pimpl != 0) delete _pimpl;
     _pimpl=csi;
 }
 
-void ChemSim::addReaction(ChemSimReactionKey k, ReactionBase *r){
+void ChemSim::addReaction(ReactionBase *r){
     _pimpl->addReaction(r);
 }
     
-void ChemSim::removeReaction(ChemSimReactionKey k, ReactionBase *r){
+void ChemSim::removeReaction(ReactionBase *r){
     _pimpl->removeReaction(r); 
 }
 
-bool ChemSim::run(ChemSimRunKey k, int steps){
+bool ChemSim::run(int steps){
     return _pimpl->run(steps);
 }
 
-void ChemSim::initialize(ChemSimInitKey k) {
+void ChemSim::initialize() {
     return _pimpl->initialize();
 }
 

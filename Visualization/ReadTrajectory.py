@@ -223,7 +223,7 @@ def show_frame(frame_number=-1):
 
 @mlab.animate(delay=10, ui=True)
 def anim():
-	for i in range(0,len(FrameList),10):
+	for i in range(0,len(FrameList), 100):
 		show_frame(i)
 		yield
 		

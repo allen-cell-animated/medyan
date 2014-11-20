@@ -14,21 +14,10 @@
 #include <list>
 
 #include "common.h"
-#include "MathFunctions.h"
-#include "SystemParameters.h"
 #include "Filament.h"
 
-///Key to access instance of FilamentDB
-class FilamentDBKey {friend class SubSystem;
-                    friend class FilamentFF;
-                    friend class MController;
-                    friend class Output;
-#ifdef TESTING
-                    public:
-#endif //TESTING
-                    FilamentDBKey(){};
-                    ~FilamentDBKey(){}; };
-
+#include "MathFunctions.h"
+#include "SystemParameters.h"
 
 ///FilamentDB is used to store all filaments in the system
 /*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament, Linkers,
@@ -43,7 +32,7 @@ public:
     using fdb::begin;
     using fdb::end;
     
-    static FilamentDB* instance(FilamentDBKey k);
+    static FilamentDB* instance();
     
     Filament* createFilament(SubSystem* s, vector<vector<double> >& v) {
         

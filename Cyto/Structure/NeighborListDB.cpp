@@ -10,7 +10,7 @@
 
 NeighborListDB* NeighborListDB::_instance = 0;
 
-NeighborListDB* NeighborListDB::instance(NeighborListDBKey k) {
+NeighborListDB* NeighborListDB::instance() {
     if(_instance==0)
         _instance = new NeighborListDB;
     return _instance;

@@ -16,17 +16,6 @@
 #include "common.h"
 #include "Cylinder.h"
 
-///Key to access instance of CylinderDB
-class CylinderDBKey {friend class Filament;
-                     friend class Controller;
-                     friend class MController;
-                     friend class VolumeCylindricalFF;
-#ifdef TESTING
-                     public:
-#endif //TESTING
-                     CylinderDBKey(){}; ~CylinderDBKey(){}; };
-
-
 ///CylinderDB class is used to store all Cylinders in the system
 
 /*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament,
@@ -54,7 +43,7 @@ public:
     
     
     /// get the instance of this singleton
-    static CylinderDB* instance(CylinderDBKey k);
+    static CylinderDB* instance();
     
     // create new empty cylinder
     Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, int positionFilament, 

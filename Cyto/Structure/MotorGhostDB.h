@@ -15,19 +15,8 @@
 #include "common.h"
 #include "MotorGhost.h"
 
+///FORWARD DECLARATIONS
 class Cylinder;
-
-///Key to access instance of MotorGhostDB
-class MotorGhostDBKey {friend class SubSystem;
-                       friend class MotorGhostFF;
-                       friend class MController;
-                       friend class Controller;
-                       friend class Output;
-#ifdef TESTING
-                       public:
-#endif //TESTING
-                       MotorGhostDBKey(){}; ~MotorGhostDBKey(){}; };
-
 
 ///MotorGhostDB is used to store all MotorGhosts in the system
 
@@ -51,9 +40,10 @@ public:
     /// Assignment is not allowed
     MotorGhostDB& operator=(MotorGhostDB &rhs) = delete;
     
-    static MotorGhostDB* instance(MotorGhostDBKey k);
+    static MotorGhostDB* instance();
     
-    void createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
+    void createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                          double position1 = 0.5, double position2 = 0.5, bool creation = false) {
     
         MotorGhost* pmg = new MotorGhost(c1, c2, motorType, _currentMotorID++, position1, position2, creation);
         push_back(pmg);

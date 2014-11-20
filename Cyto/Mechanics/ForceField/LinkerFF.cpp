@@ -22,29 +22,29 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 double LinkerFF::computeEnergy(double d) {
     double U_linker = 0;
     
-    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
+    for (auto linker: *LinkerDB::instance()) {
         
         for (auto &linkerInteraction : _linkerInteractionVector)
-            U_linker += linkerInteraction.get()->computeEnergy(it, d);
+            U_linker += linkerInteraction.get()->computeEnergy(linker, d);
     }
     return U_linker;
 }
 
 void LinkerFF::computeForces() {
     
-    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
+    for (auto linker: *LinkerDB::instance()) {
         
         for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->computeForces(it);
+            linkerInteraction.get()->computeForces(linker);
     }
 }
 
 void LinkerFF::computeForcesAux() {
     
-    for ( auto it: *LinkerDB::instance(LinkerDBKey()) ) {
+    for (auto linker: *LinkerDB::instance()) {
     
         for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->computeForcesAux(it);
+            linkerInteraction.get()->computeForcesAux(linker);
     }
 }
 

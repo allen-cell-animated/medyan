@@ -10,7 +10,7 @@
 
 BeadDB* BeadDB::_instance = 0;
 
-BeadDB* BeadDB::instance(BeadDBKey k) {
+BeadDB* BeadDB::instance() {
     if(_instance==0)
         _instance = new BeadDB;
     return _instance;

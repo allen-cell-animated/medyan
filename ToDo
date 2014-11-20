@@ -84,10 +84,11 @@ Goals for November 2014
     -Fix reaction initialization / management                                   X
     -New Neighbors list implementation                                          X
     -Get rid of chemIniitializer, change to manager                             X
-    -Database access : keys???
-    -Add poly/depoly/unbinding + coupling to mechanics
+    -Database access : keys??? REMOVE THEM                                      X
+    -Move bead / boundary element neighbors list to global                      X
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
+    -Add poly/depoly/unbinding + coupling to mechanics
     -Add aging reaction + coupling to mechanics
     -Add severing reaction + coupling to mechanics
     -Add branching reaction + coupling to mechanics

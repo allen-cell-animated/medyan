@@ -38,8 +38,7 @@ public:
     virtual void initialize(ChemistryData& chem) = 0;
     
     ///Manager, based on the given simulation
-    virtual void  initializeCCylinder(CCylinder* cc, Filament* f,
-                                      bool extensionFront, bool extensionBack, bool creation) = 0;
+    virtual void  initializeCCylinder(CCylinder* cc, Filament* f, bool extensionFront, bool extensionBack, bool creation) = 0;
 
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc) = 0;

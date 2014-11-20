@@ -11,7 +11,7 @@
 int MotorGhostDB::_currentMotorID = 0;
 MotorGhostDB* MotorGhostDB::_instance = 0;
 
-MotorGhostDB* MotorGhostDB::instance(MotorGhostDBKey k) {
+MotorGhostDB* MotorGhostDB::instance() {
     if(_instance==0)
         _instance = new MotorGhostDB;
     return _instance;

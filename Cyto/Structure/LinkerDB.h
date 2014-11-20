@@ -19,18 +19,6 @@ class SpeciesBound;
 class Compartment;
 class Cylinder;
 
-///Key to access instance of LinkerDB
-class LinkerDBKey {friend class SubSystem;
-                   friend class LinkerFF;
-                   friend class MController;
-                   friend class Controller;
-                   friend class Output;
-#ifdef TESTING
-                   public:
-#endif //TESTING
-                   LinkerDBKey() {};
-                   ~LinkerDBKey(){}; };
-
 ///LinkerDB class is used to store all linkers in the system
 /*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 
  *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing
@@ -52,9 +40,10 @@ public:
     /// Assignment is not allowed
     LinkerDB& operator=(LinkerDB &rhs) = delete;
     
-    static LinkerDB* instance(LinkerDBKey k);
+    static LinkerDB* instance();
     
-    void createLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1 = 0.5, double position2 = 0.5, bool creation = false) {
+    void createLinker(Cylinder* c1, Cylinder* c2, short linkerType,
+                      double position1 = 0.5, double position2 = 0.5, bool creation = false) {
         
         Linker* pl = new Linker(c1, c2, linkerType, _currentLinkerID++, position1, position2, creation);
         push_back(pl);

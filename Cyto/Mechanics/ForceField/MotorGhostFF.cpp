@@ -22,28 +22,28 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
 double MotorGhostFF::computeEnergy(double d) {
     double U_motor = 0;
     
-    for ( auto it: *MotorGhostDB::instance(MotorGhostDBKey()) ) {
+    for ( auto motor: *MotorGhostDB::instance())  {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            U_motor += motorGhostInteraction.get()->computeEnergy(it, d);
+            U_motor += motorGhostInteraction.get()->computeEnergy(motor, d);
     }
     return U_motor;
 }
 
 void MotorGhostFF::computeForces() {
-    for ( auto it: *MotorGhostDB::instance(MotorGhostDBKey()) ) {
+    for (auto motor: *MotorGhostDB::instance()) {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            motorGhostInteraction.get()->computeForces(it);
+            motorGhostInteraction.get()->computeForces(motor);
     }
 }
 
 void MotorGhostFF::computeForcesAux() {
     
-    for ( auto it: *MotorGhostDB::instance(MotorGhostDBKey()) ) {
+    for (auto motor: *MotorGhostDB::instance()) {
         
         for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            motorGhostInteraction.get()->computeForcesAux(it);
+            motorGhostInteraction.get()->computeForcesAux(motor);
     }
 }
 

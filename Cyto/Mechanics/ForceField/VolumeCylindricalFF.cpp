@@ -8,11 +8,10 @@
 
 #include "VolumeCylindricalFF.h"
 
-#include "CylinderDB.h"
-
 #include "CylinderExclVolume.h"
 #include "CylinderExclVolRepulsion.h"
 
+#include "CylinderDB.h"
 
 VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
     if (type == "REPULSION") {_cylinderVolInteractionVector.emplace_back(new CylinderExclVolume <CylinderExclVolRepulsion>());}
@@ -24,12 +23,11 @@ double VolumeCylindricalFF::computeEnergy(double d) {
     for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
         
         auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance(CylinderDBKey())) {
+        for(auto &cylinder : *CylinderDB::instance()) {
         
             for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
-                Cylinder* c1 = static_cast<Cylinder*>(cylinder);
-                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
-                U_cyl += cylinderVolInteraction->computeEnergy(c1, c2, d);
+                Cylinder* cNeighbor = static_cast<Cylinder*>(neighbor);
+                U_cyl += cylinderVolInteraction->computeEnergy(cylinder, cNeighbor, d);
             }
         }
     }
@@ -41,12 +39,11 @@ void VolumeCylindricalFF::computeForces() {
     for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
         
         auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance(CylinderDBKey())) {
+        for(auto &cylinder : *CylinderDB::instance()) {
             
             for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
-                Cylinder* c1 = static_cast<Cylinder*>(cylinder);
-                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
-                cylinderVolInteraction->computeForces(c1, c2);
+                Cylinder* cNeighbor = static_cast<Cylinder*>(neighbor);
+                cylinderVolInteraction->computeForces(cylinder, cNeighbor);
             }
         }
     }
@@ -57,12 +54,11 @@ void VolumeCylindricalFF::computeForcesAux() {
     for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
         
         auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance(CylinderDBKey())) {
+        for(auto &cylinder : *CylinderDB::instance()) {
             
             for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
-                Cylinder* c1 = static_cast<Cylinder*>(cylinder);
-                Cylinder* c2 = static_cast<Cylinder*>(neighbor);
-                cylinderVolInteraction->computeForcesAux(c1, c2);
+                Cylinder* cNeighbor = static_cast<Cylinder*>(neighbor);
+                cylinderVolInteraction->computeForcesAux(cylinder, cNeighbor);
             }
         }
     }

@@ -102,21 +102,16 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
 double CGMethod::gradSquare()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance(getBeadDBKey())) {
-        
+	for(auto it: *BeadDB::instance())
         g += (*it).calcForceSquare();
-	}
-    
     return g;
 }
 
 double CGMethod::gradAuxSquare()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance(getBeadDBKey())) {
-        
+	for(auto it: *BeadDB::instance())
         g += (*it).calcForceAuxSquare();
-	}
     
     return g;
 }
@@ -124,10 +119,8 @@ double CGMethod::gradAuxSquare()
 double CGMethod::gradDotProduct()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance(getBeadDBKey())) {
-        
+	for(auto it: *BeadDB::instance())
         g += (*it).calcDotForceProduct();
-	}
     
     return g;
 }
@@ -135,7 +128,7 @@ double CGMethod::gradDotProduct()
 
 void CGMethod::moveBeads(double d)
 {
-	for(auto it: *BeadDB::instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance()) {
         
         (*it).coordinate[0] = (*it).coordinate[0] + d* (*it).force[0];
         (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
@@ -148,7 +141,7 @@ void CGMethod::moveBeads(double d)
 
 void CGMethod::moveBeadsAux(double d) {
     
-    for(auto it: *BeadDB::instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance()) {
         
         (*it).coordinateAux[0] = (*it).coordinateAux[0] + d* (*it).force[0];
         (*it).coordinateAux[1] = (*it).coordinateAux[1] + d* (*it).force[1];
@@ -159,7 +152,7 @@ void CGMethod::moveBeadsAux(double d) {
 
 void CGMethod::shiftGradient(double d)
 {
-	for(auto it: *BeadDB::instance(getBeadDBKey())) {
+	for(auto it: *BeadDB::instance()) {
         
         (*it).force[0] = (*it).forceAux[0] + d* (*it).force[0];
         (*it).force[1] = (*it).forceAux[1] + d* (*it).force[1];
@@ -170,7 +163,7 @@ void CGMethod::shiftGradient(double d)
 void CGMethod::printForces()
 {
 	cout << "Print Forces" << endl;
-    for(auto it: *BeadDB::instance(getBeadDBKey())) {
+    for(auto it: *BeadDB::instance()) {
         
 		for (int i = 0; i<3; i++) { cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "<<(*it).forceAux[i]<<endl;}
 	}
@@ -267,8 +260,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     double directionDotForce = 0.0;
     double maxDirection = 0.0;
     
-    for(auto it: *BeadDB::instance(getBeadDBKey())) {
-        
+    for(auto it: *BeadDB::instance()) {
         directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
@@ -303,7 +295,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         
         if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
             
-            if(energyChange < 0) {
+            if(energyChange < -LSENERGYTOL) {
                 _energyChangeCounter = 0;
                 return lambda;
             }
@@ -322,8 +314,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     double conjugateDirectionDotForce = 0.0;
     double maxDirection = 0.0;
     
-    for(auto it: *BeadDB::instance(getBeadDBKey())) {
-        
+    for(auto it: *BeadDB::instance()) {
         conjugateDirectionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }

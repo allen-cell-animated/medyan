@@ -32,18 +32,16 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
    _compartment->addCylinder(this);
                        
    ///add to neighbor list db
-   NeighborListDB::instance(NeighborListDBKey())->addNeighbor(this);
+   NeighborListDB::instance()->addNeighbor(this);
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
     _cCylinder->setCylinder(this);
-    ChemManager::initializeCCylinder(ChemManagerCylinderKey(), _cCylinder.get(), f,
-                                     extensionFront, extensionBack, creation);
+    ChemManager::initializeCCylinder(_cCylinder.get(), f, extensionFront, extensionBack, creation);
     
-    if(creation || extensionFront || extensionBack) {
+    if(creation || extensionFront || extensionBack)
         ///Update filament reactions, only if not initialization
-        ChemManager::updateCCylinder(ChemManagerCylinderKey(), _cCylinder.get());
-    }
+        ChemManager::updateCCylinder(_cCylinder.get());
     
 #endif
 

@@ -114,7 +114,7 @@ public:
         }
         
         for(auto &r : _bulkReactions.reactions())
-            ChemSim::addReaction(ChemSimReactionKey(), r.get());
+            ChemSim::addReaction(r.get());
         
     }
     

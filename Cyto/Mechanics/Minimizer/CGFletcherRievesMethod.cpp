@@ -16,7 +16,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
     //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
     //o.printBasicSnapshot(0);
     
-    int SpaceSize = 3 * BeadDB::instance(getBeadDBKey())->size(); ///!!!!!! need to know
+    int SpaceSize = 3 * BeadDB::instance()->size(); ///!!!!!! need to know
 	double curVal = FFM.ComputeEnergy(0.0);
     //cout<<"Energy = "<< curVal <<endl;
 	double prevVal = curVal;

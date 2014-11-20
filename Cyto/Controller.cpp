@@ -49,6 +49,13 @@ void Controller::initialize(string inputFile) {
     _gController.initializeGrid();
     cout << "Done." << endl;
     
+#ifdef MECHANICS
+    ///Initialize Mechanical controller
+    cout << "Initializing mechanics...";
+    _mController.initialize(MTypes, MAlgorithm);
+    cout << "Done." <<endl;
+    
+#endif
     ///Initialize boundary
     cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
@@ -94,13 +101,6 @@ void Controller::initialize(string inputFile) {
     }
     _cController.initialize(CAlgorithm.algorithm, "", chem);
     cout << "Done." <<endl;
-#endif
-#ifdef MECHANICS
-    ///Initialize Mechanical controller
-    cout << "Initializing mechanics...";
-    _mController.initialize(MTypes, MAlgorithm);
-    cout << "Done." <<endl;
-    
 #endif
     
     ///Read filament setup, parse filament input file if needed
@@ -161,22 +161,19 @@ void Controller::initialize(string inputFile) {
 
 void Controller::updatePositions() {
     
-    ///Update bead-boundary interactions
-    for(auto b : *BeadDB::instance(BeadDBKey())) b->updatePosition();
-    ///Update cylinder positions
-    for(auto &c : *CylinderDB::instance(CylinderDBKey())) c->updatePosition();
-    ///Update linker positions
-    for(auto &l : *LinkerDB::instance(LinkerDBKey())) l->updatePosition();
-    ///update motor positions
-    for(auto &m : *MotorGhostDB::instance(MotorGhostDBKey())) m->updatePosition();
+    ///Update all positions
+    for(auto &b : *BeadDB::instance()) b->updatePosition();
+    for(auto &c : *CylinderDB::instance()) c->updatePosition();
+    for(auto &l : *LinkerDB::instance()) l->updatePosition();
+    for(auto &m : *MotorGhostDB::instance()) m->updatePosition();
     
     ///reset neighbor lists
-    NeighborListDB::instance(NeighborListDBKey())->resetAll();
+    NeighborListDB::instance()->resetAll();
     
 #ifdef CHEMISTRY
     //Update filament reactions
-    for(auto &c : *CylinderDB::instance(CylinderDBKey()))
-        ChemManager::updateCCylinder(ChemManagerCylinderKey(), c->getCCylinder());
+    for(auto &c : *CylinderDB::instance())
+        ChemManager::updateCCylinder(c->getCCylinder());
 #endif
     
 }
@@ -192,9 +189,14 @@ void Controller::run() {
     
     cout << "Starting simulation..." << endl;
     
+    ///perform first minimization
+#ifdef MECHANICS
+    _mController.run();
+    updatePositions();
+#endif
+    
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
-        
         cout << "Current simulation time = "<< tau() << endl;
         _cController.run(_numStepsPerMech);
 #endif

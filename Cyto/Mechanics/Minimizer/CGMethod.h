@@ -47,7 +47,7 @@ private:
     const double R = 0.61803399;
     const double C = 1 - R;
     
-    const double LSENERGYTOL = 1e-4; ///<Line search energy tolerance for all linesearch methods
+    const double LSENERGYTOL = 1e-6; ///<Line search energy tolerance for all linesearch methods
     
     ///helpers for searching and bracketing
     void swap(double &a, double &b);
@@ -61,7 +61,7 @@ protected:
     int _energyChangeCounter = 0; ///<number of iterations where energy has not changed by an amount more than LSENERGYTOL
     const int ENERGYCHANGEITER = 20; ///<max number of iterations allowed where """
     
-    const double GRADTOL = 1e-3; ///< gradient minimization tolerance
+    const double GRADTOL = 1e-6; ///< gradient minimization tolerance
     
     ///bracketing function (from Numerical Recipes in C++, second edition)
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
@@ -81,8 +81,6 @@ protected:
     
     double backtrackingLineSearch(ForceFieldManager& FFM);
     double quadraticLineSearch(ForceFieldManager& FFM);
-    
-    BeadDBKey getBeadDBKey() {return BeadDBKey();}
     
     void printForces();
     

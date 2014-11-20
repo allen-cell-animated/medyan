@@ -25,7 +25,7 @@ void CController::initialize(string& chemAlgorithm, string chemInitializer, Chem
         cout<< "Chem algorithm not found. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
-    ChemSim::setInstance(ChemSimInitKey(), csi);
+    ChemSim::setInstance(csi);
     
     
     ///Set the instance of the initializer
@@ -33,12 +33,12 @@ void CController::initialize(string& chemAlgorithm, string chemInitializer, Chem
     cii = new SimpleManagerImpl(_subSystem);
 
 
-    ChemManager::setInstance(ChemManagerInitKey(), cii);
+    ChemManager::setInstance(cii);
     
     ///initialize grid ...
-    ChemManager::initialize(ChemManagerGridKey(), chem);
+    ChemManager::initialize(chem);
     
     ///initialize chemsim
-    ChemSim::initialize(ChemSimInitKey());
+    ChemSim::initialize();
 }
 

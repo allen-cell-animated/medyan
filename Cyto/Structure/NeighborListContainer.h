@@ -31,7 +31,7 @@ public:
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~NLContainer() noexcept {
-        NeighborListDB::instance(NeighborListDBKey())->removeNeighborList(_neighborList);
+        NeighborListDB::instance()->removeNeighborList(_neighborList);
     }
     
     ///Setter and getter for neighborlist
@@ -47,13 +47,25 @@ public:
     ///constructor, adds a cylinder neighbor list to the database
     CylinderNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
-        _neighborList = NeighborListDB::instance(NeighborListDBKey())->
-                         createCylinderNeighborList(rMax, rMin, crossFilamentOnly);
+        _neighborList = NeighborListDB::instance()->
+                        createCylinderNeighborList(rMax, rMin, crossFilamentOnly);
     }
     ~CylinderNLContainer() {}
 };
 
-
+/// BoundaryElementNLContainer, a concrete implementation of
+/// neighbor list container. Holds a boundary element / bead neighbor list.
+class BoundaryElementNLContainer : public NLContainer {
+    
+public:
+    ///constructor, adds a cylinder neighbor list to the database
+    BoundaryElementNLContainer(float rMax = 0.0, float rMin = 0.0) {
+        
+        _neighborList = NeighborListDB::instance()->
+                        createBoundaryElementNeighborList(rMax, rMin);
+    }
+    ~BoundaryElementNLContainer() {}
+};
 
 
 #endif /* defined(__Cyto__NeighborListContainer__) */

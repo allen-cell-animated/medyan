@@ -11,7 +11,9 @@
 #include "BoundaryRepulsion.h"
 #include "BoundaryRepulsionLJ.h"
 #include "BoundaryRepulsionExp.h"
+
 #include "BoundaryElementDB.h"
+#include "Bead.h"
 
 BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interaction3) {
     
@@ -21,27 +23,48 @@ BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interac
 
 
 double BoundaryFF::computeEnergy(double d) {
-    double U_bound = 0;
+    double U = 0;
     
-    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
-        for (auto &boundaryInteraction : _BoundaryInteractionVector)
-            U_bound += boundaryInteraction.get()->computeEnergy(it, d);
+    for (auto &boundaryInteraction : _BoundaryInteractionVector){
+        
+        auto neighborList = boundaryInteraction->getNeighborList();
+        for (auto boundaryElement: *BoundaryElementDB::instance()) {
+            
+            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
+                Bead* bead = static_cast<Bead*>(neighbor);
+                U += boundaryInteraction->computeEnergy(boundaryElement, bead, d);
+            }
+        }
     }
-    return U_bound;
+    return U;
 }
 
 void BoundaryFF::computeForces() {
-    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
+    
+    for (auto &boundaryInteraction : _BoundaryInteractionVector){
         
-        for (auto &boundaryInteraction : _BoundaryInteractionVector)
-            boundaryInteraction.get()->computeForces(it);
+        auto neighborList = boundaryInteraction->getNeighborList();
+        for (auto boundaryElement: *BoundaryElementDB::instance()) {
+            
+            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
+                Bead* bead = static_cast<Bead*>(neighbor);
+                boundaryInteraction->computeForces(boundaryElement, bead);
+            }
+        }
     }
 }
 
 void BoundaryFF::computeForcesAux() {
-    for ( auto it: *BoundaryElementDB::instance(BoundaryElementDBKey()) ) {
+    
+    for (auto &boundaryInteraction : _BoundaryInteractionVector){
         
-        for (auto &boundaryInteraction : _BoundaryInteractionVector)
-           boundaryInteraction.get()->computeForcesAux(it);
+        auto neighborList = boundaryInteraction->getNeighborList();
+        for (auto boundaryElement: *BoundaryElementDB::instance()) {
+            
+            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
+                Bead* bead = static_cast<Bead*>(neighbor);
+                boundaryInteraction->computeForcesAux(boundaryElement, bead);
+            }
+        }
     }
 }

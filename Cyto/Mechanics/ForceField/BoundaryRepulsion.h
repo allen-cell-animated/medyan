@@ -17,6 +17,7 @@
 
 ///FORWARD DECLARATIONS
 class BoundaryElement;
+class Bead;
 
 
 template <class BRepulsionInteractionType>
@@ -26,8 +27,8 @@ private:
     BRepulsionInteractionType _FFType;
     
 public:
-    virtual double computeEnergy( BoundaryElement*, double d);
-    virtual void computeForces( BoundaryElement*);
-    virtual void computeForcesAux( BoundaryElement*);
+    virtual double computeEnergy(BoundaryElement*, Bead*, double d);
+    virtual void computeForces(BoundaryElement*, Bead*);
+    virtual void computeForcesAux(BoundaryElement*, Bead*);
 };
 #endif /* defined(__Cyto__BoundaryRepulsion__) */
