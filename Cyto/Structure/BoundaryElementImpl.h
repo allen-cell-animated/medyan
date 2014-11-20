@@ -26,7 +26,8 @@ private:
 
 public:
     ///Constructor, sets parameters of equation
-    PlaneBoundaryElement(vector<double> coords, vector<double> normal, double repulsConst, double screenLength);
+    PlaneBoundaryElement(vector<double> coords, vector<double> normal,
+                         double repulsConst, double screenLength);
     
     ///Distance to this plane
     virtual double distance(const vector<double>& point);
@@ -51,7 +52,8 @@ private:
     
 public:
     ///Constructor, sets parameters of equation
-    SphereBoundaryElement(vector<double> coords, double radius, double repulsConst, double screenLength);
+    SphereBoundaryElement(vector<double> coords, double radius,
+                          double repulsConst, double screenLength);
     
     ///Distance to this sphere
     virtual double distance(const vector<double>& point);
@@ -77,18 +79,19 @@ private:
     
 public:
     ///Constructor, sets parameters of equation
-    CylindricalZBoundaryElement(vector<double> coords, double radius, double height, double repulsConst, double screenLength);
+    CylindricalZBoundaryElement(vector<double> coords, double radius,
+                                double height, double repulsConst, double screenLength);
     
-    ///Distance to this sphere
+    ///Distance to this cylinder
     virtual double distance(const vector<double>& point);
     
-    ///Stretched distance to sphere
+    ///Stretched distance to cylinder
     virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
     
-    ///normal to sphere
+    ///normal to cylinder
     virtual const vector<double> normal(const vector<double>& point);
     
-    ///get the repulsion constant and screening length for this plane
+    ///get the repulsion constant and screening length for this cylinder
     virtual double getRepulsionConst();
     virtual double getScreeningLength();
 };
@@ -104,7 +107,8 @@ private:
     
 public:
     ///Constructor, sets parameters of equation
-    HalfSphereZBoundaryElement(vector<double> coords, double radius, bool up, double repulsConst, double screenLength);
+    HalfSphereZBoundaryElement(vector<double> coords, double radius,
+                               bool up, double repulsConst, double screenLength);
     
     ///Distance to this sphere
     virtual double distance(const vector<double>& point);
@@ -115,7 +119,7 @@ public:
     ///normal to sphere
     virtual const vector<double> normal(const vector<double>& point);
     
-    ///get the repulsion constant and screening length for this plane
+    ///get the repulsion constant and screening length for this sphere
     virtual double getRepulsionConst();
     virtual double getScreeningLength();
 };

@@ -76,10 +76,4 @@ public:
     
 };
 
-
-
-
-
-
-
 #endif /* defined(__Cyto__BoundarySurfaceImpl__) */

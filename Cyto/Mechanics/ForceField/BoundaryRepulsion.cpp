@@ -19,15 +19,12 @@ double BoundaryRepulsion<BRepulsionInteractionType>::computeEnergy(BoundaryEleme
     double screenLength = be->getScreeningLength();
     
     if (d == 0.0){
-        
-        for (auto b: be->getBeads()){
-           U+= _FFType.computeEnergy(b, be->distance(b->coordinate), k_rep, screenLength);
-        }
+        for (auto b: be->getBeads())
+           U+= _FFType.computeEnergy(b, abs(be->distance(b->coordinate)), k_rep, screenLength);
     }
     else {
-        for (auto b: be->getBeads()){
-            U+=_FFType.computeEnergy(b, be->stretchedDistance(b->coordinate, b->force, d), k_rep, screenLength);
-        }
+        for (auto b: be->getBeads())
+            U+=_FFType.computeEnergy(b, abs(be->stretchedDistance(b->coordinate, b->force, d)), k_rep, screenLength);
     }
     
     return U;
@@ -41,7 +38,7 @@ void BoundaryRepulsion<BRepulsionInteractionType>::computeForces(BoundaryElement
     
     for (auto b: be->getBeads()){
         auto normal = be->normal(b->coordinate);
-        _FFType.computeForces(b, be->distance(b->coordinate), normal, k_rep, screenLength);
+        _FFType.computeForces(b, abs(be->distance(b->coordinate)), normal, k_rep, screenLength);
     }
 }
 
@@ -54,7 +51,7 @@ void BoundaryRepulsion<BRepulsionInteractionType>::computeForcesAux(BoundaryElem
     
     for (auto b: be->getBeads()){
         auto normal = be->normal(b->coordinateAux);
-        _FFType.computeForcesAux(b, be->distance(b->coordinateAux), normal, k_rep, screenLength);
+        _FFType.computeForcesAux(b, abs(be->distance(b->coordinateAux)), normal, k_rep, screenLength);
     }
 }
 

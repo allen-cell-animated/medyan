@@ -55,7 +55,7 @@ void Controller::initialize(string inputFile) {
         _subSystem->addBoundary(new BoundaryCubic());
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
-        _subSystem->addBoundary(new BoundarySpherical());
+        _subSystem->addBoundary(new BoundarySpherical(SystemParameters::Boundaries().diameter));
     }
     else if(BTypes.boundaryShape == "CAPSULE") {
         _subSystem->addBoundary(new BoundaryCapsule(SystemParameters::Boundaries().diameter));
@@ -118,7 +118,8 @@ void Controller::initialize(string inputFile) {
         uniform_real_distribution<double> dU(0,1);
         uniform_real_distribution<double> dUNeg(-1,1);
         
-        for(int i = 0; i < FSetup.numFilaments; i++) {
+        int filamentCounter = 0;
+        while (filamentCounter < FSetup.numFilaments) {
             
             double firstX = dU(generator) * SystemParameters::Geometry().compartmentSizeX *
                                             SystemParameters::Geometry().NX;
@@ -146,6 +147,7 @@ void Controller::initialize(string inputFile) {
             if(_subSystem->getBoundary()->within(firstPoint)
                && _subSystem->getBoundary()->within(secondPoint)) {
                 filamentData.push_back({firstPoint, secondPoint});
+                filamentCounter++;
             }
         }
     }

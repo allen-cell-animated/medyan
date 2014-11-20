@@ -72,7 +72,7 @@ VOLUMECUTOFF:                27.0
 BOUNDARYTYPE:                REPULSIONEXP
 
 BOUNDARYSHAPE:               CAPSULE
-BDIAMETER:                   300.0
+BDIAMETER:                   700.0
 BCUTOFF:                     10.0
 
 BINTERACTIONK:               5.0

@@ -34,7 +34,7 @@ Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionF
     ///Add to list of boundary elements
     for (auto &be : *BoundaryElementDB::instance(BoundaryElementDBKey())) {
         ///If within cutoff, add bead to this boundary element interaction list
-        if(be->distance(v) <= SystemParameters::Boundaries().boundaryCutoff) {
+        if(abs(be->distance(v)) <= SystemParameters::Boundaries().boundaryCutoff) {
             addBoundaryElement(be);
             be->addBead(this);
         }

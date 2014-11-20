@@ -95,7 +95,7 @@ Goals for November 2014
                     Data structures (especially reaction dependents),
                     Neighbor list updates,
                     Virtuals, inlines)
-    -Formatting (80C lines, cleaning up other things)
+    -Formatting (80C lines, cleaning up other things, document)
     -Timings for larger systems
 
 2) TESTING FROM OCTOBER!

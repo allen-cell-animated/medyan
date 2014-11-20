@@ -52,7 +52,8 @@ public:
     static BoundaryElementDB* instance(BoundaryElementDBKey k);
     
     /// create a new plane boundary element
-    BoundaryElement* createPlaneBoundaryElement(vector<double>& coords, vector<double>& normal, double repulsConst, double screenLength) {
+    BoundaryElement* createPlaneBoundaryElement(vector<double>& coords, vector<double>& normal,
+                                                double repulsConst, double screenLength) {
         
         BoundaryElement* b = new PlaneBoundaryElement(coords, normal, repulsConst, screenLength);
         push_back(b);
@@ -60,7 +61,8 @@ public:
     }
     
     ///create a spherical boundary element
-    BoundaryElement* createSphereBoundaryElement(vector<double>& coords, double radius, double repulsConst, double screenLength) {
+    BoundaryElement* createSphereBoundaryElement(vector<double>& coords, double radius,
+                                                 double repulsConst, double screenLength) {
         
         BoundaryElement* b = new SphereBoundaryElement(coords, radius, repulsConst, screenLength);
         push_back(b);
@@ -68,7 +70,8 @@ public:
     }
     
     /// create a cylindrical z boundary element
-    BoundaryElement* createCylindricalZBoundaryElement(vector<double> coords, double radius, double height, double repulsConst, double screenLength) {
+    BoundaryElement* createCylindricalZBoundaryElement(vector<double> coords, double radius,
+                                                       double height, double repulsConst, double screenLength) {
         
         BoundaryElement* b = new CylindricalZBoundaryElement(coords, radius, height, repulsConst, screenLength);
         push_back(b);
@@ -76,7 +79,8 @@ public:
     }
     
     ///create a half sphere z boundary element
-    BoundaryElement* createHalfSphereZBoundaryElement(vector<double> coords, double radius, bool up, double repulsConst, double screenLength) {
+    BoundaryElement* createHalfSphereZBoundaryElement(vector<double> coords, double radius,
+                                                      bool up, double repulsConst, double screenLength) {
         
         BoundaryElement* b = new HalfSphereZBoundaryElement(coords, radius, up, repulsConst, screenLength);
         push_back(b);

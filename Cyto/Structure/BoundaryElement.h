@@ -27,30 +27,18 @@ class Bead;
 class BoundaryElement {
     
 protected:
-    Compartment* _compartment; ///< Compartment that this boundary element is currently in
     vector<Bead*> _beads; ///< Beads that this boundary element could interact with
-    
     vector<double> _coords; ///< coordinates of this boundary element
     
 public:
     ///Default constructor
-    BoundaryElement(vector<double> coords) : _coords(coords) {
-    
-        cout << coords[0] << " " << coords[1] << " " << coords[2] << endl;
-        
-        ///set the compartment given the initial coordinates
-        try {_compartment = GController::getCompartment(coords);}
-        catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
-    }
+    BoundaryElement(vector<double> coords) : _coords(coords) {}
     
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
-    virtual ~BoundaryElement() noexcept {
-        ///remove from compartment
-        _compartment->removeBoundaryElement(this);
-    }
+    virtual ~BoundaryElement() noexcept {}
     
     ///add a bead to list of interacting beads
     void addBead(Bead* b) {_beads.push_back(b);}
@@ -61,19 +49,25 @@ public:
         if(it != _beads.end()) _beads.erase(it);
     }
     
-    ///Get the compartment that this element is in
-    Compartment* getCompartment() {return _compartment;}
-    
     ///return coordinates of boundary element
     const vector<double>& getCoords() {return _coords;}
     ///return set of beads
     const vector<Bead*>& getBeads() {return _beads;}
     
     ///Implement for all boundary elements
+    ///Returns the distance from a given point to this boundary element
+    ///@return - 1) positive number if point is within boundary element
+    ///          2) Negative number if point is outside boundary element
+    ///          3) Infinity if point is not in domain of this boundary element
     virtual double distance(const vector<double>& point) = 0;
+    
+    ///Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d) = 0;
+    
+    ///Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;
     
+    ///Getters for parameters
     virtual double getRepulsionConst() = 0;
     virtual double getScreeningLength() = 0;
  
