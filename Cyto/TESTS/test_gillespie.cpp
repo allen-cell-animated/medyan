@@ -40,14 +40,14 @@ TEST(ChemGillespieTest, StoichiometryInvariants) {
     Reaction<1,1> r2 = { {&A2,&A1}, 15.0 };
     Reaction<1,1> r3 = { {&A1,&A3}, 20.0 };
 
-    ChemSim::setInstance(ChemSimInitKey(), new ChemGillespieImpl());
+    ChemSim::setInstance(new ChemGillespieImpl());
     
-    ChemSim::addReaction(ChemSimReactionKey(), &r1);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2);
-    ChemSim::addReaction(ChemSimReactionKey(), &r3);
+    ChemSim::addReaction(&r1);
+    ChemSim::addReaction(&r2);
+    ChemSim::addReaction(&r3);
 
-    ChemSim::initialize(ChemSimInitKey());
-    ChemSim::run(ChemSimRunKey(), 30);
+    ChemSim::initialize();
+    ChemSim::run(30);
     EXPECT_EQ(100,A1.getN()+A2.getN()+A3.getN());
 }
 
@@ -60,21 +60,21 @@ TEST(ChemGillespieTest, SimpleSteadyState) {
     Reaction<1,1> r1 = { {&A1,&A2}, 100.0 };
     Reaction<1,1> r2 = { {&A2,&A1}, 100.0 };
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemGillespieImpl());
+    ChemSim::setInstance(new ChemGillespieImpl());
     
-    ChemSim::addReaction(ChemSimReactionKey(), &r1);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    ChemSim::addReaction(&r1);
+    ChemSim::addReaction(&r2);
     
-    ChemSim::initialize(ChemSimInitKey());
+    ChemSim::initialize();
 
-    ChemSim::run(ChemSimRunKey(), 1000);
+    ChemSim::run(1000);
     
     accumulator_set<int, stats<tag::variance(immediate)>> accA1;    
     accumulator_set<int, stats<tag::mean>> accA2;    
     accumulator_set<int, stats<tag::covariance<double, tag::covariate1> > > accCov;
     int N_SAMPLE_POINTS=1000;
     for(int i=0;i<N_SAMPLE_POINTS;++i){
-        ChemSim::run(ChemSimRunKey(), 100);
+        ChemSim::run(100);
         accA1(A1.getN());
         accCov(A1.getN(), covariate1 = A2.getN());
     }
@@ -98,10 +98,10 @@ TEST(ChemGillespieTest, SimpleTransient) {
     Reaction<1,1> r1 = { {&A1,&A2}, 2.5 };
     Reaction<1,1> r2 = { {&A2,&A1}, 2.5 };
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemGillespieImpl());
+    ChemSim::setInstance(new ChemGillespieImpl());
     
-    ChemSim::addReaction(ChemSimReactionKey(), &r1);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2);
+    ChemSim::addReaction(&r1);
+    ChemSim::addReaction(&r2);
     
     vector<long long int> n_hist(Nstart+1);
     
@@ -110,10 +110,10 @@ TEST(ChemGillespieTest, SimpleTransient) {
     for(long long int i=0;i<N_SAMPLE_POINTS;++i){
         A1.setN(Nstart);
         A2.setN(0);
-        ChemSim::initialize(ChemSimInitKey());
+        ChemSim::initialize();
         do {
             N_penultimate=A1.getN();
-             ChemSim::run(ChemSimRunKey(), 1);
+             ChemSim::run(1);
         } while (tau()<tau_snapshot);
         ++n_hist[N_penultimate];
         accTau(tau());
@@ -149,11 +149,11 @@ TEST(ChemGillespieTest, CyclicTransient) {
     Reaction<1,1> r2 = { {&A2,&A3}, 2.5 };
     Reaction<1,1> r3 = { {&A3,&A1}, 0.5 };
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemGillespieImpl());
+    ChemSim::setInstance(new ChemGillespieImpl());
     
-    ChemSim::addReaction(ChemSimReactionKey(), &r1);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2);
-    ChemSim::addReaction(ChemSimReactionKey(), &r3);
+    ChemSim::addReaction(&r1);
+    ChemSim::addReaction(&r2);
+    ChemSim::addReaction(&r3);
     
     long long int n_a1_hist=0;
     long long int n_a2_hist=0;
@@ -166,13 +166,13 @@ TEST(ChemGillespieTest, CyclicTransient) {
         long long int n_a1_pentult=0;
         long long int n_a2_pentult=0;
         long long int n_a3_pentult=0;
-        ChemSim::initialize(ChemSimInitKey());
+        ChemSim::initialize();
         long long int events=0;
         do {
             n_a1_pentult=A1.getN();
             n_a2_pentult=A2.getN();
             n_a3_pentult=A3.getN();
-            ChemSim::run(ChemSimRunKey(), 1);
+            ChemSim::run( 1);
             ++events;
         } while (tau()<tau_snapshot);
         n_a1_hist+=n_a1_pentult;
@@ -220,13 +220,13 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
     Reaction<1,1> r2 = { {&B,&C}, kbc };
     Reaction<1,1> r3 = { {&C,&A}, kca };
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemGillespieImpl());
+    ChemSim::setInstance(new ChemGillespieImpl());
     
-    ChemSim::addReaction(ChemSimReactionKey(), &r1);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2);
-    ChemSim::addReaction(ChemSimReactionKey(), &r3);
-    ChemSim::addReaction(ChemSimReactionKey(), &xa);
-    ChemSim::addReaction(ChemSimReactionKey(), &ax);
+    ChemSim::addReaction(&r1);
+    ChemSim::addReaction(&r2);
+    ChemSim::addReaction(&r3);
+    ChemSim::addReaction(&xa);
+    ChemSim::addReaction(&ax);
     
     vector<long long int> x_hist(Nstart+1);
     long long int n_a1_hist=0;
@@ -242,14 +242,14 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
         long long int n_b_pentult=0;
         long long int n_c_pentult=0;
         long long int x_pentult=0;
-        ChemSim::initialize(ChemSimInitKey());
+        ChemSim::initialize();
         long long int events=0;
         do {
             x_pentult=X.getN();
             n_a_pentult=A.getN();
             n_b_pentult=B.getN();
             n_c_pentult=C.getN();
-            bool success = ChemSim::run(ChemSimRunKey(), 1);
+            bool success = ChemSim::run(1);
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
                 ChemSim::printReactions();

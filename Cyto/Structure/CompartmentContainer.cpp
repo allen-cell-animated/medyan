@@ -10,14 +10,14 @@
 
 CompartmentGrid* CompartmentGrid::_instance = 0;
 
-void CompartmentGrid::setInstance(CompartmentGridKey k, int numCompartments)
+void CompartmentGrid::setInstance(int numCompartments)
 {
     if(_instance != 0)
         delete _instance;
     _instance = new CompartmentGrid(numCompartments);
 }
 
-CompartmentGrid* CompartmentGrid::instance(CompartmentGridKey k) {
+CompartmentGrid* CompartmentGrid::instance() {
     if(_instance==0)
         _instance = new CompartmentGrid(0);
     return _instance;

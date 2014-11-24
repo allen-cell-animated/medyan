@@ -166,6 +166,7 @@
 		F786BC4519C2446B00297D03 /* test_simple_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F786BC3A19C2446B00297D03 /* test_simple_gillespie.cpp */; };
 		F786BC4619C2446B00297D03 /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F786BC3B19C2446B00297D03 /* test_species.cpp */; };
 		F786BC4719C2446B00297D03 /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F786BC3C19C2446B00297D03 /* test_visitor.cpp */; };
+		F78D07591A23BC2500DB2E80 /* test_filaments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D07581A23BC2500DB2E80 /* test_filaments.cpp */; };
 		F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D5E7919C8947A00F48A16 /* Output.cpp */; };
 		F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
 		F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
@@ -373,6 +374,7 @@
 		F786BC3A19C2446B00297D03 /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_simple_gillespie.cpp; path = Cyto/TESTS/test_simple_gillespie.cpp; sourceTree = SOURCE_ROOT; };
 		F786BC3B19C2446B00297D03 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_species.cpp; path = Cyto/TESTS/test_species.cpp; sourceTree = SOURCE_ROOT; };
 		F786BC3C19C2446B00297D03 /* test_visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_visitor.cpp; path = Cyto/TESTS/test_visitor.cpp; sourceTree = SOURCE_ROOT; };
+		F78D07581A23BC2500DB2E80 /* test_filaments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_filaments.cpp; path = Cyto/TESTS/test_filaments.cpp; sourceTree = SOURCE_ROOT; };
 		F78D5E7919C8947A00F48A16 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
 		F78D5E7A19C8947A00F48A16 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -502,6 +504,7 @@
 				F741A62619D9BAD8006B2351 /* test_boundaries.cpp */,
 				F786BC3219C2446B00297D03 /* test_compartments.cpp */,
 				F741A62919D9E00F006B2351 /* test_ccylinders.cpp */,
+				F78D07581A23BC2500DB2E80 /* test_filaments.cpp */,
 				F786BC3319C2446B00297D03 /* test_composite.cpp */,
 				F786BC3419C2446B00297D03 /* test_geometry.cpp */,
 				F786BC3519C2446B00297D03 /* test_gillespie_cross.cpp */,
@@ -955,6 +958,7 @@
 				F786BC4519C2446B00297D03 /* test_simple_gillespie.cpp in Sources */,
 				F786BC4719C2446B00297D03 /* test_visitor.cpp in Sources */,
 				F741A62819D9BAD8006B2351 /* test_boundaries.cpp in Sources */,
+				F78D07591A23BC2500DB2E80 /* test_filaments.cpp in Sources */,
 				F786BC3D19C2446B00297D03 /* test_compartments.cpp in Sources */,
 				F786BC4319C2446B00297D03 /* test_parser.cpp in Sources */,
 				F786BC4419C2446B00297D03 /* test_reactions.cpp in Sources */,

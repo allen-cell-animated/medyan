@@ -1171,7 +1171,7 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& pr
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->findSpeciesBulkByName(name));
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             
             else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1204,7 +1204,7 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& pr
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->findSpeciesBulkByName(name));
+                productSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             
             else if(product.find("DIFFUSING") != string::npos) {
@@ -1289,7 +1289,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->findSpeciesBulkByName(name));
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             else {
                 cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << endl;
@@ -1309,7 +1309,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->findSpeciesBulkByName(name));
+                productSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             else {
                 cout << "All reactants and products in a bulk reaction must be bulk. Exiting." << endl;
@@ -1353,7 +1353,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
         }
         
         ///add to grid
-        CompartmentGrid::instance(compartmentGridKey())->addBulkReactionUnique(unique_ptr<ReactionBase>(rxn));
+        CompartmentGrid::instance()->addBulkReactionUnique(unique_ptr<ReactionBase>(rxn));
     }
 }
 
@@ -1373,14 +1373,14 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     _speciesMotor  =  chem.speciesMotor;
     
     ///Setup all species diffusing and bulk
-    Compartment& cProto = CompartmentGrid::instance(compartmentGridKey())->getProtoCompartment();
+    Compartment& cProto = CompartmentGrid::instance()->getProtoCompartment();
     
     for(auto &sd : chem.speciesDiffusing)
         cProto.addSpeciesUnique(unique_ptr<Species>(
            new SpeciesDiffusing(get<0>(sd), get<1>(sd))), get<2>(sd));
     
     for(auto &sb : chem.speciesBulk)
-        CompartmentGrid::instance(compartmentGridKey())->addSpeciesBulk(get<0>(sb), get<1>(sb));
+        CompartmentGrid::instance()->addSpeciesBulk(get<0>(sb), get<1>(sb));
     
     ///add reactions to protocompartment
     genGeneralReactions(chem, cProto);
@@ -1388,17 +1388,17 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     genBulkReactions(chem);
     
     ///initialize all compartments equivalent to cproto
-    for(auto &c : CompartmentGrid::instance(compartmentGridKey())->children()) {
+    for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         *C = cProto;
     }
-    for(auto &c : CompartmentGrid::instance(compartmentGridKey())->children()) {
+    for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         C->generateAllDiffusionReactions();
     }
     
     ///add reactions to chemsim
-    CompartmentGrid::instance(compartmentGridKey())->addChemSimReactions();
+    CompartmentGrid::instance()->addChemSimReactions();
     
     ///create internal filament reaction managers
     genIFRxnManagers(chem);

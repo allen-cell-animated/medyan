@@ -133,11 +133,11 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
             double firstY = dU(generator) * SystemParameters::Geometry().compartmentSizeY *
                                             SystemParameters::Geometry().NY;
             double firstZ = dU(generator) * SystemParameters::Geometry().compartmentSizeZ *
-                                            SystemParameters::Geometry().NZ * 0.1;
+                                            SystemParameters::Geometry().NZ;
             
             double directionX = dUNeg(generator);
             double directionY = dUNeg(generator);
-            double directionZ = dU(generator);
+            double directionZ = dUNeg(generator);
             
             ///Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};

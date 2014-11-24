@@ -47,8 +47,8 @@ TEST(CCylinder, Basic) {
     
     SystemParameters::CParams.numFilamentSpecies = 2;
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemSimpleGillespieImpl);
-    ChemSim::initialize(ChemSimInitKey());
+    ChemSim::setInstance(new ChemSimpleGillespieImpl);
+    ChemSim::initialize();
     
     Compartment* c = new Compartment;
     SpeciesFilament* sf1;
@@ -94,8 +94,8 @@ TEST(CCylinder, AdvancedCloning) {
     
     SystemParameters::CParams.numFilamentSpecies = 2;
     
-    ChemSim::setInstance(ChemSimInitKey(), new ChemSimpleGillespieImpl);
-    ChemSim::initialize(ChemSimInitKey());
+    ChemSim::setInstance(new ChemSimpleGillespieImpl);
+    ChemSim::initialize();
     
     Compartment* c1 = new Compartment;
     Compartment* c2 = new Compartment;

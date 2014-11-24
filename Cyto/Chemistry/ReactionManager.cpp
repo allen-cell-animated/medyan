@@ -40,8 +40,8 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         
         ///FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
-                                                 findSpeciesBulkByMolecule(speciesInt));
+            reactantSpecies.push_back(CompartmentGrid::instance()->
+                                      findSpeciesBulkByMolecule(speciesInt));
 
         else if(type == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -121,7 +121,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         
         ///FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::instance()->
                                       findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -196,7 +196,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ///FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+        reactantSpecies.push_back(CompartmentGrid::instance()->
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {
@@ -263,7 +263,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ///FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+        reactantSpecies.push_back(CompartmentGrid::instance()->
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {
@@ -359,7 +359,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         speciesInt = get<0>(p);
         
         if( type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::instance()->
                                       findSpeciesBulkByMolecule(speciesInt));
         else if(type == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -434,7 +434,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         speciesInt = get<0>(p);
         
         if( type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::instance()->
                                      findSpeciesBulkByMolecule(speciesInt));
         else if(type == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -505,7 +505,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     speciesInt = get<0>(p);
     
     if( type == SpeciesType::BULK)
-        productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+        productSpecies.push_back(CompartmentGrid::instance()->
                                  findSpeciesBulkByMolecule(speciesInt));
     else if(type == SpeciesType::DIFFUSING) {
         Compartment* c = cc2->getCompartment();
@@ -570,7 +570,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     speciesInt = get<0>(p);
     
     if( type == SpeciesType::BULK)
-        productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+        productSpecies.push_back(CompartmentGrid::instance()->
                                  findSpeciesBulkByMolecule(speciesInt));
     else if(type == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
@@ -623,7 +623,7 @@ void BasicBindingManager::addReaction(CCylinder* cc) {
         speciesInt = get<0>(r);
         
         if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+            reactantSpecies.push_back(CompartmentGrid::instance()->
                                       findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -698,7 +698,7 @@ void UnbindingManager::addReaction(CCylinder* cc) {
         speciesInt = get<0>(p);
         
         if(type == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+            productSpecies.push_back(CompartmentGrid::instance()->
                                      findSpeciesBulkByMolecule(speciesInt));
         
         else if(type == SpeciesType::DIFFUSING) {
@@ -1001,7 +1001,7 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     speciesInt = get<0>(r);
 
     if(type == SpeciesType::BULK)
-       reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+       reactantSpecies.push_back(CompartmentGrid::instance()->
                                  findSpeciesBulkByMolecule(speciesInt));
 
     else if(type == SpeciesType::DIFFUSING) {
@@ -1072,7 +1072,7 @@ void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     speciesInt = get<0>(r);
     
     if(type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::instance(compartmentGridKey())->
+        reactantSpecies.push_back(CompartmentGrid::instance()->
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {

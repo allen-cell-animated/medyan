@@ -15,17 +15,6 @@
 
 #include "Compartment.h"
 
-///Key to access instance of CompartmentGrid
-class CompartmentGridKey {friend class ChemManagerImpl;
-                          friend class GController;
-                          friend class InternalFilamentRxnManager;
-                          friend class CrossFilamentRxnManager;
-#ifdef TESTING
-                          public:
-#endif //TESTING
-                          CompartmentGridKey(){} public: ~CompartmentGridKey(){} };
-
-
 /// CompartmentGrid class is a simple n-dimensional grid of CompartmentSpatial objects (singleton)
 
 /*!
@@ -83,10 +72,10 @@ public:
     
     ///set instance of grid (should only be done at beginning of program)
     ///@note if called, a completely new grid will be created, and the old one erased.
-    static void setInstance(CompartmentGridKey k, int numCompartments);
+    static void setInstance(int numCompartments);
     
     ///Get instance of grid
-    static CompartmentGrid* instance(CompartmentGridKey k);
+    static CompartmentGrid* instance();
     
     /// Get name of this compartment grid
     virtual string getFullName() const {return string("CompartmentGrid");};

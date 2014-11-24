@@ -80,7 +80,7 @@ public:
             
             i++;
         }
-        return static_cast<Compartment*>(CompartmentGrid::instance(CompartmentGridKey())->children().at(index).get());
+        return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
     }
     
     /// Get the compartment given a set of coordinates
@@ -112,11 +112,11 @@ public:
             }
             i++;
         }
-        return static_cast<Compartment*>(CompartmentGrid::instance(CompartmentGridKey())->children().at(index).get());
+        return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
     }
     
-    /// Get all compartments within a given range from the specified compartment
-    /// @param ccheck - compartment to check. when initially calling this function, ccheck should be the same as c
+    /// Get all compartments within a given range from the specified coordinate
+    /// @param ccheck - compartment to check when initially calling this function
     /// @param compartments - list of compartments that are within range. This will be populated by the function
     static void findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments);
     

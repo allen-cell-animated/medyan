@@ -159,7 +159,7 @@ void GController::initializeGrid() {
     }
     
     ///Set the instance of this grid with given parameters
-    CompartmentGrid::setInstance(CompartmentGridKey(), size);
+    CompartmentGrid::setInstance(size);
     
     ///Create connections based on dimensionality
     generateConnections();
@@ -169,7 +169,7 @@ void GController::initializeGrid() {
 void GController::activateCompartments(Boundary* boundary) {
     
     ///initialize all compartments equivalent to cproto
-    for(auto &c : CompartmentGrid::instance(CompartmentGridKey())->children()) {
+    for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         if(boundary->within(C->coordinates())) C->activate();
     }

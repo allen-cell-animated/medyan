@@ -67,14 +67,11 @@ Goals for October 2014:
 
 2) Testing:
     -Cylinder reaction management                                               X
-    -Reaction Managers
-    -Geometry findCompartments
-    -Filament (initialization, poly, depoly) (general, chem)
-    -Linker/Motor (general, chem)
-    -Compartment (bead, cylinder, boundary element adding/removing, etc)
+    -Geometry findCompartments                                                  X
+    -Filament (initialization, poly, depoly) (general, chem, mech)
+    -Linker/Motor (general, chem, mech)
     -Neighbors lists
-    -All databases
-    -All FF's (Aravind?)
+    -All FF's
 
 ------
 Goals for November 2014
@@ -89,13 +86,14 @@ Goals for November 2014
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
     -Add poly/depoly/unbinding + coupling to mechanics
+    -Motor step size, rethinking of binding/stepping
     -Add aging reaction + coupling to mechanics
     -Add severing reaction + coupling to mechanics
     -Add branching reaction + coupling to mechanics
     -Optimizations (Clean headers and move all code to c files,
                     Data structures (especially reaction dependents),
                     Neighbor list updates,
-                    Virtuals, inlines)
+                    Virtuals, inlines, friends of db!)
     -Formatting (80C lines, cleaning up other things, document)
     -Timings for larger systems
 

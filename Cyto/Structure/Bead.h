@@ -23,6 +23,7 @@
 ///FORWARD DECLARATIONS
 class Compartment;
 class BoundaryElement;
+class Cylinder;
 
 ///The Bead class represents a single coordinate and mechanical constants needed.
 /*!

@@ -69,6 +69,7 @@ protected:
     double gradSquare();
     double gradAuxSquare();
     double gradDotProduct();
+    
     void moveBeads(double d);
     void moveBeadsAux(double d);
     void shiftGradient(double d);

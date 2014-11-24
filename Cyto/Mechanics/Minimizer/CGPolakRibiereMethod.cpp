@@ -33,8 +33,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = backtrackingLineSearch(FFM);
-        if(lambda < 0) lambda = 0.0;
+        lambda = 0.1;//backtrackingLineSearch(FFM);
+        if(lambda < 0) return;
         
         //cout<<"lambda= "<<lambda<<endl;
 		//PrintForces();
@@ -62,10 +62,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         //PrintForces();
 		gSquare = newGradSquare;
         //cout<<"GradSq before end=  "<< gSquare <<endl;
+        
 	}
 	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
 	//cout << "Polak-Ribiere Method: " << endl;
     //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    //printForces();
+    printForces();
 }

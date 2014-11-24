@@ -44,8 +44,6 @@ public:
 
     ///add/update cross cylinder reactions that are within range
     virtual void updateCCylinder(CCylinder* cc) = 0;
-    
-    CompartmentGridKey compartmentGridKey() {return CompartmentGridKey();}
 };
 
 #endif /* defined(__Cyto__ChemManagerImpl__) */

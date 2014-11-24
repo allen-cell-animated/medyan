@@ -79,5 +79,4 @@ TEST(GeometryTest, NonCubicGrid) {
 }
 
 
-
 #endif //DO_THIS_GEOMETRY_TEST

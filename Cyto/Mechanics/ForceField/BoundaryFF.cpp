@@ -49,6 +49,8 @@ void BoundaryFF::computeForces() {
             for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
                 Bead* bead = static_cast<Bead*>(neighbor);
                 boundaryInteraction->computeForces(boundaryElement, bead);
+                
+                cout << "Forces on edge bead = " << bead->force[0] << " " << bead->force[1] << " " << bead->force[2] << endl;
             }
         }
     }

@@ -96,9 +96,10 @@ TEST(CompartmentContainerTest, Main) {
     
     int _numSpecies; ///for testing
 
-    GController::initializeGrid();
+    GController g;
+    g.initializeGrid();
     
-    Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
+    Compartment &Cproto = CompartmentGrid::instance()->getProtoCompartment();
     
     Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
@@ -109,23 +110,23 @@ TEST(CompartmentContainerTest, Main) {
     Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
     
     ///initialize all compartments with species
-    for(auto &c : CompartmentGrid::Instance(CompartmentGridKey())->children())
+    for(auto &c : CompartmentGrid::instance()->children())
     {
         Compartment *C = static_cast<Compartment*>(c.get());
         *C = Cproto;
     }
     
     ///activate all compartments for diffusion
-    CompartmentGrid::Instance(CompartmentGridKey())->activateAll();
+    CompartmentGrid::instance()->activateAll();
     
     ///Generate all diffusion reactions
-    for(auto &c : CompartmentGrid::Instance(CompartmentGridKey())->children())
+    for(auto &c : CompartmentGrid::instance()->children())
     {
         Compartment *C = static_cast<Compartment*>(c.get());
         C->generateAllDiffusionReactions();
     }
     
-    _numSpecies = CompartmentGrid::Instance(CompartmentGridKey())->countSpecies();
+    _numSpecies = CompartmentGrid::instance()->countSpecies();
     
     Compartment *C1 = GController::getCompartment(vector<size_t>{10U,10U,10U});
     
