@@ -10,6 +10,7 @@
 #define __Cyto__CMotorGhost__
 
 #include <iostream>
+
 #include "CBound.h"
 #include "Compartment.h"
 

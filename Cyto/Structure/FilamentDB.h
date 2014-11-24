@@ -14,6 +14,7 @@
 #include <list>
 
 #include "common.h"
+
 #include "Filament.h"
 
 #include "MathFunctions.h"

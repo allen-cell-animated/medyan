@@ -34,9 +34,11 @@
 #include <iostream>
 #include <numeric>
 #include <chrono>
+
+#include "common.h"
+
 #include "Controller.h"
 #include "SubSystem.h"
-#include "common.h"
 
 using namespace mathfunc;
 
@@ -45,9 +47,9 @@ int main(int argc, const char * argv[])
 
     SubSystem s;
     Controller c(&s);
-    
-    //c.initialize("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testsysteminput.txt");
-    c.initialize("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/testsysteminput.txt");
+
+    c.initialize("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/",
+                 "/Users/jameskomianos/Code/CytoSim-Repo/Cyto/");
     c.run();
 
 }

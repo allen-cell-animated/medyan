@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "Boundary.h"
 
 ///Cubic boundary implementation

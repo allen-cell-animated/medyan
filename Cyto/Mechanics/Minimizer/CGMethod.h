@@ -11,7 +11,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "BeadDB.h"
 #include "common.h"
 
 ///FORWARD DECLARATIONS
@@ -27,7 +26,7 @@ class ForceFieldManager;
 
 class CGMethod {
 
-private:
+protected:
     
     ///Lambda parameters for use in linear search methods
     const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used only in golden section for now
@@ -35,8 +34,8 @@ private:
     const double MAXDIST = 1; ///< Max distance beads can be moved, used only in backtracking line search
     
     ///Parameters used in backtracking line search
-    const double LAMBDAREDUCE = 0.1; ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
+    const double LAMBDAREDUCE = 0.5; ///< Lambda reduction parameter for backtracking
+    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
     
     ///Parameters used in quadratic line search
     const double QUADRATICTOL = 0.1;
@@ -61,7 +60,7 @@ protected:
     int _energyChangeCounter = 0; ///<number of iterations where energy has not changed by an amount more than LSENERGYTOL
     const int ENERGYCHANGEITER = 20; ///<max number of iterations allowed where """
     
-    const double GRADTOL = 1e-6; ///< gradient minimization tolerance
+    const double GRADTOL = 1e-10; ///< gradient minimization tolerance
     
     ///bracketing function (from Numerical Recipes in C++, second edition)
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);

@@ -10,6 +10,7 @@
 #define Cyto_FilamentBending_h
 
 #include "common.h"
+
 #include "FilamentInteractions.h"
 
 ///FORWARD DECLARATIONS

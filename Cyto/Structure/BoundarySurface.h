@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "BoundaryElementDB.h"
 
 /// BoundarySurface class is a boundary shape that holds boundary elements

@@ -8,11 +8,10 @@
 
 #include "NeighborList.h"
 
+#include "BeadDB.h"
+#include "GController.h"
 #include "Cylinder.h"
 #include "BoundaryElement.h"
-#include "BeadDB.h"
-
-#include "GController.h"
 
 #include "MathFunctions.h"
 

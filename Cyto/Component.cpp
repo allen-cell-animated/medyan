@@ -7,8 +7,8 @@
 //
 #include <iostream>
 
-#include "common.h"
 #include "Component.h"
+
 #include "Composite.h"
 #include "Visitor.h"
 

@@ -8,7 +8,6 @@
 
 #include "Filament.h"
 
-#include "Bead.h"
 #include "BeadDB.h"
 #include "CylinderDB.h"
 
@@ -40,6 +39,7 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads
     ///create a projection of beads
     if(projectionType == "STRAIGHT") tmpBeadsCoord = straightFilamentProjection(position, numBeads);
     else if(projectionType == "ZIGZAG") tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
+    
     else {}
    
     ///Create beads
@@ -304,6 +304,8 @@ vector<vector<double> > Filament::zigZagFilamentProjection(vector<vector<double>
     }
     return coordinate;
 }
+
+
 
 
 

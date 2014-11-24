@@ -10,10 +10,12 @@
 #define __CytoMech__MotorGhost__
 
 #include <iostream>
+
+#include "common.h"
+
 #include "Composite.h"
 #include "CMotorGhost.h"
 #include "MMotorGhost.h"
-#include "common.h"
 
 ///FORWARD DECLARATIONS
 class Cylinder;

@@ -9,8 +9,9 @@
 #ifndef __Cyto__Minimizer__
 #define __Cyto__Minimizer__
 
-#include "common.h"
 #include <iostream>
+
+#include "common.h"
 
 ///FORWARD DECLARATIONS
 class ForceFieldManager;

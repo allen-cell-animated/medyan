@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "common.h"
-#include "NeighborList.h"
+
 #include "NeighborListDB.h"
 
 

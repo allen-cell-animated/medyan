@@ -7,11 +7,12 @@
 //
 
 #include "LinkerStretching.h"
+
 #include "LinkerStretchingHarmonic.h"
 
 #include "Cylinder.h"
-#include "Bead.h"
 #include "Linker.h"
+#include "Bead.h"
 
 template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::computeEnergy(Linker* l, double d) {

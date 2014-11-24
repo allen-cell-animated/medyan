@@ -7,6 +7,7 @@
 //
 
 #include "BoundaryRepulsion.h"
+
 #include "BoundaryRepulsionLJ.h"
 #include "BoundaryRepulsionExp.h"
 #include "BoundaryElement.h"

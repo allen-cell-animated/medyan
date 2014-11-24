@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "common.h"
+
 #include "BoundaryInteractions.h"
 
 ///FORWARD DECLARATIONS

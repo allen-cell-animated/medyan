@@ -15,11 +15,13 @@
 
 #include "ChemManagerImpl.h"
 #include "ReactionManager.h"
-#include "CMonomer.h"
-#include "Parser.h"
 
 ///FORWARD DECLARATIONS
 class SubSystem;
+struct ChemistryData;
+
+class InternalFilamentRxnManager;
+class CrossFilamentRxnManager;
 
 ///SimpleManagerImpl is a concrete implementation of the ChemInitailizerImpl class
 class SimpleManagerImpl : public ChemManagerImpl {
@@ -38,15 +40,15 @@ private:
                    _speciesLinker, _speciesMotor;
     
     ///Set up all reaction managers from chemsetup struct
-    void generateIFRxnManagers(ChemistryData& chem);
+    void genIFRxnManagers(ChemistryData& chem);
     
-    void generateCFRxnManagers(ChemistryData& chem);
+    void genCFRxnManagers(ChemistryData& chem);
     
     ///Generate the general, non-filament reactions
-    void generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
+    void genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
     
     ///Generate bulk reactions
-    void generateBulkReactions(ChemistryData& chem);
+    void genBulkReactions(ChemistryData& chem);
     
 public:
     SimpleManagerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}

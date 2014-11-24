@@ -12,10 +12,10 @@
 #include <memory>
 
 #include "common.h"
-#include "Reaction.h"
     
 ///FORWARD DECLARATIONS
 class ChemSimImpl;
+class ReactionBase;
 
 /// ChemSim is used to manage running a network of chemical reactions.
 

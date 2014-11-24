@@ -25,10 +25,10 @@ MD:
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                0.5
+FSTRETCHINGK:                0.2
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   2.0
+FBENDINGK:                   0.5
 FBENDINGTHETA:
 
 FTWISTINGTYPE:
@@ -38,7 +38,7 @@ FTWISTINGPHI:
 ### LINKERS ###
 
 LSTRETCHINGTYPE:             HARMONIC
-LSTRETCHINGK:                5.0
+LSTRETCHINGK:                2.0
 
 LBENDINGTYPE:
 LBENDINGK:
@@ -51,7 +51,7 @@ LTWISTINGPHI:
 ### MOTORS ###
 
 MSTRETCHINGTYPE:             HARMONIC
-MSTRETCHINGK:                5.0
+MSTRETCHINGK:                2.0
 
 MBENDINGTYPE:
 MBENDINGK:
@@ -73,16 +73,15 @@ BOUNDARYTYPE:                REPULSIONEXP
 
 BOUNDARYSHAPE:               CAPSULE
 BDIAMETER:                   700.0
-BCUTOFF:                     10.0
+BCUTOFF:                     5.0
 
-BINTERACTIONK:               1.0
-BSCREENLENGTH:               5.0
+BINTERACTIONK:               100.0
+BSCREENLENGTH:               2.0
 
 ##################################################
 ################### CHEMISTRY ####################
 
-CHEMISTRYFILE:               /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testchemistryinput.txt
-#CHEMISTRYFILE:              /Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testchemistryinput.txt
+CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMSTEPS:                    1000000
@@ -103,10 +102,10 @@ NUMMOTORSPECIES:             1
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-#FILAMENTFILE:                /Users/jameskomianos/Code/CytoSim-Repo/Cyto/testfilamentinput.txt
-#FILAMENTFILE:                /Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/testfilamentinput.txt
+#FILAMENTFILE:               testfilamentinput.txt
 
-NUMFILAMENTS:                200
+
+NUMFILAMENTS:                100
 
 
 

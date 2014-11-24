@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "Compartment.h"
 
 ///Key to access instance of CompartmentGrid

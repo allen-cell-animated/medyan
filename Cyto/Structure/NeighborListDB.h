@@ -13,6 +13,7 @@
 #include <list>
 
 #include "common.h"
+
 #include "NeighborList.h"
 
 ///NeighborListDB is used to store all NeighborLists in the system

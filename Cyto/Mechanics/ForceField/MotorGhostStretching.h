@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "MotorGhostInteractions.h"
 
 ///FORWARD DECLARATIONS

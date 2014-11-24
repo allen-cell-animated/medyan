@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "BoundaryElementImpl.h"
 
 /*! An Object Data Base singleton structure will be used as a container for all main objects: 

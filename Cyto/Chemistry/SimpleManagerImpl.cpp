@@ -9,6 +9,8 @@
 #include "SimpleManagerImpl.h"
 
 #include "ChemCallbacks.h"
+#include "ReactionManager.h"
+#include "Parser.h"
 #include "Bead.h"
 
 #include "SystemParameters.h"
@@ -16,7 +18,7 @@
 
 using namespace mathfunc;
 
-void SimpleManagerImpl::generateIFRxnManagers(ChemistryData& chem) {
+void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     
     ///set up reaction templates
     for(auto &r: chem.polymerizationReactions) {
@@ -819,7 +821,7 @@ void SimpleManagerImpl::generateIFRxnManagers(ChemistryData& chem) {
  
 }
 
-void SimpleManagerImpl::generateCFRxnManagers(ChemistryData& chem) {
+void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
     
     int ID = 0;
     for(auto &r: chem.linkerBindingReactions) {
@@ -1146,7 +1148,7 @@ void SimpleManagerImpl::generateCFRxnManagers(ChemistryData& chem) {
 }
 
 
-void SimpleManagerImpl::generateGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
+void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
     
      ///go through reactions, add each
     for(auto &r: chem.genReactions) {
@@ -1264,7 +1266,7 @@ void SimpleManagerImpl::generateGeneralReactions(ChemistryData& chem, Compartmen
     }
 }
 
-void SimpleManagerImpl::generateBulkReactions(ChemistryData& chem) {
+void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
     
     ///go through reactions, add each
     for(auto &r: chem.bulkReactions) {
@@ -1381,9 +1383,9 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
         CompartmentGrid::instance(compartmentGridKey())->addSpeciesBulk(get<0>(sb), get<1>(sb));
     
     ///add reactions to protocompartment
-    generateGeneralReactions(chem, cProto);
+    genGeneralReactions(chem, cProto);
     ///generate any bulk reactions
-    generateBulkReactions(chem);
+    genBulkReactions(chem);
     
     ///initialize all compartments equivalent to cproto
     for(auto &c : CompartmentGrid::instance(compartmentGridKey())->children()) {
@@ -1399,9 +1401,9 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     CompartmentGrid::instance(compartmentGridKey())->addChemSimReactions();
     
     ///create internal filament reaction managers
-    generateIFRxnManagers(chem);
+    genIFRxnManagers(chem);
     ///create cross filament reaction managers
-    generateCFRxnManagers(chem);
+    genCFRxnManagers(chem);
 }
 
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "common.h"
+
 #include "MController.h"
 #include "GController.h"
 #include "CController.h"
@@ -28,6 +29,9 @@ private:
     CController _cController; ///< Mechanical Controller
     GController _gController; ///< Geometry controller
     
+    string _inputDirectory; ///< input directory being used
+    string _outputDirectory; ///< output directory being used
+    
     int _numSteps; ///< number of chemical steps we are running
     int _numStepsPerMech; ///<number of chemical steps before mechanical equilibration
 
@@ -37,7 +41,7 @@ public:
     ~Controller() {};
     
     ///Initialize the system
-    void initialize(string inputFile);
+    void initialize(string inputDirectory, string outputDirectory);
     ///update positions of all elements in system
     void updatePositions();
     ///Run the simulation

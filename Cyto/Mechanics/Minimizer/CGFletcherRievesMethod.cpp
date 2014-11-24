@@ -13,14 +13,12 @@
 
 void FletcherRieves::minimize(ForceFieldManager &FFM)
 {
-    //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/beadoutput.txt");
-    //o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::instance()->size(); ///!!!!!! need to know
-	double curVal = FFM.ComputeEnergy(0.0);
-    //cout<<"Energy = "<< curVal <<endl;
-	double prevVal = curVal;
-	FFM.ComputeForces();
+	double curEnergy = FFM.computeEnergy(0.0);
+    cout<<"Energy = "<< curEnergy <<endl;
+	double prevEnergy = curEnergy;
+	FFM.computeForces();
     
     //PrintForces();
     
@@ -35,15 +33,14 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
 		vector<double> newGrad;
 
         lambda = backtrackingLineSearch(FFM);
-        if(lambda < 0) break;
+        if(lambda < 0) lambda = 0.0;
         //cout<<"lambda= "<<lambda<<endl;
         
 		//PrintForces();
         moveBeads(lambda);
         //PrintForces();
-        //o.printBasicSnapshot(numIter);
         
-        FFM.ComputeForcesAux();
+        FFM.computeForcesAux();
         //PrintForces();
         
 		newGradSquare = gradAuxSquare();
@@ -57,8 +54,8 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
 		shiftGradient(beta);
         if(gradDotProduct() <= 0.0) shiftGradient(0);
         
-		prevVal = curVal;
-		curVal = FFM.ComputeEnergy(0.0);
+		prevEnergy = curEnergy;
+		curEnergy = FFM.computeEnergy(0.0);
         
 		gSquare = newGradSquare;
         //cout<<"GradSq=  "<<gradSquare<<endl;
@@ -66,9 +63,9 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
 	}
 	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
     
-	cout << "Fletcher-Rieves Method: " << endl;
-    cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-	printForces();
+	//cout << "Fletcher-Rieves Method: " << endl;
+    //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+	//printForces();
 	
 }
 

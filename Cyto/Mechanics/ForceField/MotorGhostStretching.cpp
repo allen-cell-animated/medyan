@@ -7,8 +7,10 @@
 //
 
 #include "MotorGhostStretching.h"
+
 #include "MotorGhostStretchingHarmonic.h"
-#include "MotorGhostDB.h"
+
+#include "MotorGhost.h"
 #include "Cylinder.h"
 #include "Bead.h"
 

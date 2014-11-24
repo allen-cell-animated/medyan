@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "common.h"
+
 #include "ForceField.h"
 #include "BeadDB.h"
 
@@ -28,7 +29,7 @@ public:
      vector<ForceField*> _forceFields;
     
     //Compute the energy using all available force fields
-    double ComputeEnergy(double d) {
+    double computeEnergy(double d) {
         
         double energy = 0;
         for(auto &f : _forceFields)
@@ -38,21 +39,21 @@ public:
     }
     
     ///Compute the forces of all force fields
-    void ComputeForces() {
-        ResetForces();
+    void computeForces() {
+        resetForces();
         for(auto &f : _forceFields) f->computeForces();
     }
     
     ///Compute the forcesAux of all force fields
-    void ComputeForcesAux() {
-        ResetForcesAux();
+    void computeForcesAux() {
+        resetForcesAux();
         
         for(auto &f : _forceFields)
             f->computeForcesAux();
     }
     
     ///Reset the forces of all objects
-    void ResetForces() {
+    void resetForces() {
         
         for(auto it: *BeadDB::instance()) {
             it->force.assign (3, 0); //Set force to zero;
@@ -60,7 +61,7 @@ public:
     }
     
     ///Reset the forcesAux of all objects
-    void ResetForcesAux() {
+    void resetForcesAux() {
         
         for(auto it: *BeadDB::instance()) {
             it->forceAux.assign (3, 0); //Set forceAux to zero;

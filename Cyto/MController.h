@@ -8,8 +8,11 @@
 
 #ifndef __Cyto__MController__
 #define __Cyto__MController__
+#include <iostream>
+#include <vector>
 
 #include "common.h"
+
 #include "SubSystem.h"
 #include "Parser.h"
 
@@ -30,14 +33,9 @@
 #include "LinkerDB.h"
 #include "MotorGhostDB.h"
 
-#include <iostream>
-#include <vector>
-
-
 ///FORWARD DECLARATIONS
 class PolakRibiere;
 class FletcherRieves;
-
 
 /// MController class is used to initialize and run the mechanical components of a simulation
 

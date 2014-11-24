@@ -10,6 +10,7 @@
 #define __Cyto__FilamentBendingHarmonic__
 
 #include <iostream>
+
 #include "common.h"
 
 ///FORWARD DECLARATIONS

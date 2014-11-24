@@ -9,9 +9,11 @@
 #ifndef __Cyto__ChemManager__
 #define __Cyto__ChemManager__
 
-#include "common.h"
-#include "ChemManagerImpl.h"
 #include <iostream>
+
+#include "common.h"
+
+#include "ChemManagerImpl.h"
 
 ///FORWARD DECLARATIONS
 class Compartment;

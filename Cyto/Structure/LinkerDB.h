@@ -13,6 +13,7 @@
 #include <list>
 
 #include "common.h"
+
 #include "Linker.h"
 
 class SpeciesBound;

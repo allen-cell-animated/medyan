@@ -8,11 +8,11 @@
 
 #include "FilamentFF.h"
 
+#include "FilamentDB.h"
 #include "FilamentStretching.h"
 #include "FilamentStretchingHarmonic.h"
 #include "FilamentBending.h"
 #include "FilamentBendingHarmonic.h"
-#include "FilamentDB.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting)
 {

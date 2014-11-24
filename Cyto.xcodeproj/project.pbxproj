@@ -568,6 +568,8 @@
 		F777FA0719C1F3A800D2850A /* ForceField */ = {
 			isa = PBXGroup;
 			children = (
+				F777FA1719C1F3A800D2850A /* ForceFieldManager.cpp */,
+				F777FA1819C1F3A800D2850A /* ForceFieldManager.h */,
 				F777FA1619C1F3A800D2850A /* ForceField.h */,
 				F777FA0E19C1F3A800D2850A /* FilamentFF.cpp */,
 				F777FA0F19C1F3A800D2850A /* FilamentFF.h */,
@@ -580,8 +582,6 @@
 				F777FA0B19C1F3A800D2850A /* FilamentBending.h */,
 				F777FA0C19C1F3A800D2850A /* FilamentBendingHarmonic.cpp */,
 				F777FA0D19C1F3A800D2850A /* FilamentBendingHarmonic.h */,
-				F777FA1719C1F3A800D2850A /* ForceFieldManager.cpp */,
-				F777FA1819C1F3A800D2850A /* ForceFieldManager.h */,
 				F777FA1919C1F3A800D2850A /* LinkerFF.cpp */,
 				F777FA1A19C1F3A800D2850A /* LinkerFF.h */,
 				F777FA1B19C1F3A800D2850A /* LinkerInteractions.h */,

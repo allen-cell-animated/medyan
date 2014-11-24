@@ -7,6 +7,7 @@
 //
 
 #include "FilamentStretching.h"
+
 #include "FilamentStretchingHarmonic.h"
 #include "Filament.h"
 

@@ -10,18 +10,22 @@
 
 #include "Parser.h"
 #include "Output.h"
-
 #include "BoundaryImpl.h"
-#include "NeighborListDB.h"
-#include "SystemParameters.h"
 
+#include "SystemParameters.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-void Controller::initialize(string inputFile) {
+void Controller::initialize(string inputDirectory, string outputDirectory) {
     
     cout << "******************** CYTOSIM **********************" << endl;
+    
+    //init input directory
+    _inputDirectory = inputDirectory;
+    _outputDirectory = outputDirectory;
+    
+    string inputFile = inputDirectory + "testsysteminput.txt";
     
     ///Parse input, get parameters
     SystemParser p(inputFile);
@@ -32,13 +36,15 @@ void Controller::initialize(string inputFile) {
     
 #ifdef MECHANICS
     ///read algorithm and types
-    MTypes = p.readMechanicsFFType(); MAlgorithm = p.readMechanicsAlgorithm();
+    MTypes = p.readMechanicsFFType();
+    MAlgorithm = p.readMechanicsAlgorithm();
     
     ///read const parameters
     p.readMechanicsParameters();
 #endif
     ///Always read boundary type
-    BTypes = p.readBoundaryType(); p.readBoundaryParameters();
+    BTypes = p.readBoundaryType();
+    p.readBoundaryParameters();
     
     ///Always read geometry
     p.readGeometryParameters();
@@ -83,7 +89,8 @@ void Controller::initialize(string inputFile) {
     ///Initialize chemical controller
     cout << "Initializing chemistry...";
     ///read algorithm
-    CAlgorithm = p.readChemistryAlgorithm(); ChemistrySetup CSetup = p.readChemistrySetup();
+    CAlgorithm = p.readChemistryAlgorithm();
+    ChemistrySetup CSetup = p.readChemistrySetup();
     
     //num steps for sim
     _numSteps = CAlgorithm.numSteps;
@@ -92,7 +99,7 @@ void Controller::initialize(string inputFile) {
     ChemistryData chem;
     
     if(CSetup.inputFile != "") {
-        ChemistryParser cp(CSetup.inputFile);
+        ChemistryParser cp(_inputDirectory + CSetup.inputFile);
         chem = cp.readChemistryInput();
     }
     else {
@@ -109,7 +116,7 @@ void Controller::initialize(string inputFile) {
     cout << "Initializing filaments...";
     
     if(FSetup.inputFile != "") {
-        FilamentParser fp(FSetup.inputFile);
+        FilamentParser fp(_inputDirectory + FSetup.inputFile);
         filamentData = fp.readFilaments();
     }
     else {
@@ -126,11 +133,11 @@ void Controller::initialize(string inputFile) {
             double firstY = dU(generator) * SystemParameters::Geometry().compartmentSizeY *
                                             SystemParameters::Geometry().NY;
             double firstZ = dU(generator) * SystemParameters::Geometry().compartmentSizeZ *
-                                            SystemParameters::Geometry().NZ;
+                                            SystemParameters::Geometry().NZ * 0.1;
             
             double directionX = dUNeg(generator);
             double directionY = dUNeg(generator);
-            double directionZ = dUNeg(generator);
+            double directionZ = dU(generator);
             
             ///Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};
@@ -182,9 +189,9 @@ void Controller::run() {
     
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
+    
     ///Set up filament output file
-    //Output o("/Users/Konstantin/Documents/Codes/Cyto/CytoRepo/Cyto/filamentoutput.txt");
-    Output o("/Users/jameskomianos/Code/CytoSim-Repo/Cyto/filamentoutput.txt");
+    Output o(_outputDirectory + "filamentoutput.txt");
     o.printBasicSnapshot(0);
     
     cout << "Starting simulation..." << endl;

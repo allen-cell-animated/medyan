@@ -11,6 +11,9 @@
 
 #include <iostream>
 #include <vector>
+
+#include "common.h"
+
 #include "CompartmentContainer.h"
 #include "SystemParameters.h"
 

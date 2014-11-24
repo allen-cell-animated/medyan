@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <ios>
+
 #include "common.h"
 
 ///Struct to hold mechanics algorithm information

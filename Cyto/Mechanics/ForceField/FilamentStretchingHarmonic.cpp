@@ -7,7 +7,9 @@
 //
 
 #include "FilamentStretchingHarmonic.h"
+
 #include "Bead.h"
+
 #include "MathFunctions.h"
 
 using namespace mathfunc;

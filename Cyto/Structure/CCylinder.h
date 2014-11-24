@@ -12,8 +12,9 @@
 #include <iostream>
 
 #include "common.h"
-#include "Compartment.h"
+
 #include "CMonomer.h"
+#include "Compartment.h"
 #include "SystemParameters.h"
 
 ///FORWARD DECLARATIONS

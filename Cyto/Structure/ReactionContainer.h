@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "common.h"
-#include "ReactionBase.h"
+
 #include "Reaction.h"
     
 ///An abstract interface for a container of pointers to reaction objects

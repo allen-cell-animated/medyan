@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "common.h"
+
 #include "NeighborListDB.h"
 
 ///Neighbor class is a class that can be added/removed from a neighborlist

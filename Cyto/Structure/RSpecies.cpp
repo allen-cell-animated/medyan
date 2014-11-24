@@ -7,6 +7,7 @@
 //
 
 #include "RSpecies.h"
+
 #include "Reaction.h"
 
 #ifdef BOOST_MEM_POOL

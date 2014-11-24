@@ -13,8 +13,10 @@
 #include <vector>
 
 #include "common.h"
+
 #include "CompartmentContainer.h"
 
+///FORWARD DECLARATIONS
 class Filament;
 class CCylinder;
 class ReactionBase;

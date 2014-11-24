@@ -12,10 +12,10 @@
 #include <iostream>
 
 #include "common.h"
+
 #include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
-
 #include "Neighbor.h"
 
 ///FORWARD DECLARATIONS

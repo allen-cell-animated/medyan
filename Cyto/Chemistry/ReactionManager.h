@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "common.h"
+
 #include "NeighborListContainer.h"
 #include "CompartmentContainer.h"
 

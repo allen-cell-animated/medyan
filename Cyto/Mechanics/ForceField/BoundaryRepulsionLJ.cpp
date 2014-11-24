@@ -7,6 +7,7 @@
 //
 
 #include "BoundaryRepulsionLJ.h"
+
 #include "Bead.h"
 
 double BoundaryRepulsionLJ::computeEnergy(Bead* b, double r, double k_rep, double screenLength)

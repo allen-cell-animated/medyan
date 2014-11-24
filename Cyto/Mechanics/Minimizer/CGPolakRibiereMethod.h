@@ -18,7 +18,8 @@
 #include <math.h>
 #include <algorithm>
 
-#include "common.H"
+#include "common.h"
+
 #include "CGMethod.h"
 
 class PolakRibiere : public CGMethod

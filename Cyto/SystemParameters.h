@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include "common.h"
 
 ///Struct to hold the read mechanics parameters

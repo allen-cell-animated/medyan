@@ -14,6 +14,8 @@
 #include <deque>
 #include <typeinfo>
 
+#include "common.h"
+
 #include "Component.h"
 #include "Species.h"
 

@@ -17,6 +17,7 @@
 #include <algorithm>
 
 #include "common.h"
+
 #include "CGMethod.h"
 
 class FletcherRieves : public CGMethod {

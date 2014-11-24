@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "common.h"
+
 #include "Bead.h"
 
 ///BeadDB class is a database for all beads in the system

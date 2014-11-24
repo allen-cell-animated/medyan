@@ -5,10 +5,9 @@
 //  Created by Konstantin Popov on 6/30/14.
 //  Copyright (c) 2014 Konstantin Popov. All rights reserved.
 //
-#include <vector>
-#include "MathFunctions.h"
 #include "MCylinder.h"
-#include "Bead.h"
+
+#include "MathFunctions.h"
 #include "SystemParameters.h"
 
 using namespace mathfunc;

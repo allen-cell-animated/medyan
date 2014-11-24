@@ -5,10 +5,13 @@
 //  Created by James Komianos on 9/10/14.
 //  Copyright (c) 2014 University of Maryland. All rights reserved.
 //
+#include <cmath>
 
 #include "CGMethod.h"
+
 #include "ForceFieldManager.h"
-#include <cmath>
+#include "BeadDB.h"
+
 
 inline void CGMethod::swap(double &a, double &b) {
     double tmp = a;
@@ -38,8 +41,8 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
     const double GLIMIT = 100.0, TINY = 1.0e-20;
     double ulim, u, r, q, fu;
     
-    fa = FFM.ComputeEnergy(ax);
-    fb = FFM.ComputeEnergy(bx);
+    fa = FFM.computeEnergy(ax);
+    fb = FFM.computeEnergy(bx);
     
     ///go in correct direction
     if (fb > fa){
@@ -49,7 +52,7 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
 
     //first guess
     cx = bx + PHI * (bx - ax);
-    fc = FFM.ComputeEnergy(cx);
+    fc = FFM.computeEnergy(cx);
     
     while(fb > fc) {
         
@@ -60,7 +63,7 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
         ulim = bx + GLIMIT * (cx - bx);
         
         if ((bx - u) * (u - cx) > 0.0) {
-            fu = FFM.ComputeEnergy(u);
+            fu = FFM.computeEnergy(u);
             if (fu < fc) {
                 ax = bx;
                 bx = u;
@@ -74,24 +77,24 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
                 return;
             }
             u = cx + PHI * (cx - bx);
-            fu = FFM.ComputeEnergy(u);
+            fu = FFM.computeEnergy(u);
         }
         else if ((cx - u) * (u - ulim) > 0.0) {
             
-            fu = FFM.ComputeEnergy(u);
+            fu = FFM.computeEnergy(u);
             if (fu < fc) {
                 shift3(bx, cx, u, cx + PHI * (cx - bx));
-                shift3(fb, fc, fu, FFM.ComputeEnergy(u));
+                shift3(fb, fc, fu, FFM.computeEnergy(u));
             }
         }
         else if((u - ulim) * (ulim - cx) >= 0.0) {
             
             u = ulim;
-            fu = FFM.ComputeEnergy(u);
+            fu = FFM.computeEnergy(u);
         }
         else {
             u = cx + PHI * (cx - bx);
-            fu = FFM.ComputeEnergy(u);
+            fu = FFM.computeEnergy(u);
         }
         shift3(ax, bx, cx, u);
         shift3(fa, fb, fc, fu);
@@ -182,7 +185,7 @@ double CGMethod::goldenSection1(ForceFieldManager& FFM)
     
 	while (fabs(b - a) > LSENERGYTOL)
 	{
-		if (FFM.ComputeEnergy(x1) >= FFM.ComputeEnergy(x2) ){
+		if (FFM.computeEnergy(x1) >= FFM.computeEnergy(x2) ){
             a = x1;
             x1 = x2;
             x2 =a + inv_phi * (b - a);
@@ -216,17 +219,17 @@ double CGMethod::goldenSection2(ForceFieldManager& FFM) {
         x2 = bx;
         x1 = bx - C * (bx - ax);
     }
-    f1 = FFM.ComputeEnergy(x1);
-    f2 = FFM.ComputeEnergy(x2);
+    f1 = FFM.computeEnergy(x1);
+    f2 = FFM.computeEnergy(x2);
     
     while (fabs(x3 - x0) > LSENERGYTOL * (fabs(x1) + fabs(x2))) {
         if (f2 < f1) {
             shift3(x0, x1, x2, R * x2 + C * x3);
-            shift2(f1, f2, FFM.ComputeEnergy(x2));
+            shift2(f1, f2, FFM.computeEnergy(x2));
         }
         else {
             shift3(x3, x2, x1, R * x1 + C * x0);
-            shift2(f2, f1, FFM.ComputeEnergy(x1));
+            shift2(f2, f1, FFM.computeEnergy(x1));
         }
     }
     double returnLambda;
@@ -247,7 +250,7 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
         
         double half_x1 = ((a + b)/2 - LSENERGYTOL/4);
         double half_x2 = ((a + b)/2 + LSENERGYTOL/4);
-        if (FFM.ComputeEnergy(half_x1) <= FFM.ComputeEnergy(half_x2)) b = half_x2;
+        if (FFM.computeEnergy(half_x1) <= FFM.computeEnergy(half_x2)) b = half_x2;
         else a = half_x1;
     }
      return (a + b) / 2;
@@ -265,21 +268,20 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
     ///return error if in wrong direction
-    //directionDotForce /= BeadDB::Instance(getBeadDBKey())->size();
-    if(directionDotForce < 0.0)
-        return -1.0;
+    directionDotForce /= BeadDB::instance()->size();
+    if(directionDotForce < 0.0) return -1.0;
     
     ///return zero if no forces
     if(maxDirection == 0.0) return 0.0;
     
     ///calculate first lambda. cannot be greater than lambda max
     double lambda = min(LAMBDAMAX, MAXDIST / maxDirection);
-    double currentEnergy = FFM.ComputeEnergy(0.0);
+    double currentEnergy = FFM.computeEnergy(0.0);
     
     ///backtracking loop
     while(true) {
         
-        double energyLambda = FFM.ComputeEnergy(lambda);
+        double energyLambda = FFM.computeEnergy(lambda);
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * directionDotForce;
         double energyChange = energyLambda - currentEnergy;
         
@@ -293,9 +295,9 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         
         //cout << "lambda reduced" << endl;
         
-        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
+        if(lambda <= 0 || idealEnergyChange >= -LSENERGYTOL) {
             
-            if(energyChange < -LSENERGYTOL) {
+            if(energyChange < 0) {
                 _energyChangeCounter = 0;
                 return lambda;
             }
@@ -311,50 +313,50 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
 double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     
     //Forces are used as directions of outer loop minimization (CG). ForceAux -- forces on the beads.
-    double conjugateDirectionDotForce = 0.0;
+    double directionDotForce = 0.0;
     double maxDirection = 0.0;
     
     for(auto it: *BeadDB::instance()) {
-        conjugateDirectionDotForce += it->calcDotForceProduct();
+        directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
     ///return error if in wrong direction
-    if(conjugateDirectionDotForce < 0.0)  return -1.0;
+    directionDotForce /= BeadDB::instance()->size();
+    if(directionDotForce < 0.0)  return -1.0;
     
     ///return zero if no forces
     if(maxDirection == 0.0) return 0.0;
     
     ///first lambda is lambda max
     double lambda = LAMBDAMAX;
-    double conjugateDirectionDotForcePrev = conjugateDirectionDotForce;
-    double energyPrev = FFM.ComputeEnergy(0.0);
+    double directionDotForcePrev = directionDotForce;
+    double energyPrev = FFM.computeEnergy(0.0);
     double lambdaPrev = 0.0;
     
     ///backtracking loop
     while (true) {
         
-        double energy = FFM.ComputeEnergy(lambda);
+        double energy = FFM.computeEnergy(lambda);
+        
+        ///move and compute new forces
         moveBeadsAux(lambda);
-        FFM.ComputeForcesAux();
-        conjugateDirectionDotForce = gradDotProduct();
+        FFM.computeForcesAux();
         
-        double deltaConjugateDirectionDotForce = conjugateDirectionDotForce - conjugateDirectionDotForcePrev;
+        directionDotForce = gradDotProduct() / BeadDB::instance()->size();
         
-        if(fabs(conjugateDirectionDotForce) < EPSQUAD
-           || fabs(deltaConjugateDirectionDotForce) < EPSQUAD ) { return -1.0; }
+        double deltaDirectionDotForce = directionDotForce - directionDotForcePrev;
         
-        double relativeErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
-                                  (conjugateDirectionDotForce + conjugateDirectionDotForcePrev)
-                                   + energy) / energyPrev);
-        double lambda0 = lambda - (lambda - lambdaPrev) *
-                         conjugateDirectionDotForce / deltaConjugateDirectionDotForce;
+        if(fabs(directionDotForce) < EPSQUAD || fabs(deltaDirectionDotForce) < EPSQUAD ) { return -1.0; }
+        
+        double relativeErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) * (directionDotForce + directionDotForcePrev) + energy) / energyPrev);
+        double lambda0 = lambda - (lambda - lambdaPrev) * directionDotForce / deltaDirectionDotForce;
         
         if(relativeErr <= QUADRATICTOL && lambda0 > 0.0 && lambda0 < LAMBDAMAX ) {
             _energyChangeCounter = 0;
             return lambda;
         }
         
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjugateDirectionDotForce;
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * directionDotForce;
         double energyChange = energy - energyPrev;
         
         if(energyChange <= idealEnergyChange) {
@@ -362,7 +364,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
             return lambda;
         }
         
-        conjugateDirectionDotForcePrev = conjugateDirectionDotForce;
+        directionDotForcePrev = directionDotForce;
         energyPrev = energy;
         lambdaPrev = lambda;
         

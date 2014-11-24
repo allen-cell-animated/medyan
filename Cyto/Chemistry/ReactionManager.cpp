@@ -9,8 +9,6 @@
 #include "ReactionManager.h"
 
 #include "ChemCallbacks.h"
-#include "Bead.h"
-#include "Filament.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"

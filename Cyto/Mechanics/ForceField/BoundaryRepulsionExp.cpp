@@ -7,8 +7,8 @@
 //
 
 #include "BoundaryRepulsionExp.h"
+
 #include "Bead.h"
-#include <math.h>
 
 double BoundaryRepulsionExp::computeEnergy(Bead* b, double r, double k_rep, double screenLength)
 {

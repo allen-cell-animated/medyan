@@ -26,8 +26,8 @@
 #include "CylinderExclVolRepulsion.h"
 
 #include "Bead.h"
+
 #include "MathFunctions.h"
-#include <math.h>
 
 using namespace mathfunc;
 
