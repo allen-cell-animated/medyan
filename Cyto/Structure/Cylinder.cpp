@@ -92,4 +92,5 @@ void Cylinder::updatePosition() {
 
 }
 
+void Cylinder::updateReactionRates() {}
 

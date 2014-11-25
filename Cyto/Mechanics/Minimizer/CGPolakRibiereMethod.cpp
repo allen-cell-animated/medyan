@@ -68,5 +68,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
     
 	//cout << "Polak-Ribiere Method: " << endl;
     //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    //printForces();
+    printForces();
 }

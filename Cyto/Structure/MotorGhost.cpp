@@ -126,3 +126,5 @@ void MotorGhost::updatePosition() {
 #endif
     }
 }
+
+void MotorGhost::updateReactionRates() {}

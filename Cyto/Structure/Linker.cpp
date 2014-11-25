@@ -124,3 +124,6 @@ void Linker::updatePosition() {
 #endif
     }
 }
+
+void Linker::updateReactionRates() {}
+

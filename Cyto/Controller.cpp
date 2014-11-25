@@ -164,10 +164,19 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
 
 void Controller::updateSystem() {
     
-    ///Update all positions
-    for(auto &m : _subSystem->getMovables()) m->updatePosition();
-    ///Update all reactions
-    for(auto &r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto &c : *CylinderDB::instance())
+        c->updatePosition();
+    for(auto &b : *BeadDB::instance())
+        b->updatePosition();
+    for(auto &l : *LinkerDB::instance())
+        l->updatePosition();
+    for(auto &m : *MotorGhostDB::instance())
+        m->updatePosition();
+    
+//    ///Update all positions
+//    for(auto &m : _subSystem->getMovables()) m->updatePosition();
+//    ///Update all reactions
+//    for(auto &r : _subSystem->getReactables()) r->updateReactionRates();
     
     ///reset neighbor lists
     NeighborListDB::instance()->resetAll();

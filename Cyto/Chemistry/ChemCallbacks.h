@@ -14,6 +14,10 @@
 #include "common.h"
 
 #include "SubSystem.h"
+#include "Filament.h"
+#include "MotorGhost.h"
+#include "Linker.h"
+
 #include "SystemParameters.h"
 
 ///FILAMENT REACTION CALLBACKS
