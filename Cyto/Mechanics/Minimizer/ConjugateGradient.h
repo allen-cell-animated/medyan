@@ -10,12 +10,12 @@
 #define Cyto_ConjugateGradient_h
 
 #include "common.h"
+
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 
 ///FORWARD DECLARATIONS
 class ForceFieldManager;
-class Minimizer;
 
 template <class CGType>
 class ConjugateGradient : public Minimizer {

@@ -16,32 +16,11 @@
 #include "NeighborListDB.h"
 
 
-///NLContainer is an abstract class used for any interaction that needs a neighborlist
-class NLContainer {
-    
-protected:
-    NeighborList* _neighborList; ///< the neighborlist that this holds
-    
-    ///Default constructor
-    NLContainer() {}
-    
-public:
-    ///Destructor, removes this neighborlist from DB
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
-    virtual ~NLContainer() noexcept {
-        NeighborListDB::instance()->removeNeighborList(_neighborList);
-    }
-    
-    ///Setter and getter for neighborlist
-    NeighborList* getNeighborList() { return _neighborList; }
-};
+/// CylinderNLContainer, holds a cylinder neighbor list.
+class CylinderNLContainer {
 
-
-/// CylinderNLContainer, a concrete implementation of
-/// neighbor list container. Holds a cylinder neighbor list.
-class CylinderNLContainer : public NLContainer {
+private:
+    CylinderNeighborList* _neighborList;
     
 public:
     ///constructor, adds a cylinder neighbor list to the database
@@ -50,13 +29,18 @@ public:
         _neighborList = NeighborListDB::instance()->
                         createCylinderNeighborList(rMax, rMin, crossFilamentOnly);
     }
-    ~CylinderNLContainer() {}
+    ~CylinderNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
+    
+    CylinderNeighborList* getNeighborList() {return _neighborList;}
+    
 };
 
-/// BoundaryElementNLContainer, a concrete implementation of
-/// neighbor list container. Holds a boundary element / bead neighbor list.
-class BoundaryElementNLContainer : public NLContainer {
+/// BoundaryElementNLContainer, holds a boundary element / bead neighbor list.
+class BoundaryElementNLContainer {
     
+private:
+    BoundaryElementNeighborList* _neighborList;
+
 public:
     ///constructor, adds a cylinder neighbor list to the database
     BoundaryElementNLContainer(float rMax = 0.0, float rMin = 0.0) {
@@ -64,7 +48,9 @@ public:
         _neighborList = NeighborListDB::instance()->
                         createBoundaryElementNeighborList(rMax, rMin);
     }
-    ~BoundaryElementNLContainer() {}
+    ~BoundaryElementNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
+    
+    BoundaryElementNeighborList* getNeighborList() {return _neighborList;}
 };
 
 

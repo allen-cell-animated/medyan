@@ -10,6 +10,7 @@
 
 #include "BoundaryElementDB.h"
 #include "NeighborListDB.h"
+#include "Compartment.h"
 
 #include "MathFunctions.h"
 #include "SystemParameters.h"

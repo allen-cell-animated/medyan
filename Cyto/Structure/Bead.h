@@ -17,8 +17,7 @@
 
 #include "Component.h"
 #include "Neighbor.h"
-#include "Compartment.h"
-#include "GController.h"
+#include "Movable.h"
 
 ///FORWARD DECLARATIONS
 class Compartment;
@@ -32,7 +31,7 @@ class Cylinder;
  * and i-1 bead.
  */
 
-class Bead : public Component, public Neighbor {
+class Bead : public Component, public Neighbor, public Movable {
 public:
 
     vector<double> coordinate; ///< Coordinates of the bead
@@ -55,20 +54,11 @@ public:
     double calcForceAuxSquare() {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
     double calcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
     
-    ///add a boundary element to list of interacting boundary elements
-    void addBoundaryElement(BoundaryElement* be) {_boundaryElements.push_back(be);}
-    ///Remove a boundary element from list of interacting boundary elements
-    ///@note does nothing if boundary element is not in interacting list already
-    void removeBoundaryElement(BoundaryElement* be) {
-        auto it = find(_boundaryElements.begin(), _boundaryElements.end(), be);
-        if(it != _boundaryElements.end()) _boundaryElements.erase(it);
-    }
-    
     ///Set and get compartment
     Compartment* getCompartment() {return _compartment;}
     
-    ///update the position of this bead (and interaction boundary elements)
-    void updatePosition();
+    ///update the position of this bead
+    virtual void updatePosition();
     
     ///getters for bead data
     void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
@@ -79,7 +69,6 @@ public:
     
 private:
     Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
-    vector<BoundaryElement*> _boundaryElements; ///<list of currently interacting boundary elements
     
     int _positionFilament; ///Position of bead on filament
     float _birthTime; ///Time of birth of bead;

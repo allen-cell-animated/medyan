@@ -12,15 +12,11 @@
 
 double BoundaryRepulsionLJ::computeEnergy(Bead* b, double r, double k_rep, double screenLength)
 {
-    assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
-    
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     return k_rep * inv_r4;
 }
 
-void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm, double k_rep, double screenLength){
-    
-    assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
+void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm, double k_rep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     
@@ -29,9 +25,7 @@ void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm,
     b->force[2] +=  k_rep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
 }
 
-void BoundaryRepulsionLJ::computeForcesAux(Bead* b, double r, vector<double>& norm,  double k_rep, double screenLength){
-    
-    assert(r != 0 && "Boundary repulsion cannot be calculated, distance from boundary is zero.");
+void BoundaryRepulsionLJ::computeForcesAux(Bead* b, double r, vector<double>& norm,  double k_rep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     

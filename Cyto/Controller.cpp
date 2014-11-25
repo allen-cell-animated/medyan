@@ -122,7 +122,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     else {
         ///Create random distribution of filaments
         default_random_engine generator;
-        uniform_real_distribution<double> dU(0,1);
+        uniform_real_distribution<double> dU(0.0,1.0);
         uniform_real_distribution<double> dUNeg(-1,1);
         
         int filamentCounter = 0;
@@ -141,13 +141,9 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
             
             ///Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};
-            auto normFactor = sqrt(directionX * directionX +
-                                   directionY * directionY +
-                                   directionZ * directionZ);
+            auto normFactor = sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
             
-            vector<double> direction = {directionX/normFactor,
-                                        directionY/normFactor,
-                                        directionZ/normFactor};
+            vector<double> direction = {directionX/normFactor, directionY/normFactor, directionZ/normFactor};
             vector<double> secondPoint = NextPointProjection(firstPoint,
                     (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
@@ -162,17 +158,16 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     _subSystem->addNewFilaments(filamentData);
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
     
-    ///First update of positions
-    updatePositions();
+    ///First update of system
+    updateSystem();
 }
 
-void Controller::updatePositions() {
+void Controller::updateSystem() {
     
     ///Update all positions
-    for(auto &b : *BeadDB::instance()) b->updatePosition();
-    for(auto &c : *CylinderDB::instance()) c->updatePosition();
-    for(auto &l : *LinkerDB::instance()) l->updatePosition();
-    for(auto &m : *MotorGhostDB::instance()) m->updatePosition();
+    for(auto &m : _subSystem->getMovables()) m->updatePosition();
+    ///Update all reactions
+    for(auto &r : _subSystem->getReactables()) r->updateReactionRates();
     
     ///reset neighbor lists
     NeighborListDB::instance()->resetAll();
@@ -199,7 +194,7 @@ void Controller::run() {
     ///perform first minimization
 #ifdef MECHANICS
     _mController.run();
-    updatePositions();
+    updateSystem();
 #endif
     
 #if defined(CHEMISTRY)
@@ -209,7 +204,7 @@ void Controller::run() {
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
         _mController.run();
-        updatePositions();
+        updateSystem();
         o.printBasicSnapshot(i + _numStepsPerMech);
 #elif defined(MECHANICS)
         _mController.run();

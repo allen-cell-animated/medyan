@@ -30,8 +30,7 @@ double BoundaryFF::computeEnergy(double d) {
         auto neighborList = boundaryInteraction->getNeighborList();
         for (auto boundaryElement: *BoundaryElementDB::instance()) {
             
-            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
-                Bead* bead = static_cast<Bead*>(neighbor);
+            for(auto &bead : neighborList->getNeighbors(boundaryElement)) {
                 U += boundaryInteraction->computeEnergy(boundaryElement, bead, d);
             }
         }
@@ -46,11 +45,8 @@ void BoundaryFF::computeForces() {
         auto neighborList = boundaryInteraction->getNeighborList();
         for (auto boundaryElement: *BoundaryElementDB::instance()) {
             
-            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
-                Bead* bead = static_cast<Bead*>(neighbor);
+            for(auto &bead : neighborList->getNeighbors(boundaryElement)) {
                 boundaryInteraction->computeForces(boundaryElement, bead);
-                
-                cout << "Forces on edge bead = " << bead->force[0] << " " << bead->force[1] << " " << bead->force[2] << endl;
             }
         }
     }
@@ -63,8 +59,7 @@ void BoundaryFF::computeForcesAux() {
         auto neighborList = boundaryInteraction->getNeighborList();
         for (auto boundaryElement: *BoundaryElementDB::instance()) {
             
-            for(auto &neighbor : neighborList->getNeighbors(boundaryElement)) {
-                Bead* bead = static_cast<Bead*>(neighbor);
+            for(auto &bead : neighborList->getNeighbors(boundaryElement)) {
                 boundaryInteraction->computeForcesAux(boundaryElement, bead);
             }
         }

@@ -16,23 +16,18 @@
 #include "NeighborListDB.h"
 
 ///Neighbor class is a class that can be added/removed from a neighborlist
-///@note - any subclass that inherits from Neighbor MUST add itself to the neighbors list DB.
+///@note - any subclass that inherits from Neighbor MUST add and remove itself to the neighbors list DB.
 class Neighbor {
     
 protected:
     ///Constructor
     Neighbor() {}
     
-public:
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
-    virtual ~Neighbor() noexcept {
-        ///remove from neighbor lists
-        NeighborListDB::instance()->removeNeighbor(this);
-    }
-    
+    virtual ~Neighbor() noexcept {}
 };
 
 #endif /* defined(__Cyto__Neighbor__) */

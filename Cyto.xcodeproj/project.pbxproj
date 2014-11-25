@@ -375,6 +375,8 @@
 		F786BC3B19C2446B00297D03 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_species.cpp; path = Cyto/TESTS/test_species.cpp; sourceTree = SOURCE_ROOT; };
 		F786BC3C19C2446B00297D03 /* test_visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_visitor.cpp; path = Cyto/TESTS/test_visitor.cpp; sourceTree = SOURCE_ROOT; };
 		F78D07581A23BC2500DB2E80 /* test_filaments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_filaments.cpp; path = Cyto/TESTS/test_filaments.cpp; sourceTree = SOURCE_ROOT; };
+		F78D075B1A25190F00DB2E80 /* Movable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Movable.h; path = Cyto/Movable.h; sourceTree = SOURCE_ROOT; };
+		F78D075D1A25197000DB2E80 /* Reactable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reactable.h; sourceTree = SOURCE_ROOT; };
 		F78D5E7919C8947A00F48A16 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
 		F78D5E7A19C8947A00F48A16 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -493,6 +495,8 @@
 				F746C4DA1A11596E0085E4BB /* NeighborListDB.h */,
 				F7D1BE441A140DEC0066DEF1 /* NeighborListContainer.cpp */,
 				F7D1BE451A140DEC0066DEF1 /* NeighborListContainer.h */,
+				F78D075B1A25190F00DB2E80 /* Movable.h */,
+				F78D075D1A25197000DB2E80 /* Reactable.h */,
 			);
 			name = Structure;
 			path = CytoMech;

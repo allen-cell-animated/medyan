@@ -173,18 +173,6 @@ void CCylinder::removeAllReactingCylinders() {
 }
 
 
-//void CCylinder::activateReactions()
-//{
-//    ///loop through all reactions, passivate/ activate
-//    for(auto &r : _internalReactions) r->activateReaction();
-//    
-//    for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++)
-//        for(auto &r : it->second) r->activateReaction();
-//    
-//    for(auto &cc : _reactingCylinders) 
-//        for (auto &r : cc->_crossCylinderReactions[this]) r->activateReaction();
-//}
-
 void CCylinder::printCCylinder()
 {
     cout << "Compartment:" << _compartment << endl;

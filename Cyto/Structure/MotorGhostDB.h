@@ -43,13 +43,13 @@ public:
     
     static MotorGhostDB* instance();
     
-    void createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                          double position1 = 0.5, double position2 = 0.5, bool creation = false) {
+    MotorGhost* createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                                 double position1 = 0.5, double position2 = 0.5, bool creation = false) {
     
-        MotorGhost* pmg = new MotorGhost(c1, c2, motorType, _currentMotorID++, position1, position2, creation);
-        push_back(pmg);
+        MotorGhost* mg = new MotorGhost(c1, c2, motorType, _currentMotorID++, position1, position2, creation);
+        push_back(mg);
         
-        //return pmg;
+        return mg;
     }
     
     void removeMotorGhost(MotorGhost* mg) {

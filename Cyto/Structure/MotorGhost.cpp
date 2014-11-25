@@ -14,6 +14,8 @@
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
+#include "GController.h"
+
 using namespace mathfunc;
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID, double position1, double position2, bool creation)

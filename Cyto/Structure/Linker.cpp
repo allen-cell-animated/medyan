@@ -14,6 +14,8 @@
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
+#include "GController.h"
+
 using namespace mathfunc;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, double position1, double position2, bool creation) :

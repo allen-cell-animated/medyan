@@ -43,11 +43,13 @@ public:
     
     static LinkerDB* instance();
     
-    void createLinker(Cylinder* c1, Cylinder* c2, short linkerType,
+    Linker* createLinker(Cylinder* c1, Cylinder* c2, short linkerType,
                       double position1 = 0.5, double position2 = 0.5, bool creation = false) {
         
-        Linker* pl = new Linker(c1, c2, linkerType, _currentLinkerID++, position1, position2, creation);
-        push_back(pl);
+        Linker* l = new Linker(c1, c2, linkerType, _currentLinkerID++, position1, position2, creation);
+        push_back(l);
+        
+        return l;
     }
 
     void removeLinker(Linker* l) {

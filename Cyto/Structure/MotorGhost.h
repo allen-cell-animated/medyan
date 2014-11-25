@@ -16,6 +16,8 @@
 #include "Composite.h"
 #include "CMotorGhost.h"
 #include "MMotorGhost.h"
+#include "Movable.h"
+#include "Reactable.h"
 
 ///FORWARD DECLARATIONS
 class Cylinder;
@@ -26,7 +28,7 @@ class Cylinder;
  * It contains a constructor as well as getters for mmotorghost and cmotorghost.
  */
 
-class MotorGhost : public Composite{
+class MotorGhost : public Composite, public Movable, public Reactable {
    
 private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< ptr to mMotorGhost
@@ -77,8 +79,10 @@ public:
     
     ///Update the position of this Linker
     ///@note - changes compartment of clinker if needed
-    void updatePosition();
+    virtual void updatePosition();
 
+    ///Update the reaction rates of this linker
+    virtual void updateReactionRates();
 
 };
 

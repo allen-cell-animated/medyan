@@ -41,17 +41,17 @@ public:
     static NeighborListDB* instance();
     
     ///create a cylinder neighbor list
-    NeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
+    CylinderNeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
-        NeighborList* n = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
+        CylinderNeighborList* n = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
         push_back(n);
         
         return n;
     }
     ///create a cylinder neighbor list
-    NeighborList* createBoundaryElementNeighborList(float rMax = 0.0, float rMin = 0.0) {
+    BoundaryElementNeighborList* createBoundaryElementNeighborList(float rMax = 0.0, float rMin = 0.0) {
         
-        NeighborList* n = new BoundaryElementNeighborList(rMax, rMin);
+        BoundaryElementNeighborList* n = new BoundaryElementNeighborList(rMax, rMin);
         push_back(n);
         
         return n;

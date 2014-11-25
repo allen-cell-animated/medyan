@@ -14,9 +14,13 @@
 #include "common.h"
 
 #include "Composite.h"
-#include "Cylinder.h"
 #include "CLinker.h"
 #include "MLinker.h"
+#include "Movable.h"
+#include "Reactable.h"
+
+///FORWARD DECLARATIONS
+class Cylinder;
 
 ///Linker class is a wrapper for a chemical and mechanical linker
 /*!
@@ -24,7 +28,7 @@
  * It contains a constructor as well as getters for mlinker and clinker.
  */
 
-class Linker : public Composite {
+class Linker : public Composite, public Movable, public Reactable {
 
 private:
     unique_ptr<MLinker> _mLinker; ///< ptr to mLinker
@@ -71,7 +75,10 @@ public:
     
     ///Update the position of this Linker
     ///@note - changes compartment of clinker if needed
-    void updatePosition();
+    virtual void updatePosition();
+    
+    ///Update the reaction rates of this linker
+    virtual void updateReactionRates();
     
 };
 

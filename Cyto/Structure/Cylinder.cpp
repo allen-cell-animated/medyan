@@ -63,6 +63,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
 Cylinder::~Cylinder() {
     ///remove from compartment
     _compartment->removeCylinder(this);
+    
+    ///remove from neighbor lists
+    NeighborListDB::instance()->removeNeighbor(this);
 }
 
 void Cylinder::updatePosition() {

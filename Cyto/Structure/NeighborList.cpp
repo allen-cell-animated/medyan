@@ -9,19 +9,30 @@
 #include "NeighborList.h"
 
 #include "BeadDB.h"
-#include "GController.h"
 #include "Cylinder.h"
 #include "BoundaryElement.h"
 
 #include "MathFunctions.h"
 
+#include "GController.h"
+
 using namespace mathfunc;
+
+void CylinderNeighborList::addNeighbor(Neighbor* n) {
+    
+    ///return if not a cylinder!
+    if(!dynamic_cast<Cylinder*>(n)) return;
+    
+    ///update neighbors
+    updateNeighbors(n);
+    
+}
 
 void CylinderNeighborList::updateNeighbors(Neighbor* n) {
 
     ///clear existing
+    _list[n].clear();
     Cylinder* cylinder = static_cast<Cylinder*>(n);
-    _list[cylinder].clear();
     
     ///Find surrounding compartments (For now its conservative, change soon)
     vector<Compartment*> compartments;
@@ -56,41 +67,50 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     }
 }
 
-void CylinderNeighborList::addNeighbor(Neighbor* n) {
+vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
     
-    ///return if not a cylinder!
-    if(!dynamic_cast<Cylinder*>(n)) return;
+    auto neighbors = _list[cylinder];
+    vector<Cylinder*> cylinderNeighbors(_list[cylinder].size());
+    
+    transform(neighbors.begin(), neighbors.end(), cylinderNeighbors.begin(),
+              [](Neighbor* n){return static_cast<Cylinder*>(n);});
+    return vector<Cylinder*>(cylinderNeighbors.begin(), cylinderNeighbors.end());
+}
+
+void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
+    
+    ///return if not a boundary element!
+    if(!dynamic_cast<BoundaryElement*>(n)) return;
+    
     ///update neighbors
     updateNeighbors(n);
-    
 }
 
 void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
     
     ///clear existing
-    BoundaryElement* be = static_cast<BoundaryElement*>(n);
-    _list[be].clear();
+    _list[n].clear();
     
     ///loop through beads, add as
     for (auto &b : *BeadDB::instance()) {
         
-        double dist = be->distance(b->coordinate);
+        double dist = static_cast<BoundaryElement*>(n)->distance(b->coordinate);
         if(dist > _rMax || dist < _rMin) continue;
         
         ///If we got through this, add it!
-        _list[be].push_back(b);
+        _list[n].push_back(b);
     }
 }
 
-
-void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
+vector<Bead*> BoundaryElementNeighborList::getNeighbors(BoundaryElement* be) {
     
-    ///return if not a cylinder!
-    if(!dynamic_cast<BoundaryElement*>(n)) return;
-    ///update neighbors
-    updateNeighbors(n);
+    auto neighbors = _list[be];
+    vector<Bead*> beadNeighbors(_list[be].size());
+    
+    transform(neighbors.begin(), neighbors.end(), beadNeighbors.begin(),
+              [](Neighbor* n){return static_cast<Bead*>(n);});
+    return vector<Bead*>(beadNeighbors.begin(), beadNeighbors.end());
 }
-
 
 
 

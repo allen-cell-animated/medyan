@@ -13,9 +13,7 @@
 
 #include "common.h"
 
-#include "ReactionBase.h"
 #include "SubSystem.h"
-
 #include "SystemParameters.h"
 
 ///FILAMENT REACTION CALLBACKS
@@ -195,6 +193,12 @@ struct MotorWalkingForwardCallback {
     
     void operator() (ReactionBase* r) {
         
+        if(_sm1->getCBound() == nullptr) {
+            
+            cout << "Major bug: motor is in wrong place" << endl;
+            return;
+        }
+        
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
@@ -225,6 +229,12 @@ struct MotorWalkingBackwardCallback {
         :_sm1(sm1), _sm2(sm2) {}
     
     void operator() (ReactionBase* r) {
+        
+        if(_sm1->getCBound() == nullptr) {
+            
+            cout << "Major bug: motor is in wrong place" << endl;
+            return;
+        }
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
@@ -258,6 +268,12 @@ struct MotorMovingCylinderForwardCallback {
     
     void operator() (ReactionBase* r) {
         
+        if(_sm1->getCBound() == nullptr) {
+            
+            cout << "Major bug: motor is in wrong place" << endl;
+            return;
+        }
+        
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
         ///shift the position of one side of the motor forward
@@ -289,6 +305,12 @@ struct MotorMovingCylinderBackwardCallback {
         : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
+        
+        if(_sm1->getCBound() == nullptr) {
+            
+            cout << "Major bug: motor is in wrong place" << endl;
+            return;
+        }
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         

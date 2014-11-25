@@ -9,9 +9,7 @@
 #ifndef __Cyto__NeighborList__
 #define __Cyto__NeighborList__
 
-#include <stdio.h>
-
-#include <stdio.h>
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 
@@ -19,6 +17,9 @@
 
 ///FORWARD DECLARATIONS
 class Neighbor;
+class Bead;
+class Cylinder;
+class BoundaryElement;
 
 class NeighborList {
     
@@ -37,6 +38,9 @@ public:
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~NeighborList() noexcept {}
     
+    ///remove a neighbor if possible
+    virtual void removeNeighbor(Neighbor* n) {_list.erase(n);}
+    
     ///re-initialize the neighborlist
     virtual void reset() {
         //loop through all neighbor keys
@@ -47,14 +51,9 @@ public:
         }
     }
     
-    ///add and remove a neighbor
-    virtual void removeNeighbor(Neighbor* n) {_list.erase(n);}
-    
-    ///get all neighbors of a given
-    virtual const vector<Neighbor*>& getNeighbors(Neighbor* n) {return _list[n];}
-    
-    ///Add and update neighbors
+    ///Add neighbor 
     virtual void addNeighbor(Neighbor* n) = 0;
+    ///update a neighbor
     virtual void updateNeighbors(Neighbor* n) = 0;
     
 };
@@ -66,31 +65,32 @@ private:
     
 public:
     ///Constructor and destructor
-    CylinderNeighborList(float rMax, float rMin, bool crossFilamentOnly = false) :
-                         NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
-    ~CylinderNeighborList() {}
+    CylinderNeighborList(float rMax, float rMin, bool crossFilamentOnly = false)
+                         : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     
     ///add and remove a neighbor
     virtual void addNeighbor(Neighbor* n);
-    
     ///Update neighbors of a given neighbor
     virtual void updateNeighbors(Neighbor* n);
-
     
+    ///get all neighbors of a given cylinder 
+    vector<Cylinder*> getNeighbors(Cylinder* cylinder);
+
 };
 
 class BoundaryElementNeighborList : public NeighborList {
     
 public:
     ///Constructor and destructor
-    BoundaryElementNeighborList(float rMax, float rMin) : NeighborList(rMax, rMin){}
-    ~BoundaryElementNeighborList() {}
+    BoundaryElementNeighborList(float rMax, float rMin) : NeighborList(rMax, rMin) {}
     
     ///add and remove a neighbor
     virtual void addNeighbor(Neighbor* n);
-    
     ///Update neighbors of a given neighbor
     virtual void updateNeighbors(Neighbor* n);
+    
+    ///get all neighbors of a given boundary element
+    vector<Bead*> getNeighbors(BoundaryElement* be);
 };
 
 

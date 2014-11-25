@@ -3,13 +3,13 @@
 
 NDIM:                        3
 
-NX:                          1
-NY:                          1
-NZ:                          1
+NX:                          100
+NY:                          100
+NZ:                          100
 
-COMPARTMENTSIZEX:            1000.0
-COMPARTMENTSIZEY:            1000.0
-COMPARTMENTSIZEZ:            1000.0
+COMPARTMENTSIZEX:            10.0
+COMPARTMENTSIZEY:            10.0
+COMPARTMENTSIZEZ:            10.0
 
 MONOMERSIZE:                 2.7
 
@@ -38,7 +38,7 @@ FTWISTINGPHI:
 ### LINKERS ###
 
 LSTRETCHINGTYPE:             HARMONIC
-LSTRETCHINGK:                2.0
+LSTRETCHINGK:                0.5
 
 LBENDINGTYPE:
 LBENDINGK:
@@ -51,7 +51,7 @@ LTWISTINGPHI:
 ### MOTORS ###
 
 MSTRETCHINGTYPE:             HARMONIC
-MSTRETCHINGK:                2.0
+MSTRETCHINGK:                0.5
 
 MBENDINGTYPE:
 MBENDINGK:
@@ -75,7 +75,7 @@ BOUNDARYSHAPE:               CUBIC
 BDIAMETER:                   900.0
 BCUTOFF:                     5.0
 
-BINTERACTIONK:               10.0
+BINTERACTIONK:               10000.0
 BSCREENLENGTH:               2.0
 
 ##################################################
@@ -84,7 +84,7 @@ BSCREENLENGTH:               2.0
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    10000
+NUMSTEPS:                    100000
 NUMSTEPSPERM:                10
 
 NUMBULKSPECIES:              2

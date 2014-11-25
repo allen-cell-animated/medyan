@@ -33,7 +33,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
         
-        lambda = 0.1;//backtrackingLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         if(lambda < 0) return;
         
         //cout<<"lambda= "<<lambda<<endl;
@@ -68,5 +68,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
     
 	//cout << "Polak-Ribiere Method: " << endl;
     //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    printForces();
+    //printForces();
 }

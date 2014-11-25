@@ -17,6 +17,8 @@
 #include "MCylinder.h"
 #include "CCylinder.h"
 #include "Neighbor.h"
+#include "Movable.h"
+#include "Reactable.h"
 
 ///FORWARD DECLARATIONS
 class Filament;
@@ -28,7 +30,7 @@ class Compartment;
  * It contains a constructor as well as getters for mcylinder and ccylinders.
  */
 
-class Cylinder : public Composite, public Neighbor{
+class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
     
 private:
     Bead* _b1;  ///< Pointer to the first bead, associated with this cylinder ;
@@ -83,9 +85,10 @@ public:
     
     ///Update the position of this cylinder
     ///@note - changes compartment of ccylinder if needed
-    void updatePosition();
+    virtual void updatePosition();
     
-    
+    ///Update the reaction rates of this cylinder
+    virtual void updateReactionRates();
 
 };
 

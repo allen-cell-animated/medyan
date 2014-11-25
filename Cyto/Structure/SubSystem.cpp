@@ -8,14 +8,17 @@
 
 #include "SubSystem.h"
 
+#include "FilamentDB.h"
+#include "LinkerDB.h"
+#include "MotorGhostDB.h"
+
+
 void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
     for (auto it: v) FilamentDB::instance()->createFilament(this, it);
 }
-
 void SubSystem::addNewFilament(vector<vector<double>>& v) {
     FilamentDB::instance()->createFilament(this, v);
 }
-
 void SubSystem::removeFilament(Filament* f) {
     FilamentDB::instance()->removeFilament(f);
 }
@@ -27,7 +30,6 @@ void SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2,
                              short linkerType, double position1, double position2){
     LinkerDB::instance()->createLinker(c1, c2, linkerType, position1, position2, true);
 }
-
 void SubSystem::removeLinker(Linker* l) {
     LinkerDB::instance()->removeLinker(l);
 }
@@ -39,11 +41,9 @@ void SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
                                  short motorType, double position1, double position2) {
     MotorGhostDB::instance()->createMotorGhost(c1, c2, motorType, position1, position2, true);
 }
-
 void SubSystem::removeMotorGhost(MotorGhost* m) {
     MotorGhostDB::instance()->removeMotorGhost(m);
 }
 
 double SubSystem::getSubSystemEnergy() {return _energy;}
-
 void SubSystem::setSubSystemEnergy(double energy) {_energy = energy;}

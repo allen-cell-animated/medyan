@@ -10,26 +10,28 @@
 #define __CytoMech__SubSystem__
 
 #include <iostream>
-#include <list>
 #include <vector>
+#include <unordered_set>
 
 #include "common.h"
 
-#include "FilamentDB.h"
-#include "LinkerDB.h"
-#include "MotorGhostDB.h"
-
 ///FORWARD DECLARATIONS
 class Boundary;
+class Filament;
 class Cylinder;
-class Compartment;
+class Linker;
+class MotorGhost;
 
-/*! This is the main class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All parts crations and chenges go through this class and will be redirected to lower levels.
+class Movable;
+class Reactable;
+
+/*! This is the main class which handles all changes and information regarding the system. 
+    This class operates as a top manager and provides connections between smaller parts of the system. 
+    All parts crations and chenges go through this class and will be redirected to lower levels.
  */
 class SubSystem {
 public:
-    // Interfaces to add new objects:
-    
+
     ///Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
     
@@ -54,6 +56,21 @@ public:
     /// remove a motor ghost from the system
     void removeMotorGhost(MotorGhost* m);
     
+    ///add and remove movables
+    void addMovable(Movable* mov) { _movables.insert(mov); }
+    void removeMovable(Movable* mov) {
+        auto it = _movables.find(mov);
+        if(it != _movables.end()) _movables.erase(it);
+    }
+    const unordered_set<Movable*>& getMovables() {return _movables;}
+    
+    ///add and remove reactables
+    void addReactable(Reactable* r) { _reactables.insert(r); }
+    void removeReactable(Reactable* r) {
+        auto it = _reactables.find(r);
+        if(it != _reactables.end()) _reactables.erase(it);
+    }
+    const unordered_set<Reactable*>& getReactables() {return _reactables;}
     
     //System related iterfaces:
     int getSystemSize(); //Return a number of beads;
@@ -65,7 +82,9 @@ public:
 private:
     double _energy = 0; ///< energy of subsystem
     Boundary* _boundary; ///<subsystem boundary
-	
+    
+    unordered_set<Movable*> _movables;
+    unordered_set<Reactable*> _reactables;
 };
 
 
