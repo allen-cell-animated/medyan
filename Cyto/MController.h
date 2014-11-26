@@ -1,39 +1,28 @@
-//
-//  MController.h
-//  Cyto
-//
-//  Created by James Komianos on 8/4/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__MController__
-#define __Cyto__MController__
-#include <iostream>
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_MController_h
+#define M3SYM_MController_h
 #include <vector>
 
 #include "common.h"
 
-#include "SubSystem.h"
+#include "Minimizer.h"
+#include "ForceFieldManager.h"
 #include "Parser.h"
 
-#include "ForceFieldManager.h"
-#include "Minimizer.h"
-
-#include "ForceField.h"
-#include "FilamentFF.h"
-#include "LinkerFF.h"
-#include "VolumeCylindricalFF.h"
-#include "BoundaryFF.h"
-#include "MotorGhostFF.h"
-
-#include "ConjugateGradient.h"
-
-#include "FilamentDB.h"
-#include "CylinderDB.h"
-#include "LinkerDB.h"
-#include "MotorGhostDB.h"
-
 ///FORWARD DECLARATIONS
+class SubSystem;
 class PolakRibiere;
 class FletcherRieves;
 
@@ -48,20 +37,22 @@ class FletcherRieves;
 class MController {
     
 private:
-    ForceFieldManager _FFManager;  ///<container and methods for all force fields in system
+    ForceFieldManager _FFManager;  ///< container and methods for all force fields in system
     vector<Minimizer*> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
-    SubSystem* _subSystem;
+    SubSystem* _subSystem; ///< ptr to the subsystem
     
     ///Initialize the MController using a list of vector names
     ///@param forceFields - a list of forcefields to be added
     void initializeFF (MechanicsFFType& forceFields);
+    
+    
     void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
     
     
 public:
     MController(SubSystem* s) {_subSystem = s;}
     
-    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers )
+    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers)
     {
         initializeFF(forceFields);
         initializeMinAlgorithms(Minimizers);
@@ -74,4 +65,4 @@ public:
     
 };
 
-#endif /* defined(__Cyto__MController__) */
+#endif

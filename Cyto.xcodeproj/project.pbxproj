@@ -355,7 +355,6 @@
 		F777FA7E19C1F40A00D2850A /* Cyto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cyto.cpp; sourceTree = "<group>"; };
 		F777FA7F19C1F40A00D2850A /* MathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathFunctions.cpp; sourceTree = "<group>"; };
 		F777FA8019C1F40A00D2850A /* MathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathFunctions.h; sourceTree = "<group>"; };
-		F777FA8119C1F40A00D2850A /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		F777FA8219C1F40A00D2850A /* Signaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signaling.h; sourceTree = "<group>"; };
 		F777FA9819C1FC2D00D2850A /* ChemCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemCallbacks.h; sourceTree = "<group>"; };
 		F777FA9C19C1FDB200D2850A /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubSystem.cpp; path = Cyto/Structure/SubSystem.cpp; sourceTree = SOURCE_ROOT; };
@@ -648,7 +647,6 @@
 				B52F64BE19BA230000A2B9FD /* Structure */,
 				F79CA34919BA055100008021 /* Mechanics */,
 				F7BC9F59158E551400D75EA8 /* ToDo */,
-				F777FA8119C1F40A00D2850A /* notes.txt */,
 				F777FA7E19C1F40A00D2850A /* Cyto.cpp */,
 				F777FA7819C1F40A00D2850A /* common.cpp */,
 				F777FA7919C1F40A00D2850A /* common.h */,

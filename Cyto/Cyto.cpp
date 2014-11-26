@@ -1,18 +1,23 @@
-//
-//  Cyto.cpp
-//  CytoSim
-//
-//  Created by Garegin Papoian on 4/19/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-/*! \mainpage The Main Page for the CytoSim software package
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+/*! \mainpage The main page for the M3SYM software package
  
  \section intro_sec Introduction
  
  Cell motility plays a key role in human biology and disease, contributing ubiquitously to such important processes as embryonic development, wound repair and cancer metastasis. Papoian laboratory is interested in gaining deeper understanding of the physical chemistry behind these complex, far-from-equilibrium mechano-chemical processes. His approach is based on combining stochastic reaction-diffusion treatment of cellular biochemical processes with polymer physics of cytoskeletal filament network growth, while explicitly coupling chemistry and mechanics.
  
- Papoian laboratory has developed **CytoSim**, a software package to simulate growth dynamics of actin based filamentous networks *in vitro* and *in vivo*. Recent papers where **CytoSim** or its predecessor, **StochTools**, were used can be found on the publication section of [the Papoian group's main web page: ](http://papoian.chem.umd.edu/)
+ Papoian laboratory has developed **M3SYM**, a software package to simulate growth dynamics of actin based filamentous networks *in vitro* and *in vivo*. Recent papers where **M3SYM** or its predecessor, **StochTools**, were used can be found on the publication section of [the Papoian group's main web page: ](http://papoian.chem.umd.edu/ ). The **M3SYM** package can also be extended to simulate the dynamics of any active matter network.
  
  
  \section install_sec Installation
@@ -24,23 +29,16 @@
  - Boost 1.49
  - GSL ...
  
- \subsection step2 Step 2: Installation of CytoSim itself
+ \subsection step2 Step 2: Installation of M3SYM itself
  
- Untar the **CytoSim** source code into some directory, enter into the "CytoSim/CytoSim" and execute "make" from the command line.
- 
+ Untar the **M3SYM** source code into some directory, enter into the "M3SYM" and execute "make" from the command line.
  
  */
-
-#include <iostream>
-#include <numeric>
-#include <chrono>
 
 #include "common.h"
 
 #include "Controller.h"
 #include "SubSystem.h"
-
-using namespace mathfunc;
 
 int main(int argc, const char * argv[])
 {

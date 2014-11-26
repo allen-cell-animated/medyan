@@ -1,13 +1,18 @@
-//
-//  Component.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 5/31/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Component_h
-#define CytoSim_Component_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_Component_h
+#define M3SYM_Component_h
 
 #include "common.h"
 
@@ -19,7 +24,8 @@ class ReactionVisitor;
 
 /// Component class is the base class for the Composite pattern hieararchy
 
-/*! The Composite patter allows building of complex hieararchical objects, with convenient 
+/*! 
+ *  The Composite patter allows building of complex hieararchical objects, with convenient
  *  methods for applying a function to all nodes (i.e. the Visitor pattern). Each node in the 
  *  hieararchy may have a parent and may contain several children nodes. A class that is derived 
  *  directly from Component and not from Composite, cannot contain children, i.e. it is a leaf node.

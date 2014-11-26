@@ -1,20 +1,83 @@
-//
-//  GController.cpp
-//  Cyto
-//
-//  Created by James Komianos on 8/5/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
-#include "GController.h"
 
-#include "common.h"
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#include "GController.h"
 
 #include "Boundary.h"
 #include "Parser.h"
+#include "CompartmentContainer.h"
 
 #include "MathFunctions.h"
+#include "SystemParameters.h"
 
 using namespace mathfunc;
+
+Compartment* GController::getCompartment(const vector<size_t> &indices)
+{
+    size_t index = 0;
+    size_t i = 0;
+    for(auto x: indices)
+    {
+        
+        ///Flatten the indices to 1D
+        if(i == 0) {
+            if(x >= _grid[0]) { throw OutOfBoundsException();}
+            index += x;
+        }
+        else if(i == 1) {
+            if(x >= _grid[1]) { throw OutOfBoundsException();}
+            index += x * _grid[0];
+        }
+        else {
+            if(x >= _grid[2]) { throw OutOfBoundsException();}
+            index += x * _grid[0] * _grid[1];
+        }
+        
+        i++;
+    }
+    return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
+}
+
+Compartment* GController::getCompartment(const vector<double> &coords)
+{
+    ///Check if out of bounds
+    size_t index = 0;
+    size_t i = 0;
+    for(auto x: coords)
+    {
+        ///Flatten the coordinates to 1D, get integer index
+        if(i == 0) {
+            if(x < 0 || x >= (_compartmentSize[0] * _grid[0])) {
+                throw OutOfBoundsException();
+            }
+            index += int(x / _compartmentSize[0]);
+        }
+        else if(i == 1) {
+            if(x < 0 || x >= (_compartmentSize[1] * _grid[1])) {
+                throw OutOfBoundsException();
+            }
+            index += int(x / _compartmentSize[1]) * _grid[0];
+        }
+        else {
+            if(x < 0 || x >= (_compartmentSize[2] * _grid[2])) {
+                throw OutOfBoundsException();
+            }
+            index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
+        }
+        i++;
+    }
+    return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
+}
 
 void GController::generateConnections()
 {
@@ -132,7 +195,7 @@ void GController::generateConnections()
 
 void GController::initializeGrid() {
     
-    ///Initial parameters of system
+    //Initial parameters of system
     _nDim = SystemParameters::Geometry().nDim;
     
     _grid = {SystemParameters::Geometry().NX,
@@ -143,10 +206,13 @@ void GController::initializeGrid() {
                         SystemParameters::Geometry().compartmentSizeY,
                         SystemParameters::Geometry().compartmentSizeZ};
     
-    ///Check that grid and compartmentSize match nDim
-    if((_nDim == 1 && _grid[0] != 0 && _grid[1] == 0 && _grid[2]==0 && _compartmentSize[0] != 0 && _compartmentSize[1] == 0 && _compartmentSize[2] == 0)
-           || (_nDim == 2 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]==0 && _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] == 0)
-           || (_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] != 0)){
+    //Check that grid and compartmentSize match nDim
+    if((_nDim == 1 && _grid[0] != 0 && _grid[1] == 0 && _grid[2]==0 &&
+        _compartmentSize[0] != 0 && _compartmentSize[1] == 0 && _compartmentSize[2] == 0) ||
+       (_nDim == 2 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]==0 &&
+        _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] == 0) ||
+       (_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
+        _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] != 0)){
     }
     else {
         cout << "Grid parameters are invalid. Exiting" << endl;
@@ -158,17 +224,17 @@ void GController::initializeGrid() {
         if(x != 0) size*=x;
     }
     
-    ///Set the instance of this grid with given parameters
+    //Set the instance of this grid with given parameters
     CompartmentGrid::setInstance(size);
     
-    ///Create connections based on dimensionality
+    //Create connections based on dimensionality
     generateConnections();
 
 }
 
 void GController::activateCompartments(Boundary* boundary) {
     
-    ///initialize all compartments equivalent to cproto
+    //initialize all compartments equivalent to cproto
     for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = static_cast<Compartment*>(c.get());
         if(boundary->within(C->coordinates())) C->activate();
@@ -177,10 +243,10 @@ void GController::activateCompartments(Boundary* boundary) {
 
 void GController::findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments) {
     
-    ///base case : if c and ccheck are not within range, return
+    //base case : if c and ccheck are not within range, return
     if(TwoPointDistance(coords, ccheck->coordinates()) > dist ) return;
     
-    ///recursive case, c and ccheck are in range. call for all neighbors
+    //recursive case, c and ccheck are in range. call for all neighbors
     else {
         //if not already in list, add it
         if(find(compartments.begin(), compartments.end(), ccheck) == compartments.end()) {
@@ -190,6 +256,7 @@ void GController::findCompartments(const vector<double>& coords, Compartment* cc
         }
     }
 }
+
 short GController::_nDim = 0;
 vector<int> GController::_grid = {};
 vector<double> GController::_compartmentSize = {};

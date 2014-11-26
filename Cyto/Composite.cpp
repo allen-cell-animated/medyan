@@ -1,14 +1,18 @@
-//
-//  Composite.cpp
-//  CytoSim
-//
-//  Created by Garegin Papoian on 5/29/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#include <iostream>
-#include "common.h"
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
 #include "Composite.h"
+
 #include "Visitor.h"
 
 bool Composite::apply (Visitor &v) {

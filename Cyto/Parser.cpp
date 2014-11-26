@@ -1,20 +1,22 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  Parser.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/8/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "SystemParameters.h"
 
 #include "Parser.h"
 
-///CHEMISTRY PARSER
-
 void SystemParser::readChemistryParameters() {
     
-
     ChemistryParameters CParams;
     
     _inputFile.clear();
@@ -117,11 +119,9 @@ void SystemParser::readChemistryParameters() {
             }
         }
     }
-    ///set system parameters
+    //set system parameters
     SystemParameters::CParams = CParams;
 }
-
-
 
 ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     
@@ -175,7 +175,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     return CAlgorithm;
 }
 
-///CHEMISTRY SETUP PARSER
 ChemistrySetup SystemParser::readChemistrySetup() {
     
     _inputFile.clear();
@@ -204,8 +203,6 @@ ChemistrySetup SystemParser::readChemistrySetup() {
     return CSetup;
 }
 
-
-///Mechanics force field types
 MechanicsFFType SystemParser::readMechanicsFFType() {
     
     MechanicsFFType MTypes;
@@ -345,8 +342,6 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     return MTypes;
 }
 
-
-///MECHANICS CONSTANT PARSER
 void SystemParser::readMechanicsParameters() {
     
     MechanicsParameters MParams;
@@ -359,7 +354,7 @@ void SystemParser::readMechanicsParameters() {
         
         if(line.find("#") != string::npos) { continue; }
         
-        ///Filament stretching
+        //Filament stretching
         if (line.find("FSTRETCHINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -371,19 +366,8 @@ void SystemParser::readMechanicsParameters() {
                 MParams.FStretchingK = atof(lineVector[1].c_str());
             }
         }
-//        if (line.find("FSTRETCHINGL") != string::npos) {
-//            
-//            vector<string> lineVector = split<string>(line);
-//            if(lineVector.size() > 2) {
-//                cout << "There was an error parsing input file at Filament parameters. Exiting" << endl;
-//                exit(EXIT_FAILURE);
-//            }
-//            else if (lineVector.size() == 2) {
-//                MParams.FStretchingL = atof(lineVector[1].c_str());
-//            }
-//        }
-        
-        ///Filament bending
+
+        //Filament bending
         else if (line.find("FBENDINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -407,7 +391,7 @@ void SystemParser::readMechanicsParameters() {
             }
         }
         
-        ///Filament twisting
+        //Filament twisting
         else if (line.find("FTWISTINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -431,7 +415,7 @@ void SystemParser::readMechanicsParameters() {
             }
         }
         
-        ///Linker stretching
+        //Linker stretching
         if (line.find("LSTRETCHINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -441,19 +425,8 @@ void SystemParser::readMechanicsParameters() {
                     MParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-//        if (line.find("LSTRETCHINGL") != string::npos) {
-//            
-//            vector<string> lineVector = split<string>(line);
-//            if(lineVector.size() > 2) {
-//                cout << "There was an error parsing input file at Linker parameters. Exiting" << endl;
-//                exit(EXIT_FAILURE);
-//            }
-//            else if (lineVector.size() == 2) {
-//                MParams.LStretchingL = atof((lineVector[1].c_str()));
-//            }
-//        }
         
-        ///Linker bending
+        //Linker bending
         else if (line.find("LBENDINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -474,7 +447,7 @@ void SystemParser::readMechanicsParameters() {
             
         }
         
-        ///Linker twisting
+        //Linker twisting
         else if (line.find("LTWISTINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -494,7 +467,7 @@ void SystemParser::readMechanicsParameters() {
             }
         }
         
-        ///Motor stretching
+        //Motor stretching
         if (line.find("MSTRETCHINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -504,19 +477,8 @@ void SystemParser::readMechanicsParameters() {
                     MParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
-//        if (line.find("MSTRETCHINGL") != string::npos) {
-//            
-//            vector<string> lineVector = split<string>(line);
-//            if(lineVector.size() > 2) {
-//                cout << "There was an error parsing input file at Motor parameters. Exiting" << endl;
-//                exit(EXIT_FAILURE);
-//            }
-//            else if (lineVector.size() == 2) {
-//                MParams.MStretchingL = atof((lineVector[1].c_str()));
-//            }
-//        }
-        
-        ///Motor bending
+
+        //Motor bending
         else if (line.find("MBENDINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -536,7 +498,7 @@ void SystemParser::readMechanicsParameters() {
             }
         }
         
-        ///Motor twisting
+        //Motor twisting
         else if (line.find("MTWISTINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -556,7 +518,7 @@ void SystemParser::readMechanicsParameters() {
             }
         }
         
-        ///Volume parameter
+        //Volume parameter
         else if (line.find("VOLUMEK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -582,7 +544,7 @@ void SystemParser::readMechanicsParameters() {
         }
         else {}
     }
-    ///Set system parameters
+    //Set system parameters
     SystemParameters::MParams = MParams;
 }
 
@@ -624,8 +586,6 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     return MAlgorithm;
 }
 
-    
-///BOUNDARY PARSERS
 void SystemParser::readBoundaryParameters() {
     
     BoundaryParameters BParams;
@@ -648,7 +608,7 @@ void SystemParser::readBoundaryParameters() {
             else if (lineVector.size() == 2) {
                 BParams.boundaryCutoff = atof((lineVector[1].c_str()));
             }
-            ///Default value to be half compartment size
+            //Default value to be half compartment size
             else {
                 BParams.boundaryCutoff = SystemParameters::Geometry().compartmentSizeX / 2;
             }
@@ -692,7 +652,7 @@ void SystemParser::readBoundaryParameters() {
         
         else {}
     }
-    ///Set system parameters
+    //Set system parameters
     SystemParameters::BParams = BParams;
 }
 
@@ -722,9 +682,7 @@ BoundaryType SystemParser::readBoundaryType() {
     }
     return BType;
 }
-    
-    
-///GEOMETRY PARSERS
+
 void SystemParser::readGeometryParameters() {
     
     _inputFile.clear();
@@ -812,7 +770,7 @@ void SystemParser::readGeometryParameters() {
         }
         else {}
     }
-    ///set geometry parameters and return
+    //set geometry parameters and return
     GParams.nDim = nDim;
     GParams.cylinderSize = cylinderSize;
     GParams.monomerSize = monomerSize;
@@ -832,7 +790,7 @@ void SystemParser::readGeometryParameters() {
     if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
     
-    ///find max compartment side
+    //find max compartment side
     if(GParams.compartmentSizeX > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeX;
     if(GParams.compartmentSizeY > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeY;
     if(GParams.compartmentSizeZ > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeZ;
@@ -840,7 +798,6 @@ void SystemParser::readGeometryParameters() {
     SystemParameters::GParams = GParams;
 }
 
-///FILAMENT SETUP PARSER
 FilamentSetup SystemParser::readFilamentSetup() {
     
     _inputFile.clear();
@@ -879,7 +836,6 @@ FilamentSetup SystemParser::readFilamentSetup() {
     return FSetup;
 }
 
-///FILAMENT DATA PARSER
 vector<vector<vector<double>>> FilamentParser::readFilaments() {
     
     _inputFile.clear();
@@ -909,7 +865,6 @@ vector<vector<vector<double>>> FilamentParser::readFilaments() {
     return returnVector;
 }
 
-///CHEMISTRY INPUT PARSER
 ChemistryData ChemistryParser::readChemistryInput() {
     
     _inputFile.clear();
@@ -1017,7 +972,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             else {}
         }
         
-        ///loop through a reaction
+        //loop through a reaction
        else if(line.find("GENREACTION") != string::npos) {
             
             vector<string> reactants;
@@ -1146,8 +1101,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.linkerBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                                                        (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                                                         atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
+                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
+                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1175,8 +1130,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                                                       (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                                                        atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
+                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
+                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1205,7 +1160,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.unbindingReactions.push_back(tuple<vector<string>, vector<string>, double>
-                                                    (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                     (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1233,7 +1188,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.bindingReactions.push_back(tuple<vector<string>, vector<string>, double>
-                                                    (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                     (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1261,7 +1216,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorWalkingReactions.push_back(tuple<vector<string>, vector<string>, double>
-                                                  (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                     (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1270,7 +1225,6 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
         }
     }
-    
     return chem;
 }
 

@@ -1,33 +1,36 @@
-//
-//  Composite.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 5/29/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Composite_h
-#define CytoSim_Composite_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_Composite_h
+#define M3SYM_Composite_h
 
 #include <string>
 #include <vector>
-#include <deque>
 #include <typeinfo>
 
 #include "common.h"
 
 #include "Component.h"
-#include "Species.h"
 
 ///FORWARD DECLARATIONS
 class Visitor;
 class SpeciesVisitor;
 class ReactionVisitor;
 
-
 /// Composite class is the aggregating class for the Composite pattern
 
-/*! The Composite pattern allows building of complex hieararchical objects, with convenient
+/*! 
+ *  The Composite pattern allows building of complex hieararchical objects, with convenient
  *  methods for applying a function to all nodes (i.e. the Visitor pattern). Each node in the
  *  hieararchy may have a parent and may contain several children nodes. A class that is derived
  *  from Composite can contain children Component objects.

@@ -1,11 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  Component.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 5/31/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
-#include <iostream>
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "Component.h"
 

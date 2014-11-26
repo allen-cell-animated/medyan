@@ -1,77 +1,3 @@
-Goals for September 2014
---------
-
-TODO                                                                        COMPLETED?
-
-1) Combining code
-    -Compiling all of cytosim and cytomech together                             X
-    -Organizing code into folders                                               X
-    -Clean up output of controller                                              X
-
-2a) Chemical input file                                                         X
-
-2b) Finishing touches
-    -Combine common files                                                       X
-    -Filament input file                                                        X
-    -Out of bounds management                                                   X
-    -Moving cylinders, placing new cylinders                                    XX
-    -SpeciesBulk implementation                                                 X
-    -Depolymerizing front / back?                                               X
-    -Callback transfer when copying reactions                                   X
-    -Excluded volume force field
-    -Boundary Force Field                                                       X
-    -Bead indices relative to filament                                          X
-    -Moving front/back beads                                                    X
-    -More detailed output                                                       X
-    -Changing polymerization rates with forces
-    -Linker motor chemistry and mechanics
-3) TESTING!!!!
-    -Boundary elements/surfaces                                                 X
-    -SpeciesBulk                                                                X
-    -Geometry                                                                   X
-    -Reaction cloning                                                           X
-    -CMonomers / CCylinders (structure, cloning, reactions, etc)                X
-    -Chemical parsers                                                           X
-    -Filament (initialization, poly, depoly)
-    -All databases
-    -All FF's
-4) Simple use cases
-    -Polymer melt
-    -Basic actin network?
-
-Logistical things:
--Change name of code / project?
-
-WISH LIST
--Preprocessor macros set at command input file?                                 X
-
---------
-Goals for October 2014:
---------
-
-
-1) More finishing touches
-    -CMonomer structure fixes                                                   X
-    -Compartments: contain sets of all elements                                 X
-    -Reaction parsing: create general reaction template, restructuring          X
-    -Finish linker chemistry (callbacks, updating reactions)                    X
-    -Motor walking reaction and callback                                        X
-    -Filament creation and destruction?
-    -Linker/motor output file                                                   X
-    -Compartment activation for compartments within boundary                    X
-    -Spherical boundary                                                         X
-    -Cylindrical Boundary
-    -Changing of polymerization/depolymerization/binding rates
-    -Excluded volume force field                                                X
-    -Optimize movement updates?                                                 X(SORT OF)
-
-2) Testing:
-    -Cylinder reaction management                                               X
-    -Geometry findCompartments                                                  X
-    -Filament (initialization, poly, depoly) (general, chem, mech)
-    -Linker/Motor (general, chem, mech)
-    -Neighbors lists
-    -All FF's
 
 ------
 Goals for November 2014
@@ -94,10 +20,17 @@ Goals for November 2014
                     Data structures (especially reaction dependents),
                     Neighbor list updates,
                     Virtuals, inlines, friends of db!)
-    -Formatting (80C lines, cleaning up other things, document)
+    -Formatting (80C lines, cleaning up other things, document)                 X
     -Timings for larger systems
 
-2) TESTING FROM OCTOBER!
+2) Testing:
+    -Cylinder reaction management                                               X
+    -Geometry findCompartments                                                  X
+    -Filament (initialization, poly, depoly) (general, chem, mech)
+    -Linker/Motor (general, chem, mech)
+    -Neighbors lists
+    -All FF's
+
 
 
 

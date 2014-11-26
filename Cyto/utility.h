@@ -1,16 +1,23 @@
-//
-//  utility.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 5/4/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_utility_h
-#define CytoSim_utility_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include "common.h"
+#ifndef M3SYM_Utility_h
+#define M3SYM_Utility_h
+
 #include <memory>
+#include <iostream>
+
+using namespace std;
 
 template<typename T, typename ...Args>
 unique_ptr<T> make_unique( Args&& ...args )

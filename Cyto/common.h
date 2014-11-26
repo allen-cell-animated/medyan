@@ -1,17 +1,23 @@
-//
-//  common.h
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/19/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Experimenting_common_h
-#define CytoSim_Experimenting_common_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_common_h
+#define M3SYM_common_h
 
 #include <iostream>
+#include "utility.h"
 
-///Will eventually be command line macros
+///Defining chemical and mechanical capablilites turned on/off
 #define MECHANICS
 #define CHEMISTRY
 
@@ -27,7 +33,7 @@
 //#define BOOST_MEM_POOL
 //#define BOOL_POOL_NSIZE 65536
 
-///species constants
+///Species constants
 typedef unsigned short species_copy_t;
 const species_copy_t max_ulim = 10000;
 extern double global_time;

@@ -53,12 +53,12 @@ private:
 public:
     SimpleManagerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
     
-    ///initialize the chemical reaction templates and species in this system
-    ///@param chemSetup - chemistry setup struct from parsed input file
+    /// initialize the chemical reaction templates and species in this system
+    /// @param chemSetup - chemistry setup struct from parsed input file
     virtual void initialize(ChemistryData& chem);
 
-    ///SimpleManager
-    ///@note when initializing, the filaments are filled with the first species listed in
+    /// SimpleManager
+    /// @note when initializing, the filaments are filled with the first species listed in
     /// the speciesFilament vector. The active plus and minus end is set to be the first
     /// listed as well.
     virtual void initializeCCylinder(CCylinder* cc, Filament* f, 

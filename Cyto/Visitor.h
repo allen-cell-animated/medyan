@@ -12,6 +12,10 @@
 #include <iostream>
 #include "Component.h"
 
+///FORWARD DECLARATIONS
+class Speices;
+class ReactionBase;
+
 /// An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predicate.
 
 /*! The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete

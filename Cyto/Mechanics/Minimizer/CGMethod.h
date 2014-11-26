@@ -16,8 +16,8 @@
 ///FORWARD DECLARATIONS
 class ForceFieldManager;
 
-
 ///CGMethod class is for performing a conjugate gradient method
+
 /*!
  *  CGMethod is an abstract class that contains methods for conjugate gradient minimization. It has functions
  *  for various line search techniques, including golden section, backtracking, and quadratic line search.
@@ -34,8 +34,8 @@ protected:
     const double MAXDIST = 1; ///< Max distance beads can be moved, used only in backtracking line search
     
     ///Parameters used in backtracking line search
-    const double LAMBDAREDUCE = 0.5; ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
+    const double LAMBDAREDUCE = 0.1; ///< Lambda reduction parameter for backtracking
+    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
     
     ///Parameters used in quadratic line search
     const double QUADRATICTOL = 0.1;

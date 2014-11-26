@@ -1,13 +1,18 @@
-//
-//  Signaling.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 5/13/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Signaling_h
-#define CytoSim_Signaling_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_Signaling_h
+#define M3SYM_Signaling_h
 
 #include <memory>
 #include <unordered_map>
@@ -18,9 +23,9 @@
 #include <boost/signals2/connection.hpp>
 #include <boost/signals2/shared_connection_block.hpp>
 
-#include "utility.h"
 #include "common.h"
 
+///FORWARD DECLARATIONS
 class RSpecies;
 class ReactionBase;
 
@@ -65,7 +70,7 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ChemSignal {
 private:
-    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal;///< Keep track of signals corresponding to various RSpecies
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal; ///< Keep track of signals corresponding to various RSpecies
     unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
 private:
     /// Search the map for a signal corresponding to parameter, ReactionBase *r. Throw out_of_range exception if not found.
