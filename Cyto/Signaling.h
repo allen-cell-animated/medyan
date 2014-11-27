@@ -136,20 +136,20 @@ public:
     }
     
     /// Connect the callback, react_callback to a signal corresponding to ReactionBase *r.
-    /// @param ReactionBase *r - the signal will correspond to this Reaction
-    /// @param function<void (ReactionBase *)> const &react_callback - a function object to be called (a slot)
-    /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
-    ///                       unless absolutely essential.
+    /// @param r - the signal will correspond to this Reaction
+    /// @param react_callback - a function object to be called (a slot)
+    /// @param priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2
+    ///                   unless absolutely essential.
     boost::signals2::connection connect(ReactionBase *r, function<void (ReactionBase *)> const &react_callback, int priority=5) {
         auto sig_it = findSignal(r);
         return sig_it->second->connect(priority, react_callback);
     }
 
     /// Connect the callback, RSpecies_callback to a signal corresponding to RSpecies *s.
-    /// @param RSpecies *s - the signal will correspond to this RSpecies
-    /// @param function<void (RSpecies *, int)> const &RSpecies_callback - a function object to be called (a slot). 
+    /// @param s - the signal will correspond to this RSpecies
+    /// @param RSpecies_callback - a function object to be called (a slot).
     ///        int here corresponds to delta, the change in copy number of the RSpecies (for which the signal was emitted)
-    /// @param int priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 
+    /// @param priority - lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2
     ///                       unless absolutely essential.
     boost::signals2::connection connect(Species *s, function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5) {
         RSpecies *rs = &s->getRSpecies();
@@ -158,14 +158,14 @@ public:
     }
     
     /// Destroy signal corresponding to Reaction r. Should only be used by the Reaction class.
-    /// @note   Other classes should instead call void Reaction::stopSignaling (ChemSignal &sm);
+    /// @note - Other classes should instead call void Reaction::stopSignaling (ChemSignal &sm);
     void disconnect(ReactionBase *r){
         auto sig_it = findSignal(r);
         _map_reaction_signal.erase(sig_it);
     }
 
     /// Destroy signal corresponding to Reaction r. Should only be used by the RSpecies class.
-    /// @note   Other classes should instead call void RSpecies::stopSignaling (ChemSignal &sm);
+    /// @note - Other classes should instead call void RSpecies::stopSignaling (ChemSignal &sm);
     void disconnect(RSpecies *s){
         auto sig_it = findSignal(s);
         _map_RSpecies_signal.erase(sig_it);

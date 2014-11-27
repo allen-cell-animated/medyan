@@ -28,8 +28,7 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
     size_t i = 0;
     for(auto x: indices)
     {
-        
-        ///Flatten the indices to 1D
+        //Flatten the indices to 1D
         if(i == 0) {
             if(x >= _grid[0]) { throw OutOfBoundsException();}
             index += x;
@@ -50,12 +49,12 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
 
 Compartment* GController::getCompartment(const vector<double> &coords)
 {
-    ///Check if out of bounds
+    //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
     for(auto x: coords)
     {
-        ///Flatten the coordinates to 1D, get integer index
+        //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
             if(x < 0 || x >= (_compartmentSize[0] * _grid[0])) {
                 throw OutOfBoundsException();
@@ -241,7 +240,8 @@ void GController::activateCompartments(Boundary* boundary) {
     }
 }
 
-void GController::findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments) {
+void GController::findCompartments(const vector<double>& coords, Compartment* ccheck,
+                                   double dist, vector<Compartment*>& compartments) {
     
     //base case : if c and ccheck are not within range, return
     if(TwoPointDistance(coords, ccheck->coordinates()) > dist ) return;

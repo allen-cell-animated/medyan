@@ -1,51 +1,51 @@
-//
-//  CController.h
-//  Cyto
-//
-//  Created by James Komianos on 7/30/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__CController__
-#define __Cyto__CController__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_CController_h
+#define M3SYM_CController_h
+
 #include "common.h"
 
-#include "SubSystem.h"
 #include "ChemSim.h"
 #include "ChemManager.h"
 
-#include "ChemNRMImpl.h"
-#include "ChemGillespieImpl.h"
-#include "ChemSimpleGillespieImpl.h"
-#include "SimpleManagerImpl.h"
+///FORWARD DECLARATIONS
+class SubSystem;
 
 ///CController class is used to intialize, control, and run the chemical components of a simulation
 
 /*!
- *  ChemController is a class used by the SubSystem class to instantiate, control, and run the chemical
+ *  ChemController is a class used by the [SubSystem] (@ref SubSystem) to instantiate, control, and run the chemical
  *  dynamics of a simulation. It has functions to initialize a chemical system, which, based on a choice
- *  of the reaction-diffusion algorithm as well as the type of initializer which controls the reactions
- *  in the simulation, as well as run the chemical components of the simulation.
+ *  of the reaction-diffusion algorithm as well as the type of manager which controls the reactions in the simulation, 
+ *  as well as run the chemical components of the simulation.
  *
- *  The controller initializes all chemical singletons used, including ChemSim and ChemInitializer,
- *  to the correct implementations, given that they are implemented.
+ *  The controller initializes all chemical singletons used, including [ChemSim] (@ref ChemSim) 
+ *  and [ChemManager] (@ref ChemManager) to the correct implementations, given that they are implemented.
  */
 class CController {
    
 private:
-    SubSystem* _subSystem;
+    SubSystem* _subSystem; ///< A pointer to the subsystem
     
 public:
+    /// Constructor which sets [SubSystem] (@ref SubSystem) pointer
     CController(SubSystem* s) {_subSystem = s;}
-    ///Initialize the chemical system. MUST BE CALLED BEFORE RUN!
     
+    /// Initialize the [ChemSim] (@ref ChemSim) algorithm as well as the [ChemManager] (@ref ChemManager)
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
-    ///       could be: NRM, Gillespie, SimpleGillespie.
-    ///@param chemInitializer - a string defining the chemical initializer used
-    ///       could be: Simple.
-    void initialize(string& chemAlgorithm, string chemInitializer, ChemistryData& chem);
+    ///@param chemInitializer - a string defining the chemical manager used
+    void initialize(string& chemAlgorithm, string& chemManager, ChemistryData& chem);
     
     ///Run a number of chemical steps
     bool run(int steps) { return ChemSim::run(steps); }
@@ -53,4 +53,4 @@ public:
     
 
 
-#endif /* defined(__Cyto__CController__) */
+#endif

@@ -14,7 +14,6 @@
 #ifndef M3SYM_Parser_h
 #define M3SYM_Parser_h
 
-#include <iostream>
 #include <vector>
 #include <fstream>
 #include <string>

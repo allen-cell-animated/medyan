@@ -1,24 +1,31 @@
-//
-//  Visitor.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 6/2/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Visitor_h
-#define CytoSim_Visitor_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_Visitor_h
+#define M3SYM_Visitor_h
+
+#include "common.h"
+
 #include "Component.h"
 
 ///FORWARD DECLARATIONS
-class Speices;
+class Species;
 class ReactionBase;
 
-/// An abstract interface to traverse those nodes in the Composite pattern which fulfil a certain predicate.
+/// Visitor is n abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predicate.
 
-/*! The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+/*! 
+ *  The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
  *  classes derived from Visitor must implement the visit(Component *c) method. Visitor, v, allows a
  *  predicate to be applied at each node, *c, and cv->visit(c) is called only if that node
  *  satisfies the predicate. For example, this can be used to visit only filaments in the
@@ -53,7 +60,8 @@ protected:
 };
 
         
-/// The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon.
+/// The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each node,
+/// and also check via a lambda predicate whether the given node needs to be acted upon.
 class VisitorLambda : public Visitor {
 public:
     /// Sets the action to be perfomed on each node as std::function<bool (Component*)> g
@@ -88,9 +96,8 @@ protected:
     }
 };
 
-/*! The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
- *  classes derived from Visitor must implement the visit(Component *c) method.
- */
+/// The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+/// classes derived from Visitor must implement the visit(Component *c) method.
 class SpeciesVisitor {
 public:
     /// When this visitor, *v, is propagated through the Composite hieararchy, at each
@@ -98,15 +105,9 @@ public:
     /// Species *s of that node.
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.
-    bool visit(Species *s)
-    {
-        if(predImpl(s)){
-            return visitImpl(s);
-        }
-        else{
-            return true;
-        }
-        
+    bool visit(Species *s) {
+        if(predImpl(s)) return visitImpl(s);
+        else return true;
     }
 
     /// Virtual destructor
@@ -121,8 +122,6 @@ protected:
     /// Return true if the Species *s satisfies the desired predicate
     virtual bool predImpl(Species *s) {return true;}
 };
-
-
 
 /// The SpeciesVisitorLambda allows using C++11 lambda expressions to set the action to be performed on
 /// each Species of the node and its descendent nodes
@@ -145,9 +144,8 @@ protected:
 };
 
 
-/*! The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
- *  classes derived from Visitor must implement the visit(Component *c) method.
- */
+/// The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+/// classes derived from Visitor must implement the visit(Component *c) method.
 class ReactionVisitor {
 public:
     /// When this visitor, *v, is propagated through the Composite hieararchy, at each
@@ -157,19 +155,13 @@ public:
     /// propagation of the tree is terminated.
     bool visit(ReactionBase *r)
     {
-        //        std::cout << "ConditionalVisitor::visit_if: checking " << c->getFullName() << std::endl;
-        if(predImpl(r)){
-            return visitImpl(r);
-        }
-        else{
-            //            std::cout << "ConditionalVisitor::visit_if: Predicate failed, moving on..." << std::endl;
-            return true;
-        }
-        
+        if(predImpl(r)) return visitImpl(r);
+        else return true;
     }
     
     /// Virtual destructor
     virtual ~ReactionVisitor() {}
+    
 protected:
     /// When this visitor, *cv, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: cv->visit(c).
@@ -180,7 +172,6 @@ protected:
     /// Return true if the Reaction *r satisfies the desired predicate
     virtual bool predImpl(ReactionBase *r) = 0;
 };
-
 
 
 /// The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on

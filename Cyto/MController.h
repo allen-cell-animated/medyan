@@ -13,6 +13,7 @@
 
 #ifndef M3SYM_MController_h
 #define M3SYM_MController_h
+
 #include <vector>
 
 #include "common.h"
@@ -26,42 +27,41 @@ class SubSystem;
 class PolakRibiere;
 class FletcherRieves;
 
-/// MController class is used to initialize and run the mechanical components of a simulation
+/// MController class is used to initialize, control, and run the mechanical components of a simulation
 
 /*!
- *  MechanicalController is a class used by the SubSystem to initialize force fields, given an initial
- *  selection of which force fields should be included. It can compute forces and energies
- *  over all force fields, as well as run energy minimization algorithms.
+ *  MechanicalController is a class used by the [SubSystem] (@ref SubSystem) to initialize [ForceFields] (@ref ForceField),
+ *  given an initial selection of which force fields should be included. It can compute forces and energies over all force fields, 
+ *  as well as run energy [Minimization] (@ref Minimizer) algorithms.
  */
 
 class MController {
     
 private:
-    ForceFieldManager _FFManager;  ///< container and methods for all force fields in system
-    vector<Minimizer*> _minimizerAlgorithms; ///<vector with algorythms for system equlibration
-    SubSystem* _subSystem; ///< ptr to the subsystem
+    ForceFieldManager _FFManager;  ///< Container and methods for all force fields in system
+    vector<Minimizer*> _minimizerAlgorithms; ///< Vector with algorithms for system minimization
     
-    ///Initialize the MController using a list of vector names
-    ///@param forceFields - a list of forcefields to be added
+    SubSystem* _subSystem; ///< A pointer to the subsystem
+
+    /// Initialize the force-fields used in the simualtion
     void initializeFF (MechanicsFFType& forceFields);
     
-    
+    /// Initialize the minimization algorithms used in the simulation
     void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
-    
-    
+
 public:
+    /// Constructor which sets [SubSystem] (@ref SubSystem) pointer
     MController(SubSystem* s) {_subSystem = s;}
     
+    /// Initialze the [ForceFields] (@ref ForceField) and [Minimizer] (@ref Minimizer) used
     void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers)
     {
         initializeFF(forceFields);
         initializeMinAlgorithms(Minimizers);
     }
 
-    ///Run minimization on the system using the chosen algorithm
-    void run() {
-        _minimizerAlgorithms[0]->equlibrate(_FFManager);
-    }
+    /// Run a minimization on the system using the chosen algorithm
+    void run() {  _minimizerAlgorithms[0]->equlibrate(_FFManager); }
     
 };
 

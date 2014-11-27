@@ -143,7 +143,7 @@ public:
 #endif
     }
     
-    // \internal This methods is called by the Reaction class  during construction
+    // \internal This methods is called by the Reaction class during construction
     // of the Reaction where this RSpecies is involved as a Reactant
     void addAsReactant(ReactionBase *r){_as_reactants.push_back(r);}
     

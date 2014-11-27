@@ -14,7 +14,6 @@
 #ifndef M3SYM_GController_h
 #define M3SYM_GController_h
 
-#include <iostream>
 #include <vector>
 
 #include "common.h"
@@ -33,40 +32,41 @@ class Compartment;
 
 /// GController class is used to control the geometry of the grid, as well as the geometry of entire system
 /*!
- *  The GeometryController class is used to control the geometry of the simulation, which includes the compartment 
- *  grid geometry as well as any boundary conditions that are in place. It has functionality to initialize a grid 
- *  based on the given dimensionality as well as find the correct compartment based on a set of coordinates.
+ *  The GeometryController class is used to control the geometry of the simulation, which includes the [CompartmentGrid] 
+ *  (@ref CompartmentGrid) geometry as well as any [Boundaries] (@ref Boundary) that are in place. It has functionality 
+ *  to initialize a grid based on the given dimensionality as well as find the correct [Compartment] (@ref Compartment) 
+ *  based on a set of coordinates.
  */
 class GController {
     
 private:
-    ///local parameters stored for efficiency
-    static short _nDim;
-    static vector<int> _grid;
-    static vector<double> _compartmentSize;
+    static short _nDim; ///< Number of dimensions in the system
+    static vector<int> _grid; ///< Size of each dimension, in compartment lengths
+    static vector<double> _compartmentSize; ///< Compartment size in each dimension
     
-    ///Generate all neighbors lists for each compartment
+    ///Generate all neighbors lists for each compartment in the [CompartmentGrid] (@ref CompartmentGrid)
     void generateConnections();
     
 public:
     
-    ///initialize the grid based on input parameters
+    /// Initialize the grid based on input parameters
     void initializeGrid();
     
-    ///Activate compartments
+    /// Activate compartments based on a [Boundary] (@ref Boundary)
     void activateCompartments(Boundary* boundary);
     
-    /// Alternate getter from the grid
+    //@{
+    /// Get a [Compartment] (@ref Compartment) based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
-    /// Get the compartment given a set of coordinates
     static Compartment* getCompartment(const vector<double> &coords);
-    
-    /// Get all compartments within a given range from the specified coordinate
-    /// @param ccheck - compartment to check when initially calling this function
-    /// @param compartments - list of compartments that are within range. This will be populated by the function
-    static void findCompartments(const vector<double>& coords, Compartment* ccheck, double dist, vector<Compartment*>& compartments);
+    //@}
+
+    /// Get all [Compartments] (@ref Compartment) within a given range from the specified coordinate
+    /// @param ccheck - Compartment to check when initially calling this function
+    /// @param compartments - List of compartments that are within range. This will be populated by the function
+    static void findCompartments(const vector<double>& coords, Compartment* ccheck,
+                                 double dist, vector<Compartment*>& compartments);
     
 };
-
 
 #endif
