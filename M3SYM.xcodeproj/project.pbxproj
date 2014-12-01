@@ -145,7 +145,6 @@
 		F777FA8A19C1F40A00D2850A /* Component.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA7B19C1F40A00D2850A /* Component.h */; };
 		F777FA8C19C1F40A00D2850A /* Composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7C19C1F40A00D2850A /* Composite.cpp */; };
 		F777FA8D19C1F40A00D2850A /* Composite.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA7D19C1F40A00D2850A /* Composite.h */; };
-		F777FA8F19C1F40A00D2850A /* M3Sym.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7E19C1F40A00D2850A /* M3Sym.cpp */; };
 		F777FA9119C1F40A00D2850A /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7F19C1F40A00D2850A /* MathFunctions.cpp */; };
 		F777FA9219C1F40A00D2850A /* MathFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA8019C1F40A00D2850A /* MathFunctions.h */; };
 		F777FA9319C1F40A00D2850A /* Signaling.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FA8219C1F40A00D2850A /* Signaling.h */; };
@@ -155,7 +154,7 @@
 		F777FAA419C222E400D2850A /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FAA119C222E400D2850A /* Controller.cpp */; };
 		F777FAA519C222E400D2850A /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FAA219C222E400D2850A /* Controller.h */; };
 		F777FAA619C2294400D2850A /* M3Sym.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777FA7E19C1F40A00D2850A /* M3Sym.cpp */; };
-		F777FAA719C2294E00D2850A /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F777FAA919C235D100D2850A /* utility.h in Headers */ = {isa = PBXBuildFile; fileRef = F777FAA819C235D100D2850A /* utility.h */; };
 		F77C83D21A094FE7001D51DF /* SimpleManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777F97719C1F32E00D2850A /* SimpleManagerImpl.cpp */; };
 		F786BC3D19C2446B00297D03 /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F786BC3219C2446B00297D03 /* test_compartments.cpp */; };
@@ -171,7 +170,7 @@
 		F786BC4719C2446B00297D03 /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F786BC3C19C2446B00297D03 /* test_visitor.cpp */; };
 		F78D07591A23BC2500DB2E80 /* test_filaments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D07581A23BC2500DB2E80 /* test_filaments.cpp */; };
 		F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D5E7919C8947A00F48A16 /* Output.cpp */; };
-		F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C9CF821A2CFBA50087434A /* CBound.h in Headers */ = {isa = PBXBuildFile; fileRef = F7472F1E19E2DE66008DA03B /* CBound.h */; };
 		F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
 		F7D1395819CB47D5007FC395 /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */; };
@@ -253,7 +252,7 @@
 		F76C690B198FEC6800760D20 /* MController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MController.h; sourceTree = "<group>"; };
 		F76C691119916CC300760D20 /* GController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GController.cpp; sourceTree = "<group>"; };
 		F76C691219916CC300760D20 /* GController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GController.h; sourceTree = "<group>"; };
-		F771ADBB15655CD70010B123 /* libcyto.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcyto.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F777F96A19C1F32E00D2850A /* ChemGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemGillespieImpl.cpp; sourceTree = "<group>"; };
 		F777F96B19C1F32E00D2850A /* ChemGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemGillespieImpl.h; sourceTree = "<group>"; };
 		F777F96C19C1F32E00D2850A /* ChemManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemManager.cpp; sourceTree = "<group>"; };
@@ -383,7 +382,7 @@
 		F78D07581A23BC2500DB2E80 /* test_filaments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_filaments.cpp; path = Cyto/TESTS/test_filaments.cpp; sourceTree = SOURCE_ROOT; };
 		F78D5E7919C8947A00F48A16 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
 		F78D5E7A19C8947A00F48A16 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
-		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -412,7 +411,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F777FAA719C2294E00D2850A /* libcyto.dylib in Frameworks */,
+				F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +419,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */,
+				F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,16 +535,16 @@
 			children = (
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED071548FFC70069DA61 /* Products */,
-				F7954C4A197D98BE00074A12 /* Cyto */,
+				F7954C4A197D98BE00074A12 /* M3SYM */,
 			);
 			sourceTree = "<group>";
 		};
 		F763ED071548FFC70069DA61 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F771ADBB15655CD70010B123 /* libcyto.dylib */,
+				F771ADBB15655CD70010B123 /* libm3sym.dylib */,
 				F7C7A0F315FFBA3D00DF9838 /* TestSuite */,
-				F7954C49197D98BE00074A12 /* Cyto */,
+				F7954C49197D98BE00074A12 /* M3SYM */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -644,7 +643,7 @@
 			path = Cyto/Mechanics/Minimizer;
 			sourceTree = SOURCE_ROOT;
 		};
-		F7954C4A197D98BE00074A12 /* Cyto */ = {
+		F7954C4A197D98BE00074A12 /* M3SYM */ = {
 			isa = PBXGroup;
 			children = (
 				F71E973C1565A783002BDF16 /* TESTS */,
@@ -679,6 +678,7 @@
 				F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */,
 				F75AE13319BF6C6B00DD7919 /* SystemParameters.h */,
 			);
+			name = M3SYM;
 			path = Cyto;
 			sourceTree = "<group>";
 		};
@@ -794,9 +794,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F771ADBA15655CD70010B123 /* cyto */ = {
+		F771ADBA15655CD70010B123 /* m3sym */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F771ADBC15655CD70010B123 /* Build configuration list for PBXNativeTarget "cyto" */;
+			buildConfigurationList = F771ADBC15655CD70010B123 /* Build configuration list for PBXNativeTarget "m3sym" */;
 			buildPhases = (
 				F771ADB715655CD70010B123 /* Sources */,
 				F771ADB815655CD70010B123 /* Frameworks */,
@@ -806,14 +806,14 @@
 			);
 			dependencies = (
 			);
-			name = cyto;
+			name = m3sym;
 			productName = cyto;
-			productReference = F771ADBB15655CD70010B123 /* libcyto.dylib */;
+			productReference = F771ADBB15655CD70010B123 /* libm3sym.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F7954C48197D98BE00074A12 /* Cyto */ = {
+		F7954C48197D98BE00074A12 /* M3SYM */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "Cyto" */;
+			buildConfigurationList = F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "M3SYM" */;
 			buildPhases = (
 				F7954C45197D98BE00074A12 /* Sources */,
 				F7954C46197D98BE00074A12 /* Frameworks */,
@@ -823,9 +823,9 @@
 			);
 			dependencies = (
 			);
-			name = Cyto;
+			name = M3SYM;
 			productName = Cyto;
-			productReference = F7954C49197D98BE00074A12 /* Cyto */;
+			productReference = F7954C49197D98BE00074A12 /* M3SYM */;
 			productType = "com.apple.product-type.tool";
 		};
 		F7C7A0DD15FFBA3D00DF9838 /* TestSuite */ = {
@@ -854,7 +854,7 @@
 				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "University of Maryland";
 			};
-			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "Cyto" */;
+			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "M3SYM" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -866,9 +866,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F7954C48197D98BE00074A12 /* Cyto */,
+				F7954C48197D98BE00074A12 /* M3SYM */,
 				F7C7A0DD15FFBA3D00DF9838 /* TestSuite */,
-				F771ADBA15655CD70010B123 /* cyto */,
+				F771ADBA15655CD70010B123 /* m3sym */,
 			);
 		};
 /* End PBXProject section */
@@ -922,7 +922,6 @@
 				F777F9D619C1F35200D2850A /* Compartment.cpp in Sources */,
 				F7D1BE461A140DEC0066DEF1 /* NeighborListContainer.cpp in Sources */,
 				F777F96719C1E71C00D2850A /* MController.cpp in Sources */,
-				F777FA8F19C1F40A00D2850A /* M3Sym.cpp in Sources */,
 				F777FA4A19C1F3A800D2850A /* LinkerStretching.cpp in Sources */,
 				F777FA6C19C1F3C900D2850A /* CGFletcherRievesMethod.cpp in Sources */,
 				F777F96919C1E71C00D2850A /* GController.cpp in Sources */,
@@ -1115,7 +1114,7 @@
 					"-lgsl",
 					"-lboost_system",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = M3SYM;
 			};
 			name = Debug;
 		};
@@ -1151,7 +1150,7 @@
 					"-lgsl",
 					"-lboost_system",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = M3SYM;
 			};
 			name = Release;
 		};
@@ -1223,7 +1222,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "Cyto" */ = {
+		F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "M3SYM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F763ED0E1548FFC70069DA61 /* Debug */,
@@ -1232,7 +1231,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F771ADBC15655CD70010B123 /* Build configuration list for PBXNativeTarget "cyto" */ = {
+		F771ADBC15655CD70010B123 /* Build configuration list for PBXNativeTarget "m3sym" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F771ADBD15655CD70010B123 /* Debug */,
@@ -1241,7 +1240,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "Cyto" */ = {
+		F7954C4F197D98BE00074A12 /* Build configuration list for PBXNativeTarget "M3SYM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F7954C50197D98BE00074A12 /* Debug */,

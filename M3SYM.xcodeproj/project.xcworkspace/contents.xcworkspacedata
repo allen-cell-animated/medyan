@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Cyto.xcodeproj">
+      location = "self:M3SYM.xcodeproj">
    </FileRef>
 </Workspace>
