@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  LinkerStratching.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 8/28/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "LinkerStretching.h"
 
@@ -29,7 +34,7 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(Linker* l, do
     if (d == 0.0)
         return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L);
     else
-        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L, d);
     
 }
 
@@ -47,12 +52,11 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(Linker* l) {
     double pos2 = l->getSecondPosition();
     
     _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, L);
-    
 }
 
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) { /// Needed for Conjugated Gradient minimization;
+void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) {
 
     Bead* b1 = l->getFirstCylinder()->getFirstBead();
     Bead* b2 = l->getFirstCylinder()->getSecondBead();
@@ -65,7 +69,6 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) {
     double pos2 = l->getSecondPosition();
     
     _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, L);
-    
 }
 
 ///Temlate specializations

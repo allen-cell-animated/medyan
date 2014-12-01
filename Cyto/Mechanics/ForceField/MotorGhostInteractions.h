@@ -1,31 +1,40 @@
-//
-//  MotorGhostInteractions.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef Cyto_MotorGhostInteractions_h
-#define Cyto_MotorGhostInteractions_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+
+#ifndef M3SYM_MotorGhostInteractions_h
+#define M3SYM_MotorGhostInteractions_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class MotorGhost;
 
+/// MotorInteractions class represents an internal motor interaction
 class MotorGhostInteractions {
 private:
-    string _name;
+    string _name; ///< Name of interaction
     
 public:
+    /// Compute the energy of this interaction
     virtual double computeEnergy( MotorGhost*,  double d) = 0;
+    /// Compute the forces of this interaction
     virtual void computeForces(MotorGhost*) = 0;
+    /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux(MotorGhost*) = 0;
 
+    /// Get name of this interaction
     const string& getName() {return _name;}
 };
 
-#endif /* defined(__Cyto__MotorGhostInteractions__) */
+#endif

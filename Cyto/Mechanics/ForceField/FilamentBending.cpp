@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  FilamentBending.cpp
-//  CytoMech
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "FilamentBending.h"
 
@@ -43,8 +48,6 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
                 index++;
             }
         }
-        //cout << "Bending Energy = " << U << endl;
-        
         return U;
     }
     else return 0;
@@ -62,7 +65,6 @@ void FilamentBending<FBendingInteractionType>::computeForces(Filament* f)
             Bead* b2 = (*it)->getFirstBead();
             Bead* b3 = (*it)->getSecondBead();
             double k_bend = (*it)->getMCylinder()->getBendingConst();
-            
             
             _FFType.forces( b1, b2, b3, k_bend );
         }
@@ -82,7 +84,6 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f) ///
             double k_bend = (*it)->getMCylinder()->getBendingConst();
 
             _FFType.forcesAux( b1, b2, b3, k_bend );
-            
         }
     }
 }

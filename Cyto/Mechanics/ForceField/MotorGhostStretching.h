@@ -1,15 +1,18 @@
-//
-//  MotorGhostStretching.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__MotorGhostStretching__
-#define __Cyto__MotorGhostStretching__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_MotorGhostStretching_h
+#define M3SYM_MotorGhostStretching_h
 
 #include "common.h"
 
@@ -18,6 +21,7 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
+/// MotorStretching class represents a motor stretching interaction
 template <class MStretchingInteractionType>
 class MotorGhostStretching : public MotorGhostInteractions {
     
@@ -30,6 +34,4 @@ public:
     virtual void computeForcesAux(MotorGhost*);
 };
 
-
-
-#endif /* defined(__Cyto__MotorGhostStretching__) */
+#endif

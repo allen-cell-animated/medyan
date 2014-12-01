@@ -1,31 +1,33 @@
-//
-//  MotorGhostStretchingHarmonic.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__MotorGhostStretchingHarmonic__
-#define __Cyto__MotorGhostStretchingHarmonic__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_MotorGhostStretchingHarmonic_h
+#define M3SYM_MotorGhostStretchingHarmonic_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
+/// MotorStretchingHarmonic class is a harmonic potential used by the [MotorStretching](@ref MotorStretching) template.
 class MotorGhostStretchingHarmonic {
     
 public:
     double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
     double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L, double d);
     void forces(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L );
+    void forcesAux(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
     
 };
 
-
-
-#endif /* defined(__Cyto__MotorGhostStretchingHarmonic__) */
+#endif

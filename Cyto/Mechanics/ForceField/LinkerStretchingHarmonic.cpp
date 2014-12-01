@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  LinkerStretchingHarmonic.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 9/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "LinkerStretchingHarmonic.h"
 
@@ -20,7 +25,6 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     auto v2 = MidPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
     double dist = TwoPointDistance(v1, v2) - L;
-    
     return 0.5 * kStr * dist * dist;
 }
 
@@ -31,7 +35,6 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     auto v2 = MidPointCoordinateStretched(b3->coordinate, b3->force, b4->coordinate, b4->force, position2, d);
     
     double distStretched = TwoPointDistance(v1, v2) - L;
-    
     return 0.5 * kStr * distStretched * distStretched ;
 
 }
@@ -46,10 +49,8 @@ void LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double invL = 1 / dist;
     
     double f0 = kStr * ( dist - L ) * invL;
-    
-    
+
     //force on i
-    
     b1->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
     b1->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - position1);
     b1->force[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - position1);
@@ -78,11 +79,8 @@ void LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     auto v2 = MidPointCoordinate(b3->coordinateAux, b4->coordinateAux, position2);
     
     double dist = TwoPointDistance( v1, v2);
-    
     double invL = 1 / dist;
-    
     double f0 = kStr * ( dist - L ) * invL;
-    
     
     //force on i
     b1->forceAux[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
@@ -103,6 +101,5 @@ void LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->forceAux[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
-    
 }
 

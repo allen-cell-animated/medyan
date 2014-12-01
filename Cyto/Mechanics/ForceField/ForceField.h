@@ -1,15 +1,18 @@
-//
-//  ForceField.h
-//  Cyto
-//
-//  Created by James Komianos on 8/5/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__ForceField__
-#define __Cyto__ForceField__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_ForceField_h
+#define M3SYM_ForceField_h
 
 #include "common.h"
 
@@ -21,18 +24,17 @@
 class ForceField {
 
 private:
-    string _name;
+    string _name; ///< Name of this forcefield
     
 public:
+    /// Get the name of this forcefield
     const string& getName() {return _name;}
+    /// Compute total energy of this forcefield in the system
     virtual double computeEnergy(double d) = 0;
+    /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead) forces accordingly.
     virtual void computeForces() = 0;
+    /// Compute auxiliary forces of this forcefield in the system. Update [Bead](@ref Bead) auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
 };
 
-
-
-
-
-
-#endif /* defined(__Cyto__ForceField__) */
+#endif

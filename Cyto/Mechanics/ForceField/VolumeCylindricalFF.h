@@ -1,41 +1,42 @@
-//
-//  VolumeCylindricalFF.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 10/29/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__VolumeCylindricalFF__
-#define __Cyto__VolumeCylindricalFF__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <stdio.h>
-#include <iostream>
+#ifndef M3SYM_VolumeCylindricalFF_h
+#define M3SYM_VolumeCylindricalFF_h
+
 #include <vector>
 
 #include "common.h"
 
 #include "ForceField.h"
-#include "Cylinder.h"
 
 //FORWARD DECLARATIONS
 class CylinderVolumeInteractions;
 
+/// VolumeCylindrical FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Cylinder] (@ref Cylinder)
+/// volume interactions
 class VolumeCylindricalFF : public ForceField {
     
 private:
-    vector <unique_ptr<CylinderVolumeInteractions>> _cylinderVolInteractionVector;
+    vector <unique_ptr<CylinderVolumeInteractions>> _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
 public:
-    VolumeCylindricalFF(string& interaction );
+    /// Initialize the volume forcefields
+    VolumeCylindricalFF(string& interaction);
     
-    // Public interfaces to compute forces:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
 };
 
-
-
-
-#endif /* defined(__Cyto__VolumeCylindricalFF__) */
+#endif

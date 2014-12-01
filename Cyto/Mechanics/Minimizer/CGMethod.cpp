@@ -1,16 +1,20 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  CGMethod.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/10/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "CGMethod.h"
 
 #include "ForceFieldManager.h"
 #include "BeadDB.h"
-
 
 inline void CGMethod::swap(double &a, double &b) {
     double tmp = a;
@@ -43,7 +47,7 @@ void CGMethod::makeBracket(ForceFieldManager &FFM, double &ax, double &bx, doubl
     fa = FFM.computeEnergy(ax);
     fb = FFM.computeEnergy(bx);
     
-    ///go in correct direction
+    //go in correct direction
     if (fb > fa){
         swap(ax, bx);
         swap(fb, fa);
@@ -136,7 +140,7 @@ void CGMethod::moveBeads(double d)
         (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
         (*it).coordinate[2] = (*it).coordinate[2] + d* (*it).force[2];
         
-        ///reset coord Aux
+        //reset coord Aux
         (*it).coordinateAux = (*it).coordinate;
 	}
 }
@@ -196,7 +200,7 @@ double CGMethod::goldenSection1(ForceFieldManager& FFM)
         }
     }
     double returnLambda = (a + b)/2.0;
-    ///check if return value is in bounds of lambda min and max
+    //check if return value is in bounds of lambda min and max
     if (returnLambda > LAMBDAMAX) return LAMBDAMAX;
     else if(returnLambda < LAMBDAMIN) return LAMBDAMIN;
     else return returnLambda;
@@ -235,7 +239,7 @@ double CGMethod::goldenSection2(ForceFieldManager& FFM) {
     if(f1 < f2) returnLambda = x1;
     else returnLambda = x2;
     
-    ///check if return value is in bounds of lambda min and max
+    //check if return value is in bounds of lambda min and max
     if (returnLambda > LAMBDAMAX) return LAMBDAMAX;
     else if(returnLambda < LAMBDAMIN) return LAMBDAMIN;
     else return returnLambda;
@@ -266,18 +270,18 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
-    ///return error if in wrong direction
+    //return error if in wrong direction
     directionDotForce /= BeadDB::instance()->size();
     if(directionDotForce < 0.0) return -1.0;
     
-    ///return zero if no forces
+    //return zero if no forces
     if(maxDirection == 0.0) return 0.0;
     
-    ///calculate first lambda. cannot be greater than lambda max
+    //calculate first lambda. cannot be greater than lambda max
     double lambda = min(LAMBDAMAX, MAXDIST / maxDirection);
     double currentEnergy = FFM.computeEnergy(0.0);
     
-    ///backtracking loop
+    //backtracking loop
     while(true) {
         
         double energyLambda = FFM.computeEnergy(lambda);
@@ -289,7 +293,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
             return lambda;
         }
         
-        ///reduce lambda
+        //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         //cout << "lambda reduced" << endl;
@@ -319,25 +323,25 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxDirection = max(maxDirection, fabs(it->force[i]));
     }
-    ///return error if in wrong direction
+    //return error if in wrong direction
     directionDotForce /= BeadDB::instance()->size();
     if(directionDotForce < 0.0)  return -1.0;
     
-    ///return zero if no forces
+    //return zero if no forces
     if(maxDirection == 0.0) return 0.0;
     
-    ///first lambda is lambda max
+    //first lambda is lambda max
     double lambda = LAMBDAMAX;
     double directionDotForcePrev = directionDotForce;
     double energyPrev = FFM.computeEnergy(0.0);
     double lambdaPrev = 0.0;
     
-    ///backtracking loop
+    //backtracking loop
     while (true) {
         
         double energy = FFM.computeEnergy(lambda);
         
-        ///move and compute new forces
+        //move and compute new forces
         moveBeadsAux(lambda);
         FFM.computeForcesAux();
         
@@ -367,7 +371,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         energyPrev = energy;
         lambdaPrev = lambda;
         
-        ///reduce lambda
+        //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {

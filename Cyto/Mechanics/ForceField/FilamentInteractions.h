@@ -1,13 +1,18 @@
-//
-//  FilamentInteractions.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 8/15/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__FilamentInteractions__
-#define __Cyto__FilamentInteractions__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_FilamentInteractions_h
+#define M3SYM_FilamentInteractions_h
 
 #include <iostream>
 
@@ -16,18 +21,22 @@
 //FORWARD DECLARATIONS
 class Filament;
 
+/// FilamentInteractions class represents an internal filament interaction
 class FilamentInteractions {
 private:
     string _name;
 
 public:
+    /// Compute the energy of this interaction
     virtual double computeEnergy(Filament*,  double d) = 0;
+    /// Compute forces of this interaction
     virtual void computeForces(Filament*) = 0;
+    /// Compute auxiliary forces of this interaction
     virtual void computeForcesAux(Filament*) = 0;
     
-   // string getName() {return _name;}
+    /// Get the name of this interaction
     const string& getName() {return _name;}
     
 };
 
-#endif /* defined(__Cyto__FilamentInteractions__) */
+#endif

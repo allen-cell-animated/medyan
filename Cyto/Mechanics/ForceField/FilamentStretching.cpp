@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  FilamentStretching.cpp
-//  CytoMech
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "FilamentStretching.h"
 
@@ -32,11 +37,9 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f
             double kStr =it->getMCylinder()->getStretchingConst();
             double L = it->getMCylinder()->getEqLength();
             
-            U += _FFType.energy(b1, b2, kStr, L, d);   ///This type of function needed for conjugated gradient minimisation only;
+            U += _FFType.energy(b1, b2, kStr, L, d);
         }
     }
-    
-    //cout << "Stretching Energy = " << U << endl;
     
     return U;
 }
@@ -56,7 +59,7 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(Filament* f) 
 
 
 template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::computeForcesAux(Filament* f) {/// Needed for Conjugated Gradient minimization;
+void FilamentStretching<FStretchingInteractionType>::computeForcesAux(Filament* f) {
     for(auto it : f->getCylinderVector()){
         
         Bead* b1 = it->getFirstBead();

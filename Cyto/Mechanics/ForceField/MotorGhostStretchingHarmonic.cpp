@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  MotorGhostStretchingHarmonic.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 9/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "MotorGhostStretchingHarmonic.h"
 
@@ -13,7 +18,6 @@
 
 using namespace mathfunc;
 
-// Energy calculation methods:
 double MotorGhostStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                             double position1, double position2, double kStr, double L){
     
@@ -21,7 +25,6 @@ double MotorGhostStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* 
     auto v2 = MidPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
     double dist = TwoPointDistance(v1, v2) - L;
-    
     return 0.5 * kStr * dist * dist ;
 }
 
@@ -32,7 +35,6 @@ double MotorGhostStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* 
     auto v2 = MidPointCoordinateStretched(b3->coordinate, b3->force, b4->coordinate, b4->force, position2, d);
     
     double dist = TwoPointDistance(v1, v2) - L;
-    
     return 0.5 * kStr * dist * dist;
 }
 // Force calculation methods:
@@ -46,7 +48,6 @@ void MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4
     
     double invL = 1 / dist;
     double f0 = kStr * ( dist - L ) * invL;
-    
     
     //force on i
     b1->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);

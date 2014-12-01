@@ -1,17 +1,20 @@
-//
-//  BoundaryFF.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/11/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__BoundaryFF__
-#define __Cyto__BoundaryFF__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_BoundaryFF_h
+#define M3SYM_BoundaryFF_h
+
 #include <vector>
-#include <stdlib.h>
 
 #include "common.h"
 
@@ -20,18 +23,20 @@
 //FORWARD DECLARATIONS
 class BoundaryInteractions;
 
+/// Boundary FF is an implementation of the [ForceField](@ref ForceField) class that calculates [BoundaryElement] (@ref BoundaryElement)
+/// repulsion and attraction to [Beads](@ref Bead) in the system.
 class BoundaryFF : public ForceField {
     
 private:
-    vector<unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector;
+    vector<unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
 public:
-    BoundaryFF( string interaction1, string interaction2, string interaction3 );
+    /// Initialize the forcefields (repulsion, attraction, etc)
+    BoundaryFF(string interaction1, string interaction2, string interaction3);
     
-    // Public interfaces to compute forces:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
 };
 
-#endif /* defined(__Cyto__BoundaryFF__) */
+#endif

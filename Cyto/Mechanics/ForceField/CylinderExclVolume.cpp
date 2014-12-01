@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  CylinderExclVolume.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 10/31/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "CylinderExclVolume.h"
 
@@ -26,7 +31,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(Cylinder* c1, C
     if (d == 0.0)
         return _FFType.energy(b1, b2, b3, b4, kRepuls);
     else
-        return _FFType.energy(b1, b2, b3, b4, kRepuls, d);   ///This type of function needed for conjugated gradient minimisation only;
+        return _FFType.energy(b1, b2, b3, b4, kRepuls, d);
     
 }
 

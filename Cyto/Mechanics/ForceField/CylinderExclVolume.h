@@ -1,16 +1,18 @@
-//
-//  CylinderExclVolume.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 10/31/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__CylinderExclVolume__
-#define __Cyto__CylinderExclVolume__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <stdio.h>
-#include <iostream>
+#ifndef M3SYM_CylinderExclVolume_h
+#define M3SYM_CylinderExclVolume_h
 
 #include "common.h"
 
@@ -19,6 +21,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
+/// CylinderExclVolume represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
 template <class CVolumeInteractionType>
 class CylinderExclVolume : public CylinderVolumeInteractions {
     
@@ -28,9 +31,7 @@ private:
 public:
     virtual double computeEnergy(Cylinder*, Cylinder*, double d);
     virtual void computeForces(Cylinder*, Cylinder*);
-    virtual void computeForcesAux(Cylinder*, Cylinder* );
+    virtual void computeForcesAux(Cylinder*, Cylinder*);
 };
 
-
-
-#endif /* defined(__Cyto__CylinderExclVolume__) */
+#endif

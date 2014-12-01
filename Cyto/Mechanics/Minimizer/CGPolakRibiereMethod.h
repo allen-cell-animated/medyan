@@ -1,32 +1,34 @@
-//
-//  CGPolakRibiereMethod.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/8/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__CGPolakRibiereMethod__
-#define __Cyto__CGPolakRibiereMethod__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_CGPolakRibiereMethod_h
+#define M3SYM_CGPolakRibiereMethod_h
 
-#include <iostream>
 #include <cmath>
 #include <numeric>
 #include <vector>
-#include <math.h>
 #include <algorithm>
 
 #include "common.h"
 
 #include "CGMethod.h"
 
+/// PolakRibiere class is the Polak-Ribiere method for conjugate gradient minimization
 class PolakRibiere : public CGMethod
 {
 public:
     void minimize(ForceFieldManager &FFM);
 };
 
-#endif /* defined(__Cyto__CGPolakRibiereMethod__) */
+#endif
 

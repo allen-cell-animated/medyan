@@ -1,15 +1,19 @@
-//
-//  BoundaryRepulsionLJ.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/16/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__BoundaryRepulsionLJ__
-#define __Cyto__BoundaryRepulsionLJ__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_BoundaryRepulsionLJ_h
+#define M3SYM_BoundaryRepulsionLJ_h
+
 #include <vector>
 
 #include "common.h"
@@ -17,6 +21,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
+/// BoundaryRepulsionLJ class is a Lennard-Jones repulsive potential.
 class BoundaryRepulsionLJ {
 
 public:
@@ -24,4 +29,4 @@ public:
     void computeForces(Bead*, double, vector<double>& norm, double, double);
     void computeForcesAux(Bead*, double, vector<double>& norm, double, double);
 };
-#endif /* defined(__Cyto__BoundaryRepulsionLJ__) */
+#endif

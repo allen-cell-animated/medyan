@@ -1,10 +1,16 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  CylindricalVolRepulsion.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 10/29/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
 /*
  Cylinder 1: x1------x2
  Cylinder 2: y1------y2
@@ -68,12 +74,18 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
 
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls, double lambda)
 {
-    double a = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, b1->coordinate, b1->force, b2->coordinate, b2->force, lambda);
-    double b = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force, b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-    double c = ScalarProductStretched(b3->coordinate, b3->force, b1->coordinate, b1->force, b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
-    double d = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-    double e = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
-    double f = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force, b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
+    double a = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
+                                      b1->coordinate, b1->force, b2->coordinate, b2->force, lambda);
+    double b = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+                                      b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+    double c = ScalarProductStretched(b3->coordinate, b3->force, b1->coordinate, b1->force,
+                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
+    double d = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
+                                      b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+    double e = ScalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
+                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
+    double f = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
     
     
     double AA = sqrt(a*c - e*e);

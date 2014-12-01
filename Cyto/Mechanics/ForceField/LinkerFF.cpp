@@ -1,20 +1,28 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  LinkerFF.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 9/5/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "LinkerFF.h"
 
 #include "LinkerStretching.h"
 #include "LinkerStretchingHarmonic.h"
+
 #include "LinkerDB.h"
 
 LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
-    if (stretching == "HARMONIC") {_linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());}
+    if (stretching == "HARMONIC")
+        _linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());
+    
     //if (Bending == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerBending<FilamentBendingHarmonic>());}
     //if (Twisting == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerTwisting<FilamentTwistingHarmonic>());}
 }
@@ -22,29 +30,24 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 double LinkerFF::computeEnergy(double d) {
     double U_linker = 0;
     
-    for (auto linker: *LinkerDB::instance()) {
-        
+    for (auto linker: *LinkerDB::instance())
         for (auto &linkerInteraction : _linkerInteractionVector)
             U_linker += linkerInteraction.get()->computeEnergy(linker, d);
-    }
+
     return U_linker;
 }
 
 void LinkerFF::computeForces() {
     
-    for (auto linker: *LinkerDB::instance()) {
-        
+    for (auto linker: *LinkerDB::instance())
         for (auto &linkerInteraction : _linkerInteractionVector)
             linkerInteraction.get()->computeForces(linker);
-    }
 }
 
 void LinkerFF::computeForcesAux() {
     
-    for (auto linker: *LinkerDB::instance()) {
-    
+    for (auto linker: *LinkerDB::instance())
         for (auto &linkerInteraction : _linkerInteractionVector)
             linkerInteraction.get()->computeForcesAux(linker);
-    }
 }
 

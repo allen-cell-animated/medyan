@@ -1,13 +1,18 @@
-//
-//  ConjugateGradient.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/8/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef Cyto_ConjugateGradient_h
-#define Cyto_ConjugateGradient_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_ConjugateGradient_h
+#define M3SYM_ConjugateGradient_h
 
 #include "common.h"
 
@@ -17,6 +22,8 @@
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
+
+/// ConjugateGradient is an implementation of [Minimzer](@ref Minimizer).
 template <class CGType>
 class ConjugateGradient : public Minimizer {
     
@@ -27,4 +34,4 @@ public:
     void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM);}
 };
 
-#endif /* defined(__Cyto__ConjugateGradient__) */
+#endif

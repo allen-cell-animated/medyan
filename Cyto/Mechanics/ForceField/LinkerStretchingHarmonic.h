@@ -1,21 +1,25 @@
-//
-//  LinkerStretchingHarmonic.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 9/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__LinkerStretchingHarmonic__
-#define __Cyto__LinkerStretchingHarmonic__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_LinkerStretchingHarmonic_h
+#define M3SYM_LinkerStretchingHarmonic_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
+/// LinkerStretchingHarmonic class is a harmonic potential used by the [LinkerStretching](@ref LinkerStretching) template.
 class LinkerStretchingHarmonic {
     
 public:

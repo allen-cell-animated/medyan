@@ -1,15 +1,18 @@
-//
-//  LinkerStretching.h
-//  Cyto
-//
-//  Created by Konstantin Popov on 8/28/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__LinkerStratching__
-#define __Cyto__LinkerStratching__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_LinkerStretching_h
+#define M3SYM_LinkerStretching_h
 
 #include "common.h"
 
@@ -18,6 +21,7 @@
 //FORWARD DECLARATIONS
 class Linker;
 
+/// LinkerStretching class represents a linker stretching interaction
 template <class LStretchingInteractionType>
 class LinkerStretching : public LinkerInteractions {
     
@@ -30,4 +34,4 @@ public:
     virtual void computeForcesAux(Linker*);
 };
 
-#endif /* defined(__Cyto__LinkerStretching__) */
+#endif
