@@ -25,7 +25,7 @@ class ReactionVisitor;
 /// Component class is the base class for the Composite pattern hieararchy
 
 /*! 
- *  The Composite patter allows building of complex hieararchical objects, with convenient
+ *  The Composite pattern allows building of complex hieararchical objects, with convenient
  *  methods for applying a function to all nodes (i.e. the Visitor pattern). Each node in the 
  *  hieararchy may have a parent and may contain several children nodes. A class that is derived 
  *  directly from Component and not from Composite, cannot contain children, i.e. it is a leaf node.

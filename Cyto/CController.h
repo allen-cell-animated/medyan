@@ -39,10 +39,10 @@ private:
     SubSystem* _subSystem; ///< A pointer to the subsystem
     
 public:
-    /// Constructor which sets [SubSystem] (@ref SubSystem) pointer
+    /// Constructor which sets subsystem pointer
     CController(SubSystem* s) {_subSystem = s;}
     
-    /// Initialize the [ChemSim] (@ref ChemSim) algorithm as well as the [ChemManager] (@ref ChemManager)
+    /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, string& chemManager, ChemistryData& chem);

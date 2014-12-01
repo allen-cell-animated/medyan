@@ -19,6 +19,8 @@
 		B5BDA3D11A014EDC002CDE66 /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3CE1A014EDC002CDE66 /* CylinderExclVolRepulsion.h */; };
 		B5BDA3D51A03FD84002CDE66 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5BDA3D21A03FD84002CDE66 /* CylinderExclVolume.cpp */; };
 		B5BDA3D61A03FD84002CDE66 /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = B5BDA3D31A03FD84002CDE66 /* CylinderExclVolume.h */; };
+		BF192E7C1A2C03C50010DC96 /* Movable.h in Headers */ = {isa = PBXBuildFile; fileRef = BF192E7A1A2C03C50010DC96 /* Movable.h */; };
+		BF192E7D1A2C03C50010DC96 /* Reactable.h in Headers */ = {isa = PBXBuildFile; fileRef = BF192E7B1A2C03C50010DC96 /* Reactable.h */; };
 		BF36F0C61A26C38300A2285C /* Visitor.h in Headers */ = {isa = PBXBuildFile; fileRef = BF36F0C51A26C38300A2285C /* Visitor.h */; };
 		F700784819B8DFE10014C178 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7358498198990E60026E1B6 /* CController.cpp */; };
 		F71338B619C737C900F774F4 /* BoundaryElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */; };
@@ -220,6 +222,8 @@
 		B5BDA3CE1A014EDC002CDE66 /* CylinderExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsion.h; sourceTree = "<group>"; };
 		B5BDA3D21A03FD84002CDE66 /* CylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolume.cpp; sourceTree = "<group>"; };
 		B5BDA3D31A03FD84002CDE66 /* CylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolume.h; sourceTree = "<group>"; };
+		BF192E7A1A2C03C50010DC96 /* Movable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Movable.h; path = Cyto/Structure/Movable.h; sourceTree = SOURCE_ROOT; };
+		BF192E7B1A2C03C50010DC96 /* Reactable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reactable.h; path = Cyto/Structure/Reactable.h; sourceTree = SOURCE_ROOT; };
 		BF36F0C51A26C38300A2285C /* Visitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
 		F71338B519C737C900F774F4 /* BoundaryElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryElementImpl.cpp; path = Cyto/Structure/BoundaryElementImpl.cpp; sourceTree = SOURCE_ROOT; };
 		F722372A19BE1728006FAB85 /* testsysteminput.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = testsysteminput.txt; path = Cyto/testsysteminput.txt; sourceTree = SOURCE_ROOT; };
@@ -376,8 +380,6 @@
 		F786BC3B19C2446B00297D03 /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_species.cpp; path = Cyto/TESTS/test_species.cpp; sourceTree = SOURCE_ROOT; };
 		F786BC3C19C2446B00297D03 /* test_visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_visitor.cpp; path = Cyto/TESTS/test_visitor.cpp; sourceTree = SOURCE_ROOT; };
 		F78D07581A23BC2500DB2E80 /* test_filaments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_filaments.cpp; path = Cyto/TESTS/test_filaments.cpp; sourceTree = SOURCE_ROOT; };
-		F78D075B1A25190F00DB2E80 /* Movable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Movable.h; path = Cyto/Movable.h; sourceTree = SOURCE_ROOT; };
-		F78D075D1A25197000DB2E80 /* Reactable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reactable.h; sourceTree = SOURCE_ROOT; };
 		F78D5E7919C8947A00F48A16 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
 		F78D5E7A19C8947A00F48A16 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* Cyto */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cyto; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -427,6 +429,8 @@
 		B52F64BE19BA230000A2B9FD /* Structure */ = {
 			isa = PBXGroup;
 			children = (
+				BF192E7A1A2C03C50010DC96 /* Movable.h */,
+				BF192E7B1A2C03C50010DC96 /* Reactable.h */,
 				F777FA9C19C1FDB200D2850A /* SubSystem.cpp */,
 				F777FA9D19C1FDB200D2850A /* SubSystem.h */,
 				F777F98E19C1F35200D2850A /* Bead.cpp */,
@@ -496,8 +500,6 @@
 				F746C4DA1A11596E0085E4BB /* NeighborListDB.h */,
 				F7D1BE441A140DEC0066DEF1 /* NeighborListContainer.cpp */,
 				F7D1BE451A140DEC0066DEF1 /* NeighborListContainer.h */,
-				F78D075B1A25190F00DB2E80 /* Movable.h */,
-				F78D075D1A25197000DB2E80 /* Reactable.h */,
 			);
 			name = Structure;
 			path = CytoMech;
@@ -771,6 +773,7 @@
 				F777FA7419C1F3C900D2850A /* ConjugateGradient.h in Headers */,
 				F777F9D319C1F35200D2850A /* CCylinder.h in Headers */,
 				F777F9FF19C1F35200D2850A /* ReactionContainer.h in Headers */,
+				BF192E7C1A2C03C50010DC96 /* Movable.h in Headers */,
 				F777F9DA19C1F35200D2850A /* CompartmentContainer.h in Headers */,
 				F777F9CB19C1F35200D2850A /* BoundaryElementImpl.h in Headers */,
 				F777F9C519C1F35200D2850A /* BeadDB.h in Headers */,
@@ -779,6 +782,7 @@
 				B5BDA3C51A014DD3002CDE66 /* VolumeCylindricalFF.h in Headers */,
 				F777FA5519C1F3A800D2850A /* MotorGhostStretching.h in Headers */,
 				B5BDA3D61A03FD84002CDE66 /* CylinderExclVolume.h in Headers */,
+				BF192E7D1A2C03C50010DC96 /* Reactable.h in Headers */,
 				F777FA4E19C1F3A800D2850A /* LinkerStretchingHarmonic.h in Headers */,
 				F777FA4819C1F3A800D2850A /* LinkerInteractions.h in Headers */,
 				F777FA4419C1F3A800D2850A /* ForceFieldManager.h in Headers */,

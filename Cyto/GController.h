@@ -52,16 +52,16 @@ public:
     /// Initialize the grid based on input parameters
     void initializeGrid();
     
-    /// Activate compartments based on a [Boundary] (@ref Boundary)
+    /// Activate compartments based on a bounda
     void activateCompartments(Boundary* boundary);
     
     //@{
-    /// Get a [Compartment] (@ref Compartment) based on coordinates or indices
+    /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
     static Compartment* getCompartment(const vector<double> &coords);
     //@}
 
-    /// Get all [Compartments] (@ref Compartment) within a given range from the specified coordinate
+    /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be populated by the function
     static void findCompartments(const vector<double>& coords, Compartment* ccheck,

@@ -10,6 +10,7 @@
 
 #include "Parser.h"
 #include "Output.h"
+#include "SubSystem.h"
 #include "BoundaryImpl.h"
 
 #include "SystemParameters.h"
