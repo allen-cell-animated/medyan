@@ -37,7 +37,11 @@ public:
     ~CLinker() {}
     
     /// Copy constructor, standard
-    CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c) {}
+    CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c) {
+        
+        setFirstSpecies(rhs._firstSpecies);
+        setSecondSpecies(rhs._secondSpecies);
+    }
     
     /// Assignment is not allowed
     CLinker& operator=(CLinker &rhs) = delete;

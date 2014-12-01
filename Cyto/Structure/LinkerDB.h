@@ -1,29 +1,35 @@
-//
-//  LinkerDB.h
-//  CytoMech
-//
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
-//
 
-#ifndef CytoMech_LinkerDB_h
-#define CytoMech_LinkerDB_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+
+#ifndef M3SYM_LinkerDB_h
+#define M3SYM_LinkerDB_h
+
 #include <list>
 
 #include "common.h"
 
 #include "Linker.h"
 
-class SpeciesBound;
+//FORWARD DELCARATIONS
 class Compartment;
 class Cylinder;
 
-///LinkerDB class is used to store all linkers in the system
-/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers 
- *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing
- *  of objects, as well as some standard list functions and iterators.
+/// LinkerDB class is a database for all [Linkers](@ref Linker) in the system
+/*!
+ *   This LinkerDB inherits from list and manage all creations and removing of
+ *   [Linkers](@ref Linker) objects, as well as some standard list functions and iterators.
+ *   The [SubSystem] (@ref SubSystem) class calls this database to create and/or remove linkers.
  */
 class LinkerDB: private list<Linker*>
 {
@@ -41,8 +47,10 @@ public:
     /// Assignment is not allowed
     LinkerDB& operator=(LinkerDB &rhs) = delete;
     
+    /// Get instance
     static LinkerDB* instance();
     
+    /// Create a new linker
     Linker* createLinker(Cylinder* c1, Cylinder* c2, short linkerType,
                       double position1 = 0.5, double position2 = 0.5, bool creation = false) {
         
@@ -52,16 +60,16 @@ public:
         return l;
     }
 
+    /// Remove a linker
     void removeLinker(Linker* l) {
         delete l;
         remove(l);
     };
     
 private:
-    ///To assign linker IDs
-    static int _currentLinkerID;
+    static int _currentLinkerID;   ///< To assign linker IDs
     
-    static LinkerDB* _instance;
+    static LinkerDB* _instance;    ///< Singleton instance
     LinkerDB() {};
     
 };

@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  RSpecies.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 5/22/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "RSpecies.h"
 
@@ -16,11 +21,9 @@
 #endif
 
 RSpecies::~RSpecies(){
-    ///SHOULD BE UNCOMMENTED...
-    if(!(_as_reactants.empty() and _as_products.empty())) {
-        cout << "Major bug: RSpecies should not contain Reactions when being destroyed." << endl;
-    }
-    //assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");//Should not throw an exception from a destructor - that would be undefined behavior
+
+    assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");
+    //Should not throw an exception from a destructor - that would be undefined behavior
 
 #ifdef RSPECIES_SIGNALING
     if(_signal!=nullptr)
@@ -28,8 +31,6 @@ RSpecies::~RSpecies(){
 #endif
 }
 
-
-/// Print self into an iostream
 ostream& operator<<(ostream& os, const RSpecies& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;

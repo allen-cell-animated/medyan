@@ -1,14 +1,18 @@
-//
-//  Species.cpp
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/21/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#include <iostream>
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "Species.h"
+
 #include "Reaction.h"
 #include "Composite.h"
 
@@ -36,25 +40,6 @@ Composite* Species::getRoot()
     return nullptr;
 }
 
-
-    
-//enum class SType : unsigned char {
-//    None = 0, ///< Undefined Species; should only be used privately during construction; 
-//    Bulk, ///< Species that have no spatial association (i.e. are "well-mixed") 
-//    Diffusing, ///< Species that diffuse between cytosolic compartments 
-//    Filament, ///< Species that comprise filaments (such as F-Actin)
-//    Walking, ///< Species that can walk ("convectively") on filaments (like Myosin X)
-//    Motors, ///< Species that are bound to filaments and generate forces (like Myosin II)
-//    Membrane ///< Species that diffuse within a membrane 
-//    };
-        
-//vector<string> vec_type_name = {"None", "Bulk", "Diffusing", "Filament", "Walking", "Motors", "Membrane"};
-
-//string getTypeAsString (SType T) {
-//    return vec_type_name[static_cast<int>(T)];
-//}
-
-/// Print self into an iostream
 ostream& operator<<(ostream& os, const Species& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;

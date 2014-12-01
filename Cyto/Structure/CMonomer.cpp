@@ -90,7 +90,6 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
             if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
             else cBound->setSecondSpecies(sNew);
         }
-        
     }
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;

@@ -1,15 +1,18 @@
-//
-//  SpeciesContainer.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 8/30/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef __CytoSim__SpeciesContainer__
-#define __CytoSim__SpeciesContainer__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_SpeciesContainer_h
+#define M3SYM_SpeciesContainer_h
 
 #include "common.h"
 
@@ -23,8 +26,6 @@ public:
 
     /// Add species to the container. The memory of species is owned by the container
     virtual Species* addSpeciesUnique(unique_ptr<Species> &&species) = 0;
-
-//        virtual Species* addSpecies(const string &name, species_copy_t copy) = 0;
 
     /// Remove all species matching "name" from the container. The memories are freed.
     virtual size_t removeSpecies(const string &name) = 0;
@@ -60,9 +61,6 @@ public:
     virtual void printSpecies() const = 0;
 };
 
-
-
-
 /// A concrete class implementing the SpeciesPtrContainerIFace, using vector<unique_ptr<Species>> as the container implementation
 class SpeciesPtrContainerVector : public  SpeciesPtrContainerIFace {
 protected:
@@ -76,14 +74,6 @@ public:
     
     /// The equality operator is not allowed
     SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;  // no assignment
-    
-//        friend void swap(SpeciesPtrContainerVector& first, SpeciesPtrContainerVector& second) // nothrow
-//        {
-//            // enable ADL (not necessary in our case, but good practice)
-//            using swap;
-//            swap(first._species, second._species);
-//        }
-    
     
     /// Empty the container. All memories are freed.
     virtual void clear() override {_species.clear();}
@@ -136,9 +126,7 @@ public:
         while(true) {
             auto child_iter = find_if(_species.begin(),_species.end(),
                                            [&species](const unique_ptr<Species> &element)
-                                           {
-                                               return element.get()==species ? true : false;
-                                           });
+                                           {return element.get()==species ? true : false;});
             if(child_iter!=_species.end()){
                 _species.erase(child_iter);
                 ++counter;
@@ -154,9 +142,7 @@ public:
     virtual Species* findSpeciesByName(const string &name) const override {
         auto child_iter = find_if(_species.begin(),_species.end(),
                                        [&name](const unique_ptr<Species> &element)
-                                       {
-                                           return element->getName()==name ? true : false;
-                                       });
+                                       {return element->getName()==name ? true : false;});
         if(child_iter!=_species.end())
             return child_iter->get();
         else
@@ -168,9 +154,7 @@ public:
     virtual Species* findSpeciesByMolecule (int molecule) const override {
         auto child_iter = find_if(_species.begin(),_species.end(),
                                        [molecule](const unique_ptr<Species> &element)
-                                       {
-                                           return element->getMolecule()==molecule ? true : false;
-                                       });
+                                       {return element->getMolecule()==molecule ? true : false;});
         if(child_iter!=_species.end())
             return child_iter->get();
         else
@@ -265,8 +249,6 @@ public:
 };
 
 
-
-
 /// A concrete class implementing the SpeciesContainerIFace, using vector<SpeciesSpecific> as the container implementation.
 
 /*! Because in the class the Species are held by value, and not as pointers, the container must be homogeneous,
@@ -285,7 +267,6 @@ public:
     /// @return the index of the added Species in the container
     template<typename ...Args>
     size_t addSpecies(Args&& ...args){
-//            cout << "SpeciesContainerVector::addSpecies()..." << endl;
         _species.emplace_back(forward<Args>(args)...);
         return _species.size()-1;
     }
@@ -407,4 +388,4 @@ public:
 
 };
 
-#endif /* defined(__CytoSim__SpeciesContainer__) */
+#endif

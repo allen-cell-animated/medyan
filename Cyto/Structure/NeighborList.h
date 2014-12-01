@@ -1,15 +1,19 @@
-//
-//  NeighborList.h
-//  Cyto
-//
-//  Created by James Komianos on 11/12/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__NeighborList__
-#define __Cyto__NeighborList__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_NeighborList_h
+#define M3SYM_NeighborList_h
+
 #include <unordered_map>
 #include <vector>
 
@@ -21,10 +25,21 @@ class Bead;
 class Cylinder;
 class BoundaryElement;
 
+
+/// NeighborList class is to hold an external neighbor list of general type.
+
+/*!
+ *  This class is used to hold any neighbor list. Contains a map of neighbors as well as
+ *  min and max cutoffs for generation of the list. This class is abstract and must be
+ *  implemented by writing functionality to add and update a neighbor.
+ * 
+ *  The neighbor list contains a function to reset, which uses the databases to clear
+ *  and update the list.
+ */
 class NeighborList {
     
 protected:
-    unordered_map<Neighbor*, vector<Neighbor*>> _list; ///The neighbors list, as a hash map
+    unordered_map<Neighbor*, vector<Neighbor*>> _list; ///< The neighbors list, as a hash map
     float _rMax;  ///< max distance cutoff
     float _rMin;  ///< min distance cutoff
     
@@ -38,10 +53,10 @@ public:
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~NeighborList() noexcept {}
     
-    ///remove a neighbor if possible
+    /// Remove a neighbor if possible
     virtual void removeNeighbor(Neighbor* n) {_list.erase(n);}
     
-    ///re-initialize the neighborlist
+    /// Re-initialize the neighborlist
     virtual void reset() {
         //loop through all neighbor keys
         for(auto it = _list.begin(); it != _list.end(); it++) {
@@ -51,48 +66,45 @@ public:
         }
     }
     
-    ///Add neighbor 
+    /// Add neighbor
     virtual void addNeighbor(Neighbor* n) = 0;
-    ///update a neighbor
+    ///U pdate a neighbor
     virtual void updateNeighbors(Neighbor* n) = 0;
     
 };
 
+
+/// CylinderNeighborList is an implementation of NeighborList for Cylinder-Cylinder interactions
 class CylinderNeighborList : public NeighborList {
     
 private:
-    bool _crossFilamentOnly; ///< whether to include cylinders in same filament
+    bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
     
 public:
-    ///Constructor and destructor
     CylinderNeighborList(float rMax, float rMin, bool crossFilamentOnly = false)
                          : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     
-    ///add and remove a neighbor
     virtual void addNeighbor(Neighbor* n);
-    ///Update neighbors of a given neighbor
     virtual void updateNeighbors(Neighbor* n);
     
-    ///get all neighbors of a given cylinder 
+    /// Get all cylinder neighbors
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
 
 };
 
+/// BoundaryElementNeighborList is an implementation of NeighborList for Bead-BoundaryElement interactions
 class BoundaryElementNeighborList : public NeighborList {
     
 public:
-    ///Constructor and destructor
     BoundaryElementNeighborList(float rMax, float rMin) : NeighborList(rMax, rMin) {}
-    
-    ///add and remove a neighbor
+
     virtual void addNeighbor(Neighbor* n);
-    ///Update neighbors of a given neighbor
     virtual void updateNeighbors(Neighbor* n);
     
-    ///get all neighbors of a given boundary element
+    /// Get all Bead neighbors of a boundary element
     vector<Bead*> getNeighbors(BoundaryElement* be);
 };
 
 
 
-#endif /* defined(__Cyto__NeighborList__) */
+#endif

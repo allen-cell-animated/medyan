@@ -21,7 +21,7 @@
 
 #include "Cylinder.h"
 
-/// CylinderDB class is a database for all boundary elements in the system
+/// CylinderDB class is a database for all [Cylinders](@ref Cylinder) in the system
 /*!
  *   This CylinderDB inherits from list and manage all creations and removing of
  *   [Cylinders](@ref Cylinder) objects, as well as some standard list functions and iterators.

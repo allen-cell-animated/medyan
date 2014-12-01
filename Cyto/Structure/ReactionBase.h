@@ -1,13 +1,18 @@
-//
-//  ReactionBase.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 9/18/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef __CytoSim__ReactionBase__
-#define __CytoSim__ReactionBase__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_ReactionBase_h
+#define M3SYM_ReactionBase_h
 
 #include <iostream>
 
@@ -333,4 +338,4 @@ public:
 
 
 
-#endif /* defined(__CytoSim__ReactionBase__) */
+#endif

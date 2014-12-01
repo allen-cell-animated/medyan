@@ -1,12 +1,18 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  ReactionBase.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 9/18/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "ReactionBase.h"
+
 #include "Composite.h"
 
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment) :
@@ -65,3 +71,4 @@ void ReactionBase::printDependents()  {
     for(auto r : _dependents)
         cout << (*r) << endl;
 }
+

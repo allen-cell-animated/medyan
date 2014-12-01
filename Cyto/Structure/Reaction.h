@@ -1,13 +1,18 @@
-//
-//  Reaction.h
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/19/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Experimenting_Reaction_h
-#define CytoSim_Experimenting_Reaction_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_Reaction_h
+#define M3SYM_Reaction_h
 
 #include "common.h"
 
@@ -32,7 +37,6 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
         {
-            //            cout << "Reaction<M,N>(initializer_list<Species*> species, float rate) called..." << endl;
             initializeSpecies(species);
         }
         

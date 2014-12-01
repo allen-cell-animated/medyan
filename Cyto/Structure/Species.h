@@ -1,20 +1,18 @@
-//
-//  Species.h
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/20/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-/**
- * @file Species.h
- * @brief this header file will contain defininition of the Species hieararchy and associated DB and helper classes.
- * @author Garegin Papoian *
- * @date 5/12/2012 
- */
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#ifndef CytoSim_Experimenting_Species_h
-#define CytoSim_Experimenting_Species_h
+#ifndef M3SYM_Species_h
+#define M3SYM_Species_h
 
 #include <vector>
 #include <string>

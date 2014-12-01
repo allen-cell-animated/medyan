@@ -18,7 +18,7 @@
 
 #include "BoundaryElementImpl.h"
 
-/// BoundaryElementDB class is a database for all boundary elements in the system
+/// BoundaryElementDB class is a database for all [BoundaryElements](@ref BoundaryElement) in the system
 /*!
  *   This BoundaryElementDB inherits from list and manage all creations and removing of
  *   [BoundaryElement](@ref BoundaryElement) objects, as well as some standard list functions and iterators.

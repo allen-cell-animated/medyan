@@ -24,7 +24,7 @@
 #include "SystemParameters.h"
 
 
-/// FilamentDB class is a database for all boundary elements in the system
+/// FilamentDB class is a database for all [Filaments](@ref Filament) in the system
 /*!
  *   This FilamentDB inherits from list and manage all creations and removing of
  *   [Filaments](@ref Filament) objects, as well as some standard list functions and iterators.

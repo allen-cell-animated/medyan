@@ -1,21 +1,24 @@
-//
-//  ReactionContainer.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 8/31/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_ReactionContainer_h
-#define CytoSim_ReactionContainer_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_ReactionContainer_h
+#define M3SYM_ReactionContainer_h
 
 #include "common.h"
 
 #include "Reaction.h"
     
-///An abstract interface for a container of pointers to reaction objects
+/// An abstract interface for a container of pointers to reaction objects
 class ReactionPtrContainerIFace {
 public:
     ///Clear the reaction container
@@ -41,13 +44,13 @@ protected:
     vector<unique_ptr<ReactionBase>> _reactions;  ///Reaction ptr container
 public:
     
-    ///Default constructor
+    /// Default constructor
     ReactionPtrContainerVector() : _reactions() {}
     
-    ///Copying not allowed
+    /// Copying not allowed
     ReactionPtrContainerVector(const ReactionPtrContainerVector &) = delete;
     
-    ///Assignment not allowed
+    /// Assignment not allowed
     ReactionPtrContainerVector& operator=(ReactionPtrContainerVector &) = delete;
 
     friend void swap(ReactionPtrContainerVector& first, ReactionPtrContainerVector& second) // nothrow
@@ -57,34 +60,32 @@ public:
         swap(first._reactions, second._reactions);
     }
 
-    ///Clear the container
+    /// Clear the container
     virtual void clear() {_reactions.clear();}
 
-    ///Add a unique reaction ptr to this container
+    /// Add a unique reaction ptr to this container
     virtual ReactionBase* addReactionUnique (unique_ptr<ReactionBase> &&Reaction) {
         _reactions.push_back(move(Reaction));
         return _reactions.back().get();
     }
     
-    ///Add a general reaction to this container
+    /// Add a general reaction to this container
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addReaction( Args&& ...args )
     {
         _reactions.push_back(unique_ptr<ReactionBase>( new Reaction<M,N>( forward<Args>(args)...) ));
-        //        _reactions.emplace_back(make_unique(Args...));
         return _reactions.back().get();
     }
     
-    ///Add a general reaction class to this container
+    /// Add a general reaction class to this container
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
     ReactionBase* add(initializer_list<Species*> species, float rate)
     {
         _reactions.push_back(unique_ptr<ReactionBase>( new RXN<M,N>(species,rate) ));
-        //        _reactions.emplace_back(make_unique(Args...));
         return _reactions.back().get();
     }
     
-    ///Remove a reaction from this container
+    /// Remove a reaction from this container
     virtual void removeReaction (ReactionBase* R) {
         auto child_iter = find_if(_reactions.begin(),_reactions.end(),
                                        [R](const unique_ptr<ReactionBase> &element)
@@ -96,7 +97,7 @@ public:
         }
     }
     
-    ///Remove all reactions that contain a certain species from this container
+    /// Remove all reactions that contain a certain species from this container
     virtual void removeReactions (Species* s)
     {
         for(auto &r : _reactions)
@@ -108,24 +109,24 @@ public:
         }
     }
     
-    ///Find a reaction by index in this container
-    ///@note no check on the index
+    /// Find a reaction by index in this container
+    /// @note no check on the index
     virtual ReactionBase* findReaction (size_t index) {
         return _reactions[index].get();
     }
     
-    ///Get all reactions in vector form
+    /// Get all reactions in vector form
     vector<unique_ptr<ReactionBase>>& reactions() {return _reactions;}
     const vector<unique_ptr<ReactionBase>>& reactions() const {return _reactions;}
     
-    ///Print all reactions in this container
+    /// Print all reactions in this container
     virtual void printReactions() {
         for(auto &r : _reactions)
             cout << (*r.get());
     }
     
-    ///Find a similar reaction in this container (satistifes equality operator)
-    ///@note returns the first similar reaction found
+    /// Find a similar reaction in this container (satistifes equality operator)
+    /// @note returns the first similar reaction found
     virtual ReactionBase* findSimilarReaction (const ReactionBase &r) {
         auto it = find_if(_reactions.begin(),_reactions.end(),
                                [&r](const unique_ptr<ReactionBase> &element)

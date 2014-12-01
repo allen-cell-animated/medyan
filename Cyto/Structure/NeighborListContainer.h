@@ -1,57 +1,63 @@
-//
-//  NeighborListContainer.h
-//  Cyto
-//
-//  Created by James Komianos on 11/12/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__NeighborListContainer__
-#define __Cyto__NeighborListContainer__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <stdio.h>
+#ifndef M3SYM_NeighborListContainer_h
+#define M3SYM_NeighborListContainer_h
 
 #include "common.h"
 
 #include "NeighborListDB.h"
 
-
-/// CylinderNLContainer, holds a cylinder neighbor list.
+/// CylinderNLContainer class holds a [CylinderNeighborList](@ref CylinderNeighborList).
 class CylinderNLContainer {
 
 private:
     CylinderNeighborList* _neighborList;
     
 public:
-    ///constructor, adds a cylinder neighbor list to the database
+    /// Constructor, adds a cylinder neighbor list to the database
     CylinderNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
         _neighborList = NeighborListDB::instance()->
                         createCylinderNeighborList(rMax, rMin, crossFilamentOnly);
     }
+    /// Destructor, removes cylinder neighbor list from the database
     ~CylinderNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
     
+    /// Get neighbor list
     CylinderNeighborList* getNeighborList() {return _neighborList;}
     
 };
 
-/// BoundaryElementNLContainer, holds a boundary element / bead neighbor list.
+/// BoundaryElementNLContainer class holds a [BoundaryElementNeighborList](@ref BoundaryElementNeighborList).
 class BoundaryElementNLContainer {
     
 private:
     BoundaryElementNeighborList* _neighborList;
 
 public:
-    ///constructor, adds a cylinder neighbor list to the database
+    /// Constructor, adds a cylinder neighbor list to the database
     BoundaryElementNLContainer(float rMax = 0.0, float rMin = 0.0) {
         
         _neighborList = NeighborListDB::instance()->
                         createBoundaryElementNeighborList(rMax, rMin);
     }
+    /// Destructor, removes boundary element neighbor list from the database
     ~BoundaryElementNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
     
+    /// Get neighbor list
     BoundaryElementNeighborList* getNeighborList() {return _neighborList;}
 };
 
 
-#endif /* defined(__Cyto__NeighborListContainer__) */
+#endif

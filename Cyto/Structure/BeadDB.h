@@ -21,7 +21,7 @@
 
 #include "Bead.h"
 
-/// BeadDB class is a database for all beads in the system
+/// BeadDB class is a database for all [Beads](@ref Bead) in the system
 /*!  
  *   This BeadDB inherits from list and manage all creations and removing of
  *   [Bead](@ref Bead) objects, as well as some standard list functions and iterators.

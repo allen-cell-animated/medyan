@@ -1,20 +1,24 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  MotorGhost.cpp
-//  CytoMech
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 4/16/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "MotorGhost.h"
 
 #include "Bead.h"
 #include "Cylinder.h"
+#include "GController.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
-
-#include "GController.h"
 
 using namespace mathfunc;
 
@@ -23,7 +27,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
     
     _birthTime = tau();
     
-    ///Find compartment
+    //Find compartment
     auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);
@@ -36,8 +40,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
     _cMotorGhost->setMotorGhost(this);
     
     
-    ///Find species on cylinder that should be marked. If initialization, this should be done. But,
-    ///if this is because of a reaction callback, it will have already been done.
+    //Find species on cylinder that should be marked. If initialization, this should be done. But,
+    //if this is because of a reaction callback, it will have already been done.
     
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
@@ -58,7 +62,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
         }
     }
     
-    ///attach this linker to the species
+    //attach this linker to the species
     _cMotorGhost->setFirstSpecies(sm1);
     _cMotorGhost->setSecondSpecies(sm2);
     
@@ -77,8 +81,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
 MotorGhost::~MotorGhost() {
     
 #ifdef CHEMISTRY
-    ///Find species on cylinder that should be unmarked. This should be done if deleting because
-    ///of a reaction callback, but needs to be done if deleting for other reasons
+    //Find species on cylinder that should be unmarked. This should be done if deleting because
+    //of a reaction callback, but needs to be done if deleting for other reasons
     
     int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
@@ -101,10 +105,9 @@ MotorGhost::~MotorGhost() {
     
 }
 
-
 void MotorGhost::updatePosition() {
     
-    ///check if were still in same compartment
+    //check if were still in same compartment
     auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);

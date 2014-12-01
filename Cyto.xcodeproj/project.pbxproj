@@ -172,6 +172,7 @@
 		F78D07591A23BC2500DB2E80 /* test_filaments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D07581A23BC2500DB2E80 /* test_filaments.cpp */; };
 		F78D5E7C19C8948000F48A16 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F78D5E7919C8947A00F48A16 /* Output.cpp */; };
 		F7C7A0FB15FFBA9700DF9838 /* libcyto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libcyto.dylib */; };
+		F7C9CF821A2CFBA50087434A /* CBound.h in Headers */ = {isa = PBXBuildFile; fileRef = F7472F1E19E2DE66008DA03B /* CBound.h */; };
 		F7D1395719CB47D1007FC395 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B580341D19C8F07C0017FEF4 /* BoundaryRepulsionLJ.cpp */; };
 		F7D1395819CB47D5007FC395 /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = B580341E19C8F07C0017FEF4 /* BoundaryRepulsionLJ.h */; };
 		F7D1395A19D06F98007FC395 /* CCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7D1395919D06F98007FC395 /* CCylinder.cpp */; };
@@ -709,6 +710,7 @@
 				F7D1395E19D07520007FC395 /* ReactionManager.h in Headers */,
 				F777FA9219C1F40A00D2850A /* MathFunctions.h in Headers */,
 				F777FA0619C1F35200D2850A /* SpeciesContainer.h in Headers */,
+				F7C9CF821A2CFBA50087434A /* CBound.h in Headers */,
 				F777FA9319C1F40A00D2850A /* Signaling.h in Headers */,
 				F777F97E19C1F32E00D2850A /* ChemManager.h in Headers */,
 				F777F9EC19C1F35200D2850A /* MLinker.h in Headers */,

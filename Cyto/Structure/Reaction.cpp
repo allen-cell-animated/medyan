@@ -1,12 +1,16 @@
-//
-//  Reaction.cpp
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/19/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#include <iostream>
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
 #include "Reaction.h"
 
 #include "ChemRNode.h"

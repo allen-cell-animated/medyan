@@ -1,26 +1,30 @@
-//
-//  NeighborListDB.h
-//  Cyto
-//
-//  Created by James Komianos on 11/10/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__NeighborListDB__
-#define __Cyto__NeighborListDB__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <stdio.h>
+#ifndef M3SYM_NeighborListDB_h
+#define M3SYM_NeighborListDB_h
+
 #include <list>
 
 #include "common.h"
 
 #include "NeighborList.h"
 
-///NeighborListDB is used to store all NeighborLists in the system
-
-/*! An Object Data Base structure will be used as a container for all main objects: Beads, Filament, Linkers,
- *  Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations and removing
- *  of objects, as well as some standard list functions and iterators.
+/// NeighborListDB is used to store all [NeighborLists](@ref NeighborList) in the system
+/*!
+ *   This NeighborListDB inherits from list and manage all creations and removing of
+ *   [NeighborLists](@ref NeighborList) objects, as well as some standard list functions and iterators.
+ *   The neighbor list container class calls this database to create and/or remove NeighborLists.
  */
 class NeighborListDB: private list<NeighborList*>
 {
@@ -38,9 +42,10 @@ public:
     /// Assignment is not allowed
     NeighborListDB& operator=(NeighborListDB &rhs) = delete;
     
+    /// Get instance
     static NeighborListDB* instance();
     
-    ///create a cylinder neighbor list
+    /// Create a cylinder neighbor list
     CylinderNeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
         CylinderNeighborList* n = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
@@ -48,7 +53,7 @@ public:
         
         return n;
     }
-    ///create a cylinder neighbor list
+    /// Create a cylinder neighbor list
     BoundaryElementNeighborList* createBoundaryElementNeighborList(float rMax = 0.0, float rMin = 0.0) {
         
         BoundaryElementNeighborList* n = new BoundaryElementNeighborList(rMax, rMin);
@@ -57,27 +62,23 @@ public:
         return n;
     }
 
-    ///remove a neighborlist
+    /// Remove a neighborlist
     void removeNeighborList(NeighborList* n) {
         delete n;
         remove(n);
     };
     
-    ///reset all neighbors lists
+    /// Reset all neighbors lists
     void resetAll() { for(auto &nlist : *this) nlist->reset(); }
     
-    ///add a neighbor to the db. adds to all possible lists
+    /// Add a neighbor to the db. adds to all possible lists
     void addNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->addNeighbor(n); }
-    ///remove a neighbor from the db. removes from all possible lists
+    /// Remove a neighbor from the db. removes from all possible lists
     void removeNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->removeNeighbor(n); }
     
 private:
-    
-    static NeighborListDB* _instance;
+    static NeighborListDB* _instance;   ///< Singleton instance
     NeighborListDB() {};
 };
 
-
-
-
-#endif /* defined(__Cyto__NeighborListDB__) */
+#endif

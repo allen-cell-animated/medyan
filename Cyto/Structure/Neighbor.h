@@ -1,26 +1,26 @@
-//
-//  Neighbor.h
-//  Cyto
-//
-//  Created by James Komianos on 11/12/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__Neighbor__
-#define __Cyto__Neighbor__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <stdio.h>
+#ifndef M3SYM_Neighbor_h
+#define M3SYM_Neighbor_h
 
 #include "common.h"
 
-#include "NeighborListDB.h"
-
-///Neighbor class is a class that can be added/removed from a neighborlist
-///@note - any subclass that inherits from Neighbor MUST add and remove itself to the neighbors list DB.
+/// Neighbor class is an abstract class for any object that can be added/removed from a neighborlist
+/// @note - any subclass that inherits from Neighbor MUST add and remove itself to the neighbors list DB.
 class Neighbor {
     
 protected:
-    ///Constructor
     Neighbor() {}
     
     ///Destructor
@@ -30,4 +30,4 @@ protected:
     virtual ~Neighbor() noexcept {}
 };
 
-#endif /* defined(__Cyto__Neighbor__) */
+#endif
