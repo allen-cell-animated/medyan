@@ -25,7 +25,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class RSpecies;
 class ReactionBase;
 

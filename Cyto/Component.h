@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Composite;
 class Visitor;
 class SpeciesVisitor;

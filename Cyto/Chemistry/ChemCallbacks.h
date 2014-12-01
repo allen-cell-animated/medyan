@@ -1,120 +1,127 @@
-//
-//  ChemCallbacks.h
-//  Cyto
-//
-//  Created by James Komianos on 9/11/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__ChemCallbacks__
-#define __Cyto__ChemCallbacks__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_ChemCallbacks_h
+#define M3SYM_ChemCallbacks_h
 
 #include "common.h"
 
 #include "SubSystem.h"
 #include "Filament.h"
-#include "MotorGhost.h"
 #include "Linker.h"
+#include "MotorGhost.h"
 
 #include "SystemParameters.h"
 
-///FILAMENT REACTION CALLBACKS
-
-///Extension callback
+/// FilamentExtensionFrontCallback is used to extend the front of a filament after a polymerization
+/// reaction occurs in the system.
 struct FilamentExtensionFrontCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
-    ///Callback
+    /// Callback
     void operator() (ReactionBase *r){ _filament->extendFront(); }
 };
 
-///Extension callback
+/// FilamentExtensionBackCallback is used to extend the back of a filament after a polymerization
+/// reaction occurs in the system.
 struct FilamentExtensionBackCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
     ///Callback
     void operator() (ReactionBase *r){ _filament->extendBack(); }
 };
 
-///Retraction callback
+/// FilamentRetractionBackCallback is used to retract the front of a filament after a depolymerization
+/// reaction occurs in the system.
 struct FilamentRetractionFrontCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
     ///Callback
     void operator() (ReactionBase *r){ _filament->retractFront(); }
 };
 
-///Retraction callback
+/// FilamentRetractionBackCallback is used to retract the back of a filament after a depolymerization
+/// reaction occurs in the system.
 struct FilamentRetractionBackCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
     ///Callback
     void operator() (ReactionBase *r){ _filament->retractBack(); }
 };
 
-///Polymerization/depolymerization callbacks
+/// FilamentPolymerizationFrontCallback is used to polymerize the front of a filament after a polymerization
+/// reaction occurs in the system.
 struct FilamentPolymerizationFrontCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
     ///Callback
     void operator() (ReactionBase *r){ _filament->polymerizeFront();}
 };
 
+/// FilamentPolymerizationBackCallback is used to polymerize the back of a filament after a polymerization
+/// reaction occurs in the system.
 struct FilamentPolymerizationBackCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
     ///Callback
     void operator() (ReactionBase *r){ _filament->polymerizeBack(); }
 };
 
-///Retraction callback
+/// FilamentDepolymerizationFrontCallback is used to depolymerize the front of a filament after a depolymerization
+/// reaction occurs in the system.
 struct FilamentDepolymerizationFrontCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
     ///Callback
     void operator() (ReactionBase *r){ _filament->depolymerizeFront(); }
 };
 
-///Retraction callback
+/// FilamentDeolymerizationBackCallback is used to depolymerize the back of a filament after a depolymerization
+/// reaction occurs in the system.
 struct FilamentDepolymerizationBackCallback {
     
-    //members
     Filament* _filament;
+    
     ///Constructor, sets members
     FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
     ///Callback
     void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
 };
 
-///LINKER AND MOTOR CALLBACKS
-
-///Linker binding callback
+/// LinkerBindingCallback is to bind a linker to filaments
 struct LinkerBindingCallback {
     
-    ///members
     SubSystem* _ps;
     CCylinder* _cc1, *_cc2;
     short _linkerType;
@@ -135,10 +142,9 @@ struct LinkerBindingCallback {
     }
 };
 
-///Motor binding callback
+/// MotorBindingCallback is to bind a motor to filaments
 struct MotorBindingCallback {
     
-    ///members
     SubSystem* _ps;
     CCylinder* _cc1, *_cc2;
     short _motorType;
@@ -160,10 +166,9 @@ struct MotorBindingCallback {
 };
 
 
-///unbinding callback
+/// UnbindingCallback is to unbind a bound to filaments
 struct UnbindingCallback {
     
-    ///members
     SubSystem* _ps;
     SpeciesBound* _s1;
     
@@ -185,10 +190,9 @@ struct UnbindingCallback {
 };
 
 
-///motor walking forward callback
+/// MotorWalkingForwardCallback is to walk a motor on a filament
 struct MotorWalkingForwardCallback {
     
-    ///members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
     
@@ -222,10 +226,9 @@ struct MotorWalkingForwardCallback {
     }
 };
 
-///motor walking backward callback
+/// MotorWalkingBackwardCallback is to walk a motor on a filament
 struct MotorWalkingBackwardCallback {
     
-    ///members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
     
@@ -259,7 +262,7 @@ struct MotorWalkingBackwardCallback {
     }
 };
 
-///motor moving cylinder forward callback
+/// MotorWalkingForwardCallback is to walk a motor on a filament to a new cylinder
 struct MotorMovingCylinderForwardCallback {
     
     ///members
@@ -297,7 +300,7 @@ struct MotorMovingCylinderForwardCallback {
 };
 
 
-///motor moving cylinder backward callback
+/// MotorWalkingBackwardCallback is to walk a motor on a filament to a new cylinder
 struct MotorMovingCylinderBackwardCallback {
     
     ///members
@@ -334,7 +337,4 @@ struct MotorMovingCylinderBackwardCallback {
     }
 };
 
-
-
-
-#endif /* defined(__Cyto__ChemCallbacks__) */
+#endif

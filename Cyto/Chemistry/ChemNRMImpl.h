@@ -1,17 +1,22 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  ChemNRMImpl.h
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 5/6/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 /// \section nrm_sec Next Reaction Method
 
 /// The algorithm implemented here is based on the following reference: ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000, 104 (9), 1876-1889 **
 
-#ifndef CytoSim_ChemNRMImpl_h
-#define CytoSim_ChemNRMImpl_h
+#ifndef M3SYM_ChemNRMImpl_h
+#define M3SYM_ChemNRMImpl_h
 
 #include <vector>
 #include <random>
@@ -34,7 +39,7 @@
 #define BOOST_POOL_MEM_RNODENRM
 #define BOOST_POOL_MEM_HEAP_ELEMENT
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class PQNode;
 class RNodeNRM;
 class ChemNRMImpl;
@@ -52,7 +57,8 @@ typedef boost::heap::pairing_heap<PQNode>::handle_type handle_t;
 /// boost::heap::pairing_heap<PQNode>. There will be an associated heap handle which can be 
 /// used to dynamically access PQNode's fields (e.g. boost::heap::pairing_heap<PQNode>::handle_type)
 
-/*! This is a simple structure which holds a pointer to RNodeNRM and stores the last computed tau 
+/*! 
+ *  This is a simple structure which holds a pointer to RNodeNRM and stores the last computed tau
  *  assoicated with this reaction. On some occasions tau needs to be recomputed, for example when 
  *  another reaction took place which affects this reaction. handle_t of the corresponding heap element 
  *  is used to get access to tau (and RNodeNRM).
@@ -94,7 +100,8 @@ private:
     
 /// RNodeNRM stands for Reaction Node Next Reaction Method.
 
-/*! RNodeNRM manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element 
+/*! 
+ *  RNodeNRM manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element
  *  containing the Reaction via a handle_t object (and hence can modify both the corresponding PQNode, such as PQNode's tau 
  *  or the underlying Reaction instance). RNodeNRM can recompute tau if needed and has auxiliary methods for computing 
  *  reaction's propensity. When the propensity drops to zero, the RNodeNRM can execute the passivateReaction() method. 
@@ -197,7 +204,8 @@ private:
     
 /// ChemNRMImpl stands for Chemical Next Reaction Method Implementation. 
 
-/*! ChemNRMImpl manages the NRM algorithm at the level of the network of reactions. In particular, this class contains 
+/*! 
+ *  ChemNRMImpl manages the NRM algorithm at the level of the network of reactions. In particular, this class contains
  *  the NRM heap and the exponential random number generator. Reaction objects can be added and removed from the
  *  ChemNRMImpl instance. 
  */

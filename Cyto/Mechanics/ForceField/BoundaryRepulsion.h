@@ -16,7 +16,7 @@
 
 #include "BoundaryInteractions.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
 

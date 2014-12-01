@@ -1,18 +1,21 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BoundaryElementImpl.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/15/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BoundaryElementImpl.h"
 
 #include "MathFunctions.h"
 
 using namespace mathfunc;
-
-///PLANE BOUNDARY ELEMENT
 
 PlaneBoundaryElement::PlaneBoundaryElement(vector<double> coords, vector<double> normal,
                                            double repulsConst, double sceenLength)
@@ -48,8 +51,6 @@ double PlaneBoundaryElement::getRepulsionConst(){ return _k_rep; }
 double PlaneBoundaryElement::getScreeningLength(){ return _r0; }
 
 
-///SPHERE BOUNDARY ELEMENT
-
 SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radius,
                                              double repulsConst, double sceenLength)
                     : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius) {}
@@ -74,9 +75,6 @@ const vector<double> SphereBoundaryElement::normal(const vector<double>& point) 
 double SphereBoundaryElement::getRepulsionConst(){ return _k_rep; }
 double SphereBoundaryElement::getScreeningLength(){ return _r0; }
 
-
-///CYLINDRICAL Z BOUNDARY ELEMENT
-
 CylindricalZBoundaryElement::CylindricalZBoundaryElement(vector<double> coords, double radius, double height,
                                                          double repulsConst, double sceenLength)
         : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius), _height(height) {}
@@ -92,7 +90,7 @@ double CylindricalZBoundaryElement::distance(const vector<double>& point) {
 
 double CylindricalZBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
     
-    ///check z coordinate. If outside, return infinity
+    // check z coordinate. If outside, return infinity
     if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
        (point[2] + d * force[2]) < (_coords[2] - _height / 2)) return numeric_limits<double>::infinity();
     
@@ -108,16 +106,13 @@ const vector<double> CylindricalZBoundaryElement::normal(const vector<double>& p
 double CylindricalZBoundaryElement::getRepulsionConst(){ return _k_rep; }
 double CylindricalZBoundaryElement::getScreeningLength(){ return _r0; }
 
-
-///HALF SPHERE Z BOUNDARY ELEMENT
-
 HalfSphereZBoundaryElement::HalfSphereZBoundaryElement(vector<double> coords, double radius,
                                                        bool up, double repulsConst, double sceenLength)
             : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius), _up(up) {}
 
 double HalfSphereZBoundaryElement::distance(const vector<double>& point) {
     
-    ///check z coordinate. If outside, return infinity
+    // check z coordinate. If outside, return infinity
     if(_up && (point[2] > _coords[2])) return numeric_limits<double>::infinity();
     if(!_up && (point[2] < _coords[2])) return numeric_limits<double>::infinity();
     
@@ -126,7 +121,7 @@ double HalfSphereZBoundaryElement::distance(const vector<double>& point) {
 
 double HalfSphereZBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
     
-    ///check z coordinate. If outside, return infinity
+    // check z coordinate. If outside, return infinity
     if(_up && (point[2] + d * force[2] > _coords[2])) return numeric_limits<double>::infinity();
     if(!_up && (point[2] + d * force[2] < _coords[2])) return numeric_limits<double>::infinity();
     

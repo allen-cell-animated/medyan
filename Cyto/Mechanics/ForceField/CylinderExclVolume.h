@@ -16,7 +16,7 @@
 
 #include "CylinderVolumeInteractions.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
 template <class CVolumeInteractionType>

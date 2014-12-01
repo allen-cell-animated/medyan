@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  CMonomer.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/30/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "CMonomer.h"
 
@@ -71,7 +76,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         addSpeciesMinusEnd(sNew);
     }
     
-    ///For bound species, transfer the CBound (if any)
+    //For bound species, transfer the CBound (if any)
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = rhs._speciesBound[i];
@@ -79,7 +84,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesBound(sNew);
         
-        ///update cbound
+        //update cbound
         CBound* cBound = s->getCBound();
         if(cBound != nullptr) {
             if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
@@ -95,7 +100,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesLinker(sNew);
         
-        ///update cbound
+        //update cbound
         CBound* cBound = s->getCBound();
         if(cBound != nullptr) {
             if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
@@ -110,7 +115,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesMotor(sNew);
         
-        ///update cbound
+        //update cbound
         CBound* cBound = s->getCBound();
         if(cBound != nullptr) {
             if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
@@ -119,7 +124,6 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
     }
 }
 
-///Add a species filament
 void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
     
     short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
@@ -129,13 +133,12 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add filament species to a monomer.\
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
-///Add a species minus end
 void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
     
     short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
@@ -145,13 +148,12 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add plus end species to a monomer. \
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
-///Add a species plus end
 void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
     
     short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
@@ -161,13 +163,12 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add minus end species to a monomer. \
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
-///Add a species bound
 void CMonomer::addSpeciesBound(SpeciesBound* s) {
     
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
@@ -177,13 +178,12 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add bound species to a monomer. \
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
 
-///Add a species linker
 void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
@@ -193,12 +193,12 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add linker species to a monomer. \
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);
 }
-///Add a species motor
+
 void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
     
     short numMotorSpecies= SystemParameters::Chemistry().numMotorSpecies;
@@ -208,7 +208,7 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
             return;
         }
     }
-    ///return error if we get here
+    //return error if we get here
     cout << "Could not add motor species to a monomer. \
         Check that the numer of species in the system input file matches the chemistry input Exiting" << endl;
     exit(EXIT_FAILURE);

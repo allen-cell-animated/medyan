@@ -1,55 +1,58 @@
-//
-//  CLinker.h
-//  Cyto
-//
-//  Created by James Komianos on 10/6/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__CLinker__
-#define __Cyto__CLinker__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_CLinker_h
+#define M3SYM_CLinker_h
 
 #include "common.h"
 
 #include "CBound.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Linker;
 class Compartment;
 
-///CLinker is a class to represent the chemical component of a Linker
+///CLinker class to represent the chemical component of a [Linker](@ref Linker)
 /*! 
- *  The CLinker class contains chemical info of the parent Linker.
+ *  The CLinker class contains chemical info of the parent [Linker](@ref Linker).
  */
 
 class CLinker : public CBound {
     
 private:
-    Linker* _pLinker; ///< ptr to parent linker
+    Linker* _pLinker; ///< Pointer to parent linker
 
 public:
-    ///Default constructor and destructor
     CLinker(Compartment* c) :CBound(c) {}
     ~CLinker() {}
     
-    ///Copy constructor, standard
+    /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c) {}
     
     /// Assignment is not allowed
     CLinker& operator=(CLinker &rhs) = delete;
     
-    ///Clone, calls copy constructor
+    /// Clone, calls copy constructor
     virtual CLinker* clone(Compartment* c) {
         return new CLinker(*this, c);
     }
     
-    ///Setter and getter for parent linker
+    /// Set parent linker
     void setLinker(Linker* linker) {_pLinker = linker;}
+    /// Get parent linker
     Linker* getLinker() {return _pLinker;}
     
 };
 
 
-#endif /* defined(__Cyto__CLinker__) */
+#endif

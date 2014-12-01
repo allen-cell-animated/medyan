@@ -1,11 +1,15 @@
-//
-//  Bead.cpp
-//  CytoMech
-//
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
-//
 
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 #include "Bead.h"
 
 #include "BoundaryElementDB.h"
@@ -19,8 +23,7 @@ using namespace mathfunc;
 
 Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionFilament),
                                                      coordinate(v), coordinateAux(v),
-                                                     force(3, 0), forceAux(3, 0)
-{
+                                                     force(3, 0), forceAux(3, 0) {
     ///set birth time
     _birthTime = tau();
     

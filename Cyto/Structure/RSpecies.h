@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Species;
 class RSpecies;
 class ReactionBase;

@@ -18,7 +18,7 @@
 
 #include "Component.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Species;
 class ReactionBase;
 

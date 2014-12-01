@@ -1,20 +1,24 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  Cylinder.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 7/31/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
-#include <exception>
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
 #include "Cylinder.h"
 
-#include "ChemManager.h"
 #include "Bead.h"
+#include "ChemManager.h"
 #include "GController.h"
 #include "NeighborListDB.h"
 
 #include "MathFunctions.h"
-
 
 using namespace mathfunc;
 
@@ -22,16 +26,16 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
                    bool extensionFront, bool extensionBack, bool creation)
                    : _pFilament(f), _b1(b1), _b2(b2), _ID(ID), _positionFilament(positionFilament) {
     
-    ////Set coordinate
+    //Set coordinate
     coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
                    
-   ///add to compartment
+   //add to compartment
    _compartment->addCylinder(this);
                        
-   ///add to neighbor list db
+   //add to neighbor list db
    NeighborListDB::instance()->addNeighbor(this);
     
 #ifdef CHEMISTRY
@@ -40,7 +44,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
     ChemManager::initializeCCylinder(_cCylinder.get(), f, extensionFront, extensionBack, creation);
     
     if(creation || extensionFront || extensionBack)
-        ///Update filament reactions, only if not initialization
+        //Update filament reactions, only if not initialization
         ChemManager::updateCCylinder(_cCylinder.get());
     
 #endif
@@ -48,7 +52,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
 #ifdef MECHANICS
     double eqLength;
     
-    ///set eqLength according to cylinder size
+    //set eqLength according to cylinder size
     if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
     else if(creation) eqLength = SystemParameters::Geometry().monomerSize * 2;
     else eqLength = SystemParameters::Geometry().cylinderSize;
@@ -61,16 +65,16 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
 }
 
 Cylinder::~Cylinder() {
-    ///remove from compartment
+    //remove from compartment
     _compartment->removeCylinder(this);
     
-    ///remove from neighbor lists
+    //remove from neighbor lists
     NeighborListDB::instance()->removeNeighbor(this);
 }
 
 void Cylinder::updatePosition() {
 
-    ///check if were still in same compartment, set new position
+    //check if were still in same compartment, set new position
     coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
     
     Compartment* c;
@@ -79,7 +83,7 @@ void Cylinder::updatePosition() {
     
     if(c != _compartment) {
 
-        ///remove from old compartment, add to new
+        //remove from old compartment, add to new
         _compartment->removeCylinder(this);
         _compartment = c;
         _compartment->addCylinder(this);

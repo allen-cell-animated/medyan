@@ -1,55 +1,57 @@
-//
-//  MCylinder.h
-//  CytoMech
-//
-//  Created by Konstantin Popov on 6/30/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
-//
 
-#ifndef __CytoMech__MCylinder__
-#define __CytoMech__MCylinder__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_MCylinder_h
+#define M3SYM_MCylinder_h
+
 #include <vector>
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
-///MCylinder class is used to hold mechanical properties of a cylinder
+///MCylinder class is used to hold mechanical properties of a [Cylinder](@ref Cylinder)
 /*!
- * MCylinder is a class to hold mechanical properties of a cylinder, including equilibrium force constants and
- * pointers to related structures, including a neighbors list of cylinders as well as its corresponding beads.
+ * MCylinder is a class to hold mechanical properties of a [Cylinder](@ref Cylinder), including equilibrium force constants.
  */
-
 class MCylinder {
 
 private:
     Cylinder* _pCylinder;  ///< parent cylinder
-    
-/// Mechanical constants:
-    double _eqLength;   ///< Lenght of unstertched cylinder;
-    double _eqAngle;   ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS;
-    double _kStretch;  ///< Local stretching constant, describes axial stretching of a single cylinder;
-    double _kBend;  ///< Local bending constant, which describes bending interaction between current and PREVIOUS cylinders;
+
+    double _eqLength; ///< Length of unstretched cylinder
+    double _eqAngle;  ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS
+    double _kStretch; ///< Local stretching constant, describes axial stretching of a single cylinder
+    double _kBend;  ///< Local bending constant, which describes bending interaction between current and PREVIOUS cylinders
     double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
     double _kExVol; ///< Local excluded volume constant, which describes excluded volume interactions between cylinders
     
 public:
-    
-    ///Constructor and destructor
     MCylinder(double eqLength);
     ~MCylinder() {};
 
-    ///Other setter and getter functions:
+    /// Set parent cylinder
     void setCylinder(Cylinder* c) {_pCylinder = c;}
     Cylinder* getCylinder() {return _pCylinder;}
     
-    ///Setters and getters for mechanical constants
+    /// Set the equlilibrium length, which changes mechanical constants accordingly
     void setEqLength(double L);
+    /// Get the current equlibrium length of this MCylinder
     double getEqLength() {return _eqLength;}
     
+    //@{
+    /// Mechanical parameter management function
     void setAngle(double alpha) {_eqAngle = alpha;}
     double getAngle() {return _eqAngle;}
     
@@ -64,7 +66,8 @@ public:
     
     void setExVolConst(double k) {_kExVol = k;}
     double getExVolConst() {return _kExVol;}
+    //@}
     
 };
 
-#endif /* defined(__CytoMech__MCylinder__) */
+#endif

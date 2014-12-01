@@ -1,21 +1,24 @@
-//
-//  ChemManager.h
-//  Cyto
-//
-//  Created by James Komianos on 7/30/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__ChemManager__
-#define __Cyto__ChemManager__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_ChemManager_h
+#define M3SYM_ChemManager_h
 
 #include "common.h"
 
 #include "ChemManagerImpl.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Compartment;
 class Filament;
 class CCylinder;
@@ -23,10 +26,9 @@ struct ChemistryData;
 
 /// ChemManager class is used for initailizing chemical reactions based on a specific system
 /*!
- *  ChemManager is a singleton used for initailizing all chemistry in
- *  the system, including CCylinders as well as the compartment grid. Like ChemSim, specific functions 
- *  in this class require a key to be accessed. The key declarations are above. These keys can
- *  only be created and/or destroyed by the classes that are "friends" with the key.
+ *  ChemManager is a singleton used for initailizing all chemistry in the system. Initialized by the [CController] (@ref CController),
+ *  the ChemManager initializes the chemical components of the [CompartmentGrid] (@ref CompartmentGrid) as well as initializes all 
+ *  [CCylinders] (@ref CCylinder) created. The ChemManager can also update chemical components of a [CCylinder] (@ref CCylinder).
  */
 class ChemManager {
     
@@ -51,4 +53,4 @@ private:
 };
 
 
-#endif /* defined(__Cyto__ChemManager__) */
+#endif

@@ -20,15 +20,15 @@
 #include "GController.h"
 #include "CController.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class SubSystem;
 
 ///Controller class is used to initialize, manage, and run an entire simulation
 
 /*!
- *
- *
- *
+ *  The Controller is initialized in the main program, and initializes the system given an initial input directory.
+ *  After initialization of all member controllers, the Controller class can run a simulation given the already read
+ *  input parameters, by iteratively switching between mechanical equilibration and stochastic chemical steps.
  */
 
 class Controller {
@@ -46,12 +46,11 @@ private:
     int _numSteps; ///< Number of chemical steps we are running
     int _numStepsPerMech; ///< Number of chemical steps before mechanical equilibration
 
-    ///Update the system, called in run
+    /// Update the system, called in run. Will update all positions and reactions
     void updateSystem();
     
 public:
-    ///Default constructor and destructor
-    Controller(SubSystem* s) : _mController(s), _cController(s), _gController(), _subSystem(s) { };
+    Controller(SubSystem* s) : _mController(s), _cController(s), _gController(), _subSystem(s) {};
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory

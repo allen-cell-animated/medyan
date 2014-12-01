@@ -16,7 +16,7 @@
 
 #include "ForceField.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class MotorGhostInteractions;
 
 class MotorGhostFF : public ForceField {

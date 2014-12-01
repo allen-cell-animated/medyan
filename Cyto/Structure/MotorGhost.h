@@ -19,7 +19,7 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
 ///MotorGhost class is a wrapper for a chemical and mechanical motor

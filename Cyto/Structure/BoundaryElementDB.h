@@ -1,27 +1,29 @@
-//
-//  BoundaryElementDB.h
-//  Cyto
-//
-//  Created by James Komianos on 9/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__BoundaryElementDB__
-#define __Cyto__BoundaryElementDB__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_BoundaryElementDB_h
+#define M3SYM_BoundaryElementDB_h
 
 #include "common.h"
 
 #include "BoundaryElementImpl.h"
 
-/*! An Object Data Base singleton structure will be used as a container for all main objects: 
- *  Boundary Elements, Beads, Filament, Linkers and Motors. This structure inherits from 
- *  list and manage all creations and removing of objects, as well as some standard
- *  list functions and iterators.
+/// BoundaryElementDB class is a database for all boundary elements in the system
+/*!
+ *   This BoundaryElementDB inherits from list and manage all creations and removing of
+ *   [BoundaryElement](@ref BoundaryElement) objects, as well as some standard list functions and iterators.
+ *   The [BoundarySurface] (@ref BoundarySurface) class calls this database to create and/or remove boundary elements.
  */
-
-
 class BoundaryElementDB: private list<BoundaryElement*>
 {
     typedef list<BoundaryElement*> bedb;
@@ -39,10 +41,10 @@ public:
     /// Assignment is not allowed
     BoundaryElementDB& operator=(BoundaryElementDB &rhs) = delete;
     
-    /// get the instance of this singleton
+    /// Get the instance of this singleton
     static BoundaryElementDB* instance();
     
-    /// create a new plane boundary element
+    /// Create a new plane boundary element
     BoundaryElement* createPlaneBoundaryElement(vector<double>& coords, vector<double>& normal,
                                                 double repulsConst, double screenLength) {
         
@@ -51,7 +53,7 @@ public:
         return b ;
     }
     
-    ///create a spherical boundary element
+    /// Create a spherical boundary element
     BoundaryElement* createSphereBoundaryElement(vector<double>& coords, double radius,
                                                  double repulsConst, double screenLength) {
         
@@ -60,7 +62,7 @@ public:
         return b ;
     }
     
-    /// create a cylindrical z boundary element
+    /// Create a cylindrical z boundary element
     BoundaryElement* createCylindricalZBoundaryElement(vector<double> coords, double radius,
                                                        double height, double repulsConst, double screenLength) {
         
@@ -69,7 +71,7 @@ public:
         return b ;
     }
     
-    ///create a half sphere z boundary element
+    /// Create a half sphere z boundary element
     BoundaryElement* createHalfSphereZBoundaryElement(vector<double> coords, double radius,
                                                       bool up, double repulsConst, double screenLength) {
         
@@ -78,7 +80,7 @@ public:
         return b ;
     }
     
-    // Remove boundary element
+    /// Remove boundary element
     void removeBoundaryElement(BoundaryElement* b){
         
         remove(b);
@@ -86,7 +88,7 @@ public:
         
     }
 private:
-    static BoundaryElementDB* _instance;
+    static BoundaryElementDB* _instance; ///< Singleton instance
     BoundaryElementDB() {};
     
 };

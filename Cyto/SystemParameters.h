@@ -1,66 +1,85 @@
-//
-//  SystemParameters.h
-//  Cyto
-//
-//  Created by James Komianos on 9/9/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__SystemParameters__
-#define __Cyto__SystemParameters__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_SystemParameters_h
+#define M3SYM_SystemParameters_h
+
 #include <vector>
 
 #include "common.h"
 
-///Struct to hold the read mechanics parameters
+/// MechanicsParameters is a struct to hold mechanical parameters for the system
 struct MechanicsParameters {
     
-    ///Filament parameters
+    //@{
+    /// Filament parameter
     double FStretchingK = 0;
     double FBendingK = 0;
     double FBendingTheta = 0;
     double FTwistingK = 0;
     double FTwistingPhi = 0;
+    //@}
     
-    ///Linker parameters
+    //@{
+    /// Linker parameter
     vector<double> LStretchingK = {};
     vector<double> LBendingK = {};
     vector<double> LBendingTheta = {};
     vector<double> LTwistingK = {};
     vector<double> LTwistingPhi = {};
+    //@}
     
-    ///Motor parameters
+    //@{
+    /// Motor parameter
     vector<double> MStretchingK = {};
     vector<double> MBendingK = {};
     vector<double> MBendingTheta = {};
     vector<double> MTwistingK = {};
     vector<double> MTwistingPhi = {};
+    //@}
     
-    ///Volume parameters
+    //@{
+    /// Volume parameter
     double VolumeK = 0;
     double VolumeCutoff = 0;
+    //@}
 };
 
-///Struct to hold the read chemistry parameters
+/// ChemistryParameters is a struct to hold chemistry parameters for the system
 struct ChemistryParameters {
     
-    ///number of general species
+    //@{
+    /// Number of general species
     short numBulkSpecies = 0;
     short numDiffusingSpecies = 0;
+    //@}
     
-    ///number of filament related species
+    //@{
+    /// Number of filament related species
     short numFilamentSpecies = 0;
     short numPlusEndSpecies = 0;
     short numMinusEndSpecies = 0;
     short numBoundSpecies = 0;
     short numLinkerSpecies = 0;
     short numMotorSpecies = 0;
+    //@}
 };
 
-///Struct to hold the read geometry parameters
+/// GeometryParameters is a struct to hold geometry parameters for the system
 struct GeometryParameters {
+    
+    //@{
+    /// Geometry parameter
     short nDim = 0;
     
     int NX = 0;
@@ -76,39 +95,41 @@ struct GeometryParameters {
     double monomerSize = 0;
     double cylinderSize = 0;
     int cylinderIntSize = 0;
+    //@}
     
 };
 
-///Struct to hold the read boundary parameters
+/// BoundaryParameters is a struct to hold boundary parameters for the system
 struct BoundaryParameters {
     
     double boundaryCutoff = 0;
     double boundaryK = 0;
     double screenLength = 0;
     
-    ///for a capsule
     double diameter = 0;
 };
 
 
-///This class holds all system-wide parameters, initialized by the Parser
+///SystemParameters is a static class that holds all simulation parameters, initialized by the [SystemParser] (@ref SystemParser)
 class SystemParameters {
 friend class SystemParser;
     
 #ifdef TESTING ///Public access if testing only
 public:
 #endif
-    static MechanicsParameters MParams; ///< mechanical parameters
-    static ChemistryParameters CParams; ///< chemistry parameters
-    static GeometryParameters GParams;  ///< geometry parameters
-    static BoundaryParameters BParams; ///< boundary parameters
+    static MechanicsParameters MParams; ///< The mechanical parameters
+    static ChemistryParameters CParams; ///< The chemistry parameters
+    static GeometryParameters GParams;  ///< The geometry parameters
+    static BoundaryParameters BParams; ///< The boundary parameters
     
 public:
-    ///Const getters for all parameters
+    //@{
+    ///Const getter
     static const MechanicsParameters& Mechanics() {return MParams;}
     static const ChemistryParameters& Chemistry() {return CParams;}
     static const GeometryParameters& Geometry() {return GParams;}
     static const BoundaryParameters& Boundaries() {return BParams;}
+    //@}
 };
 
 

@@ -1,15 +1,19 @@
-//
-//  Bead.h
-//  CytoMech
-//
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
-//
 
-#ifndef __CytoMech__Bead__
-#define __CytoMech__Bead__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_Bead_h
+#define M3SYM_Bead_h
+
 #include <vector>
 #include <list>
 
@@ -19,59 +23,69 @@
 #include "Neighbor.h"
 #include "Movable.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Compartment;
 class BoundaryElement;
 class Cylinder;
 
-///The Bead class represents a single coordinate and mechanical constants needed.
+///The Bead class represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
 /*!
- * The basic and simplest mechanical class. Contains information about a bead and some mecanical
- * constant needed to calculate interactions. Constants are local and related to a bond between i(curent)
- * and i-1 bead.
+ *  Beads are the "hinges" between [Cylinders](@ref Cylinder). In the minimization algorithms, beads are moved corresponding to external forces,
+ *  for example, filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate
+ *  dot products for the minimization algorithms.
  */
 
 class Bead : public Component, public Neighbor, public Movable {
 public:
 
     vector<double> coordinate; ///< Coordinates of the bead
-    vector<double> coordinateAux; ///< An aux coordinate field needed during CG minimization
-	vector<double> force;
-    ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
-    vector<double> forceAux; ///< An Aux field needed during CG minimization.
+    vector<double> coordinateAux; ///< An auxiliary coordinate field needed during CG minimization
+	vector<double> force; ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
+    vector<double> forceAux; ///< An auxiliary field needed during CG minimization.
     
     ///Main constructor
     Bead (vector<double> v, int positionFilament);
+    
     ///Default constructor
-    Bead(int positionFilament) : _positionFilament(positionFilament), coordinate (3, 0), coordinateAux(3, 0),
-                                 force(3, 0), forceAux(3, 0) {}
+    Bead(int positionFilament) : _positionFilament(positionFilament), coordinate (3, 0),
+                                 coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
     ~Bead();
     
-    ///Aux functions
+    //@{
+    /// Auxiliary method for CG minimization
+    double calcForceSquare() {return force[0]*force[0] +
+                                     force[1]*force[1] +
+                                     force[2]*force[2]; }
     
-    // Aux method for CG minimization
-    double calcForceSquare() {return force[0]*force[0] + force[1]*force[1] + force[2]*force[2]; }
-    double calcForceAuxSquare() {return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];}
-    double calcDotForceProduct() { return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];}
+    double calcForceAuxSquare() {return forceAux[0]*forceAux[0] +
+                                        forceAux[1]*forceAux[1] +
+                                        forceAux[2]*forceAux[2]; }
     
-    ///Set and get compartment
+    double calcDotForceProduct() { return force[0]*forceAux[0] +
+                                          force[1]*forceAux[1] +
+                                          force[2]*forceAux[2]; }
+    //@}
+    
+    /// Get compartment
     Compartment* getCompartment() {return _compartment;}
     
-    ///update the position of this bead
+    /// Update the position of this bead
     virtual void updatePosition();
     
-    ///getters for bead data
+    /// Set position on the local filament
     void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
+    /// Get position on the local filament
     int getPositionFilament() {return _positionFilament;}
     
+    /// Get the birth time of this bead
     float getBirthTime() {return _birthTime;}
 
     
 private:
-    Compartment* _compartment = nullptr; ///< ptr to the compartment that this bead is in
+    Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
-    int _positionFilament; ///Position of bead on filament
-    float _birthTime; ///Time of birth of bead;
+    int _positionFilament; ///< Position of bead on filament
+    float _birthTime; ///< Time of birth of bead;
 };
 
 

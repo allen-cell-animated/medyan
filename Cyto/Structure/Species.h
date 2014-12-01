@@ -30,7 +30,7 @@
 
 #include "RSpecies.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Composite;
 class CBound;
 

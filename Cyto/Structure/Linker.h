@@ -1,15 +1,18 @@
-//
-//  Linker.h
-//  Cyto
-//
-//  Created by James Komianos on 10/6/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__Linker__
-#define __Cyto__Linker__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_Linker_h
+#define M3SYM_Linker_h
 
 #include "common.h"
 
@@ -19,29 +22,30 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
-///Linker class is a wrapper for a chemical and mechanical linker
+/// Linker class is a container to store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker)
 /*!
- * Linker class is used to create a chemical and mechanical linker when needed.
- * It contains a constructor as well as getters for mlinker and clinker.
+ * Linker class is used to manage and store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker).
+ * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)
+ * classes, the Linker can update its position and reactions according to mechanical equilibration.
  */
 
 class Linker : public Composite, public Movable, public Reactable {
 
 private:
-    unique_ptr<MLinker> _mLinker; ///< ptr to mLinker
-    unique_ptr<CLinker> _cLinker; ///< ptr to cLinker
+    unique_ptr<MLinker> _mLinker; ///< Pointer to MLinker
+    unique_ptr<CLinker> _cLinker; ///< Pointer to CLinker
     
-    Cylinder* _c1; ///< first cylinder the linker is bound to
-    Cylinder* _c2; ///< second cylinder the linker is bound to
+    Cylinder* _c1; ///< First cylinder the linker is bound to
+    Cylinder* _c2; ///< Second cylinder the linker is bound to
     
-    double _position1; ///< position on first cylinder
-    double _position2; ///< position on second cylinder
+    double _position1; ///< Position on first cylinder
+    double _position2; ///< Position on second cylinder
     
-    short _linkerType; ///integer specifying the type of linker
-    int _linkerID; ///integer ID of this specific linker
+    short _linkerType; ///< Integer specifying the type of linker
+    int _linkerID; ///< Integer ID of this specific linker
     
     float _birthTime; ///Birth time of this linker
     
@@ -53,31 +57,40 @@ public:
     Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, double position1, double position2, bool creation);
     ~Linker();
     
-    ///get cylinders
+    //@{
+    ///Get attached cylinder
     Cylinder* getFirstCylinder() {return _c1;}
     Cylinder* getSecondCylinder() {return _c2;}
+    //@}
     
-    ///setter for mlinkers and clinkers
+    /// Set CLinker
     void setCLinker(CLinker* cLinker) {_cLinker = unique_ptr<CLinker>(cLinker);}
+    /// Get CLinker
     CLinker* getCLinker() {return _cLinker.get();}
     
+    /// Get MLinker
     MLinker* getMLinker() {return _mLinker.get();}
     
-    ///Getters and setters for position
+    //@{
+    /// Linker position management
     double getFirstPosition() {return _position1;}
     void setFirstPosition(double position1) {_position1 = position1;}
     
     double getSecondPosition() {return _position2;}
     void setSecondPosition(double position2) {_position2 = position2;}
+    //@}
     
+    //@{
+    /// Get linker parameter
     short getLinkerType() {return _linkerType;}
     int getLinkerID() {return _linkerID;}
+    //@}
     
-    ///Update the position of this Linker
-    ///@note - changes compartment of clinker if needed
+    /// Update the position of this Linker
+    /// @note - changes compartment of clinker if needed
     virtual void updatePosition();
     
-    ///Update the reaction rates of this linker
+    /// Update the reaction rates of this linker
     virtual void updateReactionRates();
     
 };

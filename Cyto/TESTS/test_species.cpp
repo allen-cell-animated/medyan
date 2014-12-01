@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  test_species.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 5/17/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 // Note: This test omits many functions of Species that interact with Reaction objects. 
 //        Separate tests weill cover those methods.
@@ -13,10 +18,10 @@
 
 #ifdef DO_THIS_SPECIES_TEST
 
-#include <iostream>
 #include "gtest/gtest.h"
 
 #include "common.h"
+
 #include "Species.h"
 #include "SpeciesContainer.h"
 

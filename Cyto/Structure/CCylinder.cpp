@@ -1,44 +1,49 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  CCylinder.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/22/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "CCylinder.h"
 
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _pCylinder(rhs._pCylinder)
 {
-    ///copy all monomers, bounds
+    //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
     
-    ///copy all reactions
+    //copy all reactions
     for(auto &r: rhs._internalReactions) addInternalReaction(r->clone(c->getSpeciesContainer()));
     for(auto it = rhs._crossCylinderReactions.begin(); it != rhs._crossCylinderReactions.end(); it++) {
-        ///Copy map
+        //Copy map
         for(auto &r : it->second) addCrossCylinderReaction(it->first, r->clone(c->getSpeciesContainer()));
     }
     
-    ///Copy reacting cylinders, Clone reactions where this cylinder is involved
+    //Copy reacting cylinders, Clone reactions where this cylinder is involved
     for(auto &ccyl : rhs._reactingCylinders) {
 
-        ///clone reactions
+        //clone reactions
         for(auto &r: ccyl->getCrossCylinderReactions()[const_cast<CCylinder*>(&rhs)])
             ccyl->addCrossCylinderReaction(this, r->clone(c->getSpeciesContainer()));
     }
 }
 
 CCylinder::~CCylinder() {
-    ///Remove all reactions owned by this ccylinder
+    //Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
     removeAllCrossCylinderReactions();
     
-    ///remove all reactions involving this ccylinder
+    //remove all reactions involving this ccylinder
     removeAllReactingCylinders();
     
-    ///Remove all species
+    //Remove all species
     for(auto &m: _monomers) {
         
         short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
@@ -79,10 +84,10 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(r);
     
-    ///add to local reaction list
+    //add to local reaction list
     _internalReactions.insert(r);
     
-    ///activate reaction
+    //activate reaction
     r->activateReaction();
 }
 
@@ -91,11 +96,11 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(r);
     
-    ///add to this reaction map
+    //add to this reaction map
     _crossCylinderReactions[other].insert(r);
     other->addReactingCylinder(this);
     
-    ///activate reaction
+    //activate reaction
     r->activateReaction();
 }
 
@@ -103,14 +108,14 @@ void CCylinder::addReactingCylinder(CCylinder* other) { _reactingCylinders.inser
 
 
 void CCylinder::removeInternalReaction(ReactionBase* r) {
-    ///passivate reaction, removing from dependents
+    //passivate reaction, removing from dependents
     r->passivateReaction();
     
-    ///remove from compartment and chemsim
+    //remove from compartment and chemsim
     _compartment->removeInternalReaction(r);
     ChemSim::removeReaction(r);
     
-    ///remove from internal reaction list
+    //remove from internal reaction list
     auto it = _internalReactions.find(r);
     if (it != _internalReactions.end()) _internalReactions.erase(it);
 }
@@ -118,10 +123,10 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
 void CCylinder:: removeAllInternalReactions() {
     
     for (auto &r : _internalReactions) {
-        ///passivate reaction, removing from dependents
+        //passivate reaction, removing from dependents
         r->passivateReaction();
         
-        ///remove from compartment and chemsim
+        //remove from compartment and chemsim
         _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(r);
     }
@@ -131,16 +136,16 @@ void CCylinder:: removeAllInternalReactions() {
 void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
     for(auto &r : _crossCylinderReactions[other]) {
-        ///passivate reaction, removing from dependents
+        //passivate reaction, removing from dependents
         r->passivateReaction();
         
-        ///remove from compartment and chemsim
+        //remove from compartment and chemsim
         _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(r);
     }
     _crossCylinderReactions.erase(other);
     
-    ///also remove from reacting list of other ccylinder
+    //also remove from reacting list of other ccylinder
     auto it = other->_reactingCylinders.find(this);
     if(it != other->_reactingCylinders.end()) other->_reactingCylinders.erase(it);
 }
@@ -150,15 +155,15 @@ void CCylinder::removeAllCrossCylinderReactions() {
     for(auto it = _crossCylinderReactions.begin(); it != _crossCylinderReactions.end(); it++) {
 
         for(auto &r : it->second) {
-            ///passivate reaction, removing from dependents
+            //passivate reaction, removing from dependents
             r->passivateReaction();
             
-            ///remove from compartment and chemsim
+            //remove from compartment and chemsim
             _compartment->removeInternalReaction(r);
             ChemSim::removeReaction(r);
         }
         
-        ///also remove from list of other ccylinder
+        //also remove from list of other ccylinder
         auto it2 = it->first->_reactingCylinders.find(this);
         if(it2 != it->first->_reactingCylinders.end()) it->first->_reactingCylinders.erase(it2);
     }

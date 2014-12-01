@@ -1,20 +1,24 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  Linker.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 10/6/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "Linker.h"
 
 #include "Bead.h"
 #include "Cylinder.h"
+#include "GController.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
-
-#include "GController.h"
 
 using namespace mathfunc;
 
@@ -24,7 +28,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, doubl
         
     _birthTime = tau();
         
-    ///Find compartment
+    //Find compartment
     auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);
@@ -36,8 +40,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, doubl
     _cLinker = unique_ptr<CLinker>(new CLinker(_compartment));
     _cLinker->setLinker(this);
         
-    ///Find species on cylinder that should be marked. If initialization, this should be done. But,
-    ///if this is because of a reaction callback, it will have already been done.
+    //Find species on cylinder that should be marked. If initialization, this should be done. But,
+    //if this is because of a reaction callback, it will have already been done.
         
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
@@ -58,7 +62,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, doubl
         }
     }
         
-    ///attach this linker to the species
+    //attach this linker to the species
     _cLinker->setFirstSpecies(sl1);
     _cLinker->setSecondSpecies(sl2);
 #endif
@@ -75,8 +79,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, doubl
 Linker::~Linker() {
     
 #ifdef CHEMISTRY
-    ///Find species on cylinder that should be unmarked. This should be done if deleting because
-    ///of a reaction callback, but needs to be done if deleting for other reasons
+    //Find species on cylinder that should be unmarked. This should be done if deleting because
+    //of a reaction callback, but needs to be done if deleting for other reasons
 
     int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
@@ -102,7 +106,7 @@ Linker::~Linker() {
 
 void Linker::updatePosition() {
     
-    ///check if were still in same compartment
+    //check if were still in same compartment
     auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
     auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);

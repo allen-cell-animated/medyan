@@ -17,7 +17,7 @@
 
 #include "ForceField.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class BoundaryInteractions;
 
 class BoundaryFF : public ForceField {

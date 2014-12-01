@@ -16,7 +16,7 @@
 #include "NeighborListContainer.h"
 #include "SystemParameters.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
 

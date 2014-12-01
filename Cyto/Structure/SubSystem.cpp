@@ -1,17 +1,21 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  SubSystem.cpp
-//  CytoMech
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 4/15/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "SubSystem.h"
 
 #include "FilamentDB.h"
 #include "LinkerDB.h"
 #include "MotorGhostDB.h"
-
 
 void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
     for (auto it: v) FilamentDB::instance()->createFilament(this, it);

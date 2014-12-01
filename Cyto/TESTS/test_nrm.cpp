@@ -1,16 +1,19 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  test_nrm.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 8/12/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 //#define DO_THIS_NRM_TEST
 
 #ifdef DO_THIS_NRM_TEST
-
-#include <iostream>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -24,6 +27,7 @@ using namespace boost::accumulators;
 #include "gtest/gtest.h"
 
 #include "common.h"
+
 #include "Species.h"
 #include "Reaction.h"
 #include "ChemNRMImpl.h"

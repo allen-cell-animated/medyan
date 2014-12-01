@@ -22,7 +22,7 @@
 #include "ForceFieldManager.h"
 #include "Parser.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class SubSystem;
 class PolakRibiere;
 class FletcherRieves;

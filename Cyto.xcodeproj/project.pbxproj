@@ -467,8 +467,8 @@
 				F777F9A919C1F35200D2850A /* Filament.h */,
 				F777F9AA19C1F35200D2850A /* FilamentDB.cpp */,
 				F777F9AB19C1F35200D2850A /* FilamentDB.h */,
-				F7472F2019E2E13D008DA03B /* CLinker.h */,
 				F7472F1F19E2E13D008DA03B /* CLinker.cpp */,
+				F7472F2019E2E13D008DA03B /* CLinker.h */,
 				F777F9AC19C1F35200D2850A /* MLinker.cpp */,
 				F777F9AD19C1F35200D2850A /* MLinker.h */,
 				F7472F2319E2E9EA008DA03B /* Linker.cpp */,
@@ -675,8 +675,8 @@
 				F777FAA219C222E400D2850A /* Controller.h */,
 				F78D5E7919C8947A00F48A16 /* Output.cpp */,
 				F78D5E7A19C8947A00F48A16 /* Output.h */,
-				F75AE13319BF6C6B00DD7919 /* SystemParameters.h */,
 				F75AE13519BF6F2400DD7919 /* SystemParameters.cpp */,
+				F75AE13319BF6C6B00DD7919 /* SystemParameters.h */,
 			);
 			path = Cyto;
 			sourceTree = "<group>";

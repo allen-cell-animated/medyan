@@ -15,7 +15,7 @@
 
 #include "LinkerInteractions.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Linker;
 
 template <class LStretchingInteractionType>

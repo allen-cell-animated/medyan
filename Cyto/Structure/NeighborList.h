@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Neighbor;
 class Bead;
 class Cylinder;

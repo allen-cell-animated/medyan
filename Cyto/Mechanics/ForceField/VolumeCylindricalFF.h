@@ -18,7 +18,7 @@
 #include "ForceField.h"
 #include "Cylinder.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class CylinderVolumeInteractions;
 
 class VolumeCylindricalFF : public ForceField {

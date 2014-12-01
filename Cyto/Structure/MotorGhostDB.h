@@ -16,7 +16,7 @@
 
 #include "MotorGhost.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
 ///MotorGhostDB is used to store all MotorGhosts in the system

@@ -14,7 +14,7 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class ForceFieldManager;
 
 template <class CGType>

@@ -16,7 +16,7 @@
 
 #include "ForceField.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class LinkerInteractions;
 
 class LinkerFF : public ForceField {

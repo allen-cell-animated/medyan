@@ -13,7 +13,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Filament;
 
 class FilamentInteractions {

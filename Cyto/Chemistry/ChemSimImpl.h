@@ -1,17 +1,22 @@
-//
-//  ChemSimImpl.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 7/14/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_ChemSimImpl_h
-#define CytoSim_ChemSimImpl_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_ChemSimImpl_h
+#define M3SYM_ChemSimImpl_h
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class ReactionBase;
 
 /// ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics.  

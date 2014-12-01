@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  ReactionTemplate.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/22/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "ReactionManager.h"
 
@@ -18,13 +23,12 @@ using namespace mathfunc;
 SubSystem* InternalFilamentRxnManager::_ps = 0;
 SubSystem* CrossFilamentRxnManager::_ps = 0;
 
-
 void PolyPlusEndManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -32,13 +36,13 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
 
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+        //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
             reactantSpecies.push_back(CompartmentGrid::instance()->
                                       findSpeciesBulkByMolecule(speciesInt));
@@ -48,7 +52,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
             reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
     
-        ///SECOND REACTANT MUST BE PLUS END
+        //SECOND REACTANT MUST BE PLUS END
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -56,7 +60,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
     
     
-        ///FIRST PRODUCT MUST BE FILAMENT
+        //FIRST PRODUCT MUST BE FILAMENT
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -64,7 +68,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesFilament(speciesInt));
 
     
-        ///SECOND PRODUCT MUST BE BOUND
+        //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -72,19 +76,19 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesBound(speciesInt));
     
     
-        ///THIRD PRODUCT MUST BE PLUS END
+        //THIRD PRODUCT MUST BE PLUS END
         p = _products[2];
         type = get<1>(p);
         speciesInt = get<0>(p);
     
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
-        ///callbacks
+        //callbacks
         FilamentExtensionFrontCallback extCallback(cc->getCylinder()->getFilament());
         FilamentPolymerizationFrontCallback polyCallback(cc->getCylinder()->getFilament());
         
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
@@ -102,10 +106,10 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
 
 void PolyMinusEndManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = maxlength - 1; i > 0; i--) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -113,13 +117,13 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
         
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+        //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (type == SpeciesType::BULK)
             reactantSpecies.push_back(CompartmentGrid::instance()->
                                       findSpeciesBulkByMolecule(speciesInt));
@@ -129,7 +133,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
             reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        ///SECOND REACTANT MUST BE MINUS END
+        //SECOND REACTANT MUST BE MINUS END
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -137,7 +141,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         
-        ///FIRST PRODUCT MUST BE FILAMENT
+        //FIRST PRODUCT MUST BE FILAMENT
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -145,7 +149,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesFilament(speciesInt));
         
         
-        ///SECOND PRODUCT MUST BE BOUND
+        //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -153,7 +157,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesBound(speciesInt));
         
         
-        ///THIRD PRODUCT MUST BE MINUS END
+        //THIRD PRODUCT MUST BE MINUS END
         p = _products[2];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -164,7 +168,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         FilamentExtensionBackCallback extCallback(cc->getCylinder()->getFilament());
         FilamentPolymerizationBackCallback polyCallback(cc->getCylinder()->getFilament());
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
@@ -189,12 +193,12 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
-    ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+    //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
         reactantSpecies.push_back(CompartmentGrid::instance()->
                                   findSpeciesBulkByMolecule(speciesInt));
@@ -204,7 +208,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    ///SECOND REACTANT MUST BE PLUS END
+    //SECOND REACTANT MUST BE PLUS END
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
@@ -212,7 +216,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
     
     
-    ///FIRST PRODUCT MUST BE FILAMENT
+    //FIRST PRODUCT MUST BE FILAMENT
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -220,7 +224,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m1->speciesFilament(speciesInt));
     
     
-    ///SECOND PRODUCT MUST BE BOUND
+    //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -228,7 +232,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m2->speciesBound(speciesInt));
     
     
-    ///THIRD PRODUCT MUST BE PLUS END
+    //THIRD PRODUCT MUST BE PLUS END
     p = _products[2];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -238,7 +242,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     FilamentPolymerizationFrontCallback polyCallback(cc1->getCylinder()->getFilament());
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
@@ -256,12 +260,12 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
-    ///FIRST REACTANT MUST BE BULK OR DIFFUSING
+    //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (type == SpeciesType::BULK)
         reactantSpecies.push_back(CompartmentGrid::instance()->
                                   findSpeciesBulkByMolecule(speciesInt));
@@ -271,7 +275,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    ///SECOND REACTANT MUST BE MINUS END
+    //SECOND REACTANT MUST BE MINUS END
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
@@ -279,7 +283,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
     
     
-    ///FIRST PRODUCT MUST BE FILAMENT
+    //FIRST PRODUCT MUST BE FILAMENT
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -287,7 +291,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m1->speciesFilament(speciesInt));
     
     
-    ///SECOND PRODUCT MUST BE BOUND
+    //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -295,7 +299,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m2->speciesBound(speciesInt));
     
     
-    ///THIRD PRODUCT MUST BE MINUS END
+    //THIRD PRODUCT MUST BE MINUS END
     p = _products[2];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -304,7 +308,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     FilamentPolymerizationBackCallback polyCallback(cc1->getCylinder()->getFilament());
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
@@ -318,10 +322,10 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 void DepolyPlusEndManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
 
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = maxlength - 1; i > 0; i--) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -329,23 +333,23 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
         
-        ///FIRST REACTANT  MUST BE FILAMENT
+        //FIRST REACTANT  MUST BE FILAMENT
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
         reactantSpecies.push_back(m2->speciesFilament(speciesInt));
         
-        ///SECOND REACTANT MUST BE BOUND
+        //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
         
         reactantSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///THIRD REACTANT MUST BE PLUSEND
+        //THIRD REACTANT MUST BE PLUSEND
         r = _reactants[2];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -353,7 +357,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
 
         
-        ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+        //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -366,7 +370,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
             productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        ///SECOND PRODUCT SPECIES MUST BE PLUS END
+        //SECOND PRODUCT SPECIES MUST BE PLUS END
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -376,7 +380,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         FilamentRetractionFrontCallback retCallback(cc->getCylinder()->getFilament());
         FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder()->getFilament());
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
@@ -393,10 +397,10 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
 
 void DepolyMinusEndManager::addReaction(CCylinder* cc) {
 
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -404,23 +408,23 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
  
-        ///FIRST REACTANT  MUST BE FILAMENT
+        //FIRST REACTANT  MUST BE FILAMENT
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
         reactantSpecies.push_back(m2->speciesFilament(speciesInt));
         
-        ///SECOND REACTANT MUST BE BOUND
+        //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
         
         reactantSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///THIRD REACTANT MUST BE MINUSEND
+        //THIRD REACTANT MUST BE MINUSEND
         r = _reactants[2];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -428,7 +432,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         
-        ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+        //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -441,7 +445,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
             productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        ///SECOND PRODUCT SPECIES MUST BE MINUSEND
+        //SECOND PRODUCT SPECIES MUST BE MINUSEND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -451,7 +455,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         FilamentRetractionBackCallback retCallback(cc->getCylinder()->getFilament());
         FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder()->getFilament());
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
@@ -475,23 +479,23 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     
-    ///FIRST REACTANT  MUST BE FILAMENT
+    //FIRST REACTANT  MUST BE FILAMENT
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m2->speciesFilament(speciesInt));
     
-    ///SECOND REACTANT MUST BE BOUND
+    //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m1->speciesBound(speciesInt));
     
-    ///THIRD REACTANT MUST BE PLUSEND
+    //THIRD REACTANT MUST BE PLUSEND
     r = _reactants[2];
     type = get<1>(r);
     speciesInt = get<0>(r);
@@ -499,7 +503,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
     
     
-    ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+    //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -512,7 +516,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    ///SECOND PRODUCT SPECIES MUST BE PLUS END
+    //SECOND PRODUCT SPECIES MUST BE PLUS END
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -522,7 +526,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     FilamentDepolymerizationFrontCallback depolyCallback(cc1->getCylinder()->getFilament());
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
@@ -541,22 +545,22 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
-    ///FIRST REACTANT  MUST BE FILAMENT
+    //loop through reactants, products. find all species
+    //FIRST REACTANT  MUST BE FILAMENT
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m2->speciesFilament(speciesInt));
     
-    ///SECOND REACTANT MUST BE BOUND
+    //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m1->speciesBound(speciesInt));
     
-    ///THIRD REACTANT MUST BE MINUSEND
+    //THIRD REACTANT MUST BE MINUSEND
     r = _reactants[2];
     type = get<1>(r);
     speciesInt = get<0>(r);
@@ -564,7 +568,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
     
     
-    ///FIRST PRODUCT MUST BE BULK OR DIFFUSING
+    //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -577,7 +581,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
-    ///SECOND PRODUCT SPECIES MUST BE MINUSEND
+    //SECOND PRODUCT SPECIES MUST BE MINUSEND
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -586,7 +590,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     FilamentDepolymerizationBackCallback depolyCallback(cc1->getCylinder()->getFilament());
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
@@ -600,24 +604,24 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 void BasicBindingManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
     
-        ///FIRST REACTANT SHOULD BE BOUND
+        //FIRST REACTANT SHOULD BE BOUND
         auto r = _reactants[0];
         auto type = get<1>(r);
         int speciesInt = get<0>(r);
         
         reactantSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///SECOND REACTANT MUST BE BULK OR DIFFUSING
+        //SECOND REACTANT MUST BE BULK OR DIFFUSING
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -631,7 +635,7 @@ void BasicBindingManager::addReaction(CCylinder* cc) {
             reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        ///FIRST PRODUCT MUST BE BOUND SPECIES
+        //FIRST PRODUCT MUST BE BOUND SPECIES
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -639,7 +643,7 @@ void BasicBindingManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
     
-        ///Add the reaction
+        //Add the reaction
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 1>(species, _rate);
@@ -654,10 +658,10 @@ void BasicBindingManager::addReaction(CCylinder* cc) {
 
 void UnbindingManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
         SpeciesType boundType; ReactionType reactionType;
@@ -666,10 +670,10 @@ void UnbindingManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
         UnbindingCallback unbindingCallback(nullptr, _ps);
         
-        ///FIRST REACTANT SHOULD BE LINKER, MOTOR, OR BOUND
+        //FIRST REACTANT SHOULD BE LINKER, MOTOR, OR BOUND
         auto r = _reactants[0];
         auto type = get<1>(r);
         int speciesInt = get<0>(r);
@@ -692,7 +696,7 @@ void UnbindingManager::addReaction(CCylinder* cc) {
             reactionType = ReactionType::BASICUNBINDING;
         }
         
-        ///FIRST PRODUCT SHOULD BE BULK OR DIFFUSING
+        //FIRST PRODUCT SHOULD BE BULK OR DIFFUSING
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -706,14 +710,14 @@ void UnbindingManager::addReaction(CCylinder* cc) {
             productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
         }
         
-        ///SECOND PRODUCT SHOULD BE BOUND
+        //SECOND PRODUCT SHOULD BE BOUND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
         
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<1, 2>(species, _rate);
@@ -727,10 +731,10 @@ void UnbindingManager::addReaction(CCylinder* cc) {
 
 void MotorWalkFManager::addReaction(CCylinder* cc) {
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -741,18 +745,18 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         SpeciesMotor* sm1;
         SpeciesMotor* sm2;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
         
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        ///FIRST REACTANT MUST BE MOTOR
+        //FIRST REACTANT MUST BE MOTOR
         sm1 = m1->speciesMotor(speciesInt);
         reactantSpecies.push_back(sm1);
         
         
-        ///SECOND REACTANT MUST BE BOUND
+        //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -760,7 +764,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m2->speciesBound(speciesInt));
         
         
-        ///FIRST PRODUCT MUST BE MOTOR
+        //FIRST PRODUCT MUST BE MOTOR
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -768,17 +772,17 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         sm2 = m2->speciesMotor(speciesInt);
         productSpecies.push_back(sm2);
         
-        ///SECOND PRODUCT MUST BE BOUND
+        //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
         
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///callbacks
+        //callbacks
         MotorWalkingForwardCallback motorMoveCallback(sm1, sm2);
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
@@ -800,24 +804,24 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     SpeciesMotor* sm1;
     SpeciesMotor* sm2;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
-    ///FIRST REACTANT MUST BE MOTOR
+    //FIRST REACTANT MUST BE MOTOR
     sm1 = m1->speciesMotor(speciesInt);
     reactantSpecies.push_back(sm1);
     
-    ///SECOND REACTANT MUST BE BOUND
+    //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m2->speciesBound(speciesInt));
     
-    ///FIRST PRODUCT MUST BE MOTOR
+    //FIRST PRODUCT MUST BE MOTOR
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -825,17 +829,17 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     sm2 = m2->speciesMotor(speciesInt);
     productSpecies.push_back(sm2);
     
-    ///SECOND PRODUCT MUST BE BOUND
+    //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
     
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
-    ///callbacks
+    //callbacks
     MotorMovingCylinderForwardCallback motorChangeCallback(sm1, sm2, cc2);
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
@@ -849,10 +853,10 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void MotorWalkBManager::addReaction(CCylinder* cc) {
 
     
-    ///loop through all monomers of filament
+    //loop through all monomers of filament
     int maxlength = cc->getSize();
     
-    ///loop through all monomers
+    //loop through all monomers
     for(int i = maxlength - 1; i > 0; i--) {
         
         CMonomer* m1 = cc->getCMonomer(i);
@@ -863,18 +867,18 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
         SpeciesMotor* sm1;
         SpeciesMotor* sm2;
         
-        ///loop through reactants, products. find all species
+        //loop through reactants, products. find all species
         
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        ///FIRST REACTANT MUST BE MOTOR
+        //FIRST REACTANT MUST BE MOTOR
         sm1 = m1->speciesMotor(speciesInt);
         reactantSpecies.push_back(sm1);
         
         
-        ///SECOND REACTANT MUST BE BOUND
+        //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
@@ -882,7 +886,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m2->speciesBound(speciesInt));
         
         
-        ///FIRST PRODUCT MUST BE MOTOR
+        //FIRST PRODUCT MUST BE MOTOR
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
@@ -890,17 +894,17 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
         sm2 = m2->speciesMotor(speciesInt);
         productSpecies.push_back(sm2);
         
-        ///SECOND PRODUCT MUST BE BOUND
+        //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
         type = get<1>(p);
         speciesInt = get<0>(p);
         
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
-        ///callbacks
+        //callbacks
         MotorWalkingBackwardCallback motorMoveCallback(sm1, sm2);
         
-        ///Add the reaction. If it needs a callback then attach
+        //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
@@ -922,24 +926,24 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     SpeciesMotor* sm1;
     SpeciesMotor* sm2;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
     
-    ///FIRST REACTANT MUST BE MOTOR
+    //FIRST REACTANT MUST BE MOTOR
     sm1 = m1->speciesMotor(speciesInt);
     reactantSpecies.push_back(sm1);
     
-    ///SECOND REACTANT MUST BE BOUND
+    //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
     
     reactantSpecies.push_back(m2->speciesBound(speciesInt));
     
-    ///FIRST PRODUCT MUST BE MOTOR
+    //FIRST PRODUCT MUST BE MOTOR
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -947,17 +951,17 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     sm2 = m2->speciesMotor(speciesInt);
     productSpecies.push_back(sm2);
     
-    ///SECOND PRODUCT MUST BE BOUND
+    //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
     type = get<1>(p);
     speciesInt = get<0>(p);
     
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
-    ///callbacks
+    //callbacks
     MotorMovingCylinderBackwardCallback motorChangeCallback(sm1, sm2, cc1);
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
@@ -970,7 +974,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
-    ///Add reaction to middle of both cylinders
+    //Add reaction to middle of both cylinders
     int i, j;
     i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -979,9 +983,9 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
 
-    ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+    //FIRST AND SECOND REACTANT SHOULD BE BOUND
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
@@ -994,7 +998,7 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     reactantSpecies.push_back(m2->speciesBound(speciesInt));
     
-    ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+    //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
     
     r = _reactants[2];
     type = get<1>(r);
@@ -1010,7 +1014,7 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     }
 
     
-    ///FIRST AND SECOND PRODUCT SHOULD BE LINKER
+    //FIRST AND SECOND PRODUCT SHOULD BE LINKER
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -1024,10 +1028,10 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesLinker(speciesInt));
 
-    ///set up callbacks
+    //set up callbacks
     LinkerBindingCallback lcallback(cc1, cc2, linkerNumber, i, j, _ps);
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
@@ -1041,7 +1045,7 @@ void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
 void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    ///Add reaction to middle of both cylinders
+    //Add reaction to middle of both cylinders
     int i, j;
     i = j = int(0.5 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -1050,9 +1054,9 @@ void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
-    ///loop through reactants, products. find all species
+    //loop through reactants, products. find all species
     
-    ///FIRST AND SECOND REACTANT SHOULD BE BOUND
+    //FIRST AND SECOND REACTANT SHOULD BE BOUND
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
@@ -1065,7 +1069,7 @@ void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     reactantSpecies.push_back(m2->speciesBound(speciesInt));
     
-    ///THIRD REACTANT SHOULD BE BULK OR DIFFUSING
+    //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
     
     r = _reactants[2];
     type = get<1>(r);
@@ -1081,7 +1085,7 @@ void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     }
     
     
-    ///FIRST AND SECOND PRODUCT SHOULD BE MOTOR
+    //FIRST AND SECOND PRODUCT SHOULD BE MOTOR
     auto p = _products[0];
     type = get<1>(p);
     speciesInt = get<0>(p);
@@ -1095,10 +1099,10 @@ void MotorBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesMotor(speciesInt));
     
-    ///set up callbacks
+    //set up callbacks
     MotorBindingCallback mcallback(cc1, cc2, motorNumber, i, j, _ps);
     
-    ///Add the reaction. If it needs a callback then attach
+    //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);

@@ -1,10 +1,17 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  Controller.cpp
-//  Cyto
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by James Komianos on 9/11/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#include <random>
 
 #include "Controller.h"
 
@@ -28,42 +35,42 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     
     string inputFile = inputDirectory + "testsysteminput.txt";
     
-    ///Parse input, get parameters
+    //Parse input, get parameters
     SystemParser p(inputFile);
     
-    ///Parameters for input
+    //Parameters for input
     ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
     MechanicsFFType MTypes; BoundaryType BTypes;
     
 #ifdef MECHANICS
-    ///read algorithm and types
+    //read algorithm and types
     MTypes = p.readMechanicsFFType();
     MAlgorithm = p.readMechanicsAlgorithm();
     
-    ///read const parameters
+    //read const parameters
     p.readMechanicsParameters();
 #endif
-    ///Always read boundary type
+    //Always read boundary type
     BTypes = p.readBoundaryType();
     p.readBoundaryParameters();
     
-    ///Always read geometry
+    //Always read geometry
     p.readGeometryParameters();
     
-    ///CALLING ALL CONTROLLERS TO INITIALIZE
-    ///Initialize geometry controller
+    //CALLING ALL CONTROLLERS TO INITIALIZE
+    //Initialize geometry controller
     cout << "Initializing geometry...";
     _gController.initializeGrid();
     cout << "Done." << endl;
     
 #ifdef MECHANICS
-    ///Initialize Mechanical controller
+    //Initialize Mechanical controller
     cout << "Initializing mechanics...";
     _mController.initialize(MTypes, MAlgorithm);
     cout << "Done." <<endl;
     
 #endif
-    ///Initialize boundary
+    //Initialize boundary
     cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
         _subSystem->addBoundary(new BoundaryCubic());
@@ -81,15 +88,15 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     cout << "Done." <<endl;
     
 #ifdef CHEMISTRY
-    ///Activate necessary compartments for diffusion
+    //Activate necessary compartments for diffusion
     _gController.activateCompartments(_subSystem->getBoundary());
     
-    ///read parameters
+    //read parameters
     p.readChemistryParameters();
     
-    ///Initialize chemical controller
+    //Initialize chemical controller
     cout << "Initializing chemistry...";
-    ///read algorithm
+    //read algorithm
     CAlgorithm = p.readChemistryAlgorithm();
     ChemistrySetup CSetup = p.readChemistrySetup();
     
@@ -108,10 +115,10 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
         exit(EXIT_FAILURE);
     }
     _cController.initialize(CAlgorithm.algorithm, "", chem);
-    cout << "Done." <<endl;
+    cout << "Done." << endl;
 #endif
     
-    ///Read filament setup, parse filament input file if needed
+    //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
     vector<vector<vector<double>>> filamentData;
     cout << "Initializing filaments...";
@@ -121,7 +128,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
         filamentData = fp.readFilaments();
     }
     else {
-        ///Create random distribution of filaments
+        //Create random distribution of filaments
         default_random_engine generator;
         uniform_real_distribution<double> dU(0.0,1.0);
         uniform_real_distribution<double> dUNeg(-1,1);
@@ -140,7 +147,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
             double directionY = dUNeg(generator);
             double directionZ = dUNeg(generator);
             
-            ///Create a random filament vector one cylinder long
+            //Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};
             auto normFactor = sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
             
@@ -155,11 +162,11 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
             }
         }
     }
-    ///add filaments
+    //add filaments
     _subSystem->addNewFilaments(filamentData);
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
     
-    ///First update of system
+    //First update of system
     updateSystem();
 }
 
@@ -174,12 +181,12 @@ void Controller::updateSystem() {
     for(auto &m : *MotorGhostDB::instance())
         m->updatePosition();
     
-//    ///Update all positions
+//    //Update all positions
 //    for(auto &m : _subSystem->getMovables()) m->updatePosition();
-//    ///Update all reactions
+//    //Update all reactions
 //    for(auto &r : _subSystem->getReactables()) r->updateReactionRates();
     
-    ///reset neighbor lists
+    //reset neighbor lists
     NeighborListDB::instance()->resetAll();
     
 #ifdef CHEMISTRY
@@ -201,7 +208,7 @@ void Controller::run() {
     
     cout << "Starting simulation..." << endl;
     
-    ///perform first minimization
+    //perform first minimization
 #ifdef MECHANICS
     _mController.run();
     updateSystem();

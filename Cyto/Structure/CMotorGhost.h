@@ -14,7 +14,7 @@
 #include "CBound.h"
 #include "Compartment.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class MotorGhost;
 
 ///CMotorGhost is a class to represent the chemical component of a motor

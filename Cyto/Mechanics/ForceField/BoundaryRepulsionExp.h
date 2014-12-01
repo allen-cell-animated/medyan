@@ -14,7 +14,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Bead;
 
 class BoundaryRepulsionExp {

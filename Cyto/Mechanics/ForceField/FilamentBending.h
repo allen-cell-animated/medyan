@@ -13,7 +13,7 @@
 
 #include "FilamentInteractions.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Filament;
 
 template <class FBendingInteractionType>

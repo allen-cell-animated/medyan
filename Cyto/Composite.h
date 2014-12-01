@@ -22,7 +22,7 @@
 
 #include "Component.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Visitor;
 class SpeciesVisitor;
 class ReactionVisitor;

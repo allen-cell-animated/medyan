@@ -1,13 +1,18 @@
-//
-//  ChemSimpleGillespieImpl.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 8/16/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_ChemSimpleGillespieImpl_h
-#define CytoSim_ChemSimpleGillespieImpl_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_ChemSimpleGillespieImpl_h
+#define M3SYM_ChemSimpleGillespieImpl_h
 
 #include <vector>
 #include <random>
@@ -21,7 +26,8 @@
 
 /// ChemSimpleGillespieImpl implements the simplest  version of the Gillespie algorithm, without caching, etc.
 
-/*! ChemSimpleGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects 
+/*! 
+ *  ChemSimpleGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects
  *  can be added and removed from the ChemSimpleGillespieImpl instance.
  */
 class ChemSimpleGillespieImpl : public ChemSimImpl {

@@ -1,27 +1,31 @@
-//
-//  BoundarySurfaceImpl.h
-//  Cyto
-//
-//  Created by James Komianos on 9/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__BoundarySurfaceImpl__
-#define __Cyto__BoundarySurfaceImpl__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_BoundarySurfaceImpl_h
+#define M3SYM_BoundarySurfaceImpl_h
 
 #include <cmath>
-#include <iostream>
 
 #include "common.h"
 
 #include "BoundarySurface.h"
 
-///BasicPlane is a simple implementation of the BoundarySurface class
+/// BasicPlane is a simple implementation of the BoundarySurface class
 class Plane: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< coordinates of center
-    vector<double> _normal; ///< normal vector
+    vector<double> _coords; ///< Coordinates of center
+    vector<double> _normal; ///< Normal vector
     
 public:
     
@@ -32,49 +36,52 @@ public:
 };
 
 
-///Sphere is a simple implementation of the BoundarySurface class
-///@note this represents a full sphere, not just a half
+/// Sphere is a simple implementation of the BoundarySurface class
+/// @note this represents a full sphere, not just a half
 class Sphere: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< center of sphere
-    double _radius; ///<radius of sphere
+    vector<double> _coords; ///< Center of sphere
+    double _radius; ///< Radius of sphere
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
+    ///@param normal - normal vector to sphere
     Sphere(vector<double> coords, double radius);
 };
 
 
-///CylinderZ
+/// CylinderZ is a simple implementation of the BoundarySurface class
 class CylinderZ: public BoundarySurface {
     
 private:
-    vector<double> _coords;
-    double _radius;
-    double _height;
+    vector<double> _coords; ///< Center of cylinder
+    double _radius; ///< Radius of cylinder
+    double _height; ///< Height of cylinder
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of cylinder
+    ///@param normal - normal vector to sphere
     CylinderZ(vector<double> coords, double radius, double height);
     
 };
 
-///Half Sphere Z
+/// HalfSphereZ is a simple implementation of the BoundarySurface class
 class HalfSphereZ: public BoundarySurface {
     
 private:
-    vector<double> _coords;
-    double _radius;
-    bool _up;
+    vector<double> _coords; ///< Center of half-sphere
+    double _radius; ///< Radius of half-sphere
+    bool _up; ///< Facing up or down
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of half sphere
+    ///@param normal - normal vector to sphere
     HalfSphereZ(vector<double> coords, double radius, bool up);
     
 };
 
-#endif /* defined(__Cyto__BoundarySurfaceImpl__) */
+#endif

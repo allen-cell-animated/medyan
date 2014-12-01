@@ -158,6 +158,9 @@ vector<T> split(const string& line) {
 
 
 /// Parser class is a general parser
+/*!
+ *  A parser object, when initialized, opens an input file. Upon destruction, it closes the file.
+ */
 class Parser {
 protected:
     fstream _inputFile; ///< input file being used
@@ -175,14 +178,14 @@ public:
 };
 
 
-/// SystemParser class is used to parse a system input file
+/// SystemParser class is used to parse a system input file, initialized by the [Controller] (@ref Controller).
 class SystemParser : public Parser{
 public:
     SystemParser(string inputFileName) : Parser(inputFileName) {}
     ~SystemParser() {}
     
     //@{
-    /// Parameter parsers. These read input directly into system parameters
+    /// Parameter parser. Reads input directly into system parameters
     void readMechanicsParameters();
     void readChemistryParameters();
     void readGeometryParameters();
@@ -190,13 +193,13 @@ public:
     //@}
     
     //@{
-    /// Algorithm parsers
+    /// Algorithm parser
     MechanicsAlgorithm readMechanicsAlgorithm();
     ChemistryAlgorithm readChemistryAlgorithm();
     //@}
     
     //@{
-    /// Type parsers
+    /// Type parser
     MechanicsFFType readMechanicsFFType();
     BoundaryType readBoundaryType();
     //@}
@@ -209,7 +212,7 @@ public:
 
 };
 
-/// FilamentParser class is used to parse initial filament information
+/// FilamentParser class is used to parse initial filament information, initialized by the [Controller] (@ref Controller).
 class FilamentParser : public Parser {
     
 public:

@@ -1,21 +1,27 @@
-//
-//  Movable.h
-//  Cyto
-//
-//  Created by James Komianos on 11/25/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__Movable__
-#define __Cyto__Movable__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_Movable_h
+#define M3SYM_Movable_h
 
-///Movable class is for a movable object in the subsystem
+#include "common.h"
+
+/// Movable class is for a movable object in the [SubSystem] (@ref SubSystem)
 class Movable {
     
 public:
+    /// Update the position of this object
     virtual void updatePosition() = 0;
 };
 
-#endif /* defined(__Cyto__Movable__) */
+#endif

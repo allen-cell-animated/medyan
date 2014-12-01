@@ -1,21 +1,27 @@
-//
-//  Reactable.h
-//  Cyto
-//
-//  Created by James Komianos on 11/25/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __Cyto__Reactable__
-#define __Cyto__Reactable__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_Reactable_h
+#define M3SYM_Reactable_h
 
-///Reactable class is for a reactable object in the subsystem
+#include "common.h"
+
+/// Reactable class is for a reactable object in the [SubSystem] (@ref SubSystem)
 class Reactable {
     
 public:
+    ///Update the reactions in this object
     virtual void updateReactionRates() = 0;
 };
 
-#endif /* defined(__Cyto__Reactable__) */
+#endif

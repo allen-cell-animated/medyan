@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  test_visitor.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 9/21/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 //#define DO_THIS_VISITOR_TEST
 
@@ -12,10 +17,10 @@
 
 #include <iostream>
 
-#include <iostream>
 #include "gtest/gtest.h"
 
 #include "common.h"
+
 #include "Composite.h"
 
 TEST(VisitorTest, Simple) {

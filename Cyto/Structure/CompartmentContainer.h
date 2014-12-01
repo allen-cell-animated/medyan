@@ -1,30 +1,33 @@
-//
-//  CompartmentContainer.h
-//  CytoSim
-//
-//  Created by Garegin Papoian on 9/5/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef __CytoSim__CompartmentContainer__
-#define __CytoSim__CompartmentContainer__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_CompartmentContainer_h
+#define M3SYM_CompartmentContainer_h
 
 #include "common.h"
 
 #include "Compartment.h"
 
-/// CompartmentGrid class is a simple n-dimensional grid of CompartmentSpatial objects (singleton)
+/// CompartmentGrid class is a simple n-dimensional grid of [Compartment](@ref Compartment) objects (singleton)
 
 /*!
- *  The CompartmentGrid class is a singleton grid of CompartmentSpatial objects, each of them seperately
+ *  The CompartmentGrid class is a singleton grid of [Compartment](@ref Compartment) objects, each of them seperately
  *  holding internal and diffusion reactions, species information, as well as spatial information.
  *  This class is n-dimensional, and the dimension is specified at runtime.
  *
  *  All compartments within CompartmentGrid are indexed by the geometry controller, and this class 
  *  is responsible for assignment of compartment neighbors upon initialization. All initialization
- *  of the CompartmentGrid should be done through GController::initializeGrid().
+ *  of the CompartmentGrid should be done through GController.initializeGrid().
  *
  *  The _prototype_compartment is used such that all reactions and species can be added to 
  *  the prototype, and this configuration can be copied to all compartments in the grid.
@@ -32,7 +35,7 @@
  *
  *  @code
  *
- *  Compartment &Cproto = CompartmentGrid::Instance(CompartmentGridKey())->getProtoCompartment();
+ *  Compartment &Cproto = CompartmentGrid::instance()->getProtoCompartment();
  *  Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
  *  Cproto.setDiffusionRate(M1,2000);
  *  Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
@@ -45,22 +48,20 @@
  */
 class CompartmentGrid : public Composite {
 private:
-    Compartment _prototype_compartment; ///< prototype compartment, to be configured before initialization
-    SpeciesPtrContainerVector _bulkSpecies; ///<Bulk species in this grid
+    Compartment _prototype_compartment; ///< Prototype compartment, to be configured before initialization
+    SpeciesPtrContainerVector _bulkSpecies; ///<B ulk species in this grid
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
-    int _numCompartments; ///<num compartments in the grid
+    int _numCompartments; ///< Num compartments in the grid
     
     static CompartmentGrid* _instance; ///singleton instance
     
-    //private constructor
+    /// Private constructor
     CompartmentGrid(int numCompartments) : _numCompartments(numCompartments) {
         
-        ///add children
+        //add children
         for(size_t i=0; i<numCompartments; ++i)
-        {
             addChild(unique_ptr<Component>(new Compartment()));
-        }
     }
 public:
     
@@ -70,17 +71,17 @@ public:
     /// Assignment is not allowed
     CompartmentGrid& operator=(CompartmentGrid &rhs) = delete;
     
-    ///set instance of grid (should only be done at beginning of program)
-    ///@note if called, a completely new grid will be created, and the old one erased.
+    /// Set instance of grid (should only be done at beginning of program)
+    /// @note if called, a completely new grid will be created, and the old one erased.
     static void setInstance(int numCompartments);
     
-    ///Get instance of grid
+    /// Get instance of grid
     static CompartmentGrid* instance();
     
     /// Get name of this compartment grid
     virtual string getFullName() const {return string("CompartmentGrid");};
     
-    ///Activate all compartments
+    /// Activate all compartments
     void activateAll()
     {
         for (auto &c : children())
@@ -117,17 +118,17 @@ public:
             c->printSelf();
     }
     
-    ///Add a bulk species to this grid
+    /// Add a bulk species to this grid
     template<typename ...Args>
     SpeciesBulk* addSpeciesBulk (Args&& ...args) {
         _bulkSpecies.addSpecies<SpeciesBulk>(forward<Args>(args)...);
         return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
     }
     
-    ///Remove bulk species
+    /// Remove bulk species
     void removeSpeciesBulk(const string& name) {_bulkSpecies.removeSpecies(name);}
     
-    ///Bulk species finder functions
+    /// Bulk species finder functions
     SpeciesBulk* findSpeciesBulkByName(const string& name) {
         return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByName(name));
     }
@@ -139,7 +140,6 @@ public:
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addBulkReaction (Args&& ...args)
     {
-        //            cout << "Compartment::addReaction()..." << endl;
         ReactionBase *r = _bulkReactions.addReaction<M,N>(forward<Args>(args)...);
         r->setParent(this);
         return r;
@@ -173,5 +173,4 @@ public:
 
 };
 
-
-#endif /* defined(__CytoSim__CompartmentContainer__) */
+#endif

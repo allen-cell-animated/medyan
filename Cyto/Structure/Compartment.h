@@ -1,13 +1,18 @@
-//
-//  Compartment.h
-//  CytoSim-Experimenting
-//
-//  Created by Garegin Papoian on 4/21/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
-//
 
-#ifndef CytoSim_Experimenting_Compartment_h
-#define CytoSim_Experimenting_Compartment_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_Compartment_h
+#define M3SYM_Compartment_h
 
 #include <vector>
 #include <array>
@@ -21,7 +26,7 @@
 #include "Composite.h"
 #include "ChemSim.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Bead;
 class Cylinder;
 class BoundaryElement;
@@ -43,29 +48,25 @@ class BoundaryElement;
 
 class Compartment : public Composite {
 protected:
-    ///Reaction-diffusion components
     SpeciesPtrContainerVector _species;  ///< Container with all species in this compartment
     ReactionPtrContainerVector _internal_reactions; ///< Container with all internal reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
-    
-    ///Element containers, makes it easy to generate neighbors lists for cylinders, beads, boundary elements
-    
-    unordered_set<BoundaryElement*> _boundaryElements; ///< vector of boundary element that are in this compartment
-    unordered_set<Bead*> _beads; ///<vector of beads that are in this compartment
-    unordered_set<Cylinder*> _cylinders; ///vector of cylinders that are in this compartment
 
-    ///coordinates
-    vector<double> _coords;
-    bool _activated = false; ///< the compartment is activated for diffusion
+    unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element that are in this compartment
+    unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
+    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+
+    vector<double> _coords; ///< Coordinates of this compartment
+    bool _activated = false; ///< The compartment is activated for diffusion
     
 public:
-    ///Default constructor, only takes in number of dimensions
+    /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
                     _neighbours(), _diffusion_rates() {}
     
-    ///Constructor which clones another compartment
+    /// Constructor which clones another compartment
     Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours()
     {
         C.cloneSpecies(this);
@@ -77,10 +78,10 @@ public:
         
     }
     
-    //Assignment operator
+    /// Assignment operator
     Compartment& operator=(const Compartment &other);
     
-    //Destructor
+    /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
@@ -91,7 +92,7 @@ public:
         clearSpecies();
         removeFromNeighboursList();
         
-        ///Should eventually delete beads, cylinders, boundary elements....not yet clear
+        // Should eventually delete beads, cylinders, boundary elements....not yet clear
         
     }
     
@@ -437,8 +438,6 @@ public:
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
-        //else
-            //throw out_of_range("Compartment::removeNeighbour(): Compartment is not a neighbour");
     }
     
     /// Clone the species values of another compartment into this one

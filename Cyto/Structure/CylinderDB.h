@@ -1,15 +1,19 @@
-//
-//  CylinderDB.h
-//  CytoMech
-//
-//  Created by Konstantin Popov on 7/2/14.
-//  Copyright (c) 2014 Konstantin Popov. All rights reserved.
-//
 
-#ifndef CytoMech_CylinderDB_h
-#define CytoMech_CylinderDB_h
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-#include <iostream>
+#ifndef M3SYM_CylinderDB_h
+#define M3SYM_CylinderDB_h
+
 #include <list>
 #include <vector>
 
@@ -17,19 +21,17 @@
 
 #include "Cylinder.h"
 
-///CylinderDB class is used to store all Cylinders in the system
-
-/*! An Object Data Base singleton structure will be used as a container for all main objects: Beads, Filament,
- * Linkers, Boundary Elements, Motors, and Neighbor Lists. This structure inherits from  list and manage all creations
- * and removing of objects, as well as some standard list functions and iterators.
+/// CylinderDB class is a database for all boundary elements in the system
+/*!
+ *   This CylinderDB inherits from list and manage all creations and removing of
+ *   [Cylinders](@ref Cylinder) objects, as well as some standard list functions and iterators.
+ *   The [Filament] (@ref Filament) class calls this database to create and/or remove cylinders.
  */
-
 class CylinderDB: private list<Cylinder*>
 {
     typedef list<Cylinder*> cdb;
     
 public:
-    
     using cdb::size;
     using cdb::begin;
     using cdb::end;
@@ -43,10 +45,10 @@ public:
     CylinderDB& operator=(CylinderDB &rhs) = delete;
     
     
-    /// get the instance of this singleton
+    /// Get the instance of this singleton
     static CylinderDB* instance();
     
-    // create new empty cylinder
+    /// Create new empty cylinder
     Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, int positionFilament, 
                              bool extensionFront = false, bool extensionBack = false, bool creation = false) {
         
@@ -57,16 +59,16 @@ public:
     }
     
     
-    // Remove Cylinder:
+    /// Remove Cylinder
     void removeCylinder(Cylinder* c){
         delete c;
         remove(c);
     }
     
 private:
-    int _currentCylinderID; ///current running cylinder ID
+    int _currentCylinderID; ///< Current running cylinder ID
     
-    static CylinderDB* _instance;
+    static CylinderDB* _instance; ///< Singleton instance
     CylinderDB() {};
 };
 

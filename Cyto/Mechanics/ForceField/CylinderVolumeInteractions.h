@@ -17,7 +17,7 @@
 #include "NeighborListContainer.h"
 #include "SystemParameters.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Cylinder;
 
 class CylinderVolumeInteractions : public CylinderNLContainer {

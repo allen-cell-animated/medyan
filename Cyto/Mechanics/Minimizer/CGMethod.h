@@ -13,7 +13,7 @@
 
 #include "common.h"
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class ForceFieldManager;
 
 ///CGMethod class is for performing a conjugate gradient method

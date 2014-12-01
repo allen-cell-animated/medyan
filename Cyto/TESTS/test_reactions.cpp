@@ -1,21 +1,24 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  test_reactions.cpp
-//  CytoSim
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Garegin Papoian on 5/17/12.
-//  Copyright (c) 2012 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 //#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
-#include <iostream>
-
-#include <iostream>
 #include "gtest/gtest.h"
 
 #include "common.h"
+
 #include "Species.h"
 #include "Reaction.h"
 #include "Compartment.h"

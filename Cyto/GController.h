@@ -26,7 +26,7 @@ class OutOfBoundsException : public exception {
     }
 };
 
-///FORWARD DECLARATIONS
+//FORWARD DECLARATIONS
 class Boundary;
 class Compartment;
 
