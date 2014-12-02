@@ -19,7 +19,7 @@
 #include "Species.h"
 #include "Compartment.h"
 
-/// CMonomer class represents a container for all [Species] (@ref Species) that could be contained in a
+/// Rpresents a container for all [Species] (@ref Species) that could be contained in a
 /// particular filament element at a given position.
 /*!
  *  CMonomer provides a container to hold all [Species] (@ref Species) that are possibly held at a given

@@ -23,7 +23,7 @@
 
 #include "CGMethod.h"
 
-/// PolakRibiere class is the Polak-Ribiere method for conjugate gradient minimization
+/// The Polak-Ribiere method for conjugate gradient minimization
 class PolakRibiere : public CGMethod
 {
 public:

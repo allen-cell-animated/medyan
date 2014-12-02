@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class ReactionBase;
 
-/// ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics.  
+/// An abstract base class for algorithms that run stochastic chemical kinetics.  
 
 /*! Specific stochastic kinetics algorithm classes should inherit from ChemSimImpl. A user will 
  *  then attach the corresponding algorithm to ChemSim via the algoritm's base class ChemSimImpl.

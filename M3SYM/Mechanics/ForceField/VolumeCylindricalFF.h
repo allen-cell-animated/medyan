@@ -23,8 +23,8 @@
 //FORWARD DECLARATIONS
 class CylinderVolumeInteractions;
 
-/// VolumeCylindrical FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Cylinder] (@ref Cylinder)
-/// volume interactions
+/// An implementation of the [ForceField](@ref ForceField) class that calculates [Cylinder] (@ref Cylinder)
+/// volume interactions.
 class VolumeCylindricalFF : public ForceField {
     
 private:

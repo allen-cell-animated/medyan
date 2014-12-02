@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-///MCylinder class is used to hold mechanical properties of a [Cylinder](@ref Cylinder)
+/// Used to hold mechanical properties of a [Cylinder](@ref Cylinder).
 /*!
  * MCylinder is a class to hold mechanical properties of a [Cylinder](@ref Cylinder), including equilibrium force constants.
  */

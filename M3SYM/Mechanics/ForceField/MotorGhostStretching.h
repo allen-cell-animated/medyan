@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
-/// MotorStretching class represents a motor stretching interaction
+/// Represents a motor stretching interaction.
 template <class MStretchingInteractionType>
 class MotorGhostStretching : public MotorGhostInteractions {
     

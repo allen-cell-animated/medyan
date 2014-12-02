@@ -27,7 +27,7 @@
 class RNodeGillespie;
 class ChemGillespieImpl;
     
-/// RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorithm.
+/// Used by [ChemGillespieImpl](@ref ChemGillespieImpl) to implement the cached version of the Gillespie algorithm.
 
 /*! RNodeGillespie manages a single chemical reaction within the Gillespie algorithm. When the propensity drops to zero, 
  *  the RNodeGillespie can execute the passivateReaction() method. Alternatively, passivated RNodeGillespie can be 

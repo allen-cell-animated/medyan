@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// LinkerStretchingHarmonic class is a harmonic potential used by the [LinkerStretching](@ref LinkerStretching) template.
+/// A harmonic potential used by the [LinkerStretching](@ref LinkerStretching) template.
 class LinkerStretchingHarmonic {
     
 public:

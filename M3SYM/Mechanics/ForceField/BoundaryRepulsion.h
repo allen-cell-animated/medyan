@@ -24,7 +24,7 @@
 class BoundaryElement;
 class Bead;
 
-/// BoundaryRepulsion represents a repulsive interaction between a [BoundaryElement](@ref BoundaryElement) and [Bead](@ref Bead).
+/// Represents a repulsive interaction between a [BoundaryElement](@ref BoundaryElement) and [Bead](@ref Bead).
 template <class BRepulsionInteractionType>
 class BoundaryRepulsion : public BoundaryInteractions {
     

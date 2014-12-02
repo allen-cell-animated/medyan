@@ -24,7 +24,7 @@ class Filament;
 class CCylinder;
 struct ChemistryData;
 
-/// ChemManager class is used for initailizing chemical reactions based on a specific system
+/// For initailizing chemical reactions based on a specific system
 /*!
  *  ChemManager is a singleton used for initailizing all chemistry in the system. Initialized by the [CController] (@ref CController),
  *  the ChemManager initializes the chemical components of the [CompartmentGrid] (@ref CompartmentGrid) as well as initializes all 

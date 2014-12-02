@@ -20,7 +20,7 @@
 
 #include "BoundarySurface.h"
 
-/// BasicPlane is a simple implementation of the BoundarySurface class
+/// A simple implementation of the BoundarySurface class.
 class Plane: public BoundarySurface {
     
 private:
@@ -36,7 +36,7 @@ public:
 };
 
 
-/// Sphere is a simple implementation of the BoundarySurface class
+/// A simple implementation of the BoundarySurface class.
 /// @note this represents a full sphere, not just a half
 class Sphere: public BoundarySurface {
     
@@ -52,7 +52,7 @@ public:
 };
 
 
-/// CylinderZ is a simple implementation of the BoundarySurface class
+/// A simple implementation of the BoundarySurface class.
 class CylinderZ: public BoundarySurface {
     
 private:
@@ -68,7 +68,7 @@ public:
     
 };
 
-/// HalfSphereZ is a simple implementation of the BoundarySurface class
+/// A simple implementation of the BoundarySurface class.
 class HalfSphereZ: public BoundarySurface {
     
 private:

@@ -52,7 +52,7 @@ typedef boost::heap::pairing_heap<PQNode> boost_heap;
 typedef boost::heap::pairing_heap<PQNode>::handle_type handle_t;
 #endif
     
-/// PQNode stands for Priority Queue Node. It is stored as an element of a heap, such as 
+/// Priority Queue Node. It is stored as an element of a heap, such as
 /// boost::heap::pairing_heap<PQNode>. There will be an associated heap handle which can be 
 /// used to dynamically access PQNode's fields (e.g. boost::heap::pairing_heap<PQNode>::handle_type)
 
@@ -97,7 +97,7 @@ private:
 };
 
     
-/// RNodeNRM stands for Reaction Node Next Reaction Method.
+/// Reaction Node for the Next Reaction Method.
 
 /*! 
  *  RNodeNRM manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element
@@ -201,7 +201,7 @@ private:
 
 
     
-/// ChemNRMImpl stands for Chemical Next Reaction Method Implementation. 
+/// The chemical Next Reaction Method Implementation. 
 
 /*! 
  *  ChemNRMImpl manages the NRM algorithm at the level of the network of reactions. In particular, this class contains

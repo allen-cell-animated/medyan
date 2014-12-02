@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class MotorGhostInteractions;
 
-/// Motor FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Motor] (@ref Motor)
+/// An implementation of the [ForceField](@ref ForceField) class that calculates [Motor] (@ref Motor)
 /// stretching, bending, and twisting.
 class MotorGhostFF : public ForceField {
     

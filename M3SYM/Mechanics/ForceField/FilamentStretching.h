@@ -18,7 +18,7 @@
 
 #include "FilamentInteractions.h"
 
-/// FilamentStretching class represents a filament stretching interaction
+/// Represents a filament stretching interaction
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions {
     

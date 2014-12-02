@@ -18,7 +18,7 @@
 
 #include "Compartment.h"
 
-/// CompartmentGrid class is a simple n-dimensional grid of [Compartment](@ref Compartment) objects (singleton)
+/// A simple n-dimensional grid of [Compartment](@ref Compartment) objects (singleton).
 
 /*!
  *  The CompartmentGrid class is a singleton grid of [Compartment](@ref Compartment) objects, each of them seperately

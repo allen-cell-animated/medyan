@@ -28,7 +28,7 @@
 //FORWARD DECLARATIONS
 class Compartment;
 
-///The Bead class represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
+/// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
 /*!
  *  Beads are the "hinges" between [Cylinders](@ref Cylinder). In the minimization algorithms, beads are moved corresponding to external forces,
  *  for example, filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate

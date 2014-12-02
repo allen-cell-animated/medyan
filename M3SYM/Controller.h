@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class SubSystem;
 
-///Controller class is used to initialize, manage, and run an entire simulation
+/// Used to initialize, manage, and run an entire simulation
 
 /*!
  *  The Controller is initialized in the main program, and initializes the system given an initial input directory.

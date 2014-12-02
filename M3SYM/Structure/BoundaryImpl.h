@@ -20,7 +20,7 @@
 
 #include "Boundary.h"
 
-/// BoundaryCubic is a cubic boundary implementation
+/// A cubic boundary implementation.
 class BoundaryCubic: public Boundary {
     
 public:
@@ -30,7 +30,7 @@ public:
     virtual bool within(const vector<double>& coordinates);
 };
 
-/// BoundarySpherical is a spherical boundary implementation
+/// A spherical boundary implementation.
 class BoundarySpherical: public Boundary {
     
 public:
@@ -41,7 +41,7 @@ public:
     virtual bool within(const vector<double>& coordinates);
 };
 
-//BoundaryCapsule is a capsule boundary implementation
+/// A capsule boundary implementation.
 class BoundaryCapsule: public Boundary {
     
 public:

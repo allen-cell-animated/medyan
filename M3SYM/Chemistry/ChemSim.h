@@ -22,7 +22,7 @@
 class ChemSimImpl;
 class ReactionBase;
 
-/// ChemSim is used to manage running a network of chemical reactions.
+/// Used to manage running a network of chemical reactions.
 
 /*! ChemSim implements a Strategy pattern, allowing custom algorithms for running stochastic chemical simulations. 
  *  It itself is a singleton, with a pointer to a single static implementation of ChemSimImpl.

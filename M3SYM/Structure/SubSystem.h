@@ -30,7 +30,7 @@ class Movable;
 class Reactable;
 
 
-/// SubSystem class manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker), and [Motors] (@ref Motor).
+/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker), and [Motors] (@ref Motor).
 
 /*! This is a class which handles all changes and information regarding the system.
  *  This class operates as a top manager and provides connections between smaller parts of the system.

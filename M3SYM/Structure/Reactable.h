@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-/// Reactable class is for a reactable object in the [SubSystem] (@ref SubSystem)
+/// For a reactable object in the [SubSystem] (@ref SubSystem).
 class Reactable {
     
 public:

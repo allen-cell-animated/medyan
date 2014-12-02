@@ -30,7 +30,7 @@ class OutOfBoundsException : public exception {
 class Boundary;
 class Compartment;
 
-/// GController class is used to control the geometry of the grid, as well as the geometry of entire system
+/// Used to control the geometry of the grid, as well as the geometry of entire system
 /*!
  *  The GeometryController class is used to control the geometry of the simulation, which includes the [CompartmentGrid] 
  *  (@ref CompartmentGrid) geometry as well as any [Boundaries] (@ref Boundary) that are in place. It has functionality 

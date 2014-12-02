@@ -21,7 +21,7 @@
 //FORWARD DELCARATIONS
 class Linker;
 
-/// LinkerDB class is a database for all [Linkers](@ref Linker) in the system
+/// A database for all [Linkers](@ref Linker) in the system.
 /*!
  *   This LinkerDB inherits from list and manage all creations and removing of
  *   [Linkers](@ref Linker) objects, as well as some standard list functions and iterators.

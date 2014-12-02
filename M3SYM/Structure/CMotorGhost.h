@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
-/// CMotorGhost is a class to represent the chemical component of a [MotorGhost](@ref MotorGhost).
+/// A class to represent the chemical component of a [MotorGhost](@ref MotorGhost).
 /*!
  *  The CMotorGhost class contains chemical info of the parent [MotorGhost](@ref MotorGhost).
  */

@@ -37,7 +37,7 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
 /// reaction simulation algorithm
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
-/// ChemSignal manages callbacks for RSpecies and Reactions objects. 
+/// Manages callbacks for RSpecies and Reactions objects. 
 
 /*!  One ChemSignal should be instantiated per chemical network. RSpecies and Reactions that need to be monitored 
  *   can be made to signal, based on the boost:signal2 library. Multiple receiving slots can be connected to signals. 

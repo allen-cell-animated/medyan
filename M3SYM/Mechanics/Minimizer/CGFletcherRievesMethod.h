@@ -23,7 +23,7 @@
 
 #include "CGMethod.h"
 
-/// FletcherRieves class is the Fletcher-Rieves method for conjugate gradient minimization
+/// The Fletcher-Rieves method for conjugate gradient minimization
 class FletcherRieves : public CGMethod {
 public:
    void minimize(ForceFieldManager &FFM);

@@ -28,7 +28,7 @@ class SubSystem;
 class PolakRibiere;
 class FletcherRieves;
 
-/// MController class is used to initialize, control, and run the mechanical components of a simulation
+/// Used to initialize, control, and run the mechanical components of a simulation
 
 /*!
  *  MechanicalController is a class used by the [SubSystem] (@ref SubSystem) to initialize 

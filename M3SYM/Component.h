@@ -22,7 +22,7 @@ class Visitor;
 class SpeciesVisitor;
 class ReactionVisitor;
 
-/// Component class is the base class for the Composite pattern hieararchy
+/// The base class for the Composite pattern hieararchy
 
 /*! 
  *  The Composite pattern allows building of complex hieararchical objects, with convenient

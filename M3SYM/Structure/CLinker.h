@@ -22,7 +22,7 @@
 class Linker;
 class Compartment;
 
-///CLinker class to represent the chemical component of a [Linker](@ref Linker)
+/// To represent the chemical component of a [Linker](@ref Linker).
 /*! 
  *  The CLinker class contains chemical info of the parent [Linker](@ref Linker).
  */

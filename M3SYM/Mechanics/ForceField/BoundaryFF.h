@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class BoundaryInteractions;
 
-/// Boundary FF is an implementation of the [ForceField](@ref ForceField) class that calculates [BoundaryElement] (@ref BoundaryElement)
+/// An implementation of the [ForceField](@ref ForceField) class that calculates [BoundaryElement] (@ref BoundaryElement)
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
 class BoundaryFF : public ForceField {
     

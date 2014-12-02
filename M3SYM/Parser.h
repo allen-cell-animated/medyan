@@ -22,13 +22,13 @@
 
 #include "common.h"
 
-/// MechanicsAlgorithm is a struct to hold mechanics algorithm information
+/// Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
     string ConjugateGradient = "";
     string MD = "";
 };
 
-/// ChemistryAlgorithm is a struct to hold chemistry algorithm information
+/// Struct to hold chemistry algorithm information
 struct ChemistryAlgorithm {
     
     string algorithm = "";
@@ -36,7 +36,7 @@ struct ChemistryAlgorithm {
     int numStepsPerMech = 0;
 };
 
-/// ChemistryData is a struct to hold chemistry species and reaction information
+/// Struct to hold chemistry species and reaction information
 struct ChemistryData {
     
     /// Reactions happening between bulk and diffusing species ONLY
@@ -95,13 +95,13 @@ struct ChemistryData {
     
 };
 
-/// BoundaryType is a struct to hold the parameters of the boundary
+/// Struct to hold the parameters of the boundary
 struct BoundaryType {
     
     string boundaryShape = "";
 };
 
-/// MechanicsFFType is a struct to hold the force field types
+/// Struct to hold the force field types
 struct MechanicsFFType {
     
     //@{
@@ -133,13 +133,13 @@ struct MechanicsFFType {
     
 };
 
-/// ChemistrySetup is a struct to hold chem setup information
+/// Struct to hold chem setup information
 struct ChemistrySetup {
     
     string inputFile = "";
 };
 
-/// FilamentSetup is a struct to hold filament setup information
+/// Struct to hold filament setup information
 struct FilamentSetup {
     
     string inputFile = "";
@@ -149,7 +149,7 @@ struct FilamentSetup {
 };
 
 
-///Split a string by whitespace into generic type
+/// Split a string by whitespace into generic type
 template<typename T>
 vector<T> split(const string& line) {
     istringstream is(line);
@@ -157,7 +157,7 @@ vector<T> split(const string& line) {
 }
 
 
-/// Parser class is a general parser
+/// A general parser
 /*!
  *  A parser object, when initialized, opens an input file. Upon destruction, it closes the file.
  */
@@ -178,7 +178,7 @@ public:
 };
 
 
-/// SystemParser class is used to parse a system input file, initialized by the [Controller] (@ref Controller).
+/// To parse a system input file, initialized by the [Controller] (@ref Controller).
 class SystemParser : public Parser{
 public:
     SystemParser(string inputFileName) : Parser(inputFileName) {}

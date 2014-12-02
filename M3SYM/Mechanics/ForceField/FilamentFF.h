@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class FilamentInteractions;
 
-/// Filament FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Filament] (@ref Filament)
+/// An implementation of the [ForceField](@ref ForceField) class that calculates [Filament] (@ref Filament)
 /// stretching, bending, and twisting.
 class FilamentFF : public ForceField {
  

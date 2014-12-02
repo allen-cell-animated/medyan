@@ -25,7 +25,7 @@ class Cylinder;
 class BoundaryElement;
 class Bead;
 
-/// NeighborList class is to hold an external neighbor list of general type.
+/// To hold an external neighbor list of general type.
 
 /*!
  *  This class is used to hold any neighbor list. Contains a map of neighbors as well as

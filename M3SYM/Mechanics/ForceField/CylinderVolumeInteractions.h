@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// BoundaryInteractions class represents a volume interaction between [Cylinders](@ref Cylinder).
+/// Represents a volume interaction between [Cylinders](@ref Cylinder).
 class CylinderVolumeInteractions : public CylinderNLContainer {
 private:
     string _name; ///< Name of interaction

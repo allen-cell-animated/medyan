@@ -18,7 +18,7 @@
 
 #include "NeighborListDB.h"
 
-/// CylinderNLContainer class holds a [CylinderNeighborList](@ref CylinderNeighborList).
+/// Holds a [CylinderNeighborList](@ref CylinderNeighborList).
 class CylinderNLContainer {
 
 private:

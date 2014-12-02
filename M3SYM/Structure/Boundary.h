@@ -18,10 +18,10 @@
 
 #include "BoundarySurface.h"
 
-/// BoundaryShape is a shape enumeration
+/// BoundaryShape is a shape enumeration.
 enum class BoundaryShape {Cube, Capsule, Sphere};
 
-///Boundary class is to store all boundary surfaces that are in the system
+/// To store all boundary surfaces that are in the system.
 /*!
  *  The boundary class stores all [BoundarySurfaces](@ref BoundarySurface) in the given shape. Its constructors can create
  *  basic boundary shapes (for now). Eventually will be extended to more complex surfaces.

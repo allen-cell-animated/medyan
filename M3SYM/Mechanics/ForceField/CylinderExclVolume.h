@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// CylinderExclVolume represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
+/// Represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
 template <class CVolumeInteractionType>
 class CylinderExclVolume : public CylinderVolumeInteractions {
     

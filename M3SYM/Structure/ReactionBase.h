@@ -50,7 +50,7 @@ enum ReactionType {
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
 
-/// ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -> C.
+/// Represents an abstract interface for simple chemical Reactions of the form A + B -> C.
 
 /*! ReactionBase provides an interface for managing a chemical reaction. It is an abstract interface, so
  *  it cannot be directly instantiated, but other concrete classes may be derived from it. ReactionBase

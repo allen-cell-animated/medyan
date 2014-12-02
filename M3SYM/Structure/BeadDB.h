@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// BeadDB class is a database for all [Beads](@ref Bead) in the system
+/// A database for all [Beads](@ref Bead) in the system.
 /*!  
  *   This BeadDB inherits from list and manage all creations and removing of
  *   [Bead](@ref Bead) objects, as well as some standard list functions and iterators.

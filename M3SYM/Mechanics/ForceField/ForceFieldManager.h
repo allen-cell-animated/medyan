@@ -21,7 +21,7 @@
 #include "ForceField.h"
 #include "Bead.h"
 
-///ForceFieldManager is a class to store and iterate over all [ForceFields](@ref ForceField).
+/// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
  *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField) initialized by the
  *  system, as well as iterate over these potentials and calculate total

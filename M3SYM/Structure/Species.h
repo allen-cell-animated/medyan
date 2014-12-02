@@ -36,7 +36,7 @@ enum SpeciesType {
     BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, PLUSEND, MINUSEND
 };
 
-/// SpeciesNamesDB class is used to associate unique integers with character based names of Species
+/// Used to associate unique integers with character based names of Species.
 /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, for example
  *  in cytosol vs bound to a filament. The corresponding specific Species will be distinct, however,
  *  they will share the same name, as returned by Species::getName(). This, in turn, helps to match 
@@ -103,7 +103,7 @@ public:
     }
 };
     
-/// Species class represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
+/// Represents chemical molecules, tracks their copy number and can be used in [Reactions](@ref Reaction).
 /*! This class represents chemical species, such as G-Actin. As a class, it provides Species' name, the current
  *  copy number of molecules, Species type (e.g. SType::Bulk), and a few other characteristics of a Species. 
  *  This class is synergetic with the Reaction, since Species can be added to [Reactions](@ref Reaction). 

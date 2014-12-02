@@ -1,4 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node1" href="$classchem_1_1ReactionVisitor.html" title="chem::ReactionVisitor" alt="" coords="6,5,157,33"/>
-<area shape="rect" id="node3" href="$classchem_1_1ReactionVisitorLambda.html" title="The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on ..." alt="" coords="206,5,405,33"/>
-</map>

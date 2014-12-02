@@ -31,7 +31,7 @@ class Bead;
 class Cylinder;
 class BoundaryElement;
 
-/// Compartment class is a compartment for holding species and reactions
+/// A compartment for holding [Species](@ref Species) and [Reactions](@ref Reactions).
 
 /*! The Compartment class is a container for species, internal reactions, and diffusion
  *  reactions that can occur. A compartment object keeps track of the above while also

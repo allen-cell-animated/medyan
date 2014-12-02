@@ -24,7 +24,7 @@ class CCylinder;
 class ReactionBase;
 struct ChemistryData;
 
-///ChemManagerImpl is an abstract base class for initialization of all chemistry in the system
+/// An abstract base class for initialization of all chemistry in the system
 /*  
  *  Specific Managers should inherit from ChemManagerImpl. A user will then attach the corresponding 
  *  Manager to ChemManager via the Manager base class, ChemManagerImpl.

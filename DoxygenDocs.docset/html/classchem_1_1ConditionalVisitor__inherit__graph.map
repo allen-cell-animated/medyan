@@ -1,4 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classchem_1_1CompositeVisitor.html" title="chem::CompositeVisitor" alt="" coords="4,83,165,111"/>
-<area shape="rect" id="node5" href="$classchem_1_1ConditionalVisitorLambda.html" title="The ConditionalVisitorLambda allows using C++11 lambda expressions to set the action to be performed ..." alt="" coords="191,83,403,111"/>
-</map>

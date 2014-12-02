@@ -32,7 +32,7 @@
 class Filament;
 class Compartment;
 
-///Cylinder class is a container to store a [MCylinder] (@ref MCylinder) and [CCylinder](@ref CCylinder)
+/// A container to store a [MCylinder] (@ref MCylinder) and [CCylinder](@ref CCylinder).
 /*!
  * Cylinder class is used to manage and store a [MCylinder] (@ref MCylinder) and [CCylinder](@ref CCylinder).
  * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)

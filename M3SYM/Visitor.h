@@ -22,7 +22,7 @@
 class Species;
 class ReactionBase;
 
-/// Visitor is n abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predicate.
+/// An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predicate.
 
 /*! 
  *  The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete

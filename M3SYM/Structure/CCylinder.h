@@ -24,7 +24,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// CCylinder class holds all [CMonomers](@ref CMonomer) and [Reactions](@ref Reaction) associated with it
+/// Holds all [CMonomers](@ref CMonomer) and [Reactions](@ref Reaction) associated with it.
 /*! 
  *  The CCylinder class has lists of the [CMonomers](@ref CMonomer) that it contains.
  *

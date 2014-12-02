@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Linker;
 
-/// LinkerStretching class represents a linker stretching interaction
+/// Represents a linker stretching interaction
 template <class LStretchingInteractionType>
 class LinkerStretching : public LinkerInteractions {
     

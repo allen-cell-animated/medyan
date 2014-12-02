@@ -18,7 +18,7 @@
 
 #include "common.h"
 
-/// MechanicsParameters is a struct to hold mechanical parameters for the system
+/// Struct to hold mechanical parameters for the system
 struct MechanicsParameters {
     
     //@{
@@ -55,7 +55,7 @@ struct MechanicsParameters {
     //@}
 };
 
-/// ChemistryParameters is a struct to hold chemistry parameters for the system
+/// Struct to hold chemistry parameters for the system
 struct ChemistryParameters {
     
     //@{
@@ -75,7 +75,7 @@ struct ChemistryParameters {
     //@}
 };
 
-/// GeometryParameters is a struct to hold geometry parameters for the system
+/// Struct to hold geometry parameters for the system
 struct GeometryParameters {
     
     //@{
@@ -99,7 +99,7 @@ struct GeometryParameters {
     
 };
 
-/// BoundaryParameters is a struct to hold boundary parameters for the system
+/// Struct to hold boundary parameters for the system
 struct BoundaryParameters {
     
     double boundaryCutoff = 0;
@@ -110,7 +110,7 @@ struct BoundaryParameters {
 };
 
 
-///SystemParameters is a static class that holds all simulation parameters, initialized by the [SystemParser] (@ref SystemParser)
+/// Static class that holds all simulation parameters, initialized by the [SystemParser] (@ref SystemParser)
 class SystemParameters {
 friend class SystemParser;
     

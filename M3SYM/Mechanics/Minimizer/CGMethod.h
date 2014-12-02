@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
-/// CGMethod class is for performing a conjugate gradient minimization method
+/// For performing a conjugate gradient minimization method
 
 /*!
  *  CGMethod is an abstract class that contains methods for conjugate gradient minimization. It has functions

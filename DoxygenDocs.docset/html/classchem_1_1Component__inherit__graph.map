@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="173,83,297,111"/>
-<area shape="rect" id="node5" href="$classchem_1_1Compartment.html" title="chem::Compartment" alt="" coords="50,161,192,189"/>
-<area shape="rect" id="node9" href="$classchem_1_1CompartmentsSimpleGrid.html" title="chem::CompartmentsSimpleGrid\&lt; NDIM \&gt;" alt="" coords="216,161,487,189"/>
-<area shape="rect" id="node7" href="$classchem_1_1CompartmentCubic.html" title="chem::CompartmentCubic\&lt; NDIM \&gt;" alt="" coords="5,238,237,266"/>
-</map>

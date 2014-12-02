@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
-/// MMotorGhost class represents a cross-link between [Filaments](@ref Filament) that can move by way of chemical reactions.
+/// Represents a cross-link between [Filaments](@ref Filament) that can move by way of chemical reactions.
 
 /*!
  *  The class describes interaction between 4 [Beads](@ref Bead) connected by a potential and equilibrium constants.

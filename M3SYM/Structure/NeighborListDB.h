@@ -23,7 +23,7 @@
 //FORWARD DELCARATIONS
 class Neighbor;
 
-/// NeighborListDB is used to store all [NeighborLists](@ref NeighborList) in the system
+/// A database to store all [NeighborLists](@ref NeighborList) in the system.
 /*!
  *   This NeighborListDB inherits from list and manage all creations and removing of
  *   [NeighborLists](@ref NeighborList) objects, as well as some standard list functions and iterators.

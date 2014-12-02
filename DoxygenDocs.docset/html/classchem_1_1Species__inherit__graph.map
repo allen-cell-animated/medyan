@@ -1,4 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classchem_1_1SpeciesBulk.html" title="SpeciesBulk should be used for Species without spatial information (i.e. well&#45;mixed in the container)..." alt="" coords="5,83,139,111"/>
-<area shape="rect" id="node5" href="$classchem_1_1SpeciesDiffusing.html" title="SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig..." alt="" coords="164,83,324,111"/>
-</map>

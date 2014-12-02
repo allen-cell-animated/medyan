@@ -22,8 +22,7 @@
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
-
-/// ConjugateGradient is an implementation of [Minimzer](@ref Minimizer).
+/// An implementation of [Minimzer](@ref Minimizer).
 template <class CGType>
 class ConjugateGradient : public Minimizer {
     

@@ -44,7 +44,7 @@ typedef vector<RSpecies*>::const_iterator vrsp_const_iterator;
 /// This is a RSpecies signal object that can be used to signal when the copy number changes
 typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSignal;
 
-/// RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in [Reactions](@ref Reaction).
+/// Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in [Reactions](@ref Reaction).
 
 /*!  This class represents the reactivity of chemical species. The name RSpecies stems from reacting species.
  *   RSpecies tracks the copy number of molecules and the [Reactions](@ref Reaction)

@@ -4,14 +4,20 @@
 <plist version="1.0">
 <dict>
      <key>CFBundleName</key>
-     <string>CytoSim</string>
+     <string>M3Sym</string>
      <key>CFBundleIdentifier</key>
-     <string>edu.umd.PapoianLab-CytoSim.docset</string>
+     <string>edu.umd.PapoianLab-CytoSim</string>
+     <key>CFBundleVersion</key>
+     <string>0.05</string>
      <key>DocSetFeedName</key>
      <string>Doxygen of CytoSim</string>
      <key>DocSetPublisherIdentifier</key>
      <string>edu.umd.PapoianLab</string>
      <key>DocSetPublisherName</key>
      <string>PapoianLab</string>
+     <key>DashDocSetFamily</key>
+     <string>doxy</string>
+     <key>DocSetPlatformFamily</key>
+     <string>doxygen</string>
 </dict>
 </plist>

@@ -23,7 +23,7 @@
 #include "ChemSimImpl.h"
 #include "ChemRNode.h"
 
-/// ChemSimpleGillespieImpl implements the simplest  version of the Gillespie algorithm, without caching, etc.
+/// Implements the simplest version of the Gillespie algorithm, without caching, etc.
 
 /*! 
  *  ChemSimpleGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects

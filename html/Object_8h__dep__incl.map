@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$Species_8h.html" title="this header file will contain defininition of the Species hieararchy and associated DB and helper cla..." alt="" coords="172,80,303,107"/>
-<area shape="rect" id="node13" href="$Object_8cpp.html" title="CytoSim/Object.cpp" alt="" coords="327,80,464,107"/>
-<area shape="rect" id="node5" href="$SpeciesDB_8h.html" title="this header file will contain a factory for making objects in the Species hieararchy and a DB to mana..." alt="" coords="77,155,227,181"/>
-<area shape="rect" id="node11" href="$Species_8cpp.html" title="CytoSim/Species.cpp" alt="" coords="251,155,396,181"/>
-<area shape="rect" id="node7" href="$main_8cpp.html" title="CytoSim/main.cpp" alt="" coords="5,229,131,256"/>
-<area shape="rect" id="node9" href="$SpeciesDB_8cpp.html" title="CytoSim/SpeciesDB.cpp" alt="" coords="155,229,319,256"/>
-</map>

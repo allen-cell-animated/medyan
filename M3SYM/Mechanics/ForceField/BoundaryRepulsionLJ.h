@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// BoundaryRepulsionLJ class is a Lennard-Jones repulsive potential.
+/// A Lennard-Jones repulsive potential.
 class BoundaryRepulsionLJ {
 
 public:

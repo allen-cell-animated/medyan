@@ -27,7 +27,7 @@ class InternalFilamentRxnManager;
 class CrossFilamentRxnManager;
 struct ChemistryData;
 
-/// SimpleManagerImpl is a concrete implementation of the [ChemManagerImpl] (@ref ChemManagerImpl) class.
+/// A concrete implementation of the [ChemManagerImpl] (@ref ChemManagerImpl) class.
 /// @see ChemManager for documentation on implemented methods.
 class SimpleManagerImpl : public ChemManagerImpl {
     

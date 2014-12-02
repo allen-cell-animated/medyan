@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_ReactionTemplate_h
-#define M3SYM_ReactionTemplate_h
+#ifndef M3SYM_ReactionManager_h
+#define M3SYM_ReactionManager_h
 
 #include <vector>
 
@@ -30,7 +30,7 @@ enum FilamentReactionDirection {
 class SubSystem;
 class CCylinder;
 
-///InternalFilamentRxnManager is a class to store filament chemical reaction information read from an input file
+/// To store filament chemical reaction information read from an input file
 /*!
  *  InternalFilamentRxnManager is used to store a filament reaction. It contains vectors of tuples that represent
  *  the position in the [CMonomer] (@ref CMonomer) in which the species is stored (for products and reactants), as well as the rate
@@ -178,7 +178,7 @@ public:
     
 };
 
-/// CrossFilamentRxnManager is a class to store cross-filament reactions, including linker and motor binding
+/// To store cross-filament reactions, including linker and motor binding
 
 /*!
  *  CrossFilamentRxnManager is used to store a cross-filament reaction. It contains vectors of tuples that represent

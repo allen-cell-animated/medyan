@@ -73,9 +73,9 @@ BOUNDARYTYPE:                REPULSIONEXP
 
 BOUNDARYSHAPE:               CUBIC
 BDIAMETER:                   900.0
-BCUTOFF:                     5.0
+BCUTOFF:                     50.0
 
-BINTERACTIONK:               10000.0
+BINTERACTIONK:               10.0
 BSCREENLENGTH:               2.0
 
 ##################################################

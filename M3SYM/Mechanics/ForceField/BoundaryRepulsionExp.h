@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// BoundaryRepulsionLJ class is a exponential repulsive potential.
+/// A exponential repulsive potential.
 class BoundaryRepulsionExp {
     
 public:

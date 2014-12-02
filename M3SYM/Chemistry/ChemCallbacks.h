@@ -24,103 +24,103 @@
 
 #include "SystemParameters.h"
 
-/// FilamentExtensionFrontCallback is used to extend the front of a filament after a polymerization
+/// Callback to extend the front of a filament after a polymerization
 /// reaction occurs in the system.
 struct FilamentExtensionFrontCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
-    /// Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->extendFront(); }
 };
 
-/// FilamentExtensionBackCallback is used to extend the back of a filament after a polymerization
+/// Callback to extend the back of a filament after a polymerization
 /// reaction occurs in the system.
 struct FilamentExtensionBackCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->extendBack(); }
 };
 
-/// FilamentRetractionBackCallback is used to retract the front of a filament after a depolymerization
+/// Callback to retract the front of a filament after a depolymerization
 /// reaction occurs in the system.
 struct FilamentRetractionFrontCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->retractFront(); }
 };
 
-/// FilamentRetractionBackCallback is used to retract the back of a filament after a depolymerization
+/// Callback to retract the back of a filament after a depolymerization
 /// reaction occurs in the system.
 struct FilamentRetractionBackCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->retractBack(); }
 };
 
-/// FilamentPolymerizationFrontCallback is used to polymerize the front of a filament after a polymerization
+/// Callback to polymerize the front of a filament after a polymerization
 /// reaction occurs in the system.
 struct FilamentPolymerizationFrontCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->polymerizeFront();}
 };
 
-/// FilamentPolymerizationBackCallback is used to polymerize the back of a filament after a polymerization
+/// Callback to polymerize the back of a filament after a polymerization
 /// reaction occurs in the system.
 struct FilamentPolymerizationBackCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->polymerizeBack(); }
 };
 
-/// FilamentDepolymerizationFrontCallback is used to depolymerize the front of a filament after a depolymerization
+/// Callback to depolymerize the front of a filament after a depolymerization
 /// reaction occurs in the system.
 struct FilamentDepolymerizationFrontCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->depolymerizeFront(); }
 };
 
-/// FilamentDeolymerizationBackCallback is used to depolymerize the back of a filament after a depolymerization
+/// Callback to depolymerize the back of a filament after a depolymerization
 /// reaction occurs in the system.
 struct FilamentDepolymerizationBackCallback {
     
     Filament* _filament;
     
-    ///Constructor, sets members
+    //Constructor, sets members
     FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
-    ///Callback
+    //Callback
     void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
 };
 
-/// LinkerBindingCallback is to bind a linker to filaments
+/// Callback to bind a linker to filaments
 struct LinkerBindingCallback {
     
     SubSystem* _ps;
@@ -133,7 +133,7 @@ struct LinkerBindingCallback {
     
     void operator() (ReactionBase *r) {
         
-        ///Create a linker
+        // Create a linker
         int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
@@ -143,7 +143,7 @@ struct LinkerBindingCallback {
     }
 };
 
-/// MotorBindingCallback is to bind a motor to filaments
+/// Callback to bind a motor to filaments
 struct MotorBindingCallback {
     
     SubSystem* _ps;
@@ -156,7 +156,7 @@ struct MotorBindingCallback {
     
     void operator() (ReactionBase *r) {
         
-        ///Create a linker
+        // Create a motor
         int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
@@ -167,7 +167,7 @@ struct MotorBindingCallback {
 };
 
 
-/// UnbindingCallback is to unbind a bound to filaments
+/// Callback to unbind a bound to filaments
 struct UnbindingCallback {
     
     SubSystem* _ps;
@@ -191,7 +191,7 @@ struct UnbindingCallback {
 };
 
 
-/// MotorWalkingForwardCallback is to walk a motor on a filament
+/// Callback to walk a motor on a filament
 struct MotorWalkingForwardCallback {
     
     SpeciesMotor* _sm1;
@@ -210,7 +210,7 @@ struct MotorWalkingForwardCallback {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
-        ///shift the position of one side of the motor forward
+        //shift the position of one side of the motor forward
         double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
         double newPosition;
         
@@ -227,7 +227,7 @@ struct MotorWalkingForwardCallback {
     }
 };
 
-/// MotorWalkingBackwardCallback is to walk a motor on a filament
+/// Callback to walk a motor on a filament
 struct MotorWalkingBackwardCallback {
     
     SpeciesMotor* _sm1;
@@ -246,7 +246,7 @@ struct MotorWalkingBackwardCallback {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
-        ///shift the position of one side of the motor forward
+        //shift the position of one side of the motor forward
         double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
         double newPosition;
         
@@ -263,10 +263,10 @@ struct MotorWalkingBackwardCallback {
     }
 };
 
-/// MotorWalkingForwardCallback is to walk a motor on a filament to a new cylinder
+/// Callback to walk a motor on a filament to a new cylinder
 struct MotorMovingCylinderForwardCallback {
     
-    ///members
+    //members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
     CCylinder* _newCCylinder;
@@ -284,7 +284,7 @@ struct MotorMovingCylinderForwardCallback {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
-        ///shift the position of one side of the motor forward
+        //shift the position of one side of the motor forward
         double newPosition = 0.0;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
@@ -301,10 +301,10 @@ struct MotorMovingCylinderForwardCallback {
 };
 
 
-/// MotorWalkingBackwardCallback is to walk a motor on a filament to a new cylinder
+/// Callback to walk a motor on a filament to a new cylinder
 struct MotorMovingCylinderBackwardCallback {
     
-    ///members
+    //members
     SpeciesMotor* _sm1;
     SpeciesMotor* _sm2;
     CCylinder* _newCCylinder;
@@ -322,7 +322,7 @@ struct MotorMovingCylinderBackwardCallback {
         
         MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
         
-        ///shift the position of one side of the motor forward
+        //shift the position of one side of the motor forward
         double newPosition = 1.0 - 1.0 / SystemParameters::Geometry().cylinderIntSize;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {

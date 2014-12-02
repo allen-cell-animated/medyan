@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-/// Movable class is for a movable object in the [SubSystem] (@ref SubSystem)
+/// For a movable object in the [SubSystem] (@ref SubSystem).
 class Movable {
     
 public:

@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$classchem_1_1Species.html" title="Species class represents chemical molecules, tracks their copy number and can be used in Reactions..." alt="" coords="131,395,239,423"/>
-<area shape="rect" id="node5" href="$classchem_1_1Composite.html" title="Composite class is the aggregating class for the Composite pattern." alt="" coords="285,6,409,34"/>
-<area shape="rect" id="node7" href="$classchem_1_1Component.html" title="Component class is the base class for the Composite pattern hieararchy." alt="" coords="396,99,525,127"/>
-<area shape="rect" id="node17" href="$classchem_1_1ReactionBase.html" title="ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B &#45;..." alt="" coords="61,99,205,127"/>
-<area shape="rect" id="node21" href="$classchem_1_1RNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="65,6,167,34"/>
-</map>

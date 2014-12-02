@@ -27,7 +27,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// MotorGhost class is a container to store a [MMotorGhost] (@ref MMotorGhost) and [CMotorGhost](@ref CMotorGhost)
+/// A container to store a [MMotorGhost] (@ref MMotorGhost) and [CMotorGhost](@ref CMotorGhost).
 /*!
  * MotorGhost class is used to manage and store a [MMotorGhost] (@ref MMotorGhost) and [CMotorGhost](@ref CMotorGhost).
  * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)

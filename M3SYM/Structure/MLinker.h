@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Linker;
 
-///MLinker class represents the mechanical component of a [Linker](@ref Linker)
+/// Represents the mechanical component of a [Linker](@ref Linker).
 
 /*! The class describes interaction between 4 [Beads](@ref Bead) connected by a [Linker](@ref Linker), and its associated equilibrium constants.
  *  Initial length of a linker is determinated by the condition of zero initial stress, i.e., it calculated within the constructor 

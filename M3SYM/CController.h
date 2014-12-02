@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class SubSystem;
 
-///CController class is used to intialize, control, and run the chemical components of a simulation
+/// Used to intialize, control, and run the chemical components of a simulation
 
 /*!
  *  ChemController is a class used by the [SubSystem] (@ref SubSystem) to instantiate, control, and run the chemical

@@ -27,7 +27,7 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// Linker class is a container to store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker)
+/// A container to store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker).
 /*!
  * Linker class is used to manage and store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker).
  * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)

@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
-/// Minimizer class is a mechanical minimzer used by the [MController](@ref MController).
+/// A mechanical minimzer used by the [MController](@ref MController).
 /*!
  *  This class is used to mechanically equilibrate a system. Implementations of this class
  *  can be either conjugate gradient methods, or Langevin Dynamics minimizers.

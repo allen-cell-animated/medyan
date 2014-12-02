@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Linker;
 
-/// LinkerInteractions class represents an internal linker interaction
+/// Represents an internal linker interaction
 class LinkerInteractions {
 private:
     string _name; ///< Name of interaction
