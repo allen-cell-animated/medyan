@@ -20,6 +20,10 @@
 #include "SubSystem.h"
 #include "BoundaryImpl.h"
 
+#include "FilamentDB.h"
+#include "LinkerDB.h"
+#include "MotorGhostDB.h"
+
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
@@ -38,21 +42,15 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Parse input, get parameters
     SystemParser p(inputFile);
     
-    //Parameters for input
-    ChemistryAlgorithm CAlgorithm; MechanicsAlgorithm MAlgorithm;
-    MechanicsFFType MTypes; BoundaryType BTypes;
-    
 #ifdef MECHANICS
     //read algorithm and types
-    MTypes = p.readMechanicsFFType();
-    MAlgorithm = p.readMechanicsAlgorithm();
+    auto MTypes = p.readMechanicsFFType(); auto MAlgorithm = p.readMechanicsAlgorithm();
     
     //read const parameters
     p.readMechanicsParameters();
 #endif
     //Always read boundary type
-    BTypes = p.readBoundaryType();
-    p.readBoundaryParameters();
+    auto BTypes = p.readBoundaryType(); p.readBoundaryParameters();
     
     //Always read geometry
     p.readGeometryParameters();
@@ -97,12 +95,10 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Initialize chemical controller
     cout << "Initializing chemistry...";
     //read algorithm
-    CAlgorithm = p.readChemistryAlgorithm();
-    ChemistrySetup CSetup = p.readChemistrySetup();
+    auto CAlgorithm = p.readChemistryAlgorithm(); auto CSetup = p.readChemistrySetup();
     
     //num steps for sim
-    _numSteps = CAlgorithm.numSteps;
-    _numStepsPerMech = CAlgorithm.numStepsPerMech;
+    _numSteps = CAlgorithm.numSteps; _numStepsPerMech = CAlgorithm.numStepsPerMech;
     
     ChemistryData chem;
     
@@ -149,9 +145,15 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
             
             //Create a random filament vector one cylinder long
             vector<double> firstPoint = {firstX, firstY, firstZ};
-            auto normFactor = sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
             
-            vector<double> direction = {directionX/normFactor, directionY/normFactor, directionZ/normFactor};
+            auto normFactor = sqrt(directionX * directionX +
+                                   directionY * directionY +
+                                   directionZ * directionZ);
+            
+            vector<double> direction = {directionX/normFactor,
+                                        directionY/normFactor,
+                                        directionZ/normFactor};
+            
             vector<double> secondPoint = NextPointProjection(firstPoint,
                     (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
@@ -172,27 +174,34 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
 
 void Controller::updateSystem() {
     
-    for(auto &c : *CylinderDB::instance())
-        c->updatePosition();
-    for(auto &b : *BeadDB::instance())
-        b->updatePosition();
-    for(auto &l : *LinkerDB::instance())
+    for(auto &f : *FilamentDB::instance()) {
+       
+        for (auto cylinder : f->getCylinderVector()){
+            cylinder->getFirstBead()->updatePosition();
+            cylinder->updatePosition();
+            cylinder->updateReactionRates();
+        }
+        //update last bead
+        f->getCylinderVector().back()->getSecondBead()->updatePosition();
+    }
+    
+    for(auto &l : *LinkerDB::instance()) {
         l->updatePosition();
-    for(auto &m : *MotorGhostDB::instance())
+        l->updateReactionRates();
+    }
+    for(auto &m : *MotorGhostDB::instance()) {
         m->updatePosition();
-    
-//    //Update all positions
-//    for(auto &m : _subSystem->getMovables()) m->updatePosition();
-//    //Update all reactions
-//    for(auto &r : _subSystem->getReactables()) r->updateReactionRates();
-    
+        m->updateReactionRates();
+    }
+
     //reset neighbor lists
     NeighborListDB::instance()->resetAll();
     
 #ifdef CHEMISTRY
-    //Update filament reactions
-    for(auto &c : *CylinderDB::instance())
-        ChemManager::updateCCylinder(c->getCCylinder());
+    //Update cross cylinder reactions
+    for(auto &filament : *FilamentDB::instance())
+        for (auto cylinder : filament->getCylinderVector())
+            ChemManager::updateCCylinder(cylinder->getCCylinder());
 #endif
     
 }

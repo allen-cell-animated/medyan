@@ -25,8 +25,6 @@
 
 //FORWARD DECLARATIONS
 class Compartment;
-class BoundaryElement;
-class Cylinder;
 
 ///The Bead class represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
 /*!
@@ -89,4 +87,4 @@ private:
 };
 
 
-#endif /* defined(__CytoMech__Bead__) */
+#endif
