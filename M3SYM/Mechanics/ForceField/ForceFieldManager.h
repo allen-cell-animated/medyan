@@ -19,7 +19,7 @@
 #include "common.h"
 
 #include "ForceField.h"
-#include "BeadDB.h"
+#include "Bead.h"
 
 ///ForceFieldManager is a class to store and iterate over all [ForceFields](@ref ForceField).
 /*!

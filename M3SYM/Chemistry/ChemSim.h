@@ -17,7 +17,6 @@
 #include <memory>
 
 #include "common.h"
-#include "utility.h"
     
 //FORWARD DECLARATIONS
 class ChemSimImpl;

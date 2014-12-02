@@ -19,7 +19,6 @@
 
 #include "common.h"
 
-#include "utility.h"
 #include "Reaction.h"
 #include "ChemRNode.h"
 #include "ChemSimImpl.h"

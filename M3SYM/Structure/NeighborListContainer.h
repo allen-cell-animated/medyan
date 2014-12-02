@@ -28,11 +28,14 @@ public:
     /// Constructor, adds a cylinder neighbor list to the database
     CylinderNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
-        _neighborList = NeighborListDB::instance()->
-                        createCylinderNeighborList(rMax, rMin, crossFilamentOnly);
+        _neighborList = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
+        NeighborListDB::instance()->addNeighborList(_neighborList);
     }
     /// Destructor, removes cylinder neighbor list from the database
-    ~CylinderNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
+    ~CylinderNLContainer() {
+        NeighborListDB::instance()->removeNeighborList(_neighborList);
+        delete _neighborList;
+    }
     
     /// Get neighbor list
     CylinderNeighborList* getNeighborList() {return _neighborList;}
@@ -49,11 +52,14 @@ public:
     /// Constructor, adds a cylinder neighbor list to the database
     BoundaryElementNLContainer(float rMax = 0.0, float rMin = 0.0) {
         
-        _neighborList = NeighborListDB::instance()->
-                        createBoundaryElementNeighborList(rMax, rMin);
+        _neighborList = new BoundaryElementNeighborList(rMax, rMin);
+        NeighborListDB::instance()->addNeighborList(_neighborList);
     }
     /// Destructor, removes boundary element neighbor list from the database
-    ~BoundaryElementNLContainer() { NeighborListDB::instance()->removeNeighborList(_neighborList); }
+    ~BoundaryElementNLContainer() {
+        NeighborListDB::instance()->removeNeighborList(_neighborList);
+        delete _neighborList;
+    }
     
     /// Get neighbor list
     BoundaryElementNeighborList* getNeighborList() {return _neighborList;}

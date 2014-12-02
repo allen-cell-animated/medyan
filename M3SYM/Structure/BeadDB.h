@@ -19,13 +19,13 @@
 
 #include "common.h"
 
-#include "Bead.h"
+//FORWARD DECLARATIONS
+class Bead;
 
 /// BeadDB class is a database for all [Beads](@ref Bead) in the system
 /*!  
  *   This BeadDB inherits from list and manage all creations and removing of
  *   [Bead](@ref Bead) objects, as well as some standard list functions and iterators.
- *   The [Filament] (@ref Filament) class calls this database to create and/or remove beads.
  */
 class BeadDB: private list<Bead*>
 {
@@ -47,27 +47,11 @@ public:
     /// Get the instance of this singleton
     static BeadDB* instance();
     
-    /// Create a new bead with no coordinates
-    Bead* createBead(int positionFilament) {
-        
-        Bead* b = new Bead(positionFilament);
-        push_back(b);
-        return b ;}
+    /// Add a bead
+    void addBead(Bead* b) { push_back(b); }
+    /// Remove a bead
+    void removeBead(Bead* b) { remove(b); }
     
-    /// Create bead with a given coordinate on a given filament
-    Bead* createBead(vector<double>& v, int positionFilament) {
-        
-        Bead* b = new Bead(v, positionFilament);
-        push_back(b);
-        return b ;}
-    
-    
-    /// Remove bead
-    void removeBead(Bead* b){
-        delete b;
-        remove(b);
-        
-    }
 private:
     static BeadDB* _instance; ///< Singleton instance
     BeadDB() {};

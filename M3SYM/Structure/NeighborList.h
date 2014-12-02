@@ -21,10 +21,9 @@
 
 //FORWARD DECLARATIONS
 class Neighbor;
-class Bead;
 class Cylinder;
 class BoundaryElement;
-
+class Bead;
 
 /// NeighborList class is to hold an external neighbor list of general type.
 
@@ -45,7 +44,7 @@ protected:
     
 public:
     ///Constructor and destructor
-    NeighborList(float rMax, float rMin) : _rMax(rMax), _rMin(rMin) {}
+    NeighborList(float rMax = 0.0, float rMin = 0.0) : _rMax(rMax), _rMin(rMin) {}
     
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
@@ -81,7 +80,7 @@ private:
     bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
     
 public:
-    CylinderNeighborList(float rMax, float rMin, bool crossFilamentOnly = false)
+    CylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false)
                          : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     
     virtual void addNeighbor(Neighbor* n);

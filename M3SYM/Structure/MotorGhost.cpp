@@ -15,16 +15,20 @@
 
 #include "Bead.h"
 #include "Cylinder.h"
-#include "GController.h"
 
+#include "GController.h"
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID, double position1, double position2, bool creation)
-    : _c1(c1), _c2(c2), _motorType(motorType), _motorID(motorID), _position1(position1), _position2(position2) {
+MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                       double position1, double position2, bool creation)
+                       : _c1(c1), _c2(c2), _motorType(motorType), _position1(position1), _position2(position2) {
     
+    //add to motor ghost db
+    MotorGhostDB::instance()->addMotorGhost(this);
+    _motorID = MotorGhostDB::instance()->getMotorID();
     _birthTime = tau();
     
     //Find compartment
@@ -38,7 +42,6 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
     _cMotorGhost->setMotorGhost(this);
-    
     
     //Find species on cylinder that should be marked. If initialization, this should be done. But,
     //if this is because of a reaction callback, it will have already been done.
@@ -80,10 +83,13 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID,
 
 MotorGhost::~MotorGhost() {
     
+    //remove from motor ghost db
+    MotorGhostDB::instance()->removeMotorGhost(this);
+    
 #ifdef CHEMISTRY
+    
     //Find species on cylinder that should be unmarked. This should be done if deleting because
     //of a reaction callback, but needs to be done if deleting for other reasons
-    
     int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -102,7 +108,6 @@ MotorGhost::~MotorGhost() {
     }
     
 #endif //CHEMISTRY
-    
 }
 
 void MotorGhost::updatePosition() {

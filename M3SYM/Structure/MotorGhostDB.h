@@ -18,16 +18,13 @@
 
 #include "common.h"
 
-#include "MotorGhost.h"
-
 //FORWARD DECLARATIONS
-class Cylinder;
+class MotorGhost;
 
 /// MotorGhostDB class is a database for all [MotorGhosts](@ref MotorGhost) in the system
 /*!
  *   This MotorGhostDB inherits from list and manage all creations and removing of
  *   [MotorGhosts](@ref MotorGhost) objects, as well as some standard list functions and iterators.
- *   The [SubSystem] (@ref SubSystem) class calls this database to create and/or remove MotorGhosts.
  */
 class MotorGhostDB: private list<MotorGhost*>
 {
@@ -48,21 +45,13 @@ public:
     /// Get instance
     static MotorGhostDB* instance();
     
-    /// Create a motor ghost
-    MotorGhost* createMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                                 double position1 = 0.5, double position2 = 0.5, bool creation = false) {
-    
-        MotorGhost* mg = new MotorGhost(c1, c2, motorType, _currentMotorID++, position1, position2, creation);
-        push_back(mg);
-        
-        return mg;
-    }
-    
+    /// Add a motor ghost
+    void addMotorGhost(MotorGhost* mg) {push_back(mg); }
     /// Remove a motor ghost
-    void removeMotorGhost(MotorGhost* mg) {
-        delete mg;
-        remove(mg);
-    };
+    void removeMotorGhost(MotorGhost* mg) { remove(mg); }
+    
+    /// Get current motor ID, and update the ID counter
+    int getMotorID() { return _currentMotorID++; }
     
 private:
     static int _currentMotorID; ///< To assign motor IDs

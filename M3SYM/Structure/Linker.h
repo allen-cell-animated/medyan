@@ -16,6 +16,8 @@
 
 #include "common.h"
 
+#include "LinkerDB.h"
+
 #include "Composite.h"
 #include "CLinker.h"
 #include "MLinker.h"
@@ -54,7 +56,7 @@ private:
 public:
     vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, double position1, double position2, bool creation);
+    Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1 = 0.5, double position2 = 0.5, bool creation = false);
     ~Linker();
     
     //@{

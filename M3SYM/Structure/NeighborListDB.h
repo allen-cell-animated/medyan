@@ -20,11 +20,13 @@
 
 #include "NeighborList.h"
 
+//FORWARD DELCARATIONS
+class Neighbor;
+
 /// NeighborListDB is used to store all [NeighborLists](@ref NeighborList) in the system
 /*!
  *   This NeighborListDB inherits from list and manage all creations and removing of
  *   [NeighborLists](@ref NeighborList) objects, as well as some standard list functions and iterators.
- *   The neighbor list container class calls this database to create and/or remove NeighborLists.
  */
 class NeighborListDB: private list<NeighborList*>
 {
@@ -45,28 +47,11 @@ public:
     /// Get instance
     static NeighborListDB* instance();
     
-    /// Create a cylinder neighbor list
-    CylinderNeighborList* createCylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
-        
-        CylinderNeighborList* n = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
-        push_back(n);
-        
-        return n;
-    }
-    /// Create a cylinder neighbor list
-    BoundaryElementNeighborList* createBoundaryElementNeighborList(float rMax = 0.0, float rMin = 0.0) {
-        
-        BoundaryElementNeighborList* n = new BoundaryElementNeighborList(rMax, rMin);
-        push_back(n);
-        
-        return n;
-    }
+    /// Add a cylinder neighbor list
+    void addNeighborList(NeighborList* n) { push_back(n); }
 
     /// Remove a neighborlist
-    void removeNeighborList(NeighborList* n) {
-        delete n;
-        remove(n);
-    };
+    void removeNeighborList(NeighborList* n) { remove(n); };
     
     /// Reset all neighbors lists
     void resetAll() { for(auto &nlist : *this) nlist->reset(); }

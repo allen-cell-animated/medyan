@@ -11,7 +11,6 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-
 #ifndef M3SYM_LinkerDB_h
 #define M3SYM_LinkerDB_h
 
@@ -19,17 +18,13 @@
 
 #include "common.h"
 
-#include "Linker.h"
-
 //FORWARD DELCARATIONS
-class Compartment;
-class Cylinder;
+class Linker;
 
 /// LinkerDB class is a database for all [Linkers](@ref Linker) in the system
 /*!
  *   This LinkerDB inherits from list and manage all creations and removing of
  *   [Linkers](@ref Linker) objects, as well as some standard list functions and iterators.
- *   The [SubSystem] (@ref SubSystem) class calls this database to create and/or remove linkers.
  */
 class LinkerDB: private list<Linker*>
 {
@@ -51,20 +46,12 @@ public:
     static LinkerDB* instance();
     
     /// Create a new linker
-    Linker* createLinker(Cylinder* c1, Cylinder* c2, short linkerType,
-                      double position1 = 0.5, double position2 = 0.5, bool creation = false) {
-        
-        Linker* l = new Linker(c1, c2, linkerType, _currentLinkerID++, position1, position2, creation);
-        push_back(l);
-        
-        return l;
-    }
-
+    void addLinker(Linker* l) { push_back(l); }
     /// Remove a linker
-    void removeLinker(Linker* l) {
-        delete l;
-        remove(l);
-    };
+    void removeLinker(Linker* l) { remove(l); };
+    
+    /// Get current linker ID, and update the ID counter
+    int getLinkerID() { return _currentLinkerID++; }
     
 private:
     static int _currentLinkerID;   ///< To assign linker IDs

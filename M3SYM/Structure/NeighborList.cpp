@@ -10,13 +10,14 @@
 //  See the Papoian lab page for installation and documentation:
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
+
 #include "NeighborList.h"
 
-#include "BeadDB.h"
+#include "Bead.h"
 #include "Cylinder.h"
 #include "BoundaryElement.h"
-#include "GController.h"
 
+#include "GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;

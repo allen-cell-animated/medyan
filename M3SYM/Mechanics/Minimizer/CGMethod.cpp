@@ -14,7 +14,7 @@
 #include "CGMethod.h"
 
 #include "ForceFieldManager.h"
-#include "BeadDB.h"
+#include "Bead.h"
 
 inline void CGMethod::swap(double &a, double &b) {
     double tmp = a;

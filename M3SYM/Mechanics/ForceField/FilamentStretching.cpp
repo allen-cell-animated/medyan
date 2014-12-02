@@ -15,6 +15,7 @@
 
 #include "FilamentStretchingHarmonic.h"
 #include "Filament.h"
+#include "Cylinder.h"
 
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f, double d) {

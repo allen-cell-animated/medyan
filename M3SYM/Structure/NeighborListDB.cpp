@@ -10,6 +10,7 @@
 //  See the Papoian lab page for installation and documentation:
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
+
 #include "NeighborListDB.h"
 
 NeighborListDB* NeighborListDB::_instance = 0;

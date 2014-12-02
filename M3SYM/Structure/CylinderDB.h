@@ -19,13 +19,13 @@
 
 #include "common.h"
 
-#include "Cylinder.h"
+//FORWARD DECLARATIONS
+class Cylinder;
 
 /// CylinderDB class is a database for all [Cylinders](@ref Cylinder) in the system
 /*!
  *   This CylinderDB inherits from list and manage all creations and removing of
  *   [Cylinders](@ref Cylinder) objects, as well as some standard list functions and iterators.
- *   The [Filament] (@ref Filament) class calls this database to create and/or remove cylinders.
  */
 class CylinderDB: private list<Cylinder*>
 {
@@ -44,29 +44,19 @@ public:
     /// Assignment is not allowed
     CylinderDB& operator=(CylinderDB &rhs) = delete;
     
-    
     /// Get the instance of this singleton
     static CylinderDB* instance();
     
-    /// Create new empty cylinder
-    Cylinder* createCylinder(Filament* pf, Bead* firstBead, Bead* secondBead, int positionFilament, 
-                             bool extensionFront = false, bool extensionBack = false, bool creation = false) {
-        
-        Cylinder* pc = new Cylinder(pf, firstBead, secondBead, positionFilament, _currentCylinderID++,
-                                    extensionFront, extensionBack, creation);
-        push_back(pc);
-        return pc;
-    }
+    /// Add a cylinder
+    void addCylinder(Cylinder* c){ push_back(c); }
+    /// Remove cylinder
+    void removeCylinder(Cylinder* c){ remove(c); }
     
-    
-    /// Remove Cylinder
-    void removeCylinder(Cylinder* c){
-        delete c;
-        remove(c);
-    }
+    /// Get current cylinder ID, and update the ID counter
+    int getCylinderID() { return _currentCylinderID++; }
     
 private:
-    int _currentCylinderID; ///< Current running cylinder ID
+    static int _currentCylinderID; ///< Current running cylinder ID
     
     static CylinderDB* _instance; ///< Singleton instance
     CylinderDB() {};

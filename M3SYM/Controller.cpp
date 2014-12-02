@@ -20,9 +20,10 @@
 #include "SubSystem.h"
 #include "BoundaryImpl.h"
 
-#include "FilamentDB.h"
-#include "LinkerDB.h"
-#include "MotorGhostDB.h"
+#include "Filament.h"
+#include "Cylinder.h"
+#include "Linker.h"
+#include "MotorGhost.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
@@ -174,6 +175,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
 
 void Controller::updateSystem() {
     
+    /// update all reactables and moveables
     for(auto &f : *FilamentDB::instance()) {
        
         for (auto cylinder : f->getCylinderVector()){

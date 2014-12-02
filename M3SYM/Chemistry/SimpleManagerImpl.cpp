@@ -14,8 +14,8 @@
 #include "SimpleManagerImpl.h"
 
 #include "ChemCallbacks.h"
-#include "ReactionManager.h"
 #include "Parser.h"
+
 #include "Bead.h"
 
 #include "SystemParameters.h"

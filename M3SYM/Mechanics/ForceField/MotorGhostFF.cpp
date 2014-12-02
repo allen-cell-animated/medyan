@@ -16,7 +16,7 @@
 
 #include "MotorGhostStretching.h"
 #include "MotorGhostStretchingHarmonic.h"
-#include "MotorGhostDB.h"
+#include "MotorGhost.h"
 
 MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twisting)
 {

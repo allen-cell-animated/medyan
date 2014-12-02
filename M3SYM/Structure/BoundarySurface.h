@@ -18,7 +18,7 @@
 
 #include "common.h"
 
-#include "BoundaryElementDB.h"
+#include "BoundaryElement.h"
 
 /// BoundarySurface class is a boundary shape that holds BoundaryElements
 /*!
@@ -39,10 +39,7 @@ public:
     ///Constructor, does nothing
     BoundarySurface(int nDim) : _nDim(nDim) {};
     /// Destructor, removes boundary elements from DB
-    ~BoundarySurface() {
-        //loop through boundary elements, remove from DB
-        for (auto &b : _boundaryElements) BoundaryElementDB::instance()->removeBoundaryElement(b.get());
-    };
+    ~BoundarySurface() {};
 
     /// Get boundary elements
     const vector<unique_ptr<BoundaryElement>>& boundaryElements() {return _boundaryElements;}

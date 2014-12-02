@@ -38,7 +38,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
 		vector<double> newGrad;
 
         lambda = backtrackingLineSearch(FFM);
-        if(lambda < 0) return;
+        if(lambda < 0) { printForces(); return; }
         //cout<<"lambda= "<<lambda<<endl;
         
 		//PrintForces();

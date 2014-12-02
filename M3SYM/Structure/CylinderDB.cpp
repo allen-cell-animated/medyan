@@ -14,6 +14,7 @@
 #include "CylinderDB.h"
 
 CylinderDB* CylinderDB::_instance = 0;
+int CylinderDB::_currentCylinderID = 0;
 
 CylinderDB* CylinderDB::instance() {
     if(_instance==0)

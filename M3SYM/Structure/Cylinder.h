@@ -18,10 +18,13 @@
 
 #include "common.h"
 
+#include "CylinderDB.h"
+
 #include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
 #include "Neighbor.h"
+
 #include "Movable.h"
 #include "Reactable.h"
 
@@ -56,8 +59,8 @@ private:
 public:
     vector<double> coordinate; ///< Coordinates of midpoint of cylinder, updated with updatePosition()
     
-    Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID, 
-             bool extensionFront, bool extensionBack, bool creation);
+    Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
+             bool extensionFront = false, bool extensionBack = false, bool creation = false);
     ~Cylinder();
     
     /// Get MCylinder

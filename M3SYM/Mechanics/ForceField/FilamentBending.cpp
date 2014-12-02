@@ -15,6 +15,7 @@
 
 #include "FilamentBendingHarmonic.h"
 #include "Filament.h"
+#include "Cylinder.h"
 
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, double d)

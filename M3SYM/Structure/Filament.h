@@ -21,10 +21,12 @@
 
 #include "common.h"
 
-#include "Cylinder.h"
+#include "FilamentDB.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
+class Cylinder;
+class Bead;
 
 ///Filament class is used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads](@ref Bead).
 /*!
@@ -49,13 +51,13 @@ public:
     /// This constructor creates a short filament, containing only two beads. Coordinates of the first bead is an
     /// input, second is set up by using an input direction. Using all this, two constructors
     /// for beads and cylinders are called.
-	Filament(SubSystem* s, vector<double>& position, vector<double>& direction, int ID);
+	Filament(SubSystem* s, vector<double>& position, vector<double>& direction);
     
     /// This constructor is called to create a longer filament. It creates a filament with a number of beads numBeads.
     /// Filaments starts and ends in the point determined by position vector and has a direction direction. Number of
     /// beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be
     /// pushed to cylinder vector, but will be stored in the _pLastCylinder;
-    Filament(SubSystem* s, vector<vector<double>>& position, int numBeads, int ID, string projectionType = "STRAIGHT");
+    Filament(SubSystem* s, vector<vector<double>>& position, int numBeads, string projectionType = "STRAIGHT");
     
     ///This destructor is called when a filament is to be removed from the system. Removes all cylinders
     ///and beads associated with the filament.
@@ -88,9 +90,6 @@ public:
     /// Same as depolymerization front, but moves the back bead forward one monomer length. Updates cylinder parameters accordingly.
     void depolymerizeBack();
     
-    /// Delete a bead from this filament
-    void deleteBead(Bead*);
-    
     /// Get vector of cylinders that this filament contains.
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
     
@@ -118,11 +117,7 @@ public:
     //@}
     
     /// Print chemical composition of filament (for debugging only)
-    void printChemComposition() {
-        for (auto &c : _cylinderVector) {
-            c->getCCylinder()->printCCylinder();
-        }
-    }
+    void printChemComposition();
 };
 
 #endif

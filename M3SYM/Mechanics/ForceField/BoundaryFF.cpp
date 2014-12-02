@@ -17,7 +17,7 @@
 #include "BoundaryRepulsionLJ.h"
 #include "BoundaryRepulsionExp.h"
 
-#include "BoundaryElementDB.h"
+#include "BoundaryElement.h"
 #include "Bead.h"
 
 BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interaction3) {

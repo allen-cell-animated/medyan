@@ -13,8 +13,9 @@
 
 #include "LinkerStretchingHarmonic.h"
 
-#include "MathFunctions.h"
 #include "Bead.h"
+
+#include "MathFunctions.h"
 
 using namespace mathfunc;
 

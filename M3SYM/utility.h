@@ -15,7 +15,6 @@
 #define M3SYM_Utility_h
 
 #include <memory>
-#include <iostream>
 
 using namespace std;
 

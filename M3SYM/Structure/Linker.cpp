@@ -15,17 +15,20 @@
 
 #include "Bead.h"
 #include "Cylinder.h"
-#include "GController.h"
 
+#include "GController.h"
 #include "SystemParameters.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, double position1, double position2, bool creation) :
-                                        _c1(c1), _c2(c2), _linkerType(linkerType), _linkerID(linkerID),
+Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2, bool creation) :
+                                        _c1(c1), _c2(c2), _linkerType(linkerType),
                                         _position1(position1), _position2(position2) {
-        
+    //Add to linker db
+    LinkerDB::instance()->addLinker(this);
+    _linkerID = LinkerDB::instance()->getLinkerID();
+                                            
     _birthTime = tau();
         
     //Find compartment
@@ -78,10 +81,12 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, int linkerID, doubl
 
 Linker::~Linker() {
     
+    //Remove from linker db
+    LinkerDB::instance()->removeLinker(this);
+    
 #ifdef CHEMISTRY
     //Find species on cylinder that should be unmarked. This should be done if deleting because
     //of a reaction callback, but needs to be done if deleting for other reasons
-
     int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -98,7 +103,6 @@ Linker::~Linker() {
         sl2->getRSpecies().down();
         se2->getRSpecies().up();
     }
-    
 #endif //CHEMISTRY
     
 }

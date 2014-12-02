@@ -18,8 +18,11 @@
 
 #include "common.h"
 
+#include "BoundaryElementDB.h"
+
 #include "NeighborListDB.h"
 #include "Neighbor.h"
+
 #include "Gcontroller.h"
 
 //FORWARD DECLARATIONS
@@ -39,6 +42,10 @@ protected:
 public:
     /// Default constructor
     BoundaryElement(vector<double> coords) : _coords(coords) {
+        
+        //add to boundary element db
+        BoundaryElementDB::instance()->addBoundaryElement(this);
+        
         //add to neighbor list db
         NeighborListDB::instance()->addNeighbor(this);
     }
@@ -47,6 +54,10 @@ public:
     /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
     /// (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~BoundaryElement() noexcept {
+        
+        //remove from boundary element db
+        BoundaryElementDB::instance()->removeBoundaryElement(this);
+        
         ///remove from neighbor lists
         NeighborListDB::instance()->removeNeighbor(this);
     }

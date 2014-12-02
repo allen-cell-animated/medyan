@@ -18,6 +18,7 @@
 
 #include "CMonomer.h"
 #include "Compartment.h"
+
 #include "SystemParameters.h"
 
 //FORWARD DECLARATIONS

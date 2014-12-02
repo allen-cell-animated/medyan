@@ -13,8 +13,8 @@
 #include "Bead.h"
 
 #include "Compartment.h"
-#include "GController.h"
 
+#include "GController.h"
 #include "MathFunctions.h"
 #include "SystemParameters.h"
 
@@ -23,6 +23,9 @@ using namespace mathfunc;
 Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionFilament),
                                                      coordinate(v), coordinateAux(v),
                                                      force(3, 0), forceAux(3, 0) {
+    //add to bead db
+    BeadDB::instance()->addBead(this);
+                                                         
     //set birth time
     _birthTime = tau();
     
@@ -30,9 +33,14 @@ Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionF
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     _compartment->addBead(this);
+
 }
 
 Bead::~Bead() {
+    
+    //remove from bead db
+    BeadDB::instance()->removeBead(this);
+    
     //remove from compartment
     _compartment->removeBead(this);
 }

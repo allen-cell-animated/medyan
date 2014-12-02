@@ -18,17 +18,13 @@
 
 #include "common.h"
 
-#include "Filament.h"
-
-#include "MathFunctions.h"
-#include "SystemParameters.h"
-
+//FORWARD DELCALRATIONS
+class Filament;
 
 /// FilamentDB class is a database for all [Filaments](@ref Filament) in the system
 /*!
  *   This FilamentDB inherits from list and manage all creations and removing of
  *   [Filaments](@ref Filament) objects, as well as some standard list functions and iterators.
- *   The [SubSystem] (@ref SubSystem) class calls this database to create and/or remove filaments.
  */
 class FilamentDB: private list<Filament*> {
     typedef list<Filament*> fdb;
@@ -38,38 +34,22 @@ public:
     using fdb::begin;
     using fdb::end;
     
+    /// Copying is not allowed
+    FilamentDB(const FilamentDB &rhs) = delete;
+    
+    /// Assignment is not allowed
+    FilamentDB& operator=(FilamentDB &rhs) = delete;
+    
+    /// Get singleton instance
     static FilamentDB* instance();
     
-    /// Create a filament, given a vector of initial bead coordinates
-    Filament* createFilament(SubSystem* s, vector<vector<double> >& v) {
-        
-        double d = mathfunc::TwoPointDistance(v[0], v[1]);
-        vector<double> tau = mathfunc::TwoPointDirection(v[0], v[1]);
-        
-        int numSegment = d / SystemParameters::Geometry().cylinderSize;
-        
-        // check how many segments can fit between end-to-end of the filament
-        if (numSegment == 0){
-            
-            Filament* pf = new Filament(s, v[0], tau, _currentFilamentID++); //create a filament with only two beads
-            push_back(pf);
-
-            return pf;
-        }
-        
-        else {
-            Filament* pf = new Filament(s, v, numSegment + 1, _currentFilamentID++, "STRAIGHT");  //Create a long filament with numSeg.
-            push_back(pf);
-            
-            return pf;
-        }
-    }
-
-    /// Remove a filament from the system
-    void removeFilament(Filament* f) {
-        delete f;
-        remove(f);
-    };
+    /// Add a filament
+    void addFilament(Filament* f) { push_back(f); }
+    /// Remove a filament
+    void removeFilament(Filament* f) { remove(f); };
+    
+    /// Get current filament ID, and update the ID counter
+    int getFilamentID() { return _currentFilamentID++; }
     
 private:
     static int _currentFilamentID;  ///< To assign filament ids

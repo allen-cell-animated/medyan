@@ -19,6 +19,8 @@
 
 #include "common.h"
 
+#include "BeadDB.h"
+
 #include "Component.h"
 #include "Neighbor.h"
 #include "Movable.h"

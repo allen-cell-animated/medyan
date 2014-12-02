@@ -14,18 +14,22 @@
 #include "Cylinder.h"
 
 #include "Bead.h"
-#include "ChemManager.h"
-#include "GController.h"
 #include "NeighborListDB.h"
+#include "ChemManager.h"
 
+#include "GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID, 
+Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
-                   : _pFilament(f), _b1(b1), _b2(b2), _ID(ID), _positionFilament(positionFilament) {
+                   : _pFilament(f), _b1(b1), _b2(b2), _positionFilament(positionFilament) {
     
+    //Add to cylinder DB
+    CylinderDB::instance()->addCylinder(this);
+    _ID = CylinderDB::instance()->getCylinderID();
+                       
     //Set coordinate
     coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 
@@ -65,6 +69,10 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament, int ID
 }
 
 Cylinder::~Cylinder() {
+    
+    //Remove from cylinder DB
+    CylinderDB::instance()->removeCylinder(this);
+    
     //remove from compartment
     _compartment->removeCylinder(this);
     

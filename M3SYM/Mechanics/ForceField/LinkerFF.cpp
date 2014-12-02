@@ -16,7 +16,7 @@
 #include "LinkerStretching.h"
 #include "LinkerStretchingHarmonic.h"
 
-#include "LinkerDB.h"
+#include "Linker.h"
 
 LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {

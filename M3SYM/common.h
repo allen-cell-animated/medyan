@@ -15,6 +15,7 @@
 #define M3SYM_common_h
 
 #include <iostream>
+
 #include "utility.h"
 
 ///Defining chemical and mechanical capablilites turned on/off

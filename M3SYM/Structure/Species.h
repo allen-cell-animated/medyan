@@ -24,7 +24,6 @@
 #include <type_traits>
 
 #include "common.h"
-#include "utility.h"
 
 #include "RSpecies.h"
 

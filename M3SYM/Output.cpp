@@ -13,11 +13,11 @@
 
 #include "Output.h"
 
-#include "FilamentDB.h"
-#include "CylinderDB.h"
-#include "BeadDB.h"
-#include "LinkerDB.h"
-#include "MotorGhostDB.h"
+#include "Filament.h"
+#include "Cylinder.h"
+#include "Bead.h"
+#include "Linker.h"
+#include "MotorGhost.h"
 
 #include "MathFunctions.h"
 

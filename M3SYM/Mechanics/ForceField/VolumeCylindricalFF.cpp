@@ -16,7 +16,7 @@
 #include "CylinderExclVolume.h"
 #include "CylinderExclVolRepulsion.h"
 
-#include "CylinderDB.h"
+#include "Cylinder.h"
 
 VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
     if (type == "REPULSION")

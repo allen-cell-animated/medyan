@@ -26,7 +26,6 @@
 #include <boost/signals2/shared_connection_block.hpp>
 
 #include "common.h"
-#include "utility.h"
 
 //FORWARD DECLARATIONS
 class Species;

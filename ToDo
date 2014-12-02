@@ -16,8 +16,7 @@ Goals for November 2014
     -Add aging reaction + coupling to mechanics
     -Add severing reaction + coupling to mechanics
     -Add branching reaction + coupling to mechanics
-    -Optimizations (Clean headers and move all code to c files,
-                    Data structures (especially reaction dependents),
+    -Optimizations (Data structures (especially reaction dependents, dbs),
                     Neighbor list updates,
                     Virtuals, inlines, friends of db!)
     -Formatting (80C lines, cleaning up other things, document)                 X

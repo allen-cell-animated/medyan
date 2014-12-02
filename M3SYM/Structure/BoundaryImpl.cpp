@@ -14,6 +14,7 @@
 #include "BoundaryImpl.h"
 
 #include "BoundarySurfaceImpl.h"
+#include "BoundaryElement.h"
 
 #include "SystemParameters.h"
 

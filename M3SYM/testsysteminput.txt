@@ -85,7 +85,7 @@ CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMSTEPS:                    100000
-NUMSTEPSPERM:                10
+NUMSTEPSPERM:                1
 
 NUMBULKSPECIES:              2
 NUMDIFFUSINGSPECIES:         1
@@ -105,7 +105,7 @@ NUMMOTORSPECIES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                100
+NUMFILAMENTS:                1
 
 
 

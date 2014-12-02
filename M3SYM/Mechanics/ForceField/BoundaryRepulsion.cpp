@@ -16,6 +16,7 @@
 #include "BoundaryRepulsionLJ.h"
 #include "BoundaryRepulsionExp.h"
 #include "BoundaryElement.h"
+
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>

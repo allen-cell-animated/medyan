@@ -11,9 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "SystemParameters.h"
-
 #include "Parser.h"
+
+#include "SystemParameters.h"
 
 void SystemParser::readChemistryParameters() {
     

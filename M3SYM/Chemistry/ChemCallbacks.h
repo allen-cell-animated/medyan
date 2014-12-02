@@ -18,6 +18,7 @@
 
 #include "SubSystem.h"
 #include "Filament.h"
+#include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
 

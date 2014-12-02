@@ -16,6 +16,8 @@
 
 #include "common.h"
 
+#include "MotorGhostDB.h"
+
 #include "Composite.h"
 #include "CMotorGhost.h"
 #include "MMotorGhost.h"
@@ -54,7 +56,8 @@ private:
 public:
     vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, int motorID, double position1, double position2, bool creation);
+    MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+               double position1 = 0.5, double position2 = 0.5, bool creation = false);
     ~MotorGhost();
     
     //@{
