@@ -116,7 +116,7 @@ $(document).ready(function(){initNavTree('classCompartment.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>A compartment for holding <a class="el" href="classSpecies.html">Species</a> and Reactions.  
+<p>A container or holding <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and Reactions.  
  <a href="classCompartment.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Compartment_8h_source.html">Compartment.h</a>&gt;</code></p>
@@ -150,10 +150,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae464fb54124c6a47eeeb49609a5ae5aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#ae464fb54124c6a47eeeb49609a5ae5aa">More...</a><br /></td></tr>
 <tr class="separator:ae464fb54124c6a47eeeb49609a5ae5aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9bdaf50db8e780d3614be3bc50e9171"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#ae9bdaf50db8e780d3614be3bc50e9171">apply_impl</a> (<a class="el" href="classSpeciesVisitor.html">SpeciesVisitor</a> &amp;v) override</td></tr>
-<tr class="memdesc:ae9bdaf50db8e780d3614be3bc50e9171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classSpeciesVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#ae9bdaf50db8e780d3614be3bc50e9171">More...</a><br /></td></tr>
+<tr class="memdesc:ae9bdaf50db8e780d3614be3bc50e9171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#ae9bdaf50db8e780d3614be3bc50e9171">More...</a><br /></td></tr>
 <tr class="separator:ae9bdaf50db8e780d3614be3bc50e9171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37bd8d3a6d3a21bf50716979c6694adb"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#a37bd8d3a6d3a21bf50716979c6694adb">apply_impl</a> (<a class="el" href="classReactionVisitor.html">ReactionVisitor</a> &amp;v) override</td></tr>
-<tr class="memdesc:a37bd8d3a6d3a21bf50716979c6694adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classReactionVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node.  <a href="#a37bd8d3a6d3a21bf50716979c6694adb">More...</a><br /></td></tr>
+<tr class="memdesc:a37bd8d3a6d3a21bf50716979c6694adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classReactionVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node.  <a href="#a37bd8d3a6d3a21bf50716979c6694adb">More...</a><br /></td></tr>
 <tr class="separator:a37bd8d3a6d3a21bf50716979c6694adb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a010db2fb85e77af1c48563f60517b4cc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#a010db2fb85e77af1c48563f60517b4cc">activate</a> ()</td></tr>
 <tr class="memdesc:a010db2fb85e77af1c48563f60517b4cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activate a compartment.  <a href="#a010db2fb85e77af1c48563f60517b4cc">More...</a><br /></td></tr>
@@ -451,7 +451,7 @@ Protected Attributes</h2></td></tr>
 <tr class="memdesc:aef4d7ce0676c4ddb03fa02b90973c41c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbors of the compartment.  <a href="#aef4d7ce0676c4ddb03fa02b90973c41c">More...</a><br /></td></tr>
 <tr class="separator:aef4d7ce0676c4ddb03fa02b90973c41c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92081814841d9bacca088eb55381f89c"><td class="memItemLeft" align="right" valign="top">unordered_map&lt; int, float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#a92081814841d9bacca088eb55381f89c">_diffusion_rates</a></td></tr>
-<tr class="memdesc:a92081814841d9bacca088eb55381f89c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Diffusion rates of species in compartment.  <a href="#a92081814841d9bacca088eb55381f89c">More...</a><br /></td></tr>
+<tr class="memdesc:a92081814841d9bacca088eb55381f89c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Diffusion rates of <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> in compartment.  <a href="#a92081814841d9bacca088eb55381f89c">More...</a><br /></td></tr>
 <tr class="separator:a92081814841d9bacca088eb55381f89c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa582b3db6d4bef92ec7c7b7e639d0a09"><td class="memItemLeft" align="right" valign="top">unordered_set&lt; <a class="el" href="classBoundaryElement.html">BoundaryElement</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#aa582b3db6d4bef92ec7c7b7e639d0a09">_boundaryElements</a></td></tr>
 <tr class="memdesc:aa582b3db6d4bef92ec7c7b7e639d0a09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of boundary element that are in this compartment.  <a href="#aa582b3db6d4bef92ec7c7b7e639d0a09">More...</a><br /></td></tr>
@@ -472,16 +472,16 @@ Protected Attributes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:ab45e5038a170f915298923d7a658ee8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#ab45e5038a170f915298923d7a658ee8c">operator==</a> (const <a class="el" href="classCompartment.html">Compartment</a> &amp;a, const <a class="el" href="classCompartment.html">Compartment</a> &amp;b)</td></tr>
-<tr class="memdesc:ab45e5038a170f915298923d7a658ee8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if two <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> objects are equal.  <a href="#ab45e5038a170f915298923d7a658ee8c">More...</a><br /></td></tr>
+<tr class="memdesc:ab45e5038a170f915298923d7a658ee8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if two <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> objects are equal.  <a href="#ab45e5038a170f915298923d7a658ee8c">More...</a><br /></td></tr>
 <tr class="separator:ab45e5038a170f915298923d7a658ee8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0809c1fc222c0157f44da8e41b01c09a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCompartment.html#a0809c1fc222c0157f44da8e41b01c09a">operator!=</a> (const <a class="el" href="classCompartment.html">Compartment</a> &amp;a, const <a class="el" href="classCompartment.html">Compartment</a> &amp;b)</td></tr>
-<tr class="memdesc:a0809c1fc222c0157f44da8e41b01c09a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if two <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> are not equal.  <a href="#a0809c1fc222c0157f44da8e41b01c09a">More...</a><br /></td></tr>
+<tr class="memdesc:a0809c1fc222c0157f44da8e41b01c09a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if two <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> are not equal.  <a href="#a0809c1fc222c0157f44da8e41b01c09a">More...</a><br /></td></tr>
 <tr class="separator:a0809c1fc222c0157f44da8e41b01c09a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A compartment for holding <a class="el" href="classSpecies.html">Species</a> and Reactions. </p>
-<p>The <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> class is a container for species, internal reactions, and diffusion reactions that can occur. A compartment object keeps track of the above while also holding pointers to its neighbors in order to generate diffusion reactions and other cross-compartment reactions.</p>
-<p><a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> initialization looks like the following: </p><div class="fragment"><div class="line"><a class="code" href="classCompartment.html">Compartment</a> *C1 = <span class="keyword">new</span> <a class="code" href="classCompartment.html#a582e5f8a00d5a30f07f7f653637d7aef">Compartment</a>();</div>
+<div class="textblock"><p>A container or holding <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and Reactions. </p>
+<p>The <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> class is a container for <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a>, Reactions, and diffusion Reactions that can occur. A <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> object keeps track of the above while also holding pointers to its neighbors in order to generate diffusion Reactions and other cross-compartment Reactions.</p>
+<p><a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> initialization looks like the following: </p><div class="fragment"><div class="line"><a class="code" href="classCompartment.html">Compartment</a> *C1 = <span class="keyword">new</span> <a class="code" href="classCompartment.html#a582e5f8a00d5a30f07f7f653637d7aef">Compartment</a>();</div>
 <div class="line"><a class="code" href="classSpecies.html">Species</a> *<a class="code" href="namespaceA__B__C__Cycle.html#a2e58583729f8a298b9a4fa611c0ac787">A</a> = C1-&gt;addSpecies(<span class="stringliteral">&quot;A&quot;</span>,99U);</div>
 <div class="line">C1-&gt;<a class="code" href="classCompartment.html#ae08ca5d423b24cd7a53fcd88670141a1">setDiffusionRate</a>(A,2000);</div>
 </div><!-- fragment --> 
@@ -539,7 +539,6 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructor which clones another compartment. </p>
-<p>Should eventuall clone beads, cylinders, boundary elements.... not clear yet </p>
 
 <p>Definition at line <a class="el" href="Compartment_8h_source.html#l00070">70</a> of file <a class="el" href="Compartment_8h_source.html">Compartment.h</a>.</p>
 
@@ -1425,7 +1424,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Applies <a class="el" href="classSpeciesVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
+<p>Applies <a class="el" href="classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
 <p>This method needs to be overriden by descendent classes that contain <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a>. </p>
 
 <p>Reimplemented from <a class="el" href="classComponent.html#a20f6f5a1f7da3238c069dfc35f174a4b">Component</a>.</p>
@@ -1458,7 +1457,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Applies <a class="el" href="classReactionVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node. </p>
+<p>Applies <a class="el" href="classReactionVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">ReactionVisitor</a> v to every ReactionBase* object directly owned by this node. </p>
 <p>This method needs to be overriden by descendent classes that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a>. </p>
 
 <p>Reimplemented from <a class="el" href="classComponent.html#ac9296f41e0b9c254d5adea9df3b4b07a">Component</a>.</p>
@@ -3667,7 +3666,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return true if two <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> are not equal. </p>
+<p>Return true if two <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> are not equal. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classCompartment.html#ab45e5038a170f915298923d7a658ee8c" title="Returns true if two Compartment objects are equal. ">operator ==(const Compartment&amp; a, const Compartment&amp; b)</a> above </dd></dl>
 
 <p>Definition at line <a class="el" href="Compartment_8h_source.html#l00160">160</a> of file <a class="el" href="Compartment_8h_source.html">Compartment.h</a>.</p>
@@ -3706,8 +3705,8 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns true if two <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> objects are equal. </p>
-<p>Two <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> objects are equal if each contains analogous <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> objects, in the same order </p>
+<p>Returns true if two <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> objects are equal. </p>
+<p>Two <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> objects are equal if each contains analogous <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> objects, in the same order </p>
 
 <p>Definition at line <a class="el" href="Compartment_8cpp_source.html#l00076">76</a> of file <a class="el" href="Compartment_8cpp_source.html">Compartment.cpp</a>.</p>
 
@@ -3862,7 +3861,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Diffusion rates of species in compartment. </p>
+<p>Diffusion rates of <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> in compartment. </p>
 
 <p>Definition at line <a class="el" href="Compartment_8h_source.html#l00055">55</a> of file <a class="el" href="Compartment_8h_source.html">Compartment.h</a>.</p>
 
@@ -3984,7 +3983,7 @@ template&lt;typename... Args&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classCompartment.html">Compartment</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:18:58 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

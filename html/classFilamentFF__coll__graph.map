@@ -1,6 +1,6 @@
 <map id="FilamentFF" name="FilamentFF">
 <area shape="rect" id="node2" href="$classForceField.html" title="An abstract class to represent various force field calculations. " alt="" coords="5,229,90,255"/>
 <area shape="rect" id="node3" title="STL class. " alt="" coords="49,93,128,119"/>
-<area shape="rect" id="node7" href="$classFilamentInteractions.html" title="Represents an internal filament interaction. " alt="" coords="97,180,238,205"/>
+<area shape="rect" id="node7" href="$classFilamentInteractions.html" title="Represents an internal Filament interaction. " alt="" coords="97,180,238,205"/>
 <area shape="rect" id="node4" title="STL class. " alt="" coords="26,5,152,44"/>
 </map>

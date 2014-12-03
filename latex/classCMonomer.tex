@@ -12,7 +12,8 @@ Rpresents a container for all \hyperlink{classSpecies}{Species} that could be co
 
 
 
-Collaboration diagram for C\+Monomer\+:\nopagebreak
+Collaboration diagram for C\+Monomer\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -33,9 +34,7 @@ virtual \hyperlink{classCMonomer_a6cfd5fad73b8f76fc45205839abe11bd}{$\sim$\+C\+M
 virtual \hyperlink{classCMonomer}{C\+Monomer} $\ast$ \hyperlink{classCMonomer_adbb775dba38bc68856db9529826f9676}{clone} (\hyperlink{classCompartment}{Compartment} $\ast$c)
 \begin{DoxyCompactList}\small\item\em Clone a \hyperlink{classCMonomer}{C\+Monomer}. Transfers all \hyperlink{classCBound}{C\+Bounds} to the new \hyperlink{classCMonomer}{C\+Monomer}. \end{DoxyCompactList}\item 
 void \hyperlink{classCMonomer_a72138cb91d962aed900869f4096afd92}{print} ()
-\begin{DoxyCompactList}\small\item\em Print the species in this filament element. \end{DoxyCompactList}\item 
-virtual bool \hyperlink{classCMonomer_a7e8eb6f8475a8b2fe50e369a0ed0b0ab}{check\+Species} (int sum)
-\begin{DoxyCompactList}\small\item\em Check if this filament element is valid. Involves checking copy numbers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Print the \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 {\bf }\par
 \begin{DoxyCompactItemize}
 \item 
@@ -56,17 +55,17 @@ void \hyperlink{classCMonomer_a57b8bf84368ddc0f8bfafaeaec508132}{add\+Species\+M
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classSpeciesFilament}{Species\+Filament} $\ast$ \hyperlink{classCMonomer_ad69c6060f307b00463bf59b697846344}{species\+Filament} (int index)
-\begin{DoxyCompactList}\small\item\em Get species at a specific index. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} $\ast$ \hyperlink{classCMonomer_a1923cdc3adc910d1eb83bb6873b9864c}{species\+Plus\+End} (int index)
-\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesMinusEnd}{Species\+Minus\+End} $\ast$ \hyperlink{classCMonomer_a61893c36bc55172a9a534b1caebc7b8b}{species\+Minus\+End} (int index)
-\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCMonomer_a237d02b3b2e0ecf83ed798f2c0107250}{species\+Bound} (int index)
-\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesLinker}{Species\+Linker} $\ast$ \hyperlink{classCMonomer_a71d55b070c58b90f439c0f9fd14efe4f}{species\+Linker} (int index)
-\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesMotor}{Species\+Motor} $\ast$ \hyperlink{classCMonomer_a8cfa76dbac04ef9eeca54b93208e064f}{species\+Motor} (int index)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classSpecies}{Species} at a specific index. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Attributes}
 {\bf }\par
@@ -75,24 +74,24 @@ void \hyperlink{classCMonomer_a57b8bf84368ddc0f8bfafaeaec508132}{add\+Species\+M
 \hyperlink{classSpeciesFilament}{Species\+Filament} $\ast$$\ast$ \hyperlink{classCMonomer_aa6d658b1fb0e90a549bfc0dedfc3b2a5}{\+\_\+species\+Filament}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} $\ast$$\ast$ \hyperlink{classCMonomer_a536f3c948c52d79c73fe406048071e7b}{\+\_\+species\+Plus\+End}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesMinusEnd}{Species\+Minus\+End} $\ast$$\ast$ \hyperlink{classCMonomer_a76ec86baa9b2f8e4711389481b191584}{\+\_\+species\+Minus\+End}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$$\ast$ \hyperlink{classCMonomer_a24078fb0d0c2d60e79af1cfea30b0d79}{\+\_\+species\+Bound}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesLinker}{Species\+Linker} $\ast$$\ast$ \hyperlink{classCMonomer_aa549a348f1f8e77283c4aaa2e555aca1}{\+\_\+species\+Linker}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesMotor}{Species\+Motor} $\ast$$\ast$ \hyperlink{classCMonomer_af3b42603df2c3e4dff67457bad776fd6}{\+\_\+species\+Motor}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} array. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 
 \subsection{Detailed Description}
 Rpresents a container for all \hyperlink{classSpecies}{Species} that could be contained in a particular filament element at a given position. 
 
-\hyperlink{classCMonomer}{C\+Monomer} provides a container to hold all \hyperlink{classSpecies}{Species} that are possibly held at a given filament position. The species are held in an standard vector. Functions to lookup species as well as a filament element checker are provided. 
+\hyperlink{classCMonomer}{C\+Monomer} provides a container to hold all \hyperlink{classSpecies}{Species} that are possibly held at a given filament position. The species are held in an standard vector. 
 
-Definition at line 29 of file C\+Monomer.\+h.
+Definition at line 28 of file C\+Monomer.\+h.
 
 
 
@@ -172,6 +171,9 @@ References \+\_\+species\+Bound, \+\_\+species\+Filament, \+\_\+species\+Linker,
 \item[{{\bf Species\+Bound} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_a64f136517ed2ff2d15aaa5c9bd4d9153}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
+should only be called at initialization 
+\end{DoxyNote}
 
 
 Definition at line 171 of file C\+Monomer.\+cpp.
@@ -191,7 +193,7 @@ Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder
 \item[{{\bf Species\+Filament} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_a3cdb15e3d7f2143217ad3b002337e8b1}
-Add a species \begin{DoxyNote}{Note}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
 should only be called at initialization 
 \end{DoxyNote}
 
@@ -213,6 +215,9 @@ Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder
 \item[{{\bf Species\+Linker} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_a06bfb6c661455b50d8f125cec4a06485}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
+should only be called at initialization 
+\end{DoxyNote}
 
 
 Definition at line 186 of file C\+Monomer.\+cpp.
@@ -232,6 +237,9 @@ Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder
 \item[{{\bf Species\+Minus\+End} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_ace655af18907f289683d00f6e7597b71}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
+should only be called at initialization 
+\end{DoxyNote}
 
 
 Definition at line 156 of file C\+Monomer.\+cpp.
@@ -251,6 +259,9 @@ Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder
 \item[{{\bf Species\+Motor} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_a57b8bf84368ddc0f8bfafaeaec508132}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
+should only be called at initialization 
+\end{DoxyNote}
 
 
 Definition at line 201 of file C\+Monomer.\+cpp.
@@ -270,6 +281,9 @@ Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder
 \item[{{\bf Species\+Plus\+End} $\ast$}]{s}
 \end{DoxyParamCaption}
 )}}\label{classCMonomer_a3c2a4890f5a040cdf19a150030db434c}
+Add \hyperlink{classSpecies}{Species} \begin{DoxyNote}{Note}
+should only be called at initialization 
+\end{DoxyNote}
 
 
 Definition at line 141 of file C\+Monomer.\+cpp.
@@ -281,21 +295,6 @@ References \+\_\+species\+Plus\+End, System\+Parameters\+::\+Chemistry(), and Ch
 
 
 Referenced by C\+Monomer(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder().
-
-\hypertarget{classCMonomer_a7e8eb6f8475a8b2fe50e369a0ed0b0ab}{\index{C\+Monomer@{C\+Monomer}!check\+Species@{check\+Species}}
-\index{check\+Species@{check\+Species}!C\+Monomer@{C\+Monomer}}
-\subsubsection[{check\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool C\+Monomer\+::check\+Species (
-\begin{DoxyParamCaption}
-\item[{int}]{sum}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classCMonomer_a7e8eb6f8475a8b2fe50e369a0ed0b0ab}
-
-
-Check if this filament element is valid. Involves checking copy numbers. 
-
-
-
-Definition at line 90 of file C\+Monomer.\+h.
 
 \hypertarget{classCMonomer_adbb775dba38bc68856db9529826f9676}{\index{C\+Monomer@{C\+Monomer}!clone@{clone}}
 \index{clone@{clone}!C\+Monomer@{C\+Monomer}}
@@ -310,7 +309,7 @@ Clone a \hyperlink{classCMonomer}{C\+Monomer}. Transfers all \hyperlink{classCBo
 
 
 
-Definition at line 59 of file C\+Monomer.\+h.
+Definition at line 58 of file C\+Monomer.\+h.
 
 
 
@@ -336,7 +335,7 @@ Assignment is not allowed.
 )}}\label{classCMonomer_a72138cb91d962aed900869f4096afd92}
 
 
-Print the species in this filament element. 
+Print the \hyperlink{classSpecies}{Species}. 
 
 
 
@@ -355,7 +354,14 @@ References \+\_\+species\+Bound, \+\_\+species\+Filament, \+\_\+species\+Linker,
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_a237d02b3b2e0ecf83ed798f2c0107250}
 
 
-Definition at line 84 of file C\+Monomer.\+h.
+Get \hyperlink{classSpecies}{Species} at a specific index. 
+
+\begin{DoxyNote}{Note}
+no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
+\end{DoxyNote}
+
+
+Definition at line 83 of file C\+Monomer.\+h.
 
 
 
@@ -374,14 +380,14 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Poly\+Minus\+End\+Man
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_ad69c6060f307b00463bf59b697846344}
 
 
-Get species at a specific index. 
+Get \hyperlink{classSpecies}{Species} at a specific index. 
 
 \begin{DoxyNote}{Note}
 no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
 \end{DoxyNote}
 
 
-Definition at line 81 of file C\+Monomer.\+h.
+Definition at line 80 of file C\+Monomer.\+h.
 
 
 
@@ -396,7 +402,14 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Poly\+Minus\+End\+Man
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_a71d55b070c58b90f439c0f9fd14efe4f}
 
 
-Definition at line 85 of file C\+Monomer.\+h.
+Get \hyperlink{classSpecies}{Species} at a specific index. 
+
+\begin{DoxyNote}{Note}
+no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
+\end{DoxyNote}
+
+
+Definition at line 84 of file C\+Monomer.\+h.
 
 
 
@@ -415,7 +428,14 @@ Referenced by Unbinding\+Manager\+::add\+Reaction(), Linker\+Binding\+Manager\+:
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_a61893c36bc55172a9a534b1caebc7b8b}
 
 
-Definition at line 83 of file C\+Monomer.\+h.
+Get \hyperlink{classSpecies}{Species} at a specific index. 
+
+\begin{DoxyNote}{Note}
+no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
+\end{DoxyNote}
+
+
+Definition at line 82 of file C\+Monomer.\+h.
 
 
 
@@ -434,7 +454,14 @@ Referenced by Poly\+Minus\+End\+Manager\+::add\+Reaction(), Depoly\+Minus\+End\+
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_a8cfa76dbac04ef9eeca54b93208e064f}
 
 
-Definition at line 86 of file C\+Monomer.\+h.
+Get \hyperlink{classSpecies}{Species} at a specific index. 
+
+\begin{DoxyNote}{Note}
+no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
+\end{DoxyNote}
+
+
+Definition at line 85 of file C\+Monomer.\+h.
 
 
 
@@ -453,7 +480,14 @@ Referenced by Unbinding\+Manager\+::add\+Reaction(), Motor\+Walk\+F\+Manager\+::
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMonomer_a1923cdc3adc910d1eb83bb6873b9864c}
 
 
-Definition at line 82 of file C\+Monomer.\+h.
+Get \hyperlink{classSpecies}{Species} at a specific index. 
+
+\begin{DoxyNote}{Note}
+no check on this index. The index value of a species is stored in the chemical initializer when all reactions are initialized from the chemical input file 
+\end{DoxyNote}
+
+
+Definition at line 81 of file C\+Monomer.\+h.
 
 
 
@@ -471,7 +505,11 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Depoly\+Plus\+End\+Ma
 \subsubsection[{\+\_\+species\+Bound}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$$\ast$ C\+Monomer\+::\+\_\+species\+Bound\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMonomer_a24078fb0d0c2d60e79af1cfea30b0d79}
 
 
-Definition at line 36 of file C\+Monomer.\+h.
+\hyperlink{classSpecies}{Species} array. 
+
+
+
+Definition at line 35 of file C\+Monomer.\+h.
 
 
 
@@ -486,7 +524,7 @@ Referenced by add\+Species\+Bound(), C\+Monomer(), print(), species\+Bound(), an
 
 
 
-Definition at line 33 of file C\+Monomer.\+h.
+Definition at line 32 of file C\+Monomer.\+h.
 
 
 
@@ -497,7 +535,11 @@ Referenced by add\+Species\+Filament(), C\+Monomer(), print(), and $\sim$\+C\+Mo
 \subsubsection[{\+\_\+species\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Linker}$\ast$$\ast$ C\+Monomer\+::\+\_\+species\+Linker\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMonomer_aa549a348f1f8e77283c4aaa2e555aca1}
 
 
-Definition at line 37 of file C\+Monomer.\+h.
+\hyperlink{classSpecies}{Species} array. 
+
+
+
+Definition at line 36 of file C\+Monomer.\+h.
 
 
 
@@ -508,7 +550,11 @@ Referenced by add\+Species\+Linker(), C\+Monomer(), print(), species\+Linker(), 
 \subsubsection[{\+\_\+species\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Minus\+End}$\ast$$\ast$ C\+Monomer\+::\+\_\+species\+Minus\+End\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMonomer_a76ec86baa9b2f8e4711389481b191584}
 
 
-Definition at line 35 of file C\+Monomer.\+h.
+\hyperlink{classSpecies}{Species} array. 
+
+
+
+Definition at line 34 of file C\+Monomer.\+h.
 
 
 
@@ -519,7 +565,11 @@ Referenced by add\+Species\+Minus\+End(), C\+Monomer(), print(), species\+Minus\
 \subsubsection[{\+\_\+species\+Motor}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Motor}$\ast$$\ast$ C\+Monomer\+::\+\_\+species\+Motor\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMonomer_af3b42603df2c3e4dff67457bad776fd6}
 
 
-Definition at line 38 of file C\+Monomer.\+h.
+\hyperlink{classSpecies}{Species} array. 
+
+
+
+Definition at line 37 of file C\+Monomer.\+h.
 
 
 
@@ -530,7 +580,11 @@ Referenced by add\+Species\+Motor(), C\+Monomer(), print(), species\+Motor(), an
 \subsubsection[{\+\_\+species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Plus\+End}$\ast$$\ast$ C\+Monomer\+::\+\_\+species\+Plus\+End\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMonomer_a536f3c948c52d79c73fe406048071e7b}
 
 
-Definition at line 34 of file C\+Monomer.\+h.
+\hyperlink{classSpecies}{Species} array. 
+
+
+
+Definition at line 33 of file C\+Monomer.\+h.
 
 
 

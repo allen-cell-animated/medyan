@@ -12,7 +12,8 @@ Holds all \hyperlink{classCMonomer}{C\+Monomers} and \hyperlink{classReaction}{R
 
 
 
-Collaboration diagram for C\+Cylinder\+:\nopagebreak
+Collaboration diagram for C\+Cylinder\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -23,77 +24,77 @@ Collaboration diagram for C\+Cylinder\+:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classCCylinder_a0be01ef2708175a8a147ca45fd290b83}{C\+Cylinder} (\hyperlink{classCompartment}{Compartment} $\ast$c)
-\begin{DoxyCompactList}\small\item\em Default constructor, sets compartment, init reactions and monomers. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Default constructor, sets compartment. \end{DoxyCompactList}\item 
 \hyperlink{classCCylinder_a71863b46b8fee12a2bfb03c12c52f5ee}{C\+Cylinder} (const \hyperlink{classCCylinder}{C\+Cylinder} \&rhs, \hyperlink{classCompartment}{Compartment} $\ast$c)
 \begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
 \hyperlink{classCCylinder}{C\+Cylinder} \& \hyperlink{classCCylinder_a82cdc245e542d14ceab4bb1df061dce4}{operator=} (\hyperlink{classCCylinder}{C\+Cylinder} \&rhs)=delete
 \begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
 \hyperlink{classCCylinder_a715d736c871953942e497290867f591c}{$\sim$\+C\+Cylinder} ()
-\begin{DoxyCompactList}\small\item\em Default destructor, explicitly removes monomers and bounds (including their species, rxns) Removes all reactions associated with this ccylinder, including ones owned by this as well as other ccylinders. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Default destructor, explicitly removes C\+Monomers(including their species, rxns) Removes all reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder}, including ones owned by this as well as other C\+Cylinders. \end{DoxyCompactList}\item 
 virtual \hyperlink{classCCylinder}{C\+Cylinder} $\ast$ \hyperlink{classCCylinder_a5085f34b8f011a8be07b675a59d16d6f}{clone} (\hyperlink{classCompartment}{Compartment} $\ast$c)
 \begin{DoxyCompactList}\small\item\em Clone, calls copy constructor. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCCylinder_ab58156c4f6efbe01ad58540fef073930}{get\+Compartment} ()
 \begin{DoxyCompactList}\small\item\em Get compartment. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a8a0a3292e299521278152921ebfbce51}{set\+Cylinder} (\hyperlink{classCylinder}{Cylinder} $\ast$c)
-\begin{DoxyCompactList}\small\item\em Set parent cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Set parent. \end{DoxyCompactList}\item 
 \hyperlink{classCylinder}{Cylinder} $\ast$ \hyperlink{classCCylinder_a53332923a74acb20fe192d870215a687}{get\+Cylinder} ()
-\begin{DoxyCompactList}\small\item\em Get parent cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get parent. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a14fb0bbed36384ea72519e85ad4e91b8}{add\+C\+Monomer} (\hyperlink{classCMonomer}{C\+Monomer} $\ast$monomer)
-\begin{DoxyCompactList}\small\item\em Add a monomer to this \hyperlink{classCCylinder}{C\+Cylinder}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Add a monomer. \end{DoxyCompactList}\item 
 \hyperlink{classCMonomer}{C\+Monomer} $\ast$ \hyperlink{classCCylinder_ac6b0fb293c40045db64365debca77c1d}{get\+C\+Monomer} (int index)
 \begin{DoxyCompactList}\small\item\em Get monomer at an index. \end{DoxyCompactList}\item 
 const unordered\+\_\+set\\*
 $<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \& \hyperlink{classCCylinder_a2bccfcdda7d524213d87066d1735fec9}{get\+Internal\+Reactions} ()
-\begin{DoxyCompactList}\small\item\em Get list of reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get list of reactions associated. \end{DoxyCompactList}\item 
 const unordered\+\_\+set$<$ \hyperlink{classCCylinder}{C\+Cylinder} $\ast$ $>$ \& \hyperlink{classCCylinder_ac495877eae9e12fe90a9f4f85323d13f}{get\+Reacting\+Cylinders} ()
 \item 
 unordered\+\_\+map$<$ \hyperlink{classCCylinder}{C\+Cylinder} \\*
 $\ast$, unordered\+\_\+set$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ $>$ \& \hyperlink{classCCylinder_aa1fd48d90a614bd82268367a548eb8d5}{get\+Cross\+Cylinder\+Reactions} ()
-\begin{DoxyCompactList}\small\item\em Get map of reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder} and others. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get map of reactions associated. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classCCylinder_a9c358ffc39c2503fc63d67333976bf69}{print\+C\+Cylinder} ()
-\begin{DoxyCompactList}\small\item\em Print \hyperlink{classCCylinder}{C\+Cylinder}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Print. \end{DoxyCompactList}\item 
 short \hyperlink{classCCylinder_a1e45d32541c9fb3145803cfbf0f93566}{get\+Size} ()
-\begin{DoxyCompactList}\small\item\em Get size of this ccylinder in number of monomers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get size in number of monomers. \end{DoxyCompactList}\end{DoxyCompactItemize}
 {\bf }\par
 \begin{DoxyCompactItemize}
 \item 
 void \hyperlink{classCCylinder_a53bed608f1b287eca275e0833a1233f1}{add\+Internal\+Reaction} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
 \begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a5535278dcbc8498e3006b5176858bddd}{add\+Cross\+Cylinder\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$other, \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_adeb2d133a53137e281b3134bfba5a4db}{add\+Reacting\+Cylinder} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$other)
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a9ee95b562068b9ffbc6c3b989be7af5f}{remove\+Internal\+Reaction} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_ae35ab9042ad585fa7ea9ba32ecd6e60f}{remove\+All\+Internal\+Reactions} ()
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a4cb0c141bef0820e345b5e3c756fa163}{remove\+Cross\+Cylinder\+Reactions} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$other)
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a7767880083ceda061babd4225557d7c3}{remove\+All\+Cross\+Cylinder\+Reactions} ()
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a3aecfb4bb31a032ccb73200f71f40ed9}{remove\+Reacting\+Cylinder} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$other)
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\item 
 void \hyperlink{classCCylinder_a97f1758093c7275bdb17ac92b6a05117}{remove\+All\+Reacting\+Cylinders} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} management function. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ unique\+\_\+ptr$<$ \hyperlink{classCMonomer}{C\+Monomer} $>$ $>$ \hyperlink{classCCylinder_a2583ee1b23a42501ece73a2a35d92a31}{\+\_\+monomers}
-\begin{DoxyCompactList}\small\item\em List of monomers in this ccylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em List of monomers. \end{DoxyCompactList}\item 
 unordered\+\_\+set$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \hyperlink{classCCylinder_a2f377a8697a4b4e053e747287e7a6a09}{\+\_\+internal\+Reactions}
 \begin{DoxyCompactList}\small\item\em R\+E\+A\+C\+T\+I\+O\+N C\+O\+N\+T\+A\+I\+N\+E\+R\+S. \end{DoxyCompactList}\item 
 unordered\+\_\+set$<$ \hyperlink{classCCylinder}{C\+Cylinder} $\ast$ $>$ \hyperlink{classCCylinder_afdf5de084ef7692b8ee75b078eca384f}{\+\_\+reacting\+Cylinders}
 \begin{DoxyCompactList}\small\item\em Set of ccylinders that this ccylinder has reactions with, but not ownership. \end{DoxyCompactList}\item 
 unordered\+\_\+map$<$ \hyperlink{classCCylinder}{C\+Cylinder} \\*
 $\ast$, unordered\+\_\+set$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ $>$ \hyperlink{classCCylinder_a4263400be58cd0e11e0be99a42595c88}{\+\_\+cross\+Cylinder\+Reactions}
-\begin{DoxyCompactList}\small\item\em Map of cross-\/cylinder reactions owned by this ccylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Map of cross-\/cylinder reactions owned. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCCylinder_ad8a1a406025aa82a072215aeb645c8c1}{\+\_\+compartment}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this ccylinder is in. \end{DoxyCompactList}\item 
 \hyperlink{classCylinder}{Cylinder} $\ast$ \hyperlink{classCCylinder_a4439d9b805e3e206fd495540aa975346}{\+\_\+p\+Cylinder}
 \begin{DoxyCompactList}\small\item\em Parent cylinder. \end{DoxyCompactList}\item 
 short \hyperlink{classCCylinder_a9951ded0fd9d228a2358bee18f8b61b6}{\+\_\+size} = \hyperlink{classSystemParameters_a9211bca7e3422c076f4e9ba2dc29c599}{System\+Parameters\+::\+Geometry}().cylinder\+Size / \hyperlink{classSystemParameters_a9211bca7e3422c076f4e9ba2dc29c599}{System\+Parameters\+::\+Geometry}().monomer\+Size
-\begin{DoxyCompactList}\small\item\em Max length of full cylinder. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Max length of full \hyperlink{classCylinder}{Cylinder}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -101,9 +102,9 @@ Holds all \hyperlink{classCMonomer}{C\+Monomers} and \hyperlink{classReaction}{R
 
 The \hyperlink{classCCylinder}{C\+Cylinder} class has lists of the \hyperlink{classCMonomer}{C\+Monomers} that it contains.
 
-A \hyperlink{classCCylinder}{C\+Cylinder} also stores the \hyperlink{classReaction}{Reactions} associated with it internally, as well as cross-\/cylinder reactions (still \char`\"{}owned\char`\"{} by this ccylinder, but has reactants and/or products that contain a species in another ccylinder). This information is stored in the reaction map. This map can be used to add and delete reactions when a ccylinder changes compartment or is removed from the system.
+A \hyperlink{classCCylinder}{C\+Cylinder} also stores the \hyperlink{classReaction}{Reactions} associated with it internally, as well as cross-\/cylinder reactions (still \char`\"{}owned\char`\"{} by this \hyperlink{classCCylinder}{C\+Cylinder}, but has reactants and/or products that contain a species in another \hyperlink{classCCylinder}{C\+Cylinder}). This information is stored in the reaction map. This map can be used to add and delete reactions when a \hyperlink{classCCylinder}{C\+Cylinder} changes compartment or is removed from the system.
 
-Lastly, the \hyperlink{classCCylinder}{C\+Cylinder} stores a list of other C\+Cylinders that it has cross-\/cylinder reactions with, but does not have ownership of these reactions. This list can be used to change or delete reactions when needed, but will not be tied to a compartment transfer of this \hyperlink{classCCylinder}{C\+Cylinder}. 
+Lastly, the \hyperlink{classCCylinder}{C\+Cylinder} stores a list of other C\+Cylinders that it has cross-\/cylinder reactions with, but does not have ownership of these reactions. This list can be used to change or delete reactions when needed, but will not be tied to a \hyperlink{classCompartment}{Compartment} transfer of this \hyperlink{classCCylinder}{C\+Cylinder}. 
 
 Definition at line 41 of file C\+Cylinder.\+h.
 
@@ -119,7 +120,7 @@ Definition at line 41 of file C\+Cylinder.\+h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a0be01ef2708175a8a147ca45fd290b83}
 
 
-Default constructor, sets compartment, init reactions and monomers. 
+Default constructor, sets compartment. 
 
 
 
@@ -142,7 +143,7 @@ Referenced by clone().
 Copy constructor. 
 
 \begin{DoxyNote}{Note}
-This constructor will create a new ccylinder with different species and reactions within the compartment that is chosen as a parameter to the constructor. The copied and original ccylinders will not share reactions or species, but will be copied into a new compartment. 
+This constructor will create a new \hyperlink{classCCylinder}{C\+Cylinder} with different \hyperlink{classSpecies}{Species} and \hyperlink{classReaction}{Reactions} within the \hyperlink{classCompartment}{Compartment} that is chosen as a parameter to the constructor. The copied and original \hyperlink{classCCylinder}{C\+Cylinder} will not share reactions or species, but will be copied into a new \hyperlink{classCompartment}{Compartment}. 
 \end{DoxyNote}
 
 
@@ -161,7 +162,7 @@ References \+\_\+cross\+Cylinder\+Reactions, \+\_\+internal\+Reactions, \+\_\+mo
 )}}\label{classCCylinder_a715d736c871953942e497290867f591c}
 
 
-Default destructor, explicitly removes monomers and bounds (including their species, rxns) Removes all reactions associated with this ccylinder, including ones owned by this as well as other ccylinders. 
+Default destructor, explicitly removes C\+Monomers(including their species, rxns) Removes all reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder}, including ones owned by this as well as other C\+Cylinders. 
 
 
 
@@ -183,7 +184,7 @@ References \+\_\+compartment, \+\_\+monomers, System\+Parameters\+::\+Chemistry(
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a14fb0bbed36384ea72519e85ad4e91b8}
 
 
-Add a monomer to this \hyperlink{classCCylinder}{C\+Cylinder}. 
+Add a monomer. 
 
 
 
@@ -205,6 +206,10 @@ Referenced by Simple\+Manager\+Impl\+::initialize\+C\+Cylinder().
 \item[{{\bf Reaction\+Base} $\ast$}]{r}
 \end{DoxyParamCaption}
 )}}\label{classCCylinder_a5535278dcbc8498e3006b5176858bddd}
+
+
+\hyperlink{classReaction}{Reaction} management function. 
+
 
 
 Definition at line 94 of file C\+Cylinder.\+cpp.
@@ -247,6 +252,10 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Poly\+Minus\+End\+Man
 \item[{{\bf C\+Cylinder} $\ast$}]{other}
 \end{DoxyParamCaption}
 )}}\label{classCCylinder_adeb2d133a53137e281b3134bfba5a4db}
+
+
+\hyperlink{classReaction}{Reaction} management function. 
+
 
 
 Definition at line 107 of file C\+Cylinder.\+cpp.
@@ -336,7 +345,7 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Poly\+Minus\+End\+Man
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_aa1fd48d90a614bd82268367a548eb8d5}
 
 
-Get map of reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder} and others. 
+Get map of reactions associated. 
 
 
 
@@ -359,7 +368,7 @@ Referenced by Simple\+Manager\+Impl\+::update\+C\+Cylinder().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a53332923a74acb20fe192d870215a687}
 
 
-Get parent cylinder. 
+Get parent. 
 
 
 
@@ -382,7 +391,7 @@ Referenced by Poly\+Plus\+End\+Manager\+::add\+Reaction(), Poly\+Minus\+End\+Man
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a2bccfcdda7d524213d87066d1735fec9}
 
 
-Get list of reactions associated with this \hyperlink{classCCylinder}{C\+Cylinder}. 
+Get list of reactions associated. 
 
 
 
@@ -416,7 +425,7 @@ References \+\_\+reacting\+Cylinders.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a1e45d32541c9fb3145803cfbf0f93566}
 
 
-Get size of this ccylinder in number of monomers. 
+Get size in number of monomers. 
 
 
 
@@ -450,7 +459,7 @@ Assignment is not allowed.
 )\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCCylinder_a9c358ffc39c2503fc63d67333976bf69}
 
 
-Print \hyperlink{classCCylinder}{C\+Cylinder}. 
+Print. 
 
 
 
@@ -467,6 +476,10 @@ References \+\_\+compartment, and \+\_\+monomers.
 {}
 \end{DoxyParamCaption}
 )}}\label{classCCylinder_a7767880083ceda061babd4225557d7c3}
+
+
+\hyperlink{classReaction}{Reaction} management function. 
+
 
 
 Definition at line 153 of file C\+Cylinder.\+cpp.
@@ -488,6 +501,10 @@ Referenced by $\sim$\+C\+Cylinder().
 )}}\label{classCCylinder_ae35ab9042ad585fa7ea9ba32ecd6e60f}
 
 
+\hyperlink{classReaction}{Reaction} management function. 
+
+
+
 Definition at line 123 of file C\+Cylinder.\+cpp.
 
 
@@ -505,6 +522,10 @@ Referenced by $\sim$\+C\+Cylinder().
 {}
 \end{DoxyParamCaption}
 )}}\label{classCCylinder_a97f1758093c7275bdb17ac92b6a05117}
+
+
+\hyperlink{classReaction}{Reaction} management function. 
+
 
 
 Definition at line 175 of file C\+Cylinder.\+cpp.
@@ -526,6 +547,10 @@ Referenced by $\sim$\+C\+Cylinder().
 )}}\label{classCCylinder_a4cb0c141bef0820e345b5e3c756fa163}
 
 
+\hyperlink{classReaction}{Reaction} management function. 
+
+
+
 Definition at line 136 of file C\+Cylinder.\+cpp.
 
 
@@ -545,6 +570,10 @@ Referenced by remove\+Reacting\+Cylinder(), and Simple\+Manager\+Impl\+::update\
 )}}\label{classCCylinder_a9ee95b562068b9ffbc6c3b989be7af5f}
 
 
+\hyperlink{classReaction}{Reaction} management function. 
+
+
+
 Definition at line 110 of file C\+Cylinder.\+cpp.
 
 
@@ -558,6 +587,10 @@ References \+\_\+compartment, \+\_\+internal\+Reactions, Reaction\+Base\+::passi
 \item[{{\bf C\+Cylinder} $\ast$}]{other}
 \end{DoxyParamCaption}
 )}}\label{classCCylinder_a3aecfb4bb31a032ccb73200f71f40ed9}
+
+
+\hyperlink{classReaction}{Reaction} management function. 
+
 
 
 Definition at line 173 of file C\+Cylinder.\+cpp.
@@ -575,7 +608,7 @@ References remove\+Cross\+Cylinder\+Reactions().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCCylinder_a8a0a3292e299521278152921ebfbce51}
 
 
-Set parent cylinder. 
+Set parent. 
 
 
 
@@ -608,7 +641,7 @@ Referenced by add\+Cross\+Cylinder\+Reaction(), add\+Internal\+Reaction(), get\+
 \subsubsection[{\+\_\+cross\+Cylinder\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf C\+Cylinder}$\ast$, unordered\+\_\+set$<${\bf Reaction\+Base}$\ast$$>$ $>$ C\+Cylinder\+::\+\_\+cross\+Cylinder\+Reactions\hspace{0.3cm}{\ttfamily [private]}}}\label{classCCylinder_a4263400be58cd0e11e0be99a42595c88}
 
 
-Map of cross-\/cylinder reactions owned by this ccylinder. 
+Map of cross-\/cylinder reactions owned. 
 
 
 
@@ -625,7 +658,7 @@ Referenced by add\+Cross\+Cylinder\+Reaction(), C\+Cylinder(), get\+Cross\+Cylin
 
 R\+E\+A\+C\+T\+I\+O\+N C\+O\+N\+T\+A\+I\+N\+E\+R\+S. 
 
-List of internal reactions associated with ccylinder 
+List of internal reactions associated 
 
 Definition at line 47 of file C\+Cylinder.\+h.
 
@@ -638,7 +671,7 @@ Referenced by add\+Internal\+Reaction(), C\+Cylinder(), get\+Internal\+Reactions
 \subsubsection[{\+\_\+monomers}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf C\+Monomer}$>$ $>$ C\+Cylinder\+::\+\_\+monomers\hspace{0.3cm}{\ttfamily [private]}}}\label{classCCylinder_a2583ee1b23a42501ece73a2a35d92a31}
 
 
-List of monomers in this ccylinder. 
+List of monomers. 
 
 
 
@@ -683,7 +716,7 @@ Referenced by add\+Reacting\+Cylinder(), C\+Cylinder(), get\+Reacting\+Cylinders
 \subsubsection[{\+\_\+size}]{\setlength{\rightskip}{0pt plus 5cm}short C\+Cylinder\+::\+\_\+size = {\bf System\+Parameters\+::\+Geometry}().cylinder\+Size / {\bf System\+Parameters\+::\+Geometry}().monomer\+Size\hspace{0.3cm}{\ttfamily [private]}}}\label{classCCylinder_a9951ded0fd9d228a2358bee18f8b61b6}
 
 
-Max length of full cylinder. 
+Max length of full \hyperlink{classCylinder}{Cylinder}. 
 
 
 

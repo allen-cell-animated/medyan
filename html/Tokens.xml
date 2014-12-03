@@ -1254,7 +1254,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>ae6cfcc2936a2e12a3887c9fd824c6343</Anchor>
-    <Abstract>Get compartment. </Abstract>
+    <Abstract>Get Compartment. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1266,7 +1266,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>adfda91d08764f284b4a23c05da34c84c</Anchor>
-    <Abstract>Update the position of this bead. </Abstract>
+    <Abstract>Update the position. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1278,7 +1278,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a3178379864ec93ff5e9f8a2e7916c94a</Anchor>
-    <Abstract>Set position on the local filament. </Abstract>
+    <Abstract>Set position on the local Filament. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1290,7 +1290,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a3df2bf2b6063545ba9a68b890004057e</Anchor>
-    <Abstract>Get position on the local filament. </Abstract>
+    <Abstract>Get position on the local Filament. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1302,7 +1302,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>afa239062c738d1db95a1456c9b357a68</Anchor>
-    <Abstract>Get the birth time of this bead. </Abstract>
+    <Abstract>Get the birth time. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1566,6 +1566,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a82e3c084cb26f343b5de59619c854f2b</Anchor>
+    <Abstract>Auxiliary method for CG minimization. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1577,6 +1578,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a3df6e55d379663d002c73651a24718f5</Anchor>
+    <Abstract>Auxiliary method for CG minimization. </Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1643,7 +1645,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a0eafb8f259549846d4714e6120cbc87c</Anchor>
-    <Abstract>Position of bead on filament. </Abstract>
+    <Abstract>Position on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1654,7 +1656,7 @@
     </TokenIdentifier>
     <Path>classBead.html</Path>
     <Anchor>a356c8525fcf176bca4cd539f735c1de6</Anchor>
-    <Abstract>Time of birth of bead;. </Abstract>
+    <Abstract>Time of birth. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1801,7 +1803,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a20d2121527b207eed35f6719393e3499</Anchor>
-    <Abstract>Get shape of boundary. </Abstract>
+    <Abstract>Get shape. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -1813,7 +1815,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>acfa6640f65c432e339108887913539eb</Anchor>
-    <Abstract>Get boundary surfaces. </Abstract>
+    <Abstract>Get boundarysurfaces. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -1837,7 +1839,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>abbac1843206a158e7d0a6e741cdc00c1</Anchor>
-    <Abstract>Vector of boundary surfaces (could be different implementations) </Abstract>
+    <Abstract>Vector of boundarysurfaces (could be different implementations) </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1848,7 +1850,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a04c10c9a7aea1924d779d392e29f94ff</Anchor>
-    <Abstract>Boundary type of this boundary. </Abstract>
+    <Abstract>Shape of boundary. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1859,7 +1861,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a96f2294e0c822ab216fe5ab7e17258c7</Anchor>
-    <Abstract>Dimensionality of this boundary. </Abstract>
+    <Abstract>Dimensionality. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1905,7 +1907,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a20d2121527b207eed35f6719393e3499</Anchor>
-    <Abstract>Get shape of boundary. </Abstract>
+    <Abstract>Get shape. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -1917,7 +1919,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>acfa6640f65c432e339108887913539eb</Anchor>
-    <Abstract>Get boundary surfaces. </Abstract>
+    <Abstract>Get boundarysurfaces. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -1929,7 +1931,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>abbac1843206a158e7d0a6e741cdc00c1</Anchor>
-    <Abstract>Vector of boundary surfaces (could be different implementations) </Abstract>
+    <Abstract>Vector of boundarysurfaces (could be different implementations) </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1940,7 +1942,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a04c10c9a7aea1924d779d392e29f94ff</Anchor>
-    <Abstract>Boundary type of this boundary. </Abstract>
+    <Abstract>Shape of boundary. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1951,7 +1953,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a96f2294e0c822ab216fe5ab7e17258c7</Anchor>
-    <Abstract>Dimensionality of this boundary. </Abstract>
+    <Abstract>Dimensionality. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -1973,7 +1975,7 @@
     </TokenIdentifier>
     <Path>classBoundaryCubic.html</Path>
     <Anchor>abba330bb75d623c8fa0884eeea937e63</Anchor>
-    <Abstract>Default constructor, this will create a cube with given corners at edges of current grid...</Abstract>
+    <Abstract>Default constructor, this will create a cube with given corners at edges of current CompartmentGrid...</Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -1997,7 +1999,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a20d2121527b207eed35f6719393e3499</Anchor>
-    <Abstract>Get shape of boundary. </Abstract>
+    <Abstract>Get shape. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -2009,7 +2011,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>acfa6640f65c432e339108887913539eb</Anchor>
-    <Abstract>Get boundary surfaces. </Abstract>
+    <Abstract>Get boundarysurfaces. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -2021,7 +2023,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>abbac1843206a158e7d0a6e741cdc00c1</Anchor>
-    <Abstract>Vector of boundary surfaces (could be different implementations) </Abstract>
+    <Abstract>Vector of boundarysurfaces (could be different implementations) </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2032,7 +2034,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a04c10c9a7aea1924d779d392e29f94ff</Anchor>
-    <Abstract>Boundary type of this boundary. </Abstract>
+    <Abstract>Shape of boundary. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2043,7 +2045,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a96f2294e0c822ab216fe5ab7e17258c7</Anchor>
-    <Abstract>Dimensionality of this boundary. </Abstract>
+    <Abstract>Dimensionality. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2149,6 +2151,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>a075dff05ab75cfd8be7f1a731030045a</Anchor>
+    <Abstract>Getter for parameters. </Abstract>
     <DeclaredIn>BoundaryElement.h</DeclaredIn>
   </Token>
   <Token>
@@ -2160,7 +2163,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>ab51302e10e3e2def98438234ba5bf801</Anchor>
-    <Abstract>coordinates of this boundary element </Abstract>
+    <Abstract>coordinates </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2753,7 +2756,7 @@
       <Scope>BoundaryRepulsionExp</Scope>
     </TokenIdentifier>
     <Path>classBoundaryRepulsionExp.html</Path>
-    <Abstract>A exponential repulsive potential. </Abstract>
+    <Abstract>A exponential repulsive potential used by the BoundaryRepulsion template. </Abstract>
     <DeclaredIn>BoundaryRepulsionExp.h</DeclaredIn>
   </Token>
   <Token>
@@ -2797,7 +2800,7 @@
       <Scope>BoundaryRepulsionLJ</Scope>
     </TokenIdentifier>
     <Path>classBoundaryRepulsionLJ.html</Path>
-    <Abstract>A Lennard-Jones repulsive potential. </Abstract>
+    <Abstract>A Lennard-Jones repulsive potential used by the BoundaryRepulsion template. </Abstract>
     <DeclaredIn>BoundaryRepulsionLJ.h</DeclaredIn>
   </Token>
   <Token>
@@ -2877,7 +2880,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a20d2121527b207eed35f6719393e3499</Anchor>
-    <Abstract>Get shape of boundary. </Abstract>
+    <Abstract>Get shape. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -2889,7 +2892,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>acfa6640f65c432e339108887913539eb</Anchor>
-    <Abstract>Get boundary surfaces. </Abstract>
+    <Abstract>Get boundarysurfaces. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -2901,7 +2904,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>abbac1843206a158e7d0a6e741cdc00c1</Anchor>
-    <Abstract>Vector of boundary surfaces (could be different implementations) </Abstract>
+    <Abstract>Vector of boundarysurfaces (could be different implementations) </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2912,7 +2915,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a04c10c9a7aea1924d779d392e29f94ff</Anchor>
-    <Abstract>Boundary type of this boundary. </Abstract>
+    <Abstract>Shape of boundary. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -2923,7 +2926,7 @@
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
     <Anchor>a96f2294e0c822ab216fe5ab7e17258c7</Anchor>
-    <Abstract>Dimensionality of this boundary. </Abstract>
+    <Abstract>Dimensionality. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3119,7 +3122,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>a7ee4f44fd39c414be1f7b74b1031c1ce</Anchor>
-    <Abstract>Corresponding first species on filament. </Abstract>
+    <Abstract>Corresponding first species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3130,7 +3133,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>ae6818ab861d273598a2507be75183e41</Anchor>
-    <Abstract>Corresponding second species on filament. </Abstract>
+    <Abstract>Corresponding second species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3221,7 +3224,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a0be01ef2708175a8a147ca45fd290b83</Anchor>
-    <Abstract>Default constructor, sets compartment, init reactions and monomers. </Abstract>
+    <Abstract>Default constructor, sets compartment. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3257,7 +3260,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a715d736c871953942e497290867f591c</Anchor>
-    <Abstract>Default destructor, explicitly removes monomers and bounds (including their species, rxns) Removes all reactions associated with this ccylinder, including ones owned by this as well as other ccylinders. </Abstract>
+    <Abstract>Default destructor, explicitly removes CMonomers(including their species, rxns) Removes all reactions...</Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3293,7 +3296,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a8a0a3292e299521278152921ebfbce51</Anchor>
-    <Abstract>Set parent cylinder. </Abstract>
+    <Abstract>Set parent. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3305,7 +3308,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a53332923a74acb20fe192d870215a687</Anchor>
-    <Abstract>Get parent cylinder. </Abstract>
+    <Abstract>Get parent. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3317,7 +3320,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a14fb0bbed36384ea72519e85ad4e91b8</Anchor>
-    <Abstract>Add a monomer to this CCylinder. </Abstract>
+    <Abstract>Add a monomer. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3341,7 +3344,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a2bccfcdda7d524213d87066d1735fec9</Anchor>
-    <Abstract>Get list of reactions associated with this CCylinder. </Abstract>
+    <Abstract>Get list of reactions associated. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3364,7 +3367,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>aa1fd48d90a614bd82268367a548eb8d5</Anchor>
-    <Abstract>Get map of reactions associated with this CCylinder and others. </Abstract>
+    <Abstract>Get map of reactions associated. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3376,7 +3379,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a9c358ffc39c2503fc63d67333976bf69</Anchor>
-    <Abstract>Print CCylinder. </Abstract>
+    <Abstract>Print. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3388,7 +3391,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a1e45d32541c9fb3145803cfbf0f93566</Anchor>
-    <Abstract>Get size of this ccylinder in number of monomers. </Abstract>
+    <Abstract>Get size in number of monomers. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3412,6 +3415,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a5535278dcbc8498e3006b5176858bddd</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3423,6 +3427,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>adeb2d133a53137e281b3134bfba5a4db</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3434,6 +3439,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a9ee95b562068b9ffbc6c3b989be7af5f</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3445,6 +3451,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>ae35ab9042ad585fa7ea9ba32ecd6e60f</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3456,6 +3463,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a4cb0c141bef0820e345b5e3c756fa163</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3467,6 +3475,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a7767880083ceda061babd4225557d7c3</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3478,6 +3487,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a3aecfb4bb31a032ccb73200f71f40ed9</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3489,6 +3499,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a97f1758093c7275bdb17ac92b6a05117</Anchor>
+    <Abstract>Reaction management function. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3500,7 +3511,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a2583ee1b23a42501ece73a2a35d92a31</Anchor>
-    <Abstract>List of monomers in this ccylinder. </Abstract>
+    <Abstract>List of monomers. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3533,7 +3544,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a4263400be58cd0e11e0be99a42595c88</Anchor>
-    <Abstract>Map of cross-cylinder reactions owned by this ccylinder. </Abstract>
+    <Abstract>Map of cross-cylinder reactions owned. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3566,7 +3577,7 @@
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
     <Anchor>a9951ded0fd9d228a2358bee18f8b61b6</Anchor>
-    <Abstract>Max length of full cylinder. </Abstract>
+    <Abstract>Max length of full Cylinder. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3680,6 +3691,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>ab9c35ec6681e97472d0442a37163d46d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3691,6 +3703,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a531b7d0bc38b6372dc323185f51233dc</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3702,6 +3715,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>afe717a6a06f677933b55628ea4d0014d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3713,6 +3727,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a885a9627cc4e8b2db8f3384f29cd4069</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3724,6 +3739,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a7e8d5b8d77aff6c4564c4b1d72ab5ace</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3747,6 +3763,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa1fcbcd087af6fa3aa9aab67b0b60103</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3758,6 +3775,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2d9a41ddbf7d54e6f89ee02966c7d85c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3769,6 +3787,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a432019c8a52f50b0cb8cb39b937db978</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3780,6 +3799,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa77b006b710d67b248dd18517db7709c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3901,6 +3921,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>adb2a688fe52a8729d703d81e52b9fdb3</Anchor>
+    <Abstract>Parameter used in quadratic line search. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3922,6 +3943,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2e7906b4b29a1b76dca43d56eaf2efac</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -3932,6 +3954,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>af8587ca1c0394c244ce84fe8a6ad29ff</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4308,7 +4331,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a4faa68797fd22c5247b9b52a9057023a</Anchor>
-    <Abstract>Reactions happening between bulk and diffusing species ONLY. </Abstract>
+    <Abstract>Reaction happening between bulk and diffusing species ONLY. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4319,7 +4342,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a18d2b4d3d417507768bb50f7f43f427b</Anchor>
-    <Abstract>Reactions happening between bulk species ONLY. </Abstract>
+    <Abstract>Reaction happening between bulk species ONLY. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4330,7 +4353,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a96d5d5289ae3651ab139b1de586b80e7</Anchor>
-    <Abstract>Motor walking reactions. </Abstract>
+    <Abstract>MotorGhost walking reactions. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4352,7 +4375,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>acf21fd3143fa3bc4e0e1097ce15cb77c</Anchor>
-    <Abstract>SpeciesDiffusing parsed, in the form of a tuple which contains name, initial copy number per compartm...</Abstract>
+    <Abstract>SpeicesDiffusing parsed, in the form of a tuple which contains name, initial copy number per compartm...</Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4418,7 +4441,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a2a4b2e949b6e0b8f32158cf101d24fa6</Anchor>
-    <Abstract>Motor binding reactions. </Abstract>
+    <Abstract>MotorGhost reactions. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4440,6 +4463,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>acab0ca129148f43eaa33847782411b3a</Anchor>
+    <Abstract>Filament species parsed. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4450,6 +4474,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>ab41e13ef134b8cb9066fff74ece920ca</Anchor>
+    <Abstract>Filament species parsed. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4460,6 +4485,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a273fd2565deae219bbd1fe3d557f53ba</Anchor>
+    <Abstract>Filament species parsed. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4470,6 +4496,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a627b89ad8dad87e03d249e5dc56eff5a</Anchor>
+    <Abstract>Filament species parsed. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4480,6 +4507,7 @@
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
     <Anchor>a8b638671871e8cc1ef65f2c7429d6254</Anchor>
+    <Abstract>Filament species parsed. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4512,6 +4540,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>a78116d90c15faebd400cb5c75ce00e26</Anchor>
+    <Abstract>Number of general species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4533,6 +4562,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>a14a3adb276b758bb6f2e5d0a27f80b15</Anchor>
+    <Abstract>Number of filament related species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4543,6 +4573,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>a13d911b0639656b466b1ea13be22be00</Anchor>
+    <Abstract>Number of filament related species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4553,6 +4584,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>a47fbf96b070976e8e0b7bb25a381ea54</Anchor>
+    <Abstract>Number of filament related species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4563,6 +4595,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>af82c8c5d13f1e092d9eb69a7e8e3b5a4</Anchor>
+    <Abstract>Number of filament related species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4573,6 +4606,7 @@
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
     <Anchor>a6aecadee2f3bb6bc436395473447c485</Anchor>
+    <Abstract>Number of filament related species. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -4707,7 +4741,7 @@
     </TokenIdentifier>
     <Path>classChemManager.html</Path>
     <Anchor>ae85244eb50a4254d525eb749c44a96a6</Anchor>
-    <Abstract>add/update cross cylinder reactions that are within range </Abstract>
+    <Abstract>Add/update cross cylinder reactions that are within range. </Abstract>
     <DeclaredIn>ChemManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -5221,7 +5255,7 @@
     </TokenIdentifier>
     <Path>classChemSignal.html</Path>
     <Anchor>a01513b0756cb765b0fd02a7e5497133d</Anchor>
-    <Abstract>Keep track of signals corresponding to various RSpecies. </Abstract>
+    <Abstract>Keep track of signals corresponding to various rspecies. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5232,7 +5266,7 @@
     </TokenIdentifier>
     <Path>classChemSignal.html</Path>
     <Anchor>a750129c5a876c652e76e2a008b21b276</Anchor>
-    <Abstract>Keep track of signals corresponding to various Reactions. </Abstract>
+    <Abstract>Keep track of signals corresponding to various reactions. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5793,7 +5827,7 @@
     </TokenIdentifier>
     <Path>classCLinker.html</Path>
     <Anchor>a2b0219ae91d2312bbf0c998b4d0b124e</Anchor>
-    <Abstract>Set parent linker. </Abstract>
+    <Abstract>Set parent. </Abstract>
     <DeclaredIn>CLinker.h</DeclaredIn>
   </Token>
   <Token>
@@ -5805,7 +5839,7 @@
     </TokenIdentifier>
     <Path>classCLinker.html</Path>
     <Anchor>a5a1435f2035ecdadcc35b4ae90199865</Anchor>
-    <Abstract>Get parent linker. </Abstract>
+    <Abstract>Get parent. </Abstract>
     <DeclaredIn>CLinker.h</DeclaredIn>
   </Token>
   <Token>
@@ -5877,7 +5911,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>a7ee4f44fd39c414be1f7b74b1031c1ce</Anchor>
-    <Abstract>Corresponding first species on filament. </Abstract>
+    <Abstract>Corresponding first species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5888,7 +5922,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>ae6818ab861d273598a2507be75183e41</Anchor>
-    <Abstract>Corresponding second species on filament. </Abstract>
+    <Abstract>Corresponding second species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5910,7 +5944,7 @@
     </TokenIdentifier>
     <Path>classCLinker.html</Path>
     <Anchor>a5cb1a9ff49e6d394ab980ff01af23ebc</Anchor>
-    <Abstract>Pointer to parent linker. </Abstract>
+    <Abstract>Pointer to parent. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -5992,19 +6026,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a72138cb91d962aed900869f4096afd92</Anchor>
-    <Abstract>Print the species in this filament element. </Abstract>
-    <DeclaredIn>CMonomer.h</DeclaredIn>
-  </Token>
-  <Token>
-    <TokenIdentifier>
-      <Name>checkSpecies</Name>
-      <APILanguage>cpp</APILanguage>
-      <Type>instm</Type>
-      <Scope>CMonomer</Scope>
-    </TokenIdentifier>
-    <Path>classCMonomer.html</Path>
-    <Anchor>a7e8eb6f8475a8b2fe50e369a0ed0b0ab</Anchor>
-    <Abstract>Check if this filament element is valid. Involves checking copy numbers. </Abstract>
+    <Abstract>Print the Species. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6082,7 +6104,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>ad69c6060f307b00463bf59b697846344</Anchor>
-    <Abstract>Get species at a specific index. </Abstract>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6094,6 +6116,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a1923cdc3adc910d1eb83bb6873b9864c</Anchor>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6105,6 +6128,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a61893c36bc55172a9a534b1caebc7b8b</Anchor>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6116,6 +6140,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a237d02b3b2e0ecf83ed798f2c0107250</Anchor>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6127,6 +6152,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a71d55b070c58b90f439c0f9fd14efe4f</Anchor>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6138,6 +6164,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a8cfa76dbac04ef9eeca54b93208e064f</Anchor>
+    <Abstract>Get Species at a specific index. </Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6160,6 +6187,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a536f3c948c52d79c73fe406048071e7b</Anchor>
+    <Abstract>Species array. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6170,6 +6198,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a76ec86baa9b2f8e4711389481b191584</Anchor>
+    <Abstract>Species array. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6180,6 +6209,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>a24078fb0d0c2d60e79af1cfea30b0d79</Anchor>
+    <Abstract>Species array. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6190,6 +6220,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>aa549a348f1f8e77283c4aaa2e555aca1</Anchor>
+    <Abstract>Species array. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6200,6 +6231,7 @@
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
     <Anchor>af3b42603df2c3e4dff67457bad776fd6</Anchor>
+    <Abstract>Species array. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6280,7 +6312,7 @@
     </TokenIdentifier>
     <Path>classCMotorGhost.html</Path>
     <Anchor>a1e18f9a0e0dcc0f2b4b140c3fb60bea8</Anchor>
-    <Abstract>Set parent motor ghost. </Abstract>
+    <Abstract>Set parent. </Abstract>
     <DeclaredIn>CMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -6292,7 +6324,7 @@
     </TokenIdentifier>
     <Path>classCMotorGhost.html</Path>
     <Anchor>a7b5661e4a7bc38ce2657af40b9ff7d29</Anchor>
-    <Abstract>Get parent motor ghost. </Abstract>
+    <Abstract>Get parent. </Abstract>
     <DeclaredIn>CMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -6364,7 +6396,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>a7ee4f44fd39c414be1f7b74b1031c1ce</Anchor>
-    <Abstract>Corresponding first species on filament. </Abstract>
+    <Abstract>Corresponding first species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6375,7 +6407,7 @@
     </TokenIdentifier>
     <Path>classCBound.html</Path>
     <Anchor>ae6818ab861d273598a2507be75183e41</Anchor>
-    <Abstract>Corresponding second species on filament. </Abstract>
+    <Abstract>Corresponding second species on Filament. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6397,7 +6429,7 @@
     </TokenIdentifier>
     <Path>classCMotorGhost.html</Path>
     <Anchor>a248b8fee5ba1d85c989f666e3a908261</Anchor>
-    <Abstract>Pointer to parent motorghost. </Abstract>
+    <Abstract>Pointer to parent. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -6407,7 +6439,7 @@
       <Scope>Compartment</Scope>
     </TokenIdentifier>
     <Path>classCompartment.html</Path>
-    <Abstract>A compartment for holding Species and Reactions. </Abstract>
+    <Abstract>A container or holding Species and Reactions. </Abstract>
     <DeclaredIn>Compartment.h</DeclaredIn>
   </Token>
   <Token>
@@ -7631,7 +7663,7 @@
     </TokenIdentifier>
     <Path>classCompartment.html</Path>
     <Anchor>a92081814841d9bacca088eb55381f89c</Anchor>
-    <Abstract>Diffusion rates of species in compartment. </Abstract>
+    <Abstract>Diffusion rates of Species in compartment. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -8921,7 +8953,7 @@
     </TokenIdentifier>
     <Path>classComposite.html</Path>
     <Anchor>a46a76879df0f619b5b4d4861d4079789</Anchor>
-    <Abstract>Child node pointers of this Composite node. </Abstract>
+    <Abstract>Child node pointers of this composite node. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9121,7 +9153,7 @@
       <Scope>CrossFilamentRxnManager</Scope>
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
-    <Abstract>To store cross-filament reactions, including linker and motor binding. </Abstract>
+    <Abstract>To store cross-filament reactions, including Linker and MotorGhost binding. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -9192,6 +9224,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>a7fa04502185124176a72fb2f3965c698</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -9203,6 +9236,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>aa5527049ea757ea2b22fca486d3bf08d</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -9450,7 +9484,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>aff701d6f4400ab216431d627c54a0b4e</Anchor>
-    <Abstract>Update the position of this cylinder. </Abstract>
+    <Abstract>Update the position. </Abstract>
     <DeclaredIn>Cylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -9462,7 +9496,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a1e824345ba2ec690930b34f74cc3badf</Anchor>
-    <Abstract>Update the reaction rates of this cylinder. </Abstract>
+    <Abstract>Update the reaction rates. </Abstract>
     <DeclaredIn>Cylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -9786,6 +9820,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a954ee598c495e6b86c33b684d2c16435</Anchor>
+    <Abstract>Get beads. </Abstract>
     <DeclaredIn>Cylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -9797,7 +9832,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a8c7a6cfe1aecf1ee0eff3aaf9c11338f</Anchor>
-    <Abstract>Coordinates of midpoint of cylinder, updated with updatePosition() </Abstract>
+    <Abstract>Coordinates of midpoint, updated with updatePosition() </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9808,7 +9843,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a74c9e6c0aaddba6e5b7058c7d58720d7</Anchor>
-    <Abstract>Pointer to the first bead, associated with this cylinder. </Abstract>
+    <Abstract>Pointer to the first bead. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9819,7 +9854,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a10fe1bbf3340a35637e4a966c1035af6</Anchor>
-    <Abstract>Pointer to the end bead in the cylinder. </Abstract>
+    <Abstract>Pointer to the end bead. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9830,7 +9865,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>acdd582d5e2c3ede46122e1785097e5c3</Anchor>
-    <Abstract>Pointer to MCylinder. </Abstract>
+    <Abstract>Pointer to mech cylinder. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9841,7 +9876,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>aacbbbcef8a8a2b6e5810884b017af516</Anchor>
-    <Abstract>Pointer to CCylinder. </Abstract>
+    <Abstract>Pointer to chem cylinder. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -9895,7 +9930,7 @@
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
     <Anchor>a2d8861ef62351377c0f6f7ab583cf8d5</Anchor>
-    <Abstract>Compartment this Cylinder is currently in. </Abstract>
+    <Abstract>Compartment this cylinder is currently in. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -10031,7 +10066,7 @@
       <Scope>CylinderExclVolRepulsion</Scope>
     </TokenIdentifier>
     <Path>classCylinderExclVolRepulsion.html</Path>
-    <Abstract>Represents a repulsive excluded volume potential. </Abstract>
+    <Abstract>Represents a repulsive excluded volume potential used by the CylinderExclVolume template. </Abstract>
     <DeclaredIn>CylinderExclVolRepulsion.h</DeclaredIn>
   </Token>
   <Token>
@@ -10606,6 +10641,7 @@
     </TokenIdentifier>
     <Path>classCylindricalZBoundaryElement.html</Path>
     <Anchor>afe407ba95087aff6598141daccb06d39</Anchor>
+    <Abstract>Getter for parameters. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -10629,7 +10665,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>ab51302e10e3e2def98438234ba5bf801</Anchor>
-    <Abstract>coordinates of this boundary element </Abstract>
+    <Abstract>coordinates </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -11098,6 +11134,7 @@
     </TokenIdentifier>
     <Path>classFilament.html</Path>
     <Anchor>a68435f61aba67acf457cd1570180a4f3</Anchor>
+    <Abstract>Reset delta. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11121,6 +11158,7 @@
     </TokenIdentifier>
     <Path>classFilament.html</Path>
     <Anchor>adb431809d8733d7b53dec1d438e2a42e</Anchor>
+    <Abstract>Get delta. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11144,6 +11182,7 @@
     </TokenIdentifier>
     <Path>classFilament.html</Path>
     <Anchor>ade0776033b4e56f8035eda23c03887fa</Anchor>
+    <Abstract>Projection function, returns a vector of coordinates for bead creation. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11155,6 +11194,7 @@
     </TokenIdentifier>
     <Path>classFilament.html</Path>
     <Anchor>a4809abeefb15e0009e246d4d4051ae7c</Anchor>
+    <Abstract>Projection function, returns a vector of coordinates for bead creation. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11166,6 +11206,7 @@
     </TokenIdentifier>
     <Path>classFilament.html</Path>
     <Anchor>aa552f866d4c2db6e987fa0b56e65f060</Anchor>
+    <Abstract>Projection function, returns a vector of coordinates for bead creation. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11231,7 +11272,7 @@
       <Scope>FilamentBending</Scope>
     </TokenIdentifier>
     <Path>classFilamentBending.html</Path>
-    <Abstract>Represents a filament bending interaction. </Abstract>
+    <Abstract>Represents a Filament bending interaction. </Abstract>
     <DeclaredIn>FilamentBending.h</DeclaredIn>
   </Token>
   <Token>
@@ -11481,7 +11522,7 @@
       <Scope>FilamentDepolymerizationBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationBackCallback.html</Path>
-    <Abstract>Callback to depolymerize the back of a filament after a depolymerization reaction occurs in the syste...</Abstract>
+    <Abstract>Callback to depolymerize the back of a Filament after a depolymerization Reaction occurs in the syste...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11524,7 +11565,7 @@
       <Scope>FilamentDepolymerizationFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationFrontCallback.html</Path>
-    <Abstract>Callback to depolymerize the front of a filament after a depolymerization reaction occurs in the syst...</Abstract>
+    <Abstract>Callback to depolymerize the front of a Filament after a depolymerization Reaction occurs in the syst...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11567,7 +11608,7 @@
       <Scope>FilamentExtensionBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentExtensionBackCallback.html</Path>
-    <Abstract>Callback to extend the back of a filament after a polymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to extend the back of a Filament after a polymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11610,7 +11651,7 @@
       <Scope>FilamentExtensionFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentExtensionFrontCallback.html</Path>
-    <Abstract>Callback to extend the front of a filament after a polymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to extend the front of a Filament after a polymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11735,7 +11776,7 @@
       <Scope>FilamentInteractions</Scope>
     </TokenIdentifier>
     <Path>classFilamentInteractions.html</Path>
-    <Abstract>Represents an internal filament interaction. </Abstract>
+    <Abstract>Represents an internal Filament interaction. </Abstract>
     <DeclaredIn>FilamentInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -11804,7 +11845,7 @@
       <Scope>FilamentParser</Scope>
     </TokenIdentifier>
     <Path>classFilamentParser.html</Path>
-    <Abstract>Used to parse initial filament information, initialized by the Controller. </Abstract>
+    <Abstract>Used to parse initial Filament information, initialized by the Controller. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -11860,7 +11901,7 @@
       <Scope>FilamentPolymerizationBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentPolymerizationBackCallback.html</Path>
-    <Abstract>Callback to polymerize the back of a filament after a polymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to polymerize the back of a Filament after a polymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11903,7 +11944,7 @@
       <Scope>FilamentPolymerizationFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentPolymerizationFrontCallback.html</Path>
-    <Abstract>Callback to polymerize the front of a filament after a polymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to polymerize the front of a Filament after a polymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11946,7 +11987,7 @@
       <Scope>FilamentRetractionBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentRetractionBackCallback.html</Path>
-    <Abstract>Callback to retract the back of a filament after a depolymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to retract the back of a Filament after a depolymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11989,7 +12030,7 @@
       <Scope>FilamentRetractionFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentRetractionFrontCallback.html</Path>
-    <Abstract>Callback to retract the front of a filament after a depolymerization reaction occurs in the system...</Abstract>
+    <Abstract>Callback to retract the front of a Filament after a depolymerization Reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -12032,7 +12073,7 @@
       <Scope>FilamentSetup</Scope>
     </TokenIdentifier>
     <Path>structFilamentSetup.html</Path>
-    <Abstract>Struct to hold filament setup information. </Abstract>
+    <Abstract>Struct to hold Filament setup information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -12064,7 +12105,7 @@
       <Scope>FilamentStretching</Scope>
     </TokenIdentifier>
     <Path>classFilamentStretching.html</Path>
-    <Abstract>Represents a filament stretching interaction. </Abstract>
+    <Abstract>Represents a Filament stretching interaction. </Abstract>
     <DeclaredIn>FilamentStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -12292,6 +12333,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>ab9c35ec6681e97472d0442a37163d46d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12303,6 +12345,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a531b7d0bc38b6372dc323185f51233dc</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12314,6 +12357,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>afe717a6a06f677933b55628ea4d0014d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12325,6 +12369,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a885a9627cc4e8b2db8f3384f29cd4069</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12336,6 +12381,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a7e8d5b8d77aff6c4564c4b1d72ab5ace</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12359,6 +12405,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa1fcbcd087af6fa3aa9aab67b0b60103</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12370,6 +12417,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2d9a41ddbf7d54e6f89ee02966c7d85c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12381,6 +12429,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a432019c8a52f50b0cb8cb39b937db978</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12392,6 +12441,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa77b006b710d67b248dd18517db7709c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12513,6 +12563,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>adb2a688fe52a8729d703d81e52b9fdb3</Anchor>
+    <Abstract>Parameter used in quadratic line search. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12534,6 +12585,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2e7906b4b29a1b76dca43d56eaf2efac</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12544,6 +12596,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>af8587ca1c0394c244ce84fe8a6ad29ff</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12705,7 +12758,7 @@
       <Scope>GController</Scope>
     </TokenIdentifier>
     <Path>classGController.html</Path>
-    <Abstract>Used to control the geometry of the grid, as well as the geometry of entire system. </Abstract>
+    <Abstract>Used to control the geometry of the CompartmentGrid, as well as the geometry of entire system...</Abstract>
     <DeclaredIn>GController.h</DeclaredIn>
   </Token>
   <Token>
@@ -12765,6 +12818,7 @@
     </TokenIdentifier>
     <Path>classGController.html</Path>
     <Anchor>af4a3bd7c2e4868529860c58e125f6447</Anchor>
+    <Abstract>Get a compartment based on coordinates or indices. </Abstract>
     <DeclaredIn>GController.h</DeclaredIn>
   </Token>
   <Token>
@@ -12843,6 +12897,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a45f424cfb62b868a4becc8b0bd0d32bc</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12853,6 +12908,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a5c7a33268cbfa1b236fa1bf0ef9bafc7</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12863,6 +12919,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a01890a89021cabfc92ee2b8e23faef60</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12873,6 +12930,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a74845fb942433ad543c1cb7ff437da2f</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12883,6 +12941,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a6364473fe0575150e254838e4c91e610</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12893,6 +12952,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a6c0c575c958ad3c0625f63ae3302575c</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12903,6 +12963,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a0b14f97d476bd4d40bf32a75715814b0</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12913,6 +12974,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a7afc14cf30bc80757522bcabe8fb3bc9</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12923,6 +12985,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>ab269206056f9e28193129ca5d31d8b30</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -12933,6 +12996,7 @@
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
     <Anchor>a4ea73a722482f66eeaedfb57435f35d1</Anchor>
+    <Abstract>Geometry parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13104,6 +13168,7 @@
     </TokenIdentifier>
     <Path>classHalfSphereZBoundaryElement.html</Path>
     <Anchor>ab7b9034066dbc5bec386a04f6bc3a91f</Anchor>
+    <Abstract>Getter for parameters. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -13127,7 +13192,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>ab51302e10e3e2def98438234ba5bf801</Anchor>
-    <Abstract>coordinates of this boundary element </Abstract>
+    <Abstract>coordinates </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13149,7 +13214,7 @@
     </TokenIdentifier>
     <Path>classHalfSphereZBoundaryElement.html</Path>
     <Anchor>a3251d9e34c161076f9324dc3f2477720</Anchor>
-    <Abstract>whether the half sphere faces up or down </Abstract>
+    <Abstract>Whether the half sphere faces up or down. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13179,7 +13244,7 @@
       <Scope>InternalFilamentRxnManager</Scope>
     </TokenIdentifier>
     <Path>classInternalFilamentRxnManager.html</Path>
-    <Abstract>To store filament chemical reaction information read from an input file. </Abstract>
+    <Abstract>To store Filament chemical reaction information read from an input file. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -13360,7 +13425,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>aa268869b1ed75f38973aafd1362a5c42</Anchor>
-    <Abstract>Update the position of this Linker. </Abstract>
+    <Abstract>Update the position. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13372,7 +13437,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a2903d3c1f696dd07a9dbbd02d930b050</Anchor>
-    <Abstract>Update the reaction rates of this linker. </Abstract>
+    <Abstract>Update the reaction rates. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13696,6 +13761,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a7f7e3c20b80a578cd8060770b24cba80</Anchor>
+    <Abstract>Get attached cylinder. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13719,6 +13785,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>ae7f0b6b41a3e2a4ee9cba35370c930f8</Anchor>
+    <Abstract>Linker position management. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13730,6 +13797,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a38d56541e9e262641a5d5281f1aac174</Anchor>
+    <Abstract>Linker position management. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13741,6 +13809,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a3765490ad3094ce06e574449dc45aae4</Anchor>
+    <Abstract>Linker position management. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13764,6 +13833,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>aaf5fde2540563301384e0404c16b7793</Anchor>
+    <Abstract>Get linker parameter. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13786,7 +13856,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a0b17c705cb1e5f89777f2675bd857e1c</Anchor>
-    <Abstract>Pointer to MLinker. </Abstract>
+    <Abstract>Pointer to mech linker. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13797,7 +13867,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a6cbe666ab89dd1b4ed0eae03d8f25d63</Anchor>
-    <Abstract>Pointer to CLinker. </Abstract>
+    <Abstract>Pointer to chem linker. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13830,7 +13900,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>ad16ab7afce0a3a09b455f3407a382bf2</Anchor>
-    <Abstract>Position on first cylinder. </Abstract>
+    <Abstract>Position on first Cylinder. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13841,7 +13911,7 @@
     </TokenIdentifier>
     <Path>classLinker.html</Path>
     <Anchor>a1efe8ae37a4b70b843c0d7f2dfa47b90</Anchor>
-    <Abstract>Position on second cylinder. </Abstract>
+    <Abstract>Position on second Cylinder. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -13894,7 +13964,7 @@
       <Scope>LinkerBindingCallback</Scope>
     </TokenIdentifier>
     <Path>structLinkerBindingCallback.html</Path>
-    <Abstract>Callback to bind a linker to filaments. </Abstract>
+    <Abstract>Callback to bind a Linker to Filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -13987,7 +14057,7 @@
       <Scope>LinkerBindingManager</Scope>
     </TokenIdentifier>
     <Path>classLinkerBindingManager.html</Path>
-    <Abstract>Manager for linker binding. </Abstract>
+    <Abstract>Manager for Linker binding. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -14057,6 +14127,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>a7fa04502185124176a72fb2f3965c698</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -14068,6 +14139,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>aa5527049ea757ea2b22fca486d3bf08d</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -14362,7 +14434,7 @@
       <Scope>LinkerInteractions</Scope>
     </TokenIdentifier>
     <Path>classLinkerInteractions.html</Path>
-    <Abstract>Represents an internal linker interaction. </Abstract>
+    <Abstract>Represents an internal Linker interaction. </Abstract>
     <DeclaredIn>LinkerInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -14432,7 +14504,7 @@
       <Scope>LinkerStretching</Scope>
     </TokenIdentifier>
     <Path>classLinkerStretching.html</Path>
-    <Abstract>Represents a linker stretching interaction. </Abstract>
+    <Abstract>Represents a Linker stretching interaction. </Abstract>
     <DeclaredIn>LinkerStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -14694,7 +14766,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>a83c3f990d2eab221b1007a04f3bf7d12</Anchor>
-    <Abstract>Set parent cylinder. </Abstract>
+    <Abstract>Set parent. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14753,6 +14825,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>aaf9f88afc648aa965028f64163c8d336</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14764,6 +14837,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>af9a3d6741a8cf7b72d983d0b25446092</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14775,6 +14849,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>a46afbfa5fa8050dee247c1a91b9bd2d6</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14786,6 +14861,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>a441c75cb7dcafe33de0dcb04ac839eb9</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14797,6 +14873,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>aab0e5ecedb045b81c1bb0d42bbe1c55a</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14808,6 +14885,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>ae68ccc14047ef0ece414e967dd7364f4</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14819,6 +14897,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>aa15887dd8d78c56f00236b2776b79f8b</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14830,6 +14909,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>aad7533f1b024044574d17c9e681772a9</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14841,6 +14921,7 @@
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
     <Anchor>aafd38200ff997912fae0c1ec8c2140dd</Anchor>
+    <Abstract>Mechanical parameter management function. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -15004,6 +15085,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>acbd0076ef804005b56b6db07dce03589</Anchor>
+    <Abstract>Filament FF types. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15014,6 +15096,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>a7cde64b003b7a90a9f3fa13b5dbe573f</Anchor>
+    <Abstract>Filament FF types. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15035,6 +15118,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>a14852de6199812e5e6c646f2a8479aac</Anchor>
+    <Abstract>Linker FF types. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15045,6 +15129,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>a90c249f75ff2207d3ec927e1e8da57f1</Anchor>
+    <Abstract>Linker FF types. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15066,6 +15151,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>a0bed42c13d0c33d3b37738b44494d8bf</Anchor>
+    <Abstract>Motor FF type. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15076,6 +15162,7 @@
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
     <Anchor>a76f25f6b34dc38d73dfecb236500c53b</Anchor>
+    <Abstract>Motor FF type. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15108,6 +15195,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>aa13b8fd35ef9f6574981c411b535fb83</Anchor>
+    <Abstract>Filament parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15118,6 +15206,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a143107fd6c26d306f4d57e1b006cccb5</Anchor>
+    <Abstract>Filament parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15128,6 +15217,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>af25f0f95ebf55f3f8f02b861bf0a9b2d</Anchor>
+    <Abstract>Filament parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15138,6 +15228,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>ae108dda4da55a3debc21abf3fbebd3f3</Anchor>
+    <Abstract>Filament parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15159,6 +15250,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a4538f8a7ee3c71f1eda540bc41614a55</Anchor>
+    <Abstract>Linker parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15169,6 +15261,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>aab9d6facd9ba3939017117cd5bff60db</Anchor>
+    <Abstract>Linker parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15179,6 +15272,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a6629c1138e0a0662f6156fe67431f690</Anchor>
+    <Abstract>Linker parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15189,6 +15283,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a8cc146be39259d4b1edd94b70d9b1832</Anchor>
+    <Abstract>Linker parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15210,6 +15305,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>abbc374692e6df3c7532e085918a98c4c</Anchor>
+    <Abstract>Motor parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15220,6 +15316,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a597e2027d01d684f5dfe90d8a2734a90</Anchor>
+    <Abstract>Motor parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15230,6 +15327,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a3efad448cc6428dcb081d2778655ec12</Anchor>
+    <Abstract>Motor parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15240,6 +15338,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>abff44b81c046945ed8277a522b741ac8</Anchor>
+    <Abstract>Motor parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15261,6 +15360,7 @@
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
     <Anchor>a597ef187ef21d3eca159e00264bf425c</Anchor>
+    <Abstract>Volume parameter. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15353,6 +15453,7 @@
     </TokenIdentifier>
     <Path>classMLinker.html</Path>
     <Anchor>ad9e3e86cf88e4e06d1c16f6851c2f97c</Anchor>
+    <Abstract>Getter for constants. </Abstract>
     <DeclaredIn>MLinker.h</DeclaredIn>
   </Token>
   <Token>
@@ -15420,7 +15521,7 @@
     </TokenIdentifier>
     <Path>classMMotorGhost.html</Path>
     <Anchor>a629db9174d4bca0f43001f97fc37bea9</Anchor>
-    <Abstract>Set parent linker. </Abstract>
+    <Abstract>Set parent. </Abstract>
     <DeclaredIn>MMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -15432,7 +15533,7 @@
     </TokenIdentifier>
     <Path>classMMotorGhost.html</Path>
     <Anchor>aa46956e65d843ae582530b80496cdc8f</Anchor>
-    <Abstract>Get parent linker. </Abstract>
+    <Abstract>Get parent. </Abstract>
     <DeclaredIn>MMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -15456,6 +15557,7 @@
     </TokenIdentifier>
     <Path>classMMotorGhost.html</Path>
     <Anchor>a49dd97a87f833f5815c0e6d152f78baa</Anchor>
+    <Abstract>Getter for constants. </Abstract>
     <DeclaredIn>MMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -15489,7 +15591,7 @@
     </TokenIdentifier>
     <Path>classMMotorGhost.html</Path>
     <Anchor>a3c22024539ed93368cd83cda70e075a4</Anchor>
-    <Abstract>Pointer to parent linker. </Abstract>
+    <Abstract>Pointer to parent. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -15499,7 +15601,7 @@
       <Scope>MotorBindingCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorBindingCallback.html</Path>
-    <Abstract>Callback to bind a motor to filaments. </Abstract>
+    <Abstract>Callback to bind a MotorGhost to Filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -15592,7 +15694,7 @@
       <Scope>MotorBindingManager</Scope>
     </TokenIdentifier>
     <Path>classMotorBindingManager.html</Path>
-    <Abstract>Manager for motor binding. </Abstract>
+    <Abstract>Manager for MotorGhost binding. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -15662,6 +15764,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>a7fa04502185124176a72fb2f3965c698</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -15673,6 +15776,7 @@
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
     <Anchor>aa5527049ea757ea2b22fca486d3bf08d</Anchor>
+    <Abstract>Getter for parameters of reaction. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -15829,7 +15933,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>af5160d203173a203b91bfe2e1461acf8</Anchor>
-    <Abstract>Update the position of this Linker. </Abstract>
+    <Abstract>Update the position. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -15841,7 +15945,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>af04a329034d73a637f72afd14ec0709f</Anchor>
-    <Abstract>Update the reaction rates of this linker. </Abstract>
+    <Abstract>Update the reaction rates. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16165,6 +16269,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a0f9c7b8208d450277232df422cc96f2e</Anchor>
+    <Abstract>Get cylinder. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16188,6 +16293,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a37eb6c3fd66f16999b8c84e1d1f3e758</Anchor>
+    <Abstract>Set cylinder. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16211,6 +16317,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>ad78f17ef57c3ccf90d2b78e554c3cf85</Anchor>
+    <Abstract>Position management function. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16222,6 +16329,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a1de3231a90ef1de485591f77bc52ef7a</Anchor>
+    <Abstract>Position management function. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16233,6 +16341,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>aedc47fdd28d95809af9859a64a18117e</Anchor>
+    <Abstract>Position management function. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16256,6 +16365,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a62ddebe9da16e27e0f3c9df23fc73bce</Anchor>
+    <Abstract>Parameter management. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16278,7 +16388,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a651509682f0faffe9b8e2d77e652312b</Anchor>
-    <Abstract>Pointer to MMotorGhost. </Abstract>
+    <Abstract>Pointer to mech motor ghost. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -16289,7 +16399,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a9e16cc127c973fe3c8e559daa5922e97</Anchor>
-    <Abstract>Pointer to CMotorGhost. </Abstract>
+    <Abstract>Pointer to chem motor ghost. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -16366,7 +16476,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a7b33616ae53f08cf2095d30090a4fa82</Anchor>
-    <Abstract>Birth time of this motor. </Abstract>
+    <Abstract>Birth time. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -16377,7 +16487,7 @@
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
     <Anchor>a3a16b996a9a4a7e51735b410e65d339c</Anchor>
-    <Abstract>Compartment that this linker is in. </Abstract>
+    <Abstract>Compartment that this motor is in. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -16513,7 +16623,7 @@
       <Scope>MotorGhostFF</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostFF.html</Path>
-    <Abstract>An implementation of the ForceField class that calculates Motor stretching, bending, and twisting. </Abstract>
+    <Abstract>An implementation of the ForceField class that calculates MotorGhost stretching, bending, and twisting. </Abstract>
     <DeclaredIn>MotorGhostFF.h</DeclaredIn>
   </Token>
   <Token>
@@ -16595,7 +16705,7 @@
       <Scope>MotorGhostInteractions</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostInteractions.html</Path>
-    <Abstract>Represents an internal motor interaction. </Abstract>
+    <Abstract>Represents an internal MotorGhost interaction. </Abstract>
     <DeclaredIn>MotorGhostInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -16665,7 +16775,7 @@
       <Scope>MotorGhostStretching</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostStretching.html</Path>
-    <Abstract>Represents a motor stretching interaction. </Abstract>
+    <Abstract>Represents a MotorGhost stretching interaction. </Abstract>
     <DeclaredIn>MotorGhostStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -16734,7 +16844,7 @@
       <Scope>MotorGhostStretchingHarmonic</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostStretchingHarmonic.html</Path>
-    <Abstract>A harmonic potential used by the MotorStretching template. </Abstract>
+    <Abstract>A harmonic potential used by the MotorGhostStretching template. </Abstract>
     <DeclaredIn>MotorGhostStretchingHarmonic.h</DeclaredIn>
   </Token>
   <Token>
@@ -16789,7 +16899,7 @@
       <Scope>MotorMovingCylinderBackwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorMovingCylinderBackwardCallback.html</Path>
-    <Abstract>Callback to walk a motor on a filament to a new cylinder. </Abstract>
+    <Abstract>Callback to walk a MotorGhost on a Filament to a new Cylinder. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -16852,7 +16962,7 @@
       <Scope>MotorMovingCylinderForwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorMovingCylinderForwardCallback.html</Path>
-    <Abstract>Callback to walk a motor on a filament to a new cylinder. </Abstract>
+    <Abstract>Callback to walk a MotorGhost on a Filament to a new Cylinder. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -16915,7 +17025,7 @@
       <Scope>MotorWalkBManager</Scope>
     </TokenIdentifier>
     <Path>classMotorWalkBManager.html</Path>
-    <Abstract>Manager for motor walking. </Abstract>
+    <Abstract>Manager for MotorGhost walking. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -17016,7 +17126,7 @@
       <Scope>MotorWalkFManager</Scope>
     </TokenIdentifier>
     <Path>classMotorWalkFManager.html</Path>
-    <Abstract>Manager for motor walking. </Abstract>
+    <Abstract>Manager for MotorGhost walking. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -17118,7 +17228,7 @@
       <Scope>MotorWalkingBackwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorWalkingBackwardCallback.html</Path>
-    <Abstract>Callback to walk a motor on a filament. </Abstract>
+    <Abstract>Callback to walk a MotorGhost on a Filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -17171,7 +17281,7 @@
       <Scope>MotorWalkingForwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorWalkingForwardCallback.html</Path>
-    <Abstract>Callback to walk a motor on a filament. </Abstract>
+    <Abstract>Callback to walk a MotorGhost on a Filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -17594,7 +17704,7 @@
     </TokenIdentifier>
     <Path>classOutput.html</Path>
     <Anchor>ad35067cbcca30c5cea00735d1d11f2b5</Anchor>
-    <Abstract>Print basic information about filaments, linkers, motors (DEPRECATED) </Abstract>
+    <Abstract>Print basic information about all Filament, Linker, MotorGhost in system (DEPRECATED). </Abstract>
     <DeclaredIn>Output.h</DeclaredIn>
   </Token>
   <Token>
@@ -17618,7 +17728,7 @@
     </TokenIdentifier>
     <Path>classOutput.html</Path>
     <Anchor>a1ca68aeb9bbffdcdc2a1d473ed923ceb</Anchor>
-    <Abstract>Print birth times of beads for each filament. </Abstract>
+    <Abstract>Print birth times of beads for each Filament. </Abstract>
     <DeclaredIn>Output.h</DeclaredIn>
   </Token>
   <Token>
@@ -17630,7 +17740,7 @@
     </TokenIdentifier>
     <Path>classOutput.html</Path>
     <Anchor>a86a58b2b083f2a6043ad30b8c3d14ba0</Anchor>
-    <Abstract>Print forces on beads for each filament. </Abstract>
+    <Abstract>Print forces on beads for each Filament. </Abstract>
     <DeclaredIn>Output.h</DeclaredIn>
   </Token>
   <Token>
@@ -17642,7 +17752,7 @@
     </TokenIdentifier>
     <Path>classOutput.html</Path>
     <Anchor>acb72afbff4487898488cdfd6a829ce45</Anchor>
-    <Abstract>Print stresses on beads for each filament. </Abstract>
+    <Abstract>Print stresses on beads for each Filament. </Abstract>
     <DeclaredIn>Output.h</DeclaredIn>
   </Token>
   <Token>
@@ -17859,6 +17969,7 @@
     </TokenIdentifier>
     <Path>classPlaneBoundaryElement.html</Path>
     <Anchor>a81c5691717216f8602cc2300c603e253</Anchor>
+    <Abstract>Getter for parameters. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -17882,7 +17993,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>ab51302e10e3e2def98438234ba5bf801</Anchor>
-    <Abstract>coordinates of this boundary element </Abstract>
+    <Abstract>coordinates </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -18057,6 +18168,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>ab9c35ec6681e97472d0442a37163d46d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18068,6 +18180,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a531b7d0bc38b6372dc323185f51233dc</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18079,6 +18192,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>afe717a6a06f677933b55628ea4d0014d</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18090,6 +18204,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a885a9627cc4e8b2db8f3384f29cd4069</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18101,6 +18216,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a7e8d5b8d77aff6c4564c4b1d72ab5ace</Anchor>
+    <Abstract>For use in minimization. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18124,6 +18240,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa1fcbcd087af6fa3aa9aab67b0b60103</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18135,6 +18252,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2d9a41ddbf7d54e6f89ee02966c7d85c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18146,6 +18264,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a432019c8a52f50b0cb8cb39b937db978</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18157,6 +18276,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>aa77b006b710d67b248dd18517db7709c</Anchor>
+    <Abstract>Linear search method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18278,6 +18398,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>adb2a688fe52a8729d703d81e52b9fdb3</Anchor>
+    <Abstract>Parameter used in quadratic line search. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -18299,6 +18420,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>a2e7906b4b29a1b76dca43d56eaf2efac</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -18309,6 +18431,7 @@
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
     <Anchor>af8587ca1c0394c244ce84fe8a6ad29ff</Anchor>
+    <Abstract>Parameter used in golden section. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -20405,7 +20528,7 @@
       <Scope>ReactionVisitor</Scope>
     </TokenIdentifier>
     <Path>classReactionVisitor.html</Path>
-    <Abstract>The visitor pattern allows a functor to visit each node of the Composite pattern. ...</Abstract>
+    <Abstract>The Visitor pattern allows a functor to visit each node of the Composite pattern. ...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -20417,7 +20540,7 @@
     </TokenIdentifier>
     <Path>classReactionVisitor.html</Path>
     <Anchor>a2a2381f0f0fcd0067537af8d965a32d3</Anchor>
-    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+    <Abstract>When this Visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -20441,7 +20564,7 @@
     </TokenIdentifier>
     <Path>classReactionVisitor.html</Path>
     <Anchor>ab8ca562e38925467ae17eb2425f61a4c</Anchor>
-    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+    <Abstract>When this Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -20524,7 +20647,7 @@
     </TokenIdentifier>
     <Path>classReactionVisitor.html</Path>
     <Anchor>a2a2381f0f0fcd0067537af8d965a32d3</Anchor>
-    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+    <Abstract>When this Visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -21644,6 +21767,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>a0018d381ff3b968d74fa261ea9774dee</Anchor>
+    <Abstract>Set up all reaction managers from the setup struct. </Abstract>
     <DeclaredIn>SimpleManagerImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -21688,7 +21812,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>a6842452647356333fa3a8dfc9daad925</Anchor>
-    <Abstract>Vector of filament-related species in system. </Abstract>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -21699,6 +21823,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>a8c41d3d46a0534a7127d5b863718bcba</Anchor>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -21709,6 +21834,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>a07794aeec638f61758d22f7ba3b2d5b4</Anchor>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -21719,6 +21845,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>ad09569aff7c98442037cd4b5e5fd1d4d</Anchor>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -21729,6 +21856,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>ac5bb2d96109696dcd63109154f88c6be</Anchor>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -21739,6 +21867,7 @@
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
     <Anchor>a5ff19b12a756eaba341d179b795ed6b4</Anchor>
+    <Abstract>Vector of Filament -related species in system. </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -24974,7 +25103,7 @@
       <Scope>SpeciesVisitor</Scope>
     </TokenIdentifier>
     <Path>classSpeciesVisitor.html</Path>
-    <Abstract>The visitor pattern allows a functor to visit each node of the Composite pattern. ...</Abstract>
+    <Abstract>The Visitor pattern allows a functor to visit each node of the Composite pattern. ...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -24986,7 +25115,7 @@
     </TokenIdentifier>
     <Path>classSpeciesVisitor.html</Path>
     <Anchor>a1a3573d237d36307cc35e123e67875db</Anchor>
-    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+    <Abstract>When this Visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25010,7 +25139,7 @@
     </TokenIdentifier>
     <Path>classSpeciesVisitor.html</Path>
     <Anchor>a6702d4e5a08830afbf069bbe9304689c</Anchor>
-    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+    <Abstract>When this Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25069,7 +25198,7 @@
     </TokenIdentifier>
     <Path>classSpeciesVisitor.html</Path>
     <Anchor>a1a3573d237d36307cc35e123e67875db</Anchor>
-    <Abstract>When this visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
+    <Abstract>When this Visitor, *v, is propagated through the Composite hieararchy, at each Component node pointer...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25277,6 +25406,7 @@
     </TokenIdentifier>
     <Path>classSphereBoundaryElement.html</Path>
     <Anchor>aacda85af577d438ce939274960d72045</Anchor>
+    <Abstract>Getter for parameters. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -25300,7 +25430,7 @@
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
     <Anchor>ab51302e10e3e2def98438234ba5bf801</Anchor>
-    <Abstract>coordinates of this boundary element </Abstract>
+    <Abstract>coordinates </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -25554,6 +25684,7 @@
     </TokenIdentifier>
     <Path>classSubSystem.html</Path>
     <Anchor>ac523c7c0e590874bdafdef8fc1a85255</Anchor>
+    <Abstract>Setter functions for movables. </Abstract>
     <DeclaredIn>SubSystem.h</DeclaredIn>
   </Token>
   <Token>
@@ -25577,6 +25708,7 @@
     </TokenIdentifier>
     <Path>classSubSystem.html</Path>
     <Anchor>af09f92179b407453f016c1c133c6531a</Anchor>
+    <Abstract>Setter function for reactables. </Abstract>
     <DeclaredIn>SubSystem.h</DeclaredIn>
   </Token>
   <Token>
@@ -25655,6 +25787,7 @@
     </TokenIdentifier>
     <Path>classSystemParameters.html</Path>
     <Anchor>a05c9527eb94d2cf4f164de3ef09afc4b</Anchor>
+    <Abstract>Const getter. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -25666,6 +25799,7 @@
     </TokenIdentifier>
     <Path>classSystemParameters.html</Path>
     <Anchor>a9211bca7e3422c076f4e9ba2dc29c599</Anchor>
+    <Abstract>Const getter. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -25677,6 +25811,7 @@
     </TokenIdentifier>
     <Path>classSystemParameters.html</Path>
     <Anchor>a6e73fd102a3699c854d9e503c1b75fc1</Anchor>
+    <Abstract>Const getter. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -25811,6 +25946,7 @@
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
     <Anchor>a9170d246867cd58d69121ca6907baaf5</Anchor>
+    <Abstract>Parameter parser. Reads input directly into system parameters. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -25822,6 +25958,7 @@
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
     <Anchor>add4252ac4e2c4f2864a02ee13c45ad46</Anchor>
+    <Abstract>Parameter parser. Reads input directly into system parameters. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -25833,6 +25970,7 @@
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
     <Anchor>a2a198730cbe281f0db40e1ddb529e878</Anchor>
+    <Abstract>Parameter parser. Reads input directly into system parameters. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -25856,6 +25994,7 @@
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
     <Anchor>aa4dc61cfb269e17ae8adcfe58a2d41de</Anchor>
+    <Abstract>Algorithm parser. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -25879,6 +26018,7 @@
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
     <Anchor>a722843391cea1893b49b55e9670b3c5a</Anchor>
+    <Abstract>Type parser. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -25911,7 +26051,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a3f8ea7ad6aa61e99d8d1bc0576bdf23c</Anchor>
-    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
+    <Abstract>When this conditional Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25935,7 +26075,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a1ebdba266c77626f67a22fc2300d8dc3</Anchor>
-    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+    <Abstract>When this Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25981,7 +26121,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a3f8ea7ad6aa61e99d8d1bc0576bdf23c</Anchor>
-    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
+    <Abstract>When this conditional Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -26038,7 +26178,7 @@
       <Scope>UnbindingCallback</Scope>
     </TokenIdentifier>
     <Path>structUnbindingCallback.html</Path>
-    <Abstract>Callback to unbind a bound to filaments. </Abstract>
+    <Abstract>Callback to unbind a CBound from a Filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -26204,7 +26344,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a3f8ea7ad6aa61e99d8d1bc0576bdf23c</Anchor>
-    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
+    <Abstract>When this conditional Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -26228,7 +26368,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a1ebdba266c77626f67a22fc2300d8dc3</Anchor>
-    <Abstract>When this visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
+    <Abstract>When this Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointe...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -26287,7 +26427,7 @@
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
     <Anchor>a3f8ea7ad6aa61e99d8d1bc0576bdf23c</Anchor>
-    <Abstract>When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
+    <Abstract>When this conditional Visitor, *cv, is propagated through the Composite hieararchy, at each Component node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>

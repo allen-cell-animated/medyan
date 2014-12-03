@@ -21,7 +21,8 @@ Inheritance diagram for Bead\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Bead\+:\nopagebreak
+Collaboration diagram for Bead\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -38,15 +39,15 @@ Collaboration diagram for Bead\+:\nopagebreak
 \hyperlink{classBead_a21f0ccd7041f56c4038171d0da3a58ed}{$\sim$\+Bead} ()
 \item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classBead_ae6cfcc2936a2e12a3887c9fd824c6343}{get\+Compartment} ()
-\begin{DoxyCompactList}\small\item\em Get compartment. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get \hyperlink{classCompartment}{Compartment}. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classBead_adfda91d08764f284b4a23c05da34c84c}{update\+Position} ()
-\begin{DoxyCompactList}\small\item\em Update the position of this bead. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Update the position. \end{DoxyCompactList}\item 
 void \hyperlink{classBead_a3178379864ec93ff5e9f8a2e7916c94a}{set\+Position\+Filament} (int position\+Filament)
-\begin{DoxyCompactList}\small\item\em Set position on the local filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Set position on the local \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 int \hyperlink{classBead_a3df2bf2b6063545ba9a68b890004057e}{get\+Position\+Filament} ()
-\begin{DoxyCompactList}\small\item\em Get position on the local filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get position on the local \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 float \hyperlink{classBead_afa239062c738d1db95a1456c9b357a68}{get\+Birth\+Time} ()
-\begin{DoxyCompactList}\small\item\em Get the birth time of this bead. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get the birth time. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classComponent_a06be9328d615af20a155e9060def1470}{apply} (\hyperlink{classVisitor}{Visitor} \&v)
 \begin{DoxyCompactList}\small\item\em When this function is applied to a Conditional\+Visitor v, the corresponding v.\+visit(this) is called, and v is further applied to all children of this node recursively. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}{apply} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v)
@@ -93,9 +94,9 @@ virtual void \hyperlink{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{print\
 double \hyperlink{classBead_a8f10459bad94f72599f2e239644c4421}{calc\+Force\+Square} ()
 \begin{DoxyCompactList}\small\item\em Auxiliary method for C\+G minimization. \end{DoxyCompactList}\item 
 double \hyperlink{classBead_a82e3c084cb26f343b5de59619c854f2b}{calc\+Force\+Aux\+Square} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Auxiliary method for C\+G minimization. \end{DoxyCompactList}\item 
 double \hyperlink{classBead_a3df6e55d379663d002c73651a24718f5}{calc\+Dot\+Force\+Product} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Auxiliary method for C\+G minimization. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -114,15 +115,15 @@ vector$<$ double $>$ \hyperlink{classBead_a59758227cd7afbb3ec5fbcafe32773b8}{for
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classBead_ac9d2080d5d8f80f60535dfeea9cd38e9}{\+\_\+compartment} = nullptr
 \begin{DoxyCompactList}\small\item\em Pointer to the compartment that this bead is in. \end{DoxyCompactList}\item 
 int \hyperlink{classBead_a0eafb8f259549846d4714e6120cbc87c}{\+\_\+position\+Filament}
-\begin{DoxyCompactList}\small\item\em Position of bead on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Position on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 float \hyperlink{classBead_a356c8525fcf176bca4cd539f735c1de6}{\+\_\+birth\+Time}
-\begin{DoxyCompactList}\small\item\em Time of birth of bead;. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Time of birth. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Represents a single coordinate between \hyperlink{classCylinder}{Cylinders}, and holds forces needed for mechanical equilibration. 
 
-Beads are the \char`\"{}hinges\char`\"{} between \hyperlink{classCylinder}{Cylinders}. In the minimization algorithms, beads are moved corresponding to external forces, for example, filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate dot products for the minimization algorithms. 
+Beads are the \char`\"{}hinges\char`\"{} between \hyperlink{classCylinder}{Cylinders}. In the minimization algorithms, beads are moved corresponding to external forces, for example, \hyperlink{classFilament}{Filament} stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate dot products for the minimization algorithms. 
 
 Definition at line 38 of file Bead.\+h.
 
@@ -302,6 +303,10 @@ Definition at line 69 of file Component.\+h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3df6e55d379663d002c73651a24718f5}
 
 
+Auxiliary method for C\+G minimization. 
+
+
+
 Definition at line 64 of file Bead.\+h.
 
 
@@ -315,6 +320,10 @@ References force, and force\+Aux.
 {}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a82e3c084cb26f343b5de59619c854f2b}
+
+
+Auxiliary method for C\+G minimization. 
+
 
 
 Definition at line 60 of file Bead.\+h.
@@ -413,7 +422,7 @@ Definition at line 114 of file Component.\+h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_afa239062c738d1db95a1456c9b357a68}
 
 
-Get the birth time of this bead. 
+Get the birth time. 
 
 
 
@@ -432,7 +441,7 @@ References \+\_\+birth\+Time.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_ae6cfcc2936a2e12a3887c9fd824c6343}
 
 
-Get compartment. 
+Get \hyperlink{classCompartment}{Compartment}. 
 
 
 
@@ -493,7 +502,7 @@ Referenced by Component\+::get\+Root().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3df2bf2b6063545ba9a68b890004057e}
 
 
-Get position on the local filament. 
+Get position on the local \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -729,7 +738,7 @@ References Component\+::\+\_\+parent.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3178379864ec93ff5e9f8a2e7916c94a}
 
 
-Set position on the local filament. 
+Set position on the local \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -748,7 +757,7 @@ References \+\_\+position\+Filament.
 )\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classBead_adfda91d08764f284b4a23c05da34c84c}
 
 
-Update the position of this bead. 
+Update the position. 
 
 
 
@@ -770,7 +779,7 @@ References \+\_\+compartment, Compartment\+::add\+Bead(), coordinate, G\+Control
 \subsubsection[{\+\_\+birth\+Time}]{\setlength{\rightskip}{0pt plus 5cm}float Bead\+::\+\_\+birth\+Time\hspace{0.3cm}{\ttfamily [private]}}}\label{classBead_a356c8525fcf176bca4cd539f735c1de6}
 
 
-Time of birth of bead;. 
+Time of birth. 
 
 
 
@@ -800,7 +809,7 @@ Referenced by Bead(), get\+Compartment(), update\+Position(), and $\sim$\+Bead()
 \subsubsection[{\+\_\+position\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}int Bead\+::\+\_\+position\+Filament\hspace{0.3cm}{\ttfamily [private]}}}\label{classBead_a0eafb8f259549846d4714e6120cbc87c}
 
 
-Position of bead on filament. 
+Position on \hyperlink{classFilament}{Filament}. 
 
 
 

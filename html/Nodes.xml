@@ -2200,11 +2200,6 @@
               <Anchor>a3c2a4890f5a040cdf19a150030db434c</Anchor>
              </Node>
              <Node>
-              <Name>checkSpecies</Name>
-              <Path>classCMonomer.html</Path>
-              <Anchor>a7e8eb6f8475a8b2fe50e369a0ed0b0ab</Anchor>
-             </Node>
-             <Node>
               <Name>clone</Name>
               <Path>classCMonomer.html</Path>
               <Anchor>adbb775dba38bc68856db9529826f9676</Anchor>
@@ -17238,11 +17233,6 @@
                     <Name>addSpeciesPlusEnd</Name>
                     <Path>classCMonomer.html</Path>
                     <Anchor>a3c2a4890f5a040cdf19a150030db434c</Anchor>
-                   </Node>
-                   <Node>
-                    <Name>checkSpecies</Name>
-                    <Path>classCMonomer.html</Path>
-                    <Anchor>a7e8eb6f8475a8b2fe50e369a0ed0b0ab</Anchor>
                    </Node>
                    <Node>
                     <Name>clone</Name>

@@ -3,6 +3,6 @@
 <area shape="rect" id="node2" href="$classBoundaryFF.html" title="An implementation of the ForceField class that calculates BoundaryElement repulsion and attraction to..." alt="" coords="162,5,257,31"/>
 <area shape="rect" id="node3" href="$classFilamentFF.html" title="An implementation of the ForceField class that calculates Filament stretching, bending, and twisting. " alt="" coords="165,55,254,80"/>
 <area shape="rect" id="node4" href="$classLinkerFF.html" title="An implementation of the ForceField class that calculates Linker stretching, bending, and twisting. " alt="" coords="172,104,246,129"/>
-<area shape="rect" id="node5" href="$classMotorGhostFF.html" title="An implementation of the ForceField class that calculates Motor stretching, bending, and twisting. " alt="" coords="156,153,263,179"/>
+<area shape="rect" id="node5" href="$classMotorGhostFF.html" title="An implementation of the ForceField class that calculates MotorGhost stretching, bending, and twisting. " alt="" coords="156,153,263,179"/>
 <area shape="rect" id="node6" href="$classVolumeCylindricalFF.html" title="An implementation of the ForceField class that calculates Cylinder volume interactions. " alt="" coords="138,203,281,228"/>
 </map>

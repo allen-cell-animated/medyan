@@ -22,7 +22,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A exponential repulsive potential.
+/// A exponential repulsive potential used by the BoundaryRepulsion template.
 class BoundaryRepulsionExp {
     
 public:

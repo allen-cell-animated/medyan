@@ -1,5 +1,5 @@
 <map id="Composite" name="Composite">
-<area shape="rect" id="node3" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="5,152,107,177"/>
+<area shape="rect" id="node3" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="5,152,107,177"/>
 <area shape="rect" id="node4" href="$classCompartmentGrid.html" title="A simple n&#45;dimensional grid of Compartment objects (singleton). " alt="" coords="131,152,259,177"/>
 <area shape="rect" id="node5" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="283,152,353,177"/>
 <area shape="rect" id="node6" href="$classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="377,152,435,177"/>

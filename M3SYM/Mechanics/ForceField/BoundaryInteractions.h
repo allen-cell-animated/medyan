@@ -23,7 +23,7 @@
 class BoundaryElement;
 class Bead;
 
-/// Represents a [BoundaryElement](@ref BoundaryElement) interaction with a [Bead](@ref Bead).
+/// Represents a BoundaryElement interaction with a Bead.
 class BoundaryInteractions : public BoundaryElementNLContainer {
 private:
     string _name; ///< Name of interaction

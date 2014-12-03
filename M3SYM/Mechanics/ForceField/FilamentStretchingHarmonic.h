@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A harmonic potential used by the [FilamentStretching](@ref FilamentStretching) template.
+/// A harmonic potential used by the FilamentStretching template.
 class FilamentStretchingHarmonic {
     
 public:

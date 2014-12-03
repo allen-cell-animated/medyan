@@ -9,7 +9,6 @@ var classCMonomer =
     [ "addSpeciesMinusEnd", "classCMonomer.html#ace655af18907f289683d00f6e7597b71", null ],
     [ "addSpeciesMotor", "classCMonomer.html#a57b8bf84368ddc0f8bfafaeaec508132", null ],
     [ "addSpeciesPlusEnd", "classCMonomer.html#a3c2a4890f5a040cdf19a150030db434c", null ],
-    [ "checkSpecies", "classCMonomer.html#a7e8eb6f8475a8b2fe50e369a0ed0b0ab", null ],
     [ "clone", "classCMonomer.html#adbb775dba38bc68856db9529826f9676", null ],
     [ "operator=", "classCMonomer.html#a6145f013c6830c4aded4fb5677f38054", null ],
     [ "print", "classCMonomer.html#a72138cb91d962aed900869f4096afd92", null ],

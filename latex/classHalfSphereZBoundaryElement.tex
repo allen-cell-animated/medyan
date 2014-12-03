@@ -42,21 +42,21 @@ virtual const vector$<$ double $>$ \hyperlink{classHalfSphereZBoundaryElement_a3
 virtual double \hyperlink{classHalfSphereZBoundaryElement_a672b90ff798b849ef705384ab9f745bc}{get\+Repulsion\+Const} ()
 \begin{DoxyCompactList}\small\item\em Getter for parameters. \end{DoxyCompactList}\item 
 virtual double \hyperlink{classHalfSphereZBoundaryElement_ab7b9034066dbc5bec386a04f6bc3a91f}{get\+Screening\+Length} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Getter for parameters. \end{DoxyCompactList}\item 
 const vector$<$ double $>$ \& \hyperlink{classBoundaryElement_ace76817d750bb44c11edd918f1a8b78f}{get\+Coords} ()
 \begin{DoxyCompactList}\small\item\em return coordinates of boundary element \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ double $>$ \hyperlink{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}{\+\_\+coords}
-\begin{DoxyCompactList}\small\item\em coordinates of this boundary element \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em coordinates \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 double \hyperlink{classHalfSphereZBoundaryElement_ad1fff310ac2c3f221a8ab7393dc23b69}{\+\_\+radius}
 \begin{DoxyCompactList}\small\item\em Radius of half sphere. \end{DoxyCompactList}\item 
 bool \hyperlink{classHalfSphereZBoundaryElement_a3251d9e34c161076f9324dc3f2477720}{\+\_\+up}
-\begin{DoxyCompactList}\small\item\em whether the half sphere faces up or down \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Whether the half sphere faces up or down. \end{DoxyCompactList}\item 
 double \hyperlink{classHalfSphereZBoundaryElement_aaafd14a29987646f9537a7248ba6291b}{\+\_\+k\+\_\+rep}
 \item 
 double \hyperlink{classHalfSphereZBoundaryElement_afa790cdbea557aa8615188211acaedce}{\+\_\+r0}
@@ -170,6 +170,10 @@ References \+\_\+k\+\_\+rep.
 )\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classHalfSphereZBoundaryElement_ab7b9034066dbc5bec386a04f6bc3a91f}
 
 
+Getter for parameters. 
+
+
+
 Implements \hyperlink{classBoundaryElement_a075dff05ab75cfd8be7f1a731030045a}{Boundary\+Element}.
 
 
@@ -236,7 +240,7 @@ References Boundary\+Element\+::\+\_\+coords, \+\_\+radius, \+\_\+up, and mathfu
 \subsubsection[{\+\_\+coords}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Boundary\+Element\+::\+\_\+coords\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}
 
 
-coordinates of this boundary element 
+coordinates 
 
 
 
@@ -288,7 +292,7 @@ Referenced by distance(), and stretched\+Distance().
 \subsubsection[{\+\_\+up}]{\setlength{\rightskip}{0pt plus 5cm}bool Half\+Sphere\+Z\+Boundary\+Element\+::\+\_\+up\hspace{0.3cm}{\ttfamily [private]}}}\label{classHalfSphereZBoundaryElement_a3251d9e34c161076f9324dc3f2477720}
 
 
-whether the half sphere faces up or down 
+Whether the half sphere faces up or down. 
 
 
 

@@ -1,6 +1,5 @@
 var NAVTREEINDEX10 =
 {
-"functions_vars_f.html":[2,3,2,6],
 "functions_vars_g.html":[2,3,2,7],
 "functions_vars_i.html":[2,3,2,8],
 "functions_vars_l.html":[2,3,2,9],
@@ -23,8 +22,8 @@ var NAVTREEINDEX10 =
 "globals_type.html":[3,1,3],
 "globals_vars.html":[3,1,2],
 "hierarchy.html":[2,2],
-"index.html":[],
 "index.html":[0],
+"index.html":[],
 "index.html#install_sec":[0,1],
 "index.html#intro_sec":[0,0],
 "index.html#step1":[0,1,0],

@@ -3,7 +3,7 @@
 }
 
 
-Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects.  
+Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and \hyperlink{classReaction}{Reactions} objects.  
 
 
 
@@ -61,15 +61,15 @@ void \hyperlink{classChemSignal_a17510f00f6775f8bfdf9a5ed2844251a}{assert\+Signa
 unordered\+\_\+map$<$ \hyperlink{classRSpecies}{R\+Species} \\*
 $\ast$, unique\+\_\+ptr\\*
 $<$ \hyperlink{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}{R\+Species\+Copy\+N\+Changed\+Signal} $>$ $>$ \hyperlink{classChemSignal_a01513b0756cb765b0fd02a7e5497133d}{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}
-\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various rspecies. \end{DoxyCompactList}\item 
 unordered\+\_\+map$<$ \hyperlink{classReactionBase}{Reaction\+Base} \\*
 $\ast$, unique\+\_\+ptr\\*
 $<$ \hyperlink{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}{Reaction\+Event\+Signal} $>$ $>$ \hyperlink{classChemSignal_a750129c5a876c652e76e2a008b21b276}{\+\_\+map\+\_\+reaction\+\_\+signal}
-\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various Reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects. 
+Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and \hyperlink{classReaction}{Reactions} objects. 
 
 One \hyperlink{classChemSignal}{Chem\+Signal} should be instantiated per chemical network. \hyperlink{classRSpecies}{R\+Species} and Reactions that need to be monitored can be made to signal, based on the boost\+:signal2 library. Multiple receiving slots can be connected to signals.
 
@@ -384,7 +384,7 @@ References \+\_\+map\+\_\+\+R\+Species\+\_\+signal.
 \subsubsection[{\+\_\+map\+\_\+reaction\+\_\+signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf Reaction\+Base} $\ast$, unique\+\_\+ptr$<${\bf Reaction\+Event\+Signal}$>$ $>$ Chem\+Signal\+::\+\_\+map\+\_\+reaction\+\_\+signal\hspace{0.3cm}{\ttfamily [private]}}}\label{classChemSignal_a750129c5a876c652e76e2a008b21b276}
 
 
-Keep track of signals corresponding to various Reactions. 
+Keep track of signals corresponding to various reactions. 
 
 
 
@@ -399,7 +399,7 @@ Referenced by add\+Signaling\+Reaction(), assert\+Signal\+Does\+Not\+Exist(), di
 \subsubsection[{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf R\+Species} $\ast$, unique\+\_\+ptr$<${\bf R\+Species\+Copy\+N\+Changed\+Signal}$>$ $>$ Chem\+Signal\+::\+\_\+map\+\_\+\+R\+Species\+\_\+signal\hspace{0.3cm}{\ttfamily [private]}}}\label{classChemSignal_a01513b0756cb765b0fd02a7e5497133d}
 
 
-Keep track of signals corresponding to various \hyperlink{classRSpecies}{R\+Species}. 
+Keep track of signals corresponding to various rspecies. 
 
 
 

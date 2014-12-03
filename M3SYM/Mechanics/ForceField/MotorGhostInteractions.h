@@ -20,7 +20,7 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
-/// Represents an internal motor interaction
+/// Represents an internal MotorGhost interaction
 class MotorGhostInteractions {
 private:
     string _name; ///< Name of interaction

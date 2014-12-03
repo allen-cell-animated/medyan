@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Filament;
 
-/// Represents a filament bending interaction
+/// Represents a Filament bending interaction
 template <class FBendingInteractionType>
 class FilamentBending : public FilamentInteractions {
     

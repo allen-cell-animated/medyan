@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classFilamentInteractions.html" title="Represents an internal filament interaction. " alt="" coords="5,44,147,69"/>
-<area shape="rect" id="node2" href="$classFilamentBending.html" title="Represents a filament bending interaction. " alt="" coords="202,5,392,44"/>
-<area shape="rect" id="node3" href="$classFilamentStretching.html" title="Represents a filament stretching interaction. " alt="" coords="195,68,398,107"/>
+<area shape="rect" id="node1" href="$classFilamentInteractions.html" title="Represents an internal Filament interaction. " alt="" coords="5,44,147,69"/>
+<area shape="rect" id="node2" href="$classFilamentBending.html" title="Represents a Filament bending interaction. " alt="" coords="202,5,392,44"/>
+<area shape="rect" id="node3" href="$classFilamentStretching.html" title="Represents a Filament stretching interaction. " alt="" coords="195,68,398,107"/>
 </map>

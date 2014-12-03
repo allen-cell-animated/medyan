@@ -3,7 +3,7 @@
 }
 
 
-The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern.  
+The \hyperlink{classVisitor}{Visitor} pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern.  
 
 
 
@@ -23,20 +23,20 @@ Inheritance diagram for Reaction\+Visitor\+:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}{visit} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. \end{DoxyCompactList}\item 
 virtual \hyperlink{classReactionVisitor_a4d310d3c9165de0c33fc37e37406c242}{$\sim$\+Reaction\+Visitor} ()
 \begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 virtual bool \hyperlink{classReactionVisitor_ab8ca562e38925467ae17eb2425f61a4c}{visit\+Impl} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)=0
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classReactionVisitor_acee5a012f810080164130eb47865472f}{pred\+Impl} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)=0
 \begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classReaction}{Reaction} $\ast$r satisfies the desired predicate. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. 
+The \hyperlink{classVisitor}{Visitor} pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. 
 
 Concrete classes derived from \hyperlink{classVisitor}{Visitor} must implement the visit(\+Component $\ast$c) method. 
 
@@ -91,7 +91,7 @@ Referenced by visit().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}
 
 
-When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 
@@ -114,7 +114,7 @@ Referenced by Compartment\+::apply\+\_\+impl().
 )\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}}\label{classReactionVisitor_ab8ca562e38925467ae17eb2425f61a4c}
 
 
-When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 

@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class BoundaryInteractions;
 
-/// An implementation of the [ForceField](@ref ForceField) class that calculates [BoundaryElement] (@ref BoundaryElement)
+/// An implementation of the ForceField class that calculates BoundaryElement
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
 class BoundaryFF : public ForceField {
     

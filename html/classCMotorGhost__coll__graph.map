@@ -1,7 +1,7 @@
 <map id="CMotorGhost" name="CMotorGhost">
 <area shape="rect" id="node2" href="$classCBound.html" title="Represents a chemical object that is bound to a Filament. " alt="" coords="379,868,448,893"/>
 <area shape="rect" id="node46" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="448,987,555,1012"/>
-<area shape="rect" id="node3" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="576,781,678,807"/>
+<area shape="rect" id="node3" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="576,781,678,807"/>
 <area shape="rect" id="node9" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="1173,987,1243,1012"/>
 <area shape="rect" id="node14" href="$classCCylinder.html" title="Holds all CMonomers and Reactions associated with it. " alt="" coords="1737,1087,1817,1112"/>
 <area shape="rect" id="node21" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="1054,868,1106,893"/>

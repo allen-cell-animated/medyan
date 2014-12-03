@@ -7,7 +7,7 @@
 <area shape="rect" id="node7" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="187,83,292,109"/>
 <area shape="rect" id="node8" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="5,353,90,378"/>
 <area shape="rect" id="node9" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="194,417,285,442"/>
-<area shape="rect" id="node14" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="2224,353,2326,378"/>
+<area shape="rect" id="node14" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="2224,353,2326,378"/>
 <area shape="rect" id="node16" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="2925,657,2995,682"/>
 <area shape="rect" id="node27" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="2548,657,2600,682"/>
 <area shape="rect" id="node12" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="16,83,79,109"/>

@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class Filament;
 
-/// Represents an internal filament interaction
+/// Represents an internal Filament interaction
 class FilamentInteractions {
 private:
     string _name;

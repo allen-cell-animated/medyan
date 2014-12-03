@@ -21,7 +21,8 @@ Inheritance diagram for C\+Linker\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for C\+Linker\+:\nopagebreak
+Collaboration diagram for C\+Linker\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -42,9 +43,9 @@ Collaboration diagram for C\+Linker\+:\nopagebreak
 virtual \hyperlink{classCLinker}{C\+Linker} $\ast$ \hyperlink{classCLinker_ab1fba3ef14c902ed103e54c44ffa7538}{clone} (\hyperlink{classCompartment}{Compartment} $\ast$c)
 \begin{DoxyCompactList}\small\item\em Clone, calls copy constructor. \end{DoxyCompactList}\item 
 void \hyperlink{classCLinker_a2b0219ae91d2312bbf0c998b4d0b124e}{set\+Linker} (\hyperlink{classLinker}{Linker} $\ast$linker)
-\begin{DoxyCompactList}\small\item\em Set parent linker. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Set parent. \end{DoxyCompactList}\item 
 \hyperlink{classLinker}{Linker} $\ast$ \hyperlink{classCLinker_a5a1435f2035ecdadcc35b4ae90199865}{get\+Linker} ()
-\begin{DoxyCompactList}\small\item\em Get parent linker. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get parent. \end{DoxyCompactList}\item 
 void \hyperlink{classCBound_a17d4b84d683b0b7bd75b793410fed18f}{set\+First\+Species} (\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$species)
 \begin{DoxyCompactList}\small\item\em Set first species. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_aad60656a671e4ffdc45b4c904fa7c320}{get\+First\+Species} ()
@@ -59,16 +60,16 @@ void \hyperlink{classCBound_a01badbb54867fb99b6f3a895d555867a}{set\+Second\+Spec
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}{\+\_\+first\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding first species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding first species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_ae6818ab861d273598a2507be75183e41}{\+\_\+second\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding second species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding second species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCBound_a95a66719b898cf32e60ae7137186bbbf}{\+\_\+compartment}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this \hyperlink{classCBound}{C\+Bound} is in. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classLinker}{Linker} $\ast$ \hyperlink{classCLinker_a5cb1a9ff49e6d394ab980ff01af23ebc}{\+\_\+p\+Linker}
-\begin{DoxyCompactList}\small\item\em Pointer to parent linker. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Pointer to parent. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -200,7 +201,7 @@ Referenced by C\+Monomer\+::\+C\+Monomer(), Motor\+Walking\+Forward\+Callback\+:
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCLinker_a5a1435f2035ecdadcc35b4ae90199865}
 
 
-Get parent linker. 
+Get parent. 
 
 
 
@@ -272,7 +273,7 @@ Referenced by C\+Linker(), C\+Monomer\+::\+C\+Monomer(), C\+Motor\+Ghost\+::\+C\
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCLinker_a2b0219ae91d2312bbf0c998b4d0b124e}
 
 
-Set parent linker. 
+Set parent. 
 
 
 
@@ -328,7 +329,7 @@ Referenced by C\+Bound\+::get\+Compartment().
 \subsubsection[{\+\_\+first\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+first\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}
 
 
-Corresponding first species on filament. 
+Corresponding first species on \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -343,7 +344,7 @@ Referenced by C\+Linker(), C\+Motor\+Ghost\+::\+C\+Motor\+Ghost(), C\+Bound\+::g
 \subsubsection[{\+\_\+p\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Linker}$\ast$ C\+Linker\+::\+\_\+p\+Linker\hspace{0.3cm}{\ttfamily [private]}}}\label{classCLinker_a5cb1a9ff49e6d394ab980ff01af23ebc}
 
 
-Pointer to parent linker. 
+Pointer to parent. 
 
 
 
@@ -358,7 +359,7 @@ Referenced by get\+Linker(), and set\+Linker().
 \subsubsection[{\+\_\+second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+second\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_ae6818ab861d273598a2507be75183e41}
 
 
-Corresponding second species on filament. 
+Corresponding second species on \hyperlink{classFilament}{Filament}. 
 
 
 

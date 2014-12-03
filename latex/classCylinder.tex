@@ -21,7 +21,8 @@ Inheritance diagram for Cylinder\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Cylinder\+:\nopagebreak
+Collaboration diagram for Cylinder\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -56,9 +57,9 @@ void \hyperlink{classCylinder_a41b9f84107abb9603038ede14fc33073}{set\+Last} (boo
 int \hyperlink{classCylinder_a2516138846ce5fcc29b2a7379e6beae7}{get\+Position\+Filament} ()
 \item 
 virtual void \hyperlink{classCylinder_aff701d6f4400ab216431d627c54a0b4e}{update\+Position} ()
-\begin{DoxyCompactList}\small\item\em Update the position of this cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Update the position. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classCylinder_a1e824345ba2ec690930b34f74cc3badf}{update\+Reaction\+Rates} ()
-\begin{DoxyCompactList}\small\item\em Update the reaction rates of this cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Update the reaction rates. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classComposite_a58123ab346f6621a187bebe456e383ea}{apply} (\hyperlink{classVisitor}{Visitor} \&v) override
 \begin{DoxyCompactList}\small\item\em Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classComposite_a18937a1f6f84a159e77ba83dd34b2e20}{apply} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v) override
@@ -117,24 +118,24 @@ virtual void \hyperlink{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{print\
 \hyperlink{classBead}{Bead} $\ast$ \hyperlink{classCylinder_a07c1366559d10681ebc873f305c28f3f}{get\+First\+Bead} ()
 \begin{DoxyCompactList}\small\item\em Get beads. \end{DoxyCompactList}\item 
 \hyperlink{classBead}{Bead} $\ast$ \hyperlink{classCylinder_a954ee598c495e6b86c33b684d2c16435}{get\+Second\+Bead} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get beads. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ double $>$ \hyperlink{classCylinder_a8c7a6cfe1aecf1ee0eff3aaf9c11338f}{coordinate}
-\begin{DoxyCompactList}\small\item\em Coordinates of midpoint of cylinder, updated with \hyperlink{classCylinder_aff701d6f4400ab216431d627c54a0b4e}{update\+Position()} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Coordinates of midpoint, updated with \hyperlink{classCylinder_aff701d6f4400ab216431d627c54a0b4e}{update\+Position()} \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classBead}{Bead} $\ast$ \hyperlink{classCylinder_a74c9e6c0aaddba6e5b7058c7d58720d7}{\+\_\+b1}
-\begin{DoxyCompactList}\small\item\em Pointer to the first bead, associated with this cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Pointer to the first bead. \end{DoxyCompactList}\item 
 \hyperlink{classBead}{Bead} $\ast$ \hyperlink{classCylinder_a10fe1bbf3340a35637e4a966c1035af6}{\+\_\+b2}
-\begin{DoxyCompactList}\small\item\em Pointer to the end bead in the cylinder. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Pointer to the end bead. \end{DoxyCompactList}\item 
 unique\+\_\+ptr$<$ \hyperlink{classMCylinder}{M\+Cylinder} $>$ \hyperlink{classCylinder_acdd582d5e2c3ede46122e1785097e5c3}{\+\_\+m\+Cylinder}
-\begin{DoxyCompactList}\small\item\em Pointer to \hyperlink{classMCylinder}{M\+Cylinder}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Pointer to mech cylinder. \end{DoxyCompactList}\item 
 unique\+\_\+ptr$<$ \hyperlink{classCCylinder}{C\+Cylinder} $>$ \hyperlink{classCylinder_aacbbbcef8a8a2b6e5810884b017af516}{\+\_\+c\+Cylinder}
-\begin{DoxyCompactList}\small\item\em Pointer to \hyperlink{classCCylinder}{C\+Cylinder}. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Pointer to chem cylinder. \end{DoxyCompactList}\item 
 \hyperlink{classFilament}{Filament} $\ast$ \hyperlink{classCylinder_a0229e3f223dc18ef21fef8db0f2f4b51}{\+\_\+p\+Filament}
 \item 
 int \hyperlink{classCylinder_a372ecc7b3dc54ca5dd042b043af437d6}{\+\_\+position\+Filament}
@@ -144,7 +145,7 @@ bool \hyperlink{classCylinder_ae06f9e43f297b9a2fef8b4b08889c852}{\+\_\+last} = f
 int \hyperlink{classCylinder_ab64067f964d785fe166b8a05e5885065}{\+\_\+\+I\+D}
 \begin{DoxyCompactList}\small\item\em Unique I\+D of cylinder, managed by \hyperlink{classCylinderDB}{Cylinder\+D\+B}. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCylinder_a2d8861ef62351377c0f6f7ab583cf8d5}{\+\_\+compartment} = nullptr
-\begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this \hyperlink{classCylinder}{Cylinder} is currently in. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this cylinder is currently in. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -706,6 +707,10 @@ Referenced by Component\+::get\+Root(), Reaction\+Base\+::get\+Root(), and Speci
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCylinder_a954ee598c495e6b86c33b684d2c16435}
 
 
+Get beads. 
+
+
+
 Definition at line 83 of file Cylinder.\+h.
 
 
@@ -953,7 +958,7 @@ References Composite\+::\+\_\+children.
 set \hyperlink{classCCylinder}{C\+Cylinder} 
 
 \begin{DoxyNote}{Note}
-\+: since this is a unique ptr, will implicitly delete old \hyperlink{classCCylinder}{C\+Cylinder} 
+\+: since this is a unique ptr, will implicitly delete old chem cylinder 
 \end{DoxyNote}
 
 
@@ -1033,10 +1038,10 @@ References Component\+::\+\_\+parent.
 )\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCylinder_aff701d6f4400ab216431d627c54a0b4e}
 
 
-Update the position of this cylinder. 
+Update the position. 
 
 \begin{DoxyNote}{Note}
--\/ changes compartment of ccylinder if needed 
+-\/ changes compartment of \hyperlink{classCCylinder}{C\+Cylinder} if needed 
 \end{DoxyNote}
 
 
@@ -1059,7 +1064,7 @@ References \+\_\+b1, \+\_\+b2, \+\_\+c\+Cylinder, \+\_\+compartment, Compartment
 )\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCylinder_a1e824345ba2ec690930b34f74cc3badf}
 
 
-Update the reaction rates of this cylinder. 
+Update the reaction rates. 
 
 
 
@@ -1077,7 +1082,7 @@ Definition at line 107 of file Cylinder.\+cpp.
 \subsubsection[{\+\_\+b1}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Bead}$\ast$ Cylinder\+::\+\_\+b1\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinder_a74c9e6c0aaddba6e5b7058c7d58720d7}
 
 
-Pointer to the first bead, associated with this cylinder. 
+Pointer to the first bead. 
 
 
 
@@ -1092,7 +1097,7 @@ Referenced by Cylinder(), and update\+Position().
 \subsubsection[{\+\_\+b2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Bead}$\ast$ Cylinder\+::\+\_\+b2\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinder_a10fe1bbf3340a35637e4a966c1035af6}
 
 
-Pointer to the end bead in the cylinder. 
+Pointer to the end bead. 
 
 
 
@@ -1107,7 +1112,7 @@ Referenced by Cylinder(), get\+Second\+Bead(), and update\+Position().
 \subsubsection[{\+\_\+c\+Cylinder}]{\setlength{\rightskip}{0pt plus 5cm}unique\+\_\+ptr$<${\bf C\+Cylinder}$>$ Cylinder\+::\+\_\+c\+Cylinder\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinder_aacbbbcef8a8a2b6e5810884b017af516}
 
 
-Pointer to \hyperlink{classCCylinder}{C\+Cylinder}. 
+Pointer to chem cylinder. 
 
 
 
@@ -1122,7 +1127,7 @@ Referenced by Cylinder(), get\+C\+Cylinder(), set\+C\+Cylinder(), and update\+Po
 \subsubsection[{\+\_\+compartment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Compartment}$\ast$ Cylinder\+::\+\_\+compartment = nullptr\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinder_a2d8861ef62351377c0f6f7ab583cf8d5}
 
 
-\hyperlink{classCompartment}{Compartment} this \hyperlink{classCylinder}{Cylinder} is currently in. 
+\hyperlink{classCompartment}{Compartment} this cylinder is currently in. 
 
 
 
@@ -1167,7 +1172,7 @@ Referenced by last(), and set\+Last().
 \subsubsection[{\+\_\+m\+Cylinder}]{\setlength{\rightskip}{0pt plus 5cm}unique\+\_\+ptr$<${\bf M\+Cylinder}$>$ Cylinder\+::\+\_\+m\+Cylinder\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinder_acdd582d5e2c3ede46122e1785097e5c3}
 
 
-Pointer to \hyperlink{classMCylinder}{M\+Cylinder}. 
+Pointer to mech cylinder. 
 
 
 
@@ -1208,7 +1213,7 @@ Referenced by get\+Position\+Filament().
 \subsubsection[{coordinate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Cylinder\+::coordinate}}\label{classCylinder_a8c7a6cfe1aecf1ee0eff3aaf9c11338f}
 
 
-Coordinates of midpoint of cylinder, updated with \hyperlink{classCylinder_aff701d6f4400ab216431d627c54a0b4e}{update\+Position()} 
+Coordinates of midpoint, updated with \hyperlink{classCylinder_aff701d6f4400ab216431d627c54a0b4e}{update\+Position()} 
 
 
 

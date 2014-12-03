@@ -12,7 +12,8 @@ Represents the mechanical component of a \hyperlink{classLinker}{Linker}.
 
 
 
-Collaboration diagram for M\+Linker\+:\nopagebreak
+Collaboration diagram for M\+Linker\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -34,7 +35,7 @@ void \hyperlink{classMLinker_a48568e299d0e6d0149fe53c9ee34b99a}{set\+Linker} (\h
 double \hyperlink{classMLinker_a6fe829d45b8889d95f8ad7ffdb143d61}{get\+Stretching\+Constant} ()
 \begin{DoxyCompactList}\small\item\em Getter for constants. \end{DoxyCompactList}\item 
 double \hyperlink{classMLinker_ad9e3e86cf88e4e06d1c16f6851c2f97c}{get\+Eq\+Length} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Getter for constants. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
@@ -50,7 +51,7 @@ double \hyperlink{classMLinker_ac42b3d84c2cd277440c052f2f80ea68c}{\+\_\+k\+Stret
 \subsection{Detailed Description}
 Represents the mechanical component of a \hyperlink{classLinker}{Linker}. 
 
-The class describes interaction between 4 \hyperlink{classBead}{Beads} connected by a \hyperlink{classLinker}{Linker}, and its associated equilibrium constants. Initial length of a linker is determinated by the condition of zero initial stress, i.\+e., it calculated within the constructor at initiation. A linker heads positions on a segment (between two consecutive beads on a filament) determined by two numbers (double from 0 to 1) position1 and position2. 
+The class describes interaction between 4 \hyperlink{classBead}{Beads} connected by a \hyperlink{classLinker}{Linker}, and its associated equilibrium constants. Initial length of a \hyperlink{classLinker}{Linker} is determinated by the condition of zero initial stress, i.\+e., it calculated within the constructor at initiation. A \hyperlink{classLinker}{Linker} heads positions on a segment (between two consecutive beads on a \hyperlink{classFilament}{Filament}) determined by two numbers (double from 0 to 1) position1 and position2. 
 
 Definition at line 31 of file M\+Linker.\+h.
 
@@ -99,6 +100,10 @@ References mathfunc\+::\+Mid\+Point\+Coordinate(), and mathfunc\+::\+Two\+Point\
 {}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMLinker_ad9e3e86cf88e4e06d1c16f6851c2f97c}
+
+
+Getter for constants. 
+
 
 
 Definition at line 44 of file M\+Linker.\+h.

@@ -27,15 +27,15 @@ Collaboration diagram for Output\+:\nopagebreak
 \hyperlink{classOutput_a61d0840daf98bea49e4dc471f235eeab}{$\sim$\+Output} ()
 \begin{DoxyCompactList}\small\item\em Destructor, which closes the output file. \end{DoxyCompactList}\item 
 void \hyperlink{classOutput_ad35067cbcca30c5cea00735d1d11f2b5}{print\+Basic\+Snapshot} (int step)
-\begin{DoxyCompactList}\small\item\em Print basic information about filaments, linkers, motors (D\+E\+P\+R\+E\+C\+A\+T\+E\+D) \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Print basic information about all \hyperlink{classFilament}{Filament}, \hyperlink{classLinker}{Linker}, \hyperlink{classMotorGhost}{Motor\+Ghost} in system (D\+E\+P\+R\+E\+C\+A\+T\+E\+D). \end{DoxyCompactList}\item 
 void \hyperlink{classOutput_a786eca35e9c06d89eab804c67b314e61}{print\+Snapshot} (int step)
 \begin{DoxyCompactList}\small\item\em New snapshot output. \end{DoxyCompactList}\item 
 void \hyperlink{classOutput_a1ca68aeb9bbffdcdc2a1d473ed923ceb}{print\+Birth\+Times} (int step)
-\begin{DoxyCompactList}\small\item\em Print birth times of beads for each filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Print birth times of beads for each \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 void \hyperlink{classOutput_a86a58b2b083f2a6043ad30b8c3d14ba0}{print\+Forces} (int step)
-\begin{DoxyCompactList}\small\item\em Print forces on beads for each filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Print forces on beads for each \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 void \hyperlink{classOutput_acb72afbff4487898488cdfd6a829ce45}{print\+Stresses} (int step)
-\begin{DoxyCompactList}\small\item\em Print stresses on beads for each filament. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Print stresses on beads for each \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -103,7 +103,7 @@ References \+\_\+output\+File.
 )}}\label{classOutput_ad35067cbcca30c5cea00735d1d11f2b5}
 
 
-Print basic information about filaments, linkers, motors (D\+E\+P\+R\+E\+C\+A\+T\+E\+D) 
+Print basic information about all \hyperlink{classFilament}{Filament}, \hyperlink{classLinker}{Linker}, \hyperlink{classMotorGhost}{Motor\+Ghost} in system (D\+E\+P\+R\+E\+C\+A\+T\+E\+D). 
 
 
 
@@ -126,7 +126,7 @@ Referenced by Controller\+::run().
 )}}\label{classOutput_a1ca68aeb9bbffdcdc2a1d473ed923ceb}
 
 
-Print birth times of beads for each filament. 
+Print birth times of beads for each \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -145,7 +145,7 @@ References Filament\+D\+B\+::instance(), and tau().
 )}}\label{classOutput_a86a58b2b083f2a6043ad30b8c3d14ba0}
 
 
-Print forces on beads for each filament. 
+Print forces on beads for each \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -183,7 +183,7 @@ References Filament\+D\+B\+::instance(), and tau().
 )}}\label{classOutput_acb72afbff4487898488cdfd6a829ce45}
 
 
-Print stresses on beads for each filament. 
+Print stresses on beads for each \hyperlink{classFilament}{Filament}. 
 
 
 

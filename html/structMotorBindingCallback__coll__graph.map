@@ -11,7 +11,7 @@
 <area shape="rect" id="node36" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="1814,781,1895,806"/>
 <area shape="rect" id="node13" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="1456,180,1541,205"/>
 <area shape="rect" id="node14" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="1523,87,1613,112"/>
-<area shape="rect" id="node21" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="657,895,759,920"/>
+<area shape="rect" id="node21" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="657,895,759,920"/>
 <area shape="rect" id="node48" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="1500,267,1604,292"/>
 <area shape="rect" id="node20" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="1187,981,1240,1007"/>
 <area shape="rect" id="node16" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="1114,567,1190,592"/>

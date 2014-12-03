@@ -2,7 +2,7 @@
 <area shape="rect" id="node1" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="5,204,96,229"/>
 <area shape="rect" id="node2" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="314,252,367,277"/>
 <area shape="rect" id="node3" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="144,104,229,129"/>
-<area shape="rect" id="node4" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="289,5,391,31"/>
+<area shape="rect" id="node4" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="289,5,391,31"/>
 <area shape="rect" id="node5" href="$classCompartmentGrid.html" title="A simple n&#45;dimensional grid of Compartment objects (singleton). " alt="" coords="277,55,404,80"/>
 <area shape="rect" id="node6" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="305,203,375,228"/>
 <area shape="rect" id="node7" href="$classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="312,104,369,129"/>

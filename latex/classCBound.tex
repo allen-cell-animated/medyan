@@ -21,7 +21,8 @@ Inheritance diagram for C\+Bound\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for C\+Bound\+:\nopagebreak
+Collaboration diagram for C\+Bound\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -49,9 +50,9 @@ void \hyperlink{classCBound_a01badbb54867fb99b6f3a895d555867a}{set\+Second\+Spec
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}{\+\_\+first\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding first species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding first species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_ae6818ab861d273598a2507be75183e41}{\+\_\+second\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding second species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding second species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCBound_a95a66719b898cf32e60ae7137186bbbf}{\+\_\+compartment}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this \hyperlink{classCBound}{C\+Bound} is in. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -59,7 +60,7 @@ void \hyperlink{classCBound_a01badbb54867fb99b6f3a895d555867a}{set\+Second\+Spec
 \subsection{Detailed Description}
 Represents a chemical object that is bound to a \hyperlink{classFilament}{Filament}. 
 
-The \hyperlink{classCBound}{C\+Bound} class is an abstract representation of a chemically bound object to a \hyperlink{classFilament}{Filament} (Could be a linker, motor, branching protein, etc). Each \hyperlink{classCBound}{C\+Bound} object has a pointer to the corresponding \hyperlink{classSpeciesBound}{Species\+Bound} on a filament. Different implementations of \hyperlink{classCBound}{C\+Bound} class will have different functions to bind, move, etc. See documentation of subclass for more details on function. 
+The \hyperlink{classCBound}{C\+Bound} class is an abstract representation of a chemically bound object to a \hyperlink{classFilament}{Filament} (Could be a \hyperlink{classLinker}{Linker}, \hyperlink{classMotorGhost}{Motor\+Ghost}, Branch\+Point, etc). Each \hyperlink{classCBound}{C\+Bound} object has a pointer to the corresponding \hyperlink{classSpeciesBound}{Species\+Bound} on a \hyperlink{classFilament}{Filament}. Different implementations of \hyperlink{classCBound}{C\+Bound} class will have different functions to bind, move, etc. See documentation of subclass for more details on function. 
 
 Definition at line 31 of file C\+Bound.\+h.
 
@@ -236,7 +237,7 @@ Referenced by get\+Compartment().
 \subsubsection[{\+\_\+first\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+first\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}
 
 
-Corresponding first species on filament. 
+Corresponding first species on \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -251,7 +252,7 @@ Referenced by C\+Linker\+::\+C\+Linker(), C\+Motor\+Ghost\+::\+C\+Motor\+Ghost()
 \subsubsection[{\+\_\+second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+second\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCBound_ae6818ab861d273598a2507be75183e41}
 
 
-Corresponding second species on filament. 
+Corresponding second species on \hyperlink{classFilament}{Filament}. 
 
 
 

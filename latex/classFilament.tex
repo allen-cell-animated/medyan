@@ -12,7 +12,8 @@ Used to store data about connectivity of \hyperlink{classCylinder}{Cylinders} an
 
 
 
-Collaboration diagram for Filament\+:\nopagebreak
+Collaboration diagram for Filament\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -60,7 +61,7 @@ void \hyperlink{classFilament_aecac31cfc73336f1be62b520261f1901}{print\+Chem\+Co
 void \hyperlink{classFilament_a77452b7100a3ce6205fff1ddbb5cb981}{reset\+Delta\+Plus\+End} ()
 \begin{DoxyCompactList}\small\item\em Reset delta. \end{DoxyCompactList}\item 
 void \hyperlink{classFilament_a68435f61aba67acf457cd1570180a4f3}{reset\+Delta\+Minus\+End} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Reset delta. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 {\bf }\par
 \begin{DoxyCompactItemize}
@@ -68,7 +69,7 @@ void \hyperlink{classFilament_a68435f61aba67acf457cd1570180a4f3}{reset\+Delta\+M
 short \hyperlink{classFilament_a6cced8194d751f3af57e664ff14e8f38}{get\+Delta\+Plus\+End} ()
 \begin{DoxyCompactList}\small\item\em Get delta. \end{DoxyCompactList}\item 
 short \hyperlink{classFilament_adb431809d8733d7b53dec1d438e2a42e}{get\+Delta\+Minus\+End} ()
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get delta. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 {\bf }\par
 \begin{DoxyCompactItemize}
@@ -76,11 +77,11 @@ short \hyperlink{classFilament_adb431809d8733d7b53dec1d438e2a42e}{get\+Delta\+Mi
 vector$<$ double $>$ \hyperlink{classFilament_a96e6a97434a442014b199cd7623d2291}{next\+Bead\+Projection} (\hyperlink{classBead}{Bead} $\ast$b, double d, vector$<$ double $>$ director)
 \begin{DoxyCompactList}\small\item\em Projection function, returns a vector of coordinates for bead creation. \end{DoxyCompactList}\item 
 vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_ade0776033b4e56f8035eda23c03887fa}{straight\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
-\item 
+\begin{DoxyCompactList}\small\item\em Projection function, returns a vector of coordinates for bead creation. \end{DoxyCompactList}\item 
 vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_a4809abeefb15e0009e246d4d4051ae7c}{zig\+Zag\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
-\item 
+\begin{DoxyCompactList}\small\item\em Projection function, returns a vector of coordinates for bead creation. \end{DoxyCompactList}\item 
 vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_aa552f866d4c2db6e987fa0b56e65f060}{arc\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Projection function, returns a vector of coordinates for bead creation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
@@ -100,7 +101,7 @@ short \hyperlink{classFilament_ac00eb37c21190ce574738d7f5259cf58}{\+\_\+delta\+M
 \subsection{Detailed Description}
 Used to store data about connectivity of \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads}. 
 
-This class contains information about \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads} connectivity. It has functionality to polymerize and depolymerize, as well as extend and retract by creating and deleting Cylinders and Beads in the system.
+This class contains information about \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads} connectivity. It has functionality to polymerize and depolymerize, as well as extend and retract by creating and deleting \hyperlink{classCylinder}{Cylinder} and \hyperlink{classBead}{Bead} in the system.
 
 A \hyperlink{classFilament}{Filament} can also be initialized as a number of shapes, including a zig zag and arc projection. 
 
@@ -170,6 +171,10 @@ Definition at line 72 of file Filament.\+cpp.
 \item[{int}]{num\+Beads}
 \end{DoxyParamCaption}
 )}}\label{classFilament_aa552f866d4c2db6e987fa0b56e65f060}
+
+
+Projection function, returns a vector of coordinates for bead creation. 
+
 \hypertarget{classFilament_a510f71d38622b7c906d5543f95558ad6}{\index{Filament@{Filament}!depolymerize\+Back@{depolymerize\+Back}}
 \index{depolymerize\+Back@{depolymerize\+Back}!Filament@{Filament}}
 \subsubsection[{depolymerize\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::depolymerize\+Back (
@@ -328,6 +333,10 @@ Referenced by Filament\+Stretching$<$ F\+Stretching\+Interaction\+Type $>$\+::co
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_adb431809d8733d7b53dec1d438e2a42e}
 
 
+Get delta. 
+
+
+
 Definition at line 105 of file Filament.\+h.
 
 
@@ -451,6 +460,10 @@ Definition at line 269 of file Filament.\+cpp.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_a68435f61aba67acf457cd1570180a4f3}
 
 
+Reset delta. 
+
+
+
 Definition at line 99 of file Filament.\+h.
 
 
@@ -528,6 +541,10 @@ Referenced by Filament\+Retraction\+Front\+Callback\+::operator()().
 )}}\label{classFilament_ade0776033b4e56f8035eda23c03887fa}
 
 
+Projection function, returns a vector of coordinates for bead creation. 
+
+
+
 Definition at line 275 of file Filament.\+cpp.
 
 
@@ -542,6 +559,10 @@ References Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geome
 \item[{int}]{num\+Beads}
 \end{DoxyParamCaption}
 )}}\label{classFilament_a4809abeefb15e0009e246d4d4051ae7c}
+
+
+Projection function, returns a vector of coordinates for bead creation. 
+
 
 
 Definition at line 296 of file Filament.\+cpp.

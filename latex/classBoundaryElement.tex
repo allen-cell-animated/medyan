@@ -49,19 +49,19 @@ virtual const vector$<$ double $>$ \hyperlink{classBoundaryElement_aef0aa594a421
 virtual double \hyperlink{classBoundaryElement_aff96a5a1faa7df9b30899d9c3de84f4a}{get\+Repulsion\+Const} ()=0
 \begin{DoxyCompactList}\small\item\em Getter for parameters. \end{DoxyCompactList}\item 
 virtual double \hyperlink{classBoundaryElement_a075dff05ab75cfd8be7f1a731030045a}{get\+Screening\+Length} ()=0
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Getter for parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ double $>$ \hyperlink{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}{\+\_\+coords}
-\begin{DoxyCompactList}\small\item\em coordinates of this boundary element \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em coordinates \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Represents an element of a boundary surface. 
 
-The \hyperlink{classBoundaryElement}{Boundary\+Element} class is a representation of a \hyperlink{classBoundarySurface}{Boundary\+Surface} element, which can interact with other elements in the system, including other Boundary\+Elements as well as \hyperlink{classBead}{Beads} in filaments. Together, a collection of boundary elements make up a \hyperlink{classBoundarySurface}{Boundary\+Surface}. 
+The \hyperlink{classBoundaryElement}{Boundary\+Element} class is a representation of a \hyperlink{classBoundarySurface}{Boundary\+Surface} element, which can interact with other elements in the system, including other Boundary\+Elements as well as \hyperlink{classBead}{Beads} in \hyperlink{classFilament}{Filaments}. Together, a collection of boundary elements make up a \hyperlink{classBoundarySurface}{Boundary\+Surface}. 
 
 Definition at line 37 of file Boundary\+Element.\+h.
 
@@ -181,6 +181,10 @@ Referenced by Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::comp
 )\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classBoundaryElement_a075dff05ab75cfd8be7f1a731030045a}
 
 
+Getter for parameters. 
+
+
+
 Implemented in \hyperlink{classHalfSphereZBoundaryElement_ab7b9034066dbc5bec386a04f6bc3a91f}{Half\+Sphere\+Z\+Boundary\+Element}, \hyperlink{classCylindricalZBoundaryElement_afe407ba95087aff6598141daccb06d39}{Cylindrical\+Z\+Boundary\+Element}, \hyperlink{classSphereBoundaryElement_aacda85af577d438ce939274960d72045}{Sphere\+Boundary\+Element}, and \hyperlink{classPlaneBoundaryElement_a81c5691717216f8602cc2300c603e253}{Plane\+Boundary\+Element}.
 
 
@@ -235,7 +239,7 @@ Referenced by Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::comp
 \subsubsection[{\+\_\+coords}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Boundary\+Element\+::\+\_\+coords\hspace{0.3cm}{\ttfamily [protected]}}}\label{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}
 
 
-coordinates of this boundary element 
+coordinates 
 
 
 

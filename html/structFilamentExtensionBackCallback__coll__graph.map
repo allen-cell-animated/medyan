@@ -9,7 +9,7 @@
 <area shape="rect" id="node11" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="415,404,540,429"/>
 <area shape="rect" id="node14" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="515,92,642,117"/>
 <area shape="rect" id="node15" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="106,5,182,31"/>
-<area shape="rect" id="node29" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="1194,1237,1296,1263"/>
+<area shape="rect" id="node29" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="1194,1237,1296,1263"/>
 <area shape="rect" id="node24" href="$classCCylinder.html" title="Holds all CMonomers and Reactions associated with it. " alt="" coords="1343,1331,1423,1356"/>
 <area shape="rect" id="node50" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="510,1124,591,1149"/>
 <area shape="rect" id="node19" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="1333,737,1419,763"/>

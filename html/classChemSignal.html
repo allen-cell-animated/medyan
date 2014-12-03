@@ -116,7 +116,7 @@ $(document).ready(function(){initNavTree('classChemSignal.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>Manages callbacks for <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a> and Reactions objects.  
+<p>Manages callbacks for <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a> and <a class="el" href="classReaction.html">Reactions</a> objects.  
  <a href="classChemSignal.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Signaling_8h_source.html">Signaling.h</a>&gt;</code></p>
@@ -181,16 +181,16 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a01513b0756cb765b0fd02a7e5497133d"><td class="memItemLeft" align="right" valign="top">unordered_map&lt; <a class="el" href="classRSpecies.html">RSpecies</a> <br class="typebreak" />
 *, unique_ptr<br class="typebreak" />
 &lt; <a class="el" href="Signaling_8h.html#a0e8f1e8752c518bbfbcfe0147eca4587">RSpeciesCopyNChangedSignal</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classChemSignal.html#a01513b0756cb765b0fd02a7e5497133d">_map_RSpecies_signal</a></td></tr>
-<tr class="memdesc:a01513b0756cb765b0fd02a7e5497133d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keep track of signals corresponding to various <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a>.  <a href="#a01513b0756cb765b0fd02a7e5497133d">More...</a><br /></td></tr>
+<tr class="memdesc:a01513b0756cb765b0fd02a7e5497133d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keep track of signals corresponding to various rspecies.  <a href="#a01513b0756cb765b0fd02a7e5497133d">More...</a><br /></td></tr>
 <tr class="separator:a01513b0756cb765b0fd02a7e5497133d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a750129c5a876c652e76e2a008b21b276"><td class="memItemLeft" align="right" valign="top">unordered_map&lt; <a class="el" href="classReactionBase.html">ReactionBase</a> <br class="typebreak" />
 *, unique_ptr<br class="typebreak" />
 &lt; <a class="el" href="Signaling_8h.html#a474e8de96ad1d2e184edd4655b5367a5">ReactionEventSignal</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classChemSignal.html#a750129c5a876c652e76e2a008b21b276">_map_reaction_signal</a></td></tr>
-<tr class="memdesc:a750129c5a876c652e76e2a008b21b276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keep track of signals corresponding to various Reactions.  <a href="#a750129c5a876c652e76e2a008b21b276">More...</a><br /></td></tr>
+<tr class="memdesc:a750129c5a876c652e76e2a008b21b276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keep track of signals corresponding to various reactions.  <a href="#a750129c5a876c652e76e2a008b21b276">More...</a><br /></td></tr>
 <tr class="separator:a750129c5a876c652e76e2a008b21b276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manages callbacks for <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a> and Reactions objects. </p>
+<div class="textblock"><p>Manages callbacks for <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a> and <a class="el" href="classReaction.html">Reactions</a> objects. </p>
 <p>One <a class="el" href="classChemSignal.html" title="Manages callbacks for RSpecies and Reactions objects. ">ChemSignal</a> should be instantiated per chemical network. <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a> and Reactions that need to be monitored can be made to signal, based on the boost:signal2 library. Multiple receiving slots can be connected to signals.</p>
 <p>Slots can be temporarily blocked or completely disconnected. Signals can be destroyed. Here is an example of usage: </p><div class="fragment"><div class="line"> ...</div>
 <div class="line"> <a class="code" href="classSpecies.html">Species</a>* A1 = ...</div>
@@ -663,7 +663,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Keep track of signals corresponding to various Reactions. </p>
+<p>Keep track of signals corresponding to various reactions. </p>
 
 <p>Definition at line <a class="el" href="Signaling_8h_source.html#l00074">74</a> of file <a class="el" href="Signaling_8h_source.html">Signaling.h</a>.</p>
 
@@ -689,7 +689,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Keep track of signals corresponding to various <a class="el" href="classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...">RSpecies</a>. </p>
+<p>Keep track of signals corresponding to various rspecies. </p>
 
 <p>Definition at line <a class="el" href="Signaling_8h_source.html#l00073">73</a> of file <a class="el" href="Signaling_8h_source.html">Signaling.h</a>.</p>
 
@@ -706,7 +706,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classChemSignal.html">ChemSignal</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:18:57 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

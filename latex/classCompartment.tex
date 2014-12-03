@@ -3,7 +3,7 @@
 }
 
 
-A compartment for holding \hyperlink{classSpecies}{Species} and Reactions.  
+A container or holding \hyperlink{classSpecies}{Species} and Reactions.  
 
 
 
@@ -241,7 +241,7 @@ bool \hyperlink{classComponent_a4f0bed8144509d6565a30b548fac0fe7}{is\+Root} () c
 vector$<$ \hyperlink{classCompartment}{Compartment} $\ast$ $>$ \hyperlink{classCompartment_aef4d7ce0676c4ddb03fa02b90973c41c}{\+\_\+neighbours}
 \begin{DoxyCompactList}\small\item\em Neighbors of the compartment. \end{DoxyCompactList}\item 
 unordered\+\_\+map$<$ int, float $>$ \hyperlink{classCompartment_a92081814841d9bacca088eb55381f89c}{\+\_\+diffusion\+\_\+rates}
-\begin{DoxyCompactList}\small\item\em Diffusion rates of species in compartment. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Diffusion rates of \hyperlink{classSpecies}{Species} in compartment. \end{DoxyCompactList}\item 
 unordered\+\_\+set$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $\ast$ $>$ \hyperlink{classCompartment_aa582b3db6d4bef92ec7c7b7e639d0a09}{\+\_\+boundary\+Elements}
 \begin{DoxyCompactList}\small\item\em Set of boundary element that are in this compartment. \end{DoxyCompactList}\item 
 unordered\+\_\+set$<$ \hyperlink{classBead}{Bead} $\ast$ $>$ \hyperlink{classCompartment_a9da94d9a1b486007a4572865dcfcd474}{\+\_\+beads}
@@ -262,9 +262,9 @@ bool \hyperlink{classCompartment_a0809c1fc222c0157f44da8e41b01c09a}{operator!=} 
 
 
 \subsection{Detailed Description}
-A compartment for holding \hyperlink{classSpecies}{Species} and Reactions. 
+A container or holding \hyperlink{classSpecies}{Species} and Reactions. 
 
-The \hyperlink{classCompartment}{Compartment} class is a container for species, internal reactions, and diffusion reactions that can occur. A compartment object keeps track of the above while also holding pointers to its neighbors in order to generate diffusion reactions and other cross-\/compartment reactions.
+The \hyperlink{classCompartment}{Compartment} class is a container for \hyperlink{classSpecies}{Species}, Reactions, and diffusion Reactions that can occur. A \hyperlink{classCompartment}{Compartment} object keeps track of the above while also holding pointers to its neighbors in order to generate diffusion Reactions and other cross-\/compartment Reactions.
 
 \hyperlink{classCompartment}{Compartment} initialization looks like the following\+: 
 \begin{DoxyCode}
@@ -309,7 +309,7 @@ Referenced by clone().
 
 Constructor which clones another compartment. 
 
-Should eventuall clone beads, cylinders, boundary elements.... not clear yet 
+
 
 Definition at line 70 of file Compartment.\+h.
 
@@ -2576,7 +2576,7 @@ Referenced by add\+Cylinder(), get\+Cylinders(), and remove\+Cylinder().
 \subsubsection[{\+\_\+diffusion\+\_\+rates}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<$int,float$>$ Compartment\+::\+\_\+diffusion\+\_\+rates\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCompartment_a92081814841d9bacca088eb55381f89c}
 
 
-Diffusion rates of species in compartment. 
+Diffusion rates of \hyperlink{classSpecies}{Species} in compartment. 
 
 
 

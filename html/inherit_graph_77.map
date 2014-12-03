@@ -1,4 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classSpeciesVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ..." alt="" coords="5,5,111,31"/>
+<area shape="rect" id="node1" href="$classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ..." alt="" coords="5,5,111,31"/>
 <area shape="rect" id="node2" href="$classSpeciesVisitorLambda.html" title="Allows using C++11 lambda expressions to set the action to be performed on each Species of the node a..." alt="" coords="159,5,313,31"/>
 </map>

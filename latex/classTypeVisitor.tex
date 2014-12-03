@@ -27,14 +27,14 @@ Collaboration diagram for Type\+Visitor$<$ Component\+Type $>$\+:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{visit} (\hyperlink{classComponent}{Component} $\ast$c)
-\begin{DoxyCompactList}\small\item\em When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When this conditional \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 virtual bool \hyperlink{classTypeVisitor_a567bc776ee742b262ba7aa12c83c8dcf}{pred\+Impl} (\hyperlink{classComponent}{Component} $\ast$c) override
 \begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classComponent}{Component} $\ast$c satisfies the desired predicate. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}{visit\+Impl} (\hyperlink{classComponent}{Component} $\ast$c)=0
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -75,7 +75,7 @@ Definition at line 86 of file Visitor.\+h.
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}
 
 
-When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
+When this conditional \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
 
 If v-\/$>$visit(c) returns a false value, then the further propagation of the tree is terminated. 
 
@@ -98,7 +98,7 @@ Referenced by Component\+::apply(), and Composite\+::apply().
 )\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}, {\ttfamily [inherited]}}}\label{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}
 
 
-When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 

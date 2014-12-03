@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class CylinderVolumeInteractions;
 
-/// An implementation of the [ForceField](@ref ForceField) class that calculates [Cylinder] (@ref Cylinder)
+/// An implementation of the ForceField class that calculates Cylinder
 /// volume interactions.
 class VolumeCylindricalFF : public ForceField {
     

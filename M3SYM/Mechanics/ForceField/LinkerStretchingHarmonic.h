@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A harmonic potential used by the [LinkerStretching](@ref LinkerStretching) template.
+/// A harmonic potential used by the LinkerStretching template.
 class LinkerStretchingHarmonic {
     
 public:
@@ -31,4 +31,4 @@ public:
 
 
 
-#endif /* defined(__Cyto__LinkerStretchingHarmonic__) */
+#endif 

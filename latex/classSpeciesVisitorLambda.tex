@@ -12,7 +12,8 @@ Allows using C++11 lambda expressions to set the action to be performed on each 
 
 
 
-Inheritance diagram for Species\+Visitor\+Lambda\+:\nopagebreak
+Inheritance diagram for Species\+Visitor\+Lambda\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -21,7 +22,8 @@ Inheritance diagram for Species\+Visitor\+Lambda\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Species\+Visitor\+Lambda\+:\nopagebreak
+Collaboration diagram for Species\+Visitor\+Lambda\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -36,7 +38,7 @@ void \hyperlink{classSpeciesVisitorLambda_a09d2fbe0f3aec217fb587b7a4ad26733}{set
 void \hyperlink{classSpeciesVisitorLambda_a9e47f21aa9709e39065e8f393ed094c5}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classSpecies}{Species} $\ast$)$>$ pred)
 \begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
 bool \hyperlink{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}{visit} (\hyperlink{classSpecies}{Species} $\ast$s)
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -139,7 +141,7 @@ Referenced by main().
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}
 
 
-When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 

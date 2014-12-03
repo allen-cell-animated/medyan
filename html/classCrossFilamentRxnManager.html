@@ -117,7 +117,7 @@ $(document).ready(function(){initNavTree('classCrossFilamentRxnManager.html','')
 </div><!--header-->
 <div class="contents">
 
-<p>To store cross-filament reactions, including linker and motor binding.  
+<p>To store cross-filament reactions, including <a class="el" href="classLinker.html" title="A container to store a MLinker and CLinker. ">Linker</a> and <a class="el" href="classMotorGhost.html" title="A container to store a MMotorGhost and CMotorGhost. ">MotorGhost</a> binding.  
  <a href="classCrossFilamentRxnManager.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ReactionManager_8h_source.html">ReactionManager.h</a>&gt;</code></p>
@@ -126,7 +126,7 @@ Inheritance diagram for CrossFilamentRxnManager:</div>
 <div class="dyncontent">
 <div class="center"><img src="classCrossFilamentRxnManager__inherit__graph.png" border="0" usemap="#CrossFilamentRxnManager_inherit__map" alt="Inheritance graph"/></div>
 <map name="CrossFilamentRxnManager_inherit__map" id="CrossFilamentRxnManager_inherit__map">
-<area shape="rect" id="node3" href="classLinkerBindingManager.html" title="Manager for linker binding. " alt="" coords="5,152,160,177"/><area shape="rect" id="node4" href="classMotorBindingManager.html" title="Manager for motor binding. " alt="" coords="184,152,336,177"/><area shape="rect" id="node2" href="classCylinderNLContainer.html" title="Holds a CylinderNeighborList. " alt="" coords="98,5,243,31"/></map>
+<area shape="rect" id="node3" href="classLinkerBindingManager.html" title="Manager for Linker binding. " alt="" coords="5,152,160,177"/><area shape="rect" id="node4" href="classMotorBindingManager.html" title="Manager for MotorGhost binding. " alt="" coords="184,152,336,177"/><area shape="rect" id="node2" href="classCylinderNLContainer.html" title="Holds a CylinderNeighborList. " alt="" coords="98,5,243,31"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for CrossFilamentRxnManager:</div>
@@ -154,8 +154,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aeb9207c18bb40c33d9c8fe99a006401d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter for parameters of reaction.  <a href="#aeb9207c18bb40c33d9c8fe99a006401d">More...</a><br /></td></tr>
 <tr class="separator:aeb9207c18bb40c33d9c8fe99a006401d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7fa04502185124176a72fb2f3965c698"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCrossFilamentRxnManager.html#a7fa04502185124176a72fb2f3965c698">getRMax</a> ()</td></tr>
+<tr class="memdesc:a7fa04502185124176a72fb2f3965c698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter for parameters of reaction.  <a href="#a7fa04502185124176a72fb2f3965c698">More...</a><br /></td></tr>
 <tr class="separator:a7fa04502185124176a72fb2f3965c698"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5527049ea757ea2b22fca486d3bf08d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCrossFilamentRxnManager.html#aa5527049ea757ea2b22fca486d3bf08d">getReactionID</a> ()</td></tr>
+<tr class="memdesc:aa5527049ea757ea2b22fca486d3bf08d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter for parameters of reaction.  <a href="#aa5527049ea757ea2b22fca486d3bf08d">More...</a><br /></td></tr>
 <tr class="separator:aa5527049ea757ea2b22fca486d3bf08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
@@ -190,11 +192,11 @@ Friends</h2></td></tr>
 <tr class="separator:a65026d22c7682cf798dda845cac7573a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>To store cross-filament reactions, including linker and motor binding. </p>
-<p><a class="el" href="classCrossFilamentRxnManager.html" title="To store cross-filament reactions, including linker and motor binding. ">CrossFilamentRxnManager</a> is used to store a cross-filament reaction. It contains vectors of tuples that represent the position in the <a class="el" href="classCMonomer.html">CMonomer</a> in which the species is stored (for products and reactants), as well as the rate of the reaction and direction. The integer value that is the position of the species in the <a class="el" href="classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g...">CMonomer</a> vector is held by the <a class="el" href="classChemManager.html">ChemManager</a>. Also contains the range of this reaction.</p>
-<p>Also a subclass of <a class="el" href="classCylinderNLContainer.html">CylinderNLContainer</a>, contains a cylinder neighbors list of active reactions</p>
-<dl class="section note"><dt>Note</dt><dd>if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the <a class="el" href="classSpeciesNamesDB.html">SpeciesNamesDB</a>.</dd></dl>
-<p>This class also has functions to add the cross filament reaction to two <a class="el" href="classCCylinder.html">CCylinders</a> </p>
+<div class="textblock"><p>To store cross-filament reactions, including <a class="el" href="classLinker.html" title="A container to store a MLinker and CLinker. ">Linker</a> and <a class="el" href="classMotorGhost.html" title="A container to store a MMotorGhost and CMotorGhost. ">MotorGhost</a> binding. </p>
+<p><a class="el" href="classCrossFilamentRxnManager.html" title="To store cross-filament reactions, including Linker and MotorGhost binding. ">CrossFilamentRxnManager</a> is used to store a cross-filament reaction. It contains vectors of tuples that represent the position in the <a class="el" href="classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g...">CMonomer</a> in which the species is stored (for products and reactants), as well as the rate of the reaction and direction. The integer value that is the position of the species in the <a class="el" href="classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g...">CMonomer</a> vector is held by the <a class="el" href="classChemManager.html" title="For initailizing chemical reactions based on a specific system. ">ChemManager</a>. Also contains the range of this reaction.</p>
+<p>Also a subclass of <a class="el" href="classCylinderNLContainer.html" title="Holds a CylinderNeighborList. ">CylinderNLContainer</a>, contains a cylinder neighbors list of active reactions</p>
+<dl class="section note"><dt>Note</dt><dd>if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the <a class="el" href="classSpeciesNamesDB.html" title="Used to associate unique integers with character based names of Species. ">SpeciesNamesDB</a>.</dd></dl>
+<p>This class also has functions to add the cross filament reaction to two <a class="el" href="classCCylinder.html">CCylinders</a>. </p>
 
 <p>Definition at line <a class="el" href="ReactionManager_8h_source.html#l00196">196</a> of file <a class="el" href="ReactionManager_8h_source.html">ReactionManager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -374,6 +376,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Getter for parameters of reaction. </p>
+
 <p>Definition at line <a class="el" href="ReactionManager_8h_source.html#l00228">228</a> of file <a class="el" href="ReactionManager_8h_source.html">ReactionManager.h</a>.</p>
 
 <p>References <a class="el" href="ReactionManager_8h_source.html#l00211">_reactionID</a>.</p>
@@ -400,6 +404,8 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Getter for parameters of reaction. </p>
 
 <p>Definition at line <a class="el" href="ReactionManager_8h_source.html#l00227">227</a> of file <a class="el" href="ReactionManager_8h_source.html">ReactionManager.h</a>.</p>
 
@@ -641,7 +647,7 @@ Friends</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classCrossFilamentRxnManager.html">CrossFilamentRxnManager</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:18:58 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

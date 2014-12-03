@@ -3,7 +3,7 @@
 }
 
 
-Used to control the geometry of the grid, as well as the geometry of entire system.  
+Used to control the geometry of the \hyperlink{classCompartmentGrid}{Compartment\+Grid}, as well as the geometry of entire system.  
 
 
 
@@ -37,7 +37,7 @@ static void \hyperlink{classGController_a3217b2c56180064a0efda25e79bd6267}{find\
 static \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classGController_aec4700bedd12cf8d83c0ffa2c3f49891}{get\+Compartment} (const vector$<$ size\+\_\+t $>$ \&indices)
 \begin{DoxyCompactList}\small\item\em Get a compartment based on coordinates or indices. \end{DoxyCompactList}\item 
 static \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classGController_af4a3bd7c2e4868529860c58e125f6447}{get\+Compartment} (const vector$<$ double $>$ \&coords)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get a compartment based on coordinates or indices. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
@@ -56,9 +56,9 @@ static vector$<$ double $>$ \hyperlink{classGController_a26bdd8b8d1667decda74bed
 
 
 \subsection{Detailed Description}
-Used to control the geometry of the grid, as well as the geometry of entire system. 
+Used to control the geometry of the \hyperlink{classCompartmentGrid}{Compartment\+Grid}, as well as the geometry of entire system. 
 
-The Geometry\+Controller class is used to control the geometry of the simulation, which includes the \hyperlink{classCompartmentGrid}{Compartment\+Grid} geometry as well as any \hyperlink{classBoundary}{Boundaries} that are in place. It has functionality to initialize a grid based on the given dimensionality as well as find the correct \hyperlink{classCompartment}{Compartment} based on a set of coordinates. 
+The Geometry\+Controller class is used by the \hyperlink{classSubSystem}{Sub\+System} to control the geometry of the simulation, which includes the \hyperlink{classCompartmentGrid}{Compartment\+Grid} geometry as well as any \hyperlink{classBoundary}{Boundaries} that are in place. It has functionality to initialize a \hyperlink{classCompartmentGrid}{Compartment\+Grid} based on the given dimensionality as well as find the correct \hyperlink{classCompartment}{Compartment} based on a set of coordinates. 
 
 Definition at line 40 of file G\+Controller.\+h.
 
@@ -166,6 +166,10 @@ Referenced by Bead\+::\+Bead(), Cylinder\+::\+Cylinder(), Linker\+::\+Linker(), 
 \item[{const vector$<$ double $>$ \&}]{coords}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [static]}}}\label{classGController_af4a3bd7c2e4868529860c58e125f6447}
+
+
+Get a compartment based on coordinates or indices. 
+
 
 
 Definition at line 50 of file G\+Controller.\+cpp.

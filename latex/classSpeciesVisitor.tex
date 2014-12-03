@@ -3,7 +3,7 @@
 }
 
 
-The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern.  
+The \hyperlink{classVisitor}{Visitor} pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern.  
 
 
 
@@ -23,20 +23,20 @@ Inheritance diagram for Species\+Visitor\+:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}{visit} (\hyperlink{classSpecies}{Species} $\ast$s)
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. \end{DoxyCompactList}\item 
 virtual \hyperlink{classSpeciesVisitor_a07365fea8fc4e68898f68476d6da0064}{$\sim$\+Species\+Visitor} ()
 \begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 virtual bool \hyperlink{classSpeciesVisitor_a6702d4e5a08830afbf069bbe9304689c}{visit\+Impl} (\hyperlink{classSpecies}{Species} $\ast$s)=0
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classSpeciesVisitor_a3ea54d8670df82e87c8ee7d32b927584}{pred\+Impl} (\hyperlink{classSpecies}{Species} $\ast$s)
 \begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classSpecies}{Species} $\ast$s satisfies the desired predicate. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. 
+The \hyperlink{classVisitor}{Visitor} pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. 
 
 Concrete classes derived from \hyperlink{classVisitor}{Visitor} must implement the visit(\+Component $\ast$c) method. 
 
@@ -95,7 +95,7 @@ Referenced by visit().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}
 
 
-When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 
@@ -118,7 +118,7 @@ Referenced by Compartment\+::apply\+\_\+impl().
 )\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}}\label{classSpeciesVisitor_a6702d4e5a08830afbf069bbe9304689c}
 
 
-When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 

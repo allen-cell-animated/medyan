@@ -3,7 +3,7 @@
 }
 
 
-To store filament chemical reaction information read from an input file.  
+To store \hyperlink{classFilament}{Filament} chemical reaction information read from an input file.  
 
 
 
@@ -12,7 +12,8 @@ To store filament chemical reaction information read from an input file.
 
 
 
-Inheritance diagram for Internal\+Filament\+Rxn\+Manager\+:\nopagebreak
+Inheritance diagram for Internal\+Filament\+Rxn\+Manager\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -38,7 +39,7 @@ Collaboration diagram for Internal\+Filament\+Rxn\+Manager\+:\nopagebreak
 virtual void \hyperlink{classInternalFilamentRxnManager_a45f1ff9c676e41db408669ab6c5242e9}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)=0
 \begin{DoxyCompactList}\small\item\em Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. \end{DoxyCompactList}\item 
 virtual void \hyperlink{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2)=0
-\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two C\+Cylinders. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two \hyperlink{classCCylinder}{C\+Cylinders}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -61,14 +62,14 @@ class \hyperlink{classInternalFilamentRxnManager_a65026d22c7682cf798dda845cac757
 
 
 \subsection{Detailed Description}
-To store filament chemical reaction information read from an input file. 
+To store \hyperlink{classFilament}{Filament} chemical reaction information read from an input file. 
 
 \hyperlink{classInternalFilamentRxnManager}{Internal\+Filament\+Rxn\+Manager} is used to store a filament reaction. It contains vectors of tuples that represent the position in the \hyperlink{classCMonomer}{C\+Monomer} in which the species is stored (for products and reactants), as well as the rate of the reaction. The integer value that is the position of the species in the \hyperlink{classCMonomer}{C\+Monomer} vector is held by the \hyperlink{classChemManager}{Chem\+Manager}.
 
 \begin{DoxyNote}{Note}
 if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B}.
 \end{DoxyNote}
-This class also has functions to add the filament reaction to a \hyperlink{classCCylinder}{C\+Cylinder}, as well as add a connection reaction between two neighboring C\+Cylinders. 
+This class also has functions to add the filament reaction to a \hyperlink{classCCylinder}{C\+Cylinder}, as well as add a connection reaction between two neighboring \hyperlink{classCCylinder}{C\+Cylinders}. 
 
 Definition at line 45 of file Reaction\+Manager.\+h.
 
@@ -127,7 +128,7 @@ Implemented in \hyperlink{classMotorWalkBManager_a51f22756649c1d14a1d516ee850102
 )\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}
 
 
-Add this chemical reaction cross two C\+Cylinders. 
+Add this chemical reaction cross two \hyperlink{classCCylinder}{C\+Cylinders}. 
 
 \begin{DoxyNote}{Note}
 assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 

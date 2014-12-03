@@ -115,7 +115,7 @@ $(document).ready(function(){initNavTree('classReactionVisitor.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>The visitor pattern allows a functor to visit each node of the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern.  
+<p>The <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a> pattern allows a functor to visit each node of the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern.  
  <a href="classReactionVisitor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Visitor_8h_source.html">Visitor.h</a>&gt;</code></p>
@@ -130,7 +130,7 @@ Inheritance diagram for ReactionVisitor:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2a2381f0f0fcd0067537af8d965a32d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReactionVisitor.html#a2a2381f0f0fcd0067537af8d965a32d3">visit</a> (<a class="el" href="classReactionBase.html">ReactionBase</a> *r)</td></tr>
-<tr class="memdesc:a2a2381f0f0fcd0067537af8d965a32d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this visitor, *v, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(s), for each of the <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> *r of that node.  <a href="#a2a2381f0f0fcd0067537af8d965a32d3">More...</a><br /></td></tr>
+<tr class="memdesc:a2a2381f0f0fcd0067537af8d965a32d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *v, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(s), for each of the <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> *r of that node.  <a href="#a2a2381f0f0fcd0067537af8d965a32d3">More...</a><br /></td></tr>
 <tr class="separator:a2a2381f0f0fcd0067537af8d965a32d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d310d3c9165de0c33fc37e37406c242"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReactionVisitor.html#a4d310d3c9165de0c33fc37e37406c242">~ReactionVisitor</a> ()</td></tr>
 <tr class="memdesc:a4d310d3c9165de0c33fc37e37406c242"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <a href="#a4d310d3c9165de0c33fc37e37406c242">More...</a><br /></td></tr>
@@ -139,14 +139,14 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab8ca562e38925467ae17eb2425f61a4c"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReactionVisitor.html#ab8ca562e38925467ae17eb2425f61a4c">visitImpl</a> (<a class="el" href="classReactionBase.html">ReactionBase</a> *r)=0</td></tr>
-<tr class="memdesc:ab8ca562e38925467ae17eb2425f61a4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c).  <a href="#ab8ca562e38925467ae17eb2425f61a4c">More...</a><br /></td></tr>
+<tr class="memdesc:ab8ca562e38925467ae17eb2425f61a4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c).  <a href="#ab8ca562e38925467ae17eb2425f61a4c">More...</a><br /></td></tr>
 <tr class="separator:ab8ca562e38925467ae17eb2425f61a4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acee5a012f810080164130eb47865472f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReactionVisitor.html#acee5a012f810080164130eb47865472f">predImpl</a> (<a class="el" href="classReactionBase.html">ReactionBase</a> *r)=0</td></tr>
 <tr class="memdesc:acee5a012f810080164130eb47865472f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> *r satisfies the desired predicate.  <a href="#acee5a012f810080164130eb47865472f">More...</a><br /></td></tr>
 <tr class="separator:acee5a012f810080164130eb47865472f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The visitor pattern allows a functor to visit each node of the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern. </p>
+<div class="textblock"><p>The <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a> pattern allows a functor to visit each node of the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern. </p>
 <p>Concrete classes derived from <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a> must implement the visit(Component *c) method. </p>
 
 <p>Definition at line <a class="el" href="Visitor_8h_source.html#l00149">149</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
@@ -231,7 +231,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>When this visitor, *v, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(s), for each of the <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> *r of that node. </p>
+<p>When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *v, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(s), for each of the <a class="el" href="classReaction.html" title="Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N...">Reaction</a> *r of that node. </p>
 <p>If a false value is returned from this function called, then the further propagation of the tree is terminated. </p>
 
 <p>Definition at line <a class="el" href="Visitor_8h_source.html#l00156">156</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
@@ -264,7 +264,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>When this visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c). </p>
+<p>When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c). </p>
 <p>If a false value is returned from this function called, then the further propagation of the tree is terminated. </p>
 
 <p>Implemented in <a class="el" href="classReactionVisitorLambda.html#aaadac898ea6650cd79774b14ac0b16d7">ReactionVisitorLambda</a>.</p>
@@ -282,7 +282,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classReactionVisitor.html">ReactionVisitor</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:19:07 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:39 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

@@ -21,7 +21,8 @@ Inheritance diagram for C\+Motor\+Ghost\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for C\+Motor\+Ghost\+:\nopagebreak
+Collaboration diagram for C\+Motor\+Ghost\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -42,9 +43,9 @@ Collaboration diagram for C\+Motor\+Ghost\+:\nopagebreak
 virtual \hyperlink{classCMotorGhost}{C\+Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a73ff98b373999b7913d9629ac290240c}{clone} (\hyperlink{classCompartment}{Compartment} $\ast$c)
 \begin{DoxyCompactList}\small\item\em Clone, calls copy constructor. \end{DoxyCompactList}\item 
 void \hyperlink{classCMotorGhost_a1e18f9a0e0dcc0f2b4b140c3fb60bea8}{set\+Motor\+Ghost} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$\hyperlink{classMotorGhost}{Motor\+Ghost})
-\begin{DoxyCompactList}\small\item\em Set parent motor ghost. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Set parent. \end{DoxyCompactList}\item 
 \hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a7b5661e4a7bc38ce2657af40b9ff7d29}{get\+Motor\+Ghost} ()
-\begin{DoxyCompactList}\small\item\em Get parent motor ghost. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get parent. \end{DoxyCompactList}\item 
 void \hyperlink{classCBound_a17d4b84d683b0b7bd75b793410fed18f}{set\+First\+Species} (\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$species)
 \begin{DoxyCompactList}\small\item\em Set first species. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_aad60656a671e4ffdc45b4c904fa7c320}{get\+First\+Species} ()
@@ -59,16 +60,16 @@ void \hyperlink{classCBound_a01badbb54867fb99b6f3a895d555867a}{set\+Second\+Spec
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}{\+\_\+first\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding first species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding first species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_ae6818ab861d273598a2507be75183e41}{\+\_\+second\+Species} = nullptr
-\begin{DoxyCompactList}\small\item\em Corresponding second species on filament. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Corresponding second species on \hyperlink{classFilament}{Filament}. \end{DoxyCompactList}\item 
 \hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCBound_a95a66719b898cf32e60ae7137186bbbf}{\+\_\+compartment}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this \hyperlink{classCBound}{C\+Bound} is in. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a248b8fee5ba1d85c989f666e3a908261}{\+\_\+p\+Motor\+Ghost}
-\begin{DoxyCompactList}\small\item\em Pointer to parent motorghost. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Pointer to parent. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -204,7 +205,7 @@ Referenced by C\+Monomer\+::\+C\+Monomer(), Motor\+Walking\+Forward\+Callback\+:
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_a7b5661e4a7bc38ce2657af40b9ff7d29}
 
 
-Get parent motor ghost. 
+Get parent. 
 
 
 
@@ -276,7 +277,7 @@ Referenced by C\+Linker\+::\+C\+Linker(), C\+Monomer\+::\+C\+Monomer(), C\+Motor
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_a1e18f9a0e0dcc0f2b4b140c3fb60bea8}
 
 
-Set parent motor ghost. 
+Set parent. 
 
 
 
@@ -332,7 +333,7 @@ Referenced by C\+Bound\+::get\+Compartment().
 \subsubsection[{\+\_\+first\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+first\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}
 
 
-Corresponding first species on filament. 
+Corresponding first species on \hyperlink{classFilament}{Filament}. 
 
 
 
@@ -347,7 +348,7 @@ Referenced by C\+Linker\+::\+C\+Linker(), C\+Motor\+Ghost(), C\+Bound\+::get\+Fi
 \subsubsection[{\+\_\+p\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost}$\ast$ C\+Motor\+Ghost\+::\+\_\+p\+Motor\+Ghost\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMotorGhost_a248b8fee5ba1d85c989f666e3a908261}
 
 
-Pointer to parent motorghost. 
+Pointer to parent. 
 
 
 
@@ -362,7 +363,7 @@ Referenced by get\+Motor\+Ghost(), and set\+Motor\+Ghost().
 \subsubsection[{\+\_\+second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+second\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_ae6818ab861d273598a2507be75183e41}
 
 
-Corresponding second species on filament. 
+Corresponding second species on \hyperlink{classFilament}{Filament}. 
 
 
 

@@ -23,7 +23,7 @@
 //FORWARD DECLARATIONS
 class LinkerInteractions;
 
-/// An implementation of the [ForceField](@ref ForceField) class that calculates [Linker] (@ref Linker)
+/// An implementation of the ForceField class that calculates Linker
 /// stretching, bending, and twisting.
 class LinkerFF : public ForceField {
     

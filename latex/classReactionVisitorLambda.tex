@@ -12,7 +12,8 @@ Allows using C++11 lambda expressions to set the action to be performed on each 
 
 
 
-Inheritance diagram for Reaction\+Visitor\+Lambda\+:\nopagebreak
+Inheritance diagram for Reaction\+Visitor\+Lambda\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -21,7 +22,8 @@ Inheritance diagram for Reaction\+Visitor\+Lambda\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Reaction\+Visitor\+Lambda\+:\nopagebreak
+Collaboration diagram for Reaction\+Visitor\+Lambda\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -40,7 +42,7 @@ void \hyperlink{classReactionVisitorLambda_ade8528f4fbc1d980e043df2787dfe317}{se
 void \hyperlink{classReactionVisitorLambda_acadd3371a2546c5b9a13974db708877a}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ pred)
 \begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
 bool \hyperlink{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}{visit} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
-\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -180,7 +182,7 @@ Referenced by main().
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}
 
 
-When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. 
+When this \hyperlink{classVisitor}{Visitor}, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. 
 
 If a false value is returned from this function called, then the further propagation of the tree is terminated. 
 

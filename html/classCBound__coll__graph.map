@@ -1,6 +1,6 @@
 <map id="CBound" name="CBound">
 <area shape="rect" id="node17" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="513,765,620,791"/>
-<area shape="rect" id="node2" href="$classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="430,1593,532,1619"/>
+<area shape="rect" id="node2" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="430,1593,532,1619"/>
 <area shape="rect" id="node8" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="1293,1372,1363,1397"/>
 <area shape="rect" id="node13" href="$classCCylinder.html" title="Holds all CMonomers and Reactions associated with it. " alt="" coords="680,1159,760,1184"/>
 <area shape="rect" id="node26" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="868,1680,921,1705"/>

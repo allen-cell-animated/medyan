@@ -124,7 +124,7 @@ Inheritance diagram for Component:</div>
 <div class="dyncontent">
 <div class="center"><img src="classComponent__inherit__graph.png" border="0" usemap="#Component_inherit__map" alt="Inheritance graph"/></div>
 <map name="Component_inherit__map" id="Component_inherit__map">
-<area shape="rect" id="node2" href="classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="198,79,251,104"/><area shape="rect" id="node3" href="classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="275,79,360,104"/><area shape="rect" id="node4" href="classCompartment.html" title="A compartment for holding Species and Reactions. " alt="" coords="5,152,107,177"/><area shape="rect" id="node5" href="classCompartmentGrid.html" title="A simple n&#45;dimensional grid of Compartment objects (singleton). " alt="" coords="131,152,259,177"/><area shape="rect" id="node6" href="classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="283,152,353,177"/><area shape="rect" id="node7" href="classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="377,152,435,177"/><area shape="rect" id="node8" href="classMotorGhost.html" title="A container to store a MMotorGhost and CMotorGhost. " alt="" coords="459,152,550,177"/></map>
+<area shape="rect" id="node2" href="classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="198,79,251,104"/><area shape="rect" id="node3" href="classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="275,79,360,104"/><area shape="rect" id="node4" href="classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="5,152,107,177"/><area shape="rect" id="node5" href="classCompartmentGrid.html" title="A simple n&#45;dimensional grid of Compartment objects (singleton). " alt="" coords="131,152,259,177"/><area shape="rect" id="node6" href="classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="283,152,353,177"/><area shape="rect" id="node7" href="classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="377,152,435,177"/><area shape="rect" id="node8" href="classMotorGhost.html" title="A container to store a MMotorGhost and CMotorGhost. " alt="" coords="459,152,550,177"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for Component:</div>
@@ -149,7 +149,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0f1cd7534ba27c165a1574adc8d422dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a>.  <a href="#a0f1cd7534ba27c165a1574adc8d422dd">More...</a><br /></td></tr>
 <tr class="separator:a0f1cd7534ba27c165a1574adc8d422dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a20f6f5a1f7da3238c069dfc35f174a4b">apply_impl</a> (<a class="el" href="classSpeciesVisitor.html">SpeciesVisitor</a> &amp;v)</td></tr>
-<tr class="memdesc:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classSpeciesVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#a20f6f5a1f7da3238c069dfc35f174a4b">More...</a><br /></td></tr>
+<tr class="memdesc:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#a20f6f5a1f7da3238c069dfc35f174a4b">More...</a><br /></td></tr>
 <tr class="separator:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa911f6c2be71a33eeeb44f03c82cd421"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#aa911f6c2be71a33eeeb44f03c82cd421">apply</a> (<a class="el" href="classReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
 <tr class="memdesc:aa911f6c2be71a33eeeb44f03c82cd421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a>.  <a href="#aa911f6c2be71a33eeeb44f03c82cd421">More...</a><br /></td></tr>
@@ -390,7 +390,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Applies <a class="el" href="classSpeciesVisitor.html" title="The visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
+<p>Applies <a class="el" href="classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node. </p>
 <p>This method needs to be overriden by descendent classes that contain <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a>. </p>
 
 <p>Reimplemented in <a class="el" href="classCompartment.html#ae9bdaf50db8e780d3614be3bc50e9171">Compartment</a>.</p>
@@ -916,7 +916,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classComponent.html">Component</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:18:58 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

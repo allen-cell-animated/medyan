@@ -31,7 +31,7 @@ void \hyperlink{classVisitorLambda_a77004dd1388b4b7ebc5d1d6fe1adb747}{set\+Lambd
 void \hyperlink{classVisitorLambda_a46d9cc856e3fbc7155dd2212981a8902}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classComponent}{Component} $\ast$)$>$ pred)
 \begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
 bool \hyperlink{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{visit} (\hyperlink{classComponent}{Component} $\ast$c)
-\begin{DoxyCompactList}\small\item\em When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When this conditional \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -132,7 +132,7 @@ References Visitor\+Lambda\+::\+\_\+pred.
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}
 
 
-When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
+When this conditional \hyperlink{classVisitor}{Visitor}, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
 
 If v-\/$>$visit(c) returns a false value, then the further propagation of the tree is terminated. 
 

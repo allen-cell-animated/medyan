@@ -117,7 +117,7 @@ $(document).ready(function(){initNavTree('classGController.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>Used to control the geometry of the grid, as well as the geometry of entire system.  
+<p>Used to control the geometry of the <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a>, as well as the geometry of entire system.  
  <a href="classGController.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="GController_8h_source.html">GController.h</a>&gt;</code></p>
@@ -146,12 +146,13 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:aec4700bedd12cf8d83c0ffa2c3f49891"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a compartment based on coordinates or indices.  <a href="#aec4700bedd12cf8d83c0ffa2c3f49891">More...</a><br /></td></tr>
 <tr class="separator:aec4700bedd12cf8d83c0ffa2c3f49891"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4a3bd7c2e4868529860c58e125f6447"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classCompartment.html">Compartment</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGController.html#af4a3bd7c2e4868529860c58e125f6447">getCompartment</a> (const vector&lt; double &gt; &amp;coords)</td></tr>
+<tr class="memdesc:af4a3bd7c2e4868529860c58e125f6447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a compartment based on coordinates or indices.  <a href="#af4a3bd7c2e4868529860c58e125f6447">More...</a><br /></td></tr>
 <tr class="separator:af4a3bd7c2e4868529860c58e125f6447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a94281778427606e93a54c67ab288e2cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGController.html#a94281778427606e93a54c67ab288e2cc">generateConnections</a> ()</td></tr>
-<tr class="memdesc:a94281778427606e93a54c67ab288e2cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all neighbors lists for each compartment in the <a class="el" href="classCompartmentGrid.html">CompartmentGrid</a>.  <a href="#a94281778427606e93a54c67ab288e2cc">More...</a><br /></td></tr>
+<tr class="memdesc:a94281778427606e93a54c67ab288e2cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all neighbors lists for each compartment in the <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a>.  <a href="#a94281778427606e93a54c67ab288e2cc">More...</a><br /></td></tr>
 <tr class="separator:a94281778427606e93a54c67ab288e2cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
@@ -163,12 +164,12 @@ Static Private Attributes</h2></td></tr>
 <tr class="memdesc:a2134b6522abe94d25206060b9684d265"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of each dimension, in compartment lengths.  <a href="#a2134b6522abe94d25206060b9684d265">More...</a><br /></td></tr>
 <tr class="separator:a2134b6522abe94d25206060b9684d265"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26bdd8b8d1667decda74bedf7bf25800"><td class="memItemLeft" align="right" valign="top">static vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGController.html#a26bdd8b8d1667decda74bedf7bf25800">_compartmentSize</a> = {}</td></tr>
-<tr class="memdesc:a26bdd8b8d1667decda74bedf7bf25800"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> size in each dimension.  <a href="#a26bdd8b8d1667decda74bedf7bf25800">More...</a><br /></td></tr>
+<tr class="memdesc:a26bdd8b8d1667decda74bedf7bf25800"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> size in each dimension.  <a href="#a26bdd8b8d1667decda74bedf7bf25800">More...</a><br /></td></tr>
 <tr class="separator:a26bdd8b8d1667decda74bedf7bf25800"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Used to control the geometry of the grid, as well as the geometry of entire system. </p>
-<p>The GeometryController class is used to control the geometry of the simulation, which includes the <a class="el" href="classCompartmentGrid.html">CompartmentGrid</a> geometry as well as any <a class="el" href="classBoundary.html">Boundaries</a> that are in place. It has functionality to initialize a grid based on the given dimensionality as well as find the correct <a class="el" href="classCompartment.html">Compartment</a> based on a set of coordinates. </p>
+<div class="textblock"><p>Used to control the geometry of the <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a>, as well as the geometry of entire system. </p>
+<p>The GeometryController class is used by the <a class="el" href="classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ...">SubSystem</a> to control the geometry of the simulation, which includes the <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a> geometry as well as any <a class="el" href="classBoundary.html">Boundaries</a> that are in place. It has functionality to initialize a <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a> based on the given dimensionality as well as find the correct <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> based on a set of coordinates. </p>
 
 <p>Definition at line <a class="el" href="GController_8h_source.html#l00040">40</a> of file <a class="el" href="GController_8h_source.html">GController.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
@@ -241,7 +242,7 @@ Static Private Attributes</h2></td></tr>
 <p>Get all compartments within a given range from the specified coordinate. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ccheck</td><td>- <a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> to check when initially calling this function </td></tr>
+    <tr><td class="paramname">ccheck</td><td>- <a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> to check when initially calling this function </td></tr>
     <tr><td class="paramname">compartments</td><td>- List of compartments that are within range. This will be populated by the function </td></tr>
   </table>
   </dd>
@@ -276,7 +277,7 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Generate all neighbors lists for each compartment in the <a class="el" href="classCompartmentGrid.html">CompartmentGrid</a>. </p>
+<p>Generate all neighbors lists for each compartment in the <a class="el" href="classCompartmentGrid.html" title="A simple n-dimensional grid of Compartment objects (singleton). ">CompartmentGrid</a>. </p>
 
 <p>Definition at line <a class="el" href="GController_8cpp_source.html#l00081">81</a> of file <a class="el" href="GController_8cpp_source.html">GController.cpp</a>.</p>
 
@@ -338,6 +339,8 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get a compartment based on coordinates or indices. </p>
+
 <p>Definition at line <a class="el" href="GController_8cpp_source.html#l00050">50</a> of file <a class="el" href="GController_8cpp_source.html">GController.cpp</a>.</p>
 
 <p>References <a class="el" href="Composite_8h_source.html#l00140">Composite::children()</a>, and <a class="el" href="CompartmentContainer_8cpp_source.html#l00025">CompartmentGrid::instance()</a>.</p>
@@ -384,7 +387,7 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classCompartment.html" title="A compartment for holding Species and Reactions. ">Compartment</a> size in each dimension. </p>
+<p><a class="el" href="classCompartment.html" title="A container or holding Species and Reactions. ">Compartment</a> size in each dimension. </p>
 
 <p>Definition at line <a class="el" href="GController_8h_source.html#l00045">45</a> of file <a class="el" href="GController_8h_source.html">GController.h</a>.</p>
 
@@ -448,7 +451,7 @@ Static Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classGController.html">GController</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:19:00 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

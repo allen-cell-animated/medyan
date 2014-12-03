@@ -32,24 +32,24 @@ Collaboration diagram for Boundary\+Cubic\+:\nopagebreak
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classBoundaryCubic_abba330bb75d623c8fa0884eeea937e63}{Boundary\+Cubic} ()
-\begin{DoxyCompactList}\small\item\em Default constructor, this will create a cube with given corners at edges of current grid. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Default constructor, this will create a cube with given corners at edges of current \hyperlink{classCompartmentGrid}{Compartment\+Grid}. \end{DoxyCompactList}\item 
 virtual bool \hyperlink{classBoundaryCubic_a07b7fc5d0d09b0ce39e92e6b4bd2a7a4}{within} (const vector$<$ double $>$ \&coordinates)
 \begin{DoxyCompactList}\small\item\em Check if coordinates are within boundary. \end{DoxyCompactList}\item 
 \hyperlink{Boundary_8h_a0099b369f2bc119c1b54728734b41132}{Boundary\+Shape} \hyperlink{classBoundary_a20d2121527b207eed35f6719393e3499}{get\+Shape} ()
-\begin{DoxyCompactList}\small\item\em Get shape of boundary. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get shape. \end{DoxyCompactList}\item 
 const vector$<$ unique\+\_\+ptr\\*
 $<$ \hyperlink{classBoundarySurface}{Boundary\+Surface} $>$ $>$ \& \hyperlink{classBoundary_acfa6640f65c432e339108887913539eb}{get\+Boundary\+Surfaces} ()
-\begin{DoxyCompactList}\small\item\em Get boundary surfaces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get boundarysurfaces. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ unique\+\_\+ptr\\*
 $<$ \hyperlink{classBoundarySurface}{Boundary\+Surface} $>$ $>$ \hyperlink{classBoundary_abbac1843206a158e7d0a6e741cdc00c1}{\+\_\+boundary\+Surfaces}
-\begin{DoxyCompactList}\small\item\em Vector of boundary surfaces (could be different implementations) \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Vector of boundarysurfaces (could be different implementations) \end{DoxyCompactList}\item 
 \hyperlink{Boundary_8h_a0099b369f2bc119c1b54728734b41132}{Boundary\+Shape} \hyperlink{classBoundary_a04c10c9a7aea1924d779d392e29f94ff}{\+\_\+shape}
-\begin{DoxyCompactList}\small\item\em \hyperlink{classBoundary}{Boundary} type of this boundary. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Shape of boundary. \end{DoxyCompactList}\item 
 short \hyperlink{classBoundary_a96f2294e0c822ab216fe5ab7e17258c7}{\+\_\+n\+Dim}
-\begin{DoxyCompactList}\small\item\em Dimensionality of this boundary. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Dimensionality. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -69,7 +69,7 @@ Definition at line 24 of file Boundary\+Impl.\+h.
 )}}\label{classBoundaryCubic_abba330bb75d623c8fa0884eeea937e63}
 
 
-Default constructor, this will create a cube with given corners at edges of current grid. 
+Default constructor, this will create a cube with given corners at edges of current \hyperlink{classCompartmentGrid}{Compartment\+Grid}. 
 
 
 
@@ -91,7 +91,7 @@ References Boundary\+::\+\_\+boundary\+Surfaces, Geometry\+Parameters\+::compart
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundary_acfa6640f65c432e339108887913539eb}
 
 
-Get boundary surfaces. 
+Get boundarysurfaces. 
 
 
 
@@ -110,7 +110,7 @@ References Boundary\+::\+\_\+boundary\+Surfaces.
 )\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundary_a20d2121527b207eed35f6719393e3499}
 
 
-Get shape of boundary. 
+Get shape. 
 
 
 
@@ -151,7 +151,7 @@ References Boundary\+::\+\_\+boundary\+Surfaces.
 \subsubsection[{\+\_\+boundary\+Surfaces}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Boundary\+Surface}$>$ $>$ Boundary\+::\+\_\+boundary\+Surfaces\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_abbac1843206a158e7d0a6e741cdc00c1}
 
 
-Vector of boundary surfaces (could be different implementations) 
+Vector of boundarysurfaces (could be different implementations) 
 
 
 
@@ -166,7 +166,7 @@ Referenced by Boundary\+Capsule\+::\+Boundary\+Capsule(), Boundary\+Cubic(), Bou
 \subsubsection[{\+\_\+n\+Dim}]{\setlength{\rightskip}{0pt plus 5cm}short Boundary\+::\+\_\+n\+Dim\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_a96f2294e0c822ab216fe5ab7e17258c7}
 
 
-Dimensionality of this boundary. 
+Dimensionality. 
 
 
 
@@ -177,7 +177,7 @@ Definition at line 35 of file Boundary.\+h.
 \subsubsection[{\+\_\+shape}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Shape} Boundary\+::\+\_\+shape\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_a04c10c9a7aea1924d779d392e29f94ff}
 
 
-\hyperlink{classBoundary}{Boundary} type of this boundary. 
+Shape of boundary. 
 
 
 

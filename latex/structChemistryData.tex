@@ -24,18 +24,18 @@ Collaboration diagram for Chemistry\+Data\+:\nopagebreak
 \item 
 vector$<$ tuple$<$ vector$<$ string $>$\\*
 , vector$<$ string $>$, double $>$ $>$ \hyperlink{structChemistryData_a4faa68797fd22c5247b9b52a9057023a}{gen\+Reactions} = \{\}
-\begin{DoxyCompactList}\small\item\em Reactions happening between bulk and diffusing species O\+N\+L\+Y. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} happening between bulk and diffusing species O\+N\+L\+Y. \end{DoxyCompactList}\item 
 vector$<$ tuple$<$ vector$<$ string $>$\\*
 , vector$<$ string $>$, double $>$ $>$ \hyperlink{structChemistryData_a18d2b4d3d417507768bb50f7f43f427b}{bulk\+Reactions} = \{\}
-\begin{DoxyCompactList}\small\item\em Reactions happening between bulk species O\+N\+L\+Y. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} happening between bulk species O\+N\+L\+Y. \end{DoxyCompactList}\item 
 vector$<$ tuple$<$ vector$<$ string $>$\\*
 , vector$<$ string $>$, double $>$ $>$ \hyperlink{structChemistryData_a96d5d5289ae3651ab139b1de586b80e7}{motor\+Walking\+Reactions} = \{\}
-\begin{DoxyCompactList}\small\item\em Motor walking reactions. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classMotorGhost}{Motor\+Ghost} walking reactions. \end{DoxyCompactList}\item 
 vector$<$ tuple$<$ string, int $>$ $>$ \hyperlink{structChemistryData_ae9c303af6cd6b503fe45515c4ee5132b}{species\+Bulk} = \{\}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classSpeciesBulk}{Species\+Bulk} parsed, in the form of a tuple which contains the name and initial copy number. \end{DoxyCompactList}\item 
 vector$<$ tuple$<$ string, int, \\*
 double $>$ $>$ \hyperlink{structChemistryData_acf21fd3143fa3bc4e0e1097ce15cb77c}{species\+Diffusing} = \{\}
-\begin{DoxyCompactList}\small\item\em \hyperlink{classSpeciesDiffusing}{Species\+Diffusing} parsed, in the form of a tuple which contains name, initial copy number per compartment, and the rate of diffusion. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Speices\+Diffusing parsed, in the form of a tuple which contains name, initial copy number per compartment, and the rate of diffusion. \end{DoxyCompactList}\end{DoxyCompactItemize}
 {\bf }\par
 \begin{DoxyCompactItemize}
 \item 
@@ -62,7 +62,7 @@ double, double $>$ $>$ \hyperlink{structChemistryData_ae3e27a2c950e196017c06f416
 vector$<$ tuple$<$ vector$<$ string $>$\\*
 , vector$<$ string $>$, double, \\*
 double, double $>$ $>$ \hyperlink{structChemistryData_a2a4b2e949b6e0b8f32158cf101d24fa6}{motor\+Binding\+Reactions} = \{\}
-\begin{DoxyCompactList}\small\item\em Motor binding reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classMotorGhost}{Motor\+Ghost} reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 {\bf }\par
 \begin{DoxyCompactItemize}
@@ -70,15 +70,15 @@ double, double $>$ $>$ \hyperlink{structChemistryData_a2a4b2e949b6e0b8f32158cf10
 vector$<$ string $>$ \hyperlink{structChemistryData_a3389b17268aaefcba28539ec3b5e5e35}{species\+Filament} = \{\}
 \begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{structChemistryData_acab0ca129148f43eaa33847782411b3a}{species\+Bound} = \{\}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{structChemistryData_ab41e13ef134b8cb9066fff74ece920ca}{species\+Linker} = \{\}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{structChemistryData_a273fd2565deae219bbd1fe3d557f53ba}{species\+Motor} = \{\}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{structChemistryData_a627b89ad8dad87e03d249e5dc56eff5a}{species\+Plus\+End} = \{\}
-\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{structChemistryData_a8b638671871e8cc1ef65f2c7429d6254}{species\+Minus\+End} = \{\}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classFilament}{Filament} species parsed. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 
@@ -110,7 +110,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+I\+F\+Rxn\+Managers(), and Chemistry
 \subsubsection[{bulk\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$vector$<$string$>$, vector$<$string$>$, double$>$ $>$ Chemistry\+Data\+::bulk\+Reactions = \{\}}}\label{structChemistryData_a18d2b4d3d417507768bb50f7f43f427b}
 
 
-Reactions happening between bulk species O\+N\+L\+Y. 
+\hyperlink{classReaction}{Reaction} happening between bulk species O\+N\+L\+Y. 
 
 
 
@@ -140,7 +140,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+I\+F\+Rxn\+Managers(), and Chemistry
 \subsubsection[{gen\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$vector$<$string$>$, vector$<$string$>$, double$>$ $>$ Chemistry\+Data\+::gen\+Reactions = \{\}}}\label{structChemistryData_a4faa68797fd22c5247b9b52a9057023a}
 
 
-Reactions happening between bulk and diffusing species O\+N\+L\+Y. 
+\hyperlink{classReaction}{Reaction} happening between bulk and diffusing species O\+N\+L\+Y. 
 
 
 
@@ -170,7 +170,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+C\+F\+Rxn\+Managers(), and Chemistry
 \subsubsection[{motor\+Binding\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$vector$<$string$>$, vector$<$string$>$, double, double, double$>$ $>$ Chemistry\+Data\+::motor\+Binding\+Reactions = \{\}}}\label{structChemistryData_a2a4b2e949b6e0b8f32158cf101d24fa6}
 
 
-Motor binding reactions. 
+\hyperlink{classMotorGhost}{Motor\+Ghost} reactions. 
 
 
 
@@ -185,7 +185,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+C\+F\+Rxn\+Managers(), and Chemistry
 \subsubsection[{motor\+Walking\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$vector$<$string$>$, vector$<$string$>$, double$>$ $>$ Chemistry\+Data\+::motor\+Walking\+Reactions = \{\}}}\label{structChemistryData_a96d5d5289ae3651ab139b1de586b80e7}
 
 
-Motor walking reactions. 
+\hyperlink{classMotorGhost}{Motor\+Ghost} walking reactions. 
 
 
 
@@ -202,7 +202,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+I\+F\+Rxn\+Managers(), and Chemistry
 
 \hyperlink{classFilament}{Filament} reactions. 
 
-All filament reactions are held using a vector containing a tuple with the string of reactants, string of products, and the reaction rate.\+Polymerization reactions 
+All \hyperlink{classFilament}{Filament} reactions are held using a vector containing a tuple with the string of reactants, string of products, and the reaction rate.\+Polymerization reactions 
 
 Definition at line 54 of file Parser.\+h.
 
@@ -213,6 +213,10 @@ Referenced by Simple\+Manager\+Impl\+::gen\+I\+F\+Rxn\+Managers(), and Chemistry
 \hypertarget{structChemistryData_acab0ca129148f43eaa33847782411b3a}{\index{Chemistry\+Data@{Chemistry\+Data}!species\+Bound@{species\+Bound}}
 \index{species\+Bound@{species\+Bound}!Chemistry\+Data@{Chemistry\+Data}}
 \subsubsection[{species\+Bound}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Chemistry\+Data\+::species\+Bound = \{\}}}\label{structChemistryData_acab0ca129148f43eaa33847782411b3a}
+
+
+\hyperlink{classFilament}{Filament} species parsed. 
+
 
 
 Definition at line 89 of file Parser.\+h.
@@ -241,7 +245,7 @@ Referenced by Simple\+Manager\+Impl\+::gen\+Bulk\+Reactions(), Simple\+Manager\+
 \subsubsection[{species\+Diffusing}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$string, int, double$>$ $>$ Chemistry\+Data\+::species\+Diffusing = \{\}}}\label{structChemistryData_acf21fd3143fa3bc4e0e1097ce15cb77c}
 
 
-\hyperlink{classSpeciesDiffusing}{Species\+Diffusing} parsed, in the form of a tuple which contains name, initial copy number per compartment, and the rate of diffusion. 
+Speices\+Diffusing parsed, in the form of a tuple which contains name, initial copy number per compartment, and the rate of diffusion. 
 
 
 
@@ -271,6 +275,10 @@ Referenced by Simple\+Manager\+Impl\+::initialize(), and Chemistry\+Parser\+::re
 \subsubsection[{species\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Chemistry\+Data\+::species\+Linker = \{\}}}\label{structChemistryData_ab41e13ef134b8cb9066fff74ece920ca}
 
 
+\hyperlink{classFilament}{Filament} species parsed. 
+
+
+
 Definition at line 90 of file Parser.\+h.
 
 
@@ -280,6 +288,10 @@ Referenced by Simple\+Manager\+Impl\+::initialize(), and Chemistry\+Parser\+::re
 \hypertarget{structChemistryData_a8b638671871e8cc1ef65f2c7429d6254}{\index{Chemistry\+Data@{Chemistry\+Data}!species\+Minus\+End@{species\+Minus\+End}}
 \index{species\+Minus\+End@{species\+Minus\+End}!Chemistry\+Data@{Chemistry\+Data}}
 \subsubsection[{species\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Chemistry\+Data\+::species\+Minus\+End = \{\}}}\label{structChemistryData_a8b638671871e8cc1ef65f2c7429d6254}
+
+
+\hyperlink{classFilament}{Filament} species parsed. 
+
 
 
 Definition at line 93 of file Parser.\+h.
@@ -293,6 +305,10 @@ Referenced by Simple\+Manager\+Impl\+::initialize(), and Chemistry\+Parser\+::re
 \subsubsection[{species\+Motor}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Chemistry\+Data\+::species\+Motor = \{\}}}\label{structChemistryData_a273fd2565deae219bbd1fe3d557f53ba}
 
 
+\hyperlink{classFilament}{Filament} species parsed. 
+
+
+
 Definition at line 91 of file Parser.\+h.
 
 
@@ -302,6 +318,10 @@ Referenced by Simple\+Manager\+Impl\+::initialize(), and Chemistry\+Parser\+::re
 \hypertarget{structChemistryData_a627b89ad8dad87e03d249e5dc56eff5a}{\index{Chemistry\+Data@{Chemistry\+Data}!species\+Plus\+End@{species\+Plus\+End}}
 \index{species\+Plus\+End@{species\+Plus\+End}!Chemistry\+Data@{Chemistry\+Data}}
 \subsubsection[{species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Chemistry\+Data\+::species\+Plus\+End = \{\}}}\label{structChemistryData_a627b89ad8dad87e03d249e5dc56eff5a}
+
+
+\hyperlink{classFilament}{Filament} species parsed. 
+
 
 
 Definition at line 92 of file Parser.\+h.

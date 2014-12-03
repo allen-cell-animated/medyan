@@ -1,7 +1,7 @@
 <map id="SimpleManagerImpl" name="SimpleManagerImpl">
 <area shape="rect" id="node2" href="$classChemManagerImpl.html" title="An abstract base class for initialization of all chemistry in the system. " alt="" coords="5,1111,140,1136"/>
-<area shape="rect" id="node5" href="$classInternalFilamentRxnManager.html" title="To store filament chemical reaction information read from an input file. " alt="" coords="265,911,459,936"/>
-<area shape="rect" id="node23" href="$classCrossFilamentRxnManager.html" title="To store cross&#45;filament reactions, including linker and motor binding. " alt="" coords="485,911,668,936"/>
+<area shape="rect" id="node5" href="$classInternalFilamentRxnManager.html" title="To store Filament chemical reaction information read from an input file. " alt="" coords="265,911,459,936"/>
+<area shape="rect" id="node23" href="$classCrossFilamentRxnManager.html" title="To store cross&#45;filament reactions, including Linker and MotorGhost binding. " alt="" coords="485,911,668,936"/>
 <area shape="rect" id="node7" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="272,797,361,823"/>
 <area shape="rect" id="node9" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="123,597,195,623"/>
 <area shape="rect" id="node11" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="248,597,329,623"/>

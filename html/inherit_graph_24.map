@@ -1,8 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="node1" href="$classCylinderNLContainer.html" title="Holds a CylinderNeighborList. " alt="" coords="5,81,150,107"/>
-<area shape="rect" id="node2" href="$classCrossFilamentRxnManager.html" title="To store cross&#45;filament reactions, including linker and motor binding. " alt="" coords="198,55,382,80"/>
+<area shape="rect" id="node2" href="$classCrossFilamentRxnManager.html" title="To store cross&#45;filament reactions, including Linker and MotorGhost binding. " alt="" coords="198,55,382,80"/>
 <area shape="rect" id="node5" href="$classCylinderVolumeInteractions.html" title="Represents a volume interaction between Cylinders. " alt="" coords="198,107,382,132"/>
-<area shape="rect" id="node3" href="$classLinkerBindingManager.html" title="Manager for linker binding. " alt="" coords="447,5,602,31"/>
-<area shape="rect" id="node4" href="$classMotorBindingManager.html" title="Manager for motor binding. " alt="" coords="449,55,601,80"/>
+<area shape="rect" id="node3" href="$classLinkerBindingManager.html" title="Manager for Linker binding. " alt="" coords="447,5,602,31"/>
+<area shape="rect" id="node4" href="$classMotorBindingManager.html" title="Manager for MotorGhost binding. " alt="" coords="449,55,601,80"/>
 <area shape="rect" id="node6" href="$classCylinderExclVolume.html" title="Represents an excuded volume interaction between two Cylinders. " alt="" coords="430,104,620,143"/>
 </map>

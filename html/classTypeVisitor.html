@@ -134,7 +134,7 @@ Collaboration diagram for TypeVisitor&lt; ComponentType &gt;:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3f8ea7ad6aa61e99d8d1bc0576bdf23c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisitor.html#a3f8ea7ad6aa61e99d8d1bc0576bdf23c">visit</a> (<a class="el" href="classComponent.html">Component</a> *c)</td></tr>
-<tr class="memdesc:a3f8ea7ad6aa61e99d8d1bc0576bdf23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this conditional visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true.  <a href="#a3f8ea7ad6aa61e99d8d1bc0576bdf23c">More...</a><br /></td></tr>
+<tr class="memdesc:a3f8ea7ad6aa61e99d8d1bc0576bdf23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this conditional <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true.  <a href="#a3f8ea7ad6aa61e99d8d1bc0576bdf23c">More...</a><br /></td></tr>
 <tr class="separator:a3f8ea7ad6aa61e99d8d1bc0576bdf23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -143,7 +143,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="memdesc:a567bc776ee742b262ba7aa12c83c8dcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> *c satisfies the desired predicate.  <a href="#a567bc776ee742b262ba7aa12c83c8dcf">More...</a><br /></td></tr>
 <tr class="separator:a567bc776ee742b262ba7aa12c83c8dcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ebdba266c77626f67a22fc2300d8dc3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisitor.html#a1ebdba266c77626f67a22fc2300d8dc3">visitImpl</a> (<a class="el" href="classComponent.html">Component</a> *c)=0</td></tr>
-<tr class="memdesc:a1ebdba266c77626f67a22fc2300d8dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c).  <a href="#a1ebdba266c77626f67a22fc2300d8dc3">More...</a><br /></td></tr>
+<tr class="memdesc:a1ebdba266c77626f67a22fc2300d8dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c).  <a href="#a1ebdba266c77626f67a22fc2300d8dc3">More...</a><br /></td></tr>
 <tr class="separator:a1ebdba266c77626f67a22fc2300d8dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -207,7 +207,7 @@ template&lt;class ComponentType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>When this conditional visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </p>
+<p>When this conditional <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: v-&gt;visit(c), if v-&gt;pred(c) returns true. </p>
 <p>If v-&gt;visit(c) returns a false value, then the further propagation of the tree is terminated. </p>
 
 <p>Definition at line <a class="el" href="Visitor_8h_source.html#l00039">39</a> of file <a class="el" href="Visitor_8h_source.html">Visitor.h</a>.</p>
@@ -240,7 +240,7 @@ template&lt;class ComponentType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>When this visitor, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c). </p>
+<p>When this <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a>, *cv, is propagated through the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> hieararchy, at each <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> node pointer *c, the following method is called: cv-&gt;visit(c). </p>
 <p>If a false value is returned from this function called, then the further propagation of the tree is terminated. </p>
 
 <p>Implemented in <a class="el" href="classVisitorLambda.html#af934df1d8669dd315d824d9ee706f250">VisitorLambda</a>.</p>
@@ -258,7 +258,7 @@ template&lt;class ComponentType &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classTypeVisitor.html">TypeVisitor</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 13:19:10 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 14:56:40 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

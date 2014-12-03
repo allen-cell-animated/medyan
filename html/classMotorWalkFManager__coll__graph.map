@@ -1,5 +1,5 @@
 <map id="MotorWalkFManager" name="MotorWalkFManager">
-<area shape="rect" id="node2" href="$classInternalFilamentRxnManager.html" title="To store filament chemical reaction information read from an input file. " alt="" coords="44,879,238,904"/>
+<area shape="rect" id="node2" href="$classInternalFilamentRxnManager.html" title="To store Filament chemical reaction information read from an input file. " alt="" coords="44,879,238,904"/>
 <area shape="rect" id="node4" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="183,772,272,797"/>
 <area shape="rect" id="node6" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="36,572,107,597"/>
 <area shape="rect" id="node8" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="174,572,255,597"/>

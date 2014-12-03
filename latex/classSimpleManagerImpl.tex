@@ -21,7 +21,8 @@ Inheritance diagram for Simple\+Manager\+Impl\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Simple\+Manager\+Impl\+:\nopagebreak
+Collaboration diagram for Simple\+Manager\+Impl\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -52,7 +53,7 @@ void \hyperlink{classSimpleManagerImpl_a7bb497c77b2eee7ee560d0259061e552}{gen\+B
 void \hyperlink{classSimpleManagerImpl_a7e196ec854f3d9dff5c930c23e0a656f}{gen\+I\+F\+Rxn\+Managers} (\hyperlink{structChemistryData}{Chemistry\+Data} \&chem)
 \begin{DoxyCompactList}\small\item\em Set up all reaction managers from the setup struct. \end{DoxyCompactList}\item 
 void \hyperlink{classSimpleManagerImpl_a0018d381ff3b968d74fa261ea9774dee}{gen\+C\+F\+Rxn\+Managers} (\hyperlink{structChemistryData}{Chemistry\+Data} \&chem)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Set up all reaction managers from the setup struct. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
@@ -69,17 +70,17 @@ $<$ \hyperlink{classCrossFilamentRxnManager}{Cross\+Filament\+Rxn\+Manager} $>$ 
 \begin{DoxyCompactItemize}
 \item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_a6842452647356333fa3a8dfc9daad925}{\+\_\+species\+Filament}
-\begin{DoxyCompactList}\small\item\em Vector of filament-\/related species in system. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_a8c41d3d46a0534a7127d5b863718bcba}{\+\_\+species\+Plus\+End}
-\item 
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_a07794aeec638f61758d22f7ba3b2d5b4}{\+\_\+species\+Minus\+End}
-\item 
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_ad09569aff7c98442037cd4b5e5fd1d4d}{\+\_\+species\+Bound}
-\item 
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_ac5bb2d96109696dcd63109154f88c6be}{\+\_\+species\+Linker}
-\item 
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\item 
 vector$<$ string $>$ \hyperlink{classSimpleManagerImpl_a5ff19b12a756eaba341d179b795ed6b4}{\+\_\+species\+Motor}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Vector of \hyperlink{classFilament}{Filament} -\/related species in system. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 
@@ -140,6 +141,10 @@ References Compartment\+Grid\+::add\+Bulk\+Reaction\+Unique(), Chemistry\+Data\+
 \item[{{\bf Chemistry\+Data} \&}]{chem}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_a0018d381ff3b968d74fa261ea9774dee}
+
+
+Set up all reaction managers from the setup struct. 
+
 
 
 Definition at line 829 of file Simple\+Manager\+Impl.\+cpp.
@@ -278,6 +283,10 @@ Definition at line 38 of file Simple\+Manager\+Impl.\+h.
 \subsubsection[{\+\_\+species\+Bound}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Bound\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_ad09569aff7c98442037cd4b5e5fd1d4d}
 
 
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
+
+
+
 Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 
 \hypertarget{classSimpleManagerImpl_a6842452647356333fa3a8dfc9daad925}{\index{Simple\+Manager\+Impl@{Simple\+Manager\+Impl}!\+\_\+species\+Filament@{\+\_\+species\+Filament}}
@@ -285,7 +294,7 @@ Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 \subsubsection[{\+\_\+species\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Filament\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_a6842452647356333fa3a8dfc9daad925}
 
 
-Vector of filament-\/related species in system. 
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
 
 
 
@@ -296,11 +305,19 @@ Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 \subsubsection[{\+\_\+species\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Linker\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_ac5bb2d96109696dcd63109154f88c6be}
 
 
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
+
+
+
 Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 
 \hypertarget{classSimpleManagerImpl_a07794aeec638f61758d22f7ba3b2d5b4}{\index{Simple\+Manager\+Impl@{Simple\+Manager\+Impl}!\+\_\+species\+Minus\+End@{\+\_\+species\+Minus\+End}}
 \index{\+\_\+species\+Minus\+End@{\+\_\+species\+Minus\+End}!Simple\+Manager\+Impl@{Simple\+Manager\+Impl}}
 \subsubsection[{\+\_\+species\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Minus\+End\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_a07794aeec638f61758d22f7ba3b2d5b4}
+
+
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
+
 
 
 Definition at line 44 of file Simple\+Manager\+Impl.\+h.
@@ -310,11 +327,19 @@ Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 \subsubsection[{\+\_\+species\+Motor}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Motor\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_a5ff19b12a756eaba341d179b795ed6b4}
 
 
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
+
+
+
 Definition at line 44 of file Simple\+Manager\+Impl.\+h.
 
 \hypertarget{classSimpleManagerImpl_a8c41d3d46a0534a7127d5b863718bcba}{\index{Simple\+Manager\+Impl@{Simple\+Manager\+Impl}!\+\_\+species\+Plus\+End@{\+\_\+species\+Plus\+End}}
 \index{\+\_\+species\+Plus\+End@{\+\_\+species\+Plus\+End}!Simple\+Manager\+Impl@{Simple\+Manager\+Impl}}
 \subsubsection[{\+\_\+species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Simple\+Manager\+Impl\+::\+\_\+species\+Plus\+End\hspace{0.3cm}{\ttfamily [private]}}}\label{classSimpleManagerImpl_a8c41d3d46a0534a7127d5b863718bcba}
+
+
+Vector of \hyperlink{classFilament}{Filament} -\/related species in system. 
+
 
 
 Definition at line 44 of file Simple\+Manager\+Impl.\+h.
