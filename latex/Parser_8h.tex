@@ -1,0 +1,71 @@
+\hypertarget{Parser_8h}{\section{M3\+S\+Y\+M/\+Parser.h File Reference}
+\label{Parser_8h}\index{M3\+S\+Y\+M/\+Parser.\+h@{M3\+S\+Y\+M/\+Parser.\+h}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$sstream$>$}\\*
+{\ttfamily \#include $<$ios$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+Include dependency graph for Parser.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Parser_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Parser_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structMechanicsAlgorithm}{Mechanics\+Algorithm}
+\begin{DoxyCompactList}\small\item\em Struct to hold mechanics algorithm information. \end{DoxyCompactList}\item 
+struct \hyperlink{structChemistryAlgorithm}{Chemistry\+Algorithm}
+\begin{DoxyCompactList}\small\item\em Struct to hold chemistry algorithm information. \end{DoxyCompactList}\item 
+struct \hyperlink{structChemistryData}{Chemistry\+Data}
+\begin{DoxyCompactList}\small\item\em Struct to hold chemistry species and reaction information. \end{DoxyCompactList}\item 
+struct \hyperlink{structBoundaryType}{Boundary\+Type}
+\begin{DoxyCompactList}\small\item\em Struct to hold the parameters of the boundary. \end{DoxyCompactList}\item 
+struct \hyperlink{structMechanicsFFType}{Mechanics\+F\+F\+Type}
+\begin{DoxyCompactList}\small\item\em Struct to hold the force field types. \end{DoxyCompactList}\item 
+struct \hyperlink{structChemistrySetup}{Chemistry\+Setup}
+\begin{DoxyCompactList}\small\item\em Struct to hold chem setup information. \end{DoxyCompactList}\item 
+struct \hyperlink{structFilamentSetup}{Filament\+Setup}
+\begin{DoxyCompactList}\small\item\em Struct to hold filament setup information. \end{DoxyCompactList}\item 
+class \hyperlink{classParser}{Parser}
+\begin{DoxyCompactList}\small\item\em A general parser. \end{DoxyCompactList}\item 
+class \hyperlink{classSystemParser}{System\+Parser}
+\begin{DoxyCompactList}\small\item\em To parse a system input file, initialized by the \hyperlink{classController}{Controller}. \end{DoxyCompactList}\item 
+class \hyperlink{classFilamentParser}{Filament\+Parser}
+\begin{DoxyCompactList}\small\item\em Used to parse initial filament information, initialized by the \hyperlink{classController}{Controller}. \end{DoxyCompactList}\item 
+class \hyperlink{classChemistryParser}{Chemistry\+Parser}
+\begin{DoxyCompactList}\small\item\em Used to parse all chemical information. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\vector$<$ T $>$ \hyperlink{Parser_8h_ae398d828d0fed77597e8486a7888b40a}{split} (const string \&line)
+\begin{DoxyCompactList}\small\item\em Split a string by whitespace into generic type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{Parser_8h_ae398d828d0fed77597e8486a7888b40a}{\index{Parser.\+h@{Parser.\+h}!split@{split}}
+\index{split@{split}!Parser.\+h@{Parser.\+h}}
+\subsubsection[{split}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ vector$<$T$>$ split (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{line}
+\end{DoxyParamCaption}
+)}}\label{Parser_8h_ae398d828d0fed77597e8486a7888b40a}
+
+
+Split a string by whitespace into generic type. 
+
+
+
+Definition at line 154 of file Parser.\+h.
+

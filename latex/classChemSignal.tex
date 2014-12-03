@@ -1,0 +1,416 @@
+\hypertarget{classChemSignal}{\section{Chem\+Signal Class Reference}
+\label{classChemSignal}\index{Chem\+Signal@{Chem\+Signal}}
+}
+
+
+Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects.  
+
+
+
+
+{\ttfamily \#include $<$Signaling.\+h$>$}
+
+
+
+Collaboration diagram for Chem\+Signal\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classChemSignal__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classChemSignal_ab34f019b2a982650cafe7c272eeb626f}{emit\+Reaction\+Signal} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r) const 
+\begin{DoxyCompactList}\small\item\em Broadcasts signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_af8123a3b376bd247c8f1c1c5a71dcb82}{emit\+R\+Species\+Signal} (\hyperlink{classRSpecies}{R\+Species} $\ast$s, int delta) const 
+\begin{DoxyCompactList}\small\item\em Broadcasts signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_a739d867462daa1a637842f21f04516fb}{add\+Signaling\+R\+Species} (\hyperlink{classRSpecies}{R\+Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Inserts a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s into the map. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_a62e4675ca1857323bb3d1399546a9485}{add\+Signaling\+Reaction} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Inserts a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r into the map. \end{DoxyCompactList}\item 
+boost\+::signals2\+::connection \hyperlink{classChemSignal_a2c9b051880948d7721609d16cd8efcb0}{connect} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r, function$<$ void(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ const \&react\+\_\+callback, int priority=5)
+\begin{DoxyCompactList}\small\item\em Connect the callback, react\+\_\+callback to a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. \end{DoxyCompactList}\item 
+boost\+::signals2\+::connection \hyperlink{classChemSignal_ad6c0c03f2cb4a12a870d356e72ca2163}{connect} (\hyperlink{classSpecies}{Species} $\ast$s, function$<$ void(\hyperlink{classRSpecies}{R\+Species} $\ast$, int)$>$ const \&R\+Species\+\_\+callback, int priority=5)
+\begin{DoxyCompactList}\small\item\em Connect the callback, R\+Species\+\_\+callback to a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_a1e7e140afc97679d20371f0dd456c5f1}{disconnect} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_a7c0fcba3edac3e3f222bedefd0825fcb}{disconnect} (\hyperlink{classRSpecies}{R\+Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ \hyperlink{classReactionBase}{Reaction\+Base} \\*
+$\ast$, unique\+\_\+ptr\\*
+$<$ \hyperlink{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}{Reaction\+Event\+Signal} $>$\\*
+ $>$\+::const\+\_\+iterator \hyperlink{classChemSignal_a1d97f97bcba6af500da85f1422d89921}{find\+Signal} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r) const 
+\begin{DoxyCompactList}\small\item\em Search the map for a signal corresponding to parameter, \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. Throw out\+\_\+of\+\_\+range exception if not found. \end{DoxyCompactList}\item 
+unordered\+\_\+map$<$ \hyperlink{classRSpecies}{R\+Species} \\*
+$\ast$, unique\+\_\+ptr\\*
+$<$ \hyperlink{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}{R\+Species\+Copy\+N\+Changed\+Signal} $>$\\*
+ $>$\+::const\+\_\+iterator \hyperlink{classChemSignal_a93bb74fad6645d059bf85957ea34f4a8}{find\+Signal} (\hyperlink{classRSpecies}{R\+Species} $\ast$s) const 
+\begin{DoxyCompactList}\small\item\em Search the map for a signal corresponding to parameter, \hyperlink{classRSpecies}{R\+Species} $\ast$s. Throw out\+\_\+of\+\_\+range exception if not found. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_adfa6655413afc3a602a8f76ad6b71a98}{assert\+Signal\+Does\+Not\+Exist} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Assert that a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r does not exist or throw runtime\+\_\+error. \end{DoxyCompactList}\item 
+void \hyperlink{classChemSignal_a17510f00f6775f8bfdf9a5ed2844251a}{assert\+Signal\+Does\+Not\+Exist} (\hyperlink{classRSpecies}{R\+Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Assert that a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s does not exist or throw runtime\+\_\+error. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ \hyperlink{classRSpecies}{R\+Species} \\*
+$\ast$, unique\+\_\+ptr\\*
+$<$ \hyperlink{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}{R\+Species\+Copy\+N\+Changed\+Signal} $>$ $>$ \hyperlink{classChemSignal_a01513b0756cb765b0fd02a7e5497133d}{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+unordered\+\_\+map$<$ \hyperlink{classReactionBase}{Reaction\+Base} \\*
+$\ast$, unique\+\_\+ptr\\*
+$<$ \hyperlink{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}{Reaction\+Event\+Signal} $>$ $>$ \hyperlink{classChemSignal_a750129c5a876c652e76e2a008b21b276}{\+\_\+map\+\_\+reaction\+\_\+signal}
+\begin{DoxyCompactList}\small\item\em Keep track of signals corresponding to various Reactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects. 
+
+One \hyperlink{classChemSignal}{Chem\+Signal} should be instantiated per chemical network. \hyperlink{classRSpecies}{R\+Species} and Reactions that need to be monitored can be made to signal, based on the boost\+:signal2 library. Multiple receiving slots can be connected to signals.
+
+Slots can be temporarily blocked or completely disconnected. Signals can be destroyed. Here is an example of usage\+: 
+\begin{DoxyCode}
+ ...
+ \hyperlink{classSpecies}{Species}* A1 = ...
+ ...
+ \hyperlink{classChemSignal}{ChemSignal} sm;
+ A1->makeSignaling(sm);
+ PrintRSpecies ps;
+ ...
+ function<void (RSpecies *, int)> psf(ps);
+ boost::signals2::shared\_connection\_block conn\_a1(sm.\hyperlink{classChemSignal_a2c9b051880948d7721609d16cd8efcb0}{connect}(A1, [](
+      \hyperlink{classRSpecies}{RSpecies} *s, \textcolor{keywordtype}{int} i)\{s->printSelf();\}), \textcolor{keyword}{true});
+ \textcolor{comment}{// or   sm.connect(A1, print\_RSpecies);}
+ \textcolor{comment}{// or  sm.connect(A1, PrintRSpecies());}
+ \textcolor{comment}{// or   boost::signals2::shared\_connection\_block conn\_a1(sm.connect(A1,psf), false);}
+...
+\textcolor{comment}{// run simulation for some time}
+ ...
+ conn\_a1.block(); \textcolor{comment}{// this temporarily stops slots from being called.}
+...
+ conn\_a1.disconnect(); \textcolor{comment}{// this permanently disconnects the slot}
+...
+ A1->stopSignaling(sm); \textcolor{comment}{// this destroys the Signal itself (with associated multiple slots)}
+...
+\end{DoxyCode}
+ 
+
+Definition at line 71 of file Signaling.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classChemSignal_a62e4675ca1857323bb3d1399546a9485}{\index{Chem\+Signal@{Chem\+Signal}!add\+Signaling\+Reaction@{add\+Signaling\+Reaction}}
+\index{add\+Signaling\+Reaction@{add\+Signaling\+Reaction}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{add\+Signaling\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::add\+Signaling\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_a62e4675ca1857323bb3d1399546a9485}
+
+
+Inserts a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r into the map. 
+
+Should only be called by the \hyperlink{classReaction}{Reaction} class. \begin{DoxyNote}{Note}
+other classes should instead call void Reaction\+::make\+Signaling(\+Chem\+Signal \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 133 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+reaction\+\_\+signal, and assert\+Signal\+Does\+Not\+Exist().
+
+\hypertarget{classChemSignal_a739d867462daa1a637842f21f04516fb}{\index{Chem\+Signal@{Chem\+Signal}!add\+Signaling\+R\+Species@{add\+Signaling\+R\+Species}}
+\index{add\+Signaling\+R\+Species@{add\+Signaling\+R\+Species}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{add\+Signaling\+R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::add\+Signaling\+R\+Species (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_a739d867462daa1a637842f21f04516fb}
+
+
+Inserts a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s into the map. 
+
+Should only be called by the \hyperlink{classRSpecies}{R\+Species} class. \begin{DoxyNote}{Note}
+other classes should instead call void R\+Species\+::make\+Signaling(\+Chem\+Signal \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 125 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+\+R\+Species\+\_\+signal, and assert\+Signal\+Does\+Not\+Exist().
+
+\hypertarget{classChemSignal_adfa6655413afc3a602a8f76ad6b71a98}{\index{Chem\+Signal@{Chem\+Signal}!assert\+Signal\+Does\+Not\+Exist@{assert\+Signal\+Does\+Not\+Exist}}
+\index{assert\+Signal\+Does\+Not\+Exist@{assert\+Signal\+Does\+Not\+Exist}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{assert\+Signal\+Does\+Not\+Exist}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::assert\+Signal\+Does\+Not\+Exist (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classChemSignal_adfa6655413afc3a602a8f76ad6b71a98}
+
+
+Assert that a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r does not exist or throw runtime\+\_\+error. 
+
+
+
+Definition at line 95 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+reaction\+\_\+signal.
+
+
+
+Referenced by add\+Signaling\+Reaction(), and add\+Signaling\+R\+Species().
+
+\hypertarget{classChemSignal_a17510f00f6775f8bfdf9a5ed2844251a}{\index{Chem\+Signal@{Chem\+Signal}!assert\+Signal\+Does\+Not\+Exist@{assert\+Signal\+Does\+Not\+Exist}}
+\index{assert\+Signal\+Does\+Not\+Exist@{assert\+Signal\+Does\+Not\+Exist}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{assert\+Signal\+Does\+Not\+Exist}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::assert\+Signal\+Does\+Not\+Exist (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classChemSignal_a17510f00f6775f8bfdf9a5ed2844251a}
+
+
+Assert that a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s does not exist or throw runtime\+\_\+error. 
+
+
+
+Definition at line 102 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+\+R\+Species\+\_\+signal.
+
+\hypertarget{classChemSignal_a2c9b051880948d7721609d16cd8efcb0}{\index{Chem\+Signal@{Chem\+Signal}!connect@{connect}}
+\index{connect@{connect}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::signals2\+::connection Chem\+Signal\+::connect (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r, }
+\item[{function$<$ void({\bf Reaction\+Base} $\ast$)$>$ const \&}]{react\+\_\+callback, }
+\item[{int}]{priority = {\ttfamily 5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_a2c9b051880948d7721609d16cd8efcb0}
+
+
+Connect the callback, react\+\_\+callback to a signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em r} & -\/ the signal will correspond to this \hyperlink{classReaction}{Reaction} \\
+\hline
+{\em react\+\_\+callback} & -\/ a function object to be called (a slot) \\
+\hline
+{\em priority} & -\/ lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file Signaling.\+h.
+
+
+
+References find\+Signal().
+
+\hypertarget{classChemSignal_ad6c0c03f2cb4a12a870d356e72ca2163}{\index{Chem\+Signal@{Chem\+Signal}!connect@{connect}}
+\index{connect@{connect}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::signals2\+::connection Chem\+Signal\+::connect (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s, }
+\item[{function$<$ void({\bf R\+Species} $\ast$, int)$>$ const \&}]{R\+Species\+\_\+callback, }
+\item[{int}]{priority = {\ttfamily 5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_ad6c0c03f2cb4a12a870d356e72ca2163}
+
+
+Connect the callback, R\+Species\+\_\+callback to a signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & -\/ the signal will correspond to this \hyperlink{classRSpecies}{R\+Species} \\
+\hline
+{\em R\+Species\+\_\+callback} & -\/ a function object to be called (a slot). int here corresponds to delta, the change in copy number of the \hyperlink{classRSpecies}{R\+Species} (for which the signal was emitted) \\
+\hline
+{\em priority} & -\/ lower priority slots will be called first. Default is 5 Do not use priorities 1 and 2 unless absolutely essential. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 154 of file Signaling.\+h.
+
+
+
+References find\+Signal(), and Species\+::get\+R\+Species().
+
+\hypertarget{classChemSignal_a1e7e140afc97679d20371f0dd456c5f1}{\index{Chem\+Signal@{Chem\+Signal}!disconnect@{disconnect}}
+\index{disconnect@{disconnect}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{disconnect}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::disconnect (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_a1e7e140afc97679d20371f0dd456c5f1}
+
+
+Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. 
+
+Should only be used by the \hyperlink{classReaction}{Reaction} class. \begin{DoxyNote}{Note}
+-\/ Other classes should instead call void Reaction\+::stop\+Signaling (\hyperlink{classChemSignal}{Chem\+Signal} \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 162 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+reaction\+\_\+signal, and find\+Signal().
+
+\hypertarget{classChemSignal_a7c0fcba3edac3e3f222bedefd0825fcb}{\index{Chem\+Signal@{Chem\+Signal}!disconnect@{disconnect}}
+\index{disconnect@{disconnect}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{disconnect}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::disconnect (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_a7c0fcba3edac3e3f222bedefd0825fcb}
+
+
+Destroy signal corresponding to \hyperlink{classReaction}{Reaction} r. 
+
+Should only be used by the \hyperlink{classRSpecies}{R\+Species} class. \begin{DoxyNote}{Note}
+-\/ Other classes should instead call void R\+Species\+::stop\+Signaling (\hyperlink{classChemSignal}{Chem\+Signal} \&sm); 
+\end{DoxyNote}
+
+
+Definition at line 169 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+\+R\+Species\+\_\+signal, and find\+Signal().
+
+\hypertarget{classChemSignal_ab34f019b2a982650cafe7c272eeb626f}{\index{Chem\+Signal@{Chem\+Signal}!emit\+Reaction\+Signal@{emit\+Reaction\+Signal}}
+\index{emit\+Reaction\+Signal@{emit\+Reaction\+Signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{emit\+Reaction\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::emit\+Reaction\+Signal (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_ab34f019b2a982650cafe7c272eeb626f}
+
+
+Broadcasts signal corresponding to \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. 
+
+If the \hyperlink{classReaction}{Reaction} is not found, out\+\_\+of\+\_\+range exception will be thrown. This method is usally only called by the Gillespie-\/like algorithm, and not the outside code. 
+
+Definition at line 111 of file Signaling.\+h.
+
+
+
+References find\+Signal().
+
+\hypertarget{classChemSignal_af8123a3b376bd247c8f1c1c5a71dcb82}{\index{Chem\+Signal@{Chem\+Signal}!emit\+R\+Species\+Signal@{emit\+R\+Species\+Signal}}
+\index{emit\+R\+Species\+Signal@{emit\+R\+Species\+Signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{emit\+R\+Species\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Signal\+::emit\+R\+Species\+Signal (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s, }
+\item[{int}]{delta}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemSignal_af8123a3b376bd247c8f1c1c5a71dcb82}
+
+
+Broadcasts signal corresponding to \hyperlink{classRSpecies}{R\+Species} $\ast$s. 
+
+If the Specis is not found, out\+\_\+of\+\_\+range exception will be thrown. This method is usally only called by the Gillespie-\/like algorithm, and not the outside code. 
+
+Definition at line 118 of file Signaling.\+h.
+
+
+
+References find\+Signal().
+
+\hypertarget{classChemSignal_a1d97f97bcba6af500da85f1422d89921}{\index{Chem\+Signal@{Chem\+Signal}!find\+Signal@{find\+Signal}}
+\index{find\+Signal@{find\+Signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{find\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf Reaction\+Base} $\ast$, unique\+\_\+ptr$<${\bf Reaction\+Event\+Signal}$>$ $>$\+::const\+\_\+iterator Chem\+Signal\+::find\+Signal (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classChemSignal_a1d97f97bcba6af500da85f1422d89921}
+
+
+Search the map for a signal corresponding to parameter, \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r. Throw out\+\_\+of\+\_\+range exception if not found. 
+
+
+
+Definition at line 78 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+reaction\+\_\+signal.
+
+
+
+Referenced by connect(), disconnect(), emit\+Reaction\+Signal(), and emit\+R\+Species\+Signal().
+
+\hypertarget{classChemSignal_a93bb74fad6645d059bf85957ea34f4a8}{\index{Chem\+Signal@{Chem\+Signal}!find\+Signal@{find\+Signal}}
+\index{find\+Signal@{find\+Signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{find\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf R\+Species} $\ast$, unique\+\_\+ptr$<${\bf R\+Species\+Copy\+N\+Changed\+Signal}$>$ $>$\+::const\+\_\+iterator Chem\+Signal\+::find\+Signal (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classChemSignal_a93bb74fad6645d059bf85957ea34f4a8}
+
+
+Search the map for a signal corresponding to parameter, \hyperlink{classRSpecies}{R\+Species} $\ast$s. Throw out\+\_\+of\+\_\+range exception if not found. 
+
+
+
+Definition at line 87 of file Signaling.\+h.
+
+
+
+References \+\_\+map\+\_\+\+R\+Species\+\_\+signal.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classChemSignal_a750129c5a876c652e76e2a008b21b276}{\index{Chem\+Signal@{Chem\+Signal}!\+\_\+map\+\_\+reaction\+\_\+signal@{\+\_\+map\+\_\+reaction\+\_\+signal}}
+\index{\+\_\+map\+\_\+reaction\+\_\+signal@{\+\_\+map\+\_\+reaction\+\_\+signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{\+\_\+map\+\_\+reaction\+\_\+signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf Reaction\+Base} $\ast$, unique\+\_\+ptr$<${\bf Reaction\+Event\+Signal}$>$ $>$ Chem\+Signal\+::\+\_\+map\+\_\+reaction\+\_\+signal\hspace{0.3cm}{\ttfamily [private]}}}\label{classChemSignal_a750129c5a876c652e76e2a008b21b276}
+
+
+Keep track of signals corresponding to various Reactions. 
+
+
+
+Definition at line 74 of file Signaling.\+h.
+
+
+
+Referenced by add\+Signaling\+Reaction(), assert\+Signal\+Does\+Not\+Exist(), disconnect(), and find\+Signal().
+
+\hypertarget{classChemSignal_a01513b0756cb765b0fd02a7e5497133d}{\index{Chem\+Signal@{Chem\+Signal}!\+\_\+map\+\_\+\+R\+Species\+\_\+signal@{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}}
+\index{\+\_\+map\+\_\+\+R\+Species\+\_\+signal@{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}!Chem\+Signal@{Chem\+Signal}}
+\subsubsection[{\+\_\+map\+\_\+\+R\+Species\+\_\+signal}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<${\bf R\+Species} $\ast$, unique\+\_\+ptr$<${\bf R\+Species\+Copy\+N\+Changed\+Signal}$>$ $>$ Chem\+Signal\+::\+\_\+map\+\_\+\+R\+Species\+\_\+signal\hspace{0.3cm}{\ttfamily [private]}}}\label{classChemSignal_a01513b0756cb765b0fd02a7e5497133d}
+
+
+Keep track of signals corresponding to various \hyperlink{classRSpecies}{R\+Species}. 
+
+
+
+Definition at line 73 of file Signaling.\+h.
+
+
+
+Referenced by add\+Signaling\+R\+Species(), assert\+Signal\+Does\+Not\+Exist(), disconnect(), and find\+Signal().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Signaling_8h}{Signaling.\+h}\end{DoxyCompactItemize}

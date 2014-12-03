@@ -1207,7 +1207,7 @@
       <Scope>Bead</Scope>
     </TokenIdentifier>
     <Path>classBead.html</Path>
-    <Abstract>The Bead class represents a single coordinate between Cylinders, and holds forces needed for mechanic...</Abstract>
+    <Abstract>Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio...</Abstract>
     <DeclaredIn>Bead.h</DeclaredIn>
   </Token>
   <Token>
@@ -1664,7 +1664,7 @@
       <Scope>BeadDB</Scope>
     </TokenIdentifier>
     <Path>classBeadDB.html</Path>
-    <Abstract>BeadDB class is a database for all Beads in the system. </Abstract>
+    <Abstract>A database for all Beads in the system. </Abstract>
     <DeclaredIn>BeadDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -1767,7 +1767,7 @@
       <Scope>Boundary</Scope>
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
-    <Abstract>Boundary class is to store all boundary surfaces that are in the system. </Abstract>
+    <Abstract>To store all boundary surfaces that are in the system. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -1869,6 +1869,7 @@
       <Scope>BoundaryCapsule</Scope>
     </TokenIdentifier>
     <Path>classBoundaryCapsule.html</Path>
+    <Abstract>A capsule boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -1960,7 +1961,7 @@
       <Scope>BoundaryCubic</Scope>
     </TokenIdentifier>
     <Path>classBoundaryCubic.html</Path>
-    <Abstract>BoundaryCubic is a cubic boundary implementation. </Abstract>
+    <Abstract>A cubic boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -2052,7 +2053,7 @@
       <Scope>BoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
-    <Abstract>BoundaryElement class represents an element of a boundary surface. </Abstract>
+    <Abstract>Represents an element of a boundary surface. </Abstract>
     <DeclaredIn>BoundaryElement.h</DeclaredIn>
   </Token>
   <Token>
@@ -2169,7 +2170,7 @@
       <Scope>BoundaryElementDB</Scope>
     </TokenIdentifier>
     <Path>classBoundaryElementDB.html</Path>
-    <Abstract>BoundaryElementDB class is a database for all BoundaryElements in the system. </Abstract>
+    <Abstract>A database for all BoundaryElements in the system. </Abstract>
     <DeclaredIn>BoundaryElementDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -2272,7 +2273,7 @@
       <Scope>BoundaryElementNeighborList</Scope>
     </TokenIdentifier>
     <Path>classBoundaryElementNeighborList.html</Path>
-    <Abstract>BoundaryElementNeighborList is an implementation of NeighborList for Bead-BoundaryElement interaction...</Abstract>
+    <Abstract>An implementation of NeighborList for Bead-BoundaryElement interactions. </Abstract>
     <DeclaredIn>NeighborList.h</DeclaredIn>
   </Token>
   <Token>
@@ -2387,7 +2388,7 @@
       <Scope>BoundaryElementNLContainer</Scope>
     </TokenIdentifier>
     <Path>classBoundaryElementNLContainer.html</Path>
-    <Abstract>BoundaryElementNLContainer class holds a BoundaryElementNeighborList. </Abstract>
+    <Abstract>Holds a BoundaryElementNeighborList. </Abstract>
     <DeclaredIn>NeighborListContainer.h</DeclaredIn>
   </Token>
   <Token>
@@ -2444,7 +2445,7 @@
       <Scope>BoundaryFF</Scope>
     </TokenIdentifier>
     <Path>classBoundaryFF.html</Path>
-    <Abstract>Boundary FF is an implementation of the ForceField class that calculates BoundaryElement repulsion an...</Abstract>
+    <Abstract>An implementation of the ForceField class that calculates BoundaryElement repulsion and attraction to...</Abstract>
     <DeclaredIn>BoundaryFF.h</DeclaredIn>
   </Token>
   <Token>
@@ -2526,7 +2527,7 @@
       <Scope>BoundaryInteractions</Scope>
     </TokenIdentifier>
     <Path>classBoundaryInteractions.html</Path>
-    <Abstract>BoundaryInteractions class represents a BoundaryElement interaction with a Bead. </Abstract>
+    <Abstract>Represents a BoundaryElement interaction with a Bead. </Abstract>
     <DeclaredIn>BoundaryInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -2620,7 +2621,7 @@
       <Scope>BoundaryParameters</Scope>
     </TokenIdentifier>
     <Path>structBoundaryParameters.html</Path>
-    <Abstract>BoundaryParameters is a struct to hold boundary parameters for the system. </Abstract>
+    <Abstract>Struct to hold boundary parameters for the system. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -2671,7 +2672,7 @@
       <Scope>BoundaryRepulsion</Scope>
     </TokenIdentifier>
     <Path>classBoundaryRepulsion.html</Path>
-    <Abstract>BoundaryRepulsion represents a repulsive interaction between a BoundaryElement and Bead...</Abstract>
+    <Abstract>Represents a repulsive interaction between a BoundaryElement and Bead. </Abstract>
     <DeclaredIn>BoundaryRepulsion.h</DeclaredIn>
   </Token>
   <Token>
@@ -2752,7 +2753,7 @@
       <Scope>BoundaryRepulsionExp</Scope>
     </TokenIdentifier>
     <Path>classBoundaryRepulsionExp.html</Path>
-    <Abstract>BoundaryRepulsionLJ class is a exponential repulsive potential. </Abstract>
+    <Abstract>A exponential repulsive potential. </Abstract>
     <DeclaredIn>BoundaryRepulsionExp.h</DeclaredIn>
   </Token>
   <Token>
@@ -2796,7 +2797,7 @@
       <Scope>BoundaryRepulsionLJ</Scope>
     </TokenIdentifier>
     <Path>classBoundaryRepulsionLJ.html</Path>
-    <Abstract>BoundaryRepulsionLJ class is a Lennard-Jones repulsive potential. </Abstract>
+    <Abstract>A Lennard-Jones repulsive potential. </Abstract>
     <DeclaredIn>BoundaryRepulsionLJ.h</DeclaredIn>
   </Token>
   <Token>
@@ -2840,7 +2841,7 @@
       <Scope>BoundarySpherical</Scope>
     </TokenIdentifier>
     <Path>classBoundarySpherical.html</Path>
-    <Abstract>BoundarySpherical is a spherical boundary implementation. </Abstract>
+    <Abstract>A spherical boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -2932,7 +2933,7 @@
       <Scope>BoundarySurface</Scope>
     </TokenIdentifier>
     <Path>classBoundarySurface.html</Path>
-    <Abstract>BoundarySurface class is a boundary shape that holds BoundaryElements. </Abstract>
+    <Abstract>A boundary shape that holds BoundaryElements. </Abstract>
     <DeclaredIn>BoundarySurface.h</DeclaredIn>
   </Token>
   <Token>
@@ -3001,7 +3002,7 @@
       <Scope>BoundaryType</Scope>
     </TokenIdentifier>
     <Path>structBoundaryType.html</Path>
-    <Abstract>BoundaryType is a struct to hold the parameters of the boundary. </Abstract>
+    <Abstract>Struct to hold the parameters of the boundary. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -3022,7 +3023,7 @@
       <Scope>CBound</Scope>
     </TokenIdentifier>
     <Path>classCBound.html</Path>
-    <Abstract>CBound class represents a chemical object that is bound to a Filament. </Abstract>
+    <Abstract>Represents a chemical object that is bound to a Filament. </Abstract>
     <DeclaredIn>CBound.h</DeclaredIn>
   </Token>
   <Token>
@@ -3150,7 +3151,7 @@
       <Scope>CController</Scope>
     </TokenIdentifier>
     <Path>classCController.html</Path>
-    <Abstract>CController class is used to intialize, control, and run the chemical components of a simulation...</Abstract>
+    <Abstract>Used to intialize, control, and run the chemical components of a simulation. </Abstract>
     <DeclaredIn>CController.h</DeclaredIn>
   </Token>
   <Token>
@@ -3208,7 +3209,7 @@
       <Scope>CCylinder</Scope>
     </TokenIdentifier>
     <Path>classCCylinder.html</Path>
-    <Abstract>CCylinder class holds all CMonomers and Reactions associated with it. </Abstract>
+    <Abstract>Holds all CMonomers and Reactions associated with it. </Abstract>
     <DeclaredIn>CCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -3575,7 +3576,7 @@
       <Scope>CGMethod</Scope>
     </TokenIdentifier>
     <Path>classCGMethod.html</Path>
-    <Abstract>CGMethod class is for performing a conjugate gradient minimization method. </Abstract>
+    <Abstract>For performing a conjugate gradient minimization method. </Abstract>
     <DeclaredIn>CGMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -3940,7 +3941,7 @@
       <Scope>ChemGillespieImpl</Scope>
     </TokenIdentifier>
     <Path>classChemGillespieImpl.html</Path>
-    <Abstract>ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm. </Abstract>
+    <Abstract>Implements a slightly optimized version of the Gillespie algorithm. </Abstract>
     <DeclaredIn>ChemGillespieImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -4254,7 +4255,7 @@
       <Scope>ChemistryAlgorithm</Scope>
     </TokenIdentifier>
     <Path>structChemistryAlgorithm.html</Path>
-    <Abstract>ChemistryAlgorithm is a struct to hold chemistry algorithm information. </Abstract>
+    <Abstract>Struct to hold chemistry algorithm information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -4295,7 +4296,7 @@
       <Scope>ChemistryData</Scope>
     </TokenIdentifier>
     <Path>structChemistryData.html</Path>
-    <Abstract>ChemistryData is a struct to hold chemistry species and reaction information. </Abstract>
+    <Abstract>Struct to hold chemistry species and reaction information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -4488,7 +4489,7 @@
       <Scope>ChemistryParameters</Scope>
     </TokenIdentifier>
     <Path>structChemistryParameters.html</Path>
-    <Abstract>ChemistryParameters is a struct to hold chemistry parameters for the system. </Abstract>
+    <Abstract>Struct to hold chemistry parameters for the system. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -4581,7 +4582,7 @@
       <Scope>ChemistryParser</Scope>
     </TokenIdentifier>
     <Path>classChemistryParser.html</Path>
-    <Abstract>ChemistryParser class is used to parse all chemical information. </Abstract>
+    <Abstract>Used to parse all chemical information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -4637,7 +4638,7 @@
       <Scope>ChemistrySetup</Scope>
     </TokenIdentifier>
     <Path>structChemistrySetup.html</Path>
-    <Abstract>ChemistrySetup is a struct to hold chem setup information. </Abstract>
+    <Abstract>Struct to hold chem setup information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -4658,7 +4659,7 @@
       <Scope>ChemManager</Scope>
     </TokenIdentifier>
     <Path>classChemManager.html</Path>
-    <Abstract>ChemManager class is used for initailizing chemical reactions based on a specific system...</Abstract>
+    <Abstract>For initailizing chemical reactions based on a specific system. </Abstract>
     <DeclaredIn>ChemManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -4739,7 +4740,7 @@
       <Scope>ChemManagerImpl</Scope>
     </TokenIdentifier>
     <Path>classChemManagerImpl.html</Path>
-    <Abstract>ChemManagerImpl is an abstract base class for initialization of all chemistry in the system...</Abstract>
+    <Abstract>An abstract base class for initialization of all chemistry in the system. </Abstract>
     <DeclaredIn>ChemManagerImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -4795,7 +4796,7 @@
       <Scope>ChemNRMImpl</Scope>
     </TokenIdentifier>
     <Path>classChemNRMImpl.html</Path>
-    <Abstract>ChemNRMImpl stands for Chemical Next Reaction Method Implementation. </Abstract>
+    <Abstract>The chemical Next Reaction Method Implementation. </Abstract>
     <DeclaredIn>ChemNRMImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -5064,7 +5065,7 @@
       <Scope>ChemSignal</Scope>
     </TokenIdentifier>
     <Path>classChemSignal.html</Path>
-    <Abstract>ChemSignal manages callbacks for RSpecies and Reactions objects. </Abstract>
+    <Abstract>Manages callbacks for RSpecies and Reactions objects. </Abstract>
     <DeclaredIn>Signaling.h</DeclaredIn>
   </Token>
   <Token>
@@ -5241,7 +5242,7 @@
       <Scope>ChemSim</Scope>
     </TokenIdentifier>
     <Path>classChemSim.html</Path>
-    <Abstract>ChemSim is used to manage running a network of chemical reactions. </Abstract>
+    <Abstract>Used to manage running a network of chemical reactions. </Abstract>
     <DeclaredIn>ChemSim.h</DeclaredIn>
   </Token>
   <Token>
@@ -5370,7 +5371,7 @@
       <Scope>ChemSimImpl</Scope>
     </TokenIdentifier>
     <Path>classChemSimImpl.html</Path>
-    <Abstract>ChemSimImpl is an abstract base class for algorithms that run stochastic chemical kinetics...</Abstract>
+    <Abstract>An abstract base class for algorithms that run stochastic chemical kinetics. </Abstract>
     <DeclaredIn>ChemSimImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -5452,7 +5453,7 @@
       <Scope>ChemSimpleGillespieImpl</Scope>
     </TokenIdentifier>
     <Path>classChemSimpleGillespieImpl.html</Path>
-    <Abstract>ChemSimpleGillespieImpl implements the simplest version of the Gillespie algorithm, without caching, etc. </Abstract>
+    <Abstract>Implements the simplest version of the Gillespie algorithm, without caching, etc. ...</Abstract>
     <DeclaredIn>ChemSimpleGillespieImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -5722,7 +5723,7 @@
       <Scope>CLinker</Scope>
     </TokenIdentifier>
     <Path>classCLinker.html</Path>
-    <Abstract>CLinker class to represent the chemical component of a Linker. </Abstract>
+    <Abstract>To represent the chemical component of a Linker. </Abstract>
     <DeclaredIn>CLinker.h</DeclaredIn>
   </Token>
   <Token>
@@ -5919,7 +5920,7 @@
       <Scope>CMonomer</Scope>
     </TokenIdentifier>
     <Path>classCMonomer.html</Path>
-    <Abstract>CMonomer class represents a container for all Species that could be contained in a particular filamen...</Abstract>
+    <Abstract>Rpresents a container for all Species that could be contained in a particular filament element at a g...</Abstract>
     <DeclaredIn>CMonomer.h</DeclaredIn>
   </Token>
   <Token>
@@ -6208,7 +6209,7 @@
       <Scope>CMotorGhost</Scope>
     </TokenIdentifier>
     <Path>classCMotorGhost.html</Path>
-    <Abstract>CMotorGhost is a class to represent the chemical component of a MotorGhost. </Abstract>
+    <Abstract>A class to represent the chemical component of a MotorGhost. </Abstract>
     <DeclaredIn>CMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -6406,7 +6407,7 @@
       <Scope>Compartment</Scope>
     </TokenIdentifier>
     <Path>classCompartment.html</Path>
-    <Abstract>Compartment class is a compartment for holding species and reactions. </Abstract>
+    <Abstract>A compartment for holding Species and Reactions. </Abstract>
     <DeclaredIn>Compartment.h</DeclaredIn>
   </Token>
   <Token>
@@ -7719,7 +7720,7 @@
       <Scope>CompartmentGrid</Scope>
     </TokenIdentifier>
     <Path>classCompartmentGrid.html</Path>
-    <Abstract>CompartmentGrid class is a simple n-dimensional grid of Compartment objects (singleton) ...</Abstract>
+    <Abstract>A simple n-dimensional grid of Compartment objects (singleton). </Abstract>
     <DeclaredIn>CompartmentContainer.h</DeclaredIn>
   </Token>
   <Token>
@@ -8298,7 +8299,7 @@
       <Scope>Component</Scope>
     </TokenIdentifier>
     <Path>classComponent.html</Path>
-    <Abstract>Component class is the base class for the Composite pattern hieararchy. </Abstract>
+    <Abstract>The base class for the Composite pattern hieararchy. </Abstract>
     <DeclaredIn>Component.h</DeclaredIn>
   </Token>
   <Token>
@@ -8584,7 +8585,7 @@
       <Scope>Composite</Scope>
     </TokenIdentifier>
     <Path>classComposite.html</Path>
-    <Abstract>Composite class is the aggregating class for the Composite pattern. </Abstract>
+    <Abstract>The aggregating class for the Composite pattern. </Abstract>
     <DeclaredIn>Composite.h</DeclaredIn>
   </Token>
   <Token>
@@ -8930,7 +8931,7 @@
       <Scope>ConjugateGradient</Scope>
     </TokenIdentifier>
     <Path>classConjugateGradient.html</Path>
-    <Abstract>ConjugateGradient is an implementation of Minimzer. </Abstract>
+    <Abstract>An implementation of Minimzer. </Abstract>
     <DeclaredIn>ConjugateGradient.h</DeclaredIn>
   </Token>
   <Token>
@@ -8963,7 +8964,7 @@
       <Scope>Controller</Scope>
     </TokenIdentifier>
     <Path>classController.html</Path>
-    <Abstract>Controller class is used to initialize, manage, and run an entire simulation. </Abstract>
+    <Abstract>Used to initialize, manage, and run an entire simulation. </Abstract>
     <DeclaredIn>Controller.h</DeclaredIn>
   </Token>
   <Token>
@@ -9120,7 +9121,7 @@
       <Scope>CrossFilamentRxnManager</Scope>
     </TokenIdentifier>
     <Path>classCrossFilamentRxnManager.html</Path>
-    <Abstract>CrossFilamentRxnManager is a class to store cross-filament reactions, including linker and motor bind...</Abstract>
+    <Abstract>To store cross-filament reactions, including linker and motor binding. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -9298,7 +9299,7 @@
       <Scope>Cylinder</Scope>
     </TokenIdentifier>
     <Path>classCylinder.html</Path>
-    <Abstract>Cylinder class is a container to store a MCylinder and CCylinder. </Abstract>
+    <Abstract>A container to store a MCylinder and CCylinder. </Abstract>
     <DeclaredIn>Cylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -9904,7 +9905,7 @@
       <Scope>CylinderDB</Scope>
     </TokenIdentifier>
     <Path>classCylinderDB.html</Path>
-    <Abstract>CylinderDB class is a database for all Cylinders in the system. </Abstract>
+    <Abstract>A database for all Cylinders in the system. </Abstract>
     <DeclaredIn>CylinderDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -10030,7 +10031,7 @@
       <Scope>CylinderExclVolRepulsion</Scope>
     </TokenIdentifier>
     <Path>classCylinderExclVolRepulsion.html</Path>
-    <Abstract>CylinderExclVolRepulsion represents a repulsive excluded volume potential. </Abstract>
+    <Abstract>Represents a repulsive excluded volume potential. </Abstract>
     <DeclaredIn>CylinderExclVolRepulsion.h</DeclaredIn>
   </Token>
   <Token>
@@ -10085,7 +10086,7 @@
       <Scope>CylinderExclVolume</Scope>
     </TokenIdentifier>
     <Path>classCylinderExclVolume.html</Path>
-    <Abstract>CylinderExclVolume represents an excuded volume interaction between two Cylinders. </Abstract>
+    <Abstract>Represents an excuded volume interaction between two Cylinders. </Abstract>
     <DeclaredIn>CylinderExclVolume.h</DeclaredIn>
   </Token>
   <Token>
@@ -10166,7 +10167,7 @@
       <Scope>CylinderNeighborList</Scope>
     </TokenIdentifier>
     <Path>classCylinderNeighborList.html</Path>
-    <Abstract>CylinderNeighborList is an implementation of NeighborList for Cylinder-Cylinder interactions. </Abstract>
+    <Abstract>An implementation of NeighborList for Cylinder-Cylinder interactions. </Abstract>
     <DeclaredIn>NeighborList.h</DeclaredIn>
   </Token>
   <Token>
@@ -10292,7 +10293,7 @@
       <Scope>CylinderNLContainer</Scope>
     </TokenIdentifier>
     <Path>classCylinderNLContainer.html</Path>
-    <Abstract>CylinderNLContainer class holds a CylinderNeighborList. </Abstract>
+    <Abstract>Holds a CylinderNeighborList. </Abstract>
     <DeclaredIn>NeighborListContainer.h</DeclaredIn>
   </Token>
   <Token>
@@ -10349,7 +10350,7 @@
       <Scope>CylinderVolumeInteractions</Scope>
     </TokenIdentifier>
     <Path>classCylinderVolumeInteractions.html</Path>
-    <Abstract>BoundaryInteractions class represents a volume interaction between Cylinders. </Abstract>
+    <Abstract>Represents a volume interaction between Cylinders. </Abstract>
     <DeclaredIn>CylinderVolumeInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -10443,7 +10444,7 @@
       <Scope>CylinderZ</Scope>
     </TokenIdentifier>
     <Path>classCylinderZ.html</Path>
-    <Abstract>CylinderZ is a simple implementation of the BoundarySurface class. </Abstract>
+    <Abstract>A simple implementation of the BoundarySurface class. </Abstract>
     <DeclaredIn>BoundarySurfaceImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -10533,7 +10534,7 @@
       <Scope>CylindricalZBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classCylindricalZBoundaryElement.html</Path>
-    <Abstract>CylindricalZBoundaryElement is a cylinder implementation of a boundary element. </Abstract>
+    <Abstract>A cylinder implementation of a boundary element. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -10882,7 +10883,7 @@
       <Scope>Filament</Scope>
     </TokenIdentifier>
     <Path>classFilament.html</Path>
-    <Abstract>Filament class is used to store data about connectivity of Cylinders and Beads. </Abstract>
+    <Abstract>Used to store data about connectivity of Cylinders and Beads. </Abstract>
     <DeclaredIn>Filament.h</DeclaredIn>
   </Token>
   <Token>
@@ -11230,7 +11231,7 @@
       <Scope>FilamentBending</Scope>
     </TokenIdentifier>
     <Path>classFilamentBending.html</Path>
-    <Abstract>FilamentBending class represents a filament bending interaction. </Abstract>
+    <Abstract>Represents a filament bending interaction. </Abstract>
     <DeclaredIn>FilamentBending.h</DeclaredIn>
   </Token>
   <Token>
@@ -11299,7 +11300,7 @@
       <Scope>FilamentBendingHarmonic</Scope>
     </TokenIdentifier>
     <Path>classFilamentBendingHarmonic.html</Path>
-    <Abstract>FilamentBendingHarmonic class is a harmonic potential used by the FilamentBending template...</Abstract>
+    <Abstract>A harmonic potential used by the FilamentBending template. </Abstract>
     <DeclaredIn>FilamentBendingHarmonic.h</DeclaredIn>
   </Token>
   <Token>
@@ -11354,7 +11355,7 @@
       <Scope>FilamentDB</Scope>
     </TokenIdentifier>
     <Path>classFilamentDB.html</Path>
-    <Abstract>FilamentDB class is a database for all Filaments in the system. </Abstract>
+    <Abstract>A database for all Filaments in the system. </Abstract>
     <DeclaredIn>FilamentDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -11480,7 +11481,7 @@
       <Scope>FilamentDepolymerizationBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationBackCallback.html</Path>
-    <Abstract>FilamentDeolymerizationBackCallback is used to depolymerize the back of a filament after a depolymeri...</Abstract>
+    <Abstract>Callback to depolymerize the back of a filament after a depolymerization reaction occurs in the syste...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11492,7 +11493,6 @@
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationBackCallback.html</Path>
     <Anchor>a91efa0834368247e539ceb5dce45d34c</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11504,7 +11504,6 @@
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationBackCallback.html</Path>
     <Anchor>a3766bd45ea6005645508cf2a96589a52</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11525,7 +11524,7 @@
       <Scope>FilamentDepolymerizationFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationFrontCallback.html</Path>
-    <Abstract>FilamentDepolymerizationFrontCallback is used to depolymerize the front of a filament after a depolym...</Abstract>
+    <Abstract>Callback to depolymerize the front of a filament after a depolymerization reaction occurs in the syst...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11537,7 +11536,6 @@
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationFrontCallback.html</Path>
     <Anchor>ae557d44570cb2ce569ab93c97a6f860c</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11549,7 +11547,6 @@
     </TokenIdentifier>
     <Path>structFilamentDepolymerizationFrontCallback.html</Path>
     <Anchor>a741d68a920eb8dde3ebc0c94529bbd8a</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11570,7 +11567,7 @@
       <Scope>FilamentExtensionBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentExtensionBackCallback.html</Path>
-    <Abstract>FilamentExtensionBackCallback is used to extend the back of a filament after a polymerization reactio...</Abstract>
+    <Abstract>Callback to extend the back of a filament after a polymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11582,7 +11579,6 @@
     </TokenIdentifier>
     <Path>structFilamentExtensionBackCallback.html</Path>
     <Anchor>ae25bee5ab1d5a49404cc0bb0bbe6ffc4</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11594,7 +11590,6 @@
     </TokenIdentifier>
     <Path>structFilamentExtensionBackCallback.html</Path>
     <Anchor>aa88d35776e587996b2a7936b6314f380</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11615,7 +11610,7 @@
       <Scope>FilamentExtensionFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentExtensionFrontCallback.html</Path>
-    <Abstract>FilamentExtensionFrontCallback is used to extend the front of a filament after a polymerization react...</Abstract>
+    <Abstract>Callback to extend the front of a filament after a polymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11627,7 +11622,6 @@
     </TokenIdentifier>
     <Path>structFilamentExtensionFrontCallback.html</Path>
     <Anchor>afeefc622c3eefa2e570ee06383cf2c75</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11639,7 +11633,6 @@
     </TokenIdentifier>
     <Path>structFilamentExtensionFrontCallback.html</Path>
     <Anchor>a4d6d1bb7a9c175ee52db85a66c2e3f76</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11660,7 +11653,7 @@
       <Scope>FilamentFF</Scope>
     </TokenIdentifier>
     <Path>classFilamentFF.html</Path>
-    <Abstract>Filament FF is an implementation of the ForceField class that calculates Filament stretching...</Abstract>
+    <Abstract>An implementation of the ForceField class that calculates Filament stretching, bending, and twisting. </Abstract>
     <DeclaredIn>FilamentFF.h</DeclaredIn>
   </Token>
   <Token>
@@ -11742,7 +11735,7 @@
       <Scope>FilamentInteractions</Scope>
     </TokenIdentifier>
     <Path>classFilamentInteractions.html</Path>
-    <Abstract>FilamentInteractions class represents an internal filament interaction. </Abstract>
+    <Abstract>Represents an internal filament interaction. </Abstract>
     <DeclaredIn>FilamentInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -11811,7 +11804,7 @@
       <Scope>FilamentParser</Scope>
     </TokenIdentifier>
     <Path>classFilamentParser.html</Path>
-    <Abstract>FilamentParser class is used to parse initial filament information, initialized by the Controller...</Abstract>
+    <Abstract>Used to parse initial filament information, initialized by the Controller. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -11867,7 +11860,7 @@
       <Scope>FilamentPolymerizationBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentPolymerizationBackCallback.html</Path>
-    <Abstract>FilamentPolymerizationBackCallback is used to polymerize the back of a filament after a polymerizatio...</Abstract>
+    <Abstract>Callback to polymerize the back of a filament after a polymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11879,7 +11872,6 @@
     </TokenIdentifier>
     <Path>structFilamentPolymerizationBackCallback.html</Path>
     <Anchor>a7a592b0a219ddd5849babba5cf931dc8</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11891,7 +11883,6 @@
     </TokenIdentifier>
     <Path>structFilamentPolymerizationBackCallback.html</Path>
     <Anchor>a1f004e2aa43ac80a0dfea4ec07b511a4</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11912,7 +11903,7 @@
       <Scope>FilamentPolymerizationFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentPolymerizationFrontCallback.html</Path>
-    <Abstract>FilamentPolymerizationFrontCallback is used to polymerize the front of a filament after a polymerizat...</Abstract>
+    <Abstract>Callback to polymerize the front of a filament after a polymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11924,7 +11915,6 @@
     </TokenIdentifier>
     <Path>structFilamentPolymerizationFrontCallback.html</Path>
     <Anchor>aef1d6c929cc7e0e4c6da2cb55d086cc4</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11936,7 +11926,6 @@
     </TokenIdentifier>
     <Path>structFilamentPolymerizationFrontCallback.html</Path>
     <Anchor>a70946cc065011fe2042a0d8e8d69ddfa</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11957,7 +11946,7 @@
       <Scope>FilamentRetractionBackCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentRetractionBackCallback.html</Path>
-    <Abstract>FilamentRetractionBackCallback is used to retract the back of a filament after a depolymerization rea...</Abstract>
+    <Abstract>Callback to retract the back of a filament after a depolymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11969,7 +11958,6 @@
     </TokenIdentifier>
     <Path>structFilamentRetractionBackCallback.html</Path>
     <Anchor>a2c399ba7ead0c7adfa8823ff36ba1c2c</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -11981,7 +11969,6 @@
     </TokenIdentifier>
     <Path>structFilamentRetractionBackCallback.html</Path>
     <Anchor>a73f635852200f930ac3829085fcd76db</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -12002,7 +11989,7 @@
       <Scope>FilamentRetractionFrontCallback</Scope>
     </TokenIdentifier>
     <Path>structFilamentRetractionFrontCallback.html</Path>
-    <Abstract>FilamentRetractionBackCallback is used to retract the front of a filament after a depolymerization re...</Abstract>
+    <Abstract>Callback to retract the front of a filament after a depolymerization reaction occurs in the system...</Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -12014,7 +12001,6 @@
     </TokenIdentifier>
     <Path>structFilamentRetractionFrontCallback.html</Path>
     <Anchor>a0a6819d2d4b8766c242906a731fcc6dc</Anchor>
-    <Abstract>Constructor, sets members. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -12026,7 +12012,6 @@
     </TokenIdentifier>
     <Path>structFilamentRetractionFrontCallback.html</Path>
     <Anchor>a5679aab6f183c11ed3ae712fe85929e1</Anchor>
-    <Abstract>Callback. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -12047,7 +12032,7 @@
       <Scope>FilamentSetup</Scope>
     </TokenIdentifier>
     <Path>structFilamentSetup.html</Path>
-    <Abstract>FilamentSetup is a struct to hold filament setup information. </Abstract>
+    <Abstract>Struct to hold filament setup information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -12079,7 +12064,7 @@
       <Scope>FilamentStretching</Scope>
     </TokenIdentifier>
     <Path>classFilamentStretching.html</Path>
-    <Abstract>FilamentStretching class represents a filament stretching interaction. </Abstract>
+    <Abstract>Represents a filament stretching interaction. </Abstract>
     <DeclaredIn>FilamentStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -12148,7 +12133,7 @@
       <Scope>FilamentStretchingHarmonic</Scope>
     </TokenIdentifier>
     <Path>classFilamentStretchingHarmonic.html</Path>
-    <Abstract>FilamentStretchingHarmonic class is a harmonic potential used by the FilamentStretching template...</Abstract>
+    <Abstract>A harmonic potential used by the FilamentStretching template. </Abstract>
     <DeclaredIn>FilamentStretchingHarmonic.h</DeclaredIn>
   </Token>
   <Token>
@@ -12203,7 +12188,7 @@
       <Scope>FletcherRieves</Scope>
     </TokenIdentifier>
     <Path>classFletcherRieves.html</Path>
-    <Abstract>FletcherRieves class is the Fletcher-Rieves method for conjugate gradient minimization. </Abstract>
+    <Abstract>The Fletcher-Rieves method for conjugate gradient minimization. </Abstract>
     <DeclaredIn>CGFletcherRievesMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -12568,7 +12553,7 @@
       <Scope>ForceField</Scope>
     </TokenIdentifier>
     <Path>classForceField.html</Path>
-    <Abstract>ForceField is an abstract class to represent various force field calculations. </Abstract>
+    <Abstract>An abstract class to represent various force field calculations. </Abstract>
     <DeclaredIn>ForceField.h</DeclaredIn>
   </Token>
   <Token>
@@ -12638,7 +12623,7 @@
       <Scope>ForceFieldManager</Scope>
     </TokenIdentifier>
     <Path>classForceFieldManager.html</Path>
-    <Abstract>ForceFieldManager is a class to store and iterate over all ForceFields. </Abstract>
+    <Abstract>A class to store and iterate over all ForceFields. </Abstract>
     <DeclaredIn>ForceFieldManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -12720,7 +12705,7 @@
       <Scope>GController</Scope>
     </TokenIdentifier>
     <Path>classGController.html</Path>
-    <Abstract>GController class is used to control the geometry of the grid, as well as the geometry of entire syst...</Abstract>
+    <Abstract>Used to control the geometry of the grid, as well as the geometry of entire system. </Abstract>
     <DeclaredIn>GController.h</DeclaredIn>
   </Token>
   <Token>
@@ -12835,7 +12820,7 @@
       <Scope>GeometryParameters</Scope>
     </TokenIdentifier>
     <Path>structGeometryParameters.html</Path>
-    <Abstract>GeometryParameters is a struct to hold geometry parameters for the system. </Abstract>
+    <Abstract>Struct to hold geometry parameters for the system. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -12957,7 +12942,7 @@
       <Scope>HalfSphereZ</Scope>
     </TokenIdentifier>
     <Path>classHalfSphereZ.html</Path>
-    <Abstract>HalfSphereZ is a simple implementation of the BoundarySurface class. </Abstract>
+    <Abstract>A simple implementation of the BoundarySurface class. </Abstract>
     <DeclaredIn>BoundarySurfaceImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -13047,7 +13032,7 @@
       <Scope>HalfSphereZBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classHalfSphereZBoundaryElement.html</Path>
-    <Abstract>HalfSphereBoundaryElement is a half-sphere implementat of a boundary element. </Abstract>
+    <Abstract>A half-sphere implementat of a boundary element. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -13194,7 +13179,7 @@
       <Scope>InternalFilamentRxnManager</Scope>
     </TokenIdentifier>
     <Path>classInternalFilamentRxnManager.html</Path>
-    <Abstract>InternalFilamentRxnManager is a class to store filament chemical reaction information read from an in...</Abstract>
+    <Abstract>To store filament chemical reaction information read from an input file. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -13305,7 +13290,7 @@
       <Scope>Linker</Scope>
     </TokenIdentifier>
     <Path>classLinker.html</Path>
-    <Abstract>Linker class is a container to store a MLinker and CLinker. </Abstract>
+    <Abstract>A container to store a MLinker and CLinker. </Abstract>
     <DeclaredIn>Linker.h</DeclaredIn>
   </Token>
   <Token>
@@ -13909,7 +13894,7 @@
       <Scope>LinkerBindingCallback</Scope>
     </TokenIdentifier>
     <Path>structLinkerBindingCallback.html</Path>
-    <Abstract>LinkerBindingCallback is to bind a linker to filaments. </Abstract>
+    <Abstract>Callback to bind a linker to filaments. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -14169,7 +14154,7 @@
       <Scope>LinkerDB</Scope>
     </TokenIdentifier>
     <Path>classLinkerDB.html</Path>
-    <Abstract>LinkerDB class is a database for all Linkers in the system. </Abstract>
+    <Abstract>A database for all Linkers in the system. </Abstract>
     <DeclaredIn>LinkerDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -14295,7 +14280,7 @@
       <Scope>LinkerFF</Scope>
     </TokenIdentifier>
     <Path>classLinkerFF.html</Path>
-    <Abstract>Linker FF is an implementation of the ForceField class that calculates Linker stretching, bending, and twisting. </Abstract>
+    <Abstract>An implementation of the ForceField class that calculates Linker stretching, bending, and twisting. </Abstract>
     <DeclaredIn>LinkerFF.h</DeclaredIn>
   </Token>
   <Token>
@@ -14377,7 +14362,7 @@
       <Scope>LinkerInteractions</Scope>
     </TokenIdentifier>
     <Path>classLinkerInteractions.html</Path>
-    <Abstract>LinkerInteractions class represents an internal linker interaction. </Abstract>
+    <Abstract>Represents an internal linker interaction. </Abstract>
     <DeclaredIn>LinkerInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -14447,7 +14432,7 @@
       <Scope>LinkerStretching</Scope>
     </TokenIdentifier>
     <Path>classLinkerStretching.html</Path>
-    <Abstract>LinkerStretching class represents a linker stretching interaction. </Abstract>
+    <Abstract>Represents a linker stretching interaction. </Abstract>
     <DeclaredIn>LinkerStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -14516,7 +14501,7 @@
       <Scope>LinkerStretchingHarmonic</Scope>
     </TokenIdentifier>
     <Path>classLinkerStretchingHarmonic.html</Path>
-    <Abstract>LinkerStretchingHarmonic class is a harmonic potential used by the LinkerStretching template...</Abstract>
+    <Abstract>A harmonic potential used by the LinkerStretching template. </Abstract>
     <DeclaredIn>LinkerStretchingHarmonic.h</DeclaredIn>
   </Token>
   <Token>
@@ -14571,7 +14556,7 @@
       <Scope>MController</Scope>
     </TokenIdentifier>
     <Path>classMController.html</Path>
-    <Abstract>MController class is used to initialize, control, and run the mechanical components of a simulation...</Abstract>
+    <Abstract>Used to initialize, control, and run the mechanical components of a simulation. </Abstract>
     <DeclaredIn>MController.h</DeclaredIn>
   </Token>
   <Token>
@@ -14675,7 +14660,7 @@
       <Scope>MCylinder</Scope>
     </TokenIdentifier>
     <Path>classMCylinder.html</Path>
-    <Abstract>MCylinder class is used to hold mechanical properties of a Cylinder. </Abstract>
+    <Abstract>Used to hold mechanical properties of a Cylinder. </Abstract>
     <DeclaredIn>MCylinder.h</DeclaredIn>
   </Token>
   <Token>
@@ -14943,7 +14928,7 @@
       <Scope>MechanicsAlgorithm</Scope>
     </TokenIdentifier>
     <Path>structMechanicsAlgorithm.html</Path>
-    <Abstract>MechanicsAlgorithm is a struct to hold mechanics algorithm information. </Abstract>
+    <Abstract>Struct to hold mechanics algorithm information. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -14974,7 +14959,7 @@
       <Scope>MechanicsFFType</Scope>
     </TokenIdentifier>
     <Path>structMechanicsFFType.html</Path>
-    <Abstract>MechanicsFFType is a struct to hold the force field types. </Abstract>
+    <Abstract>Struct to hold the force field types. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -15100,7 +15085,7 @@
       <Scope>MechanicsParameters</Scope>
     </TokenIdentifier>
     <Path>structMechanicsParameters.html</Path>
-    <Abstract>MechanicsParameters is a struct to hold mechanical parameters for the system. </Abstract>
+    <Abstract>Struct to hold mechanical parameters for the system. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -15285,7 +15270,7 @@
       <Scope>Minimizer</Scope>
     </TokenIdentifier>
     <Path>classMinimizer.html</Path>
-    <Abstract>Minimizer class is a mechanical minimzer used by the MController. </Abstract>
+    <Abstract>A mechanical minimzer used by the MController. </Abstract>
     <DeclaredIn>Minimizer.h</DeclaredIn>
   </Token>
   <Token>
@@ -15308,7 +15293,7 @@
       <Scope>MLinker</Scope>
     </TokenIdentifier>
     <Path>classMLinker.html</Path>
-    <Abstract>MLinker class represents the mechanical component of a Linker. </Abstract>
+    <Abstract>Represents the mechanical component of a Linker. </Abstract>
     <DeclaredIn>MLinker.h</DeclaredIn>
   </Token>
   <Token>
@@ -15411,7 +15396,7 @@
       <Scope>MMotorGhost</Scope>
     </TokenIdentifier>
     <Path>classMMotorGhost.html</Path>
-    <Abstract>MMotorGhost class represents a cross-link between Filaments that can move by way of chemical reaction...</Abstract>
+    <Abstract>Represents a cross-link between Filaments that can move by way of chemical reactions. </Abstract>
     <DeclaredIn>MMotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -15514,7 +15499,7 @@
       <Scope>MotorBindingCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorBindingCallback.html</Path>
-    <Abstract>MotorBindingCallback is to bind a motor to filaments. </Abstract>
+    <Abstract>Callback to bind a motor to filaments. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -15774,7 +15759,7 @@
       <Scope>MotorGhost</Scope>
     </TokenIdentifier>
     <Path>classMotorGhost.html</Path>
-    <Abstract>MotorGhost class is a container to store a MMotorGhost and CMotorGhost. </Abstract>
+    <Abstract>A container to store a MMotorGhost and CMotorGhost. </Abstract>
     <DeclaredIn>MotorGhost.h</DeclaredIn>
   </Token>
   <Token>
@@ -16402,7 +16387,7 @@
       <Scope>MotorGhostDB</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostDB.html</Path>
-    <Abstract>MotorGhostDB class is a database for all MotorGhosts in the system. </Abstract>
+    <Abstract>A database for all MotorGhosts in the system. </Abstract>
     <DeclaredIn>MotorGhostDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -16528,7 +16513,7 @@
       <Scope>MotorGhostFF</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostFF.html</Path>
-    <Abstract>Motor FF is an implementation of the ForceField class that calculates Motor stretching, bending, and twisting. </Abstract>
+    <Abstract>An implementation of the ForceField class that calculates Motor stretching, bending, and twisting. </Abstract>
     <DeclaredIn>MotorGhostFF.h</DeclaredIn>
   </Token>
   <Token>
@@ -16610,7 +16595,7 @@
       <Scope>MotorGhostInteractions</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostInteractions.html</Path>
-    <Abstract>MotorInteractions class represents an internal motor interaction. </Abstract>
+    <Abstract>Represents an internal motor interaction. </Abstract>
     <DeclaredIn>MotorGhostInteractions.h</DeclaredIn>
   </Token>
   <Token>
@@ -16680,7 +16665,7 @@
       <Scope>MotorGhostStretching</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostStretching.html</Path>
-    <Abstract>MotorStretching class represents a motor stretching interaction. </Abstract>
+    <Abstract>Represents a motor stretching interaction. </Abstract>
     <DeclaredIn>MotorGhostStretching.h</DeclaredIn>
   </Token>
   <Token>
@@ -16749,7 +16734,7 @@
       <Scope>MotorGhostStretchingHarmonic</Scope>
     </TokenIdentifier>
     <Path>classMotorGhostStretchingHarmonic.html</Path>
-    <Abstract>MotorStretchingHarmonic class is a harmonic potential used by the MotorStretching template...</Abstract>
+    <Abstract>A harmonic potential used by the MotorStretching template. </Abstract>
     <DeclaredIn>MotorGhostStretchingHarmonic.h</DeclaredIn>
   </Token>
   <Token>
@@ -16804,7 +16789,7 @@
       <Scope>MotorMovingCylinderBackwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorMovingCylinderBackwardCallback.html</Path>
-    <Abstract>MotorWalkingBackwardCallback is to walk a motor on a filament to a new cylinder. </Abstract>
+    <Abstract>Callback to walk a motor on a filament to a new cylinder. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -16838,7 +16823,6 @@
     </TokenIdentifier>
     <Path>structMotorMovingCylinderBackwardCallback.html</Path>
     <Anchor>a6276bf072dba76305dd80c9f2a70a863</Anchor>
-    <Abstract>members </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -16868,7 +16852,7 @@
       <Scope>MotorMovingCylinderForwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorMovingCylinderForwardCallback.html</Path>
-    <Abstract>MotorWalkingForwardCallback is to walk a motor on a filament to a new cylinder. </Abstract>
+    <Abstract>Callback to walk a motor on a filament to a new cylinder. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -16902,7 +16886,6 @@
     </TokenIdentifier>
     <Path>structMotorMovingCylinderForwardCallback.html</Path>
     <Anchor>afe45cdc1c8c22c183b464a4d4a2b0d59</Anchor>
-    <Abstract>members </Abstract>
   </Token>
   <Token>
     <TokenIdentifier>
@@ -17135,7 +17118,7 @@
       <Scope>MotorWalkingBackwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorWalkingBackwardCallback.html</Path>
-    <Abstract>MotorWalkingBackwardCallback is to walk a motor on a filament. </Abstract>
+    <Abstract>Callback to walk a motor on a filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -17188,7 +17171,7 @@
       <Scope>MotorWalkingForwardCallback</Scope>
     </TokenIdentifier>
     <Path>structMotorWalkingForwardCallback.html</Path>
-    <Abstract>MotorWalkingForwardCallback is to walk a motor on a filament. </Abstract>
+    <Abstract>Callback to walk a motor on a filament. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -17241,7 +17224,7 @@
       <Scope>Movable</Scope>
     </TokenIdentifier>
     <Path>classMovable.html</Path>
-    <Abstract>Movable class is for a movable object in the SubSystem. </Abstract>
+    <Abstract>For a movable object in the SubSystem. </Abstract>
     <DeclaredIn>Movable.h</DeclaredIn>
   </Token>
   <Token>
@@ -17264,7 +17247,7 @@
       <Scope>Neighbor</Scope>
     </TokenIdentifier>
     <Path>classNeighbor.html</Path>
-    <Abstract>Neighbor class is an abstract class for any object that can be added/removed from a neighborlist...</Abstract>
+    <Abstract>An abstract class for any object that can be added/removed from a NeighborList. </Abstract>
     <DeclaredIn>Neighbor.h</DeclaredIn>
   </Token>
   <Token>
@@ -17298,7 +17281,7 @@
       <Scope>NeighborList</Scope>
     </TokenIdentifier>
     <Path>classNeighborList.html</Path>
-    <Abstract>NeighborList class is to hold an external neighbor list of general type. </Abstract>
+    <Abstract>To hold an external neighbor list of general type. </Abstract>
     <DeclaredIn>NeighborList.h</DeclaredIn>
   </Token>
   <Token>
@@ -17414,7 +17397,7 @@
       <Scope>NeighborListDB</Scope>
     </TokenIdentifier>
     <Path>classNeighborListDB.html</Path>
-    <Abstract>NeighborListDB is used to store all NeighborLists in the system. </Abstract>
+    <Abstract>A database to store all NeighborLists in the system. </Abstract>
     <DeclaredIn>NeighborListDB.h</DeclaredIn>
   </Token>
   <Token>
@@ -17553,7 +17536,7 @@
       <Scope>OutOfBoundsException</Scope>
     </TokenIdentifier>
     <Path>classOutOfBoundsException.html</Path>
-    <Abstract>OutOfBoundsException is a exception to be thrown when an index/coordinate is out of bounds of the gri...</Abstract>
+    <Abstract>A exception to be thrown when an index/coordinate is out of bounds of the grid. </Abstract>
     <DeclaredIn>GController.h</DeclaredIn>
   </Token>
   <Token>
@@ -17575,7 +17558,7 @@
       <Scope>Output</Scope>
     </TokenIdentifier>
     <Path>classOutput.html</Path>
-    <Abstract>Output class is to print a specified output into a file. </Abstract>
+    <Abstract>To print a specified output into a file. </Abstract>
     <DeclaredIn>Output.h</DeclaredIn>
   </Token>
   <Token>
@@ -17681,7 +17664,7 @@
       <Scope>Parser</Scope>
     </TokenIdentifier>
     <Path>classParser.html</Path>
-    <Abstract>Parser class is a general parser. </Abstract>
+    <Abstract>A general parser. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -17725,7 +17708,7 @@
       <Scope>Plane</Scope>
     </TokenIdentifier>
     <Path>classPlane.html</Path>
-    <Abstract>BasicPlane is a simple implementation of the BoundarySurface class. </Abstract>
+    <Abstract>A simple implementation of the BoundarySurface class. </Abstract>
     <DeclaredIn>BoundarySurfaceImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -17804,7 +17787,7 @@
       <Scope>PlaneBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classPlaneBoundaryElement.html</Path>
-    <Abstract>PlaneBoundaryElement is a plane implementation of a boundary element. </Abstract>
+    <Abstract>A plane implementation of a boundary element. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -17970,7 +17953,7 @@
       <Scope>PolakRibiere</Scope>
     </TokenIdentifier>
     <Path>classPolakRibiere.html</Path>
-    <Abstract>PolakRibiere class is the Polak-Ribiere method for conjugate gradient minimization. </Abstract>
+    <Abstract>The Polak-Ribiere method for conjugate gradient minimization. </Abstract>
     <DeclaredIn>CGPolakRibiereMethod.h</DeclaredIn>
   </Token>
   <Token>
@@ -18537,7 +18520,7 @@
       <Scope>PQNode</Scope>
     </TokenIdentifier>
     <Path>classPQNode.html</Path>
-    <Abstract>PQNode stands for Priority Queue Node. </Abstract>
+    <Abstract>Priority Queue Node. </Abstract>
     <DeclaredIn>ChemNRMImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -18656,7 +18639,7 @@
       <Scope>Reactable</Scope>
     </TokenIdentifier>
     <Path>classReactable.html</Path>
-    <Abstract>Reactable class is for a reactable object in the SubSystem. </Abstract>
+    <Abstract>For a reactable object in the SubSystem. </Abstract>
     <DeclaredIn>Reactable.h</DeclaredIn>
   </Token>
   <Token>
@@ -18679,7 +18662,7 @@
       <Scope>Reaction</Scope>
     </TokenIdentifier>
     <Path>classReaction.html</Path>
-    <Abstract>Reaction&lt;M,N&gt; class represents a concrete chemical reaction, such as A + B -&gt; C, where M is the numbe...</Abstract>
+    <Abstract>Represents a concrete chemical reaction, such as A + B -&gt; C, where M is the number of reactants and N...</Abstract>
     <DeclaredIn>Reaction.h</DeclaredIn>
   </Token>
   <Token>
@@ -19421,7 +19404,7 @@
       <Scope>ReactionBase</Scope>
     </TokenIdentifier>
     <Path>classReactionBase.html</Path>
-    <Abstract>ReactionBase class represents an abstract interface for simple chemical Reactions of the form A + B -...</Abstract>
+    <Abstract>Represents an abstract interface for simple chemical Reactions of the form A + B -&gt; C...</Abstract>
     <DeclaredIn>ReactionBase.h</DeclaredIn>
   </Token>
   <Token>
@@ -20481,7 +20464,7 @@
       <Scope>ReactionVisitorLambda</Scope>
     </TokenIdentifier>
     <Path>classReactionVisitorLambda.html</Path>
-    <Abstract>The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on ...</Abstract>
+    <Abstract>Allows using C++11 lambda expressions to set the action to be performed on each Reaction of the node ...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -20657,7 +20640,7 @@
       <Scope>RNodeGillespie</Scope>
     </TokenIdentifier>
     <Path>classRNodeGillespie.html</Path>
-    <Abstract>RNodeGillespie is used by ChemGillespieImpl to implement the cached version of the Gillespie algorith...</Abstract>
+    <Abstract>Used by ChemGillespieImpl to implement the cached version of the Gillespie algorithm. </Abstract>
     <DeclaredIn>ChemGillespieImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -20916,7 +20899,7 @@
       <Scope>RNodeNRM</Scope>
     </TokenIdentifier>
     <Path>classRNodeNRM.html</Path>
-    <Abstract>RNodeNRM stands for Reaction Node Next Reaction Method. </Abstract>
+    <Abstract>Reaction Node for the Next Reaction Method. </Abstract>
     <DeclaredIn>ChemNRMImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -21199,7 +21182,7 @@
       <Scope>RSpecies</Scope>
     </TokenIdentifier>
     <Path>classRSpecies.html</Path>
-    <Abstract>RSpecies class represents the reactive aspect of chemical molecules. It tracks their copy number and ...</Abstract>
+    <Abstract>Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ...</Abstract>
     <DeclaredIn>RSpecies.h</DeclaredIn>
   </Token>
   <Token>
@@ -21568,7 +21551,7 @@
       <Scope>SimpleManagerImpl</Scope>
     </TokenIdentifier>
     <Path>classSimpleManagerImpl.html</Path>
-    <Abstract>SimpleManagerImpl is a concrete implementation of the ChemManagerImpl class. </Abstract>
+    <Abstract>A concrete implementation of the ChemManagerImpl class. </Abstract>
     <DeclaredIn>SimpleManagerImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -21765,7 +21748,7 @@
       <Scope>Species</Scope>
     </TokenIdentifier>
     <Path>classSpecies.html</Path>
-    <Abstract>Species class represents chemical molecules, tracks their copy number and can be used in Reactions...</Abstract>
+    <Abstract>Represents chemical molecules, tracks their copy number and can be used in Reactions. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -22067,7 +22050,7 @@
       <Scope>SpeciesBound</Scope>
     </TokenIdentifier>
     <Path>classSpeciesBound.html</Path>
-    <Abstract>SpeciesBound should be used for species that can be bound to a filament. </Abstract>
+    <Abstract>Used for species that can be bound to a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -22358,7 +22341,7 @@
       <Scope>SpeciesBulk</Scope>
     </TokenIdentifier>
     <Path>classSpeciesBulk.html</Path>
-    <Abstract>SpeciesBulk should be used for Species without spatial information (i.e. well-mixed in the container)...</Abstract>
+    <Abstract>Used for Species without spatial information (i.e. well-mixed in the container) </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -22912,7 +22895,7 @@
       <Scope>SpeciesDiffusing</Scope>
     </TokenIdentifier>
     <Path>classSpeciesDiffusing.html</Path>
-    <Abstract>SpeciesDiffusing should be used for Species which can move spatially from one compartment to the neig...</Abstract>
+    <Abstract>Used for Species which can move spatially from one compartment to the neighboring one (i...</Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23157,7 +23140,7 @@
       <Scope>SpeciesFilament</Scope>
     </TokenIdentifier>
     <Path>classSpeciesFilament.html</Path>
-    <Abstract>SpeciesFilament should be used for species that can be in a filament. </Abstract>
+    <Abstract>Used for species that can be in a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23402,7 +23385,7 @@
       <Scope>SpeciesLinker</Scope>
     </TokenIdentifier>
     <Path>classSpeciesLinker.html</Path>
-    <Abstract>SpeciesLinker should be used for linker species that can be bound to a filament. </Abstract>
+    <Abstract>Used for linker species that can be bound to a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23693,7 +23676,7 @@
       <Scope>SpeciesMinusEnd</Scope>
     </TokenIdentifier>
     <Path>classSpeciesMinusEnd.html</Path>
-    <Abstract>SpeciesMinusEnd is for a minus end species on a filament This allows for various polymerization/depol...</Abstract>
+    <Abstract>Used for a minus end species on a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23938,7 +23921,7 @@
       <Scope>SpeciesMotor</Scope>
     </TokenIdentifier>
     <Path>classSpeciesMotor.html</Path>
-    <Abstract>SpeciesMotor should be used for motor species that can be bound to a filament. </Abstract>
+    <Abstract>Used for motor species that can be bound to a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -24229,7 +24212,7 @@
       <Scope>SpeciesNamesDB</Scope>
     </TokenIdentifier>
     <Path>classSpeciesNamesDB.html</Path>
-    <Abstract>SpeciesNamesDB class is used to associate unique integers with character based names of Species...</Abstract>
+    <Abstract>Used to associate unique integers with character based names of Species. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -24353,7 +24336,7 @@
       <Scope>SpeciesPlusEnd</Scope>
     </TokenIdentifier>
     <Path>classSpeciesPlusEnd.html</Path>
-    <Abstract>SpeciesPlusEnd is for a plus end species on a filament This allows for various polymerization/depolym...</Abstract>
+    <Abstract>Used for a plus end species on a filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -25050,7 +25033,7 @@
       <Scope>SpeciesVisitorLambda</Scope>
     </TokenIdentifier>
     <Path>classSpeciesVisitorLambda.html</Path>
-    <Abstract>The SpeciesVisitorLambda allows using C++11 lambda expressions to set the action to be performed on e...</Abstract>
+    <Abstract>Allows using C++11 lambda expressions to set the action to be performed on each Species of the node a...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -25143,7 +25126,7 @@
       <Scope>Sphere</Scope>
     </TokenIdentifier>
     <Path>classSphere.html</Path>
-    <Abstract>Sphere is a simple implementation of the BoundarySurface class. </Abstract>
+    <Abstract>A simple implementation of the BoundarySurface class. </Abstract>
     <DeclaredIn>BoundarySurfaceImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -25222,7 +25205,7 @@
       <Scope>SphereBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classSphereBoundaryElement.html</Path>
-    <Abstract>SphereBoundaryElement is a spherical implementation of a boundary element. </Abstract>
+    <Abstract>A spherical implementation of a boundary element. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -25358,7 +25341,7 @@
       <Scope>SubSystem</Scope>
     </TokenIdentifier>
     <Path>classSubSystem.html</Path>
-    <Abstract>SubSystem class manages all objects in the system, including Filaments, Linkers, and Motors...</Abstract>
+    <Abstract>Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ...</Abstract>
     <DeclaredIn>SubSystem.h</DeclaredIn>
   </Token>
   <Token>
@@ -25648,7 +25631,7 @@
       <Scope>SystemParameters</Scope>
     </TokenIdentifier>
     <Path>classSystemParameters.html</Path>
-    <Abstract>SystemParameters is a static class that holds all simulation parameters, initialized by the SystemPar...</Abstract>
+    <Abstract>Static class that holds all simulation parameters, initialized by the SystemParser. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -25758,7 +25741,7 @@
       <Scope>SystemParser</Scope>
     </TokenIdentifier>
     <Path>classSystemParser.html</Path>
-    <Abstract>SystemParser class is used to parse a system input file, initialized by the Controller. </Abstract>
+    <Abstract>To parse a system input file, initialized by the Controller. </Abstract>
     <DeclaredIn>Parser.h</DeclaredIn>
   </Token>
   <Token>
@@ -26055,7 +26038,7 @@
       <Scope>UnbindingCallback</Scope>
     </TokenIdentifier>
     <Path>structUnbindingCallback.html</Path>
-    <Abstract>UnbindingCallback is to unbind a bound to filaments. </Abstract>
+    <Abstract>Callback to unbind a bound to filaments. </Abstract>
     <DeclaredIn>ChemCallbacks.h</DeclaredIn>
   </Token>
   <Token>
@@ -26209,7 +26192,7 @@
       <Scope>Visitor</Scope>
     </TokenIdentifier>
     <Path>classVisitor.html</Path>
-    <Abstract>Visitor is n abstract interface to traverse those nodes in the Composite pattern which fulfill a cert...</Abstract>
+    <Abstract>An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...</Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -26268,7 +26251,7 @@
       <Scope>VisitorLambda</Scope>
     </TokenIdentifier>
     <Path>classVisitorLambda.html</Path>
-    <Abstract>The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each nod...</Abstract>
+    <Abstract>Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. </Abstract>
     <DeclaredIn>Visitor.h</DeclaredIn>
   </Token>
   <Token>
@@ -26361,7 +26344,7 @@
       <Scope>VolumeCylindricalFF</Scope>
     </TokenIdentifier>
     <Path>classVolumeCylindricalFF.html</Path>
-    <Abstract>VolumeCylindrical FF is an implementation of the ForceField class that calculates Cylinder volume int...</Abstract>
+    <Abstract>An implementation of the ForceField class that calculates Cylinder volume interactions. </Abstract>
     <DeclaredIn>VolumeCylindricalFF.h</DeclaredIn>
   </Token>
   <Token>

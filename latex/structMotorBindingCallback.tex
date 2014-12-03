@@ -1,0 +1,161 @@
+\hypertarget{structMotorBindingCallback}{\section{Motor\+Binding\+Callback Struct Reference}
+\label{structMotorBindingCallback}\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+}
+
+
+Callback to bind a motor to filaments.  
+
+
+
+
+{\ttfamily \#include $<$Chem\+Callbacks.\+h$>$}
+
+
+
+Collaboration diagram for Motor\+Binding\+Callback\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structMotorBindingCallback__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structMotorBindingCallback_a063a3eb832d1ac51e14261ce3af5aabe}{Motor\+Binding\+Callback} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2, short motor\+Type, short position1, short position2, \hyperlink{classSubSystem}{Sub\+System} $\ast$ps)
+\item 
+void \hyperlink{structMotorBindingCallback_a91333b9e848e1b77134cb20543d9c4b3}{operator()} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{structMotorBindingCallback_a62d13053a3c4913d5d2dc3d43d41223b}{\+\_\+ps}
+\item 
+\hyperlink{classCCylinder}{C\+Cylinder} $\ast$ \hyperlink{structMotorBindingCallback_ae4fa4b963bb84abf2846cca81708e19c}{\+\_\+cc1}
+\item 
+\hyperlink{classCCylinder}{C\+Cylinder} $\ast$ \hyperlink{structMotorBindingCallback_a0918d8c091191d95105ab5278c93c4c0}{\+\_\+cc2}
+\item 
+short \hyperlink{structMotorBindingCallback_a4eff4c418d4d3f09280c9472232e9559}{\+\_\+motor\+Type}
+\item 
+short \hyperlink{structMotorBindingCallback_a3a0b61cb367e62cd0d1675eac5945d4d}{\+\_\+position1}
+\item 
+short \hyperlink{structMotorBindingCallback_a2be059308f68763b673f03cba3f204e3}{\+\_\+position2}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Callback to bind a motor to filaments. 
+
+Definition at line 147 of file Chem\+Callbacks.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structMotorBindingCallback_a063a3eb832d1ac51e14261ce3af5aabe}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{Motor\+Binding\+Callback}]{\setlength{\rightskip}{0pt plus 5cm}Motor\+Binding\+Callback\+::\+Motor\+Binding\+Callback (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc1, }
+\item[{{\bf C\+Cylinder} $\ast$}]{cc2, }
+\item[{short}]{motor\+Type, }
+\item[{short}]{position1, }
+\item[{short}]{position2, }
+\item[{{\bf Sub\+System} $\ast$}]{ps}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structMotorBindingCallback_a063a3eb832d1ac51e14261ce3af5aabe}
+
+
+Definition at line 154 of file Chem\+Callbacks.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{structMotorBindingCallback_a91333b9e848e1b77134cb20543d9c4b3}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!operator()@{operator()}}
+\index{operator()@{operator()}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}void Motor\+Binding\+Callback\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structMotorBindingCallback_a91333b9e848e1b77134cb20543d9c4b3}
+
+
+Definition at line 157 of file Chem\+Callbacks.\+h.
+
+
+
+References \+\_\+cc1, \+\_\+cc2, \+\_\+motor\+Type, \+\_\+position1, \+\_\+position2, \+\_\+ps, Sub\+System\+::add\+New\+Motor\+Ghost(), Geometry\+Parameters\+::cylinder\+Int\+Size, System\+Parameters\+::\+Geometry(), and C\+Cylinder\+::get\+Cylinder().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structMotorBindingCallback_ae4fa4b963bb84abf2846cca81708e19c}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+cc1@{\+\_\+cc1}}
+\index{\+\_\+cc1@{\+\_\+cc1}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+cc1}]{\setlength{\rightskip}{0pt plus 5cm}{\bf C\+Cylinder}$\ast$ Motor\+Binding\+Callback\+::\+\_\+cc1}}\label{structMotorBindingCallback_ae4fa4b963bb84abf2846cca81708e19c}
+
+
+Definition at line 150 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structMotorBindingCallback_a0918d8c091191d95105ab5278c93c4c0}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+cc2@{\+\_\+cc2}}
+\index{\+\_\+cc2@{\+\_\+cc2}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+cc2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf C\+Cylinder} $\ast$ Motor\+Binding\+Callback\+::\+\_\+cc2}}\label{structMotorBindingCallback_a0918d8c091191d95105ab5278c93c4c0}
+
+
+Definition at line 150 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structMotorBindingCallback_a4eff4c418d4d3f09280c9472232e9559}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+motor\+Type@{\+\_\+motor\+Type}}
+\index{\+\_\+motor\+Type@{\+\_\+motor\+Type}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+motor\+Type}]{\setlength{\rightskip}{0pt plus 5cm}short Motor\+Binding\+Callback\+::\+\_\+motor\+Type}}\label{structMotorBindingCallback_a4eff4c418d4d3f09280c9472232e9559}
+
+
+Definition at line 151 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structMotorBindingCallback_a3a0b61cb367e62cd0d1675eac5945d4d}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+position1@{\+\_\+position1}}
+\index{\+\_\+position1@{\+\_\+position1}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+position1}]{\setlength{\rightskip}{0pt plus 5cm}short Motor\+Binding\+Callback\+::\+\_\+position1}}\label{structMotorBindingCallback_a3a0b61cb367e62cd0d1675eac5945d4d}
+
+
+Definition at line 152 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structMotorBindingCallback_a2be059308f68763b673f03cba3f204e3}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+position2@{\+\_\+position2}}
+\index{\+\_\+position2@{\+\_\+position2}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+position2}]{\setlength{\rightskip}{0pt plus 5cm}short Motor\+Binding\+Callback\+::\+\_\+position2}}\label{structMotorBindingCallback_a2be059308f68763b673f03cba3f204e3}
+
+
+Definition at line 152 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structMotorBindingCallback_a62d13053a3c4913d5d2dc3d43d41223b}{\index{Motor\+Binding\+Callback@{Motor\+Binding\+Callback}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Motor\+Binding\+Callback@{Motor\+Binding\+Callback}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System}$\ast$ Motor\+Binding\+Callback\+::\+\_\+ps}}\label{structMotorBindingCallback_a62d13053a3c4913d5d2dc3d43d41223b}
+
+
+Definition at line 149 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemCallbacks_8h}{Chem\+Callbacks.\+h}\end{DoxyCompactItemize}

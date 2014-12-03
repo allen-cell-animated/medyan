@@ -1,0 +1,115 @@
+\hypertarget{classTypeVisitor}{\section{Type\+Visitor$<$ Component\+Type $>$ Class Template Reference}
+\label{classTypeVisitor}\index{Type\+Visitor$<$ Component\+Type $>$@{Type\+Visitor$<$ Component\+Type $>$}}
+}
+
+
+{\ttfamily \#include $<$Visitor.\+h$>$}
+
+
+
+Inheritance diagram for Type\+Visitor$<$ Component\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classTypeVisitor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Type\+Visitor$<$ Component\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classTypeVisitor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{visit} (\hyperlink{classComponent}{Component} $\ast$c)
+\begin{DoxyCompactList}\small\item\em When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classTypeVisitor_a567bc776ee742b262ba7aa12c83c8dcf}{pred\+Impl} (\hyperlink{classComponent}{Component} $\ast$c) override
+\begin{DoxyCompactList}\small\item\em Return true if the \hyperlink{classComponent}{Component} $\ast$c satisfies the desired predicate. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}{visit\+Impl} (\hyperlink{classComponent}{Component} $\ast$c)=0
+\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Component\+Type$>$class Type\+Visitor$<$ Component\+Type $>$}
+
+
+
+Definition at line 84 of file Visitor.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classTypeVisitor_a567bc776ee742b262ba7aa12c83c8dcf}{\index{Type\+Visitor@{Type\+Visitor}!pred\+Impl@{pred\+Impl}}
+\index{pred\+Impl@{pred\+Impl}!Type\+Visitor@{Type\+Visitor}}
+\subsubsection[{pred\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Component\+Type $>$ virtual bool {\bf Type\+Visitor}$<$ Component\+Type $>$\+::pred\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classTypeVisitor_a567bc776ee742b262ba7aa12c83c8dcf}
+
+
+Return true if the \hyperlink{classComponent}{Component} $\ast$c satisfies the desired predicate. 
+
+
+
+Reimplemented from \hyperlink{classVisitor_a5f9d231f1ac00bd232085ee6e6547de0}{Visitor}.
+
+
+
+Definition at line 86 of file Visitor.\+h.
+
+\hypertarget{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{\index{Type\+Visitor@{Type\+Visitor}!visit@{visit}}
+\index{visit@{visit}!Type\+Visitor@{Type\+Visitor}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}bool Visitor\+::visit (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}
+
+
+When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
+
+If v-\/$>$visit(c) returns a false value, then the further propagation of the tree is terminated. 
+
+Definition at line 39 of file Visitor.\+h.
+
+
+
+References Visitor\+::pred\+Impl(), and Visitor\+::visit\+Impl().
+
+
+
+Referenced by Component\+::apply(), and Composite\+::apply().
+
+\hypertarget{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}{\index{Type\+Visitor@{Type\+Visitor}!visit\+Impl@{visit\+Impl}}
+\index{visit\+Impl@{visit\+Impl}!Type\+Visitor@{Type\+Visitor}}
+\subsubsection[{visit\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Visitor\+::visit\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}, {\ttfamily [inherited]}}}\label{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}
+
+
+When this visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: cv-\/$>$visit(c). 
+
+If a false value is returned from this function called, then the further propagation of the tree is terminated. 
+
+Implemented in \hyperlink{classVisitorLambda_af934df1d8669dd315d824d9ee706f250}{Visitor\+Lambda}.
+
+
+
+Referenced by Visitor\+::visit().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Visitor_8h}{Visitor.\+h}\end{DoxyCompactItemize}

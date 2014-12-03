@@ -1,0 +1,5 @@
+<map id="ReactionBase" name="ReactionBase">
+<area shape="rect" id="node2" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="185,5,270,31"/>
+<area shape="rect" id="node3" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="97,92,187,117"/>
+<area shape="rect" id="node7" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="337,5,400,31"/>
+</map>

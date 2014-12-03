@@ -1,0 +1,258 @@
+\hypertarget{classFilamentDB}{\section{Filament\+D\+B Class Reference}
+\label{classFilamentDB}\index{Filament\+D\+B@{Filament\+D\+B}}
+}
+
+
+A database for all \hyperlink{classFilament}{Filaments} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Filament\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Filament\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=189pt]{classFilamentDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Filament\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{classFilamentDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classFilamentDB_acb05fe726fc30817230fcff03b5ec0fc}{Filament\+D\+B} (const \hyperlink{classFilamentDB}{Filament\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classFilamentDB}{Filament\+D\+B} \& \hyperlink{classFilamentDB_a2f4d08f0f0c699cfafc48ebddc5ea9b6}{operator=} (\hyperlink{classFilamentDB}{Filament\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classFilamentDB_a1976958c7b9a4eea369485593ea72373}{add\+Filament} (\hyperlink{classFilament}{Filament} $\ast$f)
+\begin{DoxyCompactList}\small\item\em Add a filament. \end{DoxyCompactList}\item 
+void \hyperlink{classFilamentDB_ada62057565863d888f97ce10590c56df}{remove\+Filament} (\hyperlink{classFilament}{Filament} $\ast$f)
+\begin{DoxyCompactList}\small\item\em Remove a filament. \end{DoxyCompactList}\item 
+int \hyperlink{classFilamentDB_a59a564c801c753cd58456dd7c366aecd}{get\+Filament\+I\+D} ()
+\begin{DoxyCompactList}\small\item\em Get current filament I\+D, and update the I\+D counter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classFilamentDB}{Filament\+D\+B} $\ast$ \hyperlink{classFilamentDB_a90c6a59bba2f709b3012dae202365996}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classFilament}{Filament} $\ast$ $>$ \hyperlink{classFilamentDB_ad4dab72a17f9ca811b1394d016ff6919}{fdb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classFilamentDB_aea94e0951b04cb5c159e1b82e4234aa6}{Filament\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{classFilamentDB_aa1d24417c23d969d25de7313d1515efe}{\+\_\+current\+Filament\+I\+D} = 0
+\begin{DoxyCompactList}\small\item\em To assign filament ids. \end{DoxyCompactList}\item 
+static \hyperlink{classFilamentDB}{Filament\+D\+B} $\ast$ \hyperlink{classFilamentDB_ac70b0695a1d08e39975e601f34330bb7}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database for all \hyperlink{classFilament}{Filaments} in the system. 
+
+This \hyperlink{classFilamentDB}{Filament\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classFilament}{Filaments} objects, as well as some standard list functions and iterators. 
+
+Definition at line 29 of file Filament\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classFilamentDB_ad4dab72a17f9ca811b1394d016ff6919}{\index{Filament\+D\+B@{Filament\+D\+B}!fdb@{fdb}}
+\index{fdb@{fdb}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{fdb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Filament}$\ast$$>$ {\bf Filament\+D\+B\+::fdb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilamentDB_ad4dab72a17f9ca811b1394d016ff6919}
+
+
+Definition at line 30 of file Filament\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFilamentDB_acb05fe726fc30817230fcff03b5ec0fc}{\index{Filament\+D\+B@{Filament\+D\+B}!Filament\+D\+B@{Filament\+D\+B}}
+\index{Filament\+D\+B@{Filament\+D\+B}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{Filament\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Filament\+D\+B\+::\+Filament\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Filament\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classFilamentDB_acb05fe726fc30817230fcff03b5ec0fc}
+
+
+Copying is not allowed. 
+
+\hypertarget{classFilamentDB_aea94e0951b04cb5c159e1b82e4234aa6}{\index{Filament\+D\+B@{Filament\+D\+B}!Filament\+D\+B@{Filament\+D\+B}}
+\index{Filament\+D\+B@{Filament\+D\+B}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{Filament\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Filament\+D\+B\+::\+Filament\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classFilamentDB_aea94e0951b04cb5c159e1b82e4234aa6}
+
+
+Definition at line 58 of file Filament\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFilamentDB_a1976958c7b9a4eea369485593ea72373}{\index{Filament\+D\+B@{Filament\+D\+B}!add\+Filament@{add\+Filament}}
+\index{add\+Filament@{add\+Filament}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{add\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+D\+B\+::add\+Filament (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{f}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilamentDB_a1976958c7b9a4eea369485593ea72373}
+
+
+Add a filament. 
+
+
+
+Definition at line 47 of file Filament\+D\+B.\+h.
+
+
+
+Referenced by Filament\+::\+Filament().
+
+\hypertarget{classFilamentDB_a59a564c801c753cd58456dd7c366aecd}{\index{Filament\+D\+B@{Filament\+D\+B}!get\+Filament\+I\+D@{get\+Filament\+I\+D}}
+\index{get\+Filament\+I\+D@{get\+Filament\+I\+D}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{get\+Filament\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Filament\+D\+B\+::get\+Filament\+I\+D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilamentDB_a59a564c801c753cd58456dd7c366aecd}
+
+
+Get current filament I\+D, and update the I\+D counter. 
+
+
+
+Definition at line 52 of file Filament\+D\+B.\+h.
+
+
+
+References \+\_\+current\+Filament\+I\+D.
+
+
+
+Referenced by Filament\+::\+Filament().
+
+\hypertarget{classFilamentDB_a90c6a59bba2f709b3012dae202365996}{\index{Filament\+D\+B@{Filament\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Filament\+D\+B} $\ast$ Filament\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classFilamentDB_a90c6a59bba2f709b3012dae202365996}
+
+
+Get singleton instance. 
+
+
+
+Definition at line 19 of file Filament\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Filament\+D\+B().
+
+
+
+Referenced by Filament\+F\+F\+::compute\+Energy(), Filament\+F\+F\+::compute\+Forces(), Filament\+F\+F\+::compute\+Forces\+Aux(), Filament\+::\+Filament(), Output\+::print\+Basic\+Snapshot(), Output\+::print\+Birth\+Times(), Output\+::print\+Forces(), Output\+::print\+Snapshot(), and Controller\+::update\+System().
+
+\hypertarget{classFilamentDB_a2f4d08f0f0c699cfafc48ebddc5ea9b6}{\index{Filament\+D\+B@{Filament\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Filament\+D\+B}\& Filament\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classFilamentDB_a2f4d08f0f0c699cfafc48ebddc5ea9b6}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classFilamentDB_ada62057565863d888f97ce10590c56df}{\index{Filament\+D\+B@{Filament\+D\+B}!remove\+Filament@{remove\+Filament}}
+\index{remove\+Filament@{remove\+Filament}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{remove\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+D\+B\+::remove\+Filament (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{f}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilamentDB_ada62057565863d888f97ce10590c56df}
+
+
+Remove a filament. 
+
+
+
+Definition at line 49 of file Filament\+D\+B.\+h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classFilamentDB_aa1d24417c23d969d25de7313d1515efe}{\index{Filament\+D\+B@{Filament\+D\+B}!\+\_\+current\+Filament\+I\+D@{\+\_\+current\+Filament\+I\+D}}
+\index{\+\_\+current\+Filament\+I\+D@{\+\_\+current\+Filament\+I\+D}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{\+\_\+current\+Filament\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Filament\+D\+B\+::\+\_\+current\+Filament\+I\+D = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classFilamentDB_aa1d24417c23d969d25de7313d1515efe}
+
+
+To assign filament ids. 
+
+
+
+Definition at line 55 of file Filament\+D\+B.\+h.
+
+
+
+Referenced by get\+Filament\+I\+D().
+
+\hypertarget{classFilamentDB_ac70b0695a1d08e39975e601f34330bb7}{\index{Filament\+D\+B@{Filament\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Filament\+D\+B} $\ast$ Filament\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classFilamentDB_ac70b0695a1d08e39975e601f34330bb7}
+
+
+Singleton instance. 
+
+
+
+Definition at line 57 of file Filament\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Filament\+D\+B@{Filament\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Filament\+D\+B@{Filament\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{FilamentDB_8h}{Filament\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{FilamentDB_8cpp}{Filament\+D\+B.\+cpp}\end{DoxyCompactItemize}

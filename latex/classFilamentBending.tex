@@ -1,0 +1,163 @@
+\hypertarget{classFilamentBending}{\section{Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$ Class Template Reference}
+\label{classFilamentBending}\index{Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$@{Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$}}
+}
+
+
+Represents a filament bending interaction.  
+
+
+
+
+{\ttfamily \#include $<$Filament\+Bending.\+h$>$}
+
+
+
+Inheritance diagram for Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{classFilamentBending__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{classFilamentBending__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual double \hyperlink{classFilamentBending_ad182fa47da7a97e20fcd83e0737b4ea9}{compute\+Energy} (\hyperlink{classFilament}{Filament} $\ast$, double d)
+\begin{DoxyCompactList}\small\item\em Template specializations. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classFilamentBending_a5e57f48720ca3137e684e1f1d3e3bdb9}{compute\+Forces} (\hyperlink{classFilament}{Filament} $\ast$)
+\begin{DoxyCompactList}\small\item\em Compute forces of this interaction. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classFilamentBending_ab93dd7643bc4cd7545096ca6b96c2bc2}{compute\+Forces\+Aux} (\hyperlink{classFilament}{Filament} $\ast$)
+\begin{DoxyCompactList}\small\item\em Needed for Conjugated Gradient minimization;. \end{DoxyCompactList}\item 
+const string \& \hyperlink{classFilamentInteractions_af3c391f24ffbb7088de189cdb209d650}{get\+Name} ()
+\begin{DoxyCompactList}\small\item\em Get the name of this interaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+F\+Bending\+Interaction\+Type \hyperlink{classFilamentBending_a48702549ba5c7f9e511a770ec5e78886}{\+\_\+\+F\+F\+Type}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class F\+Bending\+Interaction\+Type$>$class Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$}
+
+Represents a filament bending interaction. 
+
+Definition at line 26 of file Filament\+Bending.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFilamentBending_ad182fa47da7a97e20fcd83e0737b4ea9}{\index{Filament\+Bending@{Filament\+Bending}!compute\+Energy@{compute\+Energy}}
+\index{compute\+Energy@{compute\+Energy}!Filament\+Bending@{Filament\+Bending}}
+\subsubsection[{compute\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class F\+Bending\+Interaction\+Type $>$ template double {\bf Filament\+Bending}$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classFilamentBending_ad182fa47da7a97e20fcd83e0737b4ea9}
+
+
+Template specializations. 
+
+
+
+Implements \hyperlink{classFilamentInteractions_ac67b5179bc0e843307edc1eb3d84722c}{Filament\+Interactions}.
+
+
+
+Definition at line 21 of file Filament\+Bending.\+cpp.
+
+
+
+References Filament\+::get\+Cylinder\+Vector().
+
+\hypertarget{classFilamentBending_a5e57f48720ca3137e684e1f1d3e3bdb9}{\index{Filament\+Bending@{Filament\+Bending}!compute\+Forces@{compute\+Forces}}
+\index{compute\+Forces@{compute\+Forces}!Filament\+Bending@{Filament\+Bending}}
+\subsubsection[{compute\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class F\+Bending\+Interaction\+Type $>$ template void {\bf Filament\+Bending}$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classFilamentBending_a5e57f48720ca3137e684e1f1d3e3bdb9}
+
+
+Compute forces of this interaction. 
+
+
+
+Implements \hyperlink{classFilamentInteractions_aa6747042a647d8d9d53cb437afc06f8b}{Filament\+Interactions}.
+
+
+
+Definition at line 58 of file Filament\+Bending.\+cpp.
+
+
+
+References Filament\+::get\+Cylinder\+Vector().
+
+\hypertarget{classFilamentBending_ab93dd7643bc4cd7545096ca6b96c2bc2}{\index{Filament\+Bending@{Filament\+Bending}!compute\+Forces\+Aux@{compute\+Forces\+Aux}}
+\index{compute\+Forces\+Aux@{compute\+Forces\+Aux}!Filament\+Bending@{Filament\+Bending}}
+\subsubsection[{compute\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class F\+Bending\+Interaction\+Type $>$ template void {\bf Filament\+Bending}$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classFilamentBending_ab93dd7643bc4cd7545096ca6b96c2bc2}
+
+
+Needed for Conjugated Gradient minimization;. 
+
+
+
+Implements \hyperlink{classFilamentInteractions_a77233ea2da56eaffe0bdea79c310d818}{Filament\+Interactions}.
+
+
+
+Definition at line 76 of file Filament\+Bending.\+cpp.
+
+
+
+References Filament\+::get\+Cylinder\+Vector().
+
+\hypertarget{classFilamentInteractions_af3c391f24ffbb7088de189cdb209d650}{\index{Filament\+Bending@{Filament\+Bending}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Filament\+Bending@{Filament\+Bending}}
+\subsubsection[{get\+Name}]{\setlength{\rightskip}{0pt plus 5cm}const string\& Filament\+Interactions\+::get\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classFilamentInteractions_af3c391f24ffbb7088de189cdb209d650}
+
+
+Get the name of this interaction. 
+
+
+
+Definition at line 38 of file Filament\+Interactions.\+h.
+
+
+
+References Filament\+Interactions\+::\+\_\+name.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classFilamentBending_a48702549ba5c7f9e511a770ec5e78886}{\index{Filament\+Bending@{Filament\+Bending}!\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}}
+\index{\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}!Filament\+Bending@{Filament\+Bending}}
+\subsubsection[{\+\_\+\+F\+F\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class F\+Bending\+Interaction\+Type $>$ F\+Bending\+Interaction\+Type {\bf Filament\+Bending}$<$ F\+Bending\+Interaction\+Type $>$\+::\+\_\+\+F\+F\+Type\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilamentBending_a48702549ba5c7f9e511a770ec5e78886}
+
+
+Definition at line 29 of file Filament\+Bending.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentBending_8h}{Filament\+Bending.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentBending_8cpp}{Filament\+Bending.\+cpp}\end{DoxyCompactItemize}

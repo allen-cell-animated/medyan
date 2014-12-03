@@ -1,0 +1,124 @@
+\hypertarget{ReactionBase_8h}{\section{M3\+S\+Y\+M/\+Structure/\+Reaction\+Base.h File Reference}
+\label{ReactionBase_8h}\index{M3\+S\+Y\+M/\+Structure/\+Reaction\+Base.\+h@{M3\+S\+Y\+M/\+Structure/\+Reaction\+Base.\+h}}
+}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$array$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$utility$>$}\\*
+{\ttfamily \#include $<$unordered\+\_\+set$>$}\\*
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$initializer\+\_\+list$>$}\\*
+{\ttfamily \#include $<$boost/signals2/signal.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/connection.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/shared\+\_\+connection\+\_\+block.\+hpp$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Species.\+h\char`\"{}}\\*
+Include dependency graph for Reaction\+Base.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ReactionBase_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ReactionBase_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classReactionBase}{Reaction\+Base}
+\begin{DoxyCompactList}\small\item\em Represents an abstract interface for simple chemical Reactions of the form A + B -\/$>$ C. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \\*
+boost\+::signals2\+::signal$<$ void(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ \hyperlink{ReactionBase_8h_a474e8de96ad1d2e184edd4655b5367a5}{Reaction\+Event\+Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classReactionBase}{Reaction\+Base} signal object that may be called by a \hyperlink{classReactionBase}{Reaction\+Base} simulation algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30b}{Reaction\+Type} \{ \\*
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bafc488491175a6dac9e5881e363ad4c41}{R\+E\+G\+U\+L\+A\+R}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba64b145492a27539220bb4a4cb95af90c}{D\+I\+F\+F\+U\+S\+I\+O\+N}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babd20bf878365c6e2977762273612e0ed}{P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba257a5b76956a3f0cdb04f2735cec8f40}{D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}, 
+\\*
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baad5d22d8f660819c71009b276b0d9853}{B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babb4246236a45de12ae33ca9742756203}{L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba052134034550952b4e637e90ea92ab58}{M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bad4ad31e4ddc141353bf712b0f38c5945}{B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G}, 
+\\*
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba20b685df2710300aaecba86159ed5f78}{L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba207d328c12ccc4519abf501f23d7a66a}{M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba4819cd4ea14d6c4a25d52ec38eda3331}{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba010bf487e9e1de2000dce9ac118e2f2e}{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D}, 
+\\*
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baf2481146540dbd021e1d88aeb83d6150}{C\+R\+E\+A\+T\+I\+O\+N}, 
+\hyperlink{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba7992404634380cda2526a7ea4149cbba}{D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N}
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration for type of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{ReactionBase_8h_a474e8de96ad1d2e184edd4655b5367a5}{\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!Reaction\+Event\+Signal@{Reaction\+Event\+Signal}}
+\index{Reaction\+Event\+Signal@{Reaction\+Event\+Signal}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}
+\subsubsection[{Reaction\+Event\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\+::signals2\+::signal$<$void ({\bf Reaction\+Base} $\ast$)$>$ {\bf Reaction\+Event\+Signal}}}\label{ReactionBase_8h_a474e8de96ad1d2e184edd4655b5367a5}
+
+
+This is a \hyperlink{classReactionBase}{Reaction\+Base} signal object that may be called by a \hyperlink{classReactionBase}{Reaction\+Base} simulation algorithm. 
+
+
+
+Definition at line 50 of file Reaction\+Base.\+h.
+
+
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30b}{\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!Reaction\+Type@{Reaction\+Type}}
+\index{Reaction\+Type@{Reaction\+Type}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}
+\subsubsection[{Reaction\+Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Reaction\+Type}}}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30b}
+
+
+Enumeration for type of reaction. 
+
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{R\+E\+G\+U\+L\+A\+R@{R\+E\+G\+U\+L\+A\+R}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!R\+E\+G\+U\+L\+A\+R@{R\+E\+G\+U\+L\+A\+R}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bafc488491175a6dac9e5881e363ad4c41}{R\+E\+G\+U\+L\+A\+R}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bafc488491175a6dac9e5881e363ad4c41}
+}]\index{D\+I\+F\+F\+U\+S\+I\+O\+N@{D\+I\+F\+F\+U\+S\+I\+O\+N}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!D\+I\+F\+F\+U\+S\+I\+O\+N@{D\+I\+F\+F\+U\+S\+I\+O\+N}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba64b145492a27539220bb4a4cb95af90c}{D\+I\+F\+F\+U\+S\+I\+O\+N}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba64b145492a27539220bb4a4cb95af90c}
+}]\index{P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N@{P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N@{P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babd20bf878365c6e2977762273612e0ed}{P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babd20bf878365c6e2977762273612e0ed}
+}]\index{D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N@{D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N@{D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba257a5b76956a3f0cdb04f2735cec8f40}{D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba257a5b76956a3f0cdb04f2735cec8f40}
+}]\index{B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G@{B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G@{B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baad5d22d8f660819c71009b276b0d9853}{B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baad5d22d8f660819c71009b276b0d9853}
+}]\index{L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G@{L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G@{L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babb4246236a45de12ae33ca9742756203}{L\+I\+N\+K\+E\+R\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30babb4246236a45de12ae33ca9742756203}
+}]\index{M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G@{M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G@{M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba052134034550952b4e637e90ea92ab58}{M\+O\+T\+O\+R\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba052134034550952b4e637e90ea92ab58}
+}]\index{B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G@{B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G@{B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bad4ad31e4ddc141353bf712b0f38c5945}{B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30bad4ad31e4ddc141353bf712b0f38c5945}
+}]\index{L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G@{L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G@{L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba20b685df2710300aaecba86159ed5f78}{L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba20b685df2710300aaecba86159ed5f78}
+}]\index{M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G@{M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G@{M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba207d328c12ccc4519abf501f23d7a66a}{M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba207d328c12ccc4519abf501f23d7a66a}
+}]\index{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D@{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D@{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba4819cd4ea14d6c4a25d52ec38eda3331}{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba4819cd4ea14d6c4a25d52ec38eda3331}
+}]\index{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D@{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D@{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba010bf487e9e1de2000dce9ac118e2f2e}{M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+B\+A\+C\+K\+W\+A\+R\+D}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba010bf487e9e1de2000dce9ac118e2f2e}
+}]\index{C\+R\+E\+A\+T\+I\+O\+N@{C\+R\+E\+A\+T\+I\+O\+N}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!C\+R\+E\+A\+T\+I\+O\+N@{C\+R\+E\+A\+T\+I\+O\+N}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baf2481146540dbd021e1d88aeb83d6150}{C\+R\+E\+A\+T\+I\+O\+N}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30baf2481146540dbd021e1d88aeb83d6150}
+}]\index{D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N@{D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N}!Reaction\+Base.\+h@{Reaction\+Base.\+h}}\index{Reaction\+Base.\+h@{Reaction\+Base.\+h}!D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N@{D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N}}\item[{\em 
+\hypertarget{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba7992404634380cda2526a7ea4149cbba}{D\+E\+S\+T\+R\+U\+C\+T\+I\+O\+N}\label{ReactionBase_8h_a360e20f142dbd097b0d0d0620111b30ba7992404634380cda2526a7ea4149cbba}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 42 of file Reaction\+Base.\+h.
+

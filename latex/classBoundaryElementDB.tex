@@ -1,0 +1,220 @@
+\hypertarget{classBoundaryElementDB}{\section{Boundary\+Element\+D\+B Class Reference}
+\label{classBoundaryElementDB}\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+}
+
+
+A database for all \hyperlink{classBoundaryElement}{Boundary\+Elements} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Element\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Boundary\+Element\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classBoundaryElementDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Boundary\+Element\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=274pt]{classBoundaryElementDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBoundaryElementDB_a734b7bbb4aa92a6fcbb0e13a2730542d}{Boundary\+Element\+D\+B} (const \hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} \& \hyperlink{classBoundaryElementDB_ad42f6c382956dee33a609da771fdce88}{operator=} (\hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classBoundaryElementDB_a87b287f3028a92ee56edba04d0293b6f}{add\+Boundary\+Element} (\hyperlink{classBoundaryElement}{Boundary\+Element} $\ast$b)
+\begin{DoxyCompactList}\small\item\em Add a boundary element. \end{DoxyCompactList}\item 
+void \hyperlink{classBoundaryElementDB_a0392d6b0a27d7dfc57d39194165c3543}{remove\+Boundary\+Element} (\hyperlink{classBoundaryElement}{Boundary\+Element} $\ast$b)
+\begin{DoxyCompactList}\small\item\em Remove boundary element. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} $\ast$ \hyperlink{classBoundaryElementDB_a576c2f5e552686c2f40e70e206693f2a}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get the instance of this singleton. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $\ast$ $>$ \hyperlink{classBoundaryElementDB_af2b807e8b6e93168ee80bc57182b7b34}{bedb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBoundaryElementDB_a71f6fba6551793efc93ffc60a2b246a6}{Boundary\+Element\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} $\ast$ \hyperlink{classBoundaryElementDB_af537420197d88dcca76a50db7d7b7079}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database for all \hyperlink{classBoundaryElement}{Boundary\+Elements} in the system. 
+
+This \hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classBoundaryElement}{Boundary\+Element} objects, as well as some standard list functions and iterators. 
+
+Definition at line 29 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classBoundaryElementDB_af2b807e8b6e93168ee80bc57182b7b34}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!bedb@{bedb}}
+\index{bedb@{bedb}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{bedb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Boundary\+Element}$\ast$$>$ {\bf Boundary\+Element\+D\+B\+::bedb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classBoundaryElementDB_af2b807e8b6e93168ee80bc57182b7b34}
+
+
+Definition at line 31 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBoundaryElementDB_a734b7bbb4aa92a6fcbb0e13a2730542d}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{Boundary\+Element\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Boundary\+Element\+D\+B\+::\+Boundary\+Element\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Boundary\+Element\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classBoundaryElementDB_a734b7bbb4aa92a6fcbb0e13a2730542d}
+
+
+Copying is not allowed. 
+
+\hypertarget{classBoundaryElementDB_a71f6fba6551793efc93ffc60a2b246a6}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{Boundary\+Element\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Boundary\+Element\+D\+B\+::\+Boundary\+Element\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classBoundaryElementDB_a71f6fba6551793efc93ffc60a2b246a6}
+
+
+Definition at line 56 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBoundaryElementDB_a87b287f3028a92ee56edba04d0293b6f}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!add\+Boundary\+Element@{add\+Boundary\+Element}}
+\index{add\+Boundary\+Element@{add\+Boundary\+Element}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{add\+Boundary\+Element}]{\setlength{\rightskip}{0pt plus 5cm}void Boundary\+Element\+D\+B\+::add\+Boundary\+Element (
+\begin{DoxyParamCaption}
+\item[{{\bf Boundary\+Element} $\ast$}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoundaryElementDB_a87b287f3028a92ee56edba04d0293b6f}
+
+
+Add a boundary element. 
+
+
+
+Definition at line 50 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+::\+Boundary\+Element().
+
+\hypertarget{classBoundaryElementDB_a576c2f5e552686c2f40e70e206693f2a}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Element\+D\+B} $\ast$ Boundary\+Element\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classBoundaryElementDB_a576c2f5e552686c2f40e70e206693f2a}
+
+
+Get the instance of this singleton. 
+
+
+
+Definition at line 18 of file Boundary\+Element\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Boundary\+Element\+D\+B().
+
+
+
+Referenced by Boundary\+Element\+::\+Boundary\+Element(), Boundary\+F\+F\+::compute\+Energy(), Boundary\+F\+F\+::compute\+Forces(), Boundary\+F\+F\+::compute\+Forces\+Aux(), and Boundary\+Element\+::$\sim$\+Boundary\+Element().
+
+\hypertarget{classBoundaryElementDB_ad42f6c382956dee33a609da771fdce88}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Element\+D\+B}\& Boundary\+Element\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Boundary\+Element\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classBoundaryElementDB_ad42f6c382956dee33a609da771fdce88}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classBoundaryElementDB_a0392d6b0a27d7dfc57d39194165c3543}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!remove\+Boundary\+Element@{remove\+Boundary\+Element}}
+\index{remove\+Boundary\+Element@{remove\+Boundary\+Element}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{remove\+Boundary\+Element}]{\setlength{\rightskip}{0pt plus 5cm}void Boundary\+Element\+D\+B\+::remove\+Boundary\+Element (
+\begin{DoxyParamCaption}
+\item[{{\bf Boundary\+Element} $\ast$}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoundaryElementDB_a0392d6b0a27d7dfc57d39194165c3543}
+
+
+Remove boundary element. 
+
+
+
+Definition at line 52 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+::$\sim$\+Boundary\+Element().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBoundaryElementDB_af537420197d88dcca76a50db7d7b7079}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Element\+D\+B} $\ast$ Boundary\+Element\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classBoundaryElementDB_af537420197d88dcca76a50db7d7b7079}
+
+
+Singleton instance. 
+
+
+
+Definition at line 55 of file Boundary\+Element\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Boundary\+Element\+D\+B@{Boundary\+Element\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryElementDB_8h}{Boundary\+Element\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryElementDB_8cpp}{Boundary\+Element\+D\+B.\+cpp}\end{DoxyCompactItemize}

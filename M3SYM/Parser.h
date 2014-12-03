@@ -212,7 +212,7 @@ public:
 
 };
 
-/// FilamentParser class is used to parse initial filament information, initialized by the [Controller] (@ref Controller).
+/// Used to parse initial filament information, initialized by the [Controller] (@ref Controller).
 class FilamentParser : public Parser {
     
 public:
@@ -224,7 +224,7 @@ public:
     vector<vector<vector<double>>> readFilaments();
 };
 
-/// ChemistryParser class is used to parse all chemical information
+/// Used to parse all chemical information
 class ChemistryParser: public Parser {
     
 public:

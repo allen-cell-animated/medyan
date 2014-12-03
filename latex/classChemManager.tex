@@ -1,0 +1,188 @@
+\hypertarget{classChemManager}{\section{Chem\+Manager Class Reference}
+\label{classChemManager}\index{Chem\+Manager@{Chem\+Manager}}
+}
+
+
+For initailizing chemical reactions based on a specific system.  
+
+
+
+
+{\ttfamily \#include $<$Chem\+Manager.\+h$>$}
+
+
+
+Collaboration diagram for Chem\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=181pt]{classChemManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{classChemManager_a47f584be692f31e39d7598f4f7488796}{set\+Instance} (\hyperlink{classChemManagerImpl}{Chem\+Manager\+Impl} $\ast$cii)
+\begin{DoxyCompactList}\small\item\em Set the chem\+Manager instance. \end{DoxyCompactList}\item 
+static void \hyperlink{classChemManager_ab3344ccf25c9ea90337e90bd9cf5ebff}{initialize} (\hyperlink{structChemistryData}{Chemistry\+Data} \&chem)
+\begin{DoxyCompactList}\small\item\em Initialize the compartment grid, based on the given simulation. \end{DoxyCompactList}\item 
+static void \hyperlink{classChemManager_a8c3958ed962520cff0e1d26b92596e68}{initialize\+C\+Cylinder} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc, \hyperlink{classFilament}{Filament} $\ast$f, bool extension\+Front, bool extension\+Back, bool creation)
+\begin{DoxyCompactList}\small\item\em Initializer, based on the given simulation. \end{DoxyCompactList}\item 
+static void \hyperlink{classChemManager_ae85244eb50a4254d525eb749c44a96a6}{update\+C\+Cylinder} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)
+\begin{DoxyCompactList}\small\item\em add/update cross cylinder reactions that are within range \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classChemManager_ac133ef2eabc4f5f002660f9d69e9c0fb}{Chem\+Manager} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classChemManagerImpl}{Chem\+Manager\+Impl} $\ast$ \hyperlink{classChemManager_aa8fe0dad2d7ed00b8fd05e3ae6a2dd4a}{\+\_\+pimpl} = 0
+\begin{DoxyCompactList}\small\item\em Store a pointer to a specific implementation of the initializer; no ownership. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+For initailizing chemical reactions based on a specific system. 
+
+\hyperlink{classChemManager}{Chem\+Manager} is a singleton used for initailizing all chemistry in the system. Initialized by the \hyperlink{classCController}{C\+Controller}, the \hyperlink{classChemManager}{Chem\+Manager} initializes the chemical components of the \hyperlink{classCompartmentGrid}{Compartment\+Grid} as well as initializes all \hyperlink{classCCylinder}{C\+Cylinders} created. The \hyperlink{classChemManager}{Chem\+Manager} can also update chemical components of a \hyperlink{classCCylinder}{C\+Cylinder}. 
+
+Definition at line 33 of file Chem\+Manager.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classChemManager_ac133ef2eabc4f5f002660f9d69e9c0fb}{\index{Chem\+Manager@{Chem\+Manager}!Chem\+Manager@{Chem\+Manager}}
+\index{Chem\+Manager@{Chem\+Manager}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{Chem\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Chem\+Manager\+::\+Chem\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classChemManager_ac133ef2eabc4f5f002660f9d69e9c0fb}
+
+
+Definition at line 51 of file Chem\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classChemManager_ab3344ccf25c9ea90337e90bd9cf5ebff}{\index{Chem\+Manager@{Chem\+Manager}!initialize@{initialize}}
+\index{initialize@{initialize}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{initialize}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Manager\+::initialize (
+\begin{DoxyParamCaption}
+\item[{{\bf Chemistry\+Data} \&}]{chem}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classChemManager_ab3344ccf25c9ea90337e90bd9cf5ebff}
+
+
+Initialize the compartment grid, based on the given simulation. 
+
+
+
+Definition at line 24 of file Chem\+Manager.\+cpp.
+
+
+
+References \+\_\+pimpl, and Chem\+Manager\+Impl\+::initialize().
+
+
+
+Referenced by C\+Controller\+::initialize().
+
+\hypertarget{classChemManager_a8c3958ed962520cff0e1d26b92596e68}{\index{Chem\+Manager@{Chem\+Manager}!initialize\+C\+Cylinder@{initialize\+C\+Cylinder}}
+\index{initialize\+C\+Cylinder@{initialize\+C\+Cylinder}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{initialize\+C\+Cylinder}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Manager\+::initialize\+C\+Cylinder (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc, }
+\item[{{\bf Filament} $\ast$}]{f, }
+\item[{bool}]{extension\+Front, }
+\item[{bool}]{extension\+Back, }
+\item[{bool}]{creation}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classChemManager_a8c3958ed962520cff0e1d26b92596e68}
+
+
+Initializer, based on the given simulation. 
+
+
+
+Definition at line 29 of file Chem\+Manager.\+cpp.
+
+
+
+References \+\_\+pimpl, and Chem\+Manager\+Impl\+::initialize\+C\+Cylinder().
+
+
+
+Referenced by Cylinder\+::\+Cylinder().
+
+\hypertarget{classChemManager_a47f584be692f31e39d7598f4f7488796}{\index{Chem\+Manager@{Chem\+Manager}!set\+Instance@{set\+Instance}}
+\index{set\+Instance@{set\+Instance}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{set\+Instance}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Manager\+::set\+Instance (
+\begin{DoxyParamCaption}
+\item[{{\bf Chem\+Manager\+Impl} $\ast$}]{cii}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classChemManager_a47f584be692f31e39d7598f4f7488796}
+
+
+Set the chem\+Manager instance. 
+
+
+
+Definition at line 18 of file Chem\+Manager.\+cpp.
+
+
+
+References \+\_\+pimpl.
+
+
+
+Referenced by C\+Controller\+::initialize().
+
+\hypertarget{classChemManager_ae85244eb50a4254d525eb749c44a96a6}{\index{Chem\+Manager@{Chem\+Manager}!update\+C\+Cylinder@{update\+C\+Cylinder}}
+\index{update\+C\+Cylinder@{update\+C\+Cylinder}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{update\+C\+Cylinder}]{\setlength{\rightskip}{0pt plus 5cm}void Chem\+Manager\+::update\+C\+Cylinder (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classChemManager_ae85244eb50a4254d525eb749c44a96a6}
+
+
+add/update cross cylinder reactions that are within range 
+
+
+
+Definition at line 35 of file Chem\+Manager.\+cpp.
+
+
+
+References \+\_\+pimpl, and Chem\+Manager\+Impl\+::update\+C\+Cylinder().
+
+
+
+Referenced by Cylinder\+::\+Cylinder(), and Controller\+::update\+System().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classChemManager_aa8fe0dad2d7ed00b8fd05e3ae6a2dd4a}{\index{Chem\+Manager@{Chem\+Manager}!\+\_\+pimpl@{\+\_\+pimpl}}
+\index{\+\_\+pimpl@{\+\_\+pimpl}!Chem\+Manager@{Chem\+Manager}}
+\subsubsection[{\+\_\+pimpl}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Chem\+Manager\+Impl} $\ast$ Chem\+Manager\+::\+\_\+pimpl = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classChemManager_aa8fe0dad2d7ed00b8fd05e3ae6a2dd4a}
+
+
+Store a pointer to a specific implementation of the initializer; no ownership. 
+
+
+
+Definition at line 50 of file Chem\+Manager.\+h.
+
+
+
+Referenced by initialize(), initialize\+C\+Cylinder(), set\+Instance(), and update\+C\+Cylinder().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemManager_8h}{Chem\+Manager.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemManager_8cpp}{Chem\+Manager.\+cpp}\end{DoxyCompactItemize}

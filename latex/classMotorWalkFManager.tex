@@ -1,0 +1,203 @@
+\hypertarget{classMotorWalkFManager}{\section{Motor\+Walk\+F\+Manager Class Reference}
+\label{classMotorWalkFManager}\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+}
+
+
+Manager for motor walking.  
+
+
+
+
+{\ttfamily \#include $<$Reaction\+Manager.\+h$>$}
+
+
+
+Inheritance diagram for Motor\+Walk\+F\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classMotorWalkFManager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Motor\+Walk\+F\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classMotorWalkFManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMotorWalkFManager_a9cd673efbc3ed580f4449e57ac5fae46}{Motor\+Walk\+F\+Manager} (vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ reactants, vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ products, float rate)
+\begin{DoxyCompactList}\small\item\em default constructor and destructor \end{DoxyCompactList}\item 
+\hyperlink{classMotorWalkFManager_a2a5f6d1af372cc1cff2527bd34f9eecd}{$\sim$\+Motor\+Walk\+F\+Manager} ()
+\item 
+virtual void \hyperlink{classMotorWalkFManager_a8974dbb104f327cf07b25415f74928db}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classMotorWalkFManager_a7cb219c170555e7716f331e05e45aded}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two C\+Cylinders. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\+\_\+reactants}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} identifier vectors. \end{DoxyCompactList}\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\+\_\+products}
+\begin{DoxyCompactList}\small\item\em Products in this reaction. \end{DoxyCompactList}\item 
+float \hyperlink{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Rate of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\+\_\+ps} = 0
+\begin{DoxyCompactList}\small\item\em A subsystem pointer to initialize and call chemical callbacks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manager for motor walking. 
+
+Definition at line 153 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMotorWalkFManager_a9cd673efbc3ed580f4449e57ac5fae46}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{Motor\+Walk\+F\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Motor\+Walk\+F\+Manager\+::\+Motor\+Walk\+F\+Manager (
+\begin{DoxyParamCaption}
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{reactants, }
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{products, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMotorWalkFManager_a9cd673efbc3ed580f4449e57ac5fae46}
+
+
+default constructor and destructor 
+
+
+
+Definition at line 157 of file Reaction\+Manager.\+h.
+
+\hypertarget{classMotorWalkFManager_a2a5f6d1af372cc1cff2527bd34f9eecd}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!````~Motor\+Walk\+F\+Manager@{$\sim$\+Motor\+Walk\+F\+Manager}}
+\index{````~Motor\+Walk\+F\+Manager@{$\sim$\+Motor\+Walk\+F\+Manager}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{$\sim$\+Motor\+Walk\+F\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Motor\+Walk\+F\+Manager\+::$\sim$\+Motor\+Walk\+F\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMotorWalkFManager_a2a5f6d1af372cc1cff2527bd34f9eecd}
+
+
+Definition at line 160 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classMotorWalkFManager_a8974dbb104f327cf07b25415f74928db}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Motor\+Walk\+F\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMotorWalkFManager_a8974dbb104f327cf07b25415f74928db}
+
+
+Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. 
+
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_a45f1ff9c676e41db408669ab6c5242e9}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 732 of file Reaction\+Manager.\+cpp.
+
+
+
+References C\+Cylinder\+::add\+Internal\+Reaction(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Size(), M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D, Reaction\+Base\+::set\+Reaction\+Type(), C\+Monomer\+::species\+Bound(), and C\+Monomer\+::species\+Motor().
+
+\hypertarget{classMotorWalkFManager_a7cb219c170555e7716f331e05e45aded}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Motor\+Walk\+F\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc1, }
+\item[{{\bf C\+Cylinder} $\ast$}]{cc2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMotorWalkFManager_a7cb219c170555e7716f331e05e45aded}
+
+
+Add this chemical reaction cross two C\+Cylinders. 
+
+\begin{DoxyNote}{Note}
+assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 797 of file Reaction\+Manager.\+cpp.
+
+
+
+References C\+Cylinder\+::add\+Cross\+Cylinder\+Reaction(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Size(), M\+O\+T\+O\+R\+W\+A\+L\+K\+I\+N\+G\+F\+O\+R\+W\+A\+R\+D, Reaction\+Base\+::set\+Reaction\+Type(), C\+Monomer\+::species\+Bound(), and C\+Monomer\+::species\+Motor().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!\+\_\+products@{\+\_\+products}}
+\index{\+\_\+products@{\+\_\+products}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{\+\_\+products}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+products\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}
+
+
+Products in this reaction. 
+
+
+
+Definition at line 54 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System} $\ast$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+ps = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}
+
+
+A subsystem pointer to initialize and call chemical callbacks. 
+
+
+
+Definition at line 50 of file Reaction\+Manager.\+h.
+
+
+
+Referenced by Simple\+Manager\+Impl\+::initialize().
+
+\hypertarget{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!\+\_\+rate@{\+\_\+rate}}
+\index{\+\_\+rate@{\+\_\+rate}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{\+\_\+rate}]{\setlength{\rightskip}{0pt plus 5cm}float Internal\+Filament\+Rxn\+Manager\+::\+\_\+rate\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}
+
+
+Rate of reaction. 
+
+
+
+Definition at line 56 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\index{Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}!\+\_\+reactants@{\+\_\+reactants}}
+\index{\+\_\+reactants@{\+\_\+reactants}!Motor\+Walk\+F\+Manager@{Motor\+Walk\+F\+Manager}}
+\subsubsection[{\+\_\+reactants}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+reactants\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}
+
+
+\hyperlink{classSpecies}{Species} identifier vectors. 
+
+Reactants in this reaction 
+
+Definition at line 53 of file Reaction\+Manager.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8h}{Reaction\+Manager.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8cpp}{Reaction\+Manager.\+cpp}\end{DoxyCompactItemize}

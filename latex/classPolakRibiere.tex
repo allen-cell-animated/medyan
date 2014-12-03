@@ -1,0 +1,679 @@
+\hypertarget{classPolakRibiere}{\section{Polak\+Ribiere Class Reference}
+\label{classPolakRibiere}\index{Polak\+Ribiere@{Polak\+Ribiere}}
+}
+
+
+The Polak-\/\+Ribiere method for conjugate gradient minimization.  
+
+
+
+
+{\ttfamily \#include $<$C\+G\+Polak\+Ribiere\+Method.\+h$>$}
+
+
+
+Inheritance diagram for Polak\+Ribiere\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=153pt]{classPolakRibiere__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Polak\+Ribiere\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=153pt]{classPolakRibiere__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classPolakRibiere_af177d214c9d7b0f285ae93525be16329}{minimize} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\begin{DoxyCompactList}\small\item\em Minimize the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classCGMethod_a98910fcbef9f0af69076c955b887c254}{swap} (double \&a, double \&b)
+\begin{DoxyCompactList}\small\item\em helpers for searching and bracketing \end{DoxyCompactList}\item 
+void \hyperlink{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}{shift2} (double \&a, double \&b, double c)
+\item 
+void \hyperlink{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}{shift3} (double \&a, double \&b, double \&c, double d)
+\item 
+double \hyperlink{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}{sign} (double a, double b)
+\item 
+void \hyperlink{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}{make\+Bracket} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M, double \&ax, double \&bx, double \&cx, double \&fa, double \&fb, double \&fc)
+\begin{DoxyCompactList}\small\item\em Gracketing function (from Numerical Recipes in C++, second edition) \end{DoxyCompactList}\item 
+void \hyperlink{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}{print\+Forces} ()
+\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}{grad\+Square} ()
+\begin{DoxyCompactList}\small\item\em For use in minimization. \end{DoxyCompactList}\item 
+double \hyperlink{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}{grad\+Aux\+Square} ()
+\item 
+double \hyperlink{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}{grad\+Dot\+Product} ()
+\item 
+void \hyperlink{classCGMethod_afe717a6a06f677933b55628ea4d0014d}{move\+Beads} (double d)
+\item 
+void \hyperlink{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}{move\+Beads\+Aux} (double d)
+\item 
+void \hyperlink{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}{shift\+Gradient} (double d)
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}{golden\+Section1} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\begin{DoxyCompactList}\small\item\em Linear search method. \end{DoxyCompactList}\item 
+double \hyperlink{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}{golden\+Section2} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}{binary\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}{backtracking\+Line\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_aa77b006b710d67b248dd18517db7709c}{quadratic\+Line\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\end{DoxyCompactItemize}
+
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_a084794992bdcec9285f6512b56e6c578}{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L} = 1e-\/6
+\begin{DoxyCompactList}\small\item\em Line search energy tolerance for all linesearch methods. \end{DoxyCompactList}\item 
+int \hyperlink{classCGMethod_aadb778c988685e46d7d109350973d826}{\+\_\+energy\+Change\+Counter} = 0
+\begin{DoxyCompactList}\small\item\em Energy counter, for use in linear search methods. \end{DoxyCompactList}\item 
+const int \hyperlink{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R} = 20
+\begin{DoxyCompactList}\small\item\em Max number of iterations allowed where \char`\"{}\char`\"{}". \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}{G\+R\+A\+D\+T\+O\+L} = 1e-\/10
+\begin{DoxyCompactList}\small\item\em Gradient minimization tolerance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}{L\+A\+M\+B\+D\+A\+M\+I\+N} = 0.\+001
+\begin{DoxyCompactList}\small\item\em Lambda parameter for use in linear search methods. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a04127fd877e82fdf4f71cd3709581419}{L\+A\+M\+B\+D\+A\+M\+A\+X} = 1
+\begin{DoxyCompactList}\small\item\em Max lambda that can be returned, used in all methods. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}{M\+A\+X\+D\+I\+S\+T} = 1
+\begin{DoxyCompactList}\small\item\em Max distance beads can be moved, used only in backtracking line search. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Parameter used in backtracking line search. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Backtrack slope parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Parameter used in quadratic line search. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}{E\+P\+S\+Q\+U\+A\+D} = 1e-\/28
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}{P\+H\+I} = (1 + sqrt(5)) / 2
+\begin{DoxyCompactList}\small\item\em Parameter used in golden section. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{R} = 0.\+61803399
+\item 
+const double \hyperlink{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}{C} = 1 -\/ \hyperlink{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{R}
+\end{DoxyCompactItemize}
+
+
+
+\subsection{Detailed Description}
+The Polak-\/\+Ribiere method for conjugate gradient minimization. 
+
+Definition at line 27 of file C\+G\+Polak\+Ribiere\+Method.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}{\index{Polak\+Ribiere@{Polak\+Ribiere}!backtracking\+Line\+Search@{backtracking\+Line\+Search}}
+\index{backtracking\+Line\+Search@{backtracking\+Line\+Search}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{backtracking\+Line\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::backtracking\+Line\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}
+
+
+Definition at line 263 of file C\+G\+Method.\+cpp.
+
+
+
+References C\+G\+Method\+::\+\_\+energy\+Change\+Counter, C\+G\+Method\+::\+B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E, Force\+Field\+Manager\+::compute\+Energy(), Bead\+D\+B\+::instance(), C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X, C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E, C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, and C\+G\+Method\+::\+M\+A\+X\+D\+I\+S\+T.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}{\index{Polak\+Ribiere@{Polak\+Ribiere}!binary\+Search@{binary\+Search}}
+\index{binary\+Search@{binary\+Search}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{binary\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::binary\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}
+
+
+Definition at line 249 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), and C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L.
+
+\hypertarget{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}{\index{Polak\+Ribiere@{Polak\+Ribiere}!golden\+Section1@{golden\+Section1}}
+\index{golden\+Section1@{golden\+Section1}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{golden\+Section1}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::golden\+Section1 (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}
+
+
+Linear search method. 
+
+
+
+Definition at line 180 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X, C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+I\+N, and C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L.
+
+\hypertarget{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}{\index{Polak\+Ribiere@{Polak\+Ribiere}!golden\+Section2@{golden\+Section2}}
+\index{golden\+Section2@{golden\+Section2}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{golden\+Section2}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::golden\+Section2 (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}
+
+
+Definition at line 209 of file C\+G\+Method.\+cpp.
+
+
+
+References C\+G\+Method\+::\+C, Force\+Field\+Manager\+::compute\+Energy(), C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X, C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+I\+N, C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, C\+G\+Method\+::\+R, C\+G\+Method\+::shift2(), and C\+G\+Method\+::shift3().
+
+\hypertarget{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}{\index{Polak\+Ribiere@{Polak\+Ribiere}!grad\+Aux\+Square@{grad\+Aux\+Square}}
+\index{grad\+Aux\+Square@{grad\+Aux\+Square}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{grad\+Aux\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Aux\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}
+
+
+Definition at line 116 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}{\index{Polak\+Ribiere@{Polak\+Ribiere}!grad\+Dot\+Product@{grad\+Dot\+Product}}
+\index{grad\+Dot\+Product@{grad\+Dot\+Product}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{grad\+Dot\+Product}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Dot\+Product (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}
+
+
+Definition at line 125 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), minimize(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}{\index{Polak\+Ribiere@{Polak\+Ribiere}!grad\+Square@{grad\+Square}}
+\index{grad\+Square@{grad\+Square}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{grad\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}
+
+
+For use in minimization. 
+
+
+
+Definition at line 108 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}{\index{Polak\+Ribiere@{Polak\+Ribiere}!make\+Bracket@{make\+Bracket}}
+\index{make\+Bracket@{make\+Bracket}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{make\+Bracket}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::make\+Bracket (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M, }
+\item[{double \&}]{ax, }
+\item[{double \&}]{bx, }
+\item[{double \&}]{cx, }
+\item[{double \&}]{fa, }
+\item[{double \&}]{fb, }
+\item[{double \&}]{fc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}
+
+
+Gracketing function (from Numerical Recipes in C++, second edition) 
+
+
+
+Definition at line 42 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), C\+G\+Method\+::\+P\+H\+I, C\+G\+Method\+::shift3(), C\+G\+Method\+::sign(), and C\+G\+Method\+::swap().
+
+\hypertarget{classPolakRibiere_af177d214c9d7b0f285ae93525be16329}{\index{Polak\+Ribiere@{Polak\+Ribiere}!minimize@{minimize}}
+\index{minimize@{minimize}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{minimize}]{\setlength{\rightskip}{0pt plus 5cm}void Polak\+Ribiere\+::minimize (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classPolakRibiere_af177d214c9d7b0f285ae93525be16329}
+
+
+Minimize the system. 
+
+
+
+Implements \hyperlink{classCGMethod_a7a03bce08f9b88d41392894d071a1ff7}{C\+G\+Method}.
+
+
+
+Definition at line 19 of file C\+G\+Polak\+Ribiere\+Method.\+cpp.
+
+
+
+References C\+G\+Method\+::\+\_\+energy\+Change\+Counter, C\+G\+Method\+::backtracking\+Line\+Search(), Force\+Field\+Manager\+::compute\+Energy(), Force\+Field\+Manager\+::compute\+Forces(), Force\+Field\+Manager\+::compute\+Forces\+Aux(), C\+G\+Method\+::\+E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R, C\+G\+Method\+::grad\+Aux\+Square(), C\+G\+Method\+::grad\+Dot\+Product(), C\+G\+Method\+::grad\+Square(), C\+G\+Method\+::\+G\+R\+A\+D\+T\+O\+L, Bead\+D\+B\+::instance(), C\+G\+Method\+::move\+Beads(), C\+G\+Method\+::print\+Forces(), and C\+G\+Method\+::shift\+Gradient().
+
+\hypertarget{classCGMethod_afe717a6a06f677933b55628ea4d0014d}{\index{Polak\+Ribiere@{Polak\+Ribiere}!move\+Beads@{move\+Beads}}
+\index{move\+Beads@{move\+Beads}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{move\+Beads}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::move\+Beads (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_afe717a6a06f677933b55628ea4d0014d}
+
+
+Definition at line 135 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}{\index{Polak\+Ribiere@{Polak\+Ribiere}!move\+Beads\+Aux@{move\+Beads\+Aux}}
+\index{move\+Beads\+Aux@{move\+Beads\+Aux}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{move\+Beads\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::move\+Beads\+Aux (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}
+
+
+Definition at line 148 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}{\index{Polak\+Ribiere@{Polak\+Ribiere}!print\+Forces@{print\+Forces}}
+\index{print\+Forces@{print\+Forces}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{print\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::print\+Forces (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}
+
+
+Definition at line 169 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_aa77b006b710d67b248dd18517db7709c}{\index{Polak\+Ribiere@{Polak\+Ribiere}!quadratic\+Line\+Search@{quadratic\+Line\+Search}}
+\index{quadratic\+Line\+Search@{quadratic\+Line\+Search}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{quadratic\+Line\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::quadratic\+Line\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aa77b006b710d67b248dd18517db7709c}
+
+
+Definition at line 316 of file C\+G\+Method.\+cpp.
+
+
+
+References C\+G\+Method\+::\+\_\+energy\+Change\+Counter, C\+G\+Method\+::\+B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E, Force\+Field\+Manager\+::compute\+Energy(), Force\+Field\+Manager\+::compute\+Forces\+Aux(), C\+G\+Method\+::\+E\+P\+S\+Q\+U\+A\+D, C\+G\+Method\+::grad\+Dot\+Product(), Bead\+D\+B\+::instance(), C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X, C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E, C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, and C\+G\+Method\+::move\+Beads\+Aux().
+
+\hypertarget{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}{\index{Polak\+Ribiere@{Polak\+Ribiere}!shift2@{shift2}}
+\index{shift2@{shift2}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{shift2}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift2 (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b, }
+\item[{double}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}
+
+
+Definition at line 25 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by C\+G\+Method\+::golden\+Section2().
+
+\hypertarget{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}{\index{Polak\+Ribiere@{Polak\+Ribiere}!shift3@{shift3}}
+\index{shift3@{shift3}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{shift3}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift3 (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b, }
+\item[{double \&}]{c, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}
+
+
+Definition at line 30 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by C\+G\+Method\+::golden\+Section2(), and C\+G\+Method\+::make\+Bracket().
+
+\hypertarget{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}{\index{Polak\+Ribiere@{Polak\+Ribiere}!shift\+Gradient@{shift\+Gradient}}
+\index{shift\+Gradient@{shift\+Gradient}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{shift\+Gradient}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift\+Gradient (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}
+
+
+Definition at line 159 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}{\index{Polak\+Ribiere@{Polak\+Ribiere}!sign@{sign}}
+\index{sign@{sign}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{sign}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::sign (
+\begin{DoxyParamCaption}
+\item[{double}]{a, }
+\item[{double}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}
+
+
+Definition at line 36 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by C\+G\+Method\+::make\+Bracket().
+
+\hypertarget{classCGMethod_a98910fcbef9f0af69076c955b887c254}{\index{Polak\+Ribiere@{Polak\+Ribiere}!swap@{swap}}
+\index{swap@{swap}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::swap (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a98910fcbef9f0af69076c955b887c254}
+
+
+helpers for searching and bracketing 
+
+
+
+Definition at line 19 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by C\+G\+Method\+::make\+Bracket().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCGMethod_aadb778c988685e46d7d109350973d826}{\index{Polak\+Ribiere@{Polak\+Ribiere}!\+\_\+energy\+Change\+Counter@{\+\_\+energy\+Change\+Counter}}
+\index{\+\_\+energy\+Change\+Counter@{\+\_\+energy\+Change\+Counter}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{\+\_\+energy\+Change\+Counter}]{\setlength{\rightskip}{0pt plus 5cm}int C\+G\+Method\+::\+\_\+energy\+Change\+Counter = 0\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aadb778c988685e46d7d109350973d826}
+
+
+Energy counter, for use in linear search methods. 
+
+Number of iterations where energy has not changed by an amount more than L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L 
+
+Definition at line 72 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), Fletcher\+Rieves\+::minimize(), minimize(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}{\index{Polak\+Ribiere@{Polak\+Ribiere}!B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E@{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}}
+\index{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E@{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}
+
+
+Backtrack slope parameter. 
+
+
+
+Definition at line 45 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}{\index{Polak\+Ribiere@{Polak\+Ribiere}!C@{C}}
+\index{C@{C}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{C}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+C = 1 -\/ {\bf R}\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}
+
+
+Definition at line 58 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::golden\+Section2().
+
+\hypertarget{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}{\index{Polak\+Ribiere@{Polak\+Ribiere}!E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R@{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}}
+\index{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R@{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}]{\setlength{\rightskip}{0pt plus 5cm}const int C\+G\+Method\+::\+E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R = 20\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}
+
+
+Max number of iterations allowed where \char`\"{}\char`\"{}". 
+
+
+
+Definition at line 73 of file C\+G\+Method.\+h.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}{\index{Polak\+Ribiere@{Polak\+Ribiere}!E\+P\+S\+Q\+U\+A\+D@{E\+P\+S\+Q\+U\+A\+D}}
+\index{E\+P\+S\+Q\+U\+A\+D@{E\+P\+S\+Q\+U\+A\+D}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{E\+P\+S\+Q\+U\+A\+D}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+E\+P\+S\+Q\+U\+A\+D = 1e-\/28\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}
+
+
+Definition at line 51 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}{\index{Polak\+Ribiere@{Polak\+Ribiere}!G\+R\+A\+D\+T\+O\+L@{G\+R\+A\+D\+T\+O\+L}}
+\index{G\+R\+A\+D\+T\+O\+L@{G\+R\+A\+D\+T\+O\+L}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{G\+R\+A\+D\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+G\+R\+A\+D\+T\+O\+L = 1e-\/10\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}
+
+
+Gradient minimization tolerance. 
+
+
+
+Definition at line 75 of file C\+G\+Method.\+h.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and minimize().
+
+\hypertarget{classCGMethod_a04127fd877e82fdf4f71cd3709581419}{\index{Polak\+Ribiere@{Polak\+Ribiere}!L\+A\+M\+B\+D\+A\+M\+A\+X@{L\+A\+M\+B\+D\+A\+M\+A\+X}}
+\index{L\+A\+M\+B\+D\+A\+M\+A\+X@{L\+A\+M\+B\+D\+A\+M\+A\+X}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+M\+A\+X}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X = 1\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a04127fd877e82fdf4f71cd3709581419}
+
+
+Max lambda that can be returned, used in all methods. 
+
+
+
+Definition at line 38 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), C\+G\+Method\+::golden\+Section1(), C\+G\+Method\+::golden\+Section2(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}{\index{Polak\+Ribiere@{Polak\+Ribiere}!L\+A\+M\+B\+D\+A\+M\+I\+N@{L\+A\+M\+B\+D\+A\+M\+I\+N}}
+\index{L\+A\+M\+B\+D\+A\+M\+I\+N@{L\+A\+M\+B\+D\+A\+M\+I\+N}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+M\+I\+N}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+I\+N = 0.\+001\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}
+
+
+Lambda parameter for use in linear search methods. 
+
+Minimum lambda that can be returned, used only in golden section for now 
+
+Definition at line 37 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::golden\+Section1(), and C\+G\+Method\+::golden\+Section2().
+
+\hypertarget{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}{\index{Polak\+Ribiere@{Polak\+Ribiere}!L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E@{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}}
+\index{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E@{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}
+
+
+Parameter used in backtracking line search. 
+
+Lambda reduction parameter for backtracking 
+
+Definition at line 44 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_a084794992bdcec9285f6512b56e6c578}{\index{Polak\+Ribiere@{Polak\+Ribiere}!L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L@{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}}
+\index{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L@{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L = 1e-\/6\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a084794992bdcec9285f6512b56e6c578}
+
+
+Line search energy tolerance for all linesearch methods. 
+
+
+
+Definition at line 61 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), C\+G\+Method\+::binary\+Search(), C\+G\+Method\+::golden\+Section1(), C\+G\+Method\+::golden\+Section2(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}{\index{Polak\+Ribiere@{Polak\+Ribiere}!M\+A\+X\+D\+I\+S\+T@{M\+A\+X\+D\+I\+S\+T}}
+\index{M\+A\+X\+D\+I\+S\+T@{M\+A\+X\+D\+I\+S\+T}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{M\+A\+X\+D\+I\+S\+T}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+M\+A\+X\+D\+I\+S\+T = 1\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}
+
+
+Max distance beads can be moved, used only in backtracking line search. 
+
+
+
+Definition at line 39 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search().
+
+\hypertarget{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}{\index{Polak\+Ribiere@{Polak\+Ribiere}!P\+H\+I@{P\+H\+I}}
+\index{P\+H\+I@{P\+H\+I}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{P\+H\+I}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+P\+H\+I = (1 + sqrt(5)) / 2\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}
+
+
+Parameter used in golden section. 
+
+
+
+Definition at line 56 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::make\+Bracket().
+
+\hypertarget{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}{\index{Polak\+Ribiere@{Polak\+Ribiere}!Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L@{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}}
+\index{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L@{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}
+
+
+Parameter used in quadratic line search. 
+
+
+
+Definition at line 50 of file C\+G\+Method.\+h.
+
+\hypertarget{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{\index{Polak\+Ribiere@{Polak\+Ribiere}!R@{R}}
+\index{R@{R}!Polak\+Ribiere@{Polak\+Ribiere}}
+\subsubsection[{R}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+R = 0.\+61803399\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}
+
+
+Definition at line 57 of file C\+G\+Method.\+h.
+
+
+
+Referenced by C\+G\+Method\+::golden\+Section2().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Minimizer/\hyperlink{CGPolakRibiereMethod_8h}{C\+G\+Polak\+Ribiere\+Method.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Minimizer/\hyperlink{CGPolakRibiereMethod_8cpp}{C\+G\+Polak\+Ribiere\+Method.\+cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,439 @@
+\hypertarget{classReactionPtrContainerVector}{\section{Reaction\+Ptr\+Container\+Vector Class Reference}
+\label{classReactionPtrContainerVector}\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+}
+
+
+A concrete class implementing the \hyperlink{classReactionPtrContainerIFace}{Reaction\+Ptr\+Container\+I\+Face}, using vector$<$unique\+\_\+ptr$<$\+Reaction\+Base$>$$>$ as the container implementation.  
+
+
+
+
+{\ttfamily \#include $<$Reaction\+Container.\+h$>$}
+
+
+
+Inheritance diagram for Reaction\+Ptr\+Container\+Vector\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{classReactionPtrContainerVector__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Reaction\+Ptr\+Container\+Vector\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classReactionPtrContainerVector__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classReactionPtrContainerVector_a323c7c77e3485b96ae7e74f7abcd5574}{Reaction\+Ptr\+Container\+Vector} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classReaction}{Reaction} ptr container. \end{DoxyCompactList}\item 
+\hyperlink{classReactionPtrContainerVector_ab3281d4f97e012075666064b162ace2f}{Reaction\+Ptr\+Container\+Vector} (const \hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copying not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \& \hyperlink{classReactionPtrContainerVector_ad6204564f34d05a4ea51945a5c7f5cd0}{operator=} (\hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \&)=delete
+\begin{DoxyCompactList}\small\item\em Assignment not allowed. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classReactionPtrContainerVector_a6b587a2b526efd88dfa91d1125950800}{clear} ()
+\begin{DoxyCompactList}\small\item\em Clear the container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classReactionPtrContainerVector_a0b3cd521c3a59239f2a65c34c8de4988}{add\+Reaction\+Unique} (unique\+\_\+ptr$<$ \hyperlink{classReactionBase}{Reaction\+Base} $>$ \&\&\hyperlink{classReaction}{Reaction})
+\begin{DoxyCompactList}\small\item\em Add a unique reaction ptr to this container. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned short M, unsigned short N, typename... Args$>$ }\\\hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classReactionPtrContainerVector_a30fada2b38ba35fe54c08d3bbf21cada}{add\+Reaction} (Args \&\&...args)
+\begin{DoxyCompactList}\small\item\em Add a general reaction to this container. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ unsigned short M, unsigned short N $>$ class R\+X\+N, unsigned short M, unsigned short N$>$ }\\\hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classReactionPtrContainerVector_a21f6062905689351eed7fdafd96dac31}{add} (initializer\+\_\+list$<$ \hyperlink{classSpecies}{Species} $\ast$ $>$ species, float rate)
+\begin{DoxyCompactList}\small\item\em Add a general reaction class to this container. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classReactionPtrContainerVector_ad45ecd42eef045ee5f6faeaf6993af6d}{remove\+Reaction} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$R)
+\begin{DoxyCompactList}\small\item\em Remove a reaction from this container. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classReactionPtrContainerVector_aafd32b6e4ff55e7ae1089026ffeb6732}{remove\+Reactions} (\hyperlink{classSpecies}{Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Remove all reactions that contain a certain species from this container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classReactionPtrContainerVector_a0bc2ed66bbd60af16e607eecf08a0979}{find\+Reaction} (size\+\_\+t index)
+\begin{DoxyCompactList}\small\item\em Find a reaction by index in this container. \end{DoxyCompactList}\item 
+vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classReactionBase}{Reaction\+Base} $>$ $>$ \& \hyperlink{classReactionPtrContainerVector_a05d57222d76ec07637ca07a0d6974559}{reactions} ()
+\begin{DoxyCompactList}\small\item\em Get all reactions in vector form. \end{DoxyCompactList}\item 
+const vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classReactionBase}{Reaction\+Base} $>$ $>$ \& \hyperlink{classReactionPtrContainerVector_a62e397a600813ffb5a29e7e238dd91d2}{reactions} () const 
+\item 
+virtual void \hyperlink{classReactionPtrContainerVector_a319196f208d6e5d52974339c11a7ecef}{print\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Print all reactions in this container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classReactionPtrContainerVector_a1e6482eb0bd72d633c768208918855f8}{find\+Similar\+Reaction} (const \hyperlink{classReactionBase}{Reaction\+Base} \&r)
+\begin{DoxyCompactList}\small\item\em Find a similar reaction in this container (satistifes equality operator) \end{DoxyCompactList}\item 
+virtual void \hyperlink{classReactionPtrContainerIFace_a9a0ee050b8dec4b0fbac25dac87b7653}{print\+Reaction} ()
+\begin{DoxyCompactList}\small\item\em Print all reactions from this container. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classReactionBase}{Reaction\+Base} $>$ $>$ \hyperlink{classReactionPtrContainerVector_a21b0105a34e1240afb6d0783c965ddc6}{\+\_\+reactions}
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classReactionPtrContainerVector_ae4230b7c32a5f731b8ec4bcb81c7351d}{swap} (\hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \&first, \hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \&second)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A concrete class implementing the \hyperlink{classReactionPtrContainerIFace}{Reaction\+Ptr\+Container\+I\+Face}, using vector$<$unique\+\_\+ptr$<$\+Reaction\+Base$>$$>$ as the container implementation. 
+
+Definition at line 42 of file Reaction\+Container.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classReactionPtrContainerVector_a323c7c77e3485b96ae7e74f7abcd5574}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{Reaction\+Ptr\+Container\+Vector}]{\setlength{\rightskip}{0pt plus 5cm}Reaction\+Ptr\+Container\+Vector\+::\+Reaction\+Ptr\+Container\+Vector (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionPtrContainerVector_a323c7c77e3485b96ae7e74f7abcd5574}
+
+
+\hyperlink{classReaction}{Reaction} ptr container. 
+
+Default constructor 
+
+Definition at line 48 of file Reaction\+Container.\+h.
+
+\hypertarget{classReactionPtrContainerVector_ab3281d4f97e012075666064b162ace2f}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{Reaction\+Ptr\+Container\+Vector}]{\setlength{\rightskip}{0pt plus 5cm}Reaction\+Ptr\+Container\+Vector\+::\+Reaction\+Ptr\+Container\+Vector (
+\begin{DoxyParamCaption}
+\item[{const {\bf Reaction\+Ptr\+Container\+Vector} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classReactionPtrContainerVector_ab3281d4f97e012075666064b162ace2f}
+
+
+Copying not allowed. 
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classReactionPtrContainerVector_a21f6062905689351eed7fdafd96dac31}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!add@{add}}
+\index{add@{add}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{add}]{\setlength{\rightskip}{0pt plus 5cm}template$<$template$<$ unsigned short M, unsigned short N $>$ class R\+X\+N, unsigned short M, unsigned short N$>$ {\bf Reaction\+Base}$\ast$ Reaction\+Ptr\+Container\+Vector\+::add (
+\begin{DoxyParamCaption}
+\item[{initializer\+\_\+list$<$ {\bf Species} $\ast$ $>$}]{species, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionPtrContainerVector_a21f6062905689351eed7fdafd96dac31}
+
+
+Add a general reaction class to this container. 
+
+
+
+Definition at line 82 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+Grid\+::add\+Bulk(), and Compartment\+::add\+Internal().
+
+\hypertarget{classReactionPtrContainerVector_a30fada2b38ba35fe54c08d3bbf21cada}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}template$<$unsigned short M, unsigned short N, typename... Args$>$ {\bf Reaction\+Base}$\ast$ Reaction\+Ptr\+Container\+Vector\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{Args \&\&...}]{args}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionPtrContainerVector_a30fada2b38ba35fe54c08d3bbf21cada}
+
+
+Add a general reaction to this container. 
+
+
+
+Definition at line 74 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+Grid\+::add\+Bulk\+Reaction(), Compartment\+::add\+Diffusion\+Reaction(), and Compartment\+::add\+Internal\+Reaction().
+
+\hypertarget{classReactionPtrContainerVector_a0b3cd521c3a59239f2a65c34c8de4988}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!add\+Reaction\+Unique@{add\+Reaction\+Unique}}
+\index{add\+Reaction\+Unique@{add\+Reaction\+Unique}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{add\+Reaction\+Unique}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Reaction\+Base}$\ast$ Reaction\+Ptr\+Container\+Vector\+::add\+Reaction\+Unique (
+\begin{DoxyParamCaption}
+\item[{unique\+\_\+ptr$<$ {\bf Reaction\+Base} $>$ \&\&}]{Reaction}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_a0b3cd521c3a59239f2a65c34c8de4988}
+
+
+Add a unique reaction ptr to this container. 
+
+
+
+Implements \hyperlink{classReactionPtrContainerIFace_a8e86b4bf36e244100f07dceff78a98ef}{Reaction\+Ptr\+Container\+I\+Face}.
+
+
+
+Definition at line 67 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+Grid\+::add\+Bulk\+Reaction\+Unique(), Compartment\+::add\+Diffusion\+Reaction\+Unique(), and Compartment\+::add\+Internal\+Reaction\+Unique().
+
+\hypertarget{classReactionPtrContainerVector_a6b587a2b526efd88dfa91d1125950800}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!clear@{clear}}
+\index{clear@{clear}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{clear}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Reaction\+Ptr\+Container\+Vector\+::clear (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_a6b587a2b526efd88dfa91d1125950800}
+
+
+Clear the container. 
+
+
+
+Implements \hyperlink{classReactionPtrContainerIFace_a5dd8042a6ac1857ee5f6288fa4353f62}{Reaction\+Ptr\+Container\+I\+Face}.
+
+
+
+Definition at line 64 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+::operator=().
+
+\hypertarget{classReactionPtrContainerVector_a0bc2ed66bbd60af16e607eecf08a0979}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!find\+Reaction@{find\+Reaction}}
+\index{find\+Reaction@{find\+Reaction}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{find\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Reaction\+Base}$\ast$ Reaction\+Ptr\+Container\+Vector\+::find\+Reaction (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{index}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_a0bc2ed66bbd60af16e607eecf08a0979}
+
+
+Find a reaction by index in this container. 
+
+\begin{DoxyNote}{Note}
+no check on the index 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classReactionPtrContainerIFace_a029c99837491d250f2927bdb39a871ca}{Reaction\+Ptr\+Container\+I\+Face}.
+
+
+
+Definition at line 114 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+\hypertarget{classReactionPtrContainerVector_a1e6482eb0bd72d633c768208918855f8}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!find\+Similar\+Reaction@{find\+Similar\+Reaction}}
+\index{find\+Similar\+Reaction@{find\+Similar\+Reaction}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{find\+Similar\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Reaction\+Base}$\ast$ Reaction\+Ptr\+Container\+Vector\+::find\+Similar\+Reaction (
+\begin{DoxyParamCaption}
+\item[{const {\bf Reaction\+Base} \&}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_a1e6482eb0bd72d633c768208918855f8}
+
+
+Find a similar reaction in this container (satistifes equality operator) 
+
+\begin{DoxyNote}{Note}
+returns the first similar reaction found 
+\end{DoxyNote}
+
+
+Definition at line 130 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+::find\+Similar\+Diffusion\+Reaction(), and Compartment\+::find\+Similar\+Internal\+Reaction().
+
+\hypertarget{classReactionPtrContainerVector_ad6204564f34d05a4ea51945a5c7f5cd0}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!operator=@{operator=}}
+\index{operator=@{operator=}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\+Ptr\+Container\+Vector}\& Reaction\+Ptr\+Container\+Vector\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Ptr\+Container\+Vector} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classReactionPtrContainerVector_ad6204564f34d05a4ea51945a5c7f5cd0}
+
+
+Assignment not allowed. 
+
+\hypertarget{classReactionPtrContainerIFace_a9a0ee050b8dec4b0fbac25dac87b7653}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!print\+Reaction@{print\+Reaction}}
+\index{print\+Reaction@{print\+Reaction}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{print\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Reaction\+Ptr\+Container\+I\+Face\+::print\+Reaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classReactionPtrContainerIFace_a9a0ee050b8dec4b0fbac25dac87b7653}
+
+
+Print all reactions from this container. 
+
+
+
+Definition at line 37 of file Reaction\+Container.\+h.
+
+\hypertarget{classReactionPtrContainerVector_a319196f208d6e5d52974339c11a7ecef}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!print\+Reactions@{print\+Reactions}}
+\index{print\+Reactions@{print\+Reactions}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{print\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Reaction\+Ptr\+Container\+Vector\+::print\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_a319196f208d6e5d52974339c11a7ecef}
+
+
+Print all reactions in this container. 
+
+
+
+Definition at line 123 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+::print\+Reactions().
+
+\hypertarget{classReactionPtrContainerVector_a05d57222d76ec07637ca07a0d6974559}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!reactions@{reactions}}
+\index{reactions@{reactions}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Reaction\+Base}$>$ $>$\& Reaction\+Ptr\+Container\+Vector\+::reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionPtrContainerVector_a05d57222d76ec07637ca07a0d6974559}
+
+
+Get all reactions in vector form. 
+
+
+
+Definition at line 119 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+
+
+Referenced by Compartment\+Grid\+::add\+Chem\+Sim\+Reactions(), Compartment\+::add\+Chem\+Sim\+Reactions(), Compartment\+::apply\+\_\+impl(), Compartment\+::clear\+Reactions(), Compartment\+::clone\+Reactions(), Compartment\+::number\+Of\+Internal\+Reactions(), Compartment\+::number\+Of\+Reactions(), and operator==().
+
+\hypertarget{classReactionPtrContainerVector_a62e397a600813ffb5a29e7e238dd91d2}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!reactions@{reactions}}
+\index{reactions@{reactions}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{reactions}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$unique\+\_\+ptr$<${\bf Reaction\+Base}$>$ $>$\& Reaction\+Ptr\+Container\+Vector\+::reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionPtrContainerVector_a62e397a600813ffb5a29e7e238dd91d2}
+
+
+Definition at line 120 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions.
+
+\hypertarget{classReactionPtrContainerVector_ad45ecd42eef045ee5f6faeaf6993af6d}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!remove\+Reaction@{remove\+Reaction}}
+\index{remove\+Reaction@{remove\+Reaction}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{remove\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Reaction\+Ptr\+Container\+Vector\+::remove\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{R}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_ad45ecd42eef045ee5f6faeaf6993af6d}
+
+
+Remove a reaction from this container. 
+
+
+
+Implements \hyperlink{classReactionPtrContainerIFace_ac55d5efa31863e2c82ed2f60d98ba92f}{Reaction\+Ptr\+Container\+I\+Face}.
+
+
+
+Definition at line 89 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions, and A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+R.
+
+
+
+Referenced by Compartment\+Grid\+::remove\+Bulk\+Reaction(), Compartment\+::remove\+Diffusion\+Reaction(), Compartment\+::remove\+Internal\+Reaction(), and remove\+Reactions().
+
+\hypertarget{classReactionPtrContainerVector_aafd32b6e4ff55e7ae1089026ffeb6732}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!remove\+Reactions@{remove\+Reactions}}
+\index{remove\+Reactions@{remove\+Reactions}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{remove\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Reaction\+Ptr\+Container\+Vector\+::remove\+Reactions (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classReactionPtrContainerVector_aafd32b6e4ff55e7ae1089026ffeb6732}
+
+
+Remove all reactions that contain a certain species from this container. 
+
+
+
+Definition at line 101 of file Reaction\+Container.\+h.
+
+
+
+References \+\_\+reactions, and remove\+Reaction().
+
+
+
+Referenced by Compartment\+Grid\+::remove\+Bulk\+Reactions(), Compartment\+::remove\+Diffusion\+Reactions(), and Compartment\+::remove\+Internal\+Reactions().
+
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{classReactionPtrContainerVector_ae4230b7c32a5f731b8ec4bcb81c7351d}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!swap@{swap}}
+\index{swap@{swap}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}void swap (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Ptr\+Container\+Vector} \&}]{first, }
+\item[{{\bf Reaction\+Ptr\+Container\+Vector} \&}]{second}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [friend]}}}\label{classReactionPtrContainerVector_ae4230b7c32a5f731b8ec4bcb81c7351d}
+
+
+Definition at line 56 of file Reaction\+Container.\+h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classReactionPtrContainerVector_a21b0105a34e1240afb6d0783c965ddc6}{\index{Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}!\+\_\+reactions@{\+\_\+reactions}}
+\index{\+\_\+reactions@{\+\_\+reactions}!Reaction\+Ptr\+Container\+Vector@{Reaction\+Ptr\+Container\+Vector}}
+\subsubsection[{\+\_\+reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Reaction\+Base}$>$ $>$ Reaction\+Ptr\+Container\+Vector\+::\+\_\+reactions\hspace{0.3cm}{\ttfamily [protected]}}}\label{classReactionPtrContainerVector_a21b0105a34e1240afb6d0783c965ddc6}
+
+
+Definition at line 44 of file Reaction\+Container.\+h.
+
+
+
+Referenced by add(), add\+Reaction(), add\+Reaction\+Unique(), clear(), find\+Reaction(), find\+Similar\+Reaction(), print\+Reactions(), reactions(), remove\+Reaction(), and remove\+Reactions().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{ReactionContainer_8h}{Reaction\+Container.\+h}\end{DoxyCompactItemize}

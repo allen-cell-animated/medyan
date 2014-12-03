@@ -1,0 +1,216 @@
+\hypertarget{classSpeciesVisitorLambda}{\section{Species\+Visitor\+Lambda Class Reference}
+\label{classSpeciesVisitorLambda}\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+}
+
+
+Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classSpecies}{Species} of the node and its descendent nodes.  
+
+
+
+
+{\ttfamily \#include $<$Visitor.\+h$>$}
+
+
+
+Inheritance diagram for Species\+Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=195pt]{classSpeciesVisitorLambda__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Species\+Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=195pt]{classSpeciesVisitorLambda__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSpeciesVisitorLambda_a09d2fbe0f3aec217fb587b7a4ad26733}{set\+Lambda} (std\+::function$<$ bool(\hyperlink{classSpecies}{Species} $\ast$)$>$ g)
+\begin{DoxyCompactList}\small\item\em Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+void \hyperlink{classSpeciesVisitorLambda_a9e47f21aa9709e39065e8f393ed094c5}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classSpecies}{Species} $\ast$)$>$ pred)
+\begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+bool \hyperlink{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}{visit} (\hyperlink{classSpecies}{Species} $\ast$s)
+\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classSpeciesVisitorLambda_aa98d74ce907a46e8f7ad1ce25d5445fe}{visit\+Impl} (\hyperlink{classSpecies}{Species} $\ast$s) override
+\begin{DoxyCompactList}\small\item\em Implementation of the visit(...) method. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classSpeciesVisitorLambda_addaad814d443e92eff749acae08f9e3d}{pred\+Impl} (\hyperlink{classSpecies}{Species} $\ast$s) override
+\begin{DoxyCompactList}\small\item\em Implementation of the pred(...) method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::function$<$ bool(\hyperlink{classSpecies}{Species} $\ast$)$>$ \hyperlink{classSpeciesVisitorLambda_a3ebed66a4854319a21d1386558bb02f5}{\+\_\+f}
+\begin{DoxyCompactList}\small\item\em The function to be perfomed on each node. \end{DoxyCompactList}\item 
+std\+::function$<$ bool(\hyperlink{classSpecies}{Species} $\ast$)$>$ \hyperlink{classSpeciesVisitorLambda_abf8ae012adcc257d55c0280ad2173eac}{\+\_\+pred} =\mbox{[}$\,$\mbox{]}(\hyperlink{classSpecies}{Species} $\ast$)\{return true;\}
+\begin{DoxyCompactList}\small\item\em The predicate which checks whether the \hyperlink{classSpecies}{Species} should be evaluated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classSpecies}{Species} of the node and its descendent nodes. 
+
+Definition at line 128 of file Visitor.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSpeciesVisitorLambda_addaad814d443e92eff749acae08f9e3d}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!pred\+Impl@{pred\+Impl}}
+\index{pred\+Impl@{pred\+Impl}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{pred\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Species\+Visitor\+Lambda\+::pred\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classSpeciesVisitorLambda_addaad814d443e92eff749acae08f9e3d}
+
+
+Implementation of the pred(...) method. 
+
+
+
+Reimplemented from \hyperlink{classSpeciesVisitor_a3ea54d8670df82e87c8ee7d32b927584}{Species\+Visitor}.
+
+
+
+Definition at line 143 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+\hypertarget{classSpeciesVisitorLambda_a09d2fbe0f3aec217fb587b7a4ad26733}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!set\+Lambda@{set\+Lambda}}
+\index{set\+Lambda@{set\+Lambda}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{set\+Lambda}]{\setlength{\rightskip}{0pt plus 5cm}void Species\+Visitor\+Lambda\+::set\+Lambda (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Species} $\ast$)$>$}]{g}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesVisitorLambda_a09d2fbe0f3aec217fb587b7a4ad26733}
+
+
+Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 131 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+Referenced by main().
+
+\hypertarget{classSpeciesVisitorLambda_a9e47f21aa9709e39065e8f393ed094c5}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!set\+Lambda\+Pred@{set\+Lambda\+Pred}}
+\index{set\+Lambda\+Pred@{set\+Lambda\+Pred}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{set\+Lambda\+Pred}]{\setlength{\rightskip}{0pt plus 5cm}void Species\+Visitor\+Lambda\+::set\+Lambda\+Pred (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Species} $\ast$)$>$}]{pred}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesVisitorLambda_a9e47f21aa9709e39065e8f393ed094c5}
+
+
+Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 134 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+
+
+Referenced by main().
+
+\hypertarget{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!visit@{visit}}
+\index{visit@{visit}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}bool Species\+Visitor\+::visit (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpeciesVisitor_a1a3573d237d36307cc35e123e67875db}
+
+
+When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classSpecies}{Species} $\ast$s of that node. 
+
+If a false value is returned from this function called, then the further propagation of the tree is terminated. 
+
+Definition at line 108 of file Visitor.\+h.
+
+
+
+References Species\+Visitor\+::pred\+Impl(), and Species\+Visitor\+::visit\+Impl().
+
+
+
+Referenced by Compartment\+::apply\+\_\+impl().
+
+\hypertarget{classSpeciesVisitorLambda_aa98d74ce907a46e8f7ad1ce25d5445fe}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!visit\+Impl@{visit\+Impl}}
+\index{visit\+Impl@{visit\+Impl}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{visit\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Species\+Visitor\+Lambda\+::visit\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classSpeciesVisitorLambda_aa98d74ce907a46e8f7ad1ce25d5445fe}
+
+
+Implementation of the visit(...) method. 
+
+
+
+Implements \hyperlink{classSpeciesVisitor_a6702d4e5a08830afbf069bbe9304689c}{Species\+Visitor}.
+
+
+
+Definition at line 140 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSpeciesVisitorLambda_a3ebed66a4854319a21d1386558bb02f5}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!\+\_\+f@{\+\_\+f}}
+\index{\+\_\+f@{\+\_\+f}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{\+\_\+f}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Species} $\ast$)$>$ Species\+Visitor\+Lambda\+::\+\_\+f\hspace{0.3cm}{\ttfamily [protected]}}}\label{classSpeciesVisitorLambda_a3ebed66a4854319a21d1386558bb02f5}
+
+
+The function to be perfomed on each node. 
+
+
+
+Definition at line 136 of file Visitor.\+h.
+
+
+
+Referenced by set\+Lambda(), and visit\+Impl().
+
+\hypertarget{classSpeciesVisitorLambda_abf8ae012adcc257d55c0280ad2173eac}{\index{Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}!\+\_\+pred@{\+\_\+pred}}
+\index{\+\_\+pred@{\+\_\+pred}!Species\+Visitor\+Lambda@{Species\+Visitor\+Lambda}}
+\subsubsection[{\+\_\+pred}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Species} $\ast$)$>$ Species\+Visitor\+Lambda\+::\+\_\+pred =\mbox{[}$\,$\mbox{]}({\bf Species} $\ast$)\{return true;\}\hspace{0.3cm}{\ttfamily [protected]}}}\label{classSpeciesVisitorLambda_abf8ae012adcc257d55c0280ad2173eac}
+
+
+The predicate which checks whether the \hyperlink{classSpecies}{Species} should be evaluated. 
+
+
+
+Definition at line 137 of file Visitor.\+h.
+
+
+
+Referenced by pred\+Impl(), and set\+Lambda\+Pred().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Visitor_8h}{Visitor.\+h}\end{DoxyCompactItemize}

@@ -1,0 +1,146 @@
+\hypertarget{classBoundarySurface}{\section{Boundary\+Surface Class Reference}
+\label{classBoundarySurface}\index{Boundary\+Surface@{Boundary\+Surface}}
+}
+
+
+A boundary shape that holds Boundary\+Elements.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Surface.\+h$>$}
+
+
+
+Inheritance diagram for Boundary\+Surface\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classBoundarySurface__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Boundary\+Surface\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{classBoundarySurface__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBoundarySurface_a87739ff516e9c879943263440e2c837d}{Boundary\+Surface} (int n\+Dim)
+\begin{DoxyCompactList}\small\item\em Constructor, does nothing. \end{DoxyCompactList}\item 
+\hyperlink{classBoundarySurface_a15f38669a0a75aa5177e326090710907}{$\sim$\+Boundary\+Surface} ()
+\begin{DoxyCompactList}\small\item\em Destructor, removes boundary elements from D\+B. \end{DoxyCompactList}\item 
+const vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $>$ $>$ \& \hyperlink{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}{boundary\+Elements} ()
+\begin{DoxyCompactList}\small\item\em Get boundary elements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $>$ $>$ \hyperlink{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}{\+\_\+boundary\+Elements}
+\begin{DoxyCompactList}\small\item\em Vector of boundary elements that make up this surface. \end{DoxyCompactList}\item 
+short \hyperlink{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}{\+\_\+n\+Dim}
+\begin{DoxyCompactList}\small\item\em Dimensionality of surface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A boundary shape that holds Boundary\+Elements. 
+
+The \hyperlink{classBoundarySurface}{Boundary\+Surface} class is a basic boundary shape that is owned and controlled by the \hyperlink{classBoundary}{Boundary}\mbox{]} that created it. It holds a vector of \mbox{[}Boundary\+Elements\mbox{]}(\hyperlink{classBoundaryElement}{Boundary} as well as any other geometrical information needed for the given implementation. 
+
+Definition at line 31 of file Boundary\+Surface.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBoundarySurface_a87739ff516e9c879943263440e2c837d}{\index{Boundary\+Surface@{Boundary\+Surface}!Boundary\+Surface@{Boundary\+Surface}}
+\index{Boundary\+Surface@{Boundary\+Surface}!Boundary\+Surface@{Boundary\+Surface}}
+\subsubsection[{Boundary\+Surface}]{\setlength{\rightskip}{0pt plus 5cm}Boundary\+Surface\+::\+Boundary\+Surface (
+\begin{DoxyParamCaption}
+\item[{int}]{n\+Dim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoundarySurface_a87739ff516e9c879943263440e2c837d}
+
+
+Constructor, does nothing. 
+
+
+
+Definition at line 40 of file Boundary\+Surface.\+h.
+
+\hypertarget{classBoundarySurface_a15f38669a0a75aa5177e326090710907}{\index{Boundary\+Surface@{Boundary\+Surface}!````~Boundary\+Surface@{$\sim$\+Boundary\+Surface}}
+\index{````~Boundary\+Surface@{$\sim$\+Boundary\+Surface}!Boundary\+Surface@{Boundary\+Surface}}
+\subsubsection[{$\sim$\+Boundary\+Surface}]{\setlength{\rightskip}{0pt plus 5cm}Boundary\+Surface\+::$\sim$\+Boundary\+Surface (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoundarySurface_a15f38669a0a75aa5177e326090710907}
+
+
+Destructor, removes boundary elements from D\+B. 
+
+
+
+Definition at line 42 of file Boundary\+Surface.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}{\index{Boundary\+Surface@{Boundary\+Surface}!boundary\+Elements@{boundary\+Elements}}
+\index{boundary\+Elements@{boundary\+Elements}!Boundary\+Surface@{Boundary\+Surface}}
+\subsubsection[{boundary\+Elements}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$unique\+\_\+ptr$<${\bf Boundary\+Element}$>$ $>$\& Boundary\+Surface\+::boundary\+Elements (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}
+
+
+Get boundary elements. 
+
+
+
+Definition at line 45 of file Boundary\+Surface.\+h.
+
+
+
+References \+\_\+boundary\+Elements.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}{\index{Boundary\+Surface@{Boundary\+Surface}!\+\_\+boundary\+Elements@{\+\_\+boundary\+Elements}}
+\index{\+\_\+boundary\+Elements@{\+\_\+boundary\+Elements}!Boundary\+Surface@{Boundary\+Surface}}
+\subsubsection[{\+\_\+boundary\+Elements}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Boundary\+Element}$>$ $>$ Boundary\+Surface\+::\+\_\+boundary\+Elements\hspace{0.3cm}{\ttfamily [protected]}}}\label{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}
+
+
+Vector of boundary elements that make up this surface. 
+
+
+
+Definition at line 35 of file Boundary\+Surface.\+h.
+
+
+
+Referenced by boundary\+Elements(), Cylinder\+Z\+::\+Cylinder\+Z(), Half\+Sphere\+Z\+::\+Half\+Sphere\+Z(), Plane\+::\+Plane(), and Sphere\+::\+Sphere().
+
+\hypertarget{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}{\index{Boundary\+Surface@{Boundary\+Surface}!\+\_\+n\+Dim@{\+\_\+n\+Dim}}
+\index{\+\_\+n\+Dim@{\+\_\+n\+Dim}!Boundary\+Surface@{Boundary\+Surface}}
+\subsubsection[{\+\_\+n\+Dim}]{\setlength{\rightskip}{0pt plus 5cm}short Boundary\+Surface\+::\+\_\+n\+Dim\hspace{0.3cm}{\ttfamily [protected]}}}\label{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}
+
+
+Dimensionality of surface. 
+
+
+
+Definition at line 36 of file Boundary\+Surface.\+h.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundarySurface_8h}{Boundary\+Surface.\+h}\end{DoxyCompactItemize}

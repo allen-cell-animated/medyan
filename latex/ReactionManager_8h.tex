@@ -1,0 +1,81 @@
+\hypertarget{ReactionManager_8h}{\section{M3\+S\+Y\+M/\+Chemistry/\+Reaction\+Manager.h File Reference}
+\label{ReactionManager_8h}\index{M3\+S\+Y\+M/\+Chemistry/\+Reaction\+Manager.\+h@{M3\+S\+Y\+M/\+Chemistry/\+Reaction\+Manager.\+h}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Neighbor\+List\+Container.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Compartment\+Container.\+h\char`\"{}}\\*
+Include dependency graph for Reaction\+Manager.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ReactionManager_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ReactionManager_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classInternalFilamentRxnManager}{Internal\+Filament\+Rxn\+Manager}
+\begin{DoxyCompactList}\small\item\em To store filament chemical reaction information read from an input file. \end{DoxyCompactList}\item 
+class \hyperlink{classPolyPlusEndManager}{Poly\+Plus\+End\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for polymerization at plus end. \end{DoxyCompactList}\item 
+class \hyperlink{classPolyMinusEndManager}{Poly\+Minus\+End\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for polymerization at minus end. \end{DoxyCompactList}\item 
+class \hyperlink{classDepolyPlusEndManager}{Depoly\+Plus\+End\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for depolymerization at plus end. \end{DoxyCompactList}\item 
+class \hyperlink{classDepolyMinusEndManager}{Depoly\+Minus\+End\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for depolymerization at minus end. \end{DoxyCompactList}\item 
+class \hyperlink{classBasicBindingManager}{Basic\+Binding\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for basic binding. \end{DoxyCompactList}\item 
+class \hyperlink{classUnbindingManager}{Unbinding\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for all unbinding. \end{DoxyCompactList}\item 
+class \hyperlink{classMotorWalkFManager}{Motor\+Walk\+F\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for motor walking. \end{DoxyCompactList}\item 
+class \hyperlink{classMotorWalkBManager}{Motor\+Walk\+B\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for motor walking. \end{DoxyCompactList}\item 
+class \hyperlink{classCrossFilamentRxnManager}{Cross\+Filament\+Rxn\+Manager}
+\begin{DoxyCompactList}\small\item\em To store cross-\/filament reactions, including linker and motor binding. \end{DoxyCompactList}\item 
+class \hyperlink{classLinkerBindingManager}{Linker\+Binding\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for linker binding. \end{DoxyCompactList}\item 
+class \hyperlink{classMotorBindingManager}{Motor\+Binding\+Manager}
+\begin{DoxyCompactList}\small\item\em Manager for motor binding. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538}{Filament\+Reaction\+Direction} \{ \hyperlink{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538aa26736999186daf8146f809e863712a1}{F\+O\+R\+W\+A\+R\+D}, 
+\hyperlink{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538afed2fca77e454294d6b8bda1bf2c9fd6}{B\+A\+C\+K\+W\+A\+R\+D}, 
+\hyperlink{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538a5b2a7c1e7d51d7f2b4a1a7b364d25adb}{I\+N\+P\+L\+A\+C\+E}
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration for direction of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538}{\index{Reaction\+Manager.\+h@{Reaction\+Manager.\+h}!Filament\+Reaction\+Direction@{Filament\+Reaction\+Direction}}
+\index{Filament\+Reaction\+Direction@{Filament\+Reaction\+Direction}!Reaction\+Manager.\+h@{Reaction\+Manager.\+h}}
+\subsubsection[{Filament\+Reaction\+Direction}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Filament\+Reaction\+Direction}}}\label{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538}
+
+
+Enumeration for direction of reaction. 
+
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{F\+O\+R\+W\+A\+R\+D@{F\+O\+R\+W\+A\+R\+D}!Reaction\+Manager.\+h@{Reaction\+Manager.\+h}}\index{Reaction\+Manager.\+h@{Reaction\+Manager.\+h}!F\+O\+R\+W\+A\+R\+D@{F\+O\+R\+W\+A\+R\+D}}\item[{\em 
+\hypertarget{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538aa26736999186daf8146f809e863712a1}{F\+O\+R\+W\+A\+R\+D}\label{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538aa26736999186daf8146f809e863712a1}
+}]\index{B\+A\+C\+K\+W\+A\+R\+D@{B\+A\+C\+K\+W\+A\+R\+D}!Reaction\+Manager.\+h@{Reaction\+Manager.\+h}}\index{Reaction\+Manager.\+h@{Reaction\+Manager.\+h}!B\+A\+C\+K\+W\+A\+R\+D@{B\+A\+C\+K\+W\+A\+R\+D}}\item[{\em 
+\hypertarget{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538afed2fca77e454294d6b8bda1bf2c9fd6}{B\+A\+C\+K\+W\+A\+R\+D}\label{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538afed2fca77e454294d6b8bda1bf2c9fd6}
+}]\index{I\+N\+P\+L\+A\+C\+E@{I\+N\+P\+L\+A\+C\+E}!Reaction\+Manager.\+h@{Reaction\+Manager.\+h}}\index{Reaction\+Manager.\+h@{Reaction\+Manager.\+h}!I\+N\+P\+L\+A\+C\+E@{I\+N\+P\+L\+A\+C\+E}}\item[{\em 
+\hypertarget{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538a5b2a7c1e7d51d7f2b4a1a7b364d25adb}{I\+N\+P\+L\+A\+C\+E}\label{ReactionManager_8h_abd87353a558418244b64a5b5b90b8538a5b2a7c1e7d51d7f2b4a1a7b364d25adb}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 25 of file Reaction\+Manager.\+h.
+

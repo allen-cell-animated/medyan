@@ -1,0 +1,63 @@
+\hypertarget{example__misc_8cpp}{\section{M3\+S\+Y\+M/\+E\+X\+A\+M\+P\+L\+E\+S/example\+\_\+misc.cpp File Reference}
+\label{example__misc_8cpp}\index{M3\+S\+Y\+M/\+E\+X\+A\+M\+P\+L\+E\+S/example\+\_\+misc.\+cpp@{M3\+S\+Y\+M/\+E\+X\+A\+M\+P\+L\+E\+S/example\+\_\+misc.\+cpp}}
+}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$boost/heap/pairing\+\_\+heap.\+hpp$>$}\\*
+{\ttfamily \#include \char`\"{}System.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Chem\+N\+R\+M\+Impl.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Chem\+Sim.\+h\char`\"{}}\\*
+Include dependency graph for example\+\_\+misc.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{example__misc_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structPrintSpecies}{Print\+Species}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{example__misc_8cpp_ad83b302bda333800c7dd249e4ea5313b}{print\+\_\+species} (\hyperlink{classRSpecies}{R\+Species} $\ast$s, int i)
+\item 
+int \hyperlink{example__misc_8cpp_ac0f2228420376f4db7e1274f2b41667c}{main} (int argc, const char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{example__misc_8cpp_ac0f2228420376f4db7e1274f2b41667c}{\index{example\+\_\+misc.\+cpp@{example\+\_\+misc.\+cpp}!main@{main}}
+\index{main@{main}!example\+\_\+misc.\+cpp@{example\+\_\+misc.\+cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{const char $\ast$}]{argv\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}}\label{example__misc_8cpp_ac0f2228420376f4db7e1274f2b41667c}
+
+
+Definition at line 38 of file example\+\_\+misc.\+cpp.
+
+
+
+References Chem\+Sim\+::add\+Reaction(), Reaction\+Base\+::compute\+Propensity(), Reaction$<$ M, N $>$\+::get\+Affected\+Reactions(), Species\+::get\+R\+Species(), Chem\+Sim\+::initialize(), Reaction\+Base\+::make\+Step(), Chem\+Sim\+::print\+Reactions(), and Chem\+Sim\+::run().
+
+\hypertarget{example__misc_8cpp_ad83b302bda333800c7dd249e4ea5313b}{\index{example\+\_\+misc.\+cpp@{example\+\_\+misc.\+cpp}!print\+\_\+species@{print\+\_\+species}}
+\index{print\+\_\+species@{print\+\_\+species}!example\+\_\+misc.\+cpp@{example\+\_\+misc.\+cpp}}
+\subsubsection[{print\+\_\+species}]{\setlength{\rightskip}{0pt plus 5cm}void print\+\_\+species (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} $\ast$}]{s, }
+\item[{int}]{i}
+\end{DoxyParamCaption}
+)}}\label{example__misc_8cpp_ad83b302bda333800c7dd249e4ea5313b}
+
+
+Definition at line 25 of file example\+\_\+misc.\+cpp.
+
+
+
+References R\+Species\+::get\+Full\+Name(), and R\+Species\+::get\+N().
+

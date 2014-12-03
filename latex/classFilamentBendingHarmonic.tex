@@ -1,0 +1,112 @@
+\hypertarget{classFilamentBendingHarmonic}{\section{Filament\+Bending\+Harmonic Class Reference}
+\label{classFilamentBendingHarmonic}\index{Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}}
+}
+
+
+A harmonic potential used by the \hyperlink{classFilamentBending}{Filament\+Bending} template.  
+
+
+
+
+{\ttfamily \#include $<$Filament\+Bending\+Harmonic.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classFilamentBendingHarmonic_a921e22634cee2f3c13ad712a554ae303}{energy} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double)
+\item 
+double \hyperlink{classFilamentBendingHarmonic_a57afd4a1c218a8bc5462d50e4c8fb9af}{energy} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double, double)
+\item 
+void \hyperlink{classFilamentBendingHarmonic_ab450b1bd28774a79f45473c66b5002a4}{forces} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double)
+\item 
+void \hyperlink{classFilamentBendingHarmonic_a4b995a97248688079326f4128b1d63bb}{forces\+Aux} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A harmonic potential used by the \hyperlink{classFilamentBending}{Filament\+Bending} template. 
+
+Definition at line 23 of file Filament\+Bending\+Harmonic.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFilamentBendingHarmonic_a921e22634cee2f3c13ad712a554ae303}{\index{Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}!energy@{energy}}
+\index{energy@{energy}!Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double Filament\+Bending\+Harmonic\+::energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{{\bf Bead} $\ast$}]{b3, }
+\item[{double}]{k\+\_\+bend}
+\end{DoxyParamCaption}
+)}}\label{classFilamentBendingHarmonic_a921e22634cee2f3c13ad712a554ae303}
+
+
+Definition at line 22 of file Filament\+Bending\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate, and mathfunc\+::\+Scalar\+Product().
+
+\hypertarget{classFilamentBendingHarmonic_a57afd4a1c218a8bc5462d50e4c8fb9af}{\index{Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}!energy@{energy}}
+\index{energy@{energy}!Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double Filament\+Bending\+Harmonic\+::energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{{\bf Bead} $\ast$}]{b3, }
+\item[{double}]{k\+\_\+bend, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)}}\label{classFilamentBendingHarmonic_a57afd4a1c218a8bc5462d50e4c8fb9af}
+
+
+Definition at line 34 of file Filament\+Bending\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate, Bead\+::force, and mathfunc\+::\+Scalar\+Product\+Stretched().
+
+\hypertarget{classFilamentBendingHarmonic_ab450b1bd28774a79f45473c66b5002a4}{\index{Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}!forces@{forces}}
+\index{forces@{forces}!Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}}
+\subsubsection[{forces}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+Bending\+Harmonic\+::forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{{\bf Bead} $\ast$}]{b3, }
+\item[{double}]{k\+\_\+bend}
+\end{DoxyParamCaption}
+)}}\label{classFilamentBendingHarmonic_ab450b1bd28774a79f45473c66b5002a4}
+
+
+Definition at line 49 of file Filament\+Bending\+Harmonic.\+cpp.
+
+
+
+References A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+A, A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+B, A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+C, Bead\+::coordinate, Bead\+::force, and mathfunc\+::\+Scalar\+Product().
+
+\hypertarget{classFilamentBendingHarmonic_a4b995a97248688079326f4128b1d63bb}{\index{Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}!forces\+Aux@{forces\+Aux}}
+\index{forces\+Aux@{forces\+Aux}!Filament\+Bending\+Harmonic@{Filament\+Bending\+Harmonic}}
+\subsubsection[{forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+Bending\+Harmonic\+::forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{{\bf Bead} $\ast$}]{b3, }
+\item[{double}]{k\+\_\+bend}
+\end{DoxyParamCaption}
+)}}\label{classFilamentBendingHarmonic_a4b995a97248688079326f4128b1d63bb}
+
+
+Definition at line 84 of file Filament\+Bending\+Harmonic.\+cpp.
+
+
+
+References A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+A, A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+B, A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+C, Bead\+::coordinate\+Aux, Bead\+::force, Bead\+::force\+Aux, and mathfunc\+::\+Scalar\+Product().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentBendingHarmonic_8h}{Filament\+Bending\+Harmonic.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentBendingHarmonic_8cpp}{Filament\+Bending\+Harmonic.\+cpp}\end{DoxyCompactItemize}

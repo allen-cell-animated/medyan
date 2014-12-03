@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic..." alt="" coords="5,31,63,56"/>
+<area shape="rect" id="node2" href="$classTypeVisitor.html" title="TypeVisitor\&lt; ComponentType \&gt;" alt="" coords="111,5,319,31"/>
+<area shape="rect" id="node3" href="$classVisitorLambda.html" title="Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. " alt="" coords="162,55,269,80"/>
+<area shape="rect" id="node4" href="$classTypeVisitorLambda.html" title="TypeVisitorLambda\&lt;\l ComponentType \&gt;" alt="" coords="367,48,510,87"/>
+</map>

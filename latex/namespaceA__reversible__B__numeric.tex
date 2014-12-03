@@ -1,0 +1,103 @@
+\hypertarget{namespaceA__reversible__B__numeric}{\section{A\+\_\+reversible\+\_\+\+B\+\_\+numeric Namespace Reference}
+\label{namespaceA__reversible__B__numeric}\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{N} = 10
+\item 
+float \hyperlink{namespaceA__reversible__B__numeric_a63df2169b3cb7b9db0743a51320bbf4f}{t} = 0.\+48
+\item 
+float \hyperlink{namespaceA__reversible__B__numeric_a772b5e72a16864c6d0d2895bf2bb5ada}{kf} = 2.\+5
+\item 
+float \hyperlink{namespaceA__reversible__B__numeric_a2f4e77a45b10e727874ecd0a83be77fd}{kb} = 2.\+5
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_a7095a52e98b19868ca09b3ea24726258}{R} = zeros(\mbox{[}\hyperlink{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{N}+1,\hyperlink{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{N}+1\mbox{]})
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_ab14192a58d248288a57a53a88e824aa1}{O\+N\+E\+S} = ones(\hyperlink{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{N}+1)
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_a238e2ae63555f68c3395add1edad1692}{T} = linalg.\+expm2(\hyperlink{namespaceA__reversible__B__numeric_a7095a52e98b19868ca09b3ea24726258}{R}$\ast$\hyperlink{namespaceA__reversible__B__numeric_a63df2169b3cb7b9db0743a51320bbf4f}{t})
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_ad5efb9fc14774d8a02dccd90d7978214}{p0} = zeros(\hyperlink{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{N}+1)
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_aae033c0920890d37257bb86daf8996f8}{pt} = dot(\hyperlink{namespaceA__reversible__B__numeric_a238e2ae63555f68c3395add1edad1692}{T},\hyperlink{namespaceA__reversible__B__numeric_ad5efb9fc14774d8a02dccd90d7978214}{p0})
+\item 
+tuple \hyperlink{namespaceA__reversible__B__numeric_a2f98730f45b559f9aece65c8682734bf}{p\+\_\+analyt} = array(\mbox{[}0.\+002327151517,0.\+1940040583e-\/1, 0.\+7277956968e-\/1, .\+1617947293, .\+2360416130, .\+2361326132, .\+1640442006, 0.\+781464013e-\/1, 0.\+244301648e-\/1, 0.\+4525850e-\/2, 0.\+377291e-\/3\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\hypertarget{namespaceA__reversible__B__numeric_a2f4e77a45b10e727874ecd0a83be77fd}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!kb@{kb}}
+\index{kb@{kb}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{kb}]{\setlength{\rightskip}{0pt plus 5cm}float A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+kb = 2.\+5}}\label{namespaceA__reversible__B__numeric_a2f4e77a45b10e727874ecd0a83be77fd}
+
+
+Definition at line 22 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_a772b5e72a16864c6d0d2895bf2bb5ada}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!kf@{kf}}
+\index{kf@{kf}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{kf}]{\setlength{\rightskip}{0pt plus 5cm}float A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+kf = 2.\+5}}\label{namespaceA__reversible__B__numeric_a772b5e72a16864c6d0d2895bf2bb5ada}
+
+
+Definition at line 21 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!N@{N}}
+\index{N@{N}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{N}]{\setlength{\rightskip}{0pt plus 5cm}int A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+N = 10}}\label{namespaceA__reversible__B__numeric_ac17162d2d7790ca7d605541ee4c919bb}
+
+
+Definition at line 19 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+
+
+Referenced by Compartment\+Grid.\+add\+Bulk(), Compartment\+Grid.\+add\+Bulk\+Reaction(), Compartment.\+add\+Internal(), Compartment.\+add\+Internal\+Reaction(), Reaction$<$ M, N $>$.\+get\+N\+Impl(), Reaction$<$ M, N $>$.\+get\+Product\+Of\+Products\+Impl(), Reaction$<$ M, N $>$.\+initialize\+Species(), Reaction$<$ M, N $>$.\+make\+Step\+Impl(), Reaction$<$ M, N $>$.\+print\+To\+Stream(), and Reaction$<$ M, N $>$.\+size\+Impl().
+
+\hypertarget{namespaceA__reversible__B__numeric_ab14192a58d248288a57a53a88e824aa1}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!O\+N\+E\+S@{O\+N\+E\+S}}
+\index{O\+N\+E\+S@{O\+N\+E\+S}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{O\+N\+E\+S}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+O\+N\+E\+S = ones({\bf N}+1)}}\label{namespaceA__reversible__B__numeric_ab14192a58d248288a57a53a88e824aa1}
+
+
+Definition at line 44 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_ad5efb9fc14774d8a02dccd90d7978214}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!p0@{p0}}
+\index{p0@{p0}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{p0}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+p0 = zeros({\bf N}+1)}}\label{namespaceA__reversible__B__numeric_ad5efb9fc14774d8a02dccd90d7978214}
+
+
+Definition at line 61 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_a2f98730f45b559f9aece65c8682734bf}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!p\+\_\+analyt@{p\+\_\+analyt}}
+\index{p\+\_\+analyt@{p\+\_\+analyt}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{p\+\_\+analyt}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+p\+\_\+analyt = array(\mbox{[}0.\+002327151517,0.\+1940040583e-\/1, 0.\+7277956968e-\/1, .\+1617947293, .\+2360416130, .\+2361326132, .\+1640442006, 0.\+781464013e-\/1, 0.\+244301648e-\/1, 0.\+4525850e-\/2, 0.\+377291e-\/3\mbox{]})}}\label{namespaceA__reversible__B__numeric_a2f98730f45b559f9aece65c8682734bf}
+
+
+Definition at line 80 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_aae033c0920890d37257bb86daf8996f8}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!pt@{pt}}
+\index{pt@{pt}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{pt}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+pt = dot({\bf T},{\bf p0})}}\label{namespaceA__reversible__B__numeric_aae033c0920890d37257bb86daf8996f8}
+
+
+Definition at line 67 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_a7095a52e98b19868ca09b3ea24726258}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!R@{R}}
+\index{R@{R}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{R}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+R = zeros(\mbox{[}{\bf N}+1,{\bf N}+1\mbox{]})}}\label{namespaceA__reversible__B__numeric_a7095a52e98b19868ca09b3ea24726258}
+
+
+Definition at line 26 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_a63df2169b3cb7b9db0743a51320bbf4f}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!t@{t}}
+\index{t@{t}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{t}]{\setlength{\rightskip}{0pt plus 5cm}float A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+t = 0.\+48}}\label{namespaceA__reversible__B__numeric_a63df2169b3cb7b9db0743a51320bbf4f}
+
+
+Definition at line 20 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+
+\hypertarget{namespaceA__reversible__B__numeric_a238e2ae63555f68c3395add1edad1692}{\index{A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}!T@{T}}
+\index{T@{T}!A\+\_\+reversible\+\_\+\+B\+\_\+numeric@{A\+\_\+reversible\+\_\+\+B\+\_\+numeric}}
+\subsubsection[{T}]{\setlength{\rightskip}{0pt plus 5cm}tuple A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+T = linalg.\+expm2({\bf R}$\ast${\bf t})}}\label{namespaceA__reversible__B__numeric_a238e2ae63555f68c3395add1edad1692}
+
+
+Definition at line 53 of file A\+\_\+reversible\+\_\+\+B\+\_\+numeric.\+py.
+

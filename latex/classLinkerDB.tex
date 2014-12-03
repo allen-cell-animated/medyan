@@ -1,0 +1,262 @@
+\hypertarget{classLinkerDB}{\section{Linker\+D\+B Class Reference}
+\label{classLinkerDB}\index{Linker\+D\+B@{Linker\+D\+B}}
+}
+
+
+A database for all \hyperlink{classLinker}{Linkers} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Linker\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Linker\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{classLinkerDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Linker\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=221pt]{classLinkerDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLinkerDB_af910b4ad55b19bf38e66558438068229}{Linker\+D\+B} (const \hyperlink{classLinkerDB}{Linker\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classLinkerDB}{Linker\+D\+B} \& \hyperlink{classLinkerDB_ab4d311688ca436179ceed0297aacd1b0}{operator=} (\hyperlink{classLinkerDB}{Linker\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classLinkerDB_aa71e5126fbf4debe99e9d92782c3db28}{add\+Linker} (\hyperlink{classLinker}{Linker} $\ast$l)
+\begin{DoxyCompactList}\small\item\em Create a new linker. \end{DoxyCompactList}\item 
+void \hyperlink{classLinkerDB_a80e61cbde7836116fa1b099fd833a002}{remove\+Linker} (\hyperlink{classLinker}{Linker} $\ast$l)
+\begin{DoxyCompactList}\small\item\em Remove a linker. \end{DoxyCompactList}\item 
+int \hyperlink{classLinkerDB_aba81b4efaa9764aad20713183fa61505}{get\+Linker\+I\+D} ()
+\begin{DoxyCompactList}\small\item\em Get current linker I\+D, and update the I\+D counter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLinkerDB}{Linker\+D\+B} $\ast$ \hyperlink{classLinkerDB_af9522f683e73a346c8336f47ac59b93b}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classLinker}{Linker} $\ast$ $>$ \hyperlink{classLinkerDB_ab6e83c50f32e3905892767088cb0f66c}{ldb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLinkerDB_a12a3c8a0510103d3205e9855c6e29ae1}{Linker\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{classLinkerDB_ac3365b8ccbf9251280c5dc08f6587bc0}{\+\_\+current\+Linker\+I\+D} = 0
+\begin{DoxyCompactList}\small\item\em To assign linker I\+Ds. \end{DoxyCompactList}\item 
+static \hyperlink{classLinkerDB}{Linker\+D\+B} $\ast$ \hyperlink{classLinkerDB_a72a6f66320366eb8ea8662749bb37a63}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database for all \hyperlink{classLinker}{Linkers} in the system. 
+
+This \hyperlink{classLinkerDB}{Linker\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classLinker}{Linkers} objects, as well as some standard list functions and iterators. 
+
+Definition at line 29 of file Linker\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classLinkerDB_ab6e83c50f32e3905892767088cb0f66c}{\index{Linker\+D\+B@{Linker\+D\+B}!ldb@{ldb}}
+\index{ldb@{ldb}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{ldb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Linker}$\ast$$>$ {\bf Linker\+D\+B\+::ldb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classLinkerDB_ab6e83c50f32e3905892767088cb0f66c}
+
+
+Definition at line 31 of file Linker\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classLinkerDB_af910b4ad55b19bf38e66558438068229}{\index{Linker\+D\+B@{Linker\+D\+B}!Linker\+D\+B@{Linker\+D\+B}}
+\index{Linker\+D\+B@{Linker\+D\+B}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{Linker\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Linker\+D\+B\+::\+Linker\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Linker\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classLinkerDB_af910b4ad55b19bf38e66558438068229}
+
+
+Copying is not allowed. 
+
+\hypertarget{classLinkerDB_a12a3c8a0510103d3205e9855c6e29ae1}{\index{Linker\+D\+B@{Linker\+D\+B}!Linker\+D\+B@{Linker\+D\+B}}
+\index{Linker\+D\+B@{Linker\+D\+B}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{Linker\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Linker\+D\+B\+::\+Linker\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classLinkerDB_a12a3c8a0510103d3205e9855c6e29ae1}
+
+
+Definition at line 60 of file Linker\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classLinkerDB_aa71e5126fbf4debe99e9d92782c3db28}{\index{Linker\+D\+B@{Linker\+D\+B}!add\+Linker@{add\+Linker}}
+\index{add\+Linker@{add\+Linker}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{add\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}void Linker\+D\+B\+::add\+Linker (
+\begin{DoxyParamCaption}
+\item[{{\bf Linker} $\ast$}]{l}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLinkerDB_aa71e5126fbf4debe99e9d92782c3db28}
+
+
+Create a new linker. 
+
+
+
+Definition at line 49 of file Linker\+D\+B.\+h.
+
+
+
+Referenced by Linker\+::\+Linker().
+
+\hypertarget{classLinkerDB_aba81b4efaa9764aad20713183fa61505}{\index{Linker\+D\+B@{Linker\+D\+B}!get\+Linker\+I\+D@{get\+Linker\+I\+D}}
+\index{get\+Linker\+I\+D@{get\+Linker\+I\+D}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{get\+Linker\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Linker\+D\+B\+::get\+Linker\+I\+D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLinkerDB_aba81b4efaa9764aad20713183fa61505}
+
+
+Get current linker I\+D, and update the I\+D counter. 
+
+
+
+Definition at line 54 of file Linker\+D\+B.\+h.
+
+
+
+References \+\_\+current\+Linker\+I\+D.
+
+
+
+Referenced by Linker\+::\+Linker().
+
+\hypertarget{classLinkerDB_af9522f683e73a346c8336f47ac59b93b}{\index{Linker\+D\+B@{Linker\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Linker\+D\+B} $\ast$ Linker\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classLinkerDB_af9522f683e73a346c8336f47ac59b93b}
+
+
+Get instance. 
+
+
+
+Definition at line 19 of file Linker\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Linker\+D\+B().
+
+
+
+Referenced by Linker\+F\+F\+::compute\+Energy(), Linker\+F\+F\+::compute\+Forces(), Linker\+F\+F\+::compute\+Forces\+Aux(), Linker\+::\+Linker(), Output\+::print\+Basic\+Snapshot(), Controller\+::update\+System(), and Linker\+::$\sim$\+Linker().
+
+\hypertarget{classLinkerDB_ab4d311688ca436179ceed0297aacd1b0}{\index{Linker\+D\+B@{Linker\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Linker\+D\+B}\& Linker\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Linker\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classLinkerDB_ab4d311688ca436179ceed0297aacd1b0}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classLinkerDB_a80e61cbde7836116fa1b099fd833a002}{\index{Linker\+D\+B@{Linker\+D\+B}!remove\+Linker@{remove\+Linker}}
+\index{remove\+Linker@{remove\+Linker}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{remove\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}void Linker\+D\+B\+::remove\+Linker (
+\begin{DoxyParamCaption}
+\item[{{\bf Linker} $\ast$}]{l}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLinkerDB_a80e61cbde7836116fa1b099fd833a002}
+
+
+Remove a linker. 
+
+
+
+Definition at line 51 of file Linker\+D\+B.\+h.
+
+
+
+Referenced by Linker\+::$\sim$\+Linker().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classLinkerDB_ac3365b8ccbf9251280c5dc08f6587bc0}{\index{Linker\+D\+B@{Linker\+D\+B}!\+\_\+current\+Linker\+I\+D@{\+\_\+current\+Linker\+I\+D}}
+\index{\+\_\+current\+Linker\+I\+D@{\+\_\+current\+Linker\+I\+D}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{\+\_\+current\+Linker\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Linker\+D\+B\+::\+\_\+current\+Linker\+I\+D = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classLinkerDB_ac3365b8ccbf9251280c5dc08f6587bc0}
+
+
+To assign linker I\+Ds. 
+
+
+
+Definition at line 57 of file Linker\+D\+B.\+h.
+
+
+
+Referenced by get\+Linker\+I\+D().
+
+\hypertarget{classLinkerDB_a72a6f66320366eb8ea8662749bb37a63}{\index{Linker\+D\+B@{Linker\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Linker\+D\+B} $\ast$ Linker\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classLinkerDB_a72a6f66320366eb8ea8662749bb37a63}
+
+
+Singleton instance. 
+
+
+
+Definition at line 59 of file Linker\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Linker\+D\+B@{Linker\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Linker\+D\+B@{Linker\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{LinkerDB_8h}{Linker\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{LinkerDB_8cpp}{Linker\+D\+B.\+cpp}\end{DoxyCompactItemize}

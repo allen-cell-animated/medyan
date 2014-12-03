@@ -1,0 +1,693 @@
+\hypertarget{classRSpecies}{\section{R\+Species Class Reference}
+\label{classRSpecies}\index{R\+Species@{R\+Species}}
+}
+
+
+Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in \hyperlink{classReaction}{Reactions}.  
+
+
+
+
+{\ttfamily \#include $<$R\+Species.\+h$>$}
+
+
+
+Collaboration diagram for R\+Species\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classRSpecies__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classRSpecies_a42066424867af0b109d0833f8826072b}{R\+Species} (\hyperlink{classSpecies}{Species} \&parent, \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} n=0, \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} ulim=\hyperlink{common_8h_adaf831a0b61083f29adf8fc6e8edab35}{max\+\_\+ulim})
+\begin{DoxyCompactList}\small\item\em Constructors. \end{DoxyCompactList}\item 
+\hyperlink{classRSpecies_aff60041af8192798c9c67c8c5b9a69a4}{R\+Species} (const \hyperlink{classRSpecies}{R\+Species} \&r)=delete
+\begin{DoxyCompactList}\small\item\em deleted copy constructor -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} \end{DoxyCompactList}\item 
+\hyperlink{classRSpecies_abadb78fc4c8b8e2ddfeda6285b0fda40}{R\+Species} (\hyperlink{classRSpecies}{R\+Species} \&\&r)=delete
+\begin{DoxyCompactList}\small\item\em deleted move constructor -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} \end{DoxyCompactList}\item 
+\hyperlink{classRSpecies}{R\+Species} \& \hyperlink{classRSpecies_a634f7c45052258c7c971fe6b4b576d0d}{operator=} (\hyperlink{classRSpecies}{R\+Species} \&)=delete
+\begin{DoxyCompactList}\small\item\em deleted assignment operator -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} \end{DoxyCompactList}\item 
+void \hyperlink{classRSpecies_af15e0af66ae1171253b9205f4cd8dfd8}{set\+N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} n)
+\begin{DoxyCompactList}\small\item\em Sets the copy number for this \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+void \hyperlink{classRSpecies_a6ded5d8dc0ccfcb0a45418a6c33a5595}{up} ()
+\begin{DoxyCompactList}\small\item\em Increases the copy number by 1. \end{DoxyCompactList}\item 
+void \hyperlink{classRSpecies_a7171743315bf9687feb639f13cea4ef5}{down} ()
+\begin{DoxyCompactList}\small\item\em Decreases the copy number by 1. \end{DoxyCompactList}\item 
+void \hyperlink{classRSpecies_a6e52bc2409c55b706197b2e48323aff2}{add\+As\+Reactant} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\item 
+void \hyperlink{classRSpecies_aa3e5bfc99f8e3a403051839f717ff775}{add\+As\+Product} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\item 
+void \hyperlink{classRSpecies_a3abaae1f77fc3cd47eb77926b7f26828}{remove\+As\+Reactant} (const \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\item 
+void \hyperlink{classRSpecies_abafe985e54f2ca717e3d093217864bd4}{remove\+As\+Product} (const \hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\item 
+void \hyperlink{classRSpecies_a8e5442de08d5f11166cf153f96062e99}{activate\+Assoc\+Reactant\+Reactions} ()
+\item 
+void \hyperlink{classRSpecies_ae3b2bf2d19b7b27dff79dd3fbd6be66b}{activate\+Assoc\+Product\+Reactions} ()
+\item 
+void \hyperlink{classRSpecies_a4cecb0924ec9576ffb9006878739b3d9}{passivate\+Assoc\+Reactant\+Reactions} ()
+\item 
+void \hyperlink{classRSpecies_ad283410f170a8f90805ddfcf2e11bef8}{passivate\+Assoc\+Product\+Reactions} ()
+\item 
+\hyperlink{classRSpecies_accd8e595b1e16dc81990043ea56e90bd}{$\sim$\+R\+Species} ()
+\begin{DoxyCompactList}\small\item\em It is required that all \hyperlink{classReaction}{Reactions} associated with this \hyperlink{classRSpecies}{R\+Species} are destructed before this \hyperlink{classRSpecies}{R\+Species} is destructed. \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} \hyperlink{classRSpecies_ab9b95848fbc0ceffbe0d1ca0153ebde7}{get\+N} () const 
+\begin{DoxyCompactList}\small\item\em Return the current copy number of this \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+\hyperlink{classSpecies}{Species} \& \hyperlink{classRSpecies_acd2575ae0c35ed2eddddd346baffd103}{get\+Species} ()
+\begin{DoxyCompactList}\small\item\em return parent \hyperlink{classSpecies}{Species} as a reference \end{DoxyCompactList}\item 
+const \hyperlink{classSpecies}{Species} \& \hyperlink{classRSpecies_a4a68b63a45665131b5640389932274b1}{get\+Species} () const 
+\begin{DoxyCompactList}\small\item\em return parent \hyperlink{classSpecies}{Species} as a const reference \end{DoxyCompactList}\item 
+string \hyperlink{classRSpecies_ae7f6d21c784b823a9929db2871948692}{get\+Full\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Return the full name of this \hyperlink{classSpecies}{Species} in a string format (e.\+g. \char`\"{}\+Arp2/3\{\+Bulk\}\char`\"{}. \end{DoxyCompactList}\item 
+vector$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \& \hyperlink{classRSpecies_a51a3f15e8b4ae12c6b1b706ff615c804}{Reactant\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$, which contains pointers to all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. \end{DoxyCompactList}\item 
+vector$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \& \hyperlink{classRSpecies_aa48b1fba86bebd7824076a86a65a7b76}{Product\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$, which contains pointers to all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. \end{DoxyCompactList}\item 
+\hyperlink{RSpecies_8h_a880cf21a44f76fb48cdb194a17487590}{vr\+\_\+iterator} \hyperlink{classRSpecies_abde1a54d7f5aeef2a95679b691c653ad}{begin\+Reactant\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the beginning of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. \end{DoxyCompactList}\item 
+\hyperlink{RSpecies_8h_a880cf21a44f76fb48cdb194a17487590}{vr\+\_\+iterator} \hyperlink{classRSpecies_a9cb66f9a3c5488cb405c7287852b0219}{begin\+Product\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the beginning of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. \end{DoxyCompactList}\item 
+\hyperlink{RSpecies_8h_a880cf21a44f76fb48cdb194a17487590}{vr\+\_\+iterator} \hyperlink{classRSpecies_ab4d59bf721abd8ea1f8611341d6e8483}{end\+Reactant\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the end of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. \end{DoxyCompactList}\item 
+\hyperlink{RSpecies_8h_a880cf21a44f76fb48cdb194a17487590}{vr\+\_\+iterator} \hyperlink{classRSpecies_a5afb91e624b040c2f10d44f446668f7d}{end\+Product\+Reactions} ()
+\begin{DoxyCompactList}\small\item\em Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the end of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+friend \hyperlink{classRSpecies_a533594d731cf6ec10a4d7321b1213cc5}{Species}
+\item 
+vector$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \hyperlink{classRSpecies_a231c4835e7367ffdb405a1463a7f8170}{\+\_\+as\+\_\+reactants} = \{\}
+\begin{DoxyCompactList}\small\item\em Reactions calls \hyperlink{classRSpecies_a6e52bc2409c55b706197b2e48323aff2}{add\+As\+Reactant()}, \hyperlink{classRSpecies_a3abaae1f77fc3cd47eb77926b7f26828}{remove\+As\+Reactant()} -\/ which other classes should not call. \end{DoxyCompactList}\item 
+vector$<$ \hyperlink{classReactionBase}{Reaction\+Base} $\ast$ $>$ \hyperlink{classRSpecies_a166eef547a69e4c03f5a8390b5f0686b}{\+\_\+as\+\_\+products} = \{\}
+\begin{DoxyCompactList}\small\item\em a vector of \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is a Product \end{DoxyCompactList}\item 
+\hyperlink{classSpecies}{Species} \& \hyperlink{classRSpecies_a884cfd77555cd6f783ef95289a87f8a5}{\+\_\+species}
+\begin{DoxyCompactList}\small\item\em reference to the {\bfseries parent} \hyperlink{classSpecies}{Species} object \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} \hyperlink{classRSpecies_a3c247ef50a25db875d0f657e6a2505ca}{\+\_\+n}
+\begin{DoxyCompactList}\small\item\em Current copy number of this \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in \hyperlink{classReaction}{Reactions}. 
+
+This class represents the reactivity of chemical species. The name \hyperlink{classRSpecies}{R\+Species} stems from reacting species. \hyperlink{classRSpecies}{R\+Species} tracks the copy number of molecules and the \hyperlink{classReaction}{Reactions} in which it is involed (\begin{DoxySeeAlso}{See also}
+\hyperlink{classReaction}{Reaction}). 
+\end{DoxySeeAlso}
+\begin{DoxyNote}{Note}
+Each intantiation of \hyperlink{classRSpecies}{R\+Species} is unique, and hence, cannot be neither copied nor moved (C++11). This has significant implications -\/ e.\+g., \hyperlink{classRSpecies}{R\+Species} cannot be used in vector$<$\+R\+Species$>$. Instead, one should use either vector$<$\+R\+Species$\ast$$>$ if not owning the \hyperlink{classRSpecies}{R\+Species} pointers, or vector$<$unique\+\_\+ptr$<$\+R\+Species$>$$>$ if owning the \hyperlink{classRSpecies}{R\+Species} pointers. A special allocator can be written such that dynamically allocated \hyperlink{classRSpecies}{R\+Species} (through new), are arranged contigiously in memory. 
+\end{DoxyNote}
+
+
+Definition at line 58 of file R\+Species.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classRSpecies_a42066424867af0b109d0833f8826072b}{\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}R\+Species\+::\+R\+Species (
+\begin{DoxyParamCaption}
+\item[{{\bf Species} \&}]{parent, }
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{n = {\ttfamily 0}, }
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{ulim = {\ttfamily {\bf max\+\_\+ulim}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a42066424867af0b109d0833f8826072b}
+
+
+Constructors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & -\/ the \hyperlink{classSpecies}{Species} object to which this \hyperlink{classRSpecies}{R\+Species} belongs \\
+\hline
+{\em n} & -\/ copy number \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 77 of file R\+Species.\+h.
+
+\hypertarget{classRSpecies_aff60041af8192798c9c67c8c5b9a69a4}{\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}R\+Species\+::\+R\+Species (
+\begin{DoxyParamCaption}
+\item[{const {\bf R\+Species} \&}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classRSpecies_aff60041af8192798c9c67c8c5b9a69a4}
+
+
+deleted copy constructor -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} 
+
+\hypertarget{classRSpecies_abadb78fc4c8b8e2ddfeda6285b0fda40}{\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\index{R\+Species@{R\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}R\+Species\+::\+R\+Species (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} \&\&}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classRSpecies_abadb78fc4c8b8e2ddfeda6285b0fda40}
+
+
+deleted move constructor -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} 
+
+\hypertarget{classRSpecies_accd8e595b1e16dc81990043ea56e90bd}{\index{R\+Species@{R\+Species}!````~R\+Species@{$\sim$\+R\+Species}}
+\index{````~R\+Species@{$\sim$\+R\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{$\sim$\+R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}R\+Species\+::$\sim$\+R\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classRSpecies_accd8e595b1e16dc81990043ea56e90bd}
+
+
+It is required that all \hyperlink{classReaction}{Reactions} associated with this \hyperlink{classRSpecies}{R\+Species} are destructed before this \hyperlink{classRSpecies}{R\+Species} is destructed. 
+
+Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program. 
+
+Definition at line 23 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+as\+\_\+products, and \+\_\+as\+\_\+reactants.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classRSpecies_ae3b2bf2d19b7b27dff79dd3fbd6be66b}{\index{R\+Species@{R\+Species}!activate\+Assoc\+Product\+Reactions@{activate\+Assoc\+Product\+Reactions}}
+\index{activate\+Assoc\+Product\+Reactions@{activate\+Assoc\+Product\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{activate\+Assoc\+Product\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::activate\+Assoc\+Product\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classRSpecies_ae3b2bf2d19b7b27dff79dd3fbd6be66b}
+Attempts to activate previously passivated \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. Usually, the \hyperlink{classReaction}{Reaction} was first passivated, for example if the \hyperlink{classRSpecies}{R\+Species} copy number of one of the reactants went up to max\+\_\+ulim. 
+
+Definition at line 62 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+as\+\_\+products.
+
+
+
+Referenced by down().
+
+\hypertarget{classRSpecies_a8e5442de08d5f11166cf153f96062e99}{\index{R\+Species@{R\+Species}!activate\+Assoc\+Reactant\+Reactions@{activate\+Assoc\+Reactant\+Reactions}}
+\index{activate\+Assoc\+Reactant\+Reactions@{activate\+Assoc\+Reactant\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{activate\+Assoc\+Reactant\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::activate\+Assoc\+Reactant\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classRSpecies_a8e5442de08d5f11166cf153f96062e99}
+Attempts to activate previously passivated \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. Usually, the \hyperlink{classReaction}{Reaction} was first passivated, for example if the \hyperlink{classRSpecies}{R\+Species} copy number of one of the reactants dropeed to zero. This attempt may not succeed if there are still other reactants in the same \hyperlink{classReaction}{Reaction} with zero copy count. 
+
+Definition at line 57 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+
+
+Referenced by up().
+
+\hypertarget{classRSpecies_aa3e5bfc99f8e3a403051839f717ff775}{\index{R\+Species@{R\+Species}!add\+As\+Product@{add\+As\+Product}}
+\index{add\+As\+Product@{add\+As\+Product}!R\+Species@{R\+Species}}
+\subsubsection[{add\+As\+Product}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::add\+As\+Product (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_aa3e5bfc99f8e3a403051839f717ff775}
+
+
+Definition at line 154 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+products.
+
+\hypertarget{classRSpecies_a6e52bc2409c55b706197b2e48323aff2}{\index{R\+Species@{R\+Species}!add\+As\+Reactant@{add\+As\+Reactant}}
+\index{add\+As\+Reactant@{add\+As\+Reactant}!R\+Species@{R\+Species}}
+\subsubsection[{add\+As\+Reactant}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::add\+As\+Reactant (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a6e52bc2409c55b706197b2e48323aff2}
+
+
+Definition at line 150 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+\hypertarget{classRSpecies_a9cb66f9a3c5488cb405c7287852b0219}{\index{R\+Species@{R\+Species}!begin\+Product\+Reactions@{begin\+Product\+Reactions}}
+\index{begin\+Product\+Reactions@{begin\+Product\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{begin\+Product\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vr\+\_\+iterator} R\+Species\+::begin\+Product\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a9cb66f9a3c5488cb405c7287852b0219}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the beginning of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. 
+
+
+
+Definition at line 249 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+products.
+
+
+
+Referenced by Reaction$<$ M, N $>$\+::activate\+Reaction\+Unconditional\+Impl(), and Reaction$<$ M, N $>$\+::passivate\+Reaction\+Impl().
+
+\hypertarget{classRSpecies_abde1a54d7f5aeef2a95679b691c653ad}{\index{R\+Species@{R\+Species}!begin\+Reactant\+Reactions@{begin\+Reactant\+Reactions}}
+\index{begin\+Reactant\+Reactions@{begin\+Reactant\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{begin\+Reactant\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vr\+\_\+iterator} R\+Species\+::begin\+Reactant\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_abde1a54d7f5aeef2a95679b691c653ad}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the beginning of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. 
+
+
+
+Definition at line 245 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+
+
+Referenced by Reaction$<$ M, N $>$\+::activate\+Reaction\+Unconditional\+Impl(), and Reaction$<$ M, N $>$\+::passivate\+Reaction\+Impl().
+
+\hypertarget{classRSpecies_a7171743315bf9687feb639f13cea4ef5}{\index{R\+Species@{R\+Species}!down@{down}}
+\index{down@{down}!R\+Species@{R\+Species}}
+\subsubsection[{down}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::down (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a7171743315bf9687feb639f13cea4ef5}
+
+
+Decreases the copy number by 1. 
+
+If the copy number changes becomes 0, calls a \char`\"{}callback\char`\"{}-\/like method to passivate \hyperlink{classReaction}{Reactions}, where this \hyperlink{classRSpecies}{R\+Species} is a Reactant. 
+
+Definition at line 129 of file R\+Species.\+h.
+
+
+
+References \+\_\+n, activate\+Assoc\+Product\+Reactions(), and passivate\+Assoc\+Reactant\+Reactions().
+
+
+
+Referenced by Linker\+::\+Linker(), Motor\+Ghost\+::\+Motor\+Ghost(), Linker\+::$\sim$\+Linker(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+\hypertarget{classRSpecies_a5afb91e624b040c2f10d44f446668f7d}{\index{R\+Species@{R\+Species}!end\+Product\+Reactions@{end\+Product\+Reactions}}
+\index{end\+Product\+Reactions@{end\+Product\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{end\+Product\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vr\+\_\+iterator} R\+Species\+::end\+Product\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a5afb91e624b040c2f10d44f446668f7d}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the end of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. 
+
+
+
+Definition at line 257 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+products.
+
+
+
+Referenced by Reaction$<$ M, N $>$\+::activate\+Reaction\+Unconditional\+Impl(), and Reaction$<$ M, N $>$\+::passivate\+Reaction\+Impl().
+
+\hypertarget{classRSpecies_ab4d59bf721abd8ea1f8611341d6e8483}{\index{R\+Species@{R\+Species}!end\+Reactant\+Reactions@{end\+Reactant\+Reactions}}
+\index{end\+Reactant\+Reactions@{end\+Reactant\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{end\+Reactant\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vr\+\_\+iterator} R\+Species\+::end\+Reactant\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_ab4d59bf721abd8ea1f8611341d6e8483}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$\+::iterator, which points to the end of all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. 
+
+
+
+Definition at line 253 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+
+
+Referenced by Reaction$<$ M, N $>$\+::activate\+Reaction\+Unconditional\+Impl(), and Reaction$<$ M, N $>$\+::passivate\+Reaction\+Impl().
+
+\hypertarget{classRSpecies_ae7f6d21c784b823a9929db2871948692}{\index{R\+Species@{R\+Species}!get\+Full\+Name@{get\+Full\+Name}}
+\index{get\+Full\+Name@{get\+Full\+Name}!R\+Species@{R\+Species}}
+\subsubsection[{get\+Full\+Name}]{\setlength{\rightskip}{0pt plus 5cm}string R\+Species\+::get\+Full\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classRSpecies_ae7f6d21c784b823a9929db2871948692}
+
+
+Return the full name of this \hyperlink{classSpecies}{Species} in a string format (e.\+g. \char`\"{}\+Arp2/3\{\+Bulk\}\char`\"{}. 
+
+
+
+Definition at line 52 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+species, and Species\+::get\+Full\+Name().
+
+
+
+Referenced by operator$<$$<$(), and print\+\_\+species().
+
+\hypertarget{classRSpecies_ab9b95848fbc0ceffbe0d1ca0153ebde7}{\index{R\+Species@{R\+Species}!get\+N@{get\+N}}
+\index{get\+N@{get\+N}!R\+Species@{R\+Species}}
+\subsubsection[{get\+N}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\+\_\+copy\+\_\+t} R\+Species\+::get\+N (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_ab9b95848fbc0ceffbe0d1ca0153ebde7}
+
+
+Return the current copy number of this \hyperlink{classRSpecies}{R\+Species}. 
+
+
+
+Definition at line 224 of file R\+Species.\+h.
+
+
+
+References \+\_\+n.
+
+
+
+Referenced by Species\+::get\+N(), operator$<$$<$(), and print\+\_\+species().
+
+\hypertarget{classRSpecies_acd2575ae0c35ed2eddddd346baffd103}{\index{R\+Species@{R\+Species}!get\+Species@{get\+Species}}
+\index{get\+Species@{get\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{get\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}\& R\+Species\+::get\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_acd2575ae0c35ed2eddddd346baffd103}
+
+
+return parent \hyperlink{classSpecies}{Species} as a reference 
+
+
+
+Definition at line 227 of file R\+Species.\+h.
+
+
+
+References \+\_\+species.
+
+
+
+Referenced by Reaction$<$ M, N $>$\+::is\+\_\+equal().
+
+\hypertarget{classRSpecies_a4a68b63a45665131b5640389932274b1}{\index{R\+Species@{R\+Species}!get\+Species@{get\+Species}}
+\index{get\+Species@{get\+Species}!R\+Species@{R\+Species}}
+\subsubsection[{get\+Species}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Species}\& R\+Species\+::get\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a4a68b63a45665131b5640389932274b1}
+
+
+return parent \hyperlink{classSpecies}{Species} as a const reference 
+
+
+
+Definition at line 230 of file R\+Species.\+h.
+
+
+
+References \+\_\+species.
+
+\hypertarget{classRSpecies_a634f7c45052258c7c971fe6b4b576d0d}{\index{R\+Species@{R\+Species}!operator=@{operator=}}
+\index{operator=@{operator=}!R\+Species@{R\+Species}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf R\+Species}\& R\+Species\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Species} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classRSpecies_a634f7c45052258c7c971fe6b4b576d0d}
+
+
+deleted assignment operator -\/ each \hyperlink{classRSpecies}{R\+Species} is uniquely created by the parent \hyperlink{classSpecies}{Species} 
+
+\hypertarget{classRSpecies_ad283410f170a8f90805ddfcf2e11bef8}{\index{R\+Species@{R\+Species}!passivate\+Assoc\+Product\+Reactions@{passivate\+Assoc\+Product\+Reactions}}
+\index{passivate\+Assoc\+Product\+Reactions@{passivate\+Assoc\+Product\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{passivate\+Assoc\+Product\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::passivate\+Assoc\+Product\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classRSpecies_ad283410f170a8f90805ddfcf2e11bef8}
+Passivates all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is among the products. 
+
+Definition at line 72 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+as\+\_\+products.
+
+
+
+Referenced by up().
+
+\hypertarget{classRSpecies_a4cecb0924ec9576ffb9006878739b3d9}{\index{R\+Species@{R\+Species}!passivate\+Assoc\+Reactant\+Reactions@{passivate\+Assoc\+Reactant\+Reactions}}
+\index{passivate\+Assoc\+Reactant\+Reactions@{passivate\+Assoc\+Reactant\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{passivate\+Assoc\+Reactant\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::passivate\+Assoc\+Reactant\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classRSpecies_a4cecb0924ec9576ffb9006878739b3d9}
+Passivates all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is among the reactants. 
+
+Definition at line 67 of file R\+Species.\+cpp.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+
+
+Referenced by down().
+
+\hypertarget{classRSpecies_aa48b1fba86bebd7824076a86a65a7b76}{\index{R\+Species@{R\+Species}!Product\+Reactions@{Product\+Reactions}}
+\index{Product\+Reactions@{Product\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{Product\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Reaction\+Base} $\ast$$>$\& R\+Species\+::\+Product\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_aa48b1fba86bebd7824076a86a65a7b76}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$, which contains pointers to all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Product. 
+
+
+
+Definition at line 241 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+products.
+
+\hypertarget{classRSpecies_a51a3f15e8b4ae12c6b1b706ff615c804}{\index{R\+Species@{R\+Species}!Reactant\+Reactions@{Reactant\+Reactions}}
+\index{Reactant\+Reactions@{Reactant\+Reactions}!R\+Species@{R\+Species}}
+\subsubsection[{Reactant\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Reaction\+Base} $\ast$$>$\& R\+Species\+::\+Reactant\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a51a3f15e8b4ae12c6b1b706ff615c804}
+
+
+Return vector$<$\+Reaction\+Base $\ast$$>$, which contains pointers to all \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is involved as a Reactant. 
+
+
+
+Definition at line 237 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+\hypertarget{classRSpecies_abafe985e54f2ca717e3d093217864bd4}{\index{R\+Species@{R\+Species}!remove\+As\+Product@{remove\+As\+Product}}
+\index{remove\+As\+Product@{remove\+As\+Product}!R\+Species@{R\+Species}}
+\subsubsection[{remove\+As\+Product}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::remove\+As\+Product (
+\begin{DoxyParamCaption}
+\item[{const {\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_abafe985e54f2ca717e3d093217864bd4}
+
+
+Definition at line 169 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+products.
+
+\hypertarget{classRSpecies_a3abaae1f77fc3cd47eb77926b7f26828}{\index{R\+Species@{R\+Species}!remove\+As\+Reactant@{remove\+As\+Reactant}}
+\index{remove\+As\+Reactant@{remove\+As\+Reactant}!R\+Species@{R\+Species}}
+\subsubsection[{remove\+As\+Reactant}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::remove\+As\+Reactant (
+\begin{DoxyParamCaption}
+\item[{const {\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a3abaae1f77fc3cd47eb77926b7f26828}
+
+
+Definition at line 158 of file R\+Species.\+h.
+
+
+
+References \+\_\+as\+\_\+reactants.
+
+\hypertarget{classRSpecies_af15e0af66ae1171253b9205f4cd8dfd8}{\index{R\+Species@{R\+Species}!set\+N@{set\+N}}
+\index{set\+N@{set\+N}!R\+Species@{R\+Species}}
+\subsubsection[{set\+N}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::set\+N (
+\begin{DoxyParamCaption}
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_af15e0af66ae1171253b9205f4cd8dfd8}
+
+
+Sets the copy number for this \hyperlink{classRSpecies}{R\+Species}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & should be a non-\/negative number, but no checking is done in run time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+The operation does not emit any signals about the copy number change. 
+\end{DoxyNote}
+
+
+Definition at line 100 of file R\+Species.\+h.
+
+
+
+References \+\_\+n.
+
+
+
+Referenced by Simple\+Manager\+Impl\+::initialize\+C\+Cylinder(), and Species\+::set\+N().
+
+\hypertarget{classRSpecies_a6ded5d8dc0ccfcb0a45418a6c33a5595}{\index{R\+Species@{R\+Species}!up@{up}}
+\index{up@{up}!R\+Species@{R\+Species}}
+\subsubsection[{up}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Species\+::up (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRSpecies_a6ded5d8dc0ccfcb0a45418a6c33a5595}
+
+
+Increases the copy number by 1. 
+
+If the copy number changes from 0 to 1, calls a \char`\"{}callback\char`\"{}-\/like method to activated previously passivated \hyperlink{classReaction}{Reactions}, where this \hyperlink{classRSpecies}{R\+Species} is a Reactant. 
+
+Definition at line 113 of file R\+Species.\+h.
+
+
+
+References \+\_\+n, activate\+Assoc\+Reactant\+Reactions(), and passivate\+Assoc\+Product\+Reactions().
+
+
+
+Referenced by Linker\+::\+Linker(), Motor\+Ghost\+::\+Motor\+Ghost(), Linker\+::$\sim$\+Linker(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classRSpecies_a166eef547a69e4c03f5a8390b5f0686b}{\index{R\+Species@{R\+Species}!\+\_\+as\+\_\+products@{\+\_\+as\+\_\+products}}
+\index{\+\_\+as\+\_\+products@{\+\_\+as\+\_\+products}!R\+Species@{R\+Species}}
+\subsubsection[{\+\_\+as\+\_\+products}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Reaction\+Base} $\ast$$>$ R\+Species\+::\+\_\+as\+\_\+products = \{\}\hspace{0.3cm}{\ttfamily [private]}}}\label{classRSpecies_a166eef547a69e4c03f5a8390b5f0686b}
+
+
+a vector of \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is a Product 
+
+
+
+Definition at line 63 of file R\+Species.\+h.
+
+
+
+Referenced by activate\+Assoc\+Product\+Reactions(), add\+As\+Product(), begin\+Product\+Reactions(), end\+Product\+Reactions(), passivate\+Assoc\+Product\+Reactions(), Product\+Reactions(), remove\+As\+Product(), and $\sim$\+R\+Species().
+
+\hypertarget{classRSpecies_a231c4835e7367ffdb405a1463a7f8170}{\index{R\+Species@{R\+Species}!\+\_\+as\+\_\+reactants@{\+\_\+as\+\_\+reactants}}
+\index{\+\_\+as\+\_\+reactants@{\+\_\+as\+\_\+reactants}!R\+Species@{R\+Species}}
+\subsubsection[{\+\_\+as\+\_\+reactants}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Reaction\+Base} $\ast$$>$ R\+Species\+::\+\_\+as\+\_\+reactants = \{\}\hspace{0.3cm}{\ttfamily [private]}}}\label{classRSpecies_a231c4835e7367ffdb405a1463a7f8170}
+
+
+Reactions calls \hyperlink{classRSpecies_a6e52bc2409c55b706197b2e48323aff2}{add\+As\+Reactant()}, \hyperlink{classRSpecies_a3abaae1f77fc3cd47eb77926b7f26828}{remove\+As\+Reactant()} -\/ which other classes should not call. 
+
+a vector of \hyperlink{classReaction}{Reactions} where this \hyperlink{classRSpecies}{R\+Species} is a Reactant 
+
+Definition at line 62 of file R\+Species.\+h.
+
+
+
+Referenced by activate\+Assoc\+Reactant\+Reactions(), add\+As\+Reactant(), begin\+Reactant\+Reactions(), end\+Reactant\+Reactions(), passivate\+Assoc\+Reactant\+Reactions(), Reactant\+Reactions(), remove\+As\+Reactant(), and $\sim$\+R\+Species().
+
+\hypertarget{classRSpecies_a3c247ef50a25db875d0f657e6a2505ca}{\index{R\+Species@{R\+Species}!\+\_\+n@{\+\_\+n}}
+\index{\+\_\+n@{\+\_\+n}!R\+Species@{R\+Species}}
+\subsubsection[{\+\_\+n}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\+\_\+copy\+\_\+t} R\+Species\+::\+\_\+n\hspace{0.3cm}{\ttfamily [private]}}}\label{classRSpecies_a3c247ef50a25db875d0f657e6a2505ca}
+
+
+Current copy number of this \hyperlink{classRSpecies}{R\+Species}. 
+
+this \hyperlink{classRSpecies}{R\+Species} (usually when a single step of this \hyperlink{classReaction}{Reaction} occurs) 
+
+Definition at line 65 of file R\+Species.\+h.
+
+
+
+Referenced by down(), get\+N(), set\+N(), and up().
+
+\hypertarget{classRSpecies_a884cfd77555cd6f783ef95289a87f8a5}{\index{R\+Species@{R\+Species}!\+\_\+species@{\+\_\+species}}
+\index{\+\_\+species@{\+\_\+species}!R\+Species@{R\+Species}}
+\subsubsection[{\+\_\+species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species}\& R\+Species\+::\+\_\+species\hspace{0.3cm}{\ttfamily [private]}}}\label{classRSpecies_a884cfd77555cd6f783ef95289a87f8a5}
+
+
+reference to the {\bfseries parent} \hyperlink{classSpecies}{Species} object 
+
+
+
+Definition at line 64 of file R\+Species.\+h.
+
+
+
+Referenced by get\+Full\+Name(), and get\+Species().
+
+\hypertarget{classRSpecies_a533594d731cf6ec10a4d7321b1213cc5}{\index{R\+Species@{R\+Species}!Species@{Species}}
+\index{Species@{Species}!R\+Species@{R\+Species}}
+\subsubsection[{Species}]{\setlength{\rightskip}{0pt plus 5cm}friend R\+Species\+::\+Species\hspace{0.3cm}{\ttfamily [private]}}}\label{classRSpecies_a533594d731cf6ec10a4d7321b1213cc5}
+
+
+Definition at line 59 of file R\+Species.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{RSpecies_8h}{R\+Species.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{RSpecies_8cpp}{R\+Species.\+cpp}\end{DoxyCompactItemize}

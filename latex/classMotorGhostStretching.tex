@@ -1,0 +1,163 @@
+\hypertarget{classMotorGhostStretching}{\section{Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$ Class Template Reference}
+\label{classMotorGhostStretching}\index{Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$@{Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$}}
+}
+
+
+Represents a motor stretching interaction.  
+
+
+
+
+{\ttfamily \#include $<$Motor\+Ghost\+Stretching.\+h$>$}
+
+
+
+Inheritance diagram for Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classMotorGhostStretching__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classMotorGhostStretching__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual double \hyperlink{classMotorGhostStretching_a312918e34e4c72a13230453aab1ed6cc}{compute\+Energy} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$, double d)
+\begin{DoxyCompactList}\small\item\em Template specializations. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classMotorGhostStretching_a82fa0820554eab9136432b39561a50a1}{compute\+Forces} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$)
+\begin{DoxyCompactList}\small\item\em Compute the forces of this interaction. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classMotorGhostStretching_ac1751d735f89869423de4ae04641e0c2}{compute\+Forces\+Aux} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$)
+\begin{DoxyCompactList}\small\item\em Compute the auxiliary forces of this interaction. \end{DoxyCompactList}\item 
+const string \& \hyperlink{classMotorGhostInteractions_a7cb8fb7e66fbf572423c8af9919bba48}{get\+Name} ()
+\begin{DoxyCompactList}\small\item\em Get name of this interaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+M\+Stretching\+Interaction\+Type \hyperlink{classMotorGhostStretching_a855ea87698428cdc04f0fa690e4c1571}{\+\_\+\+F\+F\+Type}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class M\+Stretching\+Interaction\+Type$>$class Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$}
+
+Represents a motor stretching interaction. 
+
+Definition at line 26 of file Motor\+Ghost\+Stretching.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classMotorGhostStretching_a312918e34e4c72a13230453aab1ed6cc}{\index{Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}!compute\+Energy@{compute\+Energy}}
+\index{compute\+Energy@{compute\+Energy}!Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}}
+\subsubsection[{compute\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\+Stretching\+Interaction\+Type $>$ template double {\bf Motor\+Ghost\+Stretching}$<$ M\+Stretching\+Interaction\+Type $>$\+::compute\+Energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMotorGhostStretching_a312918e34e4c72a13230453aab1ed6cc}
+
+
+Template specializations. 
+
+
+
+Implements \hyperlink{classMotorGhostInteractions_a1c79cac7f3316463c596004b92e58767}{Motor\+Ghost\+Interactions}.
+
+
+
+Definition at line 23 of file Motor\+Ghost\+Stretching.\+cpp.
+
+
+
+References M\+Motor\+Ghost\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Motor\+Ghost\+::get\+First\+Cylinder(), Motor\+Ghost\+::get\+First\+Position(), Motor\+Ghost\+::get\+M\+Motor\+Ghost(), Cylinder\+::get\+Second\+Bead(), Motor\+Ghost\+::get\+Second\+Cylinder(), Motor\+Ghost\+::get\+Second\+Position(), and M\+Motor\+Ghost\+::get\+Stretching\+Constant().
+
+\hypertarget{classMotorGhostStretching_a82fa0820554eab9136432b39561a50a1}{\index{Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}!compute\+Forces@{compute\+Forces}}
+\index{compute\+Forces@{compute\+Forces}!Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}}
+\subsubsection[{compute\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\+Stretching\+Interaction\+Type $>$ template void {\bf Motor\+Ghost\+Stretching}$<$ M\+Stretching\+Interaction\+Type $>$\+::compute\+Forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMotorGhostStretching_a82fa0820554eab9136432b39561a50a1}
+
+
+Compute the forces of this interaction. 
+
+
+
+Implements \hyperlink{classMotorGhostInteractions_a487ccdc249a0596d807fc0b954601cfd}{Motor\+Ghost\+Interactions}.
+
+
+
+Definition at line 43 of file Motor\+Ghost\+Stretching.\+cpp.
+
+
+
+References M\+Motor\+Ghost\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Motor\+Ghost\+::get\+First\+Cylinder(), Motor\+Ghost\+::get\+First\+Position(), Motor\+Ghost\+::get\+M\+Motor\+Ghost(), Cylinder\+::get\+Second\+Bead(), Motor\+Ghost\+::get\+Second\+Cylinder(), Motor\+Ghost\+::get\+Second\+Position(), and M\+Motor\+Ghost\+::get\+Stretching\+Constant().
+
+\hypertarget{classMotorGhostStretching_ac1751d735f89869423de4ae04641e0c2}{\index{Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}!compute\+Forces\+Aux@{compute\+Forces\+Aux}}
+\index{compute\+Forces\+Aux@{compute\+Forces\+Aux}!Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}}
+\subsubsection[{compute\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\+Stretching\+Interaction\+Type $>$ template void {\bf Motor\+Ghost\+Stretching}$<$ M\+Stretching\+Interaction\+Type $>$\+::compute\+Forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMotorGhostStretching_ac1751d735f89869423de4ae04641e0c2}
+
+
+Compute the auxiliary forces of this interaction. 
+
+
+
+Implements \hyperlink{classMotorGhostInteractions_a51e76eb58135a740bff737139dcaa93f}{Motor\+Ghost\+Interactions}.
+
+
+
+Definition at line 61 of file Motor\+Ghost\+Stretching.\+cpp.
+
+
+
+References M\+Motor\+Ghost\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Motor\+Ghost\+::get\+First\+Cylinder(), Motor\+Ghost\+::get\+First\+Position(), Motor\+Ghost\+::get\+M\+Motor\+Ghost(), Cylinder\+::get\+Second\+Bead(), Motor\+Ghost\+::get\+Second\+Cylinder(), Motor\+Ghost\+::get\+Second\+Position(), and M\+Motor\+Ghost\+::get\+Stretching\+Constant().
+
+\hypertarget{classMotorGhostInteractions_a7cb8fb7e66fbf572423c8af9919bba48}{\index{Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}}
+\subsubsection[{get\+Name}]{\setlength{\rightskip}{0pt plus 5cm}const string\& Motor\+Ghost\+Interactions\+::get\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classMotorGhostInteractions_a7cb8fb7e66fbf572423c8af9919bba48}
+
+
+Get name of this interaction. 
+
+
+
+Definition at line 37 of file Motor\+Ghost\+Interactions.\+h.
+
+
+
+References Motor\+Ghost\+Interactions\+::\+\_\+name.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classMotorGhostStretching_a855ea87698428cdc04f0fa690e4c1571}{\index{Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}!\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}}
+\index{\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}!Motor\+Ghost\+Stretching@{Motor\+Ghost\+Stretching}}
+\subsubsection[{\+\_\+\+F\+F\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class M\+Stretching\+Interaction\+Type $>$ M\+Stretching\+Interaction\+Type {\bf Motor\+Ghost\+Stretching}$<$ M\+Stretching\+Interaction\+Type $>$\+::\+\_\+\+F\+F\+Type\hspace{0.3cm}{\ttfamily [private]}}}\label{classMotorGhostStretching_a855ea87698428cdc04f0fa690e4c1571}
+
+
+Definition at line 29 of file Motor\+Ghost\+Stretching.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{MotorGhostStretching_8h}{Motor\+Ghost\+Stretching.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{MotorGhostStretching_8cpp}{Motor\+Ghost\+Stretching.\+cpp}\end{DoxyCompactItemize}

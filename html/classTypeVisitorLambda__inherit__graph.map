@@ -1,0 +1,4 @@
+<map id="TypeVisitorLambda&lt; ComponentType &gt;" name="TypeVisitorLambda&lt; ComponentType &gt;">
+<area shape="rect" id="node2" href="$classVisitorLambda.html" title="Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. " alt="" coords="24,79,130,104"/>
+<area shape="rect" id="node3" href="$classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic..." alt="" coords="48,5,106,31"/>
+</map>

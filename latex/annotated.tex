@@ -1,9 +1,170 @@
 \section{Class List}
-Here are the classes, structs, unions and interfaces with brief descriptions\-:\begin{DoxyCompactList}
-\item\contentsline{section}{\hyperlink{classObject}{Object} }{\pageref{classObject}}{}
-\item\contentsline{section}{\hyperlink{classSBulk}{S\-Bulk} \\*This class represent Bulk species that have no spatial component, i.\-e. are not connected to any Compartmens }{\pageref{classSBulk}}{}
-\item\contentsline{section}{\hyperlink{classSpecies}{Species} }{\pageref{classSpecies}}{}
-\item\contentsline{section}{\hyperlink{structspecies__type__tag}{species\-\_\-type\-\_\-tag} \\*Create a tag for the corresponding Species\-Type flywheights }{\pageref{structspecies__type__tag}}{}
-\item\contentsline{section}{\hyperlink{classSpeciesDB}{Species\-D\-B} \\*\hyperlink{classSpeciesDB}{Species\-D\-B} should be used for obtaining new objects of the \hyperlink{classSpecies}{Species} hieararchy }{\pageref{classSpeciesDB}}{}
-\item\contentsline{section}{\hyperlink{classSpeciesFactory}{Species\-Factory} \\*This is the standard implentation of the \hyperlink{classSpecies}{Species} Factory Method, which can be further subclassed to either specialize or introduce other construction behaviors }{\pageref{classSpeciesFactory}}{}
+Here are the classes, structs, unions and interfaces with brief descriptions\+:\begin{DoxyCompactList}
+\item\contentsline{section}{\hyperlink{classBasicBindingManager}{Basic\+Binding\+Manager} \\*Manager for basic binding }{\pageref{classBasicBindingManager}}{}
+\item\contentsline{section}{\hyperlink{classBead}{Bead} \\*Represents a single coordinate between \hyperlink{classCylinder}{Cylinders}, and holds forces needed for mechanical equilibration }{\pageref{classBead}}{}
+\item\contentsline{section}{\hyperlink{classBeadDB}{Bead\+D\+B} \\*A database for all \hyperlink{classBead}{Beads} in the system }{\pageref{classBeadDB}}{}
+\item\contentsline{section}{\hyperlink{classBoundary}{Boundary} \\*To store all boundary surfaces that are in the system }{\pageref{classBoundary}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryCapsule}{Boundary\+Capsule} \\*A capsule boundary implementation }{\pageref{classBoundaryCapsule}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryCubic}{Boundary\+Cubic} \\*A cubic boundary implementation }{\pageref{classBoundaryCubic}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryElement}{Boundary\+Element} \\*Represents an element of a boundary surface }{\pageref{classBoundaryElement}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryElementDB}{Boundary\+Element\+D\+B} \\*A database for all \hyperlink{classBoundaryElement}{Boundary\+Elements} in the system }{\pageref{classBoundaryElementDB}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryElementNeighborList}{Boundary\+Element\+Neighbor\+List} \\*An implementation of \hyperlink{classNeighborList}{Neighbor\+List} for Bead-\/\+Boundary\+Element interactions }{\pageref{classBoundaryElementNeighborList}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryElementNLContainer}{Boundary\+Element\+N\+L\+Container} \\*Holds a \hyperlink{classBoundaryElementNeighborList}{Boundary\+Element\+Neighbor\+List} }{\pageref{classBoundaryElementNLContainer}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryFF}{Boundary\+F\+F} \\*An implementation of the \hyperlink{classForceField}{Force\+Field} class that calculates \hyperlink{classBoundaryElement}{Boundary\+Element} repulsion and attraction to \hyperlink{classBead}{Beads} in the system }{\pageref{classBoundaryFF}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryInteractions}{Boundary\+Interactions} \\*Represents a \hyperlink{classBoundaryElement}{Boundary\+Element} interaction with a \hyperlink{classBead}{Bead} }{\pageref{classBoundaryInteractions}}{}
+\item\contentsline{section}{\hyperlink{structBoundaryParameters}{Boundary\+Parameters} \\*Struct to hold boundary parameters for the system }{\pageref{structBoundaryParameters}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryRepulsion}{Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$} \\*Represents a repulsive interaction between a \hyperlink{classBoundaryElement}{Boundary\+Element} and \hyperlink{classBead}{Bead} }{\pageref{classBoundaryRepulsion}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryRepulsionExp}{Boundary\+Repulsion\+Exp} \\*A exponential repulsive potential }{\pageref{classBoundaryRepulsionExp}}{}
+\item\contentsline{section}{\hyperlink{classBoundaryRepulsionLJ}{Boundary\+Repulsion\+L\+J} \\*A Lennard-\/\+Jones repulsive potential }{\pageref{classBoundaryRepulsionLJ}}{}
+\item\contentsline{section}{\hyperlink{classBoundarySpherical}{Boundary\+Spherical} \\*A spherical boundary implementation }{\pageref{classBoundarySpherical}}{}
+\item\contentsline{section}{\hyperlink{classBoundarySurface}{Boundary\+Surface} \\*A boundary shape that holds Boundary\+Elements }{\pageref{classBoundarySurface}}{}
+\item\contentsline{section}{\hyperlink{structBoundaryType}{Boundary\+Type} \\*Struct to hold the parameters of the boundary }{\pageref{structBoundaryType}}{}
+\item\contentsline{section}{\hyperlink{classCBound}{C\+Bound} \\*Represents a chemical object that is bound to a \hyperlink{classFilament}{Filament} }{\pageref{classCBound}}{}
+\item\contentsline{section}{\hyperlink{classCController}{C\+Controller} \\*Used to intialize, control, and run the chemical components of a simulation }{\pageref{classCController}}{}
+\item\contentsline{section}{\hyperlink{classCCylinder}{C\+Cylinder} \\*Holds all \hyperlink{classCMonomer}{C\+Monomers} and \hyperlink{classReaction}{Reactions} associated with it }{\pageref{classCCylinder}}{}
+\item\contentsline{section}{\hyperlink{classCGMethod}{C\+G\+Method} \\*For performing a conjugate gradient minimization method }{\pageref{classCGMethod}}{}
+\item\contentsline{section}{\hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} \\*Implements a slightly optimized version of the Gillespie algorithm }{\pageref{classChemGillespieImpl}}{}
+\item\contentsline{section}{\hyperlink{structChemistryAlgorithm}{Chemistry\+Algorithm} \\*Struct to hold chemistry algorithm information }{\pageref{structChemistryAlgorithm}}{}
+\item\contentsline{section}{\hyperlink{structChemistryData}{Chemistry\+Data} \\*Struct to hold chemistry species and reaction information }{\pageref{structChemistryData}}{}
+\item\contentsline{section}{\hyperlink{structChemistryParameters}{Chemistry\+Parameters} \\*Struct to hold chemistry parameters for the system }{\pageref{structChemistryParameters}}{}
+\item\contentsline{section}{\hyperlink{classChemistryParser}{Chemistry\+Parser} \\*Used to parse all chemical information }{\pageref{classChemistryParser}}{}
+\item\contentsline{section}{\hyperlink{structChemistrySetup}{Chemistry\+Setup} \\*Struct to hold chem setup information }{\pageref{structChemistrySetup}}{}
+\item\contentsline{section}{\hyperlink{classChemManager}{Chem\+Manager} \\*For initailizing chemical reactions based on a specific system }{\pageref{classChemManager}}{}
+\item\contentsline{section}{\hyperlink{classChemManagerImpl}{Chem\+Manager\+Impl} \\*An abstract base class for initialization of all chemistry in the system }{\pageref{classChemManagerImpl}}{}
+\item\contentsline{section}{\hyperlink{classChemNRMImpl}{Chem\+N\+R\+M\+Impl} \\*The chemical Next \hyperlink{classReaction}{Reaction} Method Implementation }{\pageref{classChemNRMImpl}}{}
+\item\contentsline{section}{\hyperlink{classChemSignal}{Chem\+Signal} \\*Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects }{\pageref{classChemSignal}}{}
+\item\contentsline{section}{\hyperlink{classChemSim}{Chem\+Sim} \\*Used to manage running a network of chemical reactions }{\pageref{classChemSim}}{}
+\item\contentsline{section}{\hyperlink{classChemSimImpl}{Chem\+Sim\+Impl} \\*An abstract base class for algorithms that run stochastic chemical kinetics }{\pageref{classChemSimImpl}}{}
+\item\contentsline{section}{\hyperlink{classChemSimpleGillespieImpl}{Chem\+Simple\+Gillespie\+Impl} \\*Implements the simplest version of the Gillespie algorithm, without caching, etc }{\pageref{classChemSimpleGillespieImpl}}{}
+\item\contentsline{section}{\hyperlink{classCLinker}{C\+Linker} \\*To represent the chemical component of a \hyperlink{classLinker}{Linker} }{\pageref{classCLinker}}{}
+\item\contentsline{section}{\hyperlink{classCMonomer}{C\+Monomer} \\*Rpresents a container for all \hyperlink{classSpecies}{Species} that could be contained in a particular filament element at a given position }{\pageref{classCMonomer}}{}
+\item\contentsline{section}{\hyperlink{classCMotorGhost}{C\+Motor\+Ghost} \\*A class to represent the chemical component of a \hyperlink{classMotorGhost}{Motor\+Ghost} }{\pageref{classCMotorGhost}}{}
+\item\contentsline{section}{\hyperlink{classCompartment}{Compartment} \\*A compartment for holding \hyperlink{classSpecies}{Species} and Reactions }{\pageref{classCompartment}}{}
+\item\contentsline{section}{\hyperlink{classCompartmentGrid}{Compartment\+Grid} \\*A simple n-\/dimensional grid of \hyperlink{classCompartment}{Compartment} objects (singleton) }{\pageref{classCompartmentGrid}}{}
+\item\contentsline{section}{\hyperlink{classComponent}{Component} \\*The base class for the \hyperlink{classComposite}{Composite} pattern hieararchy }{\pageref{classComponent}}{}
+\item\contentsline{section}{\hyperlink{classComposite}{Composite} \\*The aggregating class for the \hyperlink{classComposite}{Composite} pattern }{\pageref{classComposite}}{}
+\item\contentsline{section}{\hyperlink{classConjugateGradient}{Conjugate\+Gradient$<$ C\+G\+Type $>$} \\*An implementation of \hyperlink{classMinimizer}{Minimzer} }{\pageref{classConjugateGradient}}{}
+\item\contentsline{section}{\hyperlink{classController}{Controller} \\*Used to initialize, manage, and run an entire simulation }{\pageref{classController}}{}
+\item\contentsline{section}{\hyperlink{classCrossFilamentRxnManager}{Cross\+Filament\+Rxn\+Manager} \\*To store cross-\/filament reactions, including linker and motor binding }{\pageref{classCrossFilamentRxnManager}}{}
+\item\contentsline{section}{\hyperlink{classCylinder}{Cylinder} \\*A container to store a \hyperlink{classMCylinder}{M\+Cylinder} and \hyperlink{classCCylinder}{C\+Cylinder} }{\pageref{classCylinder}}{}
+\item\contentsline{section}{\hyperlink{classCylinderDB}{Cylinder\+D\+B} \\*A database for all \hyperlink{classCylinder}{Cylinders} in the system }{\pageref{classCylinderDB}}{}
+\item\contentsline{section}{\hyperlink{classCylinderExclVolRepulsion}{Cylinder\+Excl\+Vol\+Repulsion} \\*Represents a repulsive excluded volume potential }{\pageref{classCylinderExclVolRepulsion}}{}
+\item\contentsline{section}{\hyperlink{classCylinderExclVolume}{Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$} \\*Represents an excuded volume interaction between two \hyperlink{classCylinder}{Cylinders} }{\pageref{classCylinderExclVolume}}{}
+\item\contentsline{section}{\hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List} \\*An implementation of \hyperlink{classNeighborList}{Neighbor\+List} for Cylinder-\/\+Cylinder interactions }{\pageref{classCylinderNeighborList}}{}
+\item\contentsline{section}{\hyperlink{classCylinderNLContainer}{Cylinder\+N\+L\+Container} \\*Holds a \hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List} }{\pageref{classCylinderNLContainer}}{}
+\item\contentsline{section}{\hyperlink{classCylinderVolumeInteractions}{Cylinder\+Volume\+Interactions} \\*Represents a volume interaction between \hyperlink{classCylinder}{Cylinders} }{\pageref{classCylinderVolumeInteractions}}{}
+\item\contentsline{section}{\hyperlink{classCylinderZ}{Cylinder\+Z} \\*A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class }{\pageref{classCylinderZ}}{}
+\item\contentsline{section}{\hyperlink{classCylindricalZBoundaryElement}{Cylindrical\+Z\+Boundary\+Element} \\*A cylinder implementation of a boundary element }{\pageref{classCylindricalZBoundaryElement}}{}
+\item\contentsline{section}{\hyperlink{classDepolyMinusEndManager}{Depoly\+Minus\+End\+Manager} \\*Manager for depolymerization at minus end }{\pageref{classDepolyMinusEndManager}}{}
+\item\contentsline{section}{\hyperlink{classDepolyPlusEndManager}{Depoly\+Plus\+End\+Manager} \\*Manager for depolymerization at plus end }{\pageref{classDepolyPlusEndManager}}{}
+\item\contentsline{section}{\hyperlink{classFilament}{Filament} \\*Used to store data about connectivity of \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads} }{\pageref{classFilament}}{}
+\item\contentsline{section}{\hyperlink{classFilamentBending}{Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$} \\*Represents a filament bending interaction }{\pageref{classFilamentBending}}{}
+\item\contentsline{section}{\hyperlink{classFilamentBendingHarmonic}{Filament\+Bending\+Harmonic} \\*A harmonic potential used by the \hyperlink{classFilamentBending}{Filament\+Bending} template }{\pageref{classFilamentBendingHarmonic}}{}
+\item\contentsline{section}{\hyperlink{classFilamentDB}{Filament\+D\+B} \\*A database for all \hyperlink{classFilament}{Filaments} in the system }{\pageref{classFilamentDB}}{}
+\item\contentsline{section}{\hyperlink{structFilamentDepolymerizationBackCallback}{Filament\+Depolymerization\+Back\+Callback} \\*Callback to depolymerize the back of a filament after a depolymerization reaction occurs in the system }{\pageref{structFilamentDepolymerizationBackCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentDepolymerizationFrontCallback}{Filament\+Depolymerization\+Front\+Callback} \\*Callback to depolymerize the front of a filament after a depolymerization reaction occurs in the system }{\pageref{structFilamentDepolymerizationFrontCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentExtensionBackCallback}{Filament\+Extension\+Back\+Callback} \\*Callback to extend the back of a filament after a polymerization reaction occurs in the system }{\pageref{structFilamentExtensionBackCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentExtensionFrontCallback}{Filament\+Extension\+Front\+Callback} \\*Callback to extend the front of a filament after a polymerization reaction occurs in the system }{\pageref{structFilamentExtensionFrontCallback}}{}
+\item\contentsline{section}{\hyperlink{classFilamentFF}{Filament\+F\+F} \\*An implementation of the \hyperlink{classForceField}{Force\+Field} class that calculates \hyperlink{classFilament}{Filament} stretching, bending, and twisting }{\pageref{classFilamentFF}}{}
+\item\contentsline{section}{\hyperlink{classFilamentInteractions}{Filament\+Interactions} \\*Represents an internal filament interaction }{\pageref{classFilamentInteractions}}{}
+\item\contentsline{section}{\hyperlink{classFilamentParser}{Filament\+Parser} \\*Used to parse initial filament information, initialized by the \hyperlink{classController}{Controller} }{\pageref{classFilamentParser}}{}
+\item\contentsline{section}{\hyperlink{structFilamentPolymerizationBackCallback}{Filament\+Polymerization\+Back\+Callback} \\*Callback to polymerize the back of a filament after a polymerization reaction occurs in the system }{\pageref{structFilamentPolymerizationBackCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentPolymerizationFrontCallback}{Filament\+Polymerization\+Front\+Callback} \\*Callback to polymerize the front of a filament after a polymerization reaction occurs in the system }{\pageref{structFilamentPolymerizationFrontCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentRetractionBackCallback}{Filament\+Retraction\+Back\+Callback} \\*Callback to retract the back of a filament after a depolymerization reaction occurs in the system }{\pageref{structFilamentRetractionBackCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentRetractionFrontCallback}{Filament\+Retraction\+Front\+Callback} \\*Callback to retract the front of a filament after a depolymerization reaction occurs in the system }{\pageref{structFilamentRetractionFrontCallback}}{}
+\item\contentsline{section}{\hyperlink{structFilamentSetup}{Filament\+Setup} \\*Struct to hold filament setup information }{\pageref{structFilamentSetup}}{}
+\item\contentsline{section}{\hyperlink{classFilamentStretching}{Filament\+Stretching$<$ F\+Stretching\+Interaction\+Type $>$} \\*Represents a filament stretching interaction }{\pageref{classFilamentStretching}}{}
+\item\contentsline{section}{\hyperlink{classFilamentStretchingHarmonic}{Filament\+Stretching\+Harmonic} \\*A harmonic potential used by the \hyperlink{classFilamentStretching}{Filament\+Stretching} template }{\pageref{classFilamentStretchingHarmonic}}{}
+\item\contentsline{section}{\hyperlink{classFletcherRieves}{Fletcher\+Rieves} \\*The Fletcher-\/\+Rieves method for conjugate gradient minimization }{\pageref{classFletcherRieves}}{}
+\item\contentsline{section}{\hyperlink{classForceField}{Force\+Field} \\*An abstract class to represent various force field calculations }{\pageref{classForceField}}{}
+\item\contentsline{section}{\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \\*A class to store and iterate over all \hyperlink{classForceField}{Force\+Fields} }{\pageref{classForceFieldManager}}{}
+\item\contentsline{section}{\hyperlink{classGController}{G\+Controller} \\*Used to control the geometry of the grid, as well as the geometry of entire system }{\pageref{classGController}}{}
+\item\contentsline{section}{\hyperlink{structGeometryParameters}{Geometry\+Parameters} \\*Struct to hold geometry parameters for the system }{\pageref{structGeometryParameters}}{}
+\item\contentsline{section}{\hyperlink{classHalfSphereZ}{Half\+Sphere\+Z} \\*A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class }{\pageref{classHalfSphereZ}}{}
+\item\contentsline{section}{\hyperlink{classHalfSphereZBoundaryElement}{Half\+Sphere\+Z\+Boundary\+Element} \\*A half-\/sphere implementat of a boundary element }{\pageref{classHalfSphereZBoundaryElement}}{}
+\item\contentsline{section}{\hyperlink{classInternalFilamentRxnManager}{Internal\+Filament\+Rxn\+Manager} \\*To store filament chemical reaction information read from an input file }{\pageref{classInternalFilamentRxnManager}}{}
+\item\contentsline{section}{\hyperlink{classLinker}{Linker} \\*A container to store a \hyperlink{classMLinker}{M\+Linker} and \hyperlink{classCLinker}{C\+Linker} }{\pageref{classLinker}}{}
+\item\contentsline{section}{\hyperlink{structLinkerBindingCallback}{Linker\+Binding\+Callback} \\*Callback to bind a linker to filaments }{\pageref{structLinkerBindingCallback}}{}
+\item\contentsline{section}{\hyperlink{classLinkerBindingManager}{Linker\+Binding\+Manager} \\*Manager for linker binding }{\pageref{classLinkerBindingManager}}{}
+\item\contentsline{section}{\hyperlink{classLinkerDB}{Linker\+D\+B} \\*A database for all \hyperlink{classLinker}{Linkers} in the system }{\pageref{classLinkerDB}}{}
+\item\contentsline{section}{\hyperlink{classLinkerFF}{Linker\+F\+F} \\*An implementation of the \hyperlink{classForceField}{Force\+Field} class that calculates \hyperlink{classLinker}{Linker} stretching, bending, and twisting }{\pageref{classLinkerFF}}{}
+\item\contentsline{section}{\hyperlink{classLinkerInteractions}{Linker\+Interactions} \\*Represents an internal linker interaction }{\pageref{classLinkerInteractions}}{}
+\item\contentsline{section}{\hyperlink{classLinkerStretching}{Linker\+Stretching$<$ L\+Stretching\+Interaction\+Type $>$} \\*Represents a linker stretching interaction }{\pageref{classLinkerStretching}}{}
+\item\contentsline{section}{\hyperlink{classLinkerStretchingHarmonic}{Linker\+Stretching\+Harmonic} \\*A harmonic potential used by the \hyperlink{classLinkerStretching}{Linker\+Stretching} template }{\pageref{classLinkerStretchingHarmonic}}{}
+\item\contentsline{section}{\hyperlink{classMController}{M\+Controller} \\*Used to initialize, control, and run the mechanical components of a simulation }{\pageref{classMController}}{}
+\item\contentsline{section}{\hyperlink{classMCylinder}{M\+Cylinder} \\*Used to hold mechanical properties of a \hyperlink{classCylinder}{Cylinder} }{\pageref{classMCylinder}}{}
+\item\contentsline{section}{\hyperlink{structMechanicsAlgorithm}{Mechanics\+Algorithm} \\*Struct to hold mechanics algorithm information }{\pageref{structMechanicsAlgorithm}}{}
+\item\contentsline{section}{\hyperlink{structMechanicsFFType}{Mechanics\+F\+F\+Type} \\*Struct to hold the force field types }{\pageref{structMechanicsFFType}}{}
+\item\contentsline{section}{\hyperlink{structMechanicsParameters}{Mechanics\+Parameters} \\*Struct to hold mechanical parameters for the system }{\pageref{structMechanicsParameters}}{}
+\item\contentsline{section}{\hyperlink{classMinimizer}{Minimizer} \\*A mechanical minimzer used by the \hyperlink{classMController}{M\+Controller} }{\pageref{classMinimizer}}{}
+\item\contentsline{section}{\hyperlink{classMLinker}{M\+Linker} \\*Represents the mechanical component of a \hyperlink{classLinker}{Linker} }{\pageref{classMLinker}}{}
+\item\contentsline{section}{\hyperlink{classMMotorGhost}{M\+Motor\+Ghost} \\*Represents a cross-\/link between \hyperlink{classFilament}{Filaments} that can move by way of chemical reactions }{\pageref{classMMotorGhost}}{}
+\item\contentsline{section}{\hyperlink{structMotorBindingCallback}{Motor\+Binding\+Callback} \\*Callback to bind a motor to filaments }{\pageref{structMotorBindingCallback}}{}
+\item\contentsline{section}{\hyperlink{classMotorBindingManager}{Motor\+Binding\+Manager} \\*Manager for motor binding }{\pageref{classMotorBindingManager}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhost}{Motor\+Ghost} \\*A container to store a \hyperlink{classMMotorGhost}{M\+Motor\+Ghost} and \hyperlink{classCMotorGhost}{C\+Motor\+Ghost} }{\pageref{classMotorGhost}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} \\*A database for all \hyperlink{classMotorGhost}{Motor\+Ghosts} in the system }{\pageref{classMotorGhostDB}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhostFF}{Motor\+Ghost\+F\+F} \\*An implementation of the \hyperlink{classForceField}{Force\+Field} class that calculates \hyperlink{classMotorGhost}{Motor} stretching, bending, and twisting }{\pageref{classMotorGhostFF}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhostInteractions}{Motor\+Ghost\+Interactions} \\*Represents an internal motor interaction }{\pageref{classMotorGhostInteractions}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhostStretching}{Motor\+Ghost\+Stretching$<$ M\+Stretching\+Interaction\+Type $>$} \\*Represents a motor stretching interaction }{\pageref{classMotorGhostStretching}}{}
+\item\contentsline{section}{\hyperlink{classMotorGhostStretchingHarmonic}{Motor\+Ghost\+Stretching\+Harmonic} \\*A harmonic potential used by the \hyperlink{classMotorGhostStretching}{Motor\+Stretching} template }{\pageref{classMotorGhostStretchingHarmonic}}{}
+\item\contentsline{section}{\hyperlink{structMotorMovingCylinderBackwardCallback}{Motor\+Moving\+Cylinder\+Backward\+Callback} \\*Callback to walk a motor on a filament to a new cylinder }{\pageref{structMotorMovingCylinderBackwardCallback}}{}
+\item\contentsline{section}{\hyperlink{structMotorMovingCylinderForwardCallback}{Motor\+Moving\+Cylinder\+Forward\+Callback} \\*Callback to walk a motor on a filament to a new cylinder }{\pageref{structMotorMovingCylinderForwardCallback}}{}
+\item\contentsline{section}{\hyperlink{classMotorWalkBManager}{Motor\+Walk\+B\+Manager} \\*Manager for motor walking }{\pageref{classMotorWalkBManager}}{}
+\item\contentsline{section}{\hyperlink{classMotorWalkFManager}{Motor\+Walk\+F\+Manager} \\*Manager for motor walking }{\pageref{classMotorWalkFManager}}{}
+\item\contentsline{section}{\hyperlink{structMotorWalkingBackwardCallback}{Motor\+Walking\+Backward\+Callback} \\*Callback to walk a motor on a filament }{\pageref{structMotorWalkingBackwardCallback}}{}
+\item\contentsline{section}{\hyperlink{structMotorWalkingForwardCallback}{Motor\+Walking\+Forward\+Callback} \\*Callback to walk a motor on a filament }{\pageref{structMotorWalkingForwardCallback}}{}
+\item\contentsline{section}{\hyperlink{classMovable}{Movable} \\*For a movable object in the \hyperlink{classSubSystem}{Sub\+System} }{\pageref{classMovable}}{}
+\item\contentsline{section}{\hyperlink{classNeighbor}{Neighbor} \\*An abstract class for any object that can be added/removed from a \hyperlink{classNeighborList}{Neighbor\+List} }{\pageref{classNeighbor}}{}
+\item\contentsline{section}{\hyperlink{classNeighborList}{Neighbor\+List} \\*To hold an external neighbor list of general type }{\pageref{classNeighborList}}{}
+\item\contentsline{section}{\hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} \\*A database to store all \hyperlink{classNeighborList}{Neighbor\+Lists} in the system }{\pageref{classNeighborListDB}}{}
+\item\contentsline{section}{\hyperlink{classOutOfBoundsException}{Out\+Of\+Bounds\+Exception} \\*A exception to be thrown when an index/coordinate is out of bounds of the grid }{\pageref{classOutOfBoundsException}}{}
+\item\contentsline{section}{\hyperlink{classOutput}{Output} \\*To print a specified output into a file }{\pageref{classOutput}}{}
+\item\contentsline{section}{\hyperlink{classParser}{Parser} \\*A general parser }{\pageref{classParser}}{}
+\item\contentsline{section}{\hyperlink{classPlane}{Plane} \\*A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class }{\pageref{classPlane}}{}
+\item\contentsline{section}{\hyperlink{classPlaneBoundaryElement}{Plane\+Boundary\+Element} \\*A plane implementation of a boundary element }{\pageref{classPlaneBoundaryElement}}{}
+\item\contentsline{section}{\hyperlink{classPolakRibiere}{Polak\+Ribiere} \\*The Polak-\/\+Ribiere method for conjugate gradient minimization }{\pageref{classPolakRibiere}}{}
+\item\contentsline{section}{\hyperlink{classPolyMinusEndManager}{Poly\+Minus\+End\+Manager} \\*Manager for polymerization at minus end }{\pageref{classPolyMinusEndManager}}{}
+\item\contentsline{section}{\hyperlink{classPolyPlusEndManager}{Poly\+Plus\+End\+Manager} \\*Manager for polymerization at plus end }{\pageref{classPolyPlusEndManager}}{}
+\item\contentsline{section}{\hyperlink{classPQNode}{P\+Q\+Node} \\*Priority Queue Node }{\pageref{classPQNode}}{}
+\item\contentsline{section}{\hyperlink{structPrintSpecies}{Print\+Species} }{\pageref{structPrintSpecies}}{}
+\item\contentsline{section}{\hyperlink{classReactable}{Reactable} \\*For a reactable object in the \hyperlink{classSubSystem}{Sub\+System} }{\pageref{classReactable}}{}
+\item\contentsline{section}{\hyperlink{classReaction}{Reaction$<$ M, N $>$} \\*Represents a concrete chemical reaction, such as A + B -\/$>$ C, where M is the number of reactants and N is the number of products }{\pageref{classReaction}}{}
+\item\contentsline{section}{\hyperlink{classReactionBase}{Reaction\+Base} \\*Represents an abstract interface for simple chemical Reactions of the form A + B -\/$>$ C }{\pageref{classReactionBase}}{}
+\item\contentsline{section}{\hyperlink{classReactionPtrContainerIFace}{Reaction\+Ptr\+Container\+I\+Face} \\*An abstract interface for a container of pointers to reaction objects }{\pageref{classReactionPtrContainerIFace}}{}
+\item\contentsline{section}{\hyperlink{classReactionPtrContainerVector}{Reaction\+Ptr\+Container\+Vector} \\*A concrete class implementing the \hyperlink{classReactionPtrContainerIFace}{Reaction\+Ptr\+Container\+I\+Face}, using vector$<$unique\+\_\+ptr$<$\+Reaction\+Base$>$$>$ as the container implementation }{\pageref{classReactionPtrContainerVector}}{}
+\item\contentsline{section}{\hyperlink{classReactionVisitor}{Reaction\+Visitor} \\*The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern }{\pageref{classReactionVisitor}}{}
+\item\contentsline{section}{\hyperlink{classReactionVisitorLambda}{Reaction\+Visitor\+Lambda} \\*Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classReaction}{Reaction} of the node and its descendent nodes }{\pageref{classReactionVisitorLambda}}{}
+\item\contentsline{section}{\hyperlink{classRNode}{R\+Node} \\*This is an abstract base class for classes that need to be associated with the given \hyperlink{classReaction}{Reaction} object }{\pageref{classRNode}}{}
+\item\contentsline{section}{\hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} \\*Used by \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} to implement the cached version of the Gillespie algorithm }{\pageref{classRNodeGillespie}}{}
+\item\contentsline{section}{\hyperlink{classRNodeNRM}{R\+Node\+N\+R\+M} \\*\hyperlink{classReaction}{Reaction} Node for the Next \hyperlink{classReaction}{Reaction} Method }{\pageref{classRNodeNRM}}{}
+\item\contentsline{section}{\hyperlink{classRSpecies}{R\+Species} \\*Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in \hyperlink{classReaction}{Reactions} }{\pageref{classRSpecies}}{}
+\item\contentsline{section}{\hyperlink{classSimpleManagerImpl}{Simple\+Manager\+Impl} \\*A concrete implementation of the \hyperlink{classChemManagerImpl}{Chem\+Manager\+Impl} class }{\pageref{classSimpleManagerImpl}}{}
+\item\contentsline{section}{\hyperlink{classSpecies}{Species} \\*Represents chemical molecules, tracks their copy number and can be used in \hyperlink{classReaction}{Reactions} }{\pageref{classSpecies}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesBound}{Species\+Bound} \\*Used for species that can be bound to a filament }{\pageref{classSpeciesBound}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesBulk}{Species\+Bulk} \\*Used for \hyperlink{classSpecies}{Species} without spatial information (i.\+e. well-\/mixed in the container) }{\pageref{classSpeciesBulk}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesContainerIFace}{Species\+Container\+I\+Face} \\*An abstract interface for a container of \hyperlink{classSpecies}{Species} objects }{\pageref{classSpeciesContainerIFace}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesContainerVector}{Species\+Container\+Vector$<$ Species\+Specific $>$} \\*A concrete class implementing the \hyperlink{classSpeciesContainerIFace}{Species\+Container\+I\+Face}, using vector$<$\+Species\+Specific$>$ as the container implementation }{\pageref{classSpeciesContainerVector}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesDiffusing}{Species\+Diffusing} \\*Used for \hyperlink{classSpecies}{Species} which can move spatially from one compartment to the neighboring one (i.\+e }{\pageref{classSpeciesDiffusing}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesFilament}{Species\+Filament} \\*Used for species that can be in a filament }{\pageref{classSpeciesFilament}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesLinker}{Species\+Linker} \\*Used for linker species that can be bound to a filament }{\pageref{classSpeciesLinker}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesMinusEnd}{Species\+Minus\+End} \\*Used for a minus end species on a filament }{\pageref{classSpeciesMinusEnd}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesMotor}{Species\+Motor} \\*Used for motor species that can be bound to a filament }{\pageref{classSpeciesMotor}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} \\*Used to associate unique integers with character based names of \hyperlink{classSpecies}{Species} }{\pageref{classSpeciesNamesDB}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \\*Used for a plus end species on a filament }{\pageref{classSpeciesPlusEnd}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesPtrContainerIFace}{Species\+Ptr\+Container\+I\+Face} \\*An abstract interface for a container of pointers to \hyperlink{classSpecies}{Species} objects }{\pageref{classSpeciesPtrContainerIFace}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesPtrContainerVector}{Species\+Ptr\+Container\+Vector} \\*A concrete class implementing the \hyperlink{classSpeciesPtrContainerIFace}{Species\+Ptr\+Container\+I\+Face}, using vector$<$unique\+\_\+ptr$<$\+Species$>$$>$ as the container implementation }{\pageref{classSpeciesPtrContainerVector}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesVisitor}{Species\+Visitor} \\*The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern }{\pageref{classSpeciesVisitor}}{}
+\item\contentsline{section}{\hyperlink{classSpeciesVisitorLambda}{Species\+Visitor\+Lambda} \\*Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classSpecies}{Species} of the node and its descendent nodes }{\pageref{classSpeciesVisitorLambda}}{}
+\item\contentsline{section}{\hyperlink{classSphere}{Sphere} \\*A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class }{\pageref{classSphere}}{}
+\item\contentsline{section}{\hyperlink{classSphereBoundaryElement}{Sphere\+Boundary\+Element} \\*A spherical implementation of a boundary element }{\pageref{classSphereBoundaryElement}}{}
+\item\contentsline{section}{\hyperlink{classSubSystem}{Sub\+System} \\*Manages all objects in the system, including \hyperlink{classFilament}{Filaments}, \hyperlink{classLinker}{Linkers}, and \hyperlink{classMotorGhost}{Motor\+Ghosts} }{\pageref{classSubSystem}}{}
+\item\contentsline{section}{\hyperlink{classSystemParameters}{System\+Parameters} \\*Static class that holds all simulation parameters, initialized by the \hyperlink{classSystemParser}{System\+Parser} }{\pageref{classSystemParameters}}{}
+\item\contentsline{section}{\hyperlink{classSystemParser}{System\+Parser} \\*To parse a system input file, initialized by the \hyperlink{classController}{Controller} }{\pageref{classSystemParser}}{}
+\item\contentsline{section}{\hyperlink{classTypeVisitor}{Type\+Visitor$<$ Component\+Type $>$} }{\pageref{classTypeVisitor}}{}
+\item\contentsline{section}{\hyperlink{classTypeVisitorLambda}{Type\+Visitor\+Lambda$<$ Component\+Type $>$} }{\pageref{classTypeVisitorLambda}}{}
+\item\contentsline{section}{\hyperlink{structUnbindingCallback}{Unbinding\+Callback} \\*Callback to unbind a bound to filaments }{\pageref{structUnbindingCallback}}{}
+\item\contentsline{section}{\hyperlink{classUnbindingManager}{Unbinding\+Manager} \\*Manager for all unbinding }{\pageref{classUnbindingManager}}{}
+\item\contentsline{section}{\hyperlink{classVisitor}{Visitor} \\*An abstract interface to traverse those nodes in the \hyperlink{classComposite}{Composite} pattern which fulfill a certain predicate }{\pageref{classVisitor}}{}
+\item\contentsline{section}{\hyperlink{classVisitorLambda}{Visitor\+Lambda} \\*Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon }{\pageref{classVisitorLambda}}{}
+\item\contentsline{section}{\hyperlink{classVolumeCylindricalFF}{Volume\+Cylindrical\+F\+F} \\*An implementation of the \hyperlink{classForceField}{Force\+Field} class that calculates \hyperlink{classCylinder}{Cylinder} volume interactions }{\pageref{classVolumeCylindricalFF}}{}
 \end{DoxyCompactList}

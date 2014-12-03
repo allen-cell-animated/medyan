@@ -1,5 +1,10 @@
-<map id="G" name="G">
-<area shape="rect" id="node1" href="$classObject.html" title="Object" alt="" coords="6,5,66,32"/>
-<area shape="rect" id="node3" href="$classSpecies.html" title="Species" alt="" coords="115,5,183,32"/>
-<area shape="rect" id="node5" href="$classSBulk.html" title="This class represent Bulk species that have no spatial component, i.e. are not connected to any Compa..." alt="" coords="233,5,287,32"/>
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title="STL class. " alt="" coords="5,153,99,179"/>
+<area shape="rect" id="node2" href="$classBeadDB.html" title="A database for all Beads in the system. " alt="" coords="184,5,255,31"/>
+<area shape="rect" id="node3" href="$classBoundaryElementDB.html" title="A database for all BoundaryElements in the system. " alt="" coords="147,55,293,80"/>
+<area shape="rect" id="node4" href="$classCylinderDB.html" title="A database for all Cylinders in the system. " alt="" coords="175,104,264,129"/>
+<area shape="rect" id="node5" href="$classFilamentDB.html" title="A database for all Filaments in the system. " alt="" coords="174,153,265,179"/>
+<area shape="rect" id="node6" href="$classLinkerDB.html" title="A database for all Linkers in the system. " alt="" coords="182,203,258,228"/>
+<area shape="rect" id="node7" href="$classMotorGhostDB.html" title="A database for all MotorGhosts in the system. " alt="" coords="165,252,274,277"/>
+<area shape="rect" id="node8" href="$classNeighborListDB.html" title="A database to store all NeighborLists in the system. " alt="" coords="162,301,277,327"/>
 </map>

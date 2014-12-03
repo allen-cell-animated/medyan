@@ -1,0 +1,93 @@
+\hypertarget{classBoundaryRepulsionExp}{\section{Boundary\+Repulsion\+Exp Class Reference}
+\label{classBoundaryRepulsionExp}\index{Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}}
+}
+
+
+A exponential repulsive potential.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Repulsion\+Exp.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classBoundaryRepulsionExp_a43ddf5cd299610b06bf95d30e87c7310}{compute\+Energy} (\hyperlink{classBead}{Bead} $\ast$, double, double, double)
+\item 
+void \hyperlink{classBoundaryRepulsionExp_a4c837a8b9a90b3987cfb1a7000c4163c}{compute\+Forces} (\hyperlink{classBead}{Bead} $\ast$, double, vector$<$ double $>$ \&norm, double, double)
+\item 
+void \hyperlink{classBoundaryRepulsionExp_aa0da9a38c4a9dfcca390ea8350fde2b4}{compute\+Forces\+Aux} (\hyperlink{classBead}{Bead} $\ast$, double, vector$<$ double $>$ \&norm, double, double)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A exponential repulsive potential. 
+
+Definition at line 26 of file Boundary\+Repulsion\+Exp.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBoundaryRepulsionExp_a43ddf5cd299610b06bf95d30e87c7310}{\index{Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}!compute\+Energy@{compute\+Energy}}
+\index{compute\+Energy@{compute\+Energy}!Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}}
+\subsubsection[{compute\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}double Boundary\+Repulsion\+Exp\+::compute\+Energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b, }
+\item[{double}]{r, }
+\item[{double}]{k\+\_\+rep, }
+\item[{double}]{screen\+Length}
+\end{DoxyParamCaption}
+)}}\label{classBoundaryRepulsionExp_a43ddf5cd299610b06bf95d30e87c7310}
+
+
+Definition at line 18 of file Boundary\+Repulsion\+Exp.\+cpp.
+
+
+
+References A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+R.
+
+\hypertarget{classBoundaryRepulsionExp_a4c837a8b9a90b3987cfb1a7000c4163c}{\index{Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}!compute\+Forces@{compute\+Forces}}
+\index{compute\+Forces@{compute\+Forces}!Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}}
+\subsubsection[{compute\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}void Boundary\+Repulsion\+Exp\+::compute\+Forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b, }
+\item[{double}]{r, }
+\item[{vector$<$ double $>$ \&}]{norm, }
+\item[{double}]{k\+\_\+rep, }
+\item[{double}]{screen\+Length}
+\end{DoxyParamCaption}
+)}}\label{classBoundaryRepulsionExp_a4c837a8b9a90b3987cfb1a7000c4163c}
+
+
+Definition at line 24 of file Boundary\+Repulsion\+Exp.\+cpp.
+
+
+
+References Bead\+::force, and A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+R.
+
+\hypertarget{classBoundaryRepulsionExp_aa0da9a38c4a9dfcca390ea8350fde2b4}{\index{Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}!compute\+Forces\+Aux@{compute\+Forces\+Aux}}
+\index{compute\+Forces\+Aux@{compute\+Forces\+Aux}!Boundary\+Repulsion\+Exp@{Boundary\+Repulsion\+Exp}}
+\subsubsection[{compute\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void Boundary\+Repulsion\+Exp\+::compute\+Forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b, }
+\item[{double}]{r, }
+\item[{vector$<$ double $>$ \&}]{norm, }
+\item[{double}]{k\+\_\+rep, }
+\item[{double}]{screen\+Length}
+\end{DoxyParamCaption}
+)}}\label{classBoundaryRepulsionExp_aa0da9a38c4a9dfcca390ea8350fde2b4}
+
+
+Definition at line 35 of file Boundary\+Repulsion\+Exp.\+cpp.
+
+
+
+References Bead\+::force\+Aux, and A\+\_\+\+B\+\_\+\+C\+\_\+\+Cycle\+::\+R.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{BoundaryRepulsionExp_8h}{Boundary\+Repulsion\+Exp.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{BoundaryRepulsionExp_8cpp}{Boundary\+Repulsion\+Exp.\+cpp}\end{DoxyCompactItemize}

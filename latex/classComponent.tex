@@ -1,0 +1,589 @@
+\hypertarget{classComponent}{\section{Component Class Reference}
+\label{classComponent}\index{Component@{Component}}
+}
+
+
+The base class for the \hyperlink{classComposite}{Composite} pattern hieararchy.  
+
+
+
+
+{\ttfamily \#include $<$Component.\+h$>$}
+
+
+
+Inheritance diagram for Component\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classComponent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Component\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{classComponent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classComponent_a8775db6d1a2c1afc2e77cd3c8f39da6f}{Component} ()
+\begin{DoxyCompactList}\small\item\em Default Constructor; Parent is assigned to nullptr. \end{DoxyCompactList}\item 
+virtual \hyperlink{classComponent_afc49d76b286b963c6505809566060440}{$\sim$\+Component} () noexcept
+\begin{DoxyCompactList}\small\item\em Virtual Destructor. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a06be9328d615af20a155e9060def1470}{apply} (\hyperlink{classVisitor}{Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em When this function is applied to a Conditional\+Visitor v, the corresponding v.\+visit(this) is called, and v is further applied to all children of this node recursively. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}{apply} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}{apply\+\_\+impl} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies \hyperlink{classSpeciesVisitor}{Species\+Visitor} v to every Species$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}{apply} (\hyperlink{classReactionVisitor}{Reaction\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classReactionBase}{Reaction\+Base}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}{apply\+\_\+impl} (\hyperlink{classReactionVisitor}{Reaction\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies Reaction\+Base\+Visitor v to every Reaction\+Base$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{get\+Parent} ()
+\begin{DoxyCompactList}\small\item\em Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. \end{DoxyCompactList}\item 
+void \hyperlink{classComponent_a9d5b03697a653cda24d5688af1d105f8}{set\+Parent} (\hyperlink{classComposite}{Composite} $\ast$other)
+\begin{DoxyCompactList}\small\item\em Sets the parent of this node to other. \end{DoxyCompactList}\item 
+bool \hyperlink{classComponent_a4f0bed8144509d6565a30b548fac0fe7}{is\+Root} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node is the root node. \end{DoxyCompactList}\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classComponent_abcb3746cb8b4afcecf437dce40c0c772}{get\+Root} ()
+\begin{DoxyCompactList}\small\item\em Returns the root node of the hieararchy to which this node belongs to. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}{number\+Of\+Children} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of children of this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a14bcb60799865752cd293fba2076d84a}{is\+Composite} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node is a \hyperlink{classComposite}{Composite} node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a0daf865ff32aff9e68316c65b681cbf9}{is\+Species\+Container} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a506e080028078ef9a753d854c60904a3}{is\+Reactions\+Container} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of reactions (i.\+e. \hyperlink{classReactionBase}{Reaction\+Base} pointers) \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_ae99bcb165a9403e64ffea2b840192b4c}{number\+Of\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classSpecies}{Species} being immediately managed by this node (i.\+e. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a116a02dd48baa6bf46c1162998548814}{number\+Of\+Reactions} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classReactionBase}{Reaction\+Base} objets being immediately managed by this node (i.\+e. \end{DoxyCompactList}\item 
+virtual string \hyperlink{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}{get\+Full\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Return a string indicating the full name of this node (presumably used mainly for debugging) \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a38336c92dacb78175dfc7746bde5055d}{count\+Descendents} () const 
+\begin{DoxyCompactList}\small\item\em Return the total number of nodes contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}{count\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of \hyperlink{classSpecies}{Species} contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}{count\+Reactions} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of \hyperlink{classReactionBase}{Reaction\+Base} objects contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{print\+Self} ()
+\begin{DoxyCompactList}\small\item\em Prints information about this node. Useful for debugging. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classComponent_a74c227d53f7fd87f14421326ee63045a}{\+\_\+parent}
+\begin{DoxyCompactList}\small\item\em The parent of this object. May be a nullptr if this object has no parent. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The base class for the \hyperlink{classComposite}{Composite} pattern hieararchy. 
+
+The \hyperlink{classComposite}{Composite} pattern allows building of complex hieararchical objects, with convenient methods for applying a function to all nodes (i.\+e. the \hyperlink{classVisitor}{Visitor} pattern). Each node in the hieararchy may have a parent and may contain several children nodes. A class that is derived directly from \hyperlink{classComponent}{Component} and not from \hyperlink{classComposite}{Composite}, cannot contain children, i.\+e. it is a leaf node. \begin{DoxyNote}{Note}
+\hyperlink{classComponent}{Component} objects may contain \hyperlink{classSpecies}{Species} and \hyperlink{classReactionBase}{Reaction\+Base} collections, however, this is treated seperately from the \hyperlink{classComposite}{Composite} pattern (i.\+e. separate methods exist for the corresponding access to elements, changes, etc.) 
+\end{DoxyNote}
+
+
+Definition at line 36 of file Component.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classComponent_a8775db6d1a2c1afc2e77cd3c8f39da6f}{\index{Component@{Component}!Component@{Component}}
+\index{Component@{Component}!Component@{Component}}
+\subsubsection[{Component}]{\setlength{\rightskip}{0pt plus 5cm}Component\+::\+Component (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classComponent_a8775db6d1a2c1afc2e77cd3c8f39da6f}
+
+
+Default Constructor; Parent is assigned to nullptr. 
+
+
+
+Definition at line 42 of file Component.\+h.
+
+\hypertarget{classComponent_afc49d76b286b963c6505809566060440}{\index{Component@{Component}!````~Component@{$\sim$\+Component}}
+\index{````~Component@{$\sim$\+Component}!Component@{Component}}
+\subsubsection[{$\sim$\+Component}]{\setlength{\rightskip}{0pt plus 5cm}virtual Component\+::$\sim$\+Component (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}}\label{classComponent_afc49d76b286b963c6505809566060440}
+
+
+Virtual Destructor. 
+
+\begin{DoxyNote}{Note}
+noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing, which in turn disables move operations by the S\+T\+L containers. This behaviour is a gcc bug (as of gcc 4.\+703), and will presumbaly be fixed in the future. 
+\end{DoxyNote}
+
+
+Definition at line 48 of file Component.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classComponent_a06be9328d615af20a155e9060def1470}{\index{Component@{Component}!apply@{apply}}
+\index{apply@{apply}!Component@{Component}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classComponent_a06be9328d615af20a155e9060def1470}
+
+
+When this function is applied to a Conditional\+Visitor v, the corresponding v.\+visit(this) is called, and v is further applied to all children of this node recursively. 
+
+However, the Conditional\+Visitor allows the visit() function to be applied only selectively to nodes that conform to specific criteria. 
+
+Reimplemented in \hyperlink{classComposite_a58123ab346f6621a187bebe456e383ea}{Composite}.
+
+
+
+Definition at line 26 of file Component.\+cpp.
+
+
+
+References Visitor\+::visit().
+
+\hypertarget{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}{\index{Component@{Component}!apply@{apply}}
+\index{apply@{apply}!Component@{Component}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}
+
+
+Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classSpecies}{Species}. 
+
+
+
+Reimplemented in \hyperlink{classComposite_a18937a1f6f84a159e77ba83dd34b2e20}{Composite}.
+
+
+
+Definition at line 57 of file Component.\+h.
+
+
+
+References apply\+\_\+impl().
+
+\hypertarget{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}{\index{Component@{Component}!apply@{apply}}
+\index{apply@{apply}!Component@{Component}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}
+
+
+Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classReactionBase}{Reaction\+Base}. 
+
+
+
+Reimplemented in \hyperlink{classComposite_aa4a608ee92aaaa6e0d63278595707474}{Composite}.
+
+
+
+Definition at line 65 of file Component.\+h.
+
+
+
+References apply\+\_\+impl().
+
+\hypertarget{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}{\index{Component@{Component}!apply\+\_\+impl@{apply\+\_\+impl}}
+\index{apply\+\_\+impl@{apply\+\_\+impl}!Component@{Component}}
+\subsubsection[{apply\+\_\+impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply\+\_\+impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}
+
+
+Applies \hyperlink{classSpeciesVisitor}{Species\+Visitor} v to every Species$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classSpecies}{Species}. 
+
+Reimplemented in \hyperlink{classCompartment_ae9bdaf50db8e780d3614be3bc50e9171}{Compartment}.
+
+
+
+Definition at line 61 of file Component.\+h.
+
+
+
+Referenced by apply(), and Composite\+::apply().
+
+\hypertarget{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}{\index{Component@{Component}!apply\+\_\+impl@{apply\+\_\+impl}}
+\index{apply\+\_\+impl@{apply\+\_\+impl}!Component@{Component}}
+\subsubsection[{apply\+\_\+impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply\+\_\+impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}
+
+
+Applies Reaction\+Base\+Visitor v to every Reaction\+Base$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classReactionBase}{Reaction\+Base}. 
+
+Reimplemented in \hyperlink{classCompartment_a37bd8d3a6d3a21bf50716979c6694adb}{Compartment}.
+
+
+
+Definition at line 69 of file Component.\+h.
+
+\hypertarget{classComponent_a38336c92dacb78175dfc7746bde5055d}{\index{Component@{Component}!count\+Descendents@{count\+Descendents}}
+\index{count\+Descendents@{count\+Descendents}!Component@{Component}}
+\subsubsection[{count\+Descendents}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Descendents (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a38336c92dacb78175dfc7746bde5055d}
+
+
+Return the total number of nodes contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_aad7cea9220c003254233ec9dc6bcb24e}{Composite}.
+
+
+
+Definition at line 110 of file Component.\+h.
+
+\hypertarget{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}{\index{Component@{Component}!count\+Reactions@{count\+Reactions}}
+\index{count\+Reactions@{count\+Reactions}!Component@{Component}}
+\subsubsection[{count\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}
+
+
+Return the number of \hyperlink{classReactionBase}{Reaction\+Base} objects contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_a14108b9a4f9e903ba0fd9cc40fbbd8ae}{Composite}.
+
+
+
+Definition at line 118 of file Component.\+h.
+
+\hypertarget{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}{\index{Component@{Component}!count\+Species@{count\+Species}}
+\index{count\+Species@{count\+Species}!Component@{Component}}
+\subsubsection[{count\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}
+
+
+Return the number of \hyperlink{classSpecies}{Species} contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_ad3162a869285627b04c5388dc28e2719}{Composite}.
+
+
+
+Definition at line 114 of file Component.\+h.
+
+\hypertarget{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}{\index{Component@{Component}!get\+Full\+Name@{get\+Full\+Name}}
+\index{get\+Full\+Name@{get\+Full\+Name}!Component@{Component}}
+\subsubsection[{get\+Full\+Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual string Component\+::get\+Full\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}
+
+
+Return a string indicating the full name of this node (presumably used mainly for debugging) 
+
+
+
+Reimplemented in \hyperlink{classCompartment_aee4d7b2def05be8e5e75f6744c7b3940}{Compartment}, \hyperlink{classCompartmentGrid_ae388f0cfd0d78d0ebbe0583bc3d9ec41}{Compartment\+Grid}, and \hyperlink{classComposite_a0219bb2449696a3ab84ff24e4462e2c2}{Composite}.
+
+
+
+Definition at line 106 of file Component.\+h.
+
+\hypertarget{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{\index{Component@{Component}!get\+Parent@{get\+Parent}}
+\index{get\+Parent@{get\+Parent}!Component@{Component}}
+\subsubsection[{get\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ Component\+::get\+Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}
+
+
+Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. 
+
+
+
+Definition at line 72 of file Component.\+h.
+
+
+
+References \+\_\+parent.
+
+
+
+Referenced by get\+Root().
+
+\hypertarget{classComponent_abcb3746cb8b4afcecf437dce40c0c772}{\index{Component@{Component}!get\+Root@{get\+Root}}
+\index{get\+Root@{get\+Root}!Component@{Component}}
+\subsubsection[{get\+Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ Component\+::get\+Root (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classComponent_abcb3746cb8b4afcecf437dce40c0c772}
+
+
+Returns the root node of the hieararchy to which this node belongs to. 
+
+
+
+Definition at line 19 of file Component.\+cpp.
+
+
+
+References get\+Parent(), get\+Root(), and is\+Root().
+
+
+
+Referenced by get\+Root(), Reaction\+Base\+::get\+Root(), and Species\+::get\+Root().
+
+\hypertarget{classComponent_a14bcb60799865752cd293fba2076d84a}{\index{Component@{Component}!is\+Composite@{is\+Composite}}
+\index{is\+Composite@{is\+Composite}!Component@{Component}}
+\subsubsection[{is\+Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Composite (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a14bcb60799865752cd293fba2076d84a}
+
+
+Returns true if this node is a \hyperlink{classComposite}{Composite} node. 
+
+
+
+Reimplemented in \hyperlink{classComposite_ae2c806010c5c1d2d166ce01f2710c271}{Composite}.
+
+
+
+Definition at line 89 of file Component.\+h.
+
+\hypertarget{classComponent_a506e080028078ef9a753d854c60904a3}{\index{Component@{Component}!is\+Reactions\+Container@{is\+Reactions\+Container}}
+\index{is\+Reactions\+Container@{is\+Reactions\+Container}!Component@{Component}}
+\subsubsection[{is\+Reactions\+Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Reactions\+Container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a506e080028078ef9a753d854c60904a3}
+
+
+Returns true if this node contains non-\/zero number of reactions (i.\+e. \hyperlink{classReactionBase}{Reaction\+Base} pointers) 
+
+
+
+Reimplemented in \hyperlink{classCompartment_a87a624dd83cc42e752454645a5484f6e}{Compartment}.
+
+
+
+Definition at line 95 of file Component.\+h.
+
+
+
+Referenced by Composite\+::count\+Reactions().
+
+\hypertarget{classComponent_a4f0bed8144509d6565a30b548fac0fe7}{\index{Component@{Component}!is\+Root@{is\+Root}}
+\index{is\+Root@{is\+Root}!Component@{Component}}
+\subsubsection[{is\+Root}]{\setlength{\rightskip}{0pt plus 5cm}bool Component\+::is\+Root (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classComponent_a4f0bed8144509d6565a30b548fac0fe7}
+
+
+Returns true if this node is the root node. 
+
+A root node has no parent, and the corresponding \hyperlink{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{get\+Parent()} call would return a nullptr. 
+
+Definition at line 79 of file Component.\+h.
+
+
+
+References \+\_\+parent.
+
+
+
+Referenced by get\+Root().
+
+\hypertarget{classComponent_a0daf865ff32aff9e68316c65b681cbf9}{\index{Component@{Component}!is\+Species\+Container@{is\+Species\+Container}}
+\index{is\+Species\+Container@{is\+Species\+Container}!Component@{Component}}
+\subsubsection[{is\+Species\+Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Species\+Container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a0daf865ff32aff9e68316c65b681cbf9}
+
+
+Returns true if this node contains non-\/zero number of \hyperlink{classSpecies}{Species}. 
+
+
+
+Reimplemented in \hyperlink{classCompartment_ac26aefc0e11a0bf2065626bc47b5de08}{Compartment}.
+
+
+
+Definition at line 92 of file Component.\+h.
+
+
+
+Referenced by Composite\+::count\+Species().
+
+\hypertarget{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}{\index{Component@{Component}!number\+Of\+Children@{number\+Of\+Children}}
+\index{number\+Of\+Children@{number\+Of\+Children}!Component@{Component}}
+\subsubsection[{number\+Of\+Children}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Children (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}
+
+
+Returns the number of children of this node. 
+
+\begin{DoxyNote}{Note}
+\hyperlink{classSpecies}{Species} and \hyperlink{classReactionBase}{Reaction\+Base} objects are not counted. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_ab00f34ad7c8f7cd90ea9392bd54fd62a}{Composite}.
+
+
+
+Definition at line 86 of file Component.\+h.
+
+\hypertarget{classComponent_a116a02dd48baa6bf46c1162998548814}{\index{Component@{Component}!number\+Of\+Reactions@{number\+Of\+Reactions}}
+\index{number\+Of\+Reactions@{number\+Of\+Reactions}!Component@{Component}}
+\subsubsection[{number\+Of\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a116a02dd48baa6bf46c1162998548814}
+
+
+Returns the number of \hyperlink{classReactionBase}{Reaction\+Base} objets being immediately managed by this node (i.\+e. 
+
+not counting reactions belonging to children nodes, etc. 
+
+Reimplemented in \hyperlink{classCompartment_a2a8090f8a6df14b5d8ab528425333cca}{Compartment}, and \hyperlink{classComposite_aee77e531ab9ccb8dcea12a307bd75539}{Composite}.
+
+
+
+Definition at line 103 of file Component.\+h.
+
+\hypertarget{classComponent_ae99bcb165a9403e64ffea2b840192b4c}{\index{Component@{Component}!number\+Of\+Species@{number\+Of\+Species}}
+\index{number\+Of\+Species@{number\+Of\+Species}!Component@{Component}}
+\subsubsection[{number\+Of\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_ae99bcb165a9403e64ffea2b840192b4c}
+
+
+Returns the number of \hyperlink{classSpecies}{Species} being immediately managed by this node (i.\+e. 
+
+not counting \hyperlink{classSpecies}{Species} belonging to children nodes, etc. 
+
+Reimplemented in \hyperlink{classCompartment_a9658205238f8d417eb29c5d966026844}{Compartment}, and \hyperlink{classComposite_af36fb9ed49f7fc262c68b41f2b9a56f6}{Composite}.
+
+
+
+Definition at line 99 of file Component.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{\index{Component@{Component}!print\+Self@{print\+Self}}
+\index{print\+Self@{print\+Self}!Component@{Component}}
+\subsubsection[{print\+Self}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Component\+::print\+Self (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}
+
+
+Prints information about this node. Useful for debugging. 
+
+
+
+Reimplemented in \hyperlink{classCompartment_a79ff3378bf4da9e9fe88669ef1a91ad0}{Compartment}, and \hyperlink{classCompartmentGrid_a1c94761f08339f43d77cc6b90504dc49}{Compartment\+Grid}.
+
+
+
+Definition at line 121 of file Component.\+h.
+
+\hypertarget{classComponent_a9d5b03697a653cda24d5688af1d105f8}{\index{Component@{Component}!set\+Parent@{set\+Parent}}
+\index{set\+Parent@{set\+Parent}!Component@{Component}}
+\subsubsection[{set\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}void Component\+::set\+Parent (
+\begin{DoxyParamCaption}
+\item[{{\bf Composite} $\ast$}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classComponent_a9d5b03697a653cda24d5688af1d105f8}
+
+
+Sets the parent of this node to other. 
+
+
+
+Definition at line 75 of file Component.\+h.
+
+
+
+References \+\_\+parent.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classComponent_a74c227d53f7fd87f14421326ee63045a}{\index{Component@{Component}!\+\_\+parent@{\+\_\+parent}}
+\index{\+\_\+parent@{\+\_\+parent}!Component@{Component}}
+\subsubsection[{\+\_\+parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ Component\+::\+\_\+parent\hspace{0.3cm}{\ttfamily [private]}}}\label{classComponent_a74c227d53f7fd87f14421326ee63045a}
+
+
+The parent of this object. May be a nullptr if this object has no parent. 
+
+
+
+Definition at line 38 of file Component.\+h.
+
+
+
+Referenced by get\+Parent(), is\+Root(), and set\+Parent().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Component_8h}{Component.\+h}\item 
+M3\+S\+Y\+M/\hyperlink{Component_8cpp}{Component.\+cpp}\end{DoxyCompactItemize}

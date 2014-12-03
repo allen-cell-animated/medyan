@@ -1,0 +1,265 @@
+\hypertarget{classSpeciesNamesDB}{\section{Species\+Names\+D\+B Class Reference}
+\label{classSpeciesNamesDB}\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+}
+
+
+Used to associate unique integers with character based names of \hyperlink{classSpecies}{Species}.  
+
+
+
+
+{\ttfamily \#include $<$Species.\+h$>$}
+
+
+
+Collaboration diagram for Species\+Names\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=309pt]{classSpeciesNamesDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classSpeciesNamesDB_ac2cc60cba624407d270e0de80c6f20fe}{int\+To\+String} (unsigned int i) const 
+\begin{DoxyCompactList}\small\item\em Given an integer \char`\"{}i\char`\"{}, returns the string associated with that integer. Throws an out of range exception. \end{DoxyCompactList}\item 
+int \hyperlink{classSpeciesNamesDB_acc0a62d3f071e1c3fd85ae3d7565c381}{string\+To\+Int} (string name)
+\begin{DoxyCompactList}\small\item\em Given a string \char`\"{}name\char`\"{}, returns the unique integer associated with that string. \end{DoxyCompactList}\item 
+string \hyperlink{classSpeciesNamesDB_a711325156ec7d770ac59ae2bb35cc17d}{generate\+Unique\+Name} (string name)
+\begin{DoxyCompactList}\small\item\em Generate a unique name based on a seed name (just adds integer value to end of string) \end{DoxyCompactList}\item 
+void \hyperlink{classSpeciesNamesDB_a7387ec4eb51c377cd56bf3eaeabad4f0}{clear} ()
+\begin{DoxyCompactList}\small\item\em Clear the contents of the database. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} $\ast$ \hyperlink{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}{Instance} ()
+\begin{DoxyCompactList}\small\item\em returns the unique instance of the singleton, which can be used to access the names D\+B \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSpeciesNamesDB_ac95818ac6b9abaf298b1b32c518a938b}{Species\+Names\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ string, int $>$ \hyperlink{classSpeciesNamesDB_a102ccdb08c93602260cff62cbf7d712a}{\+\_\+map\+\_\+string\+\_\+int}
+\item 
+vector$<$ string $>$ \hyperlink{classSpeciesNamesDB_a668ee868496f58154d860caef5fc64cc}{\+\_\+vec\+\_\+int\+\_\+string}
+\item 
+unsigned long \hyperlink{classSpeciesNamesDB_a8339994ccc621359cf8de735865be6a7}{\+\_\+num} = 0
+\begin{DoxyCompactList}\small\item\em used to generate unique names \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} $\ast$ \hyperlink{classSpeciesNamesDB_aa47f96058594e809c9da48eef415ce8b}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em the singleton instance \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to associate unique integers with character based names of \hyperlink{classSpecies}{Species}. 
+
+Often \hyperlink{classSpecies}{Species} of the same type, let's say \char`\"{}\+Arp2/3\char`\"{} can be found in different forms, for example in cytosol vs bound to a filament. The corresponding specific \hyperlink{classSpecies}{Species} will be distinct, however, they will share the same name, as returned by \hyperlink{classSpecies_a28fa239dded841133760ff9c47af63a1}{Species\+::get\+Name()}. This, in turn, helps to match \char`\"{}\+Arp2/3\char`\"{} bound to filaments with diffusing \char`\"{}\+Arp2/3\char`\"{}. \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} associates a unique integer with \hyperlink{classSpecies}{Species} of the same type (e.\+g. \char`\"{}\+Arp2/3\char`\"{}, regardless whether it is bound or not), and provides conversion functions fron integer to string (Species\+Names\+D\+B\+::int\+To\+String(int i)) and vice versa (\hyperlink{classSpeciesNamesDB_acc0a62d3f071e1c3fd85ae3d7565c381}{Species\+Names\+D\+B\+::string\+To\+Int} (string name)). class \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} is a singleton, and should be used by first calling \hyperlink{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}{Species\+Names\+D\+B\+::\+Instance()} method.
+
+
+\begin{DoxyCode}
+\textcolor{keywordtype}{int} y = \hyperlink{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}{SpeciesNamesDB::Instance}()->\hyperlink{classSpeciesNamesDB_acc0a62d3f071e1c3fd85ae3d7565c381}{stringToInt}(\textcolor{stringliteral}{"Arp2/3"}); \textcolor{comment}{// let's say
+       y=2}
+\textcolor{keywordtype}{string} x = \hyperlink{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}{SpeciesNamesDB::Instance}()->\hyperlink{classSpeciesNamesDB_ac2cc60cba624407d270e0de80c6f20fe}{intToString}(2); \textcolor{comment}{// then x should
+       be "Arp2/3"}
+\end{DoxyCode}
+
+
+\hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B} also has a function to generate a unique name given a string seed. This is particularly useful for when a filament species needs a unique name, say with the seed \char`\"{}\+Actin\char`\"{} 
+
+Definition at line 58 of file Species.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSpeciesNamesDB_ac95818ac6b9abaf298b1b32c518a938b}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{Species\+Names\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Names\+D\+B\+::\+Species\+Names\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classSpeciesNamesDB_ac95818ac6b9abaf298b1b32c518a938b}
+
+
+Definition at line 61 of file Species.\+h.
+
+
+
+Referenced by Instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSpeciesNamesDB_a7387ec4eb51c377cd56bf3eaeabad4f0}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!clear@{clear}}
+\index{clear@{clear}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{clear}]{\setlength{\rightskip}{0pt plus 5cm}void Species\+Names\+D\+B\+::clear (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesNamesDB_a7387ec4eb51c377cd56bf3eaeabad4f0}
+
+
+Clear the contents of the database. 
+
+
+
+Definition at line 100 of file Species.\+h.
+
+
+
+References \+\_\+map\+\_\+string\+\_\+int, and \+\_\+vec\+\_\+int\+\_\+string.
+
+\hypertarget{classSpeciesNamesDB_a711325156ec7d770ac59ae2bb35cc17d}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!generate\+Unique\+Name@{generate\+Unique\+Name}}
+\index{generate\+Unique\+Name@{generate\+Unique\+Name}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{generate\+Unique\+Name}]{\setlength{\rightskip}{0pt plus 5cm}string Species\+Names\+D\+B\+::generate\+Unique\+Name (
+\begin{DoxyParamCaption}
+\item[{string}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesNamesDB_a711325156ec7d770ac59ae2bb35cc17d}
+
+
+Generate a unique name based on a seed name (just adds integer value to end of string) 
+
+
+
+Definition at line 91 of file Species.\+h.
+
+
+
+References \+\_\+map\+\_\+string\+\_\+int, and \+\_\+num.
+
+\hypertarget{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!Instance@{Instance}}
+\index{Instance@{Instance}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{Instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Names\+D\+B} $\ast$ Species\+Names\+D\+B\+::\+Instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classSpeciesNamesDB_a845e8c31528ebce2177f916ef6018614}
+
+
+returns the unique instance of the singleton, which can be used to access the names D\+B 
+
+
+
+Definition at line 21 of file Species.\+cpp.
+
+
+
+References \+\_\+instance, and Species\+Names\+D\+B().
+
+
+
+Referenced by Simple\+Manager\+Impl\+::gen\+C\+F\+Rxn\+Managers(), Simple\+Manager\+Impl\+::gen\+I\+F\+Rxn\+Managers(), Compartment\+::get\+Diffusion\+Rate(), Species\+::get\+Name(), Simple\+Manager\+Impl\+::initialize\+C\+Cylinder(), Compartment\+::set\+Diffusion\+Rate(), and Species\+::\+Species().
+
+\hypertarget{classSpeciesNamesDB_ac2cc60cba624407d270e0de80c6f20fe}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!int\+To\+String@{int\+To\+String}}
+\index{int\+To\+String@{int\+To\+String}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{int\+To\+String}]{\setlength{\rightskip}{0pt plus 5cm}string Species\+Names\+D\+B\+::int\+To\+String (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{i}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesNamesDB_ac2cc60cba624407d270e0de80c6f20fe}
+
+
+Given an integer \char`\"{}i\char`\"{}, returns the string associated with that integer. Throws an out of range exception. 
+
+
+
+Definition at line 71 of file Species.\+h.
+
+
+
+References \+\_\+vec\+\_\+int\+\_\+string.
+
+
+
+Referenced by Species\+::get\+Name().
+
+\hypertarget{classSpeciesNamesDB_acc0a62d3f071e1c3fd85ae3d7565c381}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!string\+To\+Int@{string\+To\+Int}}
+\index{string\+To\+Int@{string\+To\+Int}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{string\+To\+Int}]{\setlength{\rightskip}{0pt plus 5cm}int Species\+Names\+D\+B\+::string\+To\+Int (
+\begin{DoxyParamCaption}
+\item[{string}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesNamesDB_acc0a62d3f071e1c3fd85ae3d7565c381}
+
+
+Given a string \char`\"{}name\char`\"{}, returns the unique integer associated with that string. 
+
+If the string does not exist yet, it is created. 
+
+Definition at line 79 of file Species.\+h.
+
+
+
+References \+\_\+map\+\_\+string\+\_\+int, and \+\_\+vec\+\_\+int\+\_\+string.
+
+
+
+Referenced by Compartment\+::get\+Diffusion\+Rate(), Compartment\+::set\+Diffusion\+Rate(), and Species\+::\+Species().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSpeciesNamesDB_aa47f96058594e809c9da48eef415ce8b}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Names\+D\+B} $\ast$ Species\+Names\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classSpeciesNamesDB_aa47f96058594e809c9da48eef415ce8b}
+
+
+the singleton instance 
+
+
+
+Definition at line 60 of file Species.\+h.
+
+
+
+Referenced by Instance().
+
+\hypertarget{classSpeciesNamesDB_a102ccdb08c93602260cff62cbf7d712a}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!\+\_\+map\+\_\+string\+\_\+int@{\+\_\+map\+\_\+string\+\_\+int}}
+\index{\+\_\+map\+\_\+string\+\_\+int@{\+\_\+map\+\_\+string\+\_\+int}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{\+\_\+map\+\_\+string\+\_\+int}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+map$<$string,int$>$ Species\+Names\+D\+B\+::\+\_\+map\+\_\+string\+\_\+int\hspace{0.3cm}{\ttfamily [private]}}}\label{classSpeciesNamesDB_a102ccdb08c93602260cff62cbf7d712a}
+
+
+Definition at line 63 of file Species.\+h.
+
+
+
+Referenced by clear(), generate\+Unique\+Name(), and string\+To\+Int().
+
+\hypertarget{classSpeciesNamesDB_a8339994ccc621359cf8de735865be6a7}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!\+\_\+num@{\+\_\+num}}
+\index{\+\_\+num@{\+\_\+num}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{\+\_\+num}]{\setlength{\rightskip}{0pt plus 5cm}unsigned long Species\+Names\+D\+B\+::\+\_\+num = 0\hspace{0.3cm}{\ttfamily [private]}}}\label{classSpeciesNamesDB_a8339994ccc621359cf8de735865be6a7}
+
+
+used to generate unique names 
+
+
+
+Definition at line 65 of file Species.\+h.
+
+
+
+Referenced by generate\+Unique\+Name().
+
+\hypertarget{classSpeciesNamesDB_a668ee868496f58154d860caef5fc64cc}{\index{Species\+Names\+D\+B@{Species\+Names\+D\+B}!\+\_\+vec\+\_\+int\+\_\+string@{\+\_\+vec\+\_\+int\+\_\+string}}
+\index{\+\_\+vec\+\_\+int\+\_\+string@{\+\_\+vec\+\_\+int\+\_\+string}!Species\+Names\+D\+B@{Species\+Names\+D\+B}}
+\subsubsection[{\+\_\+vec\+\_\+int\+\_\+string}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ Species\+Names\+D\+B\+::\+\_\+vec\+\_\+int\+\_\+string\hspace{0.3cm}{\ttfamily [private]}}}\label{classSpeciesNamesDB_a668ee868496f58154d860caef5fc64cc}
+
+
+Definition at line 64 of file Species.\+h.
+
+
+
+Referenced by clear(), int\+To\+String(), and string\+To\+Int().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Species_8h}{Species.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Species_8cpp}{Species.\+cpp}\end{DoxyCompactItemize}

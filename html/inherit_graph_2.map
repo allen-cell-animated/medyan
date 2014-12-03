@@ -1,3 +1,5 @@
-<map id="G" name="G">
-<area shape="rect" id="node1" href="$classSpeciesDB.html" title="SpeciesDB should be used for obtaining new objects of the Species hieararchy." alt="" coords="6,5,93,32"/>
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classBoundaryElementNLContainer.html" title="Holds a BoundaryElementNeighborList. " alt="" coords="5,12,208,37"/>
+<area shape="rect" id="node2" href="$classBoundaryInteractions.html" title="Represents a BoundaryElement interaction with a Bead. " alt="" coords="256,12,403,37"/>
+<area shape="rect" id="node3" href="$classBoundaryRepulsion.html" title="Represents a repulsive interaction between a BoundaryElement and Bead. " alt="" coords="451,5,647,44"/>
 </map>

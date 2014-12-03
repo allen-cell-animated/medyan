@@ -60,7 +60,7 @@ protected:
 };
 
         
-/// The VisitorLambda allows using C++11 lambda expressions to set the action to be performed on each node,
+/// Allows using C++11 lambda expressions to set the action to be performed on each node,
 /// and also check via a lambda predicate whether the given node needs to be acted upon.
 class VisitorLambda : public Visitor {
 public:
@@ -123,7 +123,7 @@ protected:
     virtual bool predImpl(Species *s) {return true;}
 };
 
-/// The SpeciesVisitorLambda allows using C++11 lambda expressions to set the action to be performed on
+/// Allows using C++11 lambda expressions to set the action to be performed on
 /// each Species of the node and its descendent nodes
 class SpeciesVisitorLambda : public SpeciesVisitor {
 public:
@@ -174,7 +174,7 @@ protected:
 };
 
 
-/// The ReactionVisitorLambda allows using C++11 lambda expressions to set the action to be performed on
+/// Allows using C++11 lambda expressions to set the action to be performed on
 /// each Reaction of the node and its descendent nodes
 class ReactionVisitorLambda : public ReactionVisitor {
 public:

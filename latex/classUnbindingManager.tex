@@ -1,0 +1,195 @@
+\hypertarget{classUnbindingManager}{\section{Unbinding\+Manager Class Reference}
+\label{classUnbindingManager}\index{Unbinding\+Manager@{Unbinding\+Manager}}
+}
+
+
+Manager for all unbinding.  
+
+
+
+
+{\ttfamily \#include $<$Reaction\+Manager.\+h$>$}
+
+
+
+Inheritance diagram for Unbinding\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classUnbindingManager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Unbinding\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classUnbindingManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classUnbindingManager_a701803bce8134c0dff76f3e5af78c687}{Unbinding\+Manager} (vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ reactants, vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ products, float rate)
+\item 
+\hyperlink{classUnbindingManager_af1a852cd326b5f62e18e9389e2ee8b8c}{$\sim$\+Unbinding\+Manager} ()
+\item 
+virtual void \hyperlink{classUnbindingManager_a75a0b4e709bfb0787c8cec09b7255229}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classUnbindingManager_a94018a46f879c98bd8b82f832a07b92d}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two C\+Cylinders. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\+\_\+reactants}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} identifier vectors. \end{DoxyCompactList}\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\+\_\+products}
+\begin{DoxyCompactList}\small\item\em Products in this reaction. \end{DoxyCompactList}\item 
+float \hyperlink{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Rate of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\+\_\+ps} = 0
+\begin{DoxyCompactList}\small\item\em A subsystem pointer to initialize and call chemical callbacks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manager for all unbinding. 
+
+Definition at line 139 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classUnbindingManager_a701803bce8134c0dff76f3e5af78c687}{\index{Unbinding\+Manager@{Unbinding\+Manager}!Unbinding\+Manager@{Unbinding\+Manager}}
+\index{Unbinding\+Manager@{Unbinding\+Manager}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{Unbinding\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Unbinding\+Manager\+::\+Unbinding\+Manager (
+\begin{DoxyParamCaption}
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{reactants, }
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{products, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classUnbindingManager_a701803bce8134c0dff76f3e5af78c687}
+
+
+Definition at line 142 of file Reaction\+Manager.\+h.
+
+\hypertarget{classUnbindingManager_af1a852cd326b5f62e18e9389e2ee8b8c}{\index{Unbinding\+Manager@{Unbinding\+Manager}!````~Unbinding\+Manager@{$\sim$\+Unbinding\+Manager}}
+\index{````~Unbinding\+Manager@{$\sim$\+Unbinding\+Manager}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{$\sim$\+Unbinding\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Unbinding\+Manager\+::$\sim$\+Unbinding\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classUnbindingManager_af1a852cd326b5f62e18e9389e2ee8b8c}
+
+
+Definition at line 145 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classUnbindingManager_a75a0b4e709bfb0787c8cec09b7255229}{\index{Unbinding\+Manager@{Unbinding\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Unbinding\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classUnbindingManager_a75a0b4e709bfb0787c8cec09b7255229}
+
+
+Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. 
+
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_a45f1ff9c676e41db408669ab6c5242e9}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 659 of file Reaction\+Manager.\+cpp.
+
+
+
+References Unbinding\+Callback\+::\+\_\+s1, C\+Cylinder\+::add\+Internal\+Reaction(), B\+A\+S\+I\+C\+U\+N\+B\+I\+N\+D\+I\+N\+G, B\+U\+L\+K, D\+I\+F\+F\+U\+S\+I\+N\+G, Compartment\+::find\+Species\+By\+Molecule(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Compartment(), C\+Cylinder\+::get\+Size(), Compartment\+Grid\+::instance(), L\+I\+N\+K\+E\+R, L\+I\+N\+K\+E\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G, M\+O\+T\+O\+R, M\+O\+T\+O\+R\+U\+N\+B\+I\+N\+D\+I\+N\+G, Reaction\+Base\+::set\+Reaction\+Type(), C\+Monomer\+::species\+Bound(), C\+Monomer\+::species\+Linker(), and C\+Monomer\+::species\+Motor().
+
+\hypertarget{classUnbindingManager_a94018a46f879c98bd8b82f832a07b92d}{\index{Unbinding\+Manager@{Unbinding\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Unbinding\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc1, }
+\item[{{\bf C\+Cylinder} $\ast$}]{cc2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classUnbindingManager_a94018a46f879c98bd8b82f832a07b92d}
+
+
+Add this chemical reaction cross two C\+Cylinders. 
+
+\begin{DoxyNote}{Note}
+assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 148 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\index{Unbinding\+Manager@{Unbinding\+Manager}!\+\_\+products@{\+\_\+products}}
+\index{\+\_\+products@{\+\_\+products}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{\+\_\+products}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+products\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}
+
+
+Products in this reaction. 
+
+
+
+Definition at line 54 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\index{Unbinding\+Manager@{Unbinding\+Manager}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System} $\ast$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+ps = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}
+
+
+A subsystem pointer to initialize and call chemical callbacks. 
+
+
+
+Definition at line 50 of file Reaction\+Manager.\+h.
+
+
+
+Referenced by Simple\+Manager\+Impl\+::initialize().
+
+\hypertarget{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\index{Unbinding\+Manager@{Unbinding\+Manager}!\+\_\+rate@{\+\_\+rate}}
+\index{\+\_\+rate@{\+\_\+rate}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{\+\_\+rate}]{\setlength{\rightskip}{0pt plus 5cm}float Internal\+Filament\+Rxn\+Manager\+::\+\_\+rate\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}
+
+
+Rate of reaction. 
+
+
+
+Definition at line 56 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\index{Unbinding\+Manager@{Unbinding\+Manager}!\+\_\+reactants@{\+\_\+reactants}}
+\index{\+\_\+reactants@{\+\_\+reactants}!Unbinding\+Manager@{Unbinding\+Manager}}
+\subsubsection[{\+\_\+reactants}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+reactants\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}
+
+
+\hyperlink{classSpecies}{Species} identifier vectors. 
+
+Reactants in this reaction 
+
+Definition at line 53 of file Reaction\+Manager.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8h}{Reaction\+Manager.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8cpp}{Reaction\+Manager.\+cpp}\end{DoxyCompactItemize}

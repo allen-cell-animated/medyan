@@ -1,0 +1,199 @@
+\hypertarget{classDepolyPlusEndManager}{\section{Depoly\+Plus\+End\+Manager Class Reference}
+\label{classDepolyPlusEndManager}\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+}
+
+
+Manager for depolymerization at plus end.  
+
+
+
+
+{\ttfamily \#include $<$Reaction\+Manager.\+h$>$}
+
+
+
+Inheritance diagram for Depoly\+Plus\+End\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classDepolyPlusEndManager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Depoly\+Plus\+End\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classDepolyPlusEndManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classDepolyPlusEndManager_a928aca04c94403f31b60431c8b996847}{Depoly\+Plus\+End\+Manager} (vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ reactants, vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ products, float rate)
+\item 
+\hyperlink{classDepolyPlusEndManager_a262e63ed92a58c78205ac05b2b8fd1bf}{$\sim$\+Depoly\+Plus\+End\+Manager} ()
+\item 
+virtual void \hyperlink{classDepolyPlusEndManager_a2382f480f2ef9758533cd20cc0cfd0e5}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classDepolyPlusEndManager_af3f3348ebf1d614dc9b1fcfe8282201f}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two C\+Cylinders. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\+\_\+reactants}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} identifier vectors. \end{DoxyCompactList}\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\+\_\+products}
+\begin{DoxyCompactList}\small\item\em Products in this reaction. \end{DoxyCompactList}\item 
+float \hyperlink{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Rate of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\+\_\+ps} = 0
+\begin{DoxyCompactList}\small\item\em A subsystem pointer to initialize and call chemical callbacks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manager for depolymerization at plus end. 
+
+Definition at line 100 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classDepolyPlusEndManager_a928aca04c94403f31b60431c8b996847}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{Depoly\+Plus\+End\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Depoly\+Plus\+End\+Manager\+::\+Depoly\+Plus\+End\+Manager (
+\begin{DoxyParamCaption}
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{reactants, }
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{products, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classDepolyPlusEndManager_a928aca04c94403f31b60431c8b996847}
+
+
+Definition at line 103 of file Reaction\+Manager.\+h.
+
+\hypertarget{classDepolyPlusEndManager_a262e63ed92a58c78205ac05b2b8fd1bf}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!````~Depoly\+Plus\+End\+Manager@{$\sim$\+Depoly\+Plus\+End\+Manager}}
+\index{````~Depoly\+Plus\+End\+Manager@{$\sim$\+Depoly\+Plus\+End\+Manager}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{$\sim$\+Depoly\+Plus\+End\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Depoly\+Plus\+End\+Manager\+::$\sim$\+Depoly\+Plus\+End\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classDepolyPlusEndManager_a262e63ed92a58c78205ac05b2b8fd1bf}
+
+
+Definition at line 106 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classDepolyPlusEndManager_a2382f480f2ef9758533cd20cc0cfd0e5}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Depoly\+Plus\+End\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classDepolyPlusEndManager_a2382f480f2ef9758533cd20cc0cfd0e5}
+
+
+Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. 
+
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_a45f1ff9c676e41db408669ab6c5242e9}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 323 of file Reaction\+Manager.\+cpp.
+
+
+
+References C\+Cylinder\+::add\+Internal\+Reaction(), B\+U\+L\+K, D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N, D\+I\+F\+F\+U\+S\+I\+N\+G, Compartment\+::find\+Species\+By\+Molecule(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Compartment(), C\+Cylinder\+::get\+Cylinder(), Cylinder\+::get\+Filament(), C\+Cylinder\+::get\+Size(), Compartment\+Grid\+::instance(), Reaction\+Base\+::set\+Reaction\+Type(), C\+Monomer\+::species\+Bound(), C\+Monomer\+::species\+Filament(), and C\+Monomer\+::species\+Plus\+End().
+
+\hypertarget{classDepolyPlusEndManager_af3f3348ebf1d614dc9b1fcfe8282201f}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Depoly\+Plus\+End\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc1, }
+\item[{{\bf C\+Cylinder} $\ast$}]{cc2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classDepolyPlusEndManager_af3f3348ebf1d614dc9b1fcfe8282201f}
+
+
+Add this chemical reaction cross two C\+Cylinders. 
+
+\begin{DoxyNote}{Note}
+assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 474 of file Reaction\+Manager.\+cpp.
+
+
+
+References C\+Cylinder\+::add\+Cross\+Cylinder\+Reaction(), B\+U\+L\+K, D\+E\+P\+O\+L\+Y\+M\+E\+R\+I\+Z\+A\+T\+I\+O\+N, D\+I\+F\+F\+U\+S\+I\+N\+G, Compartment\+::find\+Species\+By\+Molecule(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Compartment(), C\+Cylinder\+::get\+Cylinder(), Cylinder\+::get\+Filament(), C\+Cylinder\+::get\+Size(), Compartment\+Grid\+::instance(), Reaction\+Base\+::set\+Reaction\+Type(), C\+Monomer\+::species\+Bound(), C\+Monomer\+::species\+Filament(), and C\+Monomer\+::species\+Plus\+End().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!\+\_\+products@{\+\_\+products}}
+\index{\+\_\+products@{\+\_\+products}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{\+\_\+products}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+products\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}
+
+
+Products in this reaction. 
+
+
+
+Definition at line 54 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System} $\ast$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+ps = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}
+
+
+A subsystem pointer to initialize and call chemical callbacks. 
+
+
+
+Definition at line 50 of file Reaction\+Manager.\+h.
+
+
+
+Referenced by Simple\+Manager\+Impl\+::initialize().
+
+\hypertarget{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!\+\_\+rate@{\+\_\+rate}}
+\index{\+\_\+rate@{\+\_\+rate}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{\+\_\+rate}]{\setlength{\rightskip}{0pt plus 5cm}float Internal\+Filament\+Rxn\+Manager\+::\+\_\+rate\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}
+
+
+Rate of reaction. 
+
+
+
+Definition at line 56 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\index{Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}!\+\_\+reactants@{\+\_\+reactants}}
+\index{\+\_\+reactants@{\+\_\+reactants}!Depoly\+Plus\+End\+Manager@{Depoly\+Plus\+End\+Manager}}
+\subsubsection[{\+\_\+reactants}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+reactants\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}
+
+
+\hyperlink{classSpecies}{Species} identifier vectors. 
+
+Reactants in this reaction 
+
+Definition at line 53 of file Reaction\+Manager.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8h}{Reaction\+Manager.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8cpp}{Reaction\+Manager.\+cpp}\end{DoxyCompactItemize}

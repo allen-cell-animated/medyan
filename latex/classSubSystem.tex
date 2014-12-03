@@ -1,0 +1,513 @@
+\hypertarget{classSubSystem}{\section{Sub\+System Class Reference}
+\label{classSubSystem}\index{Sub\+System@{Sub\+System}}
+}
+
+
+Manages all objects in the system, including \hyperlink{classFilament}{Filaments}, \hyperlink{classLinker}{Linkers}, and \hyperlink{classMotorGhost}{Motor\+Ghosts}.  
+
+
+
+
+{\ttfamily \#include $<$Sub\+System.\+h$>$}
+
+
+
+Collaboration diagram for Sub\+System\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classSubSystem__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSubSystem_af188159f69852d5383100f4498257166}{add\+Boundary} (\hyperlink{classBoundary}{Boundary} $\ast$boundary)
+\begin{DoxyCompactList}\small\item\em Add a boundary to this subsystem. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_a000317a5714fd01c6666b1eefaf93fbe}{add\+New\+Filaments} (vector$<$ vector$<$ vector$<$ double $>$$>$$>$ \&v)
+\begin{DoxyCompactList}\small\item\em Add new filaments. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_a094ae54ea558c3768cd0d682db4d73f5}{add\+New\+Filament} (vector$<$ vector$<$ double $>$$>$ \&v)
+\begin{DoxyCompactList}\small\item\em Add a new filament at runtime. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_ae70ef1e424504db17cbe5aefeb37f2ab}{remove\+Filament} (\hyperlink{classFilament}{Filament} $\ast$f)
+\begin{DoxyCompactList}\small\item\em Remove a filament from the system. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_adf05a391a38d960204fe11b5aa482f70}{add\+New\+Linkers} (vector$<$ vector$<$ \hyperlink{classCylinder}{Cylinder} $\ast$ $>$$>$ \&v, short linker\+Type)
+\begin{DoxyCompactList}\small\item\em Add a linker at initialization. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_a06f803275900f8fe1bec0b924ad6ea96}{add\+New\+Linker} (\hyperlink{classCylinder}{Cylinder} $\ast$c1, \hyperlink{classCylinder}{Cylinder} $\ast$c2, short linker\+Type, double position1, double position2)
+\begin{DoxyCompactList}\small\item\em Add a single linker during runtime. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_ab9855ef25754ca903fc8039646fc6175}{remove\+Linker} (\hyperlink{classLinker}{Linker} $\ast$l)
+\begin{DoxyCompactList}\small\item\em Remove a linker from the system. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_a0f9e863b6c639fe5ee2d321c24085146}{add\+New\+Motor\+Ghosts} (vector$<$ vector$<$ \hyperlink{classCylinder}{Cylinder} $\ast$ $>$$>$ \&v, short motor\+Type)
+\begin{DoxyCompactList}\small\item\em Add a motor at initialization. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_aeb47884d24b1e2f6df9225f75ae675f0}{add\+New\+Motor\+Ghost} (\hyperlink{classCylinder}{Cylinder} $\ast$c1, \hyperlink{classCylinder}{Cylinder} $\ast$c2, short motor\+Type, double position1, double position2)
+\begin{DoxyCompactList}\small\item\em Add a motor during runtime. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_acdfe4026f3baf5b09071f2abc687df9c}{remove\+Motor\+Ghost} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$m)
+\begin{DoxyCompactList}\small\item\em remove a motor ghost from the system \end{DoxyCompactList}\item 
+const unordered\+\_\+set$<$ \hyperlink{classMovable}{Movable} $\ast$ $>$ \& \hyperlink{classSubSystem_acac40388fed2315149a5e30a481f495c}{get\+Movables} ()
+\begin{DoxyCompactList}\small\item\em Get all movables in the subsystem. \end{DoxyCompactList}\item 
+const unordered\+\_\+set$<$ \hyperlink{classReactable}{Reactable} $\ast$ $>$ \& \hyperlink{classSubSystem_afc90cc477977cad9ba0d963eeacadc0a}{get\+Reactables} ()
+\begin{DoxyCompactList}\small\item\em Get all reactables in the subsystem. \end{DoxyCompactList}\item 
+int \hyperlink{classSubSystem_af7062aeb03076cfd96446921682381ac}{get\+System\+Size} ()
+\begin{DoxyCompactList}\small\item\em Return the number of beads in the system. \end{DoxyCompactList}\item 
+double \hyperlink{classSubSystem_ad36970bb95e0dc35b9b75de449c7f9cb}{get\+Sub\+System\+Energy} ()
+\item 
+\hyperlink{classBoundary}{Boundary} $\ast$ \hyperlink{classSubSystem_a969b757cf8d54ce0a6c491c3d3286faa}{get\+Boundary} ()
+\item 
+void \hyperlink{classSubSystem_ab17565f7dbc61ee5acdaacc829b359f1}{set\+Sub\+System\+Energy} (double energy)
+\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSubSystem_a08011422ab842179aef8db76e92698f1}{add\+Movable} (\hyperlink{classMovable}{Movable} $\ast$mov)
+\begin{DoxyCompactList}\small\item\em Setter functions for movables. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_ac523c7c0e590874bdafdef8fc1a85255}{remove\+Movable} (\hyperlink{classMovable}{Movable} $\ast$mov)
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classSubSystem_a6eabe25eb8ab69b96656c569de45aa71}{add\+Reactable} (\hyperlink{classReactable}{Reactable} $\ast$r)
+\begin{DoxyCompactList}\small\item\em Setter function for reactables. \end{DoxyCompactList}\item 
+void \hyperlink{classSubSystem_af09f92179b407453f016c1c133c6531a}{remove\+Reactable} (\hyperlink{classReactable}{Reactable} $\ast$r)
+\end{DoxyCompactItemize}
+
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classSubSystem_ad6f7f51491f99102870b8907926acc40}{\+\_\+energy} = 0
+\begin{DoxyCompactList}\small\item\em energy of subsystem \end{DoxyCompactList}\item 
+\hyperlink{classBoundary}{Boundary} $\ast$ \hyperlink{classSubSystem_a5500deb6aaeccd7418d264ff4e54484f}{\+\_\+boundary}
+\begin{DoxyCompactList}\small\item\em subsystem boundary \end{DoxyCompactList}\item 
+unordered\+\_\+set$<$ \hyperlink{classMovable}{Movable} $\ast$ $>$ \hyperlink{classSubSystem_a746593123598cdda62ba3d3c51d31111}{\+\_\+movables}
+\begin{DoxyCompactList}\small\item\em All movables in the subsystem. \end{DoxyCompactList}\item 
+unordered\+\_\+set$<$ \hyperlink{classReactable}{Reactable} $\ast$ $>$ \hyperlink{classSubSystem_af9ffdc91d0631686e9f433729a216858}{\+\_\+reactables}
+\begin{DoxyCompactList}\small\item\em All reactables in the subsystem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manages all objects in the system, including \hyperlink{classFilament}{Filaments}, \hyperlink{classLinker}{Linkers}, and \hyperlink{classMotorGhost}{Motor\+Ghosts}. 
+
+This is a class which handles all changes and information regarding the system. This class operates as a top manager and provides connections between smaller parts of the system. All creation and changes go through this class and will be redirected to lower levels. See databases for more documentation on the explicit creation of subsystem objects at initialization and during runtime. 
+
+Definition at line 40 of file Sub\+System.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSubSystem_af188159f69852d5383100f4498257166}{\index{Sub\+System@{Sub\+System}!add\+Boundary@{add\+Boundary}}
+\index{add\+Boundary@{add\+Boundary}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+Boundary}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+Boundary (
+\begin{DoxyParamCaption}
+\item[{{\bf Boundary} $\ast$}]{boundary}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_af188159f69852d5383100f4498257166}
+
+
+Add a boundary to this subsystem. 
+
+
+
+Definition at line 44 of file Sub\+System.\+h.
+
+
+
+References \+\_\+boundary.
+
+\hypertarget{classSubSystem_a08011422ab842179aef8db76e92698f1}{\index{Sub\+System@{Sub\+System}!add\+Movable@{add\+Movable}}
+\index{add\+Movable@{add\+Movable}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+Movable}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+Movable (
+\begin{DoxyParamCaption}
+\item[{{\bf Movable} $\ast$}]{mov}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_a08011422ab842179aef8db76e92698f1}
+
+
+Setter functions for movables. 
+
+
+
+Definition at line 72 of file Sub\+System.\+h.
+
+\hypertarget{classSubSystem_a094ae54ea558c3768cd0d682db4d73f5}{\index{Sub\+System@{Sub\+System}!add\+New\+Filament@{add\+New\+Filament}}
+\index{add\+New\+Filament@{add\+New\+Filament}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Filament (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ double $>$$>$ \&}]{v}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_a094ae54ea558c3768cd0d682db4d73f5}
+
+
+Add a new filament at runtime. 
+
+
+
+Definition at line 37 of file Sub\+System.\+cpp.
+
+
+
+References Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), tau(), mathfunc\+::\+Two\+Point\+Direction(), and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classSubSystem_a000317a5714fd01c6666b1eefaf93fbe}{\index{Sub\+System@{Sub\+System}!add\+New\+Filaments@{add\+New\+Filaments}}
+\index{add\+New\+Filaments@{add\+New\+Filaments}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Filaments}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Filaments (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ vector$<$ double $>$$>$$>$ \&}]{v}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_a000317a5714fd01c6666b1eefaf93fbe}
+
+
+Add new filaments. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & -\/ coordinates of the first and last bead in the filament. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 23 of file Sub\+System.\+cpp.
+
+
+
+References Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), tau(), mathfunc\+::\+Two\+Point\+Direction(), and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classSubSystem_a06f803275900f8fe1bec0b924ad6ea96}{\index{Sub\+System@{Sub\+System}!add\+New\+Linker@{add\+New\+Linker}}
+\index{add\+New\+Linker@{add\+New\+Linker}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Linker (
+\begin{DoxyParamCaption}
+\item[{{\bf Cylinder} $\ast$}]{c1, }
+\item[{{\bf Cylinder} $\ast$}]{c2, }
+\item[{short}]{linker\+Type, }
+\item[{double}]{position1, }
+\item[{double}]{position2}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_a06f803275900f8fe1bec0b924ad6ea96}
+
+
+Add a single linker during runtime. 
+
+
+
+Definition at line 56 of file Sub\+System.\+cpp.
+
+
+
+Referenced by Linker\+Binding\+Callback\+::operator()().
+
+\hypertarget{classSubSystem_adf05a391a38d960204fe11b5aa482f70}{\index{Sub\+System@{Sub\+System}!add\+New\+Linkers@{add\+New\+Linkers}}
+\index{add\+New\+Linkers@{add\+New\+Linkers}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Linkers}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Linkers (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ {\bf Cylinder} $\ast$ $>$$>$ \&}]{v, }
+\item[{short}]{linker\+Type}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_adf05a391a38d960204fe11b5aa482f70}
+
+
+Add a linker at initialization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & -\/ vector of cylinders to connect to \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 51 of file Sub\+System.\+cpp.
+
+\hypertarget{classSubSystem_aeb47884d24b1e2f6df9225f75ae675f0}{\index{Sub\+System@{Sub\+System}!add\+New\+Motor\+Ghost@{add\+New\+Motor\+Ghost}}
+\index{add\+New\+Motor\+Ghost@{add\+New\+Motor\+Ghost}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Cylinder} $\ast$}]{c1, }
+\item[{{\bf Cylinder} $\ast$}]{c2, }
+\item[{short}]{motor\+Type, }
+\item[{double}]{position1, }
+\item[{double}]{position2}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_aeb47884d24b1e2f6df9225f75ae675f0}
+
+
+Add a motor during runtime. 
+
+
+
+Definition at line 69 of file Sub\+System.\+cpp.
+
+
+
+Referenced by Motor\+Binding\+Callback\+::operator()().
+
+\hypertarget{classSubSystem_a0f9e863b6c639fe5ee2d321c24085146}{\index{Sub\+System@{Sub\+System}!add\+New\+Motor\+Ghosts@{add\+New\+Motor\+Ghosts}}
+\index{add\+New\+Motor\+Ghosts@{add\+New\+Motor\+Ghosts}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+New\+Motor\+Ghosts}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+New\+Motor\+Ghosts (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ {\bf Cylinder} $\ast$ $>$$>$ \&}]{v, }
+\item[{short}]{motor\+Type}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_a0f9e863b6c639fe5ee2d321c24085146}
+
+
+Add a motor at initialization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & -\/ vector of cylinders to connect to \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 64 of file Sub\+System.\+cpp.
+
+\hypertarget{classSubSystem_a6eabe25eb8ab69b96656c569de45aa71}{\index{Sub\+System@{Sub\+System}!add\+Reactable@{add\+Reactable}}
+\index{add\+Reactable@{add\+Reactable}!Sub\+System@{Sub\+System}}
+\subsubsection[{add\+Reactable}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::add\+Reactable (
+\begin{DoxyParamCaption}
+\item[{{\bf Reactable} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_a6eabe25eb8ab69b96656c569de45aa71}
+
+
+Setter function for reactables. 
+
+
+
+Definition at line 83 of file Sub\+System.\+h.
+
+\hypertarget{classSubSystem_a969b757cf8d54ce0a6c491c3d3286faa}{\index{Sub\+System@{Sub\+System}!get\+Boundary@{get\+Boundary}}
+\index{get\+Boundary@{get\+Boundary}!Sub\+System@{Sub\+System}}
+\subsubsection[{get\+Boundary}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary}$\ast$ Sub\+System\+::get\+Boundary (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_a969b757cf8d54ce0a6c491c3d3286faa}
+
+
+Definition at line 96 of file Sub\+System.\+h.
+
+
+
+References \+\_\+boundary.
+
+\hypertarget{classSubSystem_acac40388fed2315149a5e30a481f495c}{\index{Sub\+System@{Sub\+System}!get\+Movables@{get\+Movables}}
+\index{get\+Movables@{get\+Movables}!Sub\+System@{Sub\+System}}
+\subsubsection[{get\+Movables}]{\setlength{\rightskip}{0pt plus 5cm}const unordered\+\_\+set$<${\bf Movable}$\ast$$>$\& Sub\+System\+::get\+Movables (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_acac40388fed2315149a5e30a481f495c}
+
+
+Get all movables in the subsystem. 
+
+
+
+Definition at line 79 of file Sub\+System.\+h.
+
+\hypertarget{classSubSystem_afc90cc477977cad9ba0d963eeacadc0a}{\index{Sub\+System@{Sub\+System}!get\+Reactables@{get\+Reactables}}
+\index{get\+Reactables@{get\+Reactables}!Sub\+System@{Sub\+System}}
+\subsubsection[{get\+Reactables}]{\setlength{\rightskip}{0pt plus 5cm}const unordered\+\_\+set$<${\bf Reactable}$\ast$$>$\& Sub\+System\+::get\+Reactables (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_afc90cc477977cad9ba0d963eeacadc0a}
+
+
+Get all reactables in the subsystem. 
+
+
+
+Definition at line 90 of file Sub\+System.\+h.
+
+\hypertarget{classSubSystem_ad36970bb95e0dc35b9b75de449c7f9cb}{\index{Sub\+System@{Sub\+System}!get\+Sub\+System\+Energy@{get\+Sub\+System\+Energy}}
+\index{get\+Sub\+System\+Energy@{get\+Sub\+System\+Energy}!Sub\+System@{Sub\+System}}
+\subsubsection[{get\+Sub\+System\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}double Sub\+System\+::get\+Sub\+System\+Energy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_ad36970bb95e0dc35b9b75de449c7f9cb}
+
+
+Definition at line 77 of file Sub\+System.\+cpp.
+
+
+
+References \+\_\+energy.
+
+\hypertarget{classSubSystem_af7062aeb03076cfd96446921682381ac}{\index{Sub\+System@{Sub\+System}!get\+System\+Size@{get\+System\+Size}}
+\index{get\+System\+Size@{get\+System\+Size}!Sub\+System@{Sub\+System}}
+\subsubsection[{get\+System\+Size}]{\setlength{\rightskip}{0pt plus 5cm}int Sub\+System\+::get\+System\+Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_af7062aeb03076cfd96446921682381ac}
+
+
+Return the number of beads in the system. 
+
+\hypertarget{classSubSystem_ae70ef1e424504db17cbe5aefeb37f2ab}{\index{Sub\+System@{Sub\+System}!remove\+Filament@{remove\+Filament}}
+\index{remove\+Filament@{remove\+Filament}!Sub\+System@{Sub\+System}}
+\subsubsection[{remove\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::remove\+Filament (
+\begin{DoxyParamCaption}
+\item[{{\bf Filament} $\ast$}]{f}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_ae70ef1e424504db17cbe5aefeb37f2ab}
+
+
+Remove a filament from the system. 
+
+
+
+Definition at line 48 of file Sub\+System.\+cpp.
+
+\hypertarget{classSubSystem_ab9855ef25754ca903fc8039646fc6175}{\index{Sub\+System@{Sub\+System}!remove\+Linker@{remove\+Linker}}
+\index{remove\+Linker@{remove\+Linker}!Sub\+System@{Sub\+System}}
+\subsubsection[{remove\+Linker}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::remove\+Linker (
+\begin{DoxyParamCaption}
+\item[{{\bf Linker} $\ast$}]{l}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_ab9855ef25754ca903fc8039646fc6175}
+
+
+Remove a linker from the system. 
+
+
+
+Definition at line 61 of file Sub\+System.\+cpp.
+
+
+
+Referenced by Unbinding\+Callback\+::operator()().
+
+\hypertarget{classSubSystem_acdfe4026f3baf5b09071f2abc687df9c}{\index{Sub\+System@{Sub\+System}!remove\+Motor\+Ghost@{remove\+Motor\+Ghost}}
+\index{remove\+Motor\+Ghost@{remove\+Motor\+Ghost}!Sub\+System@{Sub\+System}}
+\subsubsection[{remove\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::remove\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_acdfe4026f3baf5b09071f2abc687df9c}
+
+
+remove a motor ghost from the system 
+
+
+
+Definition at line 74 of file Sub\+System.\+cpp.
+
+
+
+Referenced by Unbinding\+Callback\+::operator()().
+
+\hypertarget{classSubSystem_ac523c7c0e590874bdafdef8fc1a85255}{\index{Sub\+System@{Sub\+System}!remove\+Movable@{remove\+Movable}}
+\index{remove\+Movable@{remove\+Movable}!Sub\+System@{Sub\+System}}
+\subsubsection[{remove\+Movable}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::remove\+Movable (
+\begin{DoxyParamCaption}
+\item[{{\bf Movable} $\ast$}]{mov}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_ac523c7c0e590874bdafdef8fc1a85255}
+
+
+Definition at line 73 of file Sub\+System.\+h.
+
+
+
+References \+\_\+movables.
+
+\hypertarget{classSubSystem_af09f92179b407453f016c1c133c6531a}{\index{Sub\+System@{Sub\+System}!remove\+Reactable@{remove\+Reactable}}
+\index{remove\+Reactable@{remove\+Reactable}!Sub\+System@{Sub\+System}}
+\subsubsection[{remove\+Reactable}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::remove\+Reactable (
+\begin{DoxyParamCaption}
+\item[{{\bf Reactable} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSubSystem_af09f92179b407453f016c1c133c6531a}
+
+
+Definition at line 84 of file Sub\+System.\+h.
+
+
+
+References \+\_\+reactables.
+
+\hypertarget{classSubSystem_ab17565f7dbc61ee5acdaacc829b359f1}{\index{Sub\+System@{Sub\+System}!set\+Sub\+System\+Energy@{set\+Sub\+System\+Energy}}
+\index{set\+Sub\+System\+Energy@{set\+Sub\+System\+Energy}!Sub\+System@{Sub\+System}}
+\subsubsection[{set\+Sub\+System\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}void Sub\+System\+::set\+Sub\+System\+Energy (
+\begin{DoxyParamCaption}
+\item[{double}]{energy}
+\end{DoxyParamCaption}
+)}}\label{classSubSystem_ab17565f7dbc61ee5acdaacc829b359f1}
+
+
+Definition at line 78 of file Sub\+System.\+cpp.
+
+
+
+References \+\_\+energy.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSubSystem_a5500deb6aaeccd7418d264ff4e54484f}{\index{Sub\+System@{Sub\+System}!\+\_\+boundary@{\+\_\+boundary}}
+\index{\+\_\+boundary@{\+\_\+boundary}!Sub\+System@{Sub\+System}}
+\subsubsection[{\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary}$\ast$ Sub\+System\+::\+\_\+boundary\hspace{0.3cm}{\ttfamily [private]}}}\label{classSubSystem_a5500deb6aaeccd7418d264ff4e54484f}
+
+
+subsystem boundary 
+
+
+
+Definition at line 101 of file Sub\+System.\+h.
+
+
+
+Referenced by add\+Boundary(), and get\+Boundary().
+
+\hypertarget{classSubSystem_ad6f7f51491f99102870b8907926acc40}{\index{Sub\+System@{Sub\+System}!\+\_\+energy@{\+\_\+energy}}
+\index{\+\_\+energy@{\+\_\+energy}!Sub\+System@{Sub\+System}}
+\subsubsection[{\+\_\+energy}]{\setlength{\rightskip}{0pt plus 5cm}double Sub\+System\+::\+\_\+energy = 0\hspace{0.3cm}{\ttfamily [private]}}}\label{classSubSystem_ad6f7f51491f99102870b8907926acc40}
+
+
+energy of subsystem 
+
+
+
+Definition at line 100 of file Sub\+System.\+h.
+
+
+
+Referenced by get\+Sub\+System\+Energy(), and set\+Sub\+System\+Energy().
+
+\hypertarget{classSubSystem_a746593123598cdda62ba3d3c51d31111}{\index{Sub\+System@{Sub\+System}!\+\_\+movables@{\+\_\+movables}}
+\index{\+\_\+movables@{\+\_\+movables}!Sub\+System@{Sub\+System}}
+\subsubsection[{\+\_\+movables}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+set$<${\bf Movable}$\ast$$>$ Sub\+System\+::\+\_\+movables\hspace{0.3cm}{\ttfamily [private]}}}\label{classSubSystem_a746593123598cdda62ba3d3c51d31111}
+
+
+All movables in the subsystem. 
+
+
+
+Definition at line 103 of file Sub\+System.\+h.
+
+
+
+Referenced by remove\+Movable().
+
+\hypertarget{classSubSystem_af9ffdc91d0631686e9f433729a216858}{\index{Sub\+System@{Sub\+System}!\+\_\+reactables@{\+\_\+reactables}}
+\index{\+\_\+reactables@{\+\_\+reactables}!Sub\+System@{Sub\+System}}
+\subsubsection[{\+\_\+reactables}]{\setlength{\rightskip}{0pt plus 5cm}unordered\+\_\+set$<${\bf Reactable}$\ast$$>$ Sub\+System\+::\+\_\+reactables\hspace{0.3cm}{\ttfamily [private]}}}\label{classSubSystem_af9ffdc91d0631686e9f433729a216858}
+
+
+All reactables in the subsystem. 
+
+
+
+Definition at line 104 of file Sub\+System.\+h.
+
+
+
+Referenced by remove\+Reactable().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{SubSystem_8h}{Sub\+System.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{SubSystem_8cpp}{Sub\+System.\+cpp}\end{DoxyCompactItemize}

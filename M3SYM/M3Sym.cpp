@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-/*! \mainpage The main page for the M3SYM software package
+/*! \mainpage M3SYM software package
  
  \section intro_sec Introduction
  

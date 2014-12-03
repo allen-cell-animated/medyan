@@ -42,7 +42,7 @@ public:
     
 };
 
-/// BoundaryElementNLContainer class holds a [BoundaryElementNeighborList](@ref BoundaryElementNeighborList).
+/// Holds a [BoundaryElementNeighborList](@ref BoundaryElementNeighborList).
 class BoundaryElementNLContainer {
     
 private:

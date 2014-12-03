@@ -1,0 +1,195 @@
+\hypertarget{classBoundaryCubic}{\section{Boundary\+Cubic Class Reference}
+\label{classBoundaryCubic}\index{Boundary\+Cubic@{Boundary\+Cubic}}
+}
+
+
+A cubic boundary implementation.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Impl.\+h$>$}
+
+
+
+Inheritance diagram for Boundary\+Cubic\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=164pt]{classBoundaryCubic__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Boundary\+Cubic\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classBoundaryCubic__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBoundaryCubic_abba330bb75d623c8fa0884eeea937e63}{Boundary\+Cubic} ()
+\begin{DoxyCompactList}\small\item\em Default constructor, this will create a cube with given corners at edges of current grid. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classBoundaryCubic_a07b7fc5d0d09b0ce39e92e6b4bd2a7a4}{within} (const vector$<$ double $>$ \&coordinates)
+\begin{DoxyCompactList}\small\item\em Check if coordinates are within boundary. \end{DoxyCompactList}\item 
+\hyperlink{Boundary_8h_a0099b369f2bc119c1b54728734b41132}{Boundary\+Shape} \hyperlink{classBoundary_a20d2121527b207eed35f6719393e3499}{get\+Shape} ()
+\begin{DoxyCompactList}\small\item\em Get shape of boundary. \end{DoxyCompactList}\item 
+const vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundarySurface}{Boundary\+Surface} $>$ $>$ \& \hyperlink{classBoundary_acfa6640f65c432e339108887913539eb}{get\+Boundary\+Surfaces} ()
+\begin{DoxyCompactList}\small\item\em Get boundary surfaces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundarySurface}{Boundary\+Surface} $>$ $>$ \hyperlink{classBoundary_abbac1843206a158e7d0a6e741cdc00c1}{\+\_\+boundary\+Surfaces}
+\begin{DoxyCompactList}\small\item\em Vector of boundary surfaces (could be different implementations) \end{DoxyCompactList}\item 
+\hyperlink{Boundary_8h_a0099b369f2bc119c1b54728734b41132}{Boundary\+Shape} \hyperlink{classBoundary_a04c10c9a7aea1924d779d392e29f94ff}{\+\_\+shape}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classBoundary}{Boundary} type of this boundary. \end{DoxyCompactList}\item 
+short \hyperlink{classBoundary_a96f2294e0c822ab216fe5ab7e17258c7}{\+\_\+n\+Dim}
+\begin{DoxyCompactList}\small\item\em Dimensionality of this boundary. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A cubic boundary implementation. 
+
+Definition at line 24 of file Boundary\+Impl.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBoundaryCubic_abba330bb75d623c8fa0884eeea937e63}{\index{Boundary\+Cubic@{Boundary\+Cubic}!Boundary\+Cubic@{Boundary\+Cubic}}
+\index{Boundary\+Cubic@{Boundary\+Cubic}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{Boundary\+Cubic}]{\setlength{\rightskip}{0pt plus 5cm}Boundary\+Cubic\+::\+Boundary\+Cubic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classBoundaryCubic_abba330bb75d623c8fa0884eeea937e63}
+
+
+Default constructor, this will create a cube with given corners at edges of current grid. 
+
+
+
+Definition at line 21 of file Boundary\+Impl.\+cpp.
+
+
+
+References Boundary\+::\+\_\+boundary\+Surfaces, Geometry\+Parameters\+::compartment\+Size\+X, Geometry\+Parameters\+::compartment\+Size\+Y, Geometry\+Parameters\+::compartment\+Size\+Z, Cube, System\+Parameters\+::\+Geometry(), Geometry\+Parameters\+::\+N\+X, Geometry\+Parameters\+::\+N\+Y, and Geometry\+Parameters\+::\+N\+Z.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBoundary_acfa6640f65c432e339108887913539eb}{\index{Boundary\+Cubic@{Boundary\+Cubic}!get\+Boundary\+Surfaces@{get\+Boundary\+Surfaces}}
+\index{get\+Boundary\+Surfaces@{get\+Boundary\+Surfaces}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{get\+Boundary\+Surfaces}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$unique\+\_\+ptr$<${\bf Boundary\+Surface}$>$ $>$\& Boundary\+::get\+Boundary\+Surfaces (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundary_acfa6640f65c432e339108887913539eb}
+
+
+Get boundary surfaces. 
+
+
+
+Definition at line 44 of file Boundary.\+h.
+
+
+
+References Boundary\+::\+\_\+boundary\+Surfaces.
+
+\hypertarget{classBoundary_a20d2121527b207eed35f6719393e3499}{\index{Boundary\+Cubic@{Boundary\+Cubic}!get\+Shape@{get\+Shape}}
+\index{get\+Shape@{get\+Shape}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{get\+Shape}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Shape} Boundary\+::get\+Shape (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundary_a20d2121527b207eed35f6719393e3499}
+
+
+Get shape of boundary. 
+
+
+
+Definition at line 42 of file Boundary.\+h.
+
+
+
+References Boundary\+::\+\_\+shape.
+
+\hypertarget{classBoundaryCubic_a07b7fc5d0d09b0ce39e92e6b4bd2a7a4}{\index{Boundary\+Cubic@{Boundary\+Cubic}!within@{within}}
+\index{within@{within}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{within}]{\setlength{\rightskip}{0pt plus 5cm}bool Boundary\+Cubic\+::within (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{coordinates}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classBoundaryCubic_a07b7fc5d0d09b0ce39e92e6b4bd2a7a4}
+
+
+Check if coordinates are within boundary. 
+
+
+
+Implements \hyperlink{classBoundary_aef1af10ace9eae30e86b6bd23087b3ff}{Boundary}.
+
+
+
+Definition at line 48 of file Boundary\+Impl.\+cpp.
+
+
+
+References Boundary\+::\+\_\+boundary\+Surfaces.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBoundary_abbac1843206a158e7d0a6e741cdc00c1}{\index{Boundary\+Cubic@{Boundary\+Cubic}!\+\_\+boundary\+Surfaces@{\+\_\+boundary\+Surfaces}}
+\index{\+\_\+boundary\+Surfaces@{\+\_\+boundary\+Surfaces}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{\+\_\+boundary\+Surfaces}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Boundary\+Surface}$>$ $>$ Boundary\+::\+\_\+boundary\+Surfaces\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_abbac1843206a158e7d0a6e741cdc00c1}
+
+
+Vector of boundary surfaces (could be different implementations) 
+
+
+
+Definition at line 33 of file Boundary.\+h.
+
+
+
+Referenced by Boundary\+Capsule\+::\+Boundary\+Capsule(), Boundary\+Cubic(), Boundary\+Spherical\+::\+Boundary\+Spherical(), Boundary\+::get\+Boundary\+Surfaces(), within(), Boundary\+Spherical\+::within(), and Boundary\+Capsule\+::within().
+
+\hypertarget{classBoundary_a96f2294e0c822ab216fe5ab7e17258c7}{\index{Boundary\+Cubic@{Boundary\+Cubic}!\+\_\+n\+Dim@{\+\_\+n\+Dim}}
+\index{\+\_\+n\+Dim@{\+\_\+n\+Dim}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{\+\_\+n\+Dim}]{\setlength{\rightskip}{0pt plus 5cm}short Boundary\+::\+\_\+n\+Dim\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_a96f2294e0c822ab216fe5ab7e17258c7}
+
+
+Dimensionality of this boundary. 
+
+
+
+Definition at line 35 of file Boundary.\+h.
+
+\hypertarget{classBoundary_a04c10c9a7aea1924d779d392e29f94ff}{\index{Boundary\+Cubic@{Boundary\+Cubic}!\+\_\+shape@{\+\_\+shape}}
+\index{\+\_\+shape@{\+\_\+shape}!Boundary\+Cubic@{Boundary\+Cubic}}
+\subsubsection[{\+\_\+shape}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Shape} Boundary\+::\+\_\+shape\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundary_a04c10c9a7aea1924d779d392e29f94ff}
+
+
+\hyperlink{classBoundary}{Boundary} type of this boundary. 
+
+
+
+Definition at line 34 of file Boundary.\+h.
+
+
+
+Referenced by Boundary\+::get\+Shape().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryImpl_8h}{Boundary\+Impl.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryImpl_8cpp}{Boundary\+Impl.\+cpp}\end{DoxyCompactItemize}

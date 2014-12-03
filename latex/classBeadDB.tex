@@ -1,0 +1,220 @@
+\hypertarget{classBeadDB}{\section{Bead\+D\+B Class Reference}
+\label{classBeadDB}\index{Bead\+D\+B@{Bead\+D\+B}}
+}
+
+
+A database for all \hyperlink{classBead}{Beads} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Bead\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Bead\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=174pt]{classBeadDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Bead\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classBeadDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBeadDB_a47d7b62ae87aeffb76e6ded2798188ac}{Bead\+D\+B} (const \hyperlink{classBeadDB}{Bead\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classBeadDB}{Bead\+D\+B} \& \hyperlink{classBeadDB_a7e9c6a6635a39aa7cb4f18c1103df01d}{operator=} (\hyperlink{classBeadDB}{Bead\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classBeadDB_a2c4d09dbcad9f65129308ae570583134}{add\+Bead} (\hyperlink{classBead}{Bead} $\ast$b)
+\begin{DoxyCompactList}\small\item\em Add a bead. \end{DoxyCompactList}\item 
+void \hyperlink{classBeadDB_aa5069d3136246c17201f3d49c3e96405}{remove\+Bead} (\hyperlink{classBead}{Bead} $\ast$b)
+\begin{DoxyCompactList}\small\item\em Remove a bead. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBeadDB}{Bead\+D\+B} $\ast$ \hyperlink{classBeadDB_a7a57dea5ef46dff11f7589d00d05a4c0}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get the instance of this singleton. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classBead}{Bead} $\ast$ $>$ \hyperlink{classBeadDB_a0312ccca7bb1de087f91481aec353d60}{bdb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBeadDB_ac25beed230d37dc184ca8c7e7b4ea087}{Bead\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBeadDB}{Bead\+D\+B} $\ast$ \hyperlink{classBeadDB_a99d68441bc8e90450f7d1fd6d65acd22}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database for all \hyperlink{classBead}{Beads} in the system. 
+
+This \hyperlink{classBeadDB}{Bead\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classBead}{Bead} objects, as well as some standard list functions and iterators. 
+
+Definition at line 30 of file Bead\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classBeadDB_a0312ccca7bb1de087f91481aec353d60}{\index{Bead\+D\+B@{Bead\+D\+B}!bdb@{bdb}}
+\index{bdb@{bdb}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{bdb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Bead}$\ast$$>$ {\bf Bead\+D\+B\+::bdb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classBeadDB_a0312ccca7bb1de087f91481aec353d60}
+
+
+Definition at line 32 of file Bead\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBeadDB_a47d7b62ae87aeffb76e6ded2798188ac}{\index{Bead\+D\+B@{Bead\+D\+B}!Bead\+D\+B@{Bead\+D\+B}}
+\index{Bead\+D\+B@{Bead\+D\+B}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{Bead\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Bead\+D\+B\+::\+Bead\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Bead\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classBeadDB_a47d7b62ae87aeffb76e6ded2798188ac}
+
+
+Copying is not allowed. 
+
+\hypertarget{classBeadDB_ac25beed230d37dc184ca8c7e7b4ea087}{\index{Bead\+D\+B@{Bead\+D\+B}!Bead\+D\+B@{Bead\+D\+B}}
+\index{Bead\+D\+B@{Bead\+D\+B}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{Bead\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Bead\+D\+B\+::\+Bead\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classBeadDB_ac25beed230d37dc184ca8c7e7b4ea087}
+
+
+Definition at line 57 of file Bead\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBeadDB_a2c4d09dbcad9f65129308ae570583134}{\index{Bead\+D\+B@{Bead\+D\+B}!add\+Bead@{add\+Bead}}
+\index{add\+Bead@{add\+Bead}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{add\+Bead}]{\setlength{\rightskip}{0pt plus 5cm}void Bead\+D\+B\+::add\+Bead (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBeadDB_a2c4d09dbcad9f65129308ae570583134}
+
+
+Add a bead. 
+
+
+
+Definition at line 51 of file Bead\+D\+B.\+h.
+
+
+
+Referenced by Bead\+::\+Bead().
+
+\hypertarget{classBeadDB_a7a57dea5ef46dff11f7589d00d05a4c0}{\index{Bead\+D\+B@{Bead\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Bead\+D\+B} $\ast$ Bead\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classBeadDB_a7a57dea5ef46dff11f7589d00d05a4c0}
+
+
+Get the instance of this singleton. 
+
+
+
+Definition at line 18 of file Bead\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Bead\+D\+B().
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), Bead\+::\+Bead(), C\+G\+Method\+::grad\+Aux\+Square(), C\+G\+Method\+::grad\+Dot\+Product(), C\+G\+Method\+::grad\+Square(), Fletcher\+Rieves\+::minimize(), Polak\+Ribiere\+::minimize(), C\+G\+Method\+::move\+Beads(), C\+G\+Method\+::move\+Beads\+Aux(), C\+G\+Method\+::print\+Forces(), C\+G\+Method\+::quadratic\+Line\+Search(), Force\+Field\+Manager\+::reset\+Forces(), Force\+Field\+Manager\+::reset\+Forces\+Aux(), C\+G\+Method\+::shift\+Gradient(), Boundary\+Element\+Neighbor\+List\+::update\+Neighbors(), and Bead\+::$\sim$\+Bead().
+
+\hypertarget{classBeadDB_a7e9c6a6635a39aa7cb4f18c1103df01d}{\index{Bead\+D\+B@{Bead\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Bead\+D\+B}\& Bead\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classBeadDB_a7e9c6a6635a39aa7cb4f18c1103df01d}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classBeadDB_aa5069d3136246c17201f3d49c3e96405}{\index{Bead\+D\+B@{Bead\+D\+B}!remove\+Bead@{remove\+Bead}}
+\index{remove\+Bead@{remove\+Bead}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{remove\+Bead}]{\setlength{\rightskip}{0pt plus 5cm}void Bead\+D\+B\+::remove\+Bead (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBeadDB_aa5069d3136246c17201f3d49c3e96405}
+
+
+Remove a bead. 
+
+
+
+Definition at line 53 of file Bead\+D\+B.\+h.
+
+
+
+Referenced by Bead\+::$\sim$\+Bead().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBeadDB_a99d68441bc8e90450f7d1fd6d65acd22}{\index{Bead\+D\+B@{Bead\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Bead\+D\+B} $\ast$ Bead\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classBeadDB_a99d68441bc8e90450f7d1fd6d65acd22}
+
+
+Singleton instance. 
+
+
+
+Definition at line 56 of file Bead\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Bead\+D\+B@{Bead\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Bead\+D\+B@{Bead\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BeadDB_8h}{Bead\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BeadDB_8cpp}{Bead\+D\+B.\+cpp}\end{DoxyCompactItemize}

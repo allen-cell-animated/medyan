@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A harmonic potential used by the [MotorStretching](@ref MotorStretching) template.
+/// A harmonic potential used by the [MotorStretching](@ref MotorGhostStretching) template.
 class MotorGhostStretchingHarmonic {
     
 public:

@@ -1,0 +1,112 @@
+\hypertarget{classFilamentStretchingHarmonic}{\section{Filament\+Stretching\+Harmonic Class Reference}
+\label{classFilamentStretchingHarmonic}\index{Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}}
+}
+
+
+A harmonic potential used by the \hyperlink{classFilamentStretching}{Filament\+Stretching} template.  
+
+
+
+
+{\ttfamily \#include $<$Filament\+Stretching\+Harmonic.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classFilamentStretchingHarmonic_aff23bb249779d685527d2c816e98bb2a}{energy} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double, double)
+\item 
+double \hyperlink{classFilamentStretchingHarmonic_a2abedb45d3a6e2af5aa5b1ff6169805a}{energy} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double, double, double)
+\item 
+void \hyperlink{classFilamentStretchingHarmonic_a68e2856173b29ab4c22103149bbb192f}{forces} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double, double)
+\item 
+void \hyperlink{classFilamentStretchingHarmonic_aae44c41221c571e3f12ad9f51b785547}{forces\+Aux} (\hyperlink{classBead}{Bead} $\ast$, \hyperlink{classBead}{Bead} $\ast$, double, double)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A harmonic potential used by the \hyperlink{classFilamentStretching}{Filament\+Stretching} template. 
+
+Definition at line 23 of file Filament\+Stretching\+Harmonic.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFilamentStretchingHarmonic_aff23bb249779d685527d2c816e98bb2a}{\index{Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}!energy@{energy}}
+\index{energy@{energy}!Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double Filament\+Stretching\+Harmonic\+::energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{double}]{k\+\_\+str, }
+\item[{double}]{L}
+\end{DoxyParamCaption}
+)}}\label{classFilamentStretchingHarmonic_aff23bb249779d685527d2c816e98bb2a}
+
+
+Definition at line 22 of file Filament\+Stretching\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate, and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classFilamentStretchingHarmonic_a2abedb45d3a6e2af5aa5b1ff6169805a}{\index{Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}!energy@{energy}}
+\index{energy@{energy}!Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double Filament\+Stretching\+Harmonic\+::energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{double}]{k\+\_\+str, }
+\item[{double}]{L, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)}}\label{classFilamentStretchingHarmonic_a2abedb45d3a6e2af5aa5b1ff6169805a}
+
+
+Definition at line 29 of file Filament\+Stretching\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate, Bead\+::force, and mathfunc\+::\+Two\+Point\+Distance\+Stretched().
+
+\hypertarget{classFilamentStretchingHarmonic_a68e2856173b29ab4c22103149bbb192f}{\index{Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}!forces@{forces}}
+\index{forces@{forces}!Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}}
+\subsubsection[{forces}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+Stretching\+Harmonic\+::forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{double}]{k\+\_\+str, }
+\item[{double}]{L}
+\end{DoxyParamCaption}
+)}}\label{classFilamentStretchingHarmonic_a68e2856173b29ab4c22103149bbb192f}
+
+
+Definition at line 35 of file Filament\+Stretching\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate, Bead\+::force, and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classFilamentStretchingHarmonic_aae44c41221c571e3f12ad9f51b785547}{\index{Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}!forces\+Aux@{forces\+Aux}}
+\index{forces\+Aux@{forces\+Aux}!Filament\+Stretching\+Harmonic@{Filament\+Stretching\+Harmonic}}
+\subsubsection[{forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+Stretching\+Harmonic\+::forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b1, }
+\item[{{\bf Bead} $\ast$}]{b2, }
+\item[{double}]{k\+\_\+str, }
+\item[{double}]{L}
+\end{DoxyParamCaption}
+)}}\label{classFilamentStretchingHarmonic_aae44c41221c571e3f12ad9f51b785547}
+
+
+Definition at line 53 of file Filament\+Stretching\+Harmonic.\+cpp.
+
+
+
+References Bead\+::coordinate\+Aux, Bead\+::force\+Aux, and mathfunc\+::\+Two\+Point\+Distance().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentStretchingHarmonic_8h}{Filament\+Stretching\+Harmonic.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{FilamentStretchingHarmonic_8cpp}{Filament\+Stretching\+Harmonic.\+cpp}\end{DoxyCompactItemize}

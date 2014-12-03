@@ -1,4 +1,10 @@
-<map id="G" name="G">
-<area shape="rect" id="node5" href="$classSBulk.html" title="This class represent Bulk species that have no spatial component, i.e. are not connected to any Compa..." alt="" coords="11,155,65,181"/>
-<area shape="rect" id="node2" href="$classObject.html" title="Object" alt="" coords="9,5,68,32"/>
+<map id="Species" name="Species">
+<area shape="rect" id="node2" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="132,29,240,55"/>
+<area shape="rect" id="node5" href="$classSpeciesBulk.html" title="Used for Species without spatial information (i.e. well&#45;mixed in the container) " alt="" coords="139,79,233,104"/>
+<area shape="rect" id="node6" href="$classSpeciesDiffusing.html" title="Used for Species which can move spatially from one compartment to the neighboring one (i..." alt="" coords="126,128,246,153"/>
+<area shape="rect" id="node7" href="$classSpeciesFilament.html" title="Used for species that can be in a filament. " alt="" coords="126,177,246,203"/>
+<area shape="rect" id="node8" href="$classSpeciesMinusEnd.html" title="Used for a minus end species on a filament. " alt="" coords="122,227,250,252"/>
+<area shape="rect" id="node9" href="$classSpeciesPlusEnd.html" title="Used for a plus end species on a filament. " alt="" coords="127,276,245,301"/>
+<area shape="rect" id="node3" href="$classSpeciesLinker.html" title="Used for linker species that can be bound to a filament. " alt="" coords="298,5,403,31"/>
+<area shape="rect" id="node4" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="299,55,402,80"/>
 </map>

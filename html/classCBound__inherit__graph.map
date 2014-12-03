@@ -1,0 +1,4 @@
+<map id="CBound" name="CBound">
+<area shape="rect" id="node2" href="$classCLinker.html" title="To represent the chemical component of a Linker. " alt="" coords="5,79,73,104"/>
+<area shape="rect" id="node3" href="$classCMotorGhost.html" title="A class to represent the chemical component of a MotorGhost. " alt="" coords="97,79,197,104"/>
+</map>

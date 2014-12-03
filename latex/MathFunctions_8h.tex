@@ -1,0 +1,46 @@
+\hypertarget{MathFunctions_8h}{\section{M3\+S\+Y\+M/\+Math\+Functions.h File Reference}
+\label{MathFunctions_8h}\index{M3\+S\+Y\+M/\+Math\+Functions.\+h@{M3\+S\+Y\+M/\+Math\+Functions.\+h}}
+}
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+Include dependency graph for Math\+Functions.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{MathFunctions_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{MathFunctions_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacemathfunc}{mathfunc}
+\begin{DoxyCompactList}\small\item\em is used for the mathematics module for the entire codebase mathfunc includes functions to calculate distances, products, and midpoints \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{namespacemathfunc_a43b9be958a97530eba2073e9816881eb}{mathfunc\+::\+Two\+Point\+Distance} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2)
+\begin{DoxyCompactList}\small\item\em Compute distance between two points with coordinates\+: (x1,y1,z1) and (x2,y2,z3);. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a79cd843c8fc2ad6513a091c86744e9f4}{mathfunc\+::\+Two\+Point\+Distance\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, double d)
+\begin{DoxyCompactList}\small\item\em Compute distance between two points with coordinates (x1 -\/d$\ast$p1x,y1-\/d$\ast$p1y,z1-\/d$\ast$p1z) and (x2-\/d$\ast$p2x,y2-\/d$\ast$p2y,z2-\/d$\ast$p2z) \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_aa45b754771ac16d546864a1a7fb9bf59}{mathfunc\+::\+Two\+Point\+Direction} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2)
+\begin{DoxyCompactList}\small\item\em Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2);. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a003be58c2f6df9098c88b2ae33d5b5d4}{mathfunc\+::\+Scalar\+Product} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&v4)
+\begin{DoxyCompactList}\small\item\em Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a3dffb1288c676c7809d4a6caae9601bb}{mathfunc\+::\+Scalar\+Product\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&p3, const vector$<$ double $>$ \&v4, const vector$<$ double $>$ \&p4, double d)
+\begin{DoxyCompactList}\small\item\em Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) but with x-\/d$\ast$p coordinates. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_a1781854650a2eb9e2d88ad0ee14a8a69}{mathfunc\+::\+Next\+Point\+Projection} (const vector$<$ double $>$ \&coordinate, double d, const vector$<$ double $>$ \&\hyperlink{common_8h_abca55e6a21e0401c42bfb5da79ad3ad5}{tau})
+\begin{DoxyCompactList}\small\item\em Projection of a new point based on a given direction and starting point. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_a5c9392edbc56add20a4f95d7406a6757}{mathfunc\+::\+Mid\+Point\+Coordinate} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, double alpha)
+\begin{DoxyCompactList}\small\item\em Returns coordinates of a point v located on a line between v1 and v2. $\vert$v-\/v1$\vert$/$\vert$v2-\/v$\vert$ = alpha. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_aaaf523827e15939d17307f0c3724973c}{mathfunc\+::\+Mid\+Point\+Coordinate\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, double alpha, double d)
+\begin{DoxyCompactList}\small\item\em Returns coordinates of a point v located on a line between v1 and v2. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a4f2e296612642f3ac1b4789f85b02c41}{mathfunc\+::\+Two\+Segment\+Distance} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&v4)
+\begin{DoxyCompactList}\small\item\em Function to calculate a diatance between two segments. \end{DoxyCompactList}\end{DoxyCompactItemize}

@@ -1,0 +1,65 @@
+\hypertarget{Signaling_8h}{\section{M3\+S\+Y\+M/\+Signaling.h File Reference}
+\label{Signaling_8h}\index{M3\+S\+Y\+M/\+Signaling.\+h@{M3\+S\+Y\+M/\+Signaling.\+h}}
+}
+{\ttfamily \#include $<$memory$>$}\\*
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\\*
+{\ttfamily \#include $<$functional$>$}\\*
+{\ttfamily \#include $<$cassert$>$}\\*
+{\ttfamily \#include $<$boost/signals2/signal.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/connection.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/signals2/shared\+\_\+connection\+\_\+block.\+hpp$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+Include dependency graph for Signaling.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Signaling_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=229pt]{Signaling_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classChemSignal}{Chem\+Signal}
+\begin{DoxyCompactList}\small\item\em Manages callbacks for \hyperlink{classRSpecies}{R\+Species} and Reactions objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \\*
+boost\+::signals2\+::signal$<$ void(\hyperlink{classRSpecies}{R\+Species} \\*
+$\ast$, int)$>$ \hyperlink{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}{R\+Species\+Copy\+N\+Changed\+Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classRSpecies}{R\+Species} signal object that will be called by \hyperlink{classChemSignal}{Chem\+Signal}, usually when requested by the reaction simulation algorithm. \end{DoxyCompactList}\item 
+typedef \\*
+boost\+::signals2\+::signal$<$ void(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ \hyperlink{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}{Reaction\+Event\+Signal}
+\begin{DoxyCompactList}\small\item\em This is a \hyperlink{classReaction}{Reaction} signal object that will be called by \hyperlink{classChemSignal}{Chem\+Signal}, usually when requested by the reaction simulation algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}{\index{Signaling.\+h@{Signaling.\+h}!Reaction\+Event\+Signal@{Reaction\+Event\+Signal}}
+\index{Reaction\+Event\+Signal@{Reaction\+Event\+Signal}!Signaling.\+h@{Signaling.\+h}}
+\subsubsection[{Reaction\+Event\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\+::signals2\+::signal$<$void ({\bf Reaction\+Base} $\ast$)$>$ {\bf Reaction\+Event\+Signal}}}\label{Signaling_8h_a474e8de96ad1d2e184edd4655b5367a5}
+
+
+This is a \hyperlink{classReaction}{Reaction} signal object that will be called by \hyperlink{classChemSignal}{Chem\+Signal}, usually when requested by the reaction simulation algorithm. 
+
+
+
+Definition at line 38 of file Signaling.\+h.
+
+\hypertarget{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}{\index{Signaling.\+h@{Signaling.\+h}!R\+Species\+Copy\+N\+Changed\+Signal@{R\+Species\+Copy\+N\+Changed\+Signal}}
+\index{R\+Species\+Copy\+N\+Changed\+Signal@{R\+Species\+Copy\+N\+Changed\+Signal}!Signaling.\+h@{Signaling.\+h}}
+\subsubsection[{R\+Species\+Copy\+N\+Changed\+Signal}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\+::signals2\+::signal$<$void ({\bf R\+Species} $\ast$, int)$>$ {\bf R\+Species\+Copy\+N\+Changed\+Signal}}}\label{Signaling_8h_a0e8f1e8752c518bbfbcfe0147eca4587}
+
+
+This is a \hyperlink{classRSpecies}{R\+Species} signal object that will be called by \hyperlink{classChemSignal}{Chem\+Signal}, usually when requested by the reaction simulation algorithm. 
+
+
+
+Definition at line 30 of file Signaling.\+h.
+

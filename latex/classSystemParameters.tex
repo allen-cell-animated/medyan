@@ -1,0 +1,215 @@
+\hypertarget{classSystemParameters}{\section{System\+Parameters Class Reference}
+\label{classSystemParameters}\index{System\+Parameters@{System\+Parameters}}
+}
+
+
+Static class that holds all simulation parameters, initialized by the \hyperlink{classSystemParser}{System\+Parser}.  
+
+
+
+
+{\ttfamily \#include $<$System\+Parameters.\+h$>$}
+
+
+
+Collaboration diagram for System\+Parameters\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classSystemParameters__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+static const \hyperlink{structMechanicsParameters}{Mechanics\+Parameters} \& \hyperlink{classSystemParameters_a8099e2ebea135ea5d7c7e79d34600f52}{Mechanics} ()
+\begin{DoxyCompactList}\small\item\em Const getter. \end{DoxyCompactList}\item 
+static const \hyperlink{structChemistryParameters}{Chemistry\+Parameters} \& \hyperlink{classSystemParameters_a05c9527eb94d2cf4f164de3ef09afc4b}{Chemistry} ()
+\item 
+static const \hyperlink{structGeometryParameters}{Geometry\+Parameters} \& \hyperlink{classSystemParameters_a9211bca7e3422c076f4e9ba2dc29c599}{Geometry} ()
+\item 
+static const \hyperlink{structBoundaryParameters}{Boundary\+Parameters} \& \hyperlink{classSystemParameters_a6e73fd102a3699c854d9e503c1b75fc1}{Boundaries} ()
+\end{DoxyCompactItemize}
+
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{structMechanicsParameters}{Mechanics\+Parameters} \hyperlink{classSystemParameters_a6640957e85bee1d107f2c9e8e0f4ca9d}{M\+Params}
+\begin{DoxyCompactList}\small\item\em Public access if testing only. \end{DoxyCompactList}\item 
+static \hyperlink{structChemistryParameters}{Chemistry\+Parameters} \hyperlink{classSystemParameters_aca60412ffdeba39dd42733d8c7ce13a8}{C\+Params}
+\begin{DoxyCompactList}\small\item\em The chemistry parameters. \end{DoxyCompactList}\item 
+static \hyperlink{structGeometryParameters}{Geometry\+Parameters} \hyperlink{classSystemParameters_ae96aa9a5a7f9accf304a44349b97a5ed}{G\+Params}
+\begin{DoxyCompactList}\small\item\em The geometry parameters. \end{DoxyCompactList}\item 
+static \hyperlink{structBoundaryParameters}{Boundary\+Parameters} \hyperlink{classSystemParameters_a74866443b1beee882b4e053fa1120969}{B\+Params}
+\begin{DoxyCompactList}\small\item\em The boundary parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classSystemParameters_ac46a56866fc9d9abe5fc1b873c8c8cb8}{System\+Parser}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Static class that holds all simulation parameters, initialized by the \hyperlink{classSystemParser}{System\+Parser}. 
+
+Definition at line 114 of file System\+Parameters.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSystemParameters_a6e73fd102a3699c854d9e503c1b75fc1}{\index{System\+Parameters@{System\+Parameters}!Boundaries@{Boundaries}}
+\index{Boundaries@{Boundaries}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{Boundaries}]{\setlength{\rightskip}{0pt plus 5cm}static const {\bf Boundary\+Parameters}\& System\+Parameters\+::\+Boundaries (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{classSystemParameters_a6e73fd102a3699c854d9e503c1b75fc1}
+
+
+Definition at line 131 of file System\+Parameters.\+h.
+
+
+
+References B\+Params.
+
+
+
+Referenced by Cylinder\+Z\+::\+Cylinder\+Z(), Half\+Sphere\+Z\+::\+Half\+Sphere\+Z(), Controller\+::initialize(), Plane\+::\+Plane(), and Sphere\+::\+Sphere().
+
+\hypertarget{classSystemParameters_a05c9527eb94d2cf4f164de3ef09afc4b}{\index{System\+Parameters@{System\+Parameters}!Chemistry@{Chemistry}}
+\index{Chemistry@{Chemistry}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{Chemistry}]{\setlength{\rightskip}{0pt plus 5cm}static const {\bf Chemistry\+Parameters}\& System\+Parameters\+::\+Chemistry (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{classSystemParameters_a05c9527eb94d2cf4f164de3ef09afc4b}
+
+
+Definition at line 129 of file System\+Parameters.\+h.
+
+
+
+References C\+Params.
+
+
+
+Referenced by C\+Monomer\+::add\+Species\+Bound(), C\+Monomer\+::add\+Species\+Filament(), C\+Monomer\+::add\+Species\+Linker(), C\+Monomer\+::add\+Species\+Minus\+End(), C\+Monomer\+::add\+Species\+Motor(), C\+Monomer\+::add\+Species\+Plus\+End(), C\+Monomer\+::\+C\+Monomer(), C\+Monomer\+::print(), and C\+Cylinder\+::$\sim$\+C\+Cylinder().
+
+\hypertarget{classSystemParameters_a9211bca7e3422c076f4e9ba2dc29c599}{\index{System\+Parameters@{System\+Parameters}!Geometry@{Geometry}}
+\index{Geometry@{Geometry}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{Geometry}]{\setlength{\rightskip}{0pt plus 5cm}static const {\bf Geometry\+Parameters}\& System\+Parameters\+::\+Geometry (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{classSystemParameters_a9211bca7e3422c076f4e9ba2dc29c599}
+
+
+Definition at line 130 of file System\+Parameters.\+h.
+
+
+
+References G\+Params.
+
+
+
+Referenced by Sub\+System\+::add\+New\+Filament(), Sub\+System\+::add\+New\+Filaments(), Linker\+Binding\+Manager\+::add\+Reaction(), Motor\+Binding\+Manager\+::add\+Reaction(), Boundary\+Capsule\+::\+Boundary\+Capsule(), Boundary\+Cubic\+::\+Boundary\+Cubic(), Boundary\+Spherical\+::\+Boundary\+Spherical(), Cylinder\+::\+Cylinder(), Filament\+::depolymerize\+Back(), Filament\+::depolymerize\+Front(), Filament\+::extend\+Back(), Filament\+::extend\+Front(), Filament\+::\+Filament(), Controller\+::initialize(), G\+Controller\+::initialize\+Grid(), Linker\+::\+Linker(), Motor\+Ghost\+::\+Motor\+Ghost(), Linker\+Binding\+Callback\+::operator()(), Motor\+Binding\+Callback\+::operator()(), Motor\+Walking\+Forward\+Callback\+::operator()(), Motor\+Walking\+Backward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Backward\+Callback\+::operator()(), Filament\+::polymerize\+Back(), Filament\+::polymerize\+Front(), System\+Parser\+::read\+Boundary\+Parameters(), M\+Cylinder\+::set\+Eq\+Length(), Filament\+::straight\+Filament\+Projection(), Cylinder\+Neighbor\+List\+::update\+Neighbors(), Filament\+::zig\+Zag\+Filament\+Projection(), Linker\+::$\sim$\+Linker(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+\hypertarget{classSystemParameters_a8099e2ebea135ea5d7c7e79d34600f52}{\index{System\+Parameters@{System\+Parameters}!Mechanics@{Mechanics}}
+\index{Mechanics@{Mechanics}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{Mechanics}]{\setlength{\rightskip}{0pt plus 5cm}static const {\bf Mechanics\+Parameters}\& System\+Parameters\+::\+Mechanics (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{classSystemParameters_a8099e2ebea135ea5d7c7e79d34600f52}
+
+
+Const getter. 
+
+
+
+Definition at line 128 of file System\+Parameters.\+h.
+
+
+
+Referenced by Linker\+::\+Linker(), M\+Cylinder\+::\+M\+Cylinder(), Motor\+Ghost\+::\+Motor\+Ghost(), and M\+Cylinder\+::set\+Eq\+Length().
+
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{classSystemParameters_ac46a56866fc9d9abe5fc1b873c8c8cb8}{\index{System\+Parameters@{System\+Parameters}!System\+Parser@{System\+Parser}}
+\index{System\+Parser@{System\+Parser}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{System\+Parser}]{\setlength{\rightskip}{0pt plus 5cm}friend class {\bf System\+Parser}\hspace{0.3cm}{\ttfamily [friend]}}}\label{classSystemParameters_ac46a56866fc9d9abe5fc1b873c8c8cb8}
+
+
+Definition at line 115 of file System\+Parameters.\+h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSystemParameters_a74866443b1beee882b4e053fa1120969}{\index{System\+Parameters@{System\+Parameters}!B\+Params@{B\+Params}}
+\index{B\+Params@{B\+Params}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{B\+Params}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Boundary\+Parameters} System\+Parameters\+::\+B\+Params\hspace{0.3cm}{\ttfamily [static]}}}\label{classSystemParameters_a74866443b1beee882b4e053fa1120969}
+
+
+The boundary parameters. 
+
+
+
+Definition at line 123 of file System\+Parameters.\+h.
+
+
+
+Referenced by Boundaries(), and System\+Parser\+::read\+Boundary\+Parameters().
+
+\hypertarget{classSystemParameters_aca60412ffdeba39dd42733d8c7ce13a8}{\index{System\+Parameters@{System\+Parameters}!C\+Params@{C\+Params}}
+\index{C\+Params@{C\+Params}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{C\+Params}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Chemistry\+Parameters} System\+Parameters\+::\+C\+Params\hspace{0.3cm}{\ttfamily [static]}}}\label{classSystemParameters_aca60412ffdeba39dd42733d8c7ce13a8}
+
+
+The chemistry parameters. 
+
+
+
+Definition at line 121 of file System\+Parameters.\+h.
+
+
+
+Referenced by Chemistry(), and System\+Parser\+::read\+Chemistry\+Parameters().
+
+\hypertarget{classSystemParameters_ae96aa9a5a7f9accf304a44349b97a5ed}{\index{System\+Parameters@{System\+Parameters}!G\+Params@{G\+Params}}
+\index{G\+Params@{G\+Params}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{G\+Params}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Geometry\+Parameters} System\+Parameters\+::\+G\+Params\hspace{0.3cm}{\ttfamily [static]}}}\label{classSystemParameters_ae96aa9a5a7f9accf304a44349b97a5ed}
+
+
+The geometry parameters. 
+
+
+
+Definition at line 122 of file System\+Parameters.\+h.
+
+
+
+Referenced by Geometry(), and System\+Parser\+::read\+Geometry\+Parameters().
+
+\hypertarget{classSystemParameters_a6640957e85bee1d107f2c9e8e0f4ca9d}{\index{System\+Parameters@{System\+Parameters}!M\+Params@{M\+Params}}
+\index{M\+Params@{M\+Params}!System\+Parameters@{System\+Parameters}}
+\subsubsection[{M\+Params}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Mechanics\+Parameters} System\+Parameters\+::\+M\+Params\hspace{0.3cm}{\ttfamily [static]}}}\label{classSystemParameters_a6640957e85bee1d107f2c9e8e0f4ca9d}
+
+
+Public access if testing only. 
+
+The mechanical parameters 
+
+Definition at line 120 of file System\+Parameters.\+h.
+
+
+
+Referenced by System\+Parser\+::read\+Mechanics\+Parameters().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{SystemParameters_8h}{System\+Parameters.\+h}\item 
+M3\+S\+Y\+M/\hyperlink{SystemParameters_8cpp}{System\+Parameters.\+cpp}\end{DoxyCompactItemize}

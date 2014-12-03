@@ -1,0 +1,8 @@
+<map id="ChemSignal" name="ChemSignal">
+<area shape="rect" id="node3" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="222,155,326,180"/>
+<area shape="rect" id="node4" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="5,311,90,336"/>
+<area shape="rect" id="node5" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="229,361,319,387"/>
+<area shape="rect" id="node14" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="1284,205,1353,231"/>
+<area shape="rect" id="node13" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="874,161,952,187"/>
+<area shape="rect" id="node9" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="16,155,79,180"/>
+</map>

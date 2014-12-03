@@ -1,0 +1,262 @@
+\hypertarget{classMotorGhostDB}{\section{Motor\+Ghost\+D\+B Class Reference}
+\label{classMotorGhostDB}\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+}
+
+
+A database for all \hyperlink{classMotorGhost}{Motor\+Ghosts} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Motor\+Ghost\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Motor\+Ghost\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classMotorGhostDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Motor\+Ghost\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=246pt]{classMotorGhostDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMotorGhostDB_a3e610587b8c6f79b48d04d6215d8ca5d}{Motor\+Ghost\+D\+B} (const \hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} \& \hyperlink{classMotorGhostDB_aa2fda20af8075f3b9cce3e06b991ec88}{operator=} (\hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classMotorGhostDB_ab72c3ce3ac8110f4ba7446e82decb0d1}{add\+Motor\+Ghost} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$mg)
+\begin{DoxyCompactList}\small\item\em Add a motor ghost. \end{DoxyCompactList}\item 
+void \hyperlink{classMotorGhostDB_a5b6bd5a8bbb407d963ea729c44cd2a90}{remove\+Motor\+Ghost} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$mg)
+\begin{DoxyCompactList}\small\item\em Remove a motor ghost. \end{DoxyCompactList}\item 
+int \hyperlink{classMotorGhostDB_a1b346aebc03e8d74c7546623cdb6eb40}{get\+Motor\+I\+D} ()
+\begin{DoxyCompactList}\small\item\em Get current motor I\+D, and update the I\+D counter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} $\ast$ \hyperlink{classMotorGhostDB_a04496d897a1d4dd5bbf99295224938ff}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$ $>$ \hyperlink{classMotorGhostDB_aba9303a159c2a7c47299b005604a9fab}{mgdb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMotorGhostDB_a41b6fa66ce424e660cf21fb5f1473e41}{Motor\+Ghost\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{classMotorGhostDB_a6635d3851ef3644e1d3db269776d9344}{\+\_\+current\+Motor\+I\+D} = 0
+\begin{DoxyCompactList}\small\item\em To assign motor I\+Ds. \end{DoxyCompactList}\item 
+static \hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} $\ast$ \hyperlink{classMotorGhostDB_aa7624b432ffda929888975ee71cd2d84}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database for all \hyperlink{classMotorGhost}{Motor\+Ghosts} in the system. 
+
+This \hyperlink{classMotorGhostDB}{Motor\+Ghost\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classMotorGhost}{Motor\+Ghosts} objects, as well as some standard list functions and iterators. 
+
+Definition at line 29 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classMotorGhostDB_aba9303a159c2a7c47299b005604a9fab}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!mgdb@{mgdb}}
+\index{mgdb@{mgdb}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{mgdb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Motor\+Ghost}$\ast$$>$ {\bf Motor\+Ghost\+D\+B\+::mgdb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classMotorGhostDB_aba9303a159c2a7c47299b005604a9fab}
+
+
+Definition at line 31 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMotorGhostDB_a3e610587b8c6f79b48d04d6215d8ca5d}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{Motor\+Ghost\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Motor\+Ghost\+D\+B\+::\+Motor\+Ghost\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Motor\+Ghost\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classMotorGhostDB_a3e610587b8c6f79b48d04d6215d8ca5d}
+
+
+Copying is not allowed. 
+
+\hypertarget{classMotorGhostDB_a41b6fa66ce424e660cf21fb5f1473e41}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{Motor\+Ghost\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Motor\+Ghost\+D\+B\+::\+Motor\+Ghost\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classMotorGhostDB_a41b6fa66ce424e660cf21fb5f1473e41}
+
+
+Definition at line 60 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classMotorGhostDB_ab72c3ce3ac8110f4ba7446e82decb0d1}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!add\+Motor\+Ghost@{add\+Motor\+Ghost}}
+\index{add\+Motor\+Ghost@{add\+Motor\+Ghost}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{add\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}void Motor\+Ghost\+D\+B\+::add\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{mg}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMotorGhostDB_ab72c3ce3ac8110f4ba7446e82decb0d1}
+
+
+Add a motor ghost. 
+
+
+
+Definition at line 49 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+Referenced by Motor\+Ghost\+::\+Motor\+Ghost().
+
+\hypertarget{classMotorGhostDB_a1b346aebc03e8d74c7546623cdb6eb40}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!get\+Motor\+I\+D@{get\+Motor\+I\+D}}
+\index{get\+Motor\+I\+D@{get\+Motor\+I\+D}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{get\+Motor\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Motor\+Ghost\+D\+B\+::get\+Motor\+I\+D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMotorGhostDB_a1b346aebc03e8d74c7546623cdb6eb40}
+
+
+Get current motor I\+D, and update the I\+D counter. 
+
+
+
+Definition at line 54 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+References \+\_\+current\+Motor\+I\+D.
+
+
+
+Referenced by Motor\+Ghost\+::\+Motor\+Ghost().
+
+\hypertarget{classMotorGhostDB_a04496d897a1d4dd5bbf99295224938ff}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost\+D\+B} $\ast$ Motor\+Ghost\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classMotorGhostDB_a04496d897a1d4dd5bbf99295224938ff}
+
+
+Get instance. 
+
+
+
+Definition at line 19 of file Motor\+Ghost\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Motor\+Ghost\+D\+B().
+
+
+
+Referenced by Motor\+Ghost\+F\+F\+::compute\+Energy(), Motor\+Ghost\+F\+F\+::compute\+Forces(), Motor\+Ghost\+F\+F\+::compute\+Forces\+Aux(), Motor\+Ghost\+::\+Motor\+Ghost(), Output\+::print\+Basic\+Snapshot(), Controller\+::update\+System(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+\hypertarget{classMotorGhostDB_aa2fda20af8075f3b9cce3e06b991ec88}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost\+D\+B}\& Motor\+Ghost\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classMotorGhostDB_aa2fda20af8075f3b9cce3e06b991ec88}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classMotorGhostDB_a5b6bd5a8bbb407d963ea729c44cd2a90}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!remove\+Motor\+Ghost@{remove\+Motor\+Ghost}}
+\index{remove\+Motor\+Ghost@{remove\+Motor\+Ghost}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{remove\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}void Motor\+Ghost\+D\+B\+::remove\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{mg}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMotorGhostDB_a5b6bd5a8bbb407d963ea729c44cd2a90}
+
+
+Remove a motor ghost. 
+
+
+
+Definition at line 51 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+Referenced by Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classMotorGhostDB_a6635d3851ef3644e1d3db269776d9344}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!\+\_\+current\+Motor\+I\+D@{\+\_\+current\+Motor\+I\+D}}
+\index{\+\_\+current\+Motor\+I\+D@{\+\_\+current\+Motor\+I\+D}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{\+\_\+current\+Motor\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Motor\+Ghost\+D\+B\+::\+\_\+current\+Motor\+I\+D = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classMotorGhostDB_a6635d3851ef3644e1d3db269776d9344}
+
+
+To assign motor I\+Ds. 
+
+
+
+Definition at line 57 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+Referenced by get\+Motor\+I\+D().
+
+\hypertarget{classMotorGhostDB_aa7624b432ffda929888975ee71cd2d84}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost\+D\+B} $\ast$ Motor\+Ghost\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classMotorGhostDB_aa7624b432ffda929888975ee71cd2d84}
+
+
+Singleton instance. 
+
+
+
+Definition at line 59 of file Motor\+Ghost\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Motor\+Ghost\+D\+B@{Motor\+Ghost\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{MotorGhostDB_8h}{Motor\+Ghost\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{MotorGhostDB_8cpp}{Motor\+Ghost\+D\+B.\+cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,219 @@
+\hypertarget{classMController}{\section{M\+Controller Class Reference}
+\label{classMController}\index{M\+Controller@{M\+Controller}}
+}
+
+
+Used to initialize, control, and run the mechanical components of a simulation.  
+
+
+
+
+{\ttfamily \#include $<$M\+Controller.\+h$>$}
+
+
+
+Collaboration diagram for M\+Controller\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classMController__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMController_a526f67950e7cdabe20330264b22721d7}{M\+Controller} (\hyperlink{classSubSystem}{Sub\+System} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Constructor which sets a subsystem pointer. \end{DoxyCompactList}\item 
+void \hyperlink{classMController_a4187b5d2f2e2255af57c4525285058b0}{initialize} (\hyperlink{structMechanicsFFType}{Mechanics\+F\+F\+Type} force\+Fields, \hyperlink{structMechanicsAlgorithm}{Mechanics\+Algorithm} Minimizers)
+\begin{DoxyCompactList}\small\item\em Initialze the force fields and minimizers used. \end{DoxyCompactList}\item 
+void \hyperlink{classMController_ad120213292e23f5549d53fe2df3d2ffd}{run} ()
+\begin{DoxyCompactList}\small\item\em Run a minimization on the system using the chosen algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classMController_a3e935a48c92ced31df17bb724e90669c}{initialize\+F\+F} (\hyperlink{structMechanicsFFType}{Mechanics\+F\+F\+Type} \&force\+Fields)
+\begin{DoxyCompactList}\small\item\em Initialize the force-\/fields used in the simualtion. \end{DoxyCompactList}\item 
+void \hyperlink{classMController_ad19cdee04c861fa4fc173d0c10956548}{initialize\+Min\+Algorithms} (\hyperlink{structMechanicsAlgorithm}{Mechanics\+Algorithm} \&Minimizers)
+\begin{DoxyCompactList}\small\item\em Initialize the minimization algorithms used in the simulation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \hyperlink{classMController_ac3c4b1b840a877dcb713c7063d5c94b7}{\+\_\+\+F\+F\+Manager}
+\begin{DoxyCompactList}\small\item\em Container and methods for all force fields in system. \end{DoxyCompactList}\item 
+vector$<$ \hyperlink{classMinimizer}{Minimizer} $\ast$ $>$ \hyperlink{classMController_a332c6625d156824a3bdd5cb44b57c142}{\+\_\+minimizer\+Algorithms}
+\begin{DoxyCompactList}\small\item\em Vector with algorithms for system minimization. \end{DoxyCompactList}\item 
+\hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classMController_a638abd4c155c7bafde6b9bff76255f73}{\+\_\+sub\+System}
+\begin{DoxyCompactList}\small\item\em A pointer to the subsystem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to initialize, control, and run the mechanical components of a simulation. 
+
+Mechanical\+Controller is a class used by the \hyperlink{classSubSystem}{Sub\+System} to initialize \hyperlink{classForceField}{Force\+Fields}, given an initial selection of which force fields should be included. It can compute forces and energies over all force fields, as well as run energy \hyperlink{classMinimizer}{Minimization} algorithms. 
+
+Definition at line 39 of file M\+Controller.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMController_a526f67950e7cdabe20330264b22721d7}{\index{M\+Controller@{M\+Controller}!M\+Controller@{M\+Controller}}
+\index{M\+Controller@{M\+Controller}!M\+Controller@{M\+Controller}}
+\subsubsection[{M\+Controller}]{\setlength{\rightskip}{0pt plus 5cm}M\+Controller\+::\+M\+Controller (
+\begin{DoxyParamCaption}
+\item[{{\bf Sub\+System} $\ast$}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMController_a526f67950e7cdabe20330264b22721d7}
+
+
+Constructor which sets a subsystem pointer. 
+
+
+
+Definition at line 55 of file M\+Controller.\+h.
+
+
+
+References \+\_\+sub\+System.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classMController_a4187b5d2f2e2255af57c4525285058b0}{\index{M\+Controller@{M\+Controller}!initialize@{initialize}}
+\index{initialize@{initialize}!M\+Controller@{M\+Controller}}
+\subsubsection[{initialize}]{\setlength{\rightskip}{0pt plus 5cm}void M\+Controller\+::initialize (
+\begin{DoxyParamCaption}
+\item[{{\bf Mechanics\+F\+F\+Type}}]{force\+Fields, }
+\item[{{\bf Mechanics\+Algorithm}}]{Minimizers}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMController_a4187b5d2f2e2255af57c4525285058b0}
+
+
+Initialze the force fields and minimizers used. 
+
+
+
+Definition at line 58 of file M\+Controller.\+h.
+
+
+
+References initialize\+F\+F(), and initialize\+Min\+Algorithms().
+
+\hypertarget{classMController_a3e935a48c92ced31df17bb724e90669c}{\index{M\+Controller@{M\+Controller}!initialize\+F\+F@{initialize\+F\+F}}
+\index{initialize\+F\+F@{initialize\+F\+F}!M\+Controller@{M\+Controller}}
+\subsubsection[{initialize\+F\+F}]{\setlength{\rightskip}{0pt plus 5cm}void M\+Controller\+::initialize\+F\+F (
+\begin{DoxyParamCaption}
+\item[{{\bf Mechanics\+F\+F\+Type} \&}]{force\+Fields}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classMController_a3e935a48c92ced31df17bb724e90669c}
+
+
+Initialize the force-\/fields used in the simualtion. 
+
+
+
+Definition at line 26 of file M\+Controller.\+cpp.
+
+
+
+References \+\_\+\+F\+F\+Manager, Force\+Field\+Manager\+::\+\_\+force\+Fields, Mechanics\+F\+F\+Type\+::\+Boundary\+F\+F\+Type, Mechanics\+F\+F\+Type\+::\+F\+Bending\+Type, Mechanics\+F\+F\+Type\+::\+F\+Stretching\+Type, Mechanics\+F\+F\+Type\+::\+F\+Twisting\+Type, Mechanics\+F\+F\+Type\+::\+L\+Bending\+Type, Mechanics\+F\+F\+Type\+::\+L\+Stretching\+Type, Mechanics\+F\+F\+Type\+::\+L\+Twisting\+Type, Mechanics\+F\+F\+Type\+::\+M\+Bending\+Type, Mechanics\+F\+F\+Type\+::\+M\+Stretching\+Type, Mechanics\+F\+F\+Type\+::\+M\+Twisting\+Type, and Mechanics\+F\+F\+Type\+::\+Volume\+F\+F\+Type.
+
+
+
+Referenced by initialize().
+
+\hypertarget{classMController_ad19cdee04c861fa4fc173d0c10956548}{\index{M\+Controller@{M\+Controller}!initialize\+Min\+Algorithms@{initialize\+Min\+Algorithms}}
+\index{initialize\+Min\+Algorithms@{initialize\+Min\+Algorithms}!M\+Controller@{M\+Controller}}
+\subsubsection[{initialize\+Min\+Algorithms}]{\setlength{\rightskip}{0pt plus 5cm}void M\+Controller\+::initialize\+Min\+Algorithms (
+\begin{DoxyParamCaption}
+\item[{{\bf Mechanics\+Algorithm} \&}]{Minimizers}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classMController_ad19cdee04c861fa4fc173d0c10956548}
+
+
+Initialize the minimization algorithms used in the simulation. 
+
+
+
+Definition at line 65 of file M\+Controller.\+cpp.
+
+
+
+References \+\_\+minimizer\+Algorithms, and Mechanics\+Algorithm\+::\+Conjugate\+Gradient.
+
+
+
+Referenced by initialize().
+
+\hypertarget{classMController_ad120213292e23f5549d53fe2df3d2ffd}{\index{M\+Controller@{M\+Controller}!run@{run}}
+\index{run@{run}!M\+Controller@{M\+Controller}}
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}void M\+Controller\+::run (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classMController_ad120213292e23f5549d53fe2df3d2ffd}
+
+
+Run a minimization on the system using the chosen algorithm. 
+
+
+
+Definition at line 65 of file M\+Controller.\+h.
+
+
+
+References \+\_\+\+F\+F\+Manager, and \+\_\+minimizer\+Algorithms.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classMController_ac3c4b1b840a877dcb713c7063d5c94b7}{\index{M\+Controller@{M\+Controller}!\+\_\+\+F\+F\+Manager@{\+\_\+\+F\+F\+Manager}}
+\index{\+\_\+\+F\+F\+Manager@{\+\_\+\+F\+F\+Manager}!M\+Controller@{M\+Controller}}
+\subsubsection[{\+\_\+\+F\+F\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Force\+Field\+Manager} M\+Controller\+::\+\_\+\+F\+F\+Manager\hspace{0.3cm}{\ttfamily [private]}}}\label{classMController_ac3c4b1b840a877dcb713c7063d5c94b7}
+
+
+Container and methods for all force fields in system. 
+
+
+
+Definition at line 42 of file M\+Controller.\+h.
+
+
+
+Referenced by initialize\+F\+F(), and run().
+
+\hypertarget{classMController_a332c6625d156824a3bdd5cb44b57c142}{\index{M\+Controller@{M\+Controller}!\+\_\+minimizer\+Algorithms@{\+\_\+minimizer\+Algorithms}}
+\index{\+\_\+minimizer\+Algorithms@{\+\_\+minimizer\+Algorithms}!M\+Controller@{M\+Controller}}
+\subsubsection[{\+\_\+minimizer\+Algorithms}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Minimizer}$\ast$$>$ M\+Controller\+::\+\_\+minimizer\+Algorithms\hspace{0.3cm}{\ttfamily [private]}}}\label{classMController_a332c6625d156824a3bdd5cb44b57c142}
+
+
+Vector with algorithms for system minimization. 
+
+
+
+Definition at line 43 of file M\+Controller.\+h.
+
+
+
+Referenced by initialize\+Min\+Algorithms(), and run().
+
+\hypertarget{classMController_a638abd4c155c7bafde6b9bff76255f73}{\index{M\+Controller@{M\+Controller}!\+\_\+sub\+System@{\+\_\+sub\+System}}
+\index{\+\_\+sub\+System@{\+\_\+sub\+System}!M\+Controller@{M\+Controller}}
+\subsubsection[{\+\_\+sub\+System}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System}$\ast$ M\+Controller\+::\+\_\+sub\+System\hspace{0.3cm}{\ttfamily [private]}}}\label{classMController_a638abd4c155c7bafde6b9bff76255f73}
+
+
+A pointer to the subsystem. 
+
+
+
+Definition at line 45 of file M\+Controller.\+h.
+
+
+
+Referenced by M\+Controller().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{MController_8h}{M\+Controller.\+h}\item 
+M3\+S\+Y\+M/\hyperlink{MController_8cpp}{M\+Controller.\+cpp}\end{DoxyCompactItemize}

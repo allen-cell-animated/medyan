@@ -111,7 +111,7 @@ private:
 
 
 
-/// ChemGillespieImpl implements a slightly optimized version of the Gillespie algorithm.
+/// Implements a slightly optimized version of the Gillespie algorithm.
 
 /*! ChemGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects can be 
  *  added and removed from the ChemGillespieImpl instance. The propensities of all Reactions are cached, and they are 

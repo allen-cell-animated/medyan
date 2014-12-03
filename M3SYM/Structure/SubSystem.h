@@ -30,7 +30,7 @@ class Movable;
 class Reactable;
 
 
-/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker), and [Motors] (@ref Motor).
+/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker), and [MotorGhosts] (@ref MotorGhost).
 
 /*! This is a class which handles all changes and information regarding the system.
  *  This class operates as a top manager and provides connections between smaller parts of the system.

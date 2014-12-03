@@ -1,0 +1,225 @@
+\hypertarget{classSpeciesContainerIFace}{\section{Species\+Container\+I\+Face Class Reference}
+\label{classSpeciesContainerIFace}\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+}
+
+
+An abstract interface for a container of \hyperlink{classSpecies}{Species} objects.  
+
+
+
+
+{\ttfamily \#include $<$Species\+Container.\+h$>$}
+
+
+
+Inheritance diagram for Species\+Container\+I\+Face\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classSpeciesContainerIFace__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual size\+\_\+t \hyperlink{classSpeciesContainerIFace_a6ee46dc4246bcc68e74bc628dae79f08}{remove\+Species} (size\+\_\+t index)=0
+\begin{DoxyCompactList}\small\item\em Remove all \hyperlink{classSpecies}{Species} with the specified index from the container. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classSpeciesContainerIFace_a8909680d58ea288f4aa4ef7d177446ee}{remove\+Species} (const string \&name)=0
+\begin{DoxyCompactList}\small\item\em Remove all \hyperlink{classSpecies}{Species} with the specified name from the container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classSpecies}{Species} \& \hyperlink{classSpeciesContainerIFace_abcd9a5f6a32c957c07afbc2c3cccec62}{find\+Species} (const string \&name)=0
+\begin{DoxyCompactList}\small\item\em Return a reference to the first \hyperlink{classSpecies}{Species} having the specified name. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classSpeciesContainerIFace_aeb3bef4a9510ed94aecf3a8c5dad161e}{find\+Species\+Index} (const string \&name) const =0
+\begin{DoxyCompactList}\small\item\em Find the index of \hyperlink{classSpecies}{Species} with the specified name in the container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classSpecies}{Species} \& \hyperlink{classSpeciesContainerIFace_a91f57b7fff89426be885de142c03f09f}{find\+Species} (size\+\_\+t index)=0
+\begin{DoxyCompactList}\small\item\em Return a reference to \hyperlink{classSpecies}{Species} at the position index in the container. \end{DoxyCompactList}\item 
+virtual \hyperlink{classSpecies}{Species} \& \hyperlink{classSpeciesContainerIFace_a529a00b8ece0bede0e94e0c150579166}{find\+Similar\+Species} (const \hyperlink{classSpecies}{Species} \&s)=0
+\begin{DoxyCompactList}\small\item\em Return a reference to \hyperlink{classSpecies}{Species} which satisfies the equality operator with s. \end{DoxyCompactList}\item 
+virtual \hyperlink{classSpecies}{Species} \& \hyperlink{classSpeciesContainerIFace_a3c683e11b4af6e3fbd280a5aa027002e}{find\+Species\+By\+Molecule} (int molecule)=0
+\begin{DoxyCompactList}\small\item\em Return a reference to \hyperlink{classSpecies}{Species} matching the molecule field of \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classSpeciesContainerIFace_a41ad985794a396be719c2615da26e205}{are\+All\+Species\+Unique} () const =0
+\begin{DoxyCompactList}\small\item\em Return true, if all contained \hyperlink{classSpecies}{Species} are different from each other as determined by \hyperlink{classSpecies_a1ea8969c51bc69879891a408f9e197c7}{Species.\+get\+Molecule()} method. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classSpeciesContainerIFace_ab9e73c92f995528db474963722929706}{size} () const =0
+\begin{DoxyCompactList}\small\item\em Return the number of \hyperlink{classSpecies}{Species} in the container. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classSpeciesContainerIFace_a37b4a06dc47eb464124c9a7f688c89ec}{print\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Print all \hyperlink{classSpecies}{Species} in the container. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An abstract interface for a container of \hyperlink{classSpecies}{Species} objects. 
+
+Definition at line 214 of file Species\+Container.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSpeciesContainerIFace_a41ad985794a396be719c2615da26e205}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!are\+All\+Species\+Unique@{are\+All\+Species\+Unique}}
+\index{are\+All\+Species\+Unique@{are\+All\+Species\+Unique}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{are\+All\+Species\+Unique}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Species\+Container\+I\+Face\+::are\+All\+Species\+Unique (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a41ad985794a396be719c2615da26e205}
+
+
+Return true, if all contained \hyperlink{classSpecies}{Species} are different from each other as determined by \hyperlink{classSpecies_a1ea8969c51bc69879891a408f9e197c7}{Species.\+get\+Molecule()} method. 
+
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_af3750cae18347e9e01173e46256cccfe}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_a529a00b8ece0bede0e94e0c150579166}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!find\+Similar\+Species@{find\+Similar\+Species}}
+\index{find\+Similar\+Species@{find\+Similar\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{find\+Similar\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species}\& Species\+Container\+I\+Face\+::find\+Similar\+Species (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species} \&}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a529a00b8ece0bede0e94e0c150579166}
+
+
+Return a reference to \hyperlink{classSpecies}{Species} which satisfies the equality operator with s. 
+
+Otherwise, return a nullptr. \begin{DoxyNote}{Note}
+The first match is returned. 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_a358f0e8d1c4fc2fcc4646fa957ae3915}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_abcd9a5f6a32c957c07afbc2c3cccec62}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!find\+Species@{find\+Species}}
+\index{find\+Species@{find\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{find\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species}\& Species\+Container\+I\+Face\+::find\+Species (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_abcd9a5f6a32c957c07afbc2c3cccec62}
+
+
+Return a reference to the first \hyperlink{classSpecies}{Species} having the specified name. 
+
+\begin{DoxyNote}{Note}
+Throw an exception if the \hyperlink{classSpecies}{Species} is not found. 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_a7c8aadd03e72887a536627059e88e884}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_a91f57b7fff89426be885de142c03f09f}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!find\+Species@{find\+Species}}
+\index{find\+Species@{find\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{find\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species}\& Species\+Container\+I\+Face\+::find\+Species (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{index}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a91f57b7fff89426be885de142c03f09f}
+
+
+Return a reference to \hyperlink{classSpecies}{Species} at the position index in the container. 
+
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_a9551fbf577ee8d7e37fe3ad8d2d52fe9}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_a3c683e11b4af6e3fbd280a5aa027002e}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!find\+Species\+By\+Molecule@{find\+Species\+By\+Molecule}}
+\index{find\+Species\+By\+Molecule@{find\+Species\+By\+Molecule}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{find\+Species\+By\+Molecule}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species}\& Species\+Container\+I\+Face\+::find\+Species\+By\+Molecule (
+\begin{DoxyParamCaption}
+\item[{int}]{molecule}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a3c683e11b4af6e3fbd280a5aa027002e}
+
+
+Return a reference to \hyperlink{classSpecies}{Species} matching the molecule field of \hyperlink{classSpecies}{Species}. 
+
+Otherwise, return a nullptr. \begin{DoxyNote}{Note}
+The first match is returned. 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_ae6d2d4763abcebf7ffb1b3434b180c6a}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_aeb3bef4a9510ed94aecf3a8c5dad161e}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!find\+Species\+Index@{find\+Species\+Index}}
+\index{find\+Species\+Index@{find\+Species\+Index}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{find\+Species\+Index}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Species\+Container\+I\+Face\+::find\+Species\+Index (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_aeb3bef4a9510ed94aecf3a8c5dad161e}
+
+
+Find the index of \hyperlink{classSpecies}{Species} with the specified name in the container. 
+
+\begin{DoxyNote}{Note}
+The first match is returned. An exception is thrown if the \hyperlink{classSpecies}{Species} is not found. 
+\end{DoxyNote}
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_a872dadde95026895570ecfa7a6dd1c63}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_a37b4a06dc47eb464124c9a7f688c89ec}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!print\+Species@{print\+Species}}
+\index{print\+Species@{print\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{print\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Species\+Container\+I\+Face\+::print\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classSpeciesContainerIFace_a37b4a06dc47eb464124c9a7f688c89ec}
+
+
+Print all \hyperlink{classSpecies}{Species} in the container. 
+
+
+
+Reimplemented in \hyperlink{classSpeciesContainerVector_a31ca6c4ad5a07bad85d8eeb5209ba77b}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+
+
+Definition at line 248 of file Species\+Container.\+h.
+
+\hypertarget{classSpeciesContainerIFace_a6ee46dc4246bcc68e74bc628dae79f08}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!remove\+Species@{remove\+Species}}
+\index{remove\+Species@{remove\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{remove\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Species\+Container\+I\+Face\+::remove\+Species (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{index}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a6ee46dc4246bcc68e74bc628dae79f08}
+
+
+Remove all \hyperlink{classSpecies}{Species} with the specified index from the container. 
+
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_af6f9bbd7215300d4f1dabc636ceeb952}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_a8909680d58ea288f4aa4ef7d177446ee}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!remove\+Species@{remove\+Species}}
+\index{remove\+Species@{remove\+Species}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{remove\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Species\+Container\+I\+Face\+::remove\+Species (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_a8909680d58ea288f4aa4ef7d177446ee}
+
+
+Remove all \hyperlink{classSpecies}{Species} with the specified name from the container. 
+
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_a7d35f37815f070547b30666bede37dd7}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+\hypertarget{classSpeciesContainerIFace_ab9e73c92f995528db474963722929706}{\index{Species\+Container\+I\+Face@{Species\+Container\+I\+Face}!size@{size}}
+\index{size@{size}!Species\+Container\+I\+Face@{Species\+Container\+I\+Face}}
+\subsubsection[{size}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Species\+Container\+I\+Face\+::size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classSpeciesContainerIFace_ab9e73c92f995528db474963722929706}
+
+
+Return the number of \hyperlink{classSpecies}{Species} in the container. 
+
+
+
+Implemented in \hyperlink{classSpeciesContainerVector_ab78398f3bd86ae9b813973181ed705a1}{Species\+Container\+Vector$<$ Species\+Specific $>$}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{SpeciesContainer_8h}{Species\+Container.\+h}\end{DoxyCompactItemize}

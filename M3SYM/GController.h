@@ -18,7 +18,7 @@
 
 #include "common.h"
 
-///OutOfBoundsException is a exception to be thrown when an index/coordinate is out of bounds of the grid
+/// A exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public exception {
     
     virtual const char* what() const throw() {

@@ -1,0 +1,6 @@
+<map id="BoundarySpherical" name="BoundarySpherical">
+<area shape="rect" id="node2" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="71,665,149,691"/>
+<area shape="rect" id="node5" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="48,379,172,404"/>
+<area shape="rect" id="node8" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="46,92,173,117"/>
+<area shape="rect" id="node9" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="5,5,81,31"/>
+</map>

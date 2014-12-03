@@ -1,0 +1,628 @@
+\hypertarget{classFilament}{\section{Filament Class Reference}
+\label{classFilament}\index{Filament@{Filament}}
+}
+
+
+Used to store data about connectivity of \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads}.  
+
+
+
+
+{\ttfamily \#include $<$Filament.\+h$>$}
+
+
+
+Collaboration diagram for Filament\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classFilament__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classFilament_ad22c23046909ccd25aa3f5686ddcb7ca}{Filament} (\hyperlink{classSubSystem}{Sub\+System} $\ast$s, vector$<$ double $>$ \&position, vector$<$ double $>$ \&direction)
+\begin{DoxyCompactList}\small\item\em This constructor creates a short filament, containing only two beads. \end{DoxyCompactList}\item 
+\hyperlink{classFilament_a67bd4429c04b55ba15d33e005575d246}{Filament} (\hyperlink{classSubSystem}{Sub\+System} $\ast$s, vector$<$ vector$<$ double $>$$>$ \&position, int num\+Beads, string projection\+Type=\char`\"{}S\+T\+R\+A\+I\+G\+H\+T\char`\"{})
+\begin{DoxyCompactList}\small\item\em This constructor is called to create a longer filament. \end{DoxyCompactList}\item 
+\hyperlink{classFilament_ad3eab5cdf55ee70950c858f1950482e2}{$\sim$\+Filament} ()
+\begin{DoxyCompactList}\small\item\em This destructor is called when a filament is to be removed from the system. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_ad9eaad54c47ca8cf1a410925c4f68382}{extend\+Front} ()
+\begin{DoxyCompactList}\small\item\em Addition of a new cylinder (with the first bead = new bead b and last bead = empty\+: before\+: --x---x---o, after --x---x---\mbox{[}x---o\mbox{]}). \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a8e813887acd983efd12bf50e47698ffe}{extend\+Back} ()
+\begin{DoxyCompactList}\small\item\em Same as extension front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a4a4dccdbf9ce74a2875d7792a1b559f8}{extend\+Front} (vector$<$ double $>$ \&coordinates)
+\begin{DoxyCompactList}\small\item\em Extend, used for initialization. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a14900f226ef7247c9c4e7ebfe9ece49c}{extend\+Back} (vector$<$ double $>$ \&coordinates)
+\item 
+void \hyperlink{classFilament_a34794ceeb822c5e22df95db49fa8f652}{retract\+Front} ()
+\begin{DoxyCompactList}\small\item\em Retraction of front of a cylinder. Removes one cylinder and one bead from the front of filament. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a79c643bf0e0356ef210b6648474b1717}{retract\+Back} ()
+\begin{DoxyCompactList}\small\item\em Retraction of back of a cylinder. Removes a cylinder and bead from back of filament. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a52bea9c01a2223e979206c24217b32d8}{polymerize\+Front} ()
+\begin{DoxyCompactList}\small\item\em Polymerization of a filament front, which moves the leading bead one monomer length. Updates cylinder parameters accordingly. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_ad9bf612548f137fa1ad39a4cc8d856fb}{polymerize\+Back} ()
+\begin{DoxyCompactList}\small\item\em Same as Polymerization front, but moves the back bead one monomer length, and updates cylinder parameters accordingly. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a30aa18216b35d98f1e42416dc3ce3116}{depolymerize\+Front} ()
+\begin{DoxyCompactList}\small\item\em Depolymerization of a filament front, which moves the leading bead back one monomer length. Updates cylinder parameters accordingly. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a510f71d38622b7c906d5543f95558ad6}{depolymerize\+Back} ()
+\begin{DoxyCompactList}\small\item\em Same as depolymerization front, but moves the back bead forward one monomer length. Updates cylinder parameters accordingly. \end{DoxyCompactList}\item 
+deque$<$ \hyperlink{classCylinder}{Cylinder} $\ast$ $>$ \& \hyperlink{classFilament_a80d3daa595fba276f53f9838e2ef5022}{get\+Cylinder\+Vector} ()
+\begin{DoxyCompactList}\small\item\em Get vector of cylinders that this filament contains. \end{DoxyCompactList}\item 
+int \hyperlink{classFilament_aec7897128b659b5063675a26736860d3}{get\+I\+D} ()
+\begin{DoxyCompactList}\small\item\em Get I\+D. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_aecac31cfc73336f1be62b520261f1901}{print\+Chem\+Composition} ()
+\begin{DoxyCompactList}\small\item\em Print chemical composition of filament (for debugging only) \end{DoxyCompactList}\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classFilament_a77452b7100a3ce6205fff1ddbb5cb981}{reset\+Delta\+Plus\+End} ()
+\begin{DoxyCompactList}\small\item\em Reset delta. \end{DoxyCompactList}\item 
+void \hyperlink{classFilament_a68435f61aba67acf457cd1570180a4f3}{reset\+Delta\+Minus\+End} ()
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+short \hyperlink{classFilament_a6cced8194d751f3af57e664ff14e8f38}{get\+Delta\+Plus\+End} ()
+\begin{DoxyCompactList}\small\item\em Get delta. \end{DoxyCompactList}\item 
+short \hyperlink{classFilament_adb431809d8733d7b53dec1d438e2a42e}{get\+Delta\+Minus\+End} ()
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ double $>$ \hyperlink{classFilament_a96e6a97434a442014b199cd7623d2291}{next\+Bead\+Projection} (\hyperlink{classBead}{Bead} $\ast$b, double d, vector$<$ double $>$ director)
+\begin{DoxyCompactList}\small\item\em Projection function, returns a vector of coordinates for bead creation. \end{DoxyCompactList}\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_ade0776033b4e56f8035eda23c03887fa}{straight\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_a4809abeefb15e0009e246d4d4051ae7c}{zig\+Zag\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classFilament_aa552f866d4c2db6e987fa0b56e65f060}{arc\+Filament\+Projection} (vector$<$ vector$<$ double $>$$>$ \&v, int num\+Beads)
+\end{DoxyCompactItemize}
+
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+deque$<$ \hyperlink{classCylinder}{Cylinder} $\ast$ $>$ \hyperlink{classFilament_afb19e1c4608b762f04bdf74e12efa535}{\+\_\+cylinder\+Vector}
+\begin{DoxyCompactList}\small\item\em Vector of cylinders;. \end{DoxyCompactList}\item 
+\hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classFilament_acfb35439bafc3940ae7ffdbb68ae3144}{\+\_\+sub\+System}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSubSystem}{Sub\+System} pointer. \end{DoxyCompactList}\item 
+int \hyperlink{classFilament_a15071125666bbd624b9b290969872bdb}{\+\_\+\+I\+D}
+\begin{DoxyCompactList}\small\item\em Unique integer id of this filament. \end{DoxyCompactList}\item 
+short \hyperlink{classFilament_ab22323b878792e2c309417f9b8435c97}{\+\_\+delta\+Plus\+End} = 0
+\begin{DoxyCompactList}\small\item\em Change in filament's cylinders at plus end since last snapshot. \end{DoxyCompactList}\item 
+short \hyperlink{classFilament_ac00eb37c21190ce574738d7f5259cf58}{\+\_\+delta\+Minus\+End} = 0
+\begin{DoxyCompactList}\small\item\em Change in filament's cylinders at minus end since last snapshot. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to store data about connectivity of \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads}. 
+
+This class contains information about \hyperlink{classCylinder}{Cylinders} and \hyperlink{classBead}{Beads} connectivity. It has functionality to polymerize and depolymerize, as well as extend and retract by creating and deleting Cylinders and Beads in the system.
+
+A \hyperlink{classFilament}{Filament} can also be initialized as a number of shapes, including a zig zag and arc projection. 
+
+Definition at line 39 of file Filament.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFilament_ad22c23046909ccd25aa3f5686ddcb7ca}{\index{Filament@{Filament}!Filament@{Filament}}
+\index{Filament@{Filament}!Filament@{Filament}}
+\subsubsection[{Filament}]{\setlength{\rightskip}{0pt plus 5cm}Filament\+::\+Filament (
+\begin{DoxyParamCaption}
+\item[{{\bf Sub\+System} $\ast$}]{s, }
+\item[{vector$<$ double $>$ \&}]{position, }
+\item[{vector$<$ double $>$ \&}]{direction}
+\end{DoxyParamCaption}
+)}}\label{classFilament_ad22c23046909ccd25aa3f5686ddcb7ca}
+
+
+This constructor creates a short filament, containing only two beads. 
+
+Coordinates of the first bead is an input, second is set up by using an input direction. Using all this, two constructors for beads and cylinders are called. 
+
+Definition at line 24 of file Filament.\+cpp.
+
+
+
+References Filament\+D\+B\+::add\+Filament(), System\+Parameters\+::\+Geometry(), Filament\+D\+B\+::get\+Filament\+I\+D(), Filament\+D\+B\+::instance(), and mathfunc\+::\+Next\+Point\+Projection().
+
+\hypertarget{classFilament_a67bd4429c04b55ba15d33e005575d246}{\index{Filament@{Filament}!Filament@{Filament}}
+\index{Filament@{Filament}!Filament@{Filament}}
+\subsubsection[{Filament}]{\setlength{\rightskip}{0pt plus 5cm}Filament\+::\+Filament (
+\begin{DoxyParamCaption}
+\item[{{\bf Sub\+System} $\ast$}]{s, }
+\item[{vector$<$ vector$<$ double $>$$>$ \&}]{position, }
+\item[{int}]{num\+Beads, }
+\item[{string}]{projection\+Type = {\ttfamily \char`\"{}STRAIGHT\char`\"{}}}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a67bd4429c04b55ba15d33e005575d246}
+
+
+This constructor is called to create a longer filament. 
+
+It creates a filament with a number of beads num\+Beads. Filaments starts and ends in the point determined by position vector and has a direction direction. Number of beads is equal to the number of cylinders. The last cylinder doesnt have an end(second) bead and will not be pushed to cylinder vector, but will be stored in the \+\_\+p\+Last\+Cylinder; \hypertarget{classFilament_ad3eab5cdf55ee70950c858f1950482e2}{\index{Filament@{Filament}!````~Filament@{$\sim$\+Filament}}
+\index{````~Filament@{$\sim$\+Filament}!Filament@{Filament}}
+\subsubsection[{$\sim$\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}Filament\+::$\sim$\+Filament (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_ad3eab5cdf55ee70950c858f1950482e2}
+
+
+This destructor is called when a filament is to be removed from the system. 
+
+Removes all cylinders and beads associated with the filament. 
+
+Definition at line 72 of file Filament.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFilament_aa552f866d4c2db6e987fa0b56e65f060}{\index{Filament@{Filament}!arc\+Filament\+Projection@{arc\+Filament\+Projection}}
+\index{arc\+Filament\+Projection@{arc\+Filament\+Projection}!Filament@{Filament}}
+\subsubsection[{arc\+Filament\+Projection}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$vector$<$double$>$ $>$ Filament\+::arc\+Filament\+Projection (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ double $>$$>$ \&}]{v, }
+\item[{int}]{num\+Beads}
+\end{DoxyParamCaption}
+)}}\label{classFilament_aa552f866d4c2db6e987fa0b56e65f060}
+\hypertarget{classFilament_a510f71d38622b7c906d5543f95558ad6}{\index{Filament@{Filament}!depolymerize\+Back@{depolymerize\+Back}}
+\index{depolymerize\+Back@{depolymerize\+Back}!Filament@{Filament}}
+\subsubsection[{depolymerize\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::depolymerize\+Back (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a510f71d38622b7c906d5543f95558ad6}
+
+
+Same as depolymerization front, but moves the back bead forward one monomer length. Updates cylinder parameters accordingly. 
+
+
+
+Definition at line 253 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), M\+Cylinder\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), M\+Cylinder\+::set\+Eq\+Length(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Depolymerization\+Back\+Callback\+::operator()().
+
+\hypertarget{classFilament_a30aa18216b35d98f1e42416dc3ce3116}{\index{Filament@{Filament}!depolymerize\+Front@{depolymerize\+Front}}
+\index{depolymerize\+Front@{depolymerize\+Front}!Filament@{Filament}}
+\subsubsection[{depolymerize\+Front}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::depolymerize\+Front (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a30aa18216b35d98f1e42416dc3ce3116}
+
+
+Depolymerization of a filament front, which moves the leading bead back one monomer length. Updates cylinder parameters accordingly. 
+
+
+
+Definition at line 237 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), M\+Cylinder\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), M\+Cylinder\+::set\+Eq\+Length(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Depolymerization\+Front\+Callback\+::operator()().
+
+\hypertarget{classFilament_a8e813887acd983efd12bf50e47698ffe}{\index{Filament@{Filament}!extend\+Back@{extend\+Back}}
+\index{extend\+Back@{extend\+Back}!Filament@{Filament}}
+\subsubsection[{extend\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::extend\+Back (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a8e813887acd983efd12bf50e47698ffe}
+
+
+Same as extension front, but adds a new first cylinder with first bead = new bead and a second bead is equal to the firs bead in the cylynder, which used to be first. 
+
+
+
+Definition at line 149 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), Cylinder\+::get\+First\+Bead(), Bead\+::get\+Position\+Filament(), Cylinder\+::get\+Position\+Filament(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Extension\+Back\+Callback\+::operator()().
+
+\hypertarget{classFilament_a14900f226ef7247c9c4e7ebfe9ece49c}{\index{Filament@{Filament}!extend\+Back@{extend\+Back}}
+\index{extend\+Back@{extend\+Back}!Filament@{Filament}}
+\subsubsection[{extend\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::extend\+Back (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$ \&}]{coordinates}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a14900f226ef7247c9c4e7ebfe9ece49c}
+
+
+Definition at line 106 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), Cylinder\+::get\+First\+Bead(), Bead\+::get\+Position\+Filament(), Cylinder\+::get\+Position\+Filament(), mathfunc\+::\+Next\+Point\+Projection(), and mathfunc\+::\+Two\+Point\+Direction().
+
+\hypertarget{classFilament_ad9eaad54c47ca8cf1a410925c4f68382}{\index{Filament@{Filament}!extend\+Front@{extend\+Front}}
+\index{extend\+Front@{extend\+Front}!Filament@{Filament}}
+\subsubsection[{extend\+Front}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::extend\+Front (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_ad9eaad54c47ca8cf1a410925c4f68382}
+
+
+Addition of a new cylinder (with the first bead = new bead b and last bead = empty\+: before\+: --x---x---o, after --x---x---\mbox{[}x---o\mbox{]}). 
+
+Next position is based on previous beads directions in the filament. This function creates a new bead. So, this function mostly called during further extension, not initiation. 
+
+Definition at line 123 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), Cylinder\+::get\+First\+Bead(), Bead\+::get\+Position\+Filament(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), Cylinder\+::set\+Last(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Extension\+Front\+Callback\+::operator()().
+
+\hypertarget{classFilament_a4a4dccdbf9ce74a2875d7792a1b559f8}{\index{Filament@{Filament}!extend\+Front@{extend\+Front}}
+\index{extend\+Front@{extend\+Front}!Filament@{Filament}}
+\subsubsection[{extend\+Front}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::extend\+Front (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$ \&}]{coordinates}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a4a4dccdbf9ce74a2875d7792a1b559f8}
+
+
+Extend, used for initialization. 
+
+
+
+Definition at line 87 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), Bead\+::get\+Position\+Filament(), Cylinder\+::get\+Second\+Bead(), mathfunc\+::\+Next\+Point\+Projection(), Cylinder\+::set\+Last(), and mathfunc\+::\+Two\+Point\+Direction().
+
+\hypertarget{classFilament_a80d3daa595fba276f53f9838e2ef5022}{\index{Filament@{Filament}!get\+Cylinder\+Vector@{get\+Cylinder\+Vector}}
+\index{get\+Cylinder\+Vector@{get\+Cylinder\+Vector}!Filament@{Filament}}
+\subsubsection[{get\+Cylinder\+Vector}]{\setlength{\rightskip}{0pt plus 5cm}deque$<${\bf Cylinder}$\ast$$>$\& Filament\+::get\+Cylinder\+Vector (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_a80d3daa595fba276f53f9838e2ef5022}
+
+
+Get vector of cylinders that this filament contains. 
+
+
+
+Definition at line 94 of file Filament.\+h.
+
+
+
+References \+\_\+cylinder\+Vector.
+
+
+
+Referenced by Filament\+Stretching$<$ F\+Stretching\+Interaction\+Type $>$\+::compute\+Energy(), Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Energy(), Filament\+Stretching$<$ F\+Stretching\+Interaction\+Type $>$\+::compute\+Forces(), Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Forces(), Filament\+Stretching$<$ F\+Stretching\+Interaction\+Type $>$\+::compute\+Forces\+Aux(), Filament\+Bending$<$ F\+Bending\+Interaction\+Type $>$\+::compute\+Forces\+Aux(), and Simple\+Manager\+Impl\+::initialize\+C\+Cylinder().
+
+\hypertarget{classFilament_adb431809d8733d7b53dec1d438e2a42e}{\index{Filament@{Filament}!get\+Delta\+Minus\+End@{get\+Delta\+Minus\+End}}
+\index{get\+Delta\+Minus\+End@{get\+Delta\+Minus\+End}!Filament@{Filament}}
+\subsubsection[{get\+Delta\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}short Filament\+::get\+Delta\+Minus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_adb431809d8733d7b53dec1d438e2a42e}
+
+
+Definition at line 105 of file Filament.\+h.
+
+
+
+References \+\_\+delta\+Minus\+End.
+
+\hypertarget{classFilament_a6cced8194d751f3af57e664ff14e8f38}{\index{Filament@{Filament}!get\+Delta\+Plus\+End@{get\+Delta\+Plus\+End}}
+\index{get\+Delta\+Plus\+End@{get\+Delta\+Plus\+End}!Filament@{Filament}}
+\subsubsection[{get\+Delta\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}short Filament\+::get\+Delta\+Plus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_a6cced8194d751f3af57e664ff14e8f38}
+
+
+Get delta. 
+
+
+
+Definition at line 104 of file Filament.\+h.
+
+\hypertarget{classFilament_aec7897128b659b5063675a26736860d3}{\index{Filament@{Filament}!get\+I\+D@{get\+I\+D}}
+\index{get\+I\+D@{get\+I\+D}!Filament@{Filament}}
+\subsubsection[{get\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Filament\+::get\+I\+D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_aec7897128b659b5063675a26736860d3}
+
+
+Get I\+D. 
+
+
+
+Definition at line 109 of file Filament.\+h.
+
+
+
+References \+\_\+\+I\+D.
+
+\hypertarget{classFilament_a96e6a97434a442014b199cd7623d2291}{\index{Filament@{Filament}!next\+Bead\+Projection@{next\+Bead\+Projection}}
+\index{next\+Bead\+Projection@{next\+Bead\+Projection}!Filament@{Filament}}
+\subsubsection[{next\+Bead\+Projection}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Filament\+::next\+Bead\+Projection (
+\begin{DoxyParamCaption}
+\item[{{\bf Bead} $\ast$}]{b, }
+\item[{double}]{d, }
+\item[{vector$<$ double $>$}]{director}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a96e6a97434a442014b199cd7623d2291}
+
+
+Projection function, returns a vector of coordinates for bead creation. 
+
+\hypertarget{classFilament_ad9bf612548f137fa1ad39a4cc8d856fb}{\index{Filament@{Filament}!polymerize\+Back@{polymerize\+Back}}
+\index{polymerize\+Back@{polymerize\+Back}!Filament@{Filament}}
+\subsubsection[{polymerize\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::polymerize\+Back (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_ad9bf612548f137fa1ad39a4cc8d856fb}
+
+
+Same as Polymerization front, but moves the back bead one monomer length, and updates cylinder parameters accordingly. 
+
+
+
+Definition at line 221 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), M\+Cylinder\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), M\+Cylinder\+::set\+Eq\+Length(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Polymerization\+Back\+Callback\+::operator()().
+
+\hypertarget{classFilament_a52bea9c01a2223e979206c24217b32d8}{\index{Filament@{Filament}!polymerize\+Front@{polymerize\+Front}}
+\index{polymerize\+Front@{polymerize\+Front}!Filament@{Filament}}
+\subsubsection[{polymerize\+Front}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::polymerize\+Front (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a52bea9c01a2223e979206c24217b32d8}
+
+
+Polymerization of a filament front, which moves the leading bead one monomer length. Updates cylinder parameters accordingly. 
+
+
+
+Definition at line 205 of file Filament.\+cpp.
+
+
+
+References Bead\+::coordinate, System\+Parameters\+::\+Geometry(), M\+Cylinder\+::get\+Eq\+Length(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), Cylinder\+::get\+Second\+Bead(), Geometry\+Parameters\+::monomer\+Size, mathfunc\+::\+Next\+Point\+Projection(), M\+Cylinder\+::set\+Eq\+Length(), and mathfunc\+::\+Two\+Point\+Direction().
+
+
+
+Referenced by Filament\+Polymerization\+Front\+Callback\+::operator()().
+
+\hypertarget{classFilament_aecac31cfc73336f1be62b520261f1901}{\index{Filament@{Filament}!print\+Chem\+Composition@{print\+Chem\+Composition}}
+\index{print\+Chem\+Composition@{print\+Chem\+Composition}!Filament@{Filament}}
+\subsubsection[{print\+Chem\+Composition}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::print\+Chem\+Composition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_aecac31cfc73336f1be62b520261f1901}
+
+
+Print chemical composition of filament (for debugging only) 
+
+
+
+Definition at line 269 of file Filament.\+cpp.
+
+\hypertarget{classFilament_a68435f61aba67acf457cd1570180a4f3}{\index{Filament@{Filament}!reset\+Delta\+Minus\+End@{reset\+Delta\+Minus\+End}}
+\index{reset\+Delta\+Minus\+End@{reset\+Delta\+Minus\+End}!Filament@{Filament}}
+\subsubsection[{reset\+Delta\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::reset\+Delta\+Minus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_a68435f61aba67acf457cd1570180a4f3}
+
+
+Definition at line 99 of file Filament.\+h.
+
+
+
+References \+\_\+delta\+Minus\+End.
+
+\hypertarget{classFilament_a77452b7100a3ce6205fff1ddbb5cb981}{\index{Filament@{Filament}!reset\+Delta\+Plus\+End@{reset\+Delta\+Plus\+End}}
+\index{reset\+Delta\+Plus\+End@{reset\+Delta\+Plus\+End}!Filament@{Filament}}
+\subsubsection[{reset\+Delta\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::reset\+Delta\+Plus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classFilament_a77452b7100a3ce6205fff1ddbb5cb981}
+
+
+Reset delta. 
+
+
+
+Definition at line 98 of file Filament.\+h.
+
+\hypertarget{classFilament_a79c643bf0e0356ef210b6648474b1717}{\index{Filament@{Filament}!retract\+Back@{retract\+Back}}
+\index{retract\+Back@{retract\+Back}!Filament@{Filament}}
+\subsubsection[{retract\+Back}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::retract\+Back (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a79c643bf0e0356ef210b6648474b1717}
+
+
+Retraction of back of a cylinder. Removes a cylinder and bead from back of filament. 
+
+
+
+Definition at line 191 of file Filament.\+cpp.
+
+
+
+References Cylinder\+::get\+First\+Bead().
+
+
+
+Referenced by Filament\+Retraction\+Back\+Callback\+::operator()().
+
+\hypertarget{classFilament_a34794ceeb822c5e22df95db49fa8f652}{\index{Filament@{Filament}!retract\+Front@{retract\+Front}}
+\index{retract\+Front@{retract\+Front}!Filament@{Filament}}
+\subsubsection[{retract\+Front}]{\setlength{\rightskip}{0pt plus 5cm}void Filament\+::retract\+Front (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a34794ceeb822c5e22df95db49fa8f652}
+
+
+Retraction of front of a cylinder. Removes one cylinder and one bead from the front of filament. 
+
+
+
+Definition at line 174 of file Filament.\+cpp.
+
+
+
+References Cylinder\+::get\+Second\+Bead(), and Cylinder\+::set\+Last().
+
+
+
+Referenced by Filament\+Retraction\+Front\+Callback\+::operator()().
+
+\hypertarget{classFilament_ade0776033b4e56f8035eda23c03887fa}{\index{Filament@{Filament}!straight\+Filament\+Projection@{straight\+Filament\+Projection}}
+\index{straight\+Filament\+Projection@{straight\+Filament\+Projection}!Filament@{Filament}}
+\subsubsection[{straight\+Filament\+Projection}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ Filament\+::straight\+Filament\+Projection (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ double $>$$>$ \&}]{v, }
+\item[{int}]{num\+Beads}
+\end{DoxyParamCaption}
+)}}\label{classFilament_ade0776033b4e56f8035eda23c03887fa}
+
+
+Definition at line 275 of file Filament.\+cpp.
+
+
+
+References Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), tau(), and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classFilament_a4809abeefb15e0009e246d4d4051ae7c}{\index{Filament@{Filament}!zig\+Zag\+Filament\+Projection@{zig\+Zag\+Filament\+Projection}}
+\index{zig\+Zag\+Filament\+Projection@{zig\+Zag\+Filament\+Projection}!Filament@{Filament}}
+\subsubsection[{zig\+Zag\+Filament\+Projection}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ Filament\+::zig\+Zag\+Filament\+Projection (
+\begin{DoxyParamCaption}
+\item[{vector$<$ vector$<$ double $>$$>$ \&}]{v, }
+\item[{int}]{num\+Beads}
+\end{DoxyParamCaption}
+)}}\label{classFilament_a4809abeefb15e0009e246d4d4051ae7c}
+
+
+Definition at line 296 of file Filament.\+cpp.
+
+
+
+References Geometry\+Parameters\+::cylinder\+Size, System\+Parameters\+::\+Geometry(), tau(), and mathfunc\+::\+Two\+Point\+Distance().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classFilament_afb19e1c4608b762f04bdf74e12efa535}{\index{Filament@{Filament}!\+\_\+cylinder\+Vector@{\+\_\+cylinder\+Vector}}
+\index{\+\_\+cylinder\+Vector@{\+\_\+cylinder\+Vector}!Filament@{Filament}}
+\subsubsection[{\+\_\+cylinder\+Vector}]{\setlength{\rightskip}{0pt plus 5cm}deque$<${\bf Cylinder}$\ast$$>$ Filament\+::\+\_\+cylinder\+Vector\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilament_afb19e1c4608b762f04bdf74e12efa535}
+
+
+Vector of cylinders;. 
+
+
+
+Definition at line 42 of file Filament.\+h.
+
+
+
+Referenced by get\+Cylinder\+Vector().
+
+\hypertarget{classFilament_ac00eb37c21190ce574738d7f5259cf58}{\index{Filament@{Filament}!\+\_\+delta\+Minus\+End@{\+\_\+delta\+Minus\+End}}
+\index{\+\_\+delta\+Minus\+End@{\+\_\+delta\+Minus\+End}!Filament@{Filament}}
+\subsubsection[{\+\_\+delta\+Minus\+End}]{\setlength{\rightskip}{0pt plus 5cm}short Filament\+::\+\_\+delta\+Minus\+End = 0\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilament_ac00eb37c21190ce574738d7f5259cf58}
+
+
+Change in filament's cylinders at minus end since last snapshot. 
+
+
+
+Definition at line 48 of file Filament.\+h.
+
+
+
+Referenced by get\+Delta\+Minus\+End(), and reset\+Delta\+Minus\+End().
+
+\hypertarget{classFilament_ab22323b878792e2c309417f9b8435c97}{\index{Filament@{Filament}!\+\_\+delta\+Plus\+End@{\+\_\+delta\+Plus\+End}}
+\index{\+\_\+delta\+Plus\+End@{\+\_\+delta\+Plus\+End}!Filament@{Filament}}
+\subsubsection[{\+\_\+delta\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}short Filament\+::\+\_\+delta\+Plus\+End = 0\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilament_ab22323b878792e2c309417f9b8435c97}
+
+
+Change in filament's cylinders at plus end since last snapshot. 
+
+
+
+Definition at line 47 of file Filament.\+h.
+
+\hypertarget{classFilament_a15071125666bbd624b9b290969872bdb}{\index{Filament@{Filament}!\+\_\+\+I\+D@{\+\_\+\+I\+D}}
+\index{\+\_\+\+I\+D@{\+\_\+\+I\+D}!Filament@{Filament}}
+\subsubsection[{\+\_\+\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}int Filament\+::\+\_\+\+I\+D\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilament_a15071125666bbd624b9b290969872bdb}
+
+
+Unique integer id of this filament. 
+
+
+
+Definition at line 45 of file Filament.\+h.
+
+
+
+Referenced by get\+I\+D().
+
+\hypertarget{classFilament_acfb35439bafc3940ae7ffdbb68ae3144}{\index{Filament@{Filament}!\+\_\+sub\+System@{\+\_\+sub\+System}}
+\index{\+\_\+sub\+System@{\+\_\+sub\+System}!Filament@{Filament}}
+\subsubsection[{\+\_\+sub\+System}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System}$\ast$ Filament\+::\+\_\+sub\+System\hspace{0.3cm}{\ttfamily [private]}}}\label{classFilament_acfb35439bafc3940ae7ffdbb68ae3144}
+
+
+\hyperlink{classSubSystem}{Sub\+System} pointer. 
+
+
+
+Definition at line 43 of file Filament.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Filament_8h}{Filament.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Filament_8cpp}{Filament.\+cpp}\end{DoxyCompactItemize}

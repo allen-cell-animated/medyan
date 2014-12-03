@@ -1,0 +1,288 @@
+\hypertarget{classSphereBoundaryElement}{\section{Sphere\+Boundary\+Element Class Reference}
+\label{classSphereBoundaryElement}\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+}
+
+
+A spherical implementation of a boundary element.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Element\+Impl.\+h$>$}
+
+
+
+Inheritance diagram for Sphere\+Boundary\+Element\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=208pt]{classSphereBoundaryElement__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Sphere\+Boundary\+Element\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{classSphereBoundaryElement__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSphereBoundaryElement_a03cc51e8db0d5f638d772ac95720f436}{Sphere\+Boundary\+Element} (vector$<$ double $>$ coords, double radius, double repuls\+Const, double screen\+Length)
+\begin{DoxyCompactList}\small\item\em Constructor, sets parameters of equation. \end{DoxyCompactList}\item 
+virtual double \hyperlink{classSphereBoundaryElement_a8e28d60646f36a7ff943e69e62f248e4}{distance} (const vector$<$ double $>$ \&point)
+\begin{DoxyCompactList}\small\item\em Implement for all boundary elements Returns the distance from a given point to this boundary element. \end{DoxyCompactList}\item 
+virtual double \hyperlink{classSphereBoundaryElement_a41d124459d11422c46c578f70d1af1b0}{stretched\+Distance} (const vector$<$ double $>$ \&point, const vector$<$ double $>$ \&force, double d)
+\begin{DoxyCompactList}\small\item\em Returns stretched distance, similar to distance above. \end{DoxyCompactList}\item 
+virtual const vector$<$ double $>$ \hyperlink{classSphereBoundaryElement_a505ad6dae8dfaff38f2b845d6f7b7ee5}{normal} (const vector$<$ double $>$ \&point)
+\begin{DoxyCompactList}\small\item\em Returns normal vector of point to plane. \end{DoxyCompactList}\item 
+virtual double \hyperlink{classSphereBoundaryElement_aa9b8bd814e79f335232d3aac100148a0}{get\+Repulsion\+Const} ()
+\begin{DoxyCompactList}\small\item\em Getter for parameters. \end{DoxyCompactList}\item 
+virtual double \hyperlink{classSphereBoundaryElement_aacda85af577d438ce939274960d72045}{get\+Screening\+Length} ()
+\item 
+const vector$<$ double $>$ \& \hyperlink{classBoundaryElement_ace76817d750bb44c11edd918f1a8b78f}{get\+Coords} ()
+\begin{DoxyCompactList}\small\item\em return coordinates of boundary element \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ double $>$ \hyperlink{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}{\+\_\+coords}
+\begin{DoxyCompactList}\small\item\em coordinates of this boundary element \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classSphereBoundaryElement_a292f2562c66472f77e516ea19121f360}{\+\_\+radius}
+\begin{DoxyCompactList}\small\item\em Radius of sphere. \end{DoxyCompactList}\item 
+double \hyperlink{classSphereBoundaryElement_a4bca6baf26a3fb1718aaaed348646a58}{\+\_\+k\+\_\+rep}
+\item 
+double \hyperlink{classSphereBoundaryElement_a3e80ad9724c8ae7ff03631b4f2f84d1b}{\+\_\+r0}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A spherical implementation of a boundary element. 
+
+Definition at line 46 of file Boundary\+Element\+Impl.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSphereBoundaryElement_a03cc51e8db0d5f638d772ac95720f436}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{Sphere\+Boundary\+Element}]{\setlength{\rightskip}{0pt plus 5cm}Sphere\+Boundary\+Element\+::\+Sphere\+Boundary\+Element (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$}]{coords, }
+\item[{double}]{radius, }
+\item[{double}]{repuls\+Const, }
+\item[{double}]{screen\+Length}
+\end{DoxyParamCaption}
+)}}\label{classSphereBoundaryElement_a03cc51e8db0d5f638d772ac95720f436}
+
+
+Constructor, sets parameters of equation. 
+
+
+
+Definition at line 54 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSphereBoundaryElement_a8e28d60646f36a7ff943e69e62f248e4}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!distance@{distance}}
+\index{distance@{distance}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{distance}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::distance (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classSphereBoundaryElement_a8e28d60646f36a7ff943e69e62f248e4}
+
+
+Implement for all boundary elements Returns the distance from a given point to this boundary element. 
+
+\begin{DoxyReturn}{Returns}
+-\/ 1) positive number if point is within boundary element 2) Negative number if point is outside boundary element 3) Infinity if point is not in domain of this boundary element 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classBoundaryElement_ac84f39882c9994b1f842c5be9a03db9d}{Boundary\+Element}.
+
+
+
+Definition at line 58 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+References Boundary\+Element\+::\+\_\+coords, \+\_\+radius, and mathfunc\+::\+Two\+Point\+Distance().
+
+\hypertarget{classBoundaryElement_ace76817d750bb44c11edd918f1a8b78f}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!get\+Coords@{get\+Coords}}
+\index{get\+Coords@{get\+Coords}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{get\+Coords}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$double$>$\& Boundary\+Element\+::get\+Coords (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundaryElement_ace76817d750bb44c11edd918f1a8b78f}
+
+
+return coordinates of boundary element 
+
+
+
+Definition at line 66 of file Boundary\+Element.\+h.
+
+
+
+References Boundary\+Element\+::\+\_\+coords.
+
+\hypertarget{classSphereBoundaryElement_aa9b8bd814e79f335232d3aac100148a0}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!get\+Repulsion\+Const@{get\+Repulsion\+Const}}
+\index{get\+Repulsion\+Const@{get\+Repulsion\+Const}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{get\+Repulsion\+Const}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::get\+Repulsion\+Const (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classSphereBoundaryElement_aa9b8bd814e79f335232d3aac100148a0}
+
+
+Getter for parameters. 
+
+
+
+Implements \hyperlink{classBoundaryElement_aff96a5a1faa7df9b30899d9c3de84f4a}{Boundary\+Element}.
+
+
+
+Definition at line 75 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+References \+\_\+k\+\_\+rep.
+
+\hypertarget{classSphereBoundaryElement_aacda85af577d438ce939274960d72045}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!get\+Screening\+Length@{get\+Screening\+Length}}
+\index{get\+Screening\+Length@{get\+Screening\+Length}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{get\+Screening\+Length}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::get\+Screening\+Length (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classSphereBoundaryElement_aacda85af577d438ce939274960d72045}
+
+
+Implements \hyperlink{classBoundaryElement_a075dff05ab75cfd8be7f1a731030045a}{Boundary\+Element}.
+
+
+
+Definition at line 76 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+References \+\_\+r0.
+
+\hypertarget{classSphereBoundaryElement_a505ad6dae8dfaff38f2b845d6f7b7ee5}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!normal@{normal}}
+\index{normal@{normal}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{normal}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$ double $>$ Sphere\+Boundary\+Element\+::normal (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classSphereBoundaryElement_a505ad6dae8dfaff38f2b845d6f7b7ee5}
+
+
+Returns normal vector of point to plane. 
+
+
+
+Implements \hyperlink{classBoundaryElement_aef0aa594a42167a34efbc757b47eb012}{Boundary\+Element}.
+
+
+
+Definition at line 70 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+References Boundary\+Element\+::\+\_\+coords, and mathfunc\+::\+Two\+Point\+Direction().
+
+\hypertarget{classSphereBoundaryElement_a41d124459d11422c46c578f70d1af1b0}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!stretched\+Distance@{stretched\+Distance}}
+\index{stretched\+Distance@{stretched\+Distance}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{stretched\+Distance}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::stretched\+Distance (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{point, }
+\item[{const vector$<$ double $>$ \&}]{force, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classSphereBoundaryElement_a41d124459d11422c46c578f70d1af1b0}
+
+
+Returns stretched distance, similar to distance above. 
+
+
+
+Implements \hyperlink{classBoundaryElement_a15e0453be158c2c9774b06f27bf6ae9b}{Boundary\+Element}.
+
+
+
+Definition at line 63 of file Boundary\+Element\+Impl.\+cpp.
+
+
+
+References Boundary\+Element\+::\+\_\+coords, \+\_\+radius, and mathfunc\+::\+Two\+Point\+Distance().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!\+\_\+coords@{\+\_\+coords}}
+\index{\+\_\+coords@{\+\_\+coords}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{\+\_\+coords}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Boundary\+Element\+::\+\_\+coords\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundaryElement_ab51302e10e3e2def98438234ba5bf801}
+
+
+coordinates of this boundary element 
+
+
+
+Definition at line 40 of file Boundary\+Element.\+h.
+
+
+
+Referenced by distance(), Cylindrical\+Z\+Boundary\+Element\+::distance(), Half\+Sphere\+Z\+Boundary\+Element\+::distance(), Boundary\+Element\+::get\+Coords(), normal(), Cylindrical\+Z\+Boundary\+Element\+::normal(), Half\+Sphere\+Z\+Boundary\+Element\+::normal(), Plane\+Boundary\+Element\+::\+Plane\+Boundary\+Element(), stretched\+Distance(), Cylindrical\+Z\+Boundary\+Element\+::stretched\+Distance(), and Half\+Sphere\+Z\+Boundary\+Element\+::stretched\+Distance().
+
+\hypertarget{classSphereBoundaryElement_a4bca6baf26a3fb1718aaaed348646a58}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!\+\_\+k\+\_\+rep@{\+\_\+k\+\_\+rep}}
+\index{\+\_\+k\+\_\+rep@{\+\_\+k\+\_\+rep}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{\+\_\+k\+\_\+rep}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::\+\_\+k\+\_\+rep\hspace{0.3cm}{\ttfamily [private]}}}\label{classSphereBoundaryElement_a4bca6baf26a3fb1718aaaed348646a58}
+
+
+Definition at line 50 of file Boundary\+Element\+Impl.\+h.
+
+
+
+Referenced by get\+Repulsion\+Const().
+
+\hypertarget{classSphereBoundaryElement_a3e80ad9724c8ae7ff03631b4f2f84d1b}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!\+\_\+r0@{\+\_\+r0}}
+\index{\+\_\+r0@{\+\_\+r0}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{\+\_\+r0}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::\+\_\+r0\hspace{0.3cm}{\ttfamily [private]}}}\label{classSphereBoundaryElement_a3e80ad9724c8ae7ff03631b4f2f84d1b}
+
+
+Definition at line 51 of file Boundary\+Element\+Impl.\+h.
+
+
+
+Referenced by get\+Screening\+Length().
+
+\hypertarget{classSphereBoundaryElement_a292f2562c66472f77e516ea19121f360}{\index{Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}!\+\_\+radius@{\+\_\+radius}}
+\index{\+\_\+radius@{\+\_\+radius}!Sphere\+Boundary\+Element@{Sphere\+Boundary\+Element}}
+\subsubsection[{\+\_\+radius}]{\setlength{\rightskip}{0pt plus 5cm}double Sphere\+Boundary\+Element\+::\+\_\+radius\hspace{0.3cm}{\ttfamily [private]}}}\label{classSphereBoundaryElement_a292f2562c66472f77e516ea19121f360}
+
+
+Radius of sphere. 
+
+
+
+Definition at line 49 of file Boundary\+Element\+Impl.\+h.
+
+
+
+Referenced by distance(), and stretched\+Distance().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryElementImpl_8h}{Boundary\+Element\+Impl.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundaryElementImpl_8cpp}{Boundary\+Element\+Impl.\+cpp}\end{DoxyCompactItemize}

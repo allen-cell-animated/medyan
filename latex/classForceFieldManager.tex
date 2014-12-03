@@ -1,0 +1,189 @@
+\hypertarget{classForceFieldManager}{\section{Force\+Field\+Manager Class Reference}
+\label{classForceFieldManager}\index{Force\+Field\+Manager@{Force\+Field\+Manager}}
+}
+
+
+A class to store and iterate over all \hyperlink{classForceField}{Force\+Fields}.  
+
+
+
+
+{\ttfamily \#include $<$Force\+Field\+Manager.\+h$>$}
+
+
+
+Collaboration diagram for Force\+Field\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=213pt]{classForceFieldManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classForceFieldManager_a4486efaded29a64191cffa889cc349b2}{compute\+Energy} (double d)
+\begin{DoxyCompactList}\small\item\em Compute the energy using all available force fields. \end{DoxyCompactList}\item 
+void \hyperlink{classForceFieldManager_ac1174d87b710cf4847b74f3299efa76b}{compute\+Forces} ()
+\begin{DoxyCompactList}\small\item\em Compute the forces of all force fields. \end{DoxyCompactList}\item 
+void \hyperlink{classForceFieldManager_a2d8ebee8f7cc448665c934f81f93b64e}{compute\+Forces\+Aux} ()
+\begin{DoxyCompactList}\small\item\em Compute the forces\+Aux of all force fields. \end{DoxyCompactList}\item 
+void \hyperlink{classForceFieldManager_ac18b465afbff0d31980f4a10d72891fe}{reset\+Forces} ()
+\begin{DoxyCompactList}\small\item\em Reset the forces of all objects. \end{DoxyCompactList}\item 
+void \hyperlink{classForceFieldManager_a1bd25a71eb4bea1accc9dddfb813759a}{reset\+Forces\+Aux} ()
+\begin{DoxyCompactList}\small\item\em Reset the forces\+Aux of all objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ \hyperlink{classForceField}{Force\+Field} $\ast$ $>$ \hyperlink{classForceFieldManager_a1236a49ff3af26520cb0ffa0662983eb}{\+\_\+force\+Fields}
+\begin{DoxyCompactList}\small\item\em All forcefields in the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A class to store and iterate over all \hyperlink{classForceField}{Force\+Fields}. 
+
+The \hyperlink{classForceFieldManager}{Force\+Field\+Manager} is used to store all \hyperlink{classForceField}{Force\+Fields} initialized by the system, as well as iterate over these potentials and calculate total forces and energies. This class contains functions for the said calculations. 
+
+Definition at line 30 of file Force\+Field\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classForceFieldManager_a4486efaded29a64191cffa889cc349b2}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!compute\+Energy@{compute\+Energy}}
+\index{compute\+Energy@{compute\+Energy}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{compute\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}double Force\+Field\+Manager\+::compute\+Energy (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classForceFieldManager_a4486efaded29a64191cffa889cc349b2}
+
+
+Compute the energy using all available force fields. 
+
+
+
+Definition at line 36 of file Force\+Field\+Manager.\+h.
+
+
+
+References \+\_\+force\+Fields.
+
+
+
+Referenced by C\+G\+Method\+::backtracking\+Line\+Search(), C\+G\+Method\+::binary\+Search(), C\+G\+Method\+::golden\+Section1(), C\+G\+Method\+::golden\+Section2(), C\+G\+Method\+::make\+Bracket(), Fletcher\+Rieves\+::minimize(), Polak\+Ribiere\+::minimize(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classForceFieldManager_ac1174d87b710cf4847b74f3299efa76b}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!compute\+Forces@{compute\+Forces}}
+\index{compute\+Forces@{compute\+Forces}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{compute\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}void Force\+Field\+Manager\+::compute\+Forces (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classForceFieldManager_ac1174d87b710cf4847b74f3299efa76b}
+
+
+Compute the forces of all force fields. 
+
+
+
+Definition at line 46 of file Force\+Field\+Manager.\+h.
+
+
+
+References \+\_\+force\+Fields, and reset\+Forces().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classForceFieldManager_a2d8ebee8f7cc448665c934f81f93b64e}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!compute\+Forces\+Aux@{compute\+Forces\+Aux}}
+\index{compute\+Forces\+Aux@{compute\+Forces\+Aux}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{compute\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void Force\+Field\+Manager\+::compute\+Forces\+Aux (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classForceFieldManager_a2d8ebee8f7cc448665c934f81f93b64e}
+
+
+Compute the forces\+Aux of all force fields. 
+
+
+
+Definition at line 52 of file Force\+Field\+Manager.\+h.
+
+
+
+References \+\_\+force\+Fields, and reset\+Forces\+Aux().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), Polak\+Ribiere\+::minimize(), and C\+G\+Method\+::quadratic\+Line\+Search().
+
+\hypertarget{classForceFieldManager_ac18b465afbff0d31980f4a10d72891fe}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!reset\+Forces@{reset\+Forces}}
+\index{reset\+Forces@{reset\+Forces}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{reset\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}void Force\+Field\+Manager\+::reset\+Forces (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classForceFieldManager_ac18b465afbff0d31980f4a10d72891fe}
+
+
+Reset the forces of all objects. 
+
+
+
+Definition at line 60 of file Force\+Field\+Manager.\+h.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by compute\+Forces().
+
+\hypertarget{classForceFieldManager_a1bd25a71eb4bea1accc9dddfb813759a}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!reset\+Forces\+Aux@{reset\+Forces\+Aux}}
+\index{reset\+Forces\+Aux@{reset\+Forces\+Aux}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{reset\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void Force\+Field\+Manager\+::reset\+Forces\+Aux (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classForceFieldManager_a1bd25a71eb4bea1accc9dddfb813759a}
+
+
+Reset the forces\+Aux of all objects. 
+
+
+
+Definition at line 68 of file Force\+Field\+Manager.\+h.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by compute\+Forces\+Aux().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classForceFieldManager_a1236a49ff3af26520cb0ffa0662983eb}{\index{Force\+Field\+Manager@{Force\+Field\+Manager}!\+\_\+force\+Fields@{\+\_\+force\+Fields}}
+\index{\+\_\+force\+Fields@{\+\_\+force\+Fields}!Force\+Field\+Manager@{Force\+Field\+Manager}}
+\subsubsection[{\+\_\+force\+Fields}]{\setlength{\rightskip}{0pt plus 5cm}vector$<${\bf Force\+Field}$\ast$$>$ Force\+Field\+Manager\+::\+\_\+force\+Fields}}\label{classForceFieldManager_a1236a49ff3af26520cb0ffa0662983eb}
+
+
+All forcefields in the system. 
+
+
+
+Definition at line 33 of file Force\+Field\+Manager.\+h.
+
+
+
+Referenced by compute\+Energy(), compute\+Forces(), compute\+Forces\+Aux(), and M\+Controller\+::initialize\+F\+F().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{ForceFieldManager_8h}{Force\+Field\+Manager.\+h}\end{DoxyCompactItemize}

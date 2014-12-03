@@ -1,0 +1,538 @@
+\hypertarget{classRNodeGillespie}{\section{R\+Node\+Gillespie Class Reference}
+\label{classRNodeGillespie}\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+}
+
+
+Used by \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} to implement the cached version of the Gillespie algorithm.  
+
+
+
+
+{\ttfamily \#include $<$Chem\+Gillespie\+Impl.\+h$>$}
+
+
+
+Inheritance diagram for R\+Node\+Gillespie\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=165pt]{classRNodeGillespie__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for R\+Node\+Gillespie\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classRNodeGillespie__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classRNodeGillespie_a8540bdaeda2d7c9eba6fc923f1486cd0}{R\+Node\+Gillespie} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r, \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} \&chem\+\_\+\+Gillespie)
+\begin{DoxyCompactList}\small\item\em Ctor\+: \end{DoxyCompactList}\item 
+\hyperlink{classRNodeGillespie_a0d94ffb06cf018d8e5c677093196e92b}{R\+Node\+Gillespie} (const \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} \& \hyperlink{classRNodeGillespie_a13c0e95cc74ec4facf7f9cc91a2baa18}{operator=} (\hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+virtual \hyperlink{classRNodeGillespie_a8875cb9389ef23e37ae306073a3aad4d}{$\sim$\+R\+Node\+Gillespie} () noexcept
+\begin{DoxyCompactList}\small\item\em Dtor\+: The \hyperlink{classRNode}{R\+Node} pointer of the tracked \hyperlink{classReaction}{Reaction} object is set to nullptr. \end{DoxyCompactList}\item 
+\hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classRNodeGillespie_aadf2dad38b64b7f8adbe5dc1d1fb1488}{get\+Reaction} () const 
+\begin{DoxyCompactList}\small\item\em Returns a pointer to the \hyperlink{classReaction}{Reaction} which corresponds to this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie}. \end{DoxyCompactList}\item 
+double \hyperlink{classRNodeGillespie_afde0f3af2574d0ed517fdd6cbbab8a24}{get\+Propensity} () const 
+\begin{DoxyCompactList}\small\item\em Return the currently stored propensity, \char`\"{}a\char`\"{}, for this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_a67dfc9af6a5d302ff54ccd6f1f27a61c}{set\+A} (double a)
+\begin{DoxyCompactList}\small\item\em Set the propensity, \char`\"{}a\char`\"{}, for this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\item 
+double \hyperlink{classRNodeGillespie_a05088244bc100fb15a852d9a3dfe7088}{get\+Penult\+Step\+Propensity} () const 
+\begin{DoxyCompactList}\small\item\em Return the propensity, \char`\"{}a\char`\"{}, associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_ab5bb90e0267577466f37b2008c1558e3}{set\+Penult\+A} (double a\+\_\+prev)
+\begin{DoxyCompactList}\small\item\em Set the propensity, \char`\"{}a\char`\"{}, associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\item 
+double \hyperlink{classRNodeGillespie_af28aaa3b9e56c743a8cdeadbcb9b8ec9}{re\+Compute\+Propensity} ()
+\begin{DoxyCompactList}\small\item\em (Re)Compute and return the propensity associated with this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_af8abb653f5bede62ba7f259e26c2060d}{reset} ()
+\begin{DoxyCompactList}\small\item\em Set the the penultimate step propensity to zero and compute the current propensity. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_a2ed26495d18c940cb56e1f5afead94cf}{make\+Step} ()
+\begin{DoxyCompactList}\small\item\em This method calls the corresponding \hyperlink{classReactionBase_a565e2d5fac7efaf63f19dab909428882}{Reaction\+::make\+Step()} method of the underyling \hyperlink{classReaction}{Reaction} object. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classRNodeGillespie_ab223d02c7a604123c8d7c451e5d86a33}{activate\+Reaction} ()
+\begin{DoxyCompactList}\small\item\em Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classRNodeGillespie_a2d5ed4fab56ebe5e90a0b7f7e605b90b}{passivate\+Reaction} ()
+\begin{DoxyCompactList}\small\item\em Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. \end{DoxyCompactList}\item 
+bool \hyperlink{classRNodeGillespie_abf9dd2df1932720822ac6b1faeb70b25}{is\+Passivated} () const 
+\begin{DoxyCompactList}\small\item\em Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_a178f4be92754cfb40dcb6f5fb25dbaa6}{print\+Self} () const 
+\begin{DoxyCompactList}\small\item\em Print information about this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} such as \char`\"{}a\char`\"{}, \char`\"{}a\+\_\+penult\char`\"{} and the \hyperlink{classReaction}{Reaction} which this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} tracks. \end{DoxyCompactList}\item 
+void \hyperlink{classRNodeGillespie_ac3e927cc00182eca3289cf6a4587d2dd}{print\+Dependents} () const 
+\begin{DoxyCompactList}\small\item\em Print the \hyperlink{classRNode}{R\+Node} objects which are dependents of this \hyperlink{classRNode}{R\+Node} (via the tracked \hyperlink{classReaction}{Reaction} object dependencies) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} \& \hyperlink{classRNodeGillespie_a17f8b8b148da5586a31a5720e3f2b748}{\+\_\+chem\+\_\+\+Gillespie}
+\begin{DoxyCompactList}\small\item\em A reference to the \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} which containts the heap, random number generators, etc. \end{DoxyCompactList}\item 
+\hyperlink{classReactionBase}{Reaction\+Base} $\ast$ \hyperlink{classRNodeGillespie_a17e883bc0b90ba0aef2b5b41e505f066}{\+\_\+react}
+\begin{DoxyCompactList}\small\item\em The pointer to the associated \hyperlink{classReaction}{Reaction} object. The corresponding memory is not managed by \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie}. \end{DoxyCompactList}\item 
+double \hyperlink{classRNodeGillespie_a6e27b71748a2fdaef116fc0a0f3b4781}{\+\_\+a}
+\begin{DoxyCompactList}\small\item\em The propensity associated with the \hyperlink{classReaction}{Reaction}. It may be outdated and may need to be recomputed if needed. \end{DoxyCompactList}\item 
+double \hyperlink{classRNodeGillespie_ae132221a1a09a566b08808c996f8b51c}{\+\_\+a\+\_\+prev}
+\begin{DoxyCompactList}\small\item\em The propensity associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used by \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} to implement the cached version of the Gillespie algorithm. 
+
+\hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} manages a single chemical reaction within the Gillespie algorithm. When the propensity drops to zero, the \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} can execute the \hyperlink{classRNodeGillespie_a2d5ed4fab56ebe5e90a0b7f7e605b90b}{passivate\+Reaction()} method. Alternatively, passivated \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} can be activated via \hyperlink{classRNodeGillespie_ab223d02c7a604123c8d7c451e5d86a33}{activate\+Reaction()}. The main part of the Gillespie algoritm is implemented in the \hyperlink{classRNodeGillespie_a2ed26495d18c940cb56e1f5afead94cf}{make\+Step()} method. 
+
+Definition at line 36 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classRNodeGillespie_a8540bdaeda2d7c9eba6fc923f1486cd0}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{R\+Node\+Gillespie}]{\setlength{\rightskip}{0pt plus 5cm}R\+Node\+Gillespie\+::\+R\+Node\+Gillespie (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r, }
+\item[{{\bf Chem\+Gillespie\+Impl} \&}]{chem\+\_\+\+Gillespie}
+\end{DoxyParamCaption}
+)}}\label{classRNodeGillespie_a8540bdaeda2d7c9eba6fc923f1486cd0}
+
+
+Ctor\+: 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$r} & is the \hyperlink{classReaction}{Reaction} object corresponding to this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} \\
+\hline
+{\em \&chem\+\_\+\+Gillespie} & is a refernce to \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} object, which does the overall management of the Gillespie scheme (e.\+g. random distribution generators, etc.) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 16 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+react, reset(), and Reaction\+Base\+::set\+Rnode().
+
+\hypertarget{classRNodeGillespie_a0d94ffb06cf018d8e5c677093196e92b}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{R\+Node\+Gillespie}]{\setlength{\rightskip}{0pt plus 5cm}R\+Node\+Gillespie\+::\+R\+Node\+Gillespie (
+\begin{DoxyParamCaption}
+\item[{const {\bf R\+Node\+Gillespie} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classRNodeGillespie_a0d94ffb06cf018d8e5c677093196e92b}
+
+
+Copying is not allowed. 
+
+\hypertarget{classRNodeGillespie_a8875cb9389ef23e37ae306073a3aad4d}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!````~R\+Node\+Gillespie@{$\sim$\+R\+Node\+Gillespie}}
+\index{````~R\+Node\+Gillespie@{$\sim$\+R\+Node\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{$\sim$\+R\+Node\+Gillespie}]{\setlength{\rightskip}{0pt plus 5cm}R\+Node\+Gillespie\+::$\sim$\+R\+Node\+Gillespie (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [noexcept]}}}\label{classRNodeGillespie_a8875cb9389ef23e37ae306073a3aad4d}
+
+
+Dtor\+: The \hyperlink{classRNode}{R\+Node} pointer of the tracked \hyperlink{classReaction}{Reaction} object is set to nullptr. 
+
+\begin{DoxyNote}{Note}
+noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing, which in turn disables move operations by the S\+T\+L containers. This behaviour is a gcc bug (as of gcc 4.\+703), and will presumbaly be fixed in the future. 
+\end{DoxyNote}
+
+
+Definition at line 22 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+react, and Reaction\+Base\+::set\+Rnode().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classRNodeGillespie_ab223d02c7a604123c8d7c451e5d86a33}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!activate\+Reaction@{activate\+Reaction}}
+\index{activate\+Reaction@{activate\+Reaction}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{activate\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::activate\+Reaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classRNodeGillespie_ab223d02c7a604123c8d7c451e5d86a33}
+
+
+Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. 
+
+
+
+Implements \hyperlink{classRNode_ae637a64362ad0ac7aab6e71abfafda57}{R\+Node}.
+
+
+
+Definition at line 41 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+chem\+\_\+\+Gillespie, Chem\+Gillespie\+Impl\+::activate\+Reaction(), and get\+Reaction().
+
+\hypertarget{classRNodeGillespie_a05088244bc100fb15a852d9a3dfe7088}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!get\+Penult\+Step\+Propensity@{get\+Penult\+Step\+Propensity}}
+\index{get\+Penult\+Step\+Propensity@{get\+Penult\+Step\+Propensity}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{get\+Penult\+Step\+Propensity}]{\setlength{\rightskip}{0pt plus 5cm}double R\+Node\+Gillespie\+::get\+Penult\+Step\+Propensity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_a05088244bc100fb15a852d9a3dfe7088}
+
+
+Return the propensity, \char`\"{}a\char`\"{}, associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. 
+
+\begin{DoxyNote}{Note}
+The propensity is not recomputed in this method, so it potentially can be out of sync. 
+\end{DoxyNote}
+
+
+Definition at line 68 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a\+\_\+prev.
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::activate\+Reaction(), and Chem\+Gillespie\+Impl\+::make\+Step().
+
+\hypertarget{classRNodeGillespie_afde0f3af2574d0ed517fdd6cbbab8a24}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!get\+Propensity@{get\+Propensity}}
+\index{get\+Propensity@{get\+Propensity}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{get\+Propensity}]{\setlength{\rightskip}{0pt plus 5cm}double R\+Node\+Gillespie\+::get\+Propensity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_afde0f3af2574d0ed517fdd6cbbab8a24}
+
+
+Return the currently stored propensity, \char`\"{}a\char`\"{}, for this \hyperlink{classReaction}{Reaction}. 
+
+\begin{DoxyNote}{Note}
+The propensity is not recomputed in this method, so it potentially can be out of sync. 
+\end{DoxyNote}
+
+
+Definition at line 61 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a.
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::activate\+Reaction(), Chem\+Gillespie\+Impl\+::make\+Step(), and Chem\+Gillespie\+Impl\+::passivate\+Reaction().
+
+\hypertarget{classRNodeGillespie_aadf2dad38b64b7f8adbe5dc1d1fb1488}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!get\+Reaction@{get\+Reaction}}
+\index{get\+Reaction@{get\+Reaction}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{get\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\+Base}$\ast$ R\+Node\+Gillespie\+::get\+Reaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_aadf2dad38b64b7f8adbe5dc1d1fb1488}
+
+
+Returns a pointer to the \hyperlink{classReaction}{Reaction} which corresponds to this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie}. 
+
+
+
+Definition at line 57 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+react.
+
+
+
+Referenced by activate\+Reaction(), Chem\+Gillespie\+Impl\+::make\+Step(), and passivate\+Reaction().
+
+\hypertarget{classRNodeGillespie_abf9dd2df1932720822ac6b1faeb70b25}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!is\+Passivated@{is\+Passivated}}
+\index{is\+Passivated@{is\+Passivated}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{is\+Passivated}]{\setlength{\rightskip}{0pt plus 5cm}bool R\+Node\+Gillespie\+::is\+Passivated (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classRNodeGillespie_abf9dd2df1932720822ac6b1faeb70b25}
+
+
+Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. 
+
+
+
+Implements \hyperlink{classRNode_abdf414a4ac9701ea0731d9a3f989d05f}{R\+Node}.
+
+
+
+Definition at line 98 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+react, and Reaction\+Base\+::is\+Passivated().
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::make\+Step().
+
+\hypertarget{classRNodeGillespie_a2ed26495d18c940cb56e1f5afead94cf}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!make\+Step@{make\+Step}}
+\index{make\+Step@{make\+Step}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{make\+Step}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::make\+Step (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_a2ed26495d18c940cb56e1f5afead94cf}
+
+
+This method calls the corresponding \hyperlink{classReactionBase_a565e2d5fac7efaf63f19dab909428882}{Reaction\+::make\+Step()} method of the underyling \hyperlink{classReaction}{Reaction} object. 
+
+
+
+Definition at line 89 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+react, and Reaction\+Base\+::make\+Step().
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::make\+Step().
+
+\hypertarget{classRNodeGillespie_a13c0e95cc74ec4facf7f9cc91a2baa18}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!operator=@{operator=}}
+\index{operator=@{operator=}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf R\+Node\+Gillespie}\& R\+Node\+Gillespie\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+Node\+Gillespie} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classRNodeGillespie_a13c0e95cc74ec4facf7f9cc91a2baa18}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classRNodeGillespie_a2d5ed4fab56ebe5e90a0b7f7e605b90b}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!passivate\+Reaction@{passivate\+Reaction}}
+\index{passivate\+Reaction@{passivate\+Reaction}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{passivate\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::passivate\+Reaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classRNodeGillespie_a2d5ed4fab56ebe5e90a0b7f7e605b90b}
+
+
+Forwards the call to the similarly named method of \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl}. 
+
+
+
+Implements \hyperlink{classRNode_a4b3254697c3ddc7baaff8106c84986df}{R\+Node}.
+
+
+
+Definition at line 45 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+chem\+\_\+\+Gillespie, get\+Reaction(), and Chem\+Gillespie\+Impl\+::passivate\+Reaction().
+
+\hypertarget{classRNodeGillespie_ac3e927cc00182eca3289cf6a4587d2dd}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!print\+Dependents@{print\+Dependents}}
+\index{print\+Dependents@{print\+Dependents}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{print\+Dependents}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::print\+Dependents (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classRNodeGillespie_ac3e927cc00182eca3289cf6a4587d2dd}
+
+
+Print the \hyperlink{classRNode}{R\+Node} objects which are dependents of this \hyperlink{classRNode}{R\+Node} (via the tracked \hyperlink{classReaction}{Reaction} object dependencies) 
+
+
+
+Definition at line 32 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+react, Reaction\+Base\+::dependents(), and print\+Self().
+
+\hypertarget{classRNodeGillespie_a178f4be92754cfb40dcb6f5fb25dbaa6}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!print\+Self@{print\+Self}}
+\index{print\+Self@{print\+Self}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{print\+Self}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::print\+Self (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classRNodeGillespie_a178f4be92754cfb40dcb6f5fb25dbaa6}
+
+
+Print information about this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} such as \char`\"{}a\char`\"{}, \char`\"{}a\+\_\+penult\char`\"{} and the \hyperlink{classReaction}{Reaction} which this \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie} tracks. 
+
+
+
+Definition at line 27 of file Chem\+Gillespie\+Impl.\+cpp.
+
+
+
+References \+\_\+a, and \+\_\+a\+\_\+prev.
+
+
+
+Referenced by print\+Dependents().
+
+\hypertarget{classRNodeGillespie_af28aaa3b9e56c743a8cdeadbcb9b8ec9}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!re\+Compute\+Propensity@{re\+Compute\+Propensity}}
+\index{re\+Compute\+Propensity@{re\+Compute\+Propensity}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{re\+Compute\+Propensity}]{\setlength{\rightskip}{0pt plus 5cm}double R\+Node\+Gillespie\+::re\+Compute\+Propensity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_af28aaa3b9e56c743a8cdeadbcb9b8ec9}
+
+
+(Re)Compute and return the propensity associated with this \hyperlink{classReaction}{Reaction}. 
+
+Remembers the penultimate step propensity as well 
+
+Definition at line 75 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a, \+\_\+a\+\_\+prev, \+\_\+react, and Reaction\+Base\+::compute\+Propensity().
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::activate\+Reaction(), and Chem\+Gillespie\+Impl\+::make\+Step().
+
+\hypertarget{classRNodeGillespie_af8abb653f5bede62ba7f259e26c2060d}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!reset@{reset}}
+\index{reset@{reset}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{reset}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_af8abb653f5bede62ba7f259e26c2060d}
+
+
+Set the the penultimate step propensity to zero and compute the current propensity. 
+
+
+
+Definition at line 83 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a, \+\_\+a\+\_\+prev, \+\_\+react, and Reaction\+Base\+::compute\+Propensity().
+
+
+
+Referenced by R\+Node\+Gillespie().
+
+\hypertarget{classRNodeGillespie_a67dfc9af6a5d302ff54ccd6f1f27a61c}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!set\+A@{set\+A}}
+\index{set\+A@{set\+A}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{set\+A}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::set\+A (
+\begin{DoxyParamCaption}
+\item[{double}]{a}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_a67dfc9af6a5d302ff54ccd6f1f27a61c}
+
+
+Set the propensity, \char`\"{}a\char`\"{}, for this \hyperlink{classReaction}{Reaction}. 
+
+
+
+Definition at line 64 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a.
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::passivate\+Reaction().
+
+\hypertarget{classRNodeGillespie_ab5bb90e0267577466f37b2008c1558e3}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!set\+Penult\+A@{set\+Penult\+A}}
+\index{set\+Penult\+A@{set\+Penult\+A}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{set\+Penult\+A}]{\setlength{\rightskip}{0pt plus 5cm}void R\+Node\+Gillespie\+::set\+Penult\+A (
+\begin{DoxyParamCaption}
+\item[{double}]{a\+\_\+prev}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classRNodeGillespie_ab5bb90e0267577466f37b2008c1558e3}
+
+
+Set the propensity, \char`\"{}a\char`\"{}, associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. 
+
+
+
+Definition at line 71 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+References \+\_\+a\+\_\+prev.
+
+
+
+Referenced by Chem\+Gillespie\+Impl\+::passivate\+Reaction().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classRNodeGillespie_a6e27b71748a2fdaef116fc0a0f3b4781}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!\+\_\+a@{\+\_\+a}}
+\index{\+\_\+a@{\+\_\+a}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{\+\_\+a}]{\setlength{\rightskip}{0pt plus 5cm}double R\+Node\+Gillespie\+::\+\_\+a\hspace{0.3cm}{\ttfamily [private]}}}\label{classRNodeGillespie_a6e27b71748a2fdaef116fc0a0f3b4781}
+
+
+The propensity associated with the \hyperlink{classReaction}{Reaction}. It may be outdated and may need to be recomputed if needed. 
+
+
+
+Definition at line 108 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+Referenced by get\+Propensity(), print\+Self(), re\+Compute\+Propensity(), reset(), and set\+A().
+
+\hypertarget{classRNodeGillespie_ae132221a1a09a566b08808c996f8b51c}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!\+\_\+a\+\_\+prev@{\+\_\+a\+\_\+prev}}
+\index{\+\_\+a\+\_\+prev@{\+\_\+a\+\_\+prev}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{\+\_\+a\+\_\+prev}]{\setlength{\rightskip}{0pt plus 5cm}double R\+Node\+Gillespie\+::\+\_\+a\+\_\+prev\hspace{0.3cm}{\ttfamily [private]}}}\label{classRNodeGillespie_ae132221a1a09a566b08808c996f8b51c}
+
+
+The propensity associated with the penultimate step of this \hyperlink{classReaction}{Reaction}. 
+
+
+
+Definition at line 109 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+Referenced by get\+Penult\+Step\+Propensity(), print\+Self(), re\+Compute\+Propensity(), reset(), and set\+Penult\+A().
+
+\hypertarget{classRNodeGillespie_a17f8b8b148da5586a31a5720e3f2b748}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!\+\_\+chem\+\_\+\+Gillespie@{\+\_\+chem\+\_\+\+Gillespie}}
+\index{\+\_\+chem\+\_\+\+Gillespie@{\+\_\+chem\+\_\+\+Gillespie}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{\+\_\+chem\+\_\+\+Gillespie}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Chem\+Gillespie\+Impl}\& R\+Node\+Gillespie\+::\+\_\+chem\+\_\+\+Gillespie\hspace{0.3cm}{\ttfamily [private]}}}\label{classRNodeGillespie_a17f8b8b148da5586a31a5720e3f2b748}
+
+
+A reference to the \hyperlink{classChemGillespieImpl}{Chem\+Gillespie\+Impl} which containts the heap, random number generators, etc. 
+
+
+
+Definition at line 106 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+Referenced by activate\+Reaction(), and passivate\+Reaction().
+
+\hypertarget{classRNodeGillespie_a17e883bc0b90ba0aef2b5b41e505f066}{\index{R\+Node\+Gillespie@{R\+Node\+Gillespie}!\+\_\+react@{\+\_\+react}}
+\index{\+\_\+react@{\+\_\+react}!R\+Node\+Gillespie@{R\+Node\+Gillespie}}
+\subsubsection[{\+\_\+react}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Reaction\+Base}$\ast$ R\+Node\+Gillespie\+::\+\_\+react\hspace{0.3cm}{\ttfamily [private]}}}\label{classRNodeGillespie_a17e883bc0b90ba0aef2b5b41e505f066}
+
+
+The pointer to the associated \hyperlink{classReaction}{Reaction} object. The corresponding memory is not managed by \hyperlink{classRNodeGillespie}{R\+Node\+Gillespie}. 
+
+
+
+Definition at line 107 of file Chem\+Gillespie\+Impl.\+h.
+
+
+
+Referenced by get\+Reaction(), is\+Passivated(), make\+Step(), print\+Dependents(), re\+Compute\+Propensity(), reset(), R\+Node\+Gillespie(), and $\sim$\+R\+Node\+Gillespie().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemGillespieImpl_8h}{Chem\+Gillespie\+Impl.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemGillespieImpl_8cpp}{Chem\+Gillespie\+Impl.\+cpp}\end{DoxyCompactItemize}

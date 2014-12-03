@@ -73,7 +73,7 @@ public:
 };
 
 
-/// CylinderNeighborList is an implementation of NeighborList for Cylinder-Cylinder interactions
+/// An implementation of NeighborList for Cylinder-Cylinder interactions
 class CylinderNeighborList : public NeighborList {
     
 private:
@@ -91,7 +91,7 @@ public:
 
 };
 
-/// BoundaryElementNeighborList is an implementation of NeighborList for Bead-BoundaryElement interactions
+/// An implementation of NeighborList for Bead-BoundaryElement interactions
 class BoundaryElementNeighborList : public NeighborList {
     
 public:

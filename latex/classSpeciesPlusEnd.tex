@@ -1,0 +1,486 @@
+\hypertarget{classSpeciesPlusEnd}{\section{Species\+Plus\+End Class Reference}
+\label{classSpeciesPlusEnd}\index{Species\+Plus\+End@{Species\+Plus\+End}}
+}
+
+
+Used for a plus end species on a filament.  
+
+
+
+
+{\ttfamily \#include $<$Species.\+h$>$}
+
+
+
+Inheritance diagram for Species\+Plus\+End\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=169pt]{classSpeciesPlusEnd__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Species\+Plus\+End\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classSpeciesPlusEnd__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSpeciesPlusEnd_a940477fe241c4e36a13d42a479c788d6}{Species\+Plus\+End} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd_ab36e50cc010eccade0ef3f2223727644}{Species\+Plus\+End} (const string \&name, \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} n=0, \hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} ulim=1)
+\begin{DoxyCompactList}\small\item\em The main constructor. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd_a353b33c1e93acf5254e761eb0045c3a0}{Species\+Plus\+End} (const \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \&rhs)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd_ae83c7bb9f800dc394a6e5038f1e043f1}{Species\+Plus\+End} (\hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \&\&rhs) noexcept
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \& \hyperlink{classSpeciesPlusEnd_a5f0bc88dba1a97d30d54c0b37e349ec7}{operator=} (const \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \&rhs)
+\begin{DoxyCompactList}\small\item\em Regular Assignment. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \& \hyperlink{classSpeciesPlusEnd_a1ef2d1e906f0470eb62465d574e0491f}{operator=} (\hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} \&\&rhs)
+\begin{DoxyCompactList}\small\item\em Move assignment. \end{DoxyCompactList}\item 
+virtual \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End} $\ast$ \hyperlink{classSpeciesPlusEnd_a359b23c2ec95d9ead3f8f40d1bc641de}{clone} ()
+\item 
+virtual string \hyperlink{classSpeciesPlusEnd_aa010e7adb578155bf0142fa84684b47e}{get\+Full\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Return the full name of this \hyperlink{classSpecies}{Species} in a string format (e.\+g. \char`\"{}\+Arp2/3\{\+Bound\}\char`\"{}. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesPlusEnd_ab1c15e965d105e1d11dcc8608796d789}{$\sim$\+Species\+Plus\+End} () noexcept
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classSpecies_af24cab7cbaa561d35b08fef5faf05fdf}{get\+Parent} ()
+\item 
+void \hyperlink{classSpecies_acc64c5b61abf911872d433ac32b62de8}{set\+Parent} (\hyperlink{classComposite}{Composite} $\ast$other)
+\item 
+bool \hyperlink{classSpecies_a40262d7217fcc28a31682aee40a19232}{has\+Parent} () const 
+\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classSpecies_a876c8a827476a11e05f3b7a7669c29b6}{get\+Root} ()
+\item 
+\hyperlink{classRSpecies}{R\+Species} \& \hyperlink{classSpecies_a048dd7bc3fecd08b1b1797dc83aa163d}{get\+R\+Species} ()
+\begin{DoxyCompactList}\small\item\em Return a reference to \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+const \hyperlink{classRSpecies}{R\+Species} \& \hyperlink{classSpecies_aa1069a34b360f84d186f48bd99f80971}{get\+R\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Return a constant reference to \hyperlink{classRSpecies}{R\+Species}. \end{DoxyCompactList}\item 
+void \hyperlink{classSpecies_a88de7cf5130cb9cee2da3585374db654}{set\+N} (\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} n)
+\begin{DoxyCompactList}\small\item\em Sets the copy number for this \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+\hyperlink{common_8h_a3503f321fd36304ee274141275cca586}{species\+\_\+copy\+\_\+t} \hyperlink{classSpecies_aea7327b3fed261c705b4d32b9973aa58}{get\+N} () const 
+\begin{DoxyCompactList}\small\item\em Return the current copy number of this \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+string \hyperlink{classSpecies_a28fa239dded841133760ff9c47af63a1}{get\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Return this \hyperlink{classSpecies}{Species}' name. \end{DoxyCompactList}\item 
+int \hyperlink{classSpecies_a1ea8969c51bc69879891a408f9e197c7}{get\+Molecule} () const 
+\begin{DoxyCompactList}\small\item\em Return the molecule index associated with this \hyperlink{classSpecies}{Species}' (as int) \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classSpecies_a1864e111fe0304ca8d6b2d0d955a7356}{count\+Species} () const 
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used for a plus end species on a filament. 
+
+This allows for various polymerization/depolymerization rates on filaments These species can not move cross-\/compartment. 
+
+Definition at line 581 of file Species.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSpeciesPlusEnd_a940477fe241c4e36a13d42a479c788d6}{\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{Species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Plus\+End\+::\+Species\+Plus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesPlusEnd_a940477fe241c4e36a13d42a479c788d6}
+
+
+Default constructor. 
+
+
+
+Definition at line 584 of file Species.\+h.
+
+
+
+Referenced by clone().
+
+\hypertarget{classSpeciesPlusEnd_ab36e50cc010eccade0ef3f2223727644}{\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{Species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Plus\+End\+::\+Species\+Plus\+End (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{n = {\ttfamily 0}, }
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{ulim = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesPlusEnd_ab36e50cc010eccade0ef3f2223727644}
+
+
+The main constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & -\/ Example, \char`\"{}\+G-\/\+Actin\char`\"{} or \char`\"{}\+Arp2/3\char`\"{} \\
+\hline
+{\em n} & -\/ copy number \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 589 of file Species.\+h.
+
+\hypertarget{classSpeciesPlusEnd_a353b33c1e93acf5254e761eb0045c3a0}{\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{Species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Plus\+End\+::\+Species\+Plus\+End (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\+Plus\+End} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesPlusEnd_a353b33c1e93acf5254e761eb0045c3a0}
+
+
+Copy constructor. 
+
+
+
+Definition at line 593 of file Species.\+h.
+
+\hypertarget{classSpeciesPlusEnd_ae83c7bb9f800dc394a6e5038f1e043f1}{\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\index{Species\+Plus\+End@{Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{Species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Plus\+End\+::\+Species\+Plus\+End (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Plus\+End} \&\&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}}\label{classSpeciesPlusEnd_ae83c7bb9f800dc394a6e5038f1e043f1}
+
+
+Move constructor. 
+
+
+
+Definition at line 596 of file Species.\+h.
+
+\hypertarget{classSpeciesPlusEnd_ab1c15e965d105e1d11dcc8608796d789}{\index{Species\+Plus\+End@{Species\+Plus\+End}!````~Species\+Plus\+End@{$\sim$\+Species\+Plus\+End}}
+\index{````~Species\+Plus\+End@{$\sim$\+Species\+Plus\+End}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{$\sim$\+Species\+Plus\+End}]{\setlength{\rightskip}{0pt plus 5cm}Species\+Plus\+End\+::$\sim$\+Species\+Plus\+End (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}}\label{classSpeciesPlusEnd_ab1c15e965d105e1d11dcc8608796d789}
+
+
+Default destructor. 
+
+
+
+Definition at line 620 of file Species.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSpeciesPlusEnd_a359b23c2ec95d9ead3f8f40d1bc641de}{\index{Species\+Plus\+End@{Species\+Plus\+End}!clone@{clone}}
+\index{clone@{clone}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{clone}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Species\+Plus\+End}$\ast$ Species\+Plus\+End\+::clone (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classSpeciesPlusEnd_a359b23c2ec95d9ead3f8f40d1bc641de}
+
+
+Reimplemented from \hyperlink{classSpecies_a5a7e96158d90d5f59f75c9e3405b54c6}{Species}.
+
+
+
+Definition at line 612 of file Species.\+h.
+
+
+
+References Species\+Plus\+End().
+
+
+
+Referenced by C\+Monomer\+::\+C\+Monomer().
+
+\hypertarget{classSpecies_a1864e111fe0304ca8d6b2d0d955a7356}{\index{Species\+Plus\+End@{Species\+Plus\+End}!count\+Species@{count\+Species}}
+\index{count\+Species@{count\+Species}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{count\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Species\+::count\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classSpecies_a1864e111fe0304ca8d6b2d0d955a7356}
+
+
+Definition at line 295 of file Species.\+h.
+
+\hypertarget{classSpeciesPlusEnd_aa010e7adb578155bf0142fa84684b47e}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+Full\+Name@{get\+Full\+Name}}
+\index{get\+Full\+Name@{get\+Full\+Name}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+Full\+Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual string Species\+Plus\+End\+::get\+Full\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classSpeciesPlusEnd_aa010e7adb578155bf0142fa84684b47e}
+
+
+Return the full name of this \hyperlink{classSpecies}{Species} in a string format (e.\+g. \char`\"{}\+Arp2/3\{\+Bound\}\char`\"{}. 
+
+
+
+Reimplemented from \hyperlink{classSpecies_a00dab56705525cefef915aa29363a959}{Species}.
+
+
+
+Definition at line 617 of file Species.\+h.
+
+
+
+References Species\+::get\+Name().
+
+\hypertarget{classSpecies_a1ea8969c51bc69879891a408f9e197c7}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+Molecule@{get\+Molecule}}
+\index{get\+Molecule@{get\+Molecule}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+Molecule}]{\setlength{\rightskip}{0pt plus 5cm}int Species\+::get\+Molecule (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_a1ea8969c51bc69879891a408f9e197c7}
+
+
+Return the molecule index associated with this \hyperlink{classSpecies}{Species}' (as int) 
+
+
+
+Definition at line 241 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+molecule.
+
+
+
+Referenced by Compartment\+::add\+Species\+Bound(), Compartment\+::add\+Species\+Diffusing(), Compartment\+::add\+Species\+Filament(), Compartment\+::add\+Species\+Linker(), Compartment\+::add\+Species\+Minus\+End(), Compartment\+::add\+Species\+Motor(), Compartment\+::add\+Species\+Plus\+End(), Compartment\+::add\+Species\+Unique(), and Compartment\+::set\+Diffusion\+Rate().
+
+\hypertarget{classSpecies_aea7327b3fed261c705b4d32b9973aa58}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+N@{get\+N}}
+\index{get\+N@{get\+N}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+N}]{\setlength{\rightskip}{0pt plus 5cm}{\bf species\+\_\+copy\+\_\+t} Species\+::get\+N (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_aea7327b3fed261c705b4d32b9973aa58}
+
+
+Return the current copy number of this \hyperlink{classSpecies}{Species}. 
+
+
+
+Definition at line 230 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+rspecies, and R\+Species\+::get\+N().
+
+
+
+Referenced by Linker\+::\+Linker(), main(), Motor\+Ghost\+::\+Motor\+Ghost(), operator$<$$<$(), Species\+::operator=(), C\+Monomer\+::print(), Species\+::\+Species(), Linker\+::$\sim$\+Linker(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+\hypertarget{classSpecies_a28fa239dded841133760ff9c47af63a1}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+Name}]{\setlength{\rightskip}{0pt plus 5cm}string Species\+::get\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_a28fa239dded841133760ff9c47af63a1}
+
+
+Return this \hyperlink{classSpecies}{Species}' name. 
+
+
+
+Definition at line 238 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+molecule, Species\+Names\+D\+B\+::\+Instance(), and Species\+Names\+D\+B\+::int\+To\+String().
+
+
+
+Referenced by Species\+::get\+Full\+Name(), Species\+Bulk\+::get\+Full\+Name(), Species\+Diffusing\+::get\+Full\+Name(), Species\+Filament\+::get\+Full\+Name(), Species\+Bound\+::get\+Full\+Name(), Species\+Linker\+::get\+Full\+Name(), Species\+Motor\+::get\+Full\+Name(), get\+Full\+Name(), Species\+Minus\+End\+::get\+Full\+Name(), and C\+Monomer\+::print().
+
+\hypertarget{classSpecies_af24cab7cbaa561d35b08fef5faf05fdf}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+Parent@{get\+Parent}}
+\index{get\+Parent@{get\+Parent}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ Species\+::get\+Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_af24cab7cbaa561d35b08fef5faf05fdf}
+
+
+Definition at line 209 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+parent.
+
+
+
+Referenced by Species\+::get\+Root(), and main().
+
+\hypertarget{classSpecies_a876c8a827476a11e05f3b7a7669c29b6}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+Root@{get\+Root}}
+\index{get\+Root@{get\+Root}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ Species\+::get\+Root (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classSpecies_a876c8a827476a11e05f3b7a7669c29b6}
+
+
+Definition at line 36 of file Species.\+cpp.
+
+
+
+References Species\+::get\+Parent(), Component\+::get\+Root(), and Species\+::has\+Parent().
+
+\hypertarget{classSpecies_a048dd7bc3fecd08b1b1797dc83aa163d}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+R\+Species@{get\+R\+Species}}
+\index{get\+R\+Species@{get\+R\+Species}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf R\+Species}\& Species\+::get\+R\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_a048dd7bc3fecd08b1b1797dc83aa163d}
+
+
+Return a reference to \hyperlink{classRSpecies}{R\+Species}. 
+
+Notice that value copying won't be allowed because \hyperlink{classRSpecies}{R\+Species} is not copyable. 
+
+Definition at line 219 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+rspecies.
+
+
+
+Referenced by Chem\+Signal\+::connect(), Simple\+Manager\+Impl\+::initialize\+C\+Cylinder(), Linker\+::\+Linker(), main(), Motor\+Ghost\+::\+Motor\+Ghost(), Linker\+::$\sim$\+Linker(), and Motor\+Ghost\+::$\sim$\+Motor\+Ghost().
+
+\hypertarget{classSpecies_aa1069a34b360f84d186f48bd99f80971}{\index{Species\+Plus\+End@{Species\+Plus\+End}!get\+R\+Species@{get\+R\+Species}}
+\index{get\+R\+Species@{get\+R\+Species}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{get\+R\+Species}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf R\+Species}\& Species\+::get\+R\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_aa1069a34b360f84d186f48bd99f80971}
+
+
+Return a constant reference to \hyperlink{classRSpecies}{R\+Species}. 
+
+
+
+Definition at line 222 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+rspecies.
+
+\hypertarget{classSpecies_a40262d7217fcc28a31682aee40a19232}{\index{Species\+Plus\+End@{Species\+Plus\+End}!has\+Parent@{has\+Parent}}
+\index{has\+Parent@{has\+Parent}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{has\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}bool Species\+::has\+Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_a40262d7217fcc28a31682aee40a19232}
+
+
+Definition at line 213 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+parent.
+
+
+
+Referenced by Species\+::get\+Root().
+
+\hypertarget{classSpeciesPlusEnd_a5f0bc88dba1a97d30d54c0b37e349ec7}{\index{Species\+Plus\+End@{Species\+Plus\+End}!operator=@{operator=}}
+\index{operator=@{operator=}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Plus\+End}\& Species\+Plus\+End\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Species\+Plus\+End} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesPlusEnd_a5f0bc88dba1a97d30d54c0b37e349ec7}
+
+
+Regular Assignment. 
+
+
+
+Definition at line 600 of file Species.\+h.
+
+
+
+References Species\+::operator=().
+
+\hypertarget{classSpeciesPlusEnd_a1ef2d1e906f0470eb62465d574e0491f}{\index{Species\+Plus\+End@{Species\+Plus\+End}!operator=@{operator=}}
+\index{operator=@{operator=}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Plus\+End}\& Species\+Plus\+End\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Plus\+End} \&\&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classSpeciesPlusEnd_a1ef2d1e906f0470eb62465d574e0491f}
+
+
+Move assignment. 
+
+
+
+Definition at line 606 of file Species.\+h.
+
+
+
+References Species\+::operator=().
+
+\hypertarget{classSpecies_a88de7cf5130cb9cee2da3585374db654}{\index{Species\+Plus\+End@{Species\+Plus\+End}!set\+N@{set\+N}}
+\index{set\+N@{set\+N}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{set\+N}]{\setlength{\rightskip}{0pt plus 5cm}void Species\+::set\+N (
+\begin{DoxyParamCaption}
+\item[{{\bf species\+\_\+copy\+\_\+t}}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_a88de7cf5130cb9cee2da3585374db654}
+
+
+Sets the copy number for this \hyperlink{classSpecies}{Species}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & should be a non-\/negative number, but no checking is done in run time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+The operation does not emit any signals about the copy number change. 
+\end{DoxyNote}
+
+
+Definition at line 227 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+rspecies, and R\+Species\+::set\+N().
+
+\hypertarget{classSpecies_acc64c5b61abf911872d433ac32b62de8}{\index{Species\+Plus\+End@{Species\+Plus\+End}!set\+Parent@{set\+Parent}}
+\index{set\+Parent@{set\+Parent}!Species\+Plus\+End@{Species\+Plus\+End}}
+\subsubsection[{set\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}void Species\+::set\+Parent (
+\begin{DoxyParamCaption}
+\item[{{\bf Composite} $\ast$}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classSpecies_acc64c5b61abf911872d433ac32b62de8}
+
+
+Definition at line 211 of file Species.\+h.
+
+
+
+References Species\+::\+\_\+parent.
+
+
+
+Referenced by Compartment\+::add\+Species\+Bound(), Compartment\+::add\+Species\+Diffusing(), Compartment\+::add\+Species\+Filament(), Compartment\+::add\+Species\+Linker(), Compartment\+::add\+Species\+Minus\+End(), Compartment\+::add\+Species\+Motor(), Compartment\+::add\+Species\+Plus\+End(), and Compartment\+::add\+Species\+Unique().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Species_8h}{Species.\+h}\end{DoxyCompactItemize}

@@ -1,0 +1,222 @@
+\hypertarget{classVisitorLambda}{\section{Visitor\+Lambda Class Reference}
+\label{classVisitorLambda}\index{Visitor\+Lambda@{Visitor\+Lambda}}
+}
+
+
+Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon.  
+
+
+
+
+{\ttfamily \#include $<$Visitor.\+h$>$}
+
+
+
+Inheritance diagram for Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=187pt]{classVisitorLambda__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=160pt]{classVisitorLambda__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classVisitorLambda_a77004dd1388b4b7ebc5d1d6fe1adb747}{set\+Lambda} (std\+::function$<$ bool(\hyperlink{classComponent}{Component} $\ast$)$>$ g)
+\begin{DoxyCompactList}\small\item\em Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+void \hyperlink{classVisitorLambda_a46d9cc856e3fbc7155dd2212981a8902}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classComponent}{Component} $\ast$)$>$ pred)
+\begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+bool \hyperlink{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{visit} (\hyperlink{classComponent}{Component} $\ast$c)
+\begin{DoxyCompactList}\small\item\em When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classVisitorLambda_af934df1d8669dd315d824d9ee706f250}{visit\+Impl} (\hyperlink{classComponent}{Component} $\ast$c) override
+\begin{DoxyCompactList}\small\item\em Implementation of the visit(...) method. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classVisitorLambda_ad41ffd99799d4ce452e5a9aaf6b62d46}{pred\+Impl} (\hyperlink{classComponent}{Component} $\ast$c) override
+\begin{DoxyCompactList}\small\item\em Implementation of the pred(...) method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::function$<$ bool(\hyperlink{classComponent}{Component} $\ast$)$>$ \hyperlink{classVisitorLambda_a098597c2b62c63a2fd2a833add3cc43d}{\+\_\+f}
+\begin{DoxyCompactList}\small\item\em The function to be perfomed on each node. \end{DoxyCompactList}\item 
+std\+::function$<$ bool(\hyperlink{classComponent}{Component} $\ast$)$>$ \hyperlink{classVisitorLambda_adfd5fc76108d52d9abc981c020379661}{\+\_\+pred} = \mbox{[}$\,$\mbox{]}(\hyperlink{classComponent}{Component}$\ast$)\{return true;\}
+\begin{DoxyCompactList}\small\item\em The predicate which checks whether the node should be evaluated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. 
+
+
+
+Definition at line 65 of file Visitor.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classVisitorLambda_ad41ffd99799d4ce452e5a9aaf6b62d46}{\index{Visitor\+Lambda@{Visitor\+Lambda}!pred\+Impl@{pred\+Impl}}
+\index{pred\+Impl@{pred\+Impl}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{pred\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Visitor\+Lambda\+::pred\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classVisitorLambda_ad41ffd99799d4ce452e5a9aaf6b62d46}
+
+
+Implementation of the pred(...) method. 
+
+
+
+Reimplemented from \hyperlink{classVisitor_a5f9d231f1ac00bd232085ee6e6547de0}{Visitor}.
+
+
+
+Reimplemented in \hyperlink{classTypeVisitorLambda_a3157fca6f97df070135388705836899a}{Type\+Visitor\+Lambda$<$ Component\+Type $>$}.
+
+
+
+Definition at line 80 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+
+
+Referenced by Type\+Visitor\+Lambda$<$ Component\+Type $>$\+::pred\+Impl().
+
+\hypertarget{classVisitorLambda_a77004dd1388b4b7ebc5d1d6fe1adb747}{\index{Visitor\+Lambda@{Visitor\+Lambda}!set\+Lambda@{set\+Lambda}}
+\index{set\+Lambda@{set\+Lambda}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{set\+Lambda}]{\setlength{\rightskip}{0pt plus 5cm}void Visitor\+Lambda\+::set\+Lambda (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Component} $\ast$)$>$}]{g}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classVisitorLambda_a77004dd1388b4b7ebc5d1d6fe1adb747}
+
+
+Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 68 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+Referenced by main().
+
+\hypertarget{classVisitorLambda_a46d9cc856e3fbc7155dd2212981a8902}{\index{Visitor\+Lambda@{Visitor\+Lambda}!set\+Lambda\+Pred@{set\+Lambda\+Pred}}
+\index{set\+Lambda\+Pred@{set\+Lambda\+Pred}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{set\+Lambda\+Pred}]{\setlength{\rightskip}{0pt plus 5cm}void Visitor\+Lambda\+::set\+Lambda\+Pred (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Component} $\ast$)$>$}]{pred}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classVisitorLambda_a46d9cc856e3fbc7155dd2212981a8902}
+
+
+Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 71 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+\hypertarget{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}{\index{Visitor\+Lambda@{Visitor\+Lambda}!visit@{visit}}
+\index{visit@{visit}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}bool Visitor\+::visit (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classVisitor_a3f8ea7ad6aa61e99d8d1bc0576bdf23c}
+
+
+When this conditional visitor, $\ast$cv, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(c), if v-\/$>$pred(c) returns true. 
+
+If v-\/$>$visit(c) returns a false value, then the further propagation of the tree is terminated. 
+
+Definition at line 39 of file Visitor.\+h.
+
+
+
+References Visitor\+::pred\+Impl(), and Visitor\+::visit\+Impl().
+
+
+
+Referenced by Component\+::apply(), and Composite\+::apply().
+
+\hypertarget{classVisitorLambda_af934df1d8669dd315d824d9ee706f250}{\index{Visitor\+Lambda@{Visitor\+Lambda}!visit\+Impl@{visit\+Impl}}
+\index{visit\+Impl@{visit\+Impl}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{visit\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Visitor\+Lambda\+::visit\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Component} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classVisitorLambda_af934df1d8669dd315d824d9ee706f250}
+
+
+Implementation of the visit(...) method. 
+
+
+
+Implements \hyperlink{classVisitor_a1ebdba266c77626f67a22fc2300d8dc3}{Visitor}.
+
+
+
+Definition at line 77 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classVisitorLambda_a098597c2b62c63a2fd2a833add3cc43d}{\index{Visitor\+Lambda@{Visitor\+Lambda}!\+\_\+f@{\+\_\+f}}
+\index{\+\_\+f@{\+\_\+f}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{\+\_\+f}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Component}$\ast$)$>$ Visitor\+Lambda\+::\+\_\+f\hspace{0.3cm}{\ttfamily [protected]}}}\label{classVisitorLambda_a098597c2b62c63a2fd2a833add3cc43d}
+
+
+The function to be perfomed on each node. 
+
+
+
+Definition at line 73 of file Visitor.\+h.
+
+
+
+Referenced by set\+Lambda(), and visit\+Impl().
+
+\hypertarget{classVisitorLambda_adfd5fc76108d52d9abc981c020379661}{\index{Visitor\+Lambda@{Visitor\+Lambda}!\+\_\+pred@{\+\_\+pred}}
+\index{\+\_\+pred@{\+\_\+pred}!Visitor\+Lambda@{Visitor\+Lambda}}
+\subsubsection[{\+\_\+pred}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Component}$\ast$)$>$ Visitor\+Lambda\+::\+\_\+pred = \mbox{[}$\,$\mbox{]}({\bf Component}$\ast$)\{return true;\}\hspace{0.3cm}{\ttfamily [protected]}}}\label{classVisitorLambda_adfd5fc76108d52d9abc981c020379661}
+
+
+The predicate which checks whether the node should be evaluated. 
+
+
+
+Definition at line 74 of file Visitor.\+h.
+
+
+
+Referenced by pred\+Impl(), and set\+Lambda\+Pred().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Visitor_8h}{Visitor.\+h}\end{DoxyCompactItemize}

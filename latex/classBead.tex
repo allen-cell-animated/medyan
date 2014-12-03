@@ -1,0 +1,878 @@
+\hypertarget{classBead}{\section{Bead Class Reference}
+\label{classBead}\index{Bead@{Bead}}
+}
+
+
+Represents a single coordinate between \hyperlink{classCylinder}{Cylinders}, and holds forces needed for mechanical equilibration.  
+
+
+
+
+{\ttfamily \#include $<$Bead.\+h$>$}
+
+
+
+Inheritance diagram for Bead\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{classBead__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Bead\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classBead__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBead_aa91581c9111d101b95bec920798e22ac}{Bead} (vector$<$ double $>$ v, int position\+Filament)
+\begin{DoxyCompactList}\small\item\em Main constructor. \end{DoxyCompactList}\item 
+\hyperlink{classBead_a5bb15ab11fee13f78721759cadb5a5b4}{Bead} (int position\+Filament)
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\hyperlink{classBead_a21f0ccd7041f56c4038171d0da3a58ed}{$\sim$\+Bead} ()
+\item 
+\hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classBead_ae6cfcc2936a2e12a3887c9fd824c6343}{get\+Compartment} ()
+\begin{DoxyCompactList}\small\item\em Get compartment. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classBead_adfda91d08764f284b4a23c05da34c84c}{update\+Position} ()
+\begin{DoxyCompactList}\small\item\em Update the position of this bead. \end{DoxyCompactList}\item 
+void \hyperlink{classBead_a3178379864ec93ff5e9f8a2e7916c94a}{set\+Position\+Filament} (int position\+Filament)
+\begin{DoxyCompactList}\small\item\em Set position on the local filament. \end{DoxyCompactList}\item 
+int \hyperlink{classBead_a3df2bf2b6063545ba9a68b890004057e}{get\+Position\+Filament} ()
+\begin{DoxyCompactList}\small\item\em Get position on the local filament. \end{DoxyCompactList}\item 
+float \hyperlink{classBead_afa239062c738d1db95a1456c9b357a68}{get\+Birth\+Time} ()
+\begin{DoxyCompactList}\small\item\em Get the birth time of this bead. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a06be9328d615af20a155e9060def1470}{apply} (\hyperlink{classVisitor}{Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em When this function is applied to a Conditional\+Visitor v, the corresponding v.\+visit(this) is called, and v is further applied to all children of this node recursively. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}{apply} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}{apply} (\hyperlink{classReactionVisitor}{Reaction\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classReactionBase}{Reaction\+Base}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}{apply\+\_\+impl} (\hyperlink{classSpeciesVisitor}{Species\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies \hyperlink{classSpeciesVisitor}{Species\+Visitor} v to every Species$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}{apply\+\_\+impl} (\hyperlink{classReactionVisitor}{Reaction\+Visitor} \&v)
+\begin{DoxyCompactList}\small\item\em Applies Reaction\+Base\+Visitor v to every Reaction\+Base$\ast$ object directly owned by this node. \end{DoxyCompactList}\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{get\+Parent} ()
+\begin{DoxyCompactList}\small\item\em Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. \end{DoxyCompactList}\item 
+void \hyperlink{classComponent_a9d5b03697a653cda24d5688af1d105f8}{set\+Parent} (\hyperlink{classComposite}{Composite} $\ast$other)
+\begin{DoxyCompactList}\small\item\em Sets the parent of this node to other. \end{DoxyCompactList}\item 
+bool \hyperlink{classComponent_a4f0bed8144509d6565a30b548fac0fe7}{is\+Root} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node is the root node. \end{DoxyCompactList}\item 
+\hyperlink{classComposite}{Composite} $\ast$ \hyperlink{classComponent_abcb3746cb8b4afcecf437dce40c0c772}{get\+Root} ()
+\begin{DoxyCompactList}\small\item\em Returns the root node of the hieararchy to which this node belongs to. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}{number\+Of\+Children} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of children of this node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a14bcb60799865752cd293fba2076d84a}{is\+Composite} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node is a \hyperlink{classComposite}{Composite} node. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a0daf865ff32aff9e68316c65b681cbf9}{is\+Species\+Container} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classComponent_a506e080028078ef9a753d854c60904a3}{is\+Reactions\+Container} () const 
+\begin{DoxyCompactList}\small\item\em Returns true if this node contains non-\/zero number of reactions (i.\+e. \hyperlink{classReactionBase}{Reaction\+Base} pointers) \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_ae99bcb165a9403e64ffea2b840192b4c}{number\+Of\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classSpecies}{Species} being immediately managed by this node (i.\+e. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a116a02dd48baa6bf46c1162998548814}{number\+Of\+Reactions} () const 
+\begin{DoxyCompactList}\small\item\em Returns the number of \hyperlink{classReactionBase}{Reaction\+Base} objets being immediately managed by this node (i.\+e. \end{DoxyCompactList}\item 
+virtual string \hyperlink{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}{get\+Full\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Return a string indicating the full name of this node (presumably used mainly for debugging) \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a38336c92dacb78175dfc7746bde5055d}{count\+Descendents} () const 
+\begin{DoxyCompactList}\small\item\em Return the total number of nodes contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}{count\+Species} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of \hyperlink{classSpecies}{Species} contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \hyperlink{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}{count\+Reactions} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of \hyperlink{classReactionBase}{Reaction\+Base} objects contained under this node's hieararchy. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{print\+Self} ()
+\begin{DoxyCompactList}\small\item\em Prints information about this node. Useful for debugging. \end{DoxyCompactList}\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classBead_a8f10459bad94f72599f2e239644c4421}{calc\+Force\+Square} ()
+\begin{DoxyCompactList}\small\item\em Auxiliary method for C\+G minimization. \end{DoxyCompactList}\item 
+double \hyperlink{classBead_a82e3c084cb26f343b5de59619c854f2b}{calc\+Force\+Aux\+Square} ()
+\item 
+double \hyperlink{classBead_a3df6e55d379663d002c73651a24718f5}{calc\+Dot\+Force\+Product} ()
+\end{DoxyCompactItemize}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ double $>$ \hyperlink{classBead_a8c9c7d97a682694bf3b16a0922b23786}{coordinate}
+\begin{DoxyCompactList}\small\item\em Coordinates of the bead. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{classBead_a4d46596f52ee0ce95e3e717483e1a921}{coordinate\+Aux}
+\begin{DoxyCompactList}\small\item\em An auxiliary coordinate field needed during C\+G minimization. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{classBead_afc556d77d1d80e11c1256e89bba0db66}{force}
+\begin{DoxyCompactList}\small\item\em Forces based on curent coordinates. Forces should always correspond to current coordinates. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{classBead_a59758227cd7afbb3ec5fbcafe32773b8}{force\+Aux}
+\begin{DoxyCompactList}\small\item\em An auxiliary field needed during C\+G minimization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classBead_ac9d2080d5d8f80f60535dfeea9cd38e9}{\+\_\+compartment} = nullptr
+\begin{DoxyCompactList}\small\item\em Pointer to the compartment that this bead is in. \end{DoxyCompactList}\item 
+int \hyperlink{classBead_a0eafb8f259549846d4714e6120cbc87c}{\+\_\+position\+Filament}
+\begin{DoxyCompactList}\small\item\em Position of bead on filament. \end{DoxyCompactList}\item 
+float \hyperlink{classBead_a356c8525fcf176bca4cd539f735c1de6}{\+\_\+birth\+Time}
+\begin{DoxyCompactList}\small\item\em Time of birth of bead;. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Represents a single coordinate between \hyperlink{classCylinder}{Cylinders}, and holds forces needed for mechanical equilibration. 
+
+Beads are the \char`\"{}hinges\char`\"{} between \hyperlink{classCylinder}{Cylinders}. In the minimization algorithms, beads are moved corresponding to external forces, for example, filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate dot products for the minimization algorithms. 
+
+Definition at line 38 of file Bead.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBead_aa91581c9111d101b95bec920798e22ac}{\index{Bead@{Bead}!Bead@{Bead}}
+\index{Bead@{Bead}!Bead@{Bead}}
+\subsubsection[{Bead}]{\setlength{\rightskip}{0pt plus 5cm}Bead\+::\+Bead (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$}]{v, }
+\item[{int}]{position\+Filament}
+\end{DoxyParamCaption}
+)}}\label{classBead_aa91581c9111d101b95bec920798e22ac}
+
+
+Main constructor. 
+
+
+
+Definition at line 23 of file Bead.\+cpp.
+
+
+
+References \+\_\+birth\+Time, \+\_\+compartment, Bead\+D\+B\+::add\+Bead(), Compartment\+::add\+Bead(), G\+Controller\+::get\+Compartment(), Bead\+D\+B\+::instance(), and tau().
+
+\hypertarget{classBead_a5bb15ab11fee13f78721759cadb5a5b4}{\index{Bead@{Bead}!Bead@{Bead}}
+\index{Bead@{Bead}!Bead@{Bead}}
+\subsubsection[{Bead}]{\setlength{\rightskip}{0pt plus 5cm}Bead\+::\+Bead (
+\begin{DoxyParamCaption}
+\item[{int}]{position\+Filament}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a5bb15ab11fee13f78721759cadb5a5b4}
+
+
+Default constructor. 
+
+
+
+Definition at line 50 of file Bead.\+h.
+
+\hypertarget{classBead_a21f0ccd7041f56c4038171d0da3a58ed}{\index{Bead@{Bead}!````~Bead@{$\sim$\+Bead}}
+\index{````~Bead@{$\sim$\+Bead}!Bead@{Bead}}
+\subsubsection[{$\sim$\+Bead}]{\setlength{\rightskip}{0pt plus 5cm}Bead\+::$\sim$\+Bead (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classBead_a21f0ccd7041f56c4038171d0da3a58ed}
+
+
+Definition at line 39 of file Bead.\+cpp.
+
+
+
+References \+\_\+compartment, Bead\+D\+B\+::instance(), Bead\+D\+B\+::remove\+Bead(), and Compartment\+::remove\+Bead().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classComponent_a06be9328d615af20a155e9060def1470}{\index{Bead@{Bead}!apply@{apply}}
+\index{apply@{apply}!Bead@{Bead}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a06be9328d615af20a155e9060def1470}
+
+
+When this function is applied to a Conditional\+Visitor v, the corresponding v.\+visit(this) is called, and v is further applied to all children of this node recursively. 
+
+However, the Conditional\+Visitor allows the visit() function to be applied only selectively to nodes that conform to specific criteria. 
+
+Reimplemented in \hyperlink{classComposite_a58123ab346f6621a187bebe456e383ea}{Composite}.
+
+
+
+Definition at line 26 of file Component.\+cpp.
+
+
+
+References Visitor\+::visit().
+
+\hypertarget{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}{\index{Bead@{Bead}!apply@{apply}}
+\index{apply@{apply}!Bead@{Bead}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a0f1cd7534ba27c165a1574adc8d422dd}
+
+
+Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classSpecies}{Species}. 
+
+
+
+Reimplemented in \hyperlink{classComposite_a18937a1f6f84a159e77ba83dd34b2e20}{Composite}.
+
+
+
+Definition at line 57 of file Component.\+h.
+
+
+
+References Component\+::apply\+\_\+impl().
+
+\hypertarget{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}{\index{Bead@{Bead}!apply@{apply}}
+\index{apply@{apply}!Bead@{Bead}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_aa911f6c2be71a33eeeb44f03c82cd421}
+
+
+Implements the apply\+\_\+if() method of the \hyperlink{classComponent}{Component} class by recursively applying it to itself and all its children that contain \hyperlink{classReactionBase}{Reaction\+Base}. 
+
+
+
+Reimplemented in \hyperlink{classComposite_aa4a608ee92aaaa6e0d63278595707474}{Composite}.
+
+
+
+Definition at line 65 of file Component.\+h.
+
+
+
+References Component\+::apply\+\_\+impl().
+
+\hypertarget{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}{\index{Bead@{Bead}!apply\+\_\+impl@{apply\+\_\+impl}}
+\index{apply\+\_\+impl@{apply\+\_\+impl}!Bead@{Bead}}
+\subsubsection[{apply\+\_\+impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply\+\_\+impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a20f6f5a1f7da3238c069dfc35f174a4b}
+
+
+Applies \hyperlink{classSpeciesVisitor}{Species\+Visitor} v to every Species$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classSpecies}{Species}. 
+
+Reimplemented in \hyperlink{classCompartment_ae9bdaf50db8e780d3614be3bc50e9171}{Compartment}.
+
+
+
+Definition at line 61 of file Component.\+h.
+
+
+
+Referenced by Component\+::apply(), and Composite\+::apply().
+
+\hypertarget{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}{\index{Bead@{Bead}!apply\+\_\+impl@{apply\+\_\+impl}}
+\index{apply\+\_\+impl@{apply\+\_\+impl}!Bead@{Bead}}
+\subsubsection[{apply\+\_\+impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::apply\+\_\+impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Visitor} \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_ac9296f41e0b9c254d5adea9df3b4b07a}
+
+
+Applies Reaction\+Base\+Visitor v to every Reaction\+Base$\ast$ object directly owned by this node. 
+
+This method needs to be overriden by descendent classes that contain \hyperlink{classReactionBase}{Reaction\+Base}. 
+
+Reimplemented in \hyperlink{classCompartment_a37bd8d3a6d3a21bf50716979c6694adb}{Compartment}.
+
+
+
+Definition at line 69 of file Component.\+h.
+
+\hypertarget{classBead_a3df6e55d379663d002c73651a24718f5}{\index{Bead@{Bead}!calc\+Dot\+Force\+Product@{calc\+Dot\+Force\+Product}}
+\index{calc\+Dot\+Force\+Product@{calc\+Dot\+Force\+Product}!Bead@{Bead}}
+\subsubsection[{calc\+Dot\+Force\+Product}]{\setlength{\rightskip}{0pt plus 5cm}double Bead\+::calc\+Dot\+Force\+Product (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3df6e55d379663d002c73651a24718f5}
+
+
+Definition at line 64 of file Bead.\+h.
+
+
+
+References force, and force\+Aux.
+
+\hypertarget{classBead_a82e3c084cb26f343b5de59619c854f2b}{\index{Bead@{Bead}!calc\+Force\+Aux\+Square@{calc\+Force\+Aux\+Square}}
+\index{calc\+Force\+Aux\+Square@{calc\+Force\+Aux\+Square}!Bead@{Bead}}
+\subsubsection[{calc\+Force\+Aux\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double Bead\+::calc\+Force\+Aux\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a82e3c084cb26f343b5de59619c854f2b}
+
+
+Definition at line 60 of file Bead.\+h.
+
+
+
+References force\+Aux.
+
+\hypertarget{classBead_a8f10459bad94f72599f2e239644c4421}{\index{Bead@{Bead}!calc\+Force\+Square@{calc\+Force\+Square}}
+\index{calc\+Force\+Square@{calc\+Force\+Square}!Bead@{Bead}}
+\subsubsection[{calc\+Force\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double Bead\+::calc\+Force\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a8f10459bad94f72599f2e239644c4421}
+
+
+Auxiliary method for C\+G minimization. 
+
+
+
+Definition at line 56 of file Bead.\+h.
+
+\hypertarget{classComponent_a38336c92dacb78175dfc7746bde5055d}{\index{Bead@{Bead}!count\+Descendents@{count\+Descendents}}
+\index{count\+Descendents@{count\+Descendents}!Bead@{Bead}}
+\subsubsection[{count\+Descendents}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Descendents (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a38336c92dacb78175dfc7746bde5055d}
+
+
+Return the total number of nodes contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_aad7cea9220c003254233ec9dc6bcb24e}{Composite}.
+
+
+
+Definition at line 110 of file Component.\+h.
+
+\hypertarget{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}{\index{Bead@{Bead}!count\+Reactions@{count\+Reactions}}
+\index{count\+Reactions@{count\+Reactions}!Bead@{Bead}}
+\subsubsection[{count\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a446ee3fa9e36a6b56642a9d2a14d983d}
+
+
+Return the number of \hyperlink{classReactionBase}{Reaction\+Base} objects contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_a14108b9a4f9e903ba0fd9cc40fbbd8ae}{Composite}.
+
+
+
+Definition at line 118 of file Component.\+h.
+
+\hypertarget{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}{\index{Bead@{Bead}!count\+Species@{count\+Species}}
+\index{count\+Species@{count\+Species}!Bead@{Bead}}
+\subsubsection[{count\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::count\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_ae4b35cc8ce749e1219bec0eeea16b4bc}
+
+
+Return the number of \hyperlink{classSpecies}{Species} contained under this node's hieararchy. 
+
+\begin{DoxyNote}{Note}
+This is a recursive call, and all nodes under this node are visited. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_ad3162a869285627b04c5388dc28e2719}{Composite}.
+
+
+
+Definition at line 114 of file Component.\+h.
+
+\hypertarget{classBead_afa239062c738d1db95a1456c9b357a68}{\index{Bead@{Bead}!get\+Birth\+Time@{get\+Birth\+Time}}
+\index{get\+Birth\+Time@{get\+Birth\+Time}!Bead@{Bead}}
+\subsubsection[{get\+Birth\+Time}]{\setlength{\rightskip}{0pt plus 5cm}float Bead\+::get\+Birth\+Time (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_afa239062c738d1db95a1456c9b357a68}
+
+
+Get the birth time of this bead. 
+
+
+
+Definition at line 81 of file Bead.\+h.
+
+
+
+References \+\_\+birth\+Time.
+
+\hypertarget{classBead_ae6cfcc2936a2e12a3887c9fd824c6343}{\index{Bead@{Bead}!get\+Compartment@{get\+Compartment}}
+\index{get\+Compartment@{get\+Compartment}!Bead@{Bead}}
+\subsubsection[{get\+Compartment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Compartment}$\ast$ Bead\+::get\+Compartment (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_ae6cfcc2936a2e12a3887c9fd824c6343}
+
+
+Get compartment. 
+
+
+
+Definition at line 70 of file Bead.\+h.
+
+
+
+References \+\_\+compartment.
+
+\hypertarget{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}{\index{Bead@{Bead}!get\+Full\+Name@{get\+Full\+Name}}
+\index{get\+Full\+Name@{get\+Full\+Name}!Bead@{Bead}}
+\subsubsection[{get\+Full\+Name}]{\setlength{\rightskip}{0pt plus 5cm}virtual string Component\+::get\+Full\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a42dd891a934150f6d6ef74b9850d4b5c}
+
+
+Return a string indicating the full name of this node (presumably used mainly for debugging) 
+
+
+
+Reimplemented in \hyperlink{classCompartment_aee4d7b2def05be8e5e75f6744c7b3940}{Compartment}, \hyperlink{classCompartmentGrid_ae388f0cfd0d78d0ebbe0583bc3d9ec41}{Compartment\+Grid}, and \hyperlink{classComposite_a0219bb2449696a3ab84ff24e4462e2c2}{Composite}.
+
+
+
+Definition at line 106 of file Component.\+h.
+
+\hypertarget{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{\index{Bead@{Bead}!get\+Parent@{get\+Parent}}
+\index{get\+Parent@{get\+Parent}!Bead@{Bead}}
+\subsubsection[{get\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite}$\ast$ Component\+::get\+Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}
+
+
+Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist. 
+
+
+
+Definition at line 72 of file Component.\+h.
+
+
+
+References Component\+::\+\_\+parent.
+
+
+
+Referenced by Component\+::get\+Root().
+
+\hypertarget{classBead_a3df2bf2b6063545ba9a68b890004057e}{\index{Bead@{Bead}!get\+Position\+Filament@{get\+Position\+Filament}}
+\index{get\+Position\+Filament@{get\+Position\+Filament}!Bead@{Bead}}
+\subsubsection[{get\+Position\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}int Bead\+::get\+Position\+Filament (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3df2bf2b6063545ba9a68b890004057e}
+
+
+Get position on the local filament. 
+
+
+
+Definition at line 78 of file Bead.\+h.
+
+
+
+References \+\_\+position\+Filament.
+
+
+
+Referenced by Filament\+::extend\+Back(), and Filament\+::extend\+Front().
+
+\hypertarget{classComponent_abcb3746cb8b4afcecf437dce40c0c772}{\index{Bead@{Bead}!get\+Root@{get\+Root}}
+\index{get\+Root@{get\+Root}!Bead@{Bead}}
+\subsubsection[{get\+Root}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Composite} $\ast$ Component\+::get\+Root (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classComponent_abcb3746cb8b4afcecf437dce40c0c772}
+
+
+Returns the root node of the hieararchy to which this node belongs to. 
+
+
+
+Definition at line 19 of file Component.\+cpp.
+
+
+
+References Component\+::get\+Parent(), Component\+::get\+Root(), and Component\+::is\+Root().
+
+
+
+Referenced by Component\+::get\+Root(), Reaction\+Base\+::get\+Root(), and Species\+::get\+Root().
+
+\hypertarget{classComponent_a14bcb60799865752cd293fba2076d84a}{\index{Bead@{Bead}!is\+Composite@{is\+Composite}}
+\index{is\+Composite@{is\+Composite}!Bead@{Bead}}
+\subsubsection[{is\+Composite}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Composite (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a14bcb60799865752cd293fba2076d84a}
+
+
+Returns true if this node is a \hyperlink{classComposite}{Composite} node. 
+
+
+
+Reimplemented in \hyperlink{classComposite_ae2c806010c5c1d2d166ce01f2710c271}{Composite}.
+
+
+
+Definition at line 89 of file Component.\+h.
+
+\hypertarget{classComponent_a506e080028078ef9a753d854c60904a3}{\index{Bead@{Bead}!is\+Reactions\+Container@{is\+Reactions\+Container}}
+\index{is\+Reactions\+Container@{is\+Reactions\+Container}!Bead@{Bead}}
+\subsubsection[{is\+Reactions\+Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Reactions\+Container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a506e080028078ef9a753d854c60904a3}
+
+
+Returns true if this node contains non-\/zero number of reactions (i.\+e. \hyperlink{classReactionBase}{Reaction\+Base} pointers) 
+
+
+
+Reimplemented in \hyperlink{classCompartment_a87a624dd83cc42e752454645a5484f6e}{Compartment}.
+
+
+
+Definition at line 95 of file Component.\+h.
+
+
+
+Referenced by Composite\+::count\+Reactions().
+
+\hypertarget{classComponent_a4f0bed8144509d6565a30b548fac0fe7}{\index{Bead@{Bead}!is\+Root@{is\+Root}}
+\index{is\+Root@{is\+Root}!Bead@{Bead}}
+\subsubsection[{is\+Root}]{\setlength{\rightskip}{0pt plus 5cm}bool Component\+::is\+Root (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classComponent_a4f0bed8144509d6565a30b548fac0fe7}
+
+
+Returns true if this node is the root node. 
+
+A root node has no parent, and the corresponding \hyperlink{classComponent_a4bb9041a7f3854f25f45060e81bb4e4e}{get\+Parent()} call would return a nullptr. 
+
+Definition at line 79 of file Component.\+h.
+
+
+
+References Component\+::\+\_\+parent.
+
+
+
+Referenced by Component\+::get\+Root().
+
+\hypertarget{classComponent_a0daf865ff32aff9e68316c65b681cbf9}{\index{Bead@{Bead}!is\+Species\+Container@{is\+Species\+Container}}
+\index{is\+Species\+Container@{is\+Species\+Container}!Bead@{Bead}}
+\subsubsection[{is\+Species\+Container}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Component\+::is\+Species\+Container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a0daf865ff32aff9e68316c65b681cbf9}
+
+
+Returns true if this node contains non-\/zero number of \hyperlink{classSpecies}{Species}. 
+
+
+
+Reimplemented in \hyperlink{classCompartment_ac26aefc0e11a0bf2065626bc47b5de08}{Compartment}.
+
+
+
+Definition at line 92 of file Component.\+h.
+
+
+
+Referenced by Composite\+::count\+Species().
+
+\hypertarget{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}{\index{Bead@{Bead}!number\+Of\+Children@{number\+Of\+Children}}
+\index{number\+Of\+Children@{number\+Of\+Children}!Bead@{Bead}}
+\subsubsection[{number\+Of\+Children}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Children (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a42566ba7ad92afe0d84d9d1d4e05745e}
+
+
+Returns the number of children of this node. 
+
+\begin{DoxyNote}{Note}
+\hyperlink{classSpecies}{Species} and \hyperlink{classReactionBase}{Reaction\+Base} objects are not counted. 
+\end{DoxyNote}
+
+
+Reimplemented in \hyperlink{classComposite_ab00f34ad7c8f7cd90ea9392bd54fd62a}{Composite}.
+
+
+
+Definition at line 86 of file Component.\+h.
+
+\hypertarget{classComponent_a116a02dd48baa6bf46c1162998548814}{\index{Bead@{Bead}!number\+Of\+Reactions@{number\+Of\+Reactions}}
+\index{number\+Of\+Reactions@{number\+Of\+Reactions}!Bead@{Bead}}
+\subsubsection[{number\+Of\+Reactions}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Reactions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a116a02dd48baa6bf46c1162998548814}
+
+
+Returns the number of \hyperlink{classReactionBase}{Reaction\+Base} objets being immediately managed by this node (i.\+e. 
+
+not counting reactions belonging to children nodes, etc. 
+
+Reimplemented in \hyperlink{classCompartment_a2a8090f8a6df14b5d8ab528425333cca}{Compartment}, and \hyperlink{classComposite_aee77e531ab9ccb8dcea12a307bd75539}{Composite}.
+
+
+
+Definition at line 103 of file Component.\+h.
+
+\hypertarget{classComponent_ae99bcb165a9403e64ffea2b840192b4c}{\index{Bead@{Bead}!number\+Of\+Species@{number\+Of\+Species}}
+\index{number\+Of\+Species@{number\+Of\+Species}!Bead@{Bead}}
+\subsubsection[{number\+Of\+Species}]{\setlength{\rightskip}{0pt plus 5cm}virtual size\+\_\+t Component\+::number\+Of\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_ae99bcb165a9403e64ffea2b840192b4c}
+
+
+Returns the number of \hyperlink{classSpecies}{Species} being immediately managed by this node (i.\+e. 
+
+not counting \hyperlink{classSpecies}{Species} belonging to children nodes, etc. 
+
+Reimplemented in \hyperlink{classCompartment_a9658205238f8d417eb29c5d966026844}{Compartment}, and \hyperlink{classComposite_af36fb9ed49f7fc262c68b41f2b9a56f6}{Composite}.
+
+
+
+Definition at line 99 of file Component.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}{\index{Bead@{Bead}!print\+Self@{print\+Self}}
+\index{print\+Self@{print\+Self}!Bead@{Bead}}
+\subsubsection[{print\+Self}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Component\+::print\+Self (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}, {\ttfamily [inherited]}}}\label{classComponent_a871fbdc783ea600ed667dd37eb8adf1e}
+
+
+Prints information about this node. Useful for debugging. 
+
+
+
+Reimplemented in \hyperlink{classCompartment_a79ff3378bf4da9e9fe88669ef1a91ad0}{Compartment}, and \hyperlink{classCompartmentGrid_a1c94761f08339f43d77cc6b90504dc49}{Compartment\+Grid}.
+
+
+
+Definition at line 121 of file Component.\+h.
+
+\hypertarget{classComponent_a9d5b03697a653cda24d5688af1d105f8}{\index{Bead@{Bead}!set\+Parent@{set\+Parent}}
+\index{set\+Parent@{set\+Parent}!Bead@{Bead}}
+\subsubsection[{set\+Parent}]{\setlength{\rightskip}{0pt plus 5cm}void Component\+::set\+Parent (
+\begin{DoxyParamCaption}
+\item[{{\bf Composite} $\ast$}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classComponent_a9d5b03697a653cda24d5688af1d105f8}
+
+
+Sets the parent of this node to other. 
+
+
+
+Definition at line 75 of file Component.\+h.
+
+
+
+References Component\+::\+\_\+parent.
+
+\hypertarget{classBead_a3178379864ec93ff5e9f8a2e7916c94a}{\index{Bead@{Bead}!set\+Position\+Filament@{set\+Position\+Filament}}
+\index{set\+Position\+Filament@{set\+Position\+Filament}!Bead@{Bead}}
+\subsubsection[{set\+Position\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}void Bead\+::set\+Position\+Filament (
+\begin{DoxyParamCaption}
+\item[{int}]{position\+Filament}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBead_a3178379864ec93ff5e9f8a2e7916c94a}
+
+
+Set position on the local filament. 
+
+
+
+Definition at line 76 of file Bead.\+h.
+
+
+
+References \+\_\+position\+Filament.
+
+\hypertarget{classBead_adfda91d08764f284b4a23c05da34c84c}{\index{Bead@{Bead}!update\+Position@{update\+Position}}
+\index{update\+Position@{update\+Position}!Bead@{Bead}}
+\subsubsection[{update\+Position}]{\setlength{\rightskip}{0pt plus 5cm}void Bead\+::update\+Position (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classBead_adfda91d08764f284b4a23c05da34c84c}
+
+
+Update the position of this bead. 
+
+
+
+Implements \hyperlink{classMovable_ac46982b0e79d846334e8cf15ba0b543d}{Movable}.
+
+
+
+Definition at line 48 of file Bead.\+cpp.
+
+
+
+References \+\_\+compartment, Compartment\+::add\+Bead(), coordinate, G\+Controller\+::get\+Compartment(), and Compartment\+::remove\+Bead().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBead_a356c8525fcf176bca4cd539f735c1de6}{\index{Bead@{Bead}!\+\_\+birth\+Time@{\+\_\+birth\+Time}}
+\index{\+\_\+birth\+Time@{\+\_\+birth\+Time}!Bead@{Bead}}
+\subsubsection[{\+\_\+birth\+Time}]{\setlength{\rightskip}{0pt plus 5cm}float Bead\+::\+\_\+birth\+Time\hspace{0.3cm}{\ttfamily [private]}}}\label{classBead_a356c8525fcf176bca4cd539f735c1de6}
+
+
+Time of birth of bead;. 
+
+
+
+Definition at line 88 of file Bead.\+h.
+
+
+
+Referenced by Bead(), and get\+Birth\+Time().
+
+\hypertarget{classBead_ac9d2080d5d8f80f60535dfeea9cd38e9}{\index{Bead@{Bead}!\+\_\+compartment@{\+\_\+compartment}}
+\index{\+\_\+compartment@{\+\_\+compartment}!Bead@{Bead}}
+\subsubsection[{\+\_\+compartment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Compartment}$\ast$ Bead\+::\+\_\+compartment = nullptr\hspace{0.3cm}{\ttfamily [private]}}}\label{classBead_ac9d2080d5d8f80f60535dfeea9cd38e9}
+
+
+Pointer to the compartment that this bead is in. 
+
+
+
+Definition at line 85 of file Bead.\+h.
+
+
+
+Referenced by Bead(), get\+Compartment(), update\+Position(), and $\sim$\+Bead().
+
+\hypertarget{classBead_a0eafb8f259549846d4714e6120cbc87c}{\index{Bead@{Bead}!\+\_\+position\+Filament@{\+\_\+position\+Filament}}
+\index{\+\_\+position\+Filament@{\+\_\+position\+Filament}!Bead@{Bead}}
+\subsubsection[{\+\_\+position\+Filament}]{\setlength{\rightskip}{0pt plus 5cm}int Bead\+::\+\_\+position\+Filament\hspace{0.3cm}{\ttfamily [private]}}}\label{classBead_a0eafb8f259549846d4714e6120cbc87c}
+
+
+Position of bead on filament. 
+
+
+
+Definition at line 87 of file Bead.\+h.
+
+
+
+Referenced by get\+Position\+Filament(), and set\+Position\+Filament().
+
+\hypertarget{classBead_a8c9c7d97a682694bf3b16a0922b23786}{\index{Bead@{Bead}!coordinate@{coordinate}}
+\index{coordinate@{coordinate}!Bead@{Bead}}
+\subsubsection[{coordinate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Bead\+::coordinate}}\label{classBead_a8c9c7d97a682694bf3b16a0922b23786}
+
+
+Coordinates of the bead. 
+
+
+
+Definition at line 41 of file Bead.\+h.
+
+
+
+Referenced by Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::compute\+Energy(), Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::compute\+Forces(), Cylinder\+::\+Cylinder(), Filament\+::depolymerize\+Back(), Filament\+::depolymerize\+Front(), Linker\+Stretching\+Harmonic\+::energy(), Filament\+Bending\+Harmonic\+::energy(), Motor\+Ghost\+Stretching\+Harmonic\+::energy(), Cylinder\+Excl\+Vol\+Repulsion\+::energy(), Filament\+Stretching\+Harmonic\+::energy(), Filament\+::extend\+Back(), Filament\+::extend\+Front(), Filament\+Stretching\+Harmonic\+::forces(), Cylinder\+Excl\+Vol\+Repulsion\+::forces(), Linker\+Stretching\+Harmonic\+::forces(), Filament\+Bending\+Harmonic\+::forces(), Motor\+Ghost\+Stretching\+Harmonic\+::forces(), Linker\+::\+Linker(), Motor\+Ghost\+::\+Motor\+Ghost(), Filament\+::polymerize\+Back(), Filament\+::polymerize\+Front(), update\+Position(), Linker\+::update\+Position(), Cylinder\+::update\+Position(), and Motor\+Ghost\+::update\+Position().
+
+\hypertarget{classBead_a4d46596f52ee0ce95e3e717483e1a921}{\index{Bead@{Bead}!coordinate\+Aux@{coordinate\+Aux}}
+\index{coordinate\+Aux@{coordinate\+Aux}!Bead@{Bead}}
+\subsubsection[{coordinate\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Bead\+::coordinate\+Aux}}\label{classBead_a4d46596f52ee0ce95e3e717483e1a921}
+
+
+An auxiliary coordinate field needed during C\+G minimization. 
+
+
+
+Definition at line 42 of file Bead.\+h.
+
+
+
+Referenced by Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::compute\+Forces\+Aux(), Cylinder\+Excl\+Vol\+Repulsion\+::forces(), Linker\+Stretching\+Harmonic\+::forces\+Aux(), Filament\+Stretching\+Harmonic\+::forces\+Aux(), Filament\+Bending\+Harmonic\+::forces\+Aux(), Cylinder\+Excl\+Vol\+Repulsion\+::forces\+Aux(), and Motor\+Ghost\+Stretching\+Harmonic\+::forces\+Aux().
+
+\hypertarget{classBead_afc556d77d1d80e11c1256e89bba0db66}{\index{Bead@{Bead}!force@{force}}
+\index{force@{force}!Bead@{Bead}}
+\subsubsection[{force}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Bead\+::force}}\label{classBead_afc556d77d1d80e11c1256e89bba0db66}
+
+
+Forces based on curent coordinates. Forces should always correspond to current coordinates. 
+
+
+
+Definition at line 43 of file Bead.\+h.
+
+
+
+Referenced by calc\+Dot\+Force\+Product(), Boundary\+Repulsion$<$ B\+Repulsion\+Interaction\+Type $>$\+::compute\+Energy(), Boundary\+Repulsion\+L\+J\+::compute\+Forces(), Boundary\+Repulsion\+Exp\+::compute\+Forces(), Cylinder\+Excl\+Vol\+Repulsion\+::energy(), Filament\+Stretching\+Harmonic\+::energy(), Linker\+Stretching\+Harmonic\+::energy(), Filament\+Bending\+Harmonic\+::energy(), Motor\+Ghost\+Stretching\+Harmonic\+::energy(), Filament\+Bending\+Harmonic\+::forces(), Filament\+Stretching\+Harmonic\+::forces(), Cylinder\+Excl\+Vol\+Repulsion\+::forces(), Linker\+Stretching\+Harmonic\+::forces(), Motor\+Ghost\+Stretching\+Harmonic\+::forces(), and Filament\+Bending\+Harmonic\+::forces\+Aux().
+
+\hypertarget{classBead_a59758227cd7afbb3ec5fbcafe32773b8}{\index{Bead@{Bead}!force\+Aux@{force\+Aux}}
+\index{force\+Aux@{force\+Aux}!Bead@{Bead}}
+\subsubsection[{force\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Bead\+::force\+Aux}}\label{classBead_a59758227cd7afbb3ec5fbcafe32773b8}
+
+
+An auxiliary field needed during C\+G minimization. 
+
+
+
+Definition at line 44 of file Bead.\+h.
+
+
+
+Referenced by calc\+Dot\+Force\+Product(), calc\+Force\+Aux\+Square(), Boundary\+Repulsion\+L\+J\+::compute\+Forces\+Aux(), Boundary\+Repulsion\+Exp\+::compute\+Forces\+Aux(), Linker\+Stretching\+Harmonic\+::forces\+Aux(), Filament\+Stretching\+Harmonic\+::forces\+Aux(), Filament\+Bending\+Harmonic\+::forces\+Aux(), Cylinder\+Excl\+Vol\+Repulsion\+::forces\+Aux(), and Motor\+Ghost\+Stretching\+Harmonic\+::forces\+Aux().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Bead_8h}{Bead.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{Bead_8cpp}{Bead.\+cpp}\end{DoxyCompactItemize}

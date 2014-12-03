@@ -1,0 +1,241 @@
+\hypertarget{namespacemathfunc}{\section{mathfunc Namespace Reference}
+\label{namespacemathfunc}\index{mathfunc@{mathfunc}}
+}
+
+
+is used for the mathematics module for the entire codebase mathfunc includes functions to calculate distances, products, and midpoints  
+
+
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{namespacemathfunc_a4f2e296612642f3ac1b4789f85b02c41}{Two\+Segment\+Distance} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&v4)
+\begin{DoxyCompactList}\small\item\em Function to calculate a diatance between two segments. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a43b9be958a97530eba2073e9816881eb}{Two\+Point\+Distance} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2)
+\begin{DoxyCompactList}\small\item\em Compute distance between two points with coordinates\+: (x1,y1,z1) and (x2,y2,z3);. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a79cd843c8fc2ad6513a091c86744e9f4}{Two\+Point\+Distance\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, double d)
+\begin{DoxyCompactList}\small\item\em Compute distance between two points with coordinates (x1 -\/d$\ast$p1x,y1-\/d$\ast$p1y,z1-\/d$\ast$p1z) and (x2-\/d$\ast$p2x,y2-\/d$\ast$p2y,z2-\/d$\ast$p2z) \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_aa45b754771ac16d546864a1a7fb9bf59}{Two\+Point\+Direction} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2)
+\begin{DoxyCompactList}\small\item\em Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2);. \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a003be58c2f6df9098c88b2ae33d5b5d4}{Scalar\+Product} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&v4)
+\begin{DoxyCompactList}\small\item\em Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) \end{DoxyCompactList}\item 
+double \hyperlink{namespacemathfunc_a3dffb1288c676c7809d4a6caae9601bb}{Scalar\+Product\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, const vector$<$ double $>$ \&v3, const vector$<$ double $>$ \&p3, const vector$<$ double $>$ \&v4, const vector$<$ double $>$ \&p4, double d)
+\begin{DoxyCompactList}\small\item\em Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) but with x-\/d$\ast$p coordinates. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_a1781854650a2eb9e2d88ad0ee14a8a69}{Next\+Point\+Projection} (const vector$<$ double $>$ \&coordinate, double d, const vector$<$ double $>$ \&\hyperlink{common_8h_abca55e6a21e0401c42bfb5da79ad3ad5}{tau})
+\begin{DoxyCompactList}\small\item\em Projection of a new point based on a given direction and starting point. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_a5c9392edbc56add20a4f95d7406a6757}{Mid\+Point\+Coordinate} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&v2, double alpha)
+\begin{DoxyCompactList}\small\item\em Returns coordinates of a point v located on a line between v1 and v2. $\vert$v-\/v1$\vert$/$\vert$v2-\/v$\vert$ = alpha. \end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{namespacemathfunc_aaaf523827e15939d17307f0c3724973c}{Mid\+Point\+Coordinate\+Stretched} (const vector$<$ double $>$ \&v1, const vector$<$ double $>$ \&p1, const vector$<$ double $>$ \&v2, const vector$<$ double $>$ \&p2, double alpha, double d)
+\begin{DoxyCompactList}\small\item\em Returns coordinates of a point v located on a line between v1 and v2. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+is used for the mathematics module for the entire codebase mathfunc includes functions to calculate distances, products, and midpoints 
+
+\subsection{Function Documentation}
+\hypertarget{namespacemathfunc_a5c9392edbc56add20a4f95d7406a6757}{\index{mathfunc@{mathfunc}!Mid\+Point\+Coordinate@{Mid\+Point\+Coordinate}}
+\index{Mid\+Point\+Coordinate@{Mid\+Point\+Coordinate}!mathfunc@{mathfunc}}
+\subsubsection[{Mid\+Point\+Coordinate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ mathfunc\+::\+Mid\+Point\+Coordinate (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{double}]{alpha}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a5c9392edbc56add20a4f95d7406a6757}
+
+
+Returns coordinates of a point v located on a line between v1 and v2. $\vert$v-\/v1$\vert$/$\vert$v2-\/v$\vert$ = alpha. 
+
+
+
+Definition at line 87 of file Math\+Functions.\+h.
+
+
+
+Referenced by Cylinder\+::\+Cylinder(), Linker\+Stretching\+Harmonic\+::energy(), Motor\+Ghost\+Stretching\+Harmonic\+::energy(), Linker\+Stretching\+Harmonic\+::forces(), Motor\+Ghost\+Stretching\+Harmonic\+::forces(), Linker\+Stretching\+Harmonic\+::forces\+Aux(), Motor\+Ghost\+Stretching\+Harmonic\+::forces\+Aux(), Linker\+::\+Linker(), M\+Linker\+::\+M\+Linker(), M\+Motor\+Ghost\+::\+M\+Motor\+Ghost(), Motor\+Ghost\+::\+Motor\+Ghost(), Output\+::print\+Basic\+Snapshot(), Linker\+::update\+Position(), Motor\+Ghost\+::update\+Position(), and Cylinder\+::update\+Position().
+
+\hypertarget{namespacemathfunc_aaaf523827e15939d17307f0c3724973c}{\index{mathfunc@{mathfunc}!Mid\+Point\+Coordinate\+Stretched@{Mid\+Point\+Coordinate\+Stretched}}
+\index{Mid\+Point\+Coordinate\+Stretched@{Mid\+Point\+Coordinate\+Stretched}!mathfunc@{mathfunc}}
+\subsubsection[{Mid\+Point\+Coordinate\+Stretched}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ mathfunc\+::\+Mid\+Point\+Coordinate\+Stretched (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{p1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{const vector$<$ double $>$ \&}]{p2, }
+\item[{double}]{alpha, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_aaaf523827e15939d17307f0c3724973c}
+
+
+Returns coordinates of a point v located on a line between v1 and v2. 
+
+$\vert$v-\/v1$\vert$/$\vert$v2-\/v$\vert$ = alpha, but with x-\/d$\ast$p coordinates 
+
+Definition at line 98 of file Math\+Functions.\+h.
+
+
+
+Referenced by Linker\+Stretching\+Harmonic\+::energy(), and Motor\+Ghost\+Stretching\+Harmonic\+::energy().
+
+\hypertarget{namespacemathfunc_a1781854650a2eb9e2d88ad0ee14a8a69}{\index{mathfunc@{mathfunc}!Next\+Point\+Projection@{Next\+Point\+Projection}}
+\index{Next\+Point\+Projection@{Next\+Point\+Projection}!mathfunc@{mathfunc}}
+\subsubsection[{Next\+Point\+Projection}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ mathfunc\+::\+Next\+Point\+Projection (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{coordinate, }
+\item[{double}]{d, }
+\item[{const vector$<$ double $>$ \&}]{tau}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a1781854650a2eb9e2d88ad0ee14a8a69}
+
+
+Projection of a new point based on a given direction and starting point. 
+
+
+
+Definition at line 78 of file Math\+Functions.\+h.
+
+
+
+Referenced by Filament\+::depolymerize\+Back(), Filament\+::depolymerize\+Front(), Filament\+::extend\+Back(), Filament\+::extend\+Front(), Filament\+::\+Filament(), Controller\+::initialize(), Filament\+::polymerize\+Back(), and Filament\+::polymerize\+Front().
+
+\hypertarget{namespacemathfunc_a003be58c2f6df9098c88b2ae33d5b5d4}{\index{mathfunc@{mathfunc}!Scalar\+Product@{Scalar\+Product}}
+\index{Scalar\+Product@{Scalar\+Product}!mathfunc@{mathfunc}}
+\subsubsection[{Scalar\+Product}]{\setlength{\rightskip}{0pt plus 5cm}double mathfunc\+::\+Scalar\+Product (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{const vector$<$ double $>$ \&}]{v3, }
+\item[{const vector$<$ double $>$ \&}]{v4}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a003be58c2f6df9098c88b2ae33d5b5d4}
+
+
+Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) 
+
+
+
+Definition at line 55 of file Math\+Functions.\+h.
+
+
+
+Referenced by Cylinder\+Excl\+Vol\+Repulsion\+::energy(), Filament\+Bending\+Harmonic\+::energy(), Filament\+Bending\+Harmonic\+::forces(), Cylinder\+Excl\+Vol\+Repulsion\+::forces(), Filament\+Bending\+Harmonic\+::forces\+Aux(), Cylinder\+Excl\+Vol\+Repulsion\+::forces\+Aux(), and Two\+Segment\+Distance().
+
+\hypertarget{namespacemathfunc_a3dffb1288c676c7809d4a6caae9601bb}{\index{mathfunc@{mathfunc}!Scalar\+Product\+Stretched@{Scalar\+Product\+Stretched}}
+\index{Scalar\+Product\+Stretched@{Scalar\+Product\+Stretched}!mathfunc@{mathfunc}}
+\subsubsection[{Scalar\+Product\+Stretched}]{\setlength{\rightskip}{0pt plus 5cm}double mathfunc\+::\+Scalar\+Product\+Stretched (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{p1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{const vector$<$ double $>$ \&}]{p2, }
+\item[{const vector$<$ double $>$ \&}]{v3, }
+\item[{const vector$<$ double $>$ \&}]{p3, }
+\item[{const vector$<$ double $>$ \&}]{v4, }
+\item[{const vector$<$ double $>$ \&}]{p4, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a3dffb1288c676c7809d4a6caae9601bb}
+
+
+Scalar product of two vectors with coordinates\+: (x2-\/x1,y2-\/y1,z2-\/z1) and (x4-\/x3,y4-\/y3,z4-\/z3) but with x-\/d$\ast$p coordinates. 
+
+
+
+Definition at line 64 of file Math\+Functions.\+h.
+
+
+
+Referenced by Cylinder\+Excl\+Vol\+Repulsion\+::energy(), and Filament\+Bending\+Harmonic\+::energy().
+
+\hypertarget{namespacemathfunc_aa45b754771ac16d546864a1a7fb9bf59}{\index{mathfunc@{mathfunc}!Two\+Point\+Direction@{Two\+Point\+Direction}}
+\index{Two\+Point\+Direction@{Two\+Point\+Direction}!mathfunc@{mathfunc}}
+\subsubsection[{Two\+Point\+Direction}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ mathfunc\+::\+Two\+Point\+Direction (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{v2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_aa45b754771ac16d546864a1a7fb9bf59}
+
+
+Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2);. 
+
+
+
+Definition at line 45 of file Math\+Functions.\+h.
+
+
+
+References tau(), and Two\+Point\+Distance().
+
+
+
+Referenced by Sub\+System\+::add\+New\+Filament(), Sub\+System\+::add\+New\+Filaments(), Filament\+::depolymerize\+Back(), Filament\+::depolymerize\+Front(), Filament\+::extend\+Back(), Filament\+::extend\+Front(), Sphere\+Boundary\+Element\+::normal(), Cylindrical\+Z\+Boundary\+Element\+::normal(), Half\+Sphere\+Z\+Boundary\+Element\+::normal(), Filament\+::polymerize\+Back(), and Filament\+::polymerize\+Front().
+
+\hypertarget{namespacemathfunc_a43b9be958a97530eba2073e9816881eb}{\index{mathfunc@{mathfunc}!Two\+Point\+Distance@{Two\+Point\+Distance}}
+\index{Two\+Point\+Distance@{Two\+Point\+Distance}!mathfunc@{mathfunc}}
+\subsubsection[{Two\+Point\+Distance}]{\setlength{\rightskip}{0pt plus 5cm}double mathfunc\+::\+Two\+Point\+Distance (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{v2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a43b9be958a97530eba2073e9816881eb}
+
+
+Compute distance between two points with coordinates\+: (x1,y1,z1) and (x2,y2,z3);. 
+
+
+
+Definition at line 27 of file Math\+Functions.\+h.
+
+
+
+Referenced by Sub\+System\+::add\+New\+Filament(), Sub\+System\+::add\+New\+Filaments(), Sphere\+Boundary\+Element\+::distance(), Cylindrical\+Z\+Boundary\+Element\+::distance(), Half\+Sphere\+Z\+Boundary\+Element\+::distance(), Motor\+Ghost\+Stretching\+Harmonic\+::energy(), Linker\+Stretching\+Harmonic\+::energy(), Filament\+Stretching\+Harmonic\+::energy(), G\+Controller\+::find\+Compartments(), Filament\+Stretching\+Harmonic\+::forces(), Motor\+Ghost\+Stretching\+Harmonic\+::forces(), Linker\+Stretching\+Harmonic\+::forces(), Linker\+Stretching\+Harmonic\+::forces\+Aux(), Filament\+Stretching\+Harmonic\+::forces\+Aux(), Motor\+Ghost\+Stretching\+Harmonic\+::forces\+Aux(), M\+Linker\+::\+M\+Linker(), M\+Motor\+Ghost\+::\+M\+Motor\+Ghost(), Filament\+::straight\+Filament\+Projection(), Sphere\+Boundary\+Element\+::stretched\+Distance(), Cylindrical\+Z\+Boundary\+Element\+::stretched\+Distance(), Half\+Sphere\+Z\+Boundary\+Element\+::stretched\+Distance(), Two\+Point\+Direction(), Cylinder\+Neighbor\+List\+::update\+Neighbors(), and Filament\+::zig\+Zag\+Filament\+Projection().
+
+\hypertarget{namespacemathfunc_a79cd843c8fc2ad6513a091c86744e9f4}{\index{mathfunc@{mathfunc}!Two\+Point\+Distance\+Stretched@{Two\+Point\+Distance\+Stretched}}
+\index{Two\+Point\+Distance\+Stretched@{Two\+Point\+Distance\+Stretched}!mathfunc@{mathfunc}}
+\subsubsection[{Two\+Point\+Distance\+Stretched}]{\setlength{\rightskip}{0pt plus 5cm}double mathfunc\+::\+Two\+Point\+Distance\+Stretched (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{p1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{const vector$<$ double $>$ \&}]{p2, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{namespacemathfunc_a79cd843c8fc2ad6513a091c86744e9f4}
+
+
+Compute distance between two points with coordinates (x1 -\/d$\ast$p1x,y1-\/d$\ast$p1y,z1-\/d$\ast$p1z) and (x2-\/d$\ast$p2x,y2-\/d$\ast$p2y,z2-\/d$\ast$p2z) 
+
+
+
+Definition at line 35 of file Math\+Functions.\+h.
+
+
+
+Referenced by Filament\+Stretching\+Harmonic\+::energy().
+
+\hypertarget{namespacemathfunc_a4f2e296612642f3ac1b4789f85b02c41}{\index{mathfunc@{mathfunc}!Two\+Segment\+Distance@{Two\+Segment\+Distance}}
+\index{Two\+Segment\+Distance@{Two\+Segment\+Distance}!mathfunc@{mathfunc}}
+\subsubsection[{Two\+Segment\+Distance}]{\setlength{\rightskip}{0pt plus 5cm}double mathfunc\+::\+Two\+Segment\+Distance (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ double $>$ \&}]{v1, }
+\item[{const vector$<$ double $>$ \&}]{v2, }
+\item[{const vector$<$ double $>$ \&}]{v3, }
+\item[{const vector$<$ double $>$ \&}]{v4}
+\end{DoxyParamCaption}
+)}}\label{namespacemathfunc_a4f2e296612642f3ac1b4789f85b02c41}
+
+
+Function to calculate a diatance between two segments. 
+
+segment 1\+: l1 = v2 -\/ v1; segment 2\+: l2 = v3 -\/ v4; distance betwin begining of l1 nd l2\+: l0 = v3 -\/ v1; a = (l1,l1); b = (l1,l2); c = (ls,vls); d = (l1,l0); e = (l2,l0); f = (l0,l0); D = a$\ast$c -\/ b$\ast$b;
+
+lines are given by a parametric equation v1 + s$\ast$(v2-\/v1) and v3 + t$\ast$(v4-\/v3). Closes distance is given by l = l0 + sc$\ast$l1 -\/ tc$\ast$l2, where tc and sc are numbers between\mbox{[}0,1\mbox{]}, so points are withing the segments. Algorithm is the following\+: find closes points between infinite lines and then move tc and sc to 0 or 1 if they are out of \mbox{[}0,1\mbox{]}.
+
+Definition at line 21 of file Math\+Functions.\+cpp.
+
+
+
+References Scalar\+Product().
+

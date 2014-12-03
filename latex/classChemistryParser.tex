@@ -1,0 +1,126 @@
+\hypertarget{classChemistryParser}{\section{Chemistry\+Parser Class Reference}
+\label{classChemistryParser}\index{Chemistry\+Parser@{Chemistry\+Parser}}
+}
+
+
+Used to parse all chemical information.  
+
+
+
+
+{\ttfamily \#include $<$Parser.\+h$>$}
+
+
+
+Inheritance diagram for Chemistry\+Parser\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=170pt]{classChemistryParser__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Chemistry\+Parser\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{classChemistryParser__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classChemistryParser_af054e9adc10a110223bdab9ed0a22adc}{Chemistry\+Parser} (string input\+File\+Name)
+\item 
+\hyperlink{classChemistryParser_a0918e9fb2e03ef37f920c1214b5286cf}{$\sim$\+Chemistry\+Parser} ()
+\item 
+\hyperlink{structChemistryData}{Chemistry\+Data} \hyperlink{classChemistryParser_a655de1a88016755e9dffae5081d00963}{read\+Chemistry\+Input} ()
+\begin{DoxyCompactList}\small\item\em Reads chemical reactions and species from input file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+fstream \hyperlink{classParser_adc64c51d84a8fe723f7b4f13ca4d37cd}{\+\_\+input\+File}
+\begin{DoxyCompactList}\small\item\em input file being used \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to parse all chemical information. 
+
+Definition at line 228 of file Parser.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classChemistryParser_af054e9adc10a110223bdab9ed0a22adc}{\index{Chemistry\+Parser@{Chemistry\+Parser}!Chemistry\+Parser@{Chemistry\+Parser}}
+\index{Chemistry\+Parser@{Chemistry\+Parser}!Chemistry\+Parser@{Chemistry\+Parser}}
+\subsubsection[{Chemistry\+Parser}]{\setlength{\rightskip}{0pt plus 5cm}Chemistry\+Parser\+::\+Chemistry\+Parser (
+\begin{DoxyParamCaption}
+\item[{string}]{input\+File\+Name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemistryParser_af054e9adc10a110223bdab9ed0a22adc}
+
+
+Definition at line 231 of file Parser.\+h.
+
+\hypertarget{classChemistryParser_a0918e9fb2e03ef37f920c1214b5286cf}{\index{Chemistry\+Parser@{Chemistry\+Parser}!````~Chemistry\+Parser@{$\sim$\+Chemistry\+Parser}}
+\index{````~Chemistry\+Parser@{$\sim$\+Chemistry\+Parser}!Chemistry\+Parser@{Chemistry\+Parser}}
+\subsubsection[{$\sim$\+Chemistry\+Parser}]{\setlength{\rightskip}{0pt plus 5cm}Chemistry\+Parser\+::$\sim$\+Chemistry\+Parser (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classChemistryParser_a0918e9fb2e03ef37f920c1214b5286cf}
+
+
+Definition at line 232 of file Parser.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classChemistryParser_a655de1a88016755e9dffae5081d00963}{\index{Chemistry\+Parser@{Chemistry\+Parser}!read\+Chemistry\+Input@{read\+Chemistry\+Input}}
+\index{read\+Chemistry\+Input@{read\+Chemistry\+Input}!Chemistry\+Parser@{Chemistry\+Parser}}
+\subsubsection[{read\+Chemistry\+Input}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Chemistry\+Data} Chemistry\+Parser\+::read\+Chemistry\+Input (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classChemistryParser_a655de1a88016755e9dffae5081d00963}
+
+
+Reads chemical reactions and species from input file. 
+
+Returns a chemistry setup struct containing this data 
+
+Definition at line 868 of file Parser.\+cpp.
+
+
+
+References Parser\+::\+\_\+input\+File, Chemistry\+Data\+::binding\+Reactions, Chemistry\+Data\+::bulk\+Reactions, Chemistry\+Data\+::depolymerization\+Reactions, Chemistry\+Data\+::gen\+Reactions, Chemistry\+Data\+::linker\+Binding\+Reactions, Chemistry\+Data\+::motor\+Binding\+Reactions, Chemistry\+Data\+::motor\+Walking\+Reactions, Chemistry\+Data\+::polymerization\+Reactions, Chemistry\+Data\+::species\+Bound, Chemistry\+Data\+::species\+Bulk, Chemistry\+Data\+::species\+Diffusing, Chemistry\+Data\+::species\+Filament, Chemistry\+Data\+::species\+Linker, Chemistry\+Data\+::species\+Minus\+End, Chemistry\+Data\+::species\+Motor, Chemistry\+Data\+::species\+Plus\+End, and Chemistry\+Data\+::unbinding\+Reactions.
+
+
+
+Referenced by Controller\+::initialize().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classParser_adc64c51d84a8fe723f7b4f13ca4d37cd}{\index{Chemistry\+Parser@{Chemistry\+Parser}!\+\_\+input\+File@{\+\_\+input\+File}}
+\index{\+\_\+input\+File@{\+\_\+input\+File}!Chemistry\+Parser@{Chemistry\+Parser}}
+\subsubsection[{\+\_\+input\+File}]{\setlength{\rightskip}{0pt plus 5cm}fstream Parser\+::\+\_\+input\+File\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classParser_adc64c51d84a8fe723f7b4f13ca4d37cd}
+
+
+input file being used 
+
+
+
+Definition at line 166 of file Parser.\+h.
+
+
+
+Referenced by Parser\+::\+Parser(), System\+Parser\+::read\+Boundary\+Parameters(), System\+Parser\+::read\+Boundary\+Type(), System\+Parser\+::read\+Chemistry\+Algorithm(), read\+Chemistry\+Input(), System\+Parser\+::read\+Chemistry\+Parameters(), System\+Parser\+::read\+Chemistry\+Setup(), Filament\+Parser\+::read\+Filaments(), System\+Parser\+::read\+Filament\+Setup(), System\+Parser\+::read\+Geometry\+Parameters(), System\+Parser\+::read\+Mechanics\+Algorithm(), System\+Parser\+::read\+Mechanics\+F\+F\+Type(), System\+Parser\+::read\+Mechanics\+Parameters(), and Parser\+::$\sim$\+Parser().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Parser_8h}{Parser.\+h}\item 
+M3\+S\+Y\+M/\hyperlink{Parser_8cpp}{Parser.\+cpp}\end{DoxyCompactItemize}

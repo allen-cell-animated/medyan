@@ -1,0 +1,38 @@
+\hypertarget{Visitor_8h}{\section{M3\+S\+Y\+M/\+Visitor.h File Reference}
+\label{Visitor_8h}\index{M3\+S\+Y\+M/\+Visitor.\+h@{M3\+S\+Y\+M/\+Visitor.\+h}}
+}
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Component.\+h\char`\"{}}\\*
+Include dependency graph for Visitor.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{Visitor_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Visitor_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classVisitor}{Visitor}
+\begin{DoxyCompactList}\small\item\em An abstract interface to traverse those nodes in the \hyperlink{classComposite}{Composite} pattern which fulfill a certain predicate. \end{DoxyCompactList}\item 
+class \hyperlink{classVisitorLambda}{Visitor\+Lambda}
+\begin{DoxyCompactList}\small\item\em Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. \end{DoxyCompactList}\item 
+class \hyperlink{classTypeVisitor}{Type\+Visitor$<$ Component\+Type $>$}
+\item 
+class \hyperlink{classTypeVisitorLambda}{Type\+Visitor\+Lambda$<$ Component\+Type $>$}
+\item 
+class \hyperlink{classSpeciesVisitor}{Species\+Visitor}
+\begin{DoxyCompactList}\small\item\em The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesVisitorLambda}{Species\+Visitor\+Lambda}
+\begin{DoxyCompactList}\small\item\em Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classSpecies}{Species} of the node and its descendent nodes. \end{DoxyCompactList}\item 
+class \hyperlink{classReactionVisitor}{Reaction\+Visitor}
+\begin{DoxyCompactList}\small\item\em The visitor pattern allows a functor to visit each node of the \hyperlink{classComposite}{Composite} pattern. \end{DoxyCompactList}\item 
+class \hyperlink{classReactionVisitorLambda}{Reaction\+Visitor\+Lambda}
+\begin{DoxyCompactList}\small\item\em Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classReaction}{Reaction} of the node and its descendent nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}

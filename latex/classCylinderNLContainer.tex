@@ -1,0 +1,135 @@
+\hypertarget{classCylinderNLContainer}{\section{Cylinder\+N\+L\+Container Class Reference}
+\label{classCylinderNLContainer}\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+}
+
+
+Holds a \hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List}.  
+
+
+
+
+{\ttfamily \#include $<$Neighbor\+List\+Container.\+h$>$}
+
+
+
+Inheritance diagram for Cylinder\+N\+L\+Container\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classCylinderNLContainer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Cylinder\+N\+L\+Container\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=287pt]{classCylinderNLContainer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCylinderNLContainer_ac6f9fad451123b8d26bfce5e9649987b}{Cylinder\+N\+L\+Container} (float r\+Max=0.\+0, float r\+Min=0.\+0, bool cross\+Filament\+Only=false)
+\begin{DoxyCompactList}\small\item\em Constructor, adds a cylinder neighbor list to the database. \end{DoxyCompactList}\item 
+\hyperlink{classCylinderNLContainer_a9d61168b2490efa03d6191c8848b2b3e}{$\sim$\+Cylinder\+N\+L\+Container} ()
+\begin{DoxyCompactList}\small\item\em Destructor, removes cylinder neighbor list from the database. \end{DoxyCompactList}\item 
+\hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List} $\ast$ \hyperlink{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}{get\+Neighbor\+List} ()
+\begin{DoxyCompactList}\small\item\em Get neighbor list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List} $\ast$ \hyperlink{classCylinderNLContainer_a08bf1bd5d85d517db15ff9f1601eb65e}{\+\_\+neighbor\+List}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Holds a \hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List}. 
+
+Definition at line 22 of file Neighbor\+List\+Container.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classCylinderNLContainer_ac6f9fad451123b8d26bfce5e9649987b}{\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}!Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}!Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+\subsubsection[{Cylinder\+N\+L\+Container}]{\setlength{\rightskip}{0pt plus 5cm}Cylinder\+N\+L\+Container\+::\+Cylinder\+N\+L\+Container (
+\begin{DoxyParamCaption}
+\item[{float}]{r\+Max = {\ttfamily 0.0}, }
+\item[{float}]{r\+Min = {\ttfamily 0.0}, }
+\item[{bool}]{cross\+Filament\+Only = {\ttfamily false}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCylinderNLContainer_ac6f9fad451123b8d26bfce5e9649987b}
+
+
+Constructor, adds a cylinder neighbor list to the database. 
+
+
+
+Definition at line 29 of file Neighbor\+List\+Container.\+h.
+
+
+
+References \+\_\+neighbor\+List, Neighbor\+List\+D\+B\+::add\+Neighbor\+List(), and Neighbor\+List\+D\+B\+::instance().
+
+\hypertarget{classCylinderNLContainer_a9d61168b2490efa03d6191c8848b2b3e}{\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}!````~Cylinder\+N\+L\+Container@{$\sim$\+Cylinder\+N\+L\+Container}}
+\index{````~Cylinder\+N\+L\+Container@{$\sim$\+Cylinder\+N\+L\+Container}!Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+\subsubsection[{$\sim$\+Cylinder\+N\+L\+Container}]{\setlength{\rightskip}{0pt plus 5cm}Cylinder\+N\+L\+Container\+::$\sim$\+Cylinder\+N\+L\+Container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCylinderNLContainer_a9d61168b2490efa03d6191c8848b2b3e}
+
+
+Destructor, removes cylinder neighbor list from the database. 
+
+
+
+Definition at line 35 of file Neighbor\+List\+Container.\+h.
+
+
+
+References \+\_\+neighbor\+List, Neighbor\+List\+D\+B\+::instance(), and Neighbor\+List\+D\+B\+::remove\+Neighbor\+List().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}{\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}!get\+Neighbor\+List@{get\+Neighbor\+List}}
+\index{get\+Neighbor\+List@{get\+Neighbor\+List}!Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+\subsubsection[{get\+Neighbor\+List}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Cylinder\+Neighbor\+List}$\ast$ Cylinder\+N\+L\+Container\+::get\+Neighbor\+List (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}
+
+
+Get neighbor list. 
+
+
+
+Definition at line 41 of file Neighbor\+List\+Container.\+h.
+
+
+
+References \+\_\+neighbor\+List.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCylinderNLContainer_a08bf1bd5d85d517db15ff9f1601eb65e}{\index{Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}!\+\_\+neighbor\+List@{\+\_\+neighbor\+List}}
+\index{\+\_\+neighbor\+List@{\+\_\+neighbor\+List}!Cylinder\+N\+L\+Container@{Cylinder\+N\+L\+Container}}
+\subsubsection[{\+\_\+neighbor\+List}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Cylinder\+Neighbor\+List}$\ast$ Cylinder\+N\+L\+Container\+::\+\_\+neighbor\+List\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinderNLContainer_a08bf1bd5d85d517db15ff9f1601eb65e}
+
+
+Definition at line 25 of file Neighbor\+List\+Container.\+h.
+
+
+
+Referenced by Cylinder\+N\+L\+Container(), get\+Neighbor\+List(), and $\sim$\+Cylinder\+N\+L\+Container().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{NeighborListContainer_8h}{Neighbor\+List\+Container.\+h}\end{DoxyCompactItemize}

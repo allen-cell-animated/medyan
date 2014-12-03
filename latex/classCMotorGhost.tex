@@ -1,0 +1,379 @@
+\hypertarget{classCMotorGhost}{\section{C\+Motor\+Ghost Class Reference}
+\label{classCMotorGhost}\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+}
+
+
+A class to represent the chemical component of a \hyperlink{classMotorGhost}{Motor\+Ghost}.  
+
+
+
+
+{\ttfamily \#include $<$C\+Motor\+Ghost.\+h$>$}
+
+
+
+Inheritance diagram for C\+Motor\+Ghost\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=155pt]{classCMotorGhost__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for C\+Motor\+Ghost\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classCMotorGhost__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCMotorGhost_af158e8f7892b3b283d25a8750539a854}{C\+Motor\+Ghost} (\hyperlink{classCompartment}{Compartment} $\ast$c)
+\begin{DoxyCompactList}\small\item\em Default constructor and destructor. \end{DoxyCompactList}\item 
+\hyperlink{classCMotorGhost_abb169feb64336df9008c4f736c09a9b4}{$\sim$\+C\+Motor\+Ghost} ()
+\item 
+\hyperlink{classCMotorGhost_ad36a0bc57074dd813a0bf7ad75c6b0d7}{C\+Motor\+Ghost} (const \hyperlink{classCMotorGhost}{C\+Motor\+Ghost} \&rhs, \hyperlink{classCompartment}{Compartment} $\ast$c)
+\begin{DoxyCompactList}\small\item\em Copy constructor, standard. \end{DoxyCompactList}\item 
+\hyperlink{classCMotorGhost}{C\+Motor\+Ghost} \& \hyperlink{classCMotorGhost_afee33dd40280b1b63cd918db1de46df8}{operator=} (\hyperlink{classCMotorGhost}{C\+Motor\+Ghost} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+virtual \hyperlink{classCMotorGhost}{C\+Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a73ff98b373999b7913d9629ac290240c}{clone} (\hyperlink{classCompartment}{Compartment} $\ast$c)
+\begin{DoxyCompactList}\small\item\em Clone, calls copy constructor. \end{DoxyCompactList}\item 
+void \hyperlink{classCMotorGhost_a1e18f9a0e0dcc0f2b4b140c3fb60bea8}{set\+Motor\+Ghost} (\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$\hyperlink{classMotorGhost}{Motor\+Ghost})
+\begin{DoxyCompactList}\small\item\em Set parent motor ghost. \end{DoxyCompactList}\item 
+\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a7b5661e4a7bc38ce2657af40b9ff7d29}{get\+Motor\+Ghost} ()
+\begin{DoxyCompactList}\small\item\em Get parent motor ghost. \end{DoxyCompactList}\item 
+void \hyperlink{classCBound_a17d4b84d683b0b7bd75b793410fed18f}{set\+First\+Species} (\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$species)
+\begin{DoxyCompactList}\small\item\em Set first species. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_aad60656a671e4ffdc45b4c904fa7c320}{get\+First\+Species} ()
+\begin{DoxyCompactList}\small\item\em Get first species. \end{DoxyCompactList}\item 
+void \hyperlink{classCBound_a01badbb54867fb99b6f3a895d555867a}{set\+Second\+Species} (\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$species)
+\begin{DoxyCompactList}\small\item\em Set second species. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_a1e706b6472c40ae1d98a64eda0acdadf}{get\+Second\+Species} ()
+\begin{DoxyCompactList}\small\item\em Get second species. \end{DoxyCompactList}\item 
+\hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCBound_a6c4d7b1b35d06725c8659424bf0c3f18}{get\+Compartment} ()
+\begin{DoxyCompactList}\small\item\em Get compartment that this \hyperlink{classCBound}{C\+Bound} is in. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}{\+\_\+first\+Species} = nullptr
+\begin{DoxyCompactList}\small\item\em Corresponding first species on filament. \end{DoxyCompactList}\item 
+\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{classCBound_ae6818ab861d273598a2507be75183e41}{\+\_\+second\+Species} = nullptr
+\begin{DoxyCompactList}\small\item\em Corresponding second species on filament. \end{DoxyCompactList}\item 
+\hyperlink{classCompartment}{Compartment} $\ast$ \hyperlink{classCBound_a95a66719b898cf32e60ae7137186bbbf}{\+\_\+compartment}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classCompartment}{Compartment} this \hyperlink{classCBound}{C\+Bound} is in. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMotorGhost}{Motor\+Ghost} $\ast$ \hyperlink{classCMotorGhost_a248b8fee5ba1d85c989f666e3a908261}{\+\_\+p\+Motor\+Ghost}
+\begin{DoxyCompactList}\small\item\em Pointer to parent motorghost. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A class to represent the chemical component of a \hyperlink{classMotorGhost}{Motor\+Ghost}. 
+
+The \hyperlink{classCMotorGhost}{C\+Motor\+Ghost} class contains chemical info of the parent \hyperlink{classMotorGhost}{Motor\+Ghost}. 
+
+Definition at line 30 of file C\+Motor\+Ghost.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classCMotorGhost_af158e8f7892b3b283d25a8750539a854}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{C\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}C\+Motor\+Ghost\+::\+C\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Compartment} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_af158e8f7892b3b283d25a8750539a854}
+
+
+Default constructor and destructor. 
+
+
+
+Definition at line 37 of file C\+Motor\+Ghost.\+h.
+
+
+
+Referenced by clone().
+
+\hypertarget{classCMotorGhost_abb169feb64336df9008c4f736c09a9b4}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!````~C\+Motor\+Ghost@{$\sim$\+C\+Motor\+Ghost}}
+\index{````~C\+Motor\+Ghost@{$\sim$\+C\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{$\sim$\+C\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}C\+Motor\+Ghost\+::$\sim$\+C\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_abb169feb64336df9008c4f736c09a9b4}
+
+
+Definition at line 38 of file C\+Motor\+Ghost.\+h.
+
+\hypertarget{classCMotorGhost_ad36a0bc57074dd813a0bf7ad75c6b0d7}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{C\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}C\+Motor\+Ghost\+::\+C\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{const {\bf C\+Motor\+Ghost} \&}]{rhs, }
+\item[{{\bf Compartment} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_ad36a0bc57074dd813a0bf7ad75c6b0d7}
+
+
+Copy constructor, standard. 
+
+
+
+Definition at line 41 of file C\+Motor\+Ghost.\+h.
+
+
+
+References C\+Bound\+::\+\_\+first\+Species, C\+Bound\+::\+\_\+second\+Species, C\+Bound\+::set\+First\+Species(), and C\+Bound\+::set\+Second\+Species().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCMotorGhost_a73ff98b373999b7913d9629ac290240c}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!clone@{clone}}
+\index{clone@{clone}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{clone}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf C\+Motor\+Ghost}$\ast$ C\+Motor\+Ghost\+::clone (
+\begin{DoxyParamCaption}
+\item[{{\bf Compartment} $\ast$}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classCMotorGhost_a73ff98b373999b7913d9629ac290240c}
+
+
+Clone, calls copy constructor. 
+
+
+
+Definition at line 51 of file C\+Motor\+Ghost.\+h.
+
+
+
+References C\+Motor\+Ghost().
+
+\hypertarget{classCBound_a6c4d7b1b35d06725c8659424bf0c3f18}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!get\+Compartment@{get\+Compartment}}
+\index{get\+Compartment@{get\+Compartment}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{get\+Compartment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Compartment}$\ast$ C\+Bound\+::get\+Compartment (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCBound_a6c4d7b1b35d06725c8659424bf0c3f18}
+
+
+Get compartment that this \hyperlink{classCBound}{C\+Bound} is in. 
+
+
+
+Definition at line 75 of file C\+Bound.\+h.
+
+
+
+References C\+Bound\+::\+\_\+compartment.
+
+\hypertarget{classCBound_aad60656a671e4ffdc45b4c904fa7c320}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!get\+First\+Species@{get\+First\+Species}}
+\index{get\+First\+Species@{get\+First\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{get\+First\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::get\+First\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCBound_aad60656a671e4ffdc45b4c904fa7c320}
+
+
+Get first species. 
+
+
+
+Definition at line 61 of file C\+Bound.\+h.
+
+
+
+References C\+Bound\+::\+\_\+first\+Species.
+
+
+
+Referenced by C\+Monomer\+::\+C\+Monomer(), Motor\+Walking\+Forward\+Callback\+::operator()(), Motor\+Walking\+Backward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Forward\+Callback\+::operator()(), and Motor\+Moving\+Cylinder\+Backward\+Callback\+::operator()().
+
+\hypertarget{classCMotorGhost_a7b5661e4a7bc38ce2657af40b9ff7d29}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!get\+Motor\+Ghost@{get\+Motor\+Ghost}}
+\index{get\+Motor\+Ghost@{get\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{get\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost}$\ast$ C\+Motor\+Ghost\+::get\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_a7b5661e4a7bc38ce2657af40b9ff7d29}
+
+
+Get parent motor ghost. 
+
+
+
+Definition at line 58 of file C\+Motor\+Ghost.\+h.
+
+
+
+References \+\_\+p\+Motor\+Ghost.
+
+\hypertarget{classCBound_a1e706b6472c40ae1d98a64eda0acdadf}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!get\+Second\+Species@{get\+Second\+Species}}
+\index{get\+Second\+Species@{get\+Second\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{get\+Second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::get\+Second\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCBound_a1e706b6472c40ae1d98a64eda0acdadf}
+
+
+Get second species. 
+
+
+
+Definition at line 72 of file C\+Bound.\+h.
+
+
+
+References C\+Bound\+::\+\_\+second\+Species.
+
+\hypertarget{classCMotorGhost_afee33dd40280b1b63cd918db1de46df8}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!operator=@{operator=}}
+\index{operator=@{operator=}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf C\+Motor\+Ghost}\& C\+Motor\+Ghost\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Motor\+Ghost} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classCMotorGhost_afee33dd40280b1b63cd918db1de46df8}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classCBound_a17d4b84d683b0b7bd75b793410fed18f}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!set\+First\+Species@{set\+First\+Species}}
+\index{set\+First\+Species@{set\+First\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{set\+First\+Species}]{\setlength{\rightskip}{0pt plus 5cm}void C\+Bound\+::set\+First\+Species (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Bound} $\ast$}]{species}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCBound_a17d4b84d683b0b7bd75b793410fed18f}
+
+
+Set first species. 
+
+remove from old first species 
+
+Definition at line 53 of file C\+Bound.\+h.
+
+
+
+References C\+Bound\+::\+\_\+first\+Species, Species\+Bound\+::remove\+C\+Bound(), and Species\+Bound\+::set\+C\+Bound().
+
+
+
+Referenced by C\+Linker\+::\+C\+Linker(), C\+Monomer\+::\+C\+Monomer(), C\+Motor\+Ghost(), Motor\+Walking\+Forward\+Callback\+::operator()(), Motor\+Walking\+Backward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Forward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Backward\+Callback\+::operator()(), Linker\+::update\+Position(), and Motor\+Ghost\+::update\+Position().
+
+\hypertarget{classCMotorGhost_a1e18f9a0e0dcc0f2b4b140c3fb60bea8}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!set\+Motor\+Ghost@{set\+Motor\+Ghost}}
+\index{set\+Motor\+Ghost@{set\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{set\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}void C\+Motor\+Ghost\+::set\+Motor\+Ghost (
+\begin{DoxyParamCaption}
+\item[{{\bf Motor\+Ghost} $\ast$}]{Motor\+Ghost}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCMotorGhost_a1e18f9a0e0dcc0f2b4b140c3fb60bea8}
+
+
+Set parent motor ghost. 
+
+
+
+Definition at line 56 of file C\+Motor\+Ghost.\+h.
+
+
+
+References \+\_\+p\+Motor\+Ghost.
+
+\hypertarget{classCBound_a01badbb54867fb99b6f3a895d555867a}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!set\+Second\+Species@{set\+Second\+Species}}
+\index{set\+Second\+Species@{set\+Second\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{set\+Second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}void C\+Bound\+::set\+Second\+Species (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Bound} $\ast$}]{species}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCBound_a01badbb54867fb99b6f3a895d555867a}
+
+
+Set second species. 
+
+remove from old second species 
+
+Definition at line 64 of file C\+Bound.\+h.
+
+
+
+References C\+Bound\+::\+\_\+second\+Species, Species\+Bound\+::remove\+C\+Bound(), and Species\+Bound\+::set\+C\+Bound().
+
+
+
+Referenced by C\+Linker\+::\+C\+Linker(), C\+Monomer\+::\+C\+Monomer(), C\+Motor\+Ghost(), Motor\+Walking\+Forward\+Callback\+::operator()(), Motor\+Walking\+Backward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Forward\+Callback\+::operator()(), Motor\+Moving\+Cylinder\+Backward\+Callback\+::operator()(), Linker\+::update\+Position(), and Motor\+Ghost\+::update\+Position().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCBound_a95a66719b898cf32e60ae7137186bbbf}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!\+\_\+compartment@{\+\_\+compartment}}
+\index{\+\_\+compartment@{\+\_\+compartment}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{\+\_\+compartment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Compartment}$\ast$ C\+Bound\+::\+\_\+compartment\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_a95a66719b898cf32e60ae7137186bbbf}
+
+
+\hyperlink{classCompartment}{Compartment} this \hyperlink{classCBound}{C\+Bound} is in. 
+
+
+
+Definition at line 37 of file C\+Bound.\+h.
+
+
+
+Referenced by C\+Bound\+::get\+Compartment().
+
+\hypertarget{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!\+\_\+first\+Species@{\+\_\+first\+Species}}
+\index{\+\_\+first\+Species@{\+\_\+first\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{\+\_\+first\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+first\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_a7ee4f44fd39c414be1f7b74b1031c1ce}
+
+
+Corresponding first species on filament. 
+
+
+
+Definition at line 34 of file C\+Bound.\+h.
+
+
+
+Referenced by C\+Linker\+::\+C\+Linker(), C\+Motor\+Ghost(), C\+Bound\+::get\+First\+Species(), C\+Bound\+::set\+First\+Species(), and C\+Bound\+::$\sim$\+C\+Bound().
+
+\hypertarget{classCMotorGhost_a248b8fee5ba1d85c989f666e3a908261}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!\+\_\+p\+Motor\+Ghost@{\+\_\+p\+Motor\+Ghost}}
+\index{\+\_\+p\+Motor\+Ghost@{\+\_\+p\+Motor\+Ghost}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{\+\_\+p\+Motor\+Ghost}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Motor\+Ghost}$\ast$ C\+Motor\+Ghost\+::\+\_\+p\+Motor\+Ghost\hspace{0.3cm}{\ttfamily [private]}}}\label{classCMotorGhost_a248b8fee5ba1d85c989f666e3a908261}
+
+
+Pointer to parent motorghost. 
+
+
+
+Definition at line 33 of file C\+Motor\+Ghost.\+h.
+
+
+
+Referenced by get\+Motor\+Ghost(), and set\+Motor\+Ghost().
+
+\hypertarget{classCBound_ae6818ab861d273598a2507be75183e41}{\index{C\+Motor\+Ghost@{C\+Motor\+Ghost}!\+\_\+second\+Species@{\+\_\+second\+Species}}
+\index{\+\_\+second\+Species@{\+\_\+second\+Species}!C\+Motor\+Ghost@{C\+Motor\+Ghost}}
+\subsubsection[{\+\_\+second\+Species}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ C\+Bound\+::\+\_\+second\+Species = nullptr\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classCBound_ae6818ab861d273598a2507be75183e41}
+
+
+Corresponding second species on filament. 
+
+
+
+Definition at line 35 of file C\+Bound.\+h.
+
+
+
+Referenced by C\+Linker\+::\+C\+Linker(), C\+Motor\+Ghost(), C\+Bound\+::get\+Second\+Species(), C\+Bound\+::set\+Second\+Species(), and C\+Bound\+::$\sim$\+C\+Bound().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{CMotorGhost_8h}{C\+Motor\+Ghost.\+h}\end{DoxyCompactItemize}

@@ -1,6 +1,51 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$SpeciesDB_8h.html" title="this header file will contain a factory for making objects in the Species hieararchy and a DB to mana..." alt="" coords="77,80,227,107"/>
-<area shape="rect" id="node9" href="$Species_8cpp.html" title="CytoSim/Species.cpp" alt="" coords="251,80,396,107"/>
-<area shape="rect" id="node5" href="$main_8cpp.html" title="CytoSim/main.cpp" alt="" coords="5,155,131,181"/>
-<area shape="rect" id="node7" href="$SpeciesDB_8cpp.html" title="CytoSim/SpeciesDB.cpp" alt="" coords="155,155,319,181"/>
+<map id="M3SYM/Structure/Species.h" name="M3SYM/Structure/Species.h">
+<area shape="rect" id="node2" href="$example__kostya_8cpp.html" title="M3SYM/EXAMPLES/example\l_kostya.cpp" alt="" coords="959,79,1158,117"/>
+<area shape="rect" id="node3" href="$SpeciesContainer_8h.html" title="M3SYM/Structure/SpeciesContainer.h" alt="" coords="962,172,1208,197"/>
+<area shape="rect" id="node6" href="$CMonomer_8h.html" title="M3SYM/Structure/CMonomer.h" alt="" coords="1354,432,1561,457"/>
+<area shape="rect" id="node32" href="$ReactionBase_8h.html" title="M3SYM/Structure/Reaction\lBase.h" alt="" coords="1864,79,2047,117"/>
+<area shape="rect" id="node44" href="$Species_8cpp.html" title="M3SYM/Structure/Species.cpp" alt="" coords="2692,259,2895,284"/>
+<area shape="rect" id="node46" href="$CBound_8h.html" title="M3SYM/Structure/CBound.h" alt="" coords="1709,432,1899,457"/>
+<area shape="rect" id="node4" href="$Compartment_8h.html" title="M3SYM/Structure/Compartment.h" alt="" coords="974,345,1196,371"/>
+<area shape="rect" id="node31" href="$Reaction_8cpp.html" title="M3SYM/Structure/Reaction.cpp" alt="" coords="1271,259,1479,284"/>
+<area shape="rect" id="node5" href="$Bead_8cpp.html" title="M3SYM/Structure/Bead.cpp" alt="" coords="992,432,1179,457"/>
+<area shape="rect" id="node7" href="$CCylinder_8h.html" title="M3SYM/Structure/CCylinder.h" alt="" coords="1358,519,1557,544"/>
+<area shape="rect" id="node19" href="$CMotorGhost_8h.html" title="M3SYM/Structure/CMotorGhost.h" alt="" coords="1112,519,1333,544"/>
+<area shape="rect" id="node24" href="$Compartment_8cpp.html" title="M3SYM/Structure/Compartment.cpp" alt="" coords="731,432,967,457"/>
+<area shape="rect" id="node25" href="$CompartmentContainer_8h.html" title="M3SYM/Structure/Compartment\lContainer.h" alt="" coords="465,425,676,464"/>
+<area shape="rect" id="node18" href="$CMonomer_8cpp.html" title="M3SYM/Structure/CMonomer.cpp" alt="" coords="1580,519,1801,544"/>
+<area shape="rect" id="node8" href="$CCylinder_8cpp.html" title="M3SYM/Structure/CCylinder.cpp" alt="" coords="1352,599,1565,624"/>
+<area shape="rect" id="node9" href="$Cylinder_8h.html" title="M3SYM/Structure/Cylinder.h" alt="" coords="1589,599,1779,624"/>
+<area shape="rect" id="node10" href="$ChemCallbacks_8h.html" title="M3SYM/Chemistry/ChemCallbacks.h" alt="" coords="1413,679,1654,704"/>
+<area shape="rect" id="node11" href="$Controller_8cpp.html" title="M3SYM/Controller.cpp" alt="" coords="1925,679,2080,704"/>
+<area shape="rect" id="node12" href="$CylinderExclVolume_8cpp.html" title="M3SYM/Mechanics/ForceField\l/CylinderExclVolume.cpp" alt="" coords="2104,672,2307,711"/>
+<area shape="rect" id="node13" href="$LinkerStretching_8cpp.html" title="M3SYM/Mechanics/ForceField\l/LinkerStretching.cpp" alt="" coords="2330,672,2533,711"/>
+<area shape="rect" id="node14" href="$MotorGhostStretching_8cpp.html" title="M3SYM/Mechanics/ForceField\l/MotorGhostStretching.cpp" alt="" coords="1024,672,1227,711"/>
+<area shape="rect" id="node15" href="$Output_8cpp.html" title="M3SYM/Output.cpp" alt="" coords="1251,679,1389,704"/>
+<area shape="rect" id="node16" href="$Linker_8cpp.html" title="M3SYM/Structure/Linker.cpp" alt="" coords="2558,679,2749,704"/>
+<area shape="rect" id="node17" href="$MotorGhost_8cpp.html" title="M3SYM/Structure/MotorGhost.cpp" alt="" coords="775,679,1000,704"/>
+<area shape="rect" id="node20" href="$CMotorGhost_8cpp.html" title="M3SYM/Structure/CMotorGhost.cpp" alt="" coords="859,599,1093,624"/>
+<area shape="rect" id="node21" href="$MotorGhost_8h.html" title="M3SYM/Structure/MotorGhost.h" alt="" coords="1117,599,1328,624"/>
+<area shape="rect" id="node22" href="$MotorGhostFF_8cpp.html" title="M3SYM/Mechanics/ForceField\l/MotorGhostFF.cpp" alt="" coords="549,672,752,711"/>
+<area shape="rect" id="node23" href="$SubSystem_8cpp.html" title="M3SYM/Structure/SubSystem.cpp" alt="" coords="1677,679,1901,704"/>
+<area shape="rect" id="node26" href="$ChemManagerImpl_8h.html" title="M3SYM/Chemistry/ChemManager\lImpl.h" alt="" coords="429,512,653,551"/>
+<area shape="rect" id="node27" href="$ReactionManager_8h.html" title="M3SYM/Chemistry/Reaction\lManager.h" alt="" coords="677,512,866,551"/>
+<area shape="rect" id="node28" href="$example__composite_8cpp.html" title="M3SYM/EXAMPLES/example\l_composite.cpp" alt="" coords="890,512,1088,551"/>
+<area shape="rect" id="node29" href="$GController_8cpp.html" title="M3SYM/GController.cpp" alt="" coords="5,519,170,544"/>
+<area shape="rect" id="node30" href="$CompartmentContainer_8cpp.html" title="M3SYM/Structure/Compartment\lContainer.cpp" alt="" coords="194,512,405,551"/>
+<area shape="rect" id="node33" href="$Reaction_8h.html" title="M3SYM/Structure/Reaction.h" alt="" coords="1859,172,2053,197"/>
+<area shape="rect" id="node45" href="$ReactionBase_8cpp.html" title="M3SYM/Structure/Reaction\lBase.cpp" alt="" coords="2076,165,2259,204"/>
+<area shape="rect" id="node34" href="$ChemGillespieImpl_8h.html" title="M3SYM/Chemistry/ChemGillespie\lImpl.h" alt="" coords="1972,252,2195,291"/>
+<area shape="rect" id="node37" href="$ChemNRMImpl_8h.html" title="M3SYM/Chemistry/ChemNRMImpl.h" alt="" coords="1710,259,1948,284"/>
+<area shape="rect" id="node40" href="$ChemSimpleGillespieImpl_8h.html" title="M3SYM/Chemistry/ChemSimple\lGillespieImpl.h" alt="" coords="2219,252,2431,291"/>
+<area shape="rect" id="node42" href="$ReactionContainer_8h.html" title="M3SYM/Structure/Reaction\lContainer.h" alt="" coords="1503,252,1686,291"/>
+<area shape="rect" id="node43" href="$RSpecies_8cpp.html" title="M3SYM/Structure/RSpecies.cpp" alt="" coords="2455,259,2667,284"/>
+<area shape="rect" id="node35" href="$CController_8cpp.html" title="M3SYM/CController.cpp" alt="" coords="1952,345,2117,371"/>
+<area shape="rect" id="node36" href="$ChemGillespieImpl_8cpp.html" title="M3SYM/Chemistry/ChemGillespie\lImpl.cpp" alt="" coords="2140,339,2363,377"/>
+<area shape="rect" id="node38" href="$ChemNRMImpl_8cpp.html" title="M3SYM/Chemistry/ChemNRMImpl.cpp" alt="" coords="1454,345,1706,371"/>
+<area shape="rect" id="node39" href="$example__misc_8cpp.html" title="M3SYM/EXAMPLES/example\l_misc.cpp" alt="" coords="1730,339,1928,377"/>
+<area shape="rect" id="node41" href="$ChemSimpleGillespieImpl_8cpp.html" title="M3SYM/Chemistry/ChemSimple\lGillespieImpl.cpp" alt="" coords="2387,339,2599,377"/>
+<area shape="rect" id="node47" href="$CLinker_8h.html" title="M3SYM/Structure/CLinker.h" alt="" coords="1825,519,2012,544"/>
+<area shape="rect" id="node48" href="$CLinker_8cpp.html" title="M3SYM/Structure/CLinker.cpp" alt="" coords="1802,599,2003,624"/>
+<area shape="rect" id="node49" href="$Linker_8h.html" title="M3SYM/Structure/Linker.h" alt="" coords="2027,599,2204,624"/>
+<area shape="rect" id="node50" href="$LinkerFF_8cpp.html" title="M3SYM/Mechanics/ForceField\l/LinkerFF.cpp" alt="" coords="2773,672,2976,711"/>
 </map>

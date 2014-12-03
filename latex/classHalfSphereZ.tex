@@ -1,0 +1,183 @@
+\hypertarget{classHalfSphereZ}{\section{Half\+Sphere\+Z Class Reference}
+\label{classHalfSphereZ}\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+}
+
+
+A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class.  
+
+
+
+
+{\ttfamily \#include $<$Boundary\+Surface\+Impl.\+h$>$}
+
+
+
+Inheritance diagram for Half\+Sphere\+Z\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=173pt]{classHalfSphereZ__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Half\+Sphere\+Z\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=310pt]{classHalfSphereZ__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHalfSphereZ_ac08b9f1f91d76fd62df48fec94fd17fd}{Half\+Sphere\+Z} (vector$<$ double $>$ coords, double radius, bool up)
+\begin{DoxyCompactList}\small\item\em Constructor, creates boundary elements. \end{DoxyCompactList}\item 
+const vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $>$ $>$ \& \hyperlink{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}{boundary\+Elements} ()
+\begin{DoxyCompactList}\small\item\em Get boundary elements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ unique\+\_\+ptr\\*
+$<$ \hyperlink{classBoundaryElement}{Boundary\+Element} $>$ $>$ \hyperlink{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}{\+\_\+boundary\+Elements}
+\begin{DoxyCompactList}\small\item\em Vector of boundary elements that make up this surface. \end{DoxyCompactList}\item 
+short \hyperlink{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}{\+\_\+n\+Dim}
+\begin{DoxyCompactList}\small\item\em Dimensionality of surface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ double $>$ \hyperlink{classHalfSphereZ_a8e0ac10e6074199346802e399c33a984}{\+\_\+coords}
+\begin{DoxyCompactList}\small\item\em Center of half-\/sphere. \end{DoxyCompactList}\item 
+double \hyperlink{classHalfSphereZ_a23ff67377b4ab2432ec6fdd73187e058}{\+\_\+radius}
+\begin{DoxyCompactList}\small\item\em Radius of half-\/sphere. \end{DoxyCompactList}\item 
+bool \hyperlink{classHalfSphereZ_a6e7d1ea96f0f16716ebc5dd5434d601a}{\+\_\+up}
+\begin{DoxyCompactList}\small\item\em Facing up or down. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A simple implementation of the \hyperlink{classBoundarySurface}{Boundary\+Surface} class. 
+
+Definition at line 72 of file Boundary\+Surface\+Impl.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classHalfSphereZ_ac08b9f1f91d76fd62df48fec94fd17fd}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{Half\+Sphere\+Z}]{\setlength{\rightskip}{0pt plus 5cm}Half\+Sphere\+Z\+::\+Half\+Sphere\+Z (
+\begin{DoxyParamCaption}
+\item[{vector$<$ double $>$}]{coords, }
+\item[{double}]{radius, }
+\item[{bool}]{up}
+\end{DoxyParamCaption}
+)}}\label{classHalfSphereZ_ac08b9f1f91d76fd62df48fec94fd17fd}
+
+
+Constructor, creates boundary elements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em coords} & -\/ coordinates of center of half sphere \\
+\hline
+{\em normal} & -\/ normal vector to sphere \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file Boundary\+Surface\+Impl.\+cpp.
+
+
+
+References Boundary\+Surface\+::\+\_\+boundary\+Elements, and System\+Parameters\+::\+Boundaries().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!boundary\+Elements@{boundary\+Elements}}
+\index{boundary\+Elements@{boundary\+Elements}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{boundary\+Elements}]{\setlength{\rightskip}{0pt plus 5cm}const vector$<$unique\+\_\+ptr$<${\bf Boundary\+Element}$>$ $>$\& Boundary\+Surface\+::boundary\+Elements (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classBoundarySurface_a402dcf23f4f96110569d01e401edee5a}
+
+
+Get boundary elements. 
+
+
+
+Definition at line 45 of file Boundary\+Surface.\+h.
+
+
+
+References Boundary\+Surface\+::\+\_\+boundary\+Elements.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!\+\_\+boundary\+Elements@{\+\_\+boundary\+Elements}}
+\index{\+\_\+boundary\+Elements@{\+\_\+boundary\+Elements}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{\+\_\+boundary\+Elements}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$unique\+\_\+ptr$<${\bf Boundary\+Element}$>$ $>$ Boundary\+Surface\+::\+\_\+boundary\+Elements\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundarySurface_a67f60b2d22fb67f097e98025803d3d34}
+
+
+Vector of boundary elements that make up this surface. 
+
+
+
+Definition at line 35 of file Boundary\+Surface.\+h.
+
+
+
+Referenced by Boundary\+Surface\+::boundary\+Elements(), Cylinder\+Z\+::\+Cylinder\+Z(), Half\+Sphere\+Z(), Plane\+::\+Plane(), and Sphere\+::\+Sphere().
+
+\hypertarget{classHalfSphereZ_a8e0ac10e6074199346802e399c33a984}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!\+\_\+coords@{\+\_\+coords}}
+\index{\+\_\+coords@{\+\_\+coords}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{\+\_\+coords}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ Half\+Sphere\+Z\+::\+\_\+coords\hspace{0.3cm}{\ttfamily [private]}}}\label{classHalfSphereZ_a8e0ac10e6074199346802e399c33a984}
+
+
+Center of half-\/sphere. 
+
+
+
+Definition at line 75 of file Boundary\+Surface\+Impl.\+h.
+
+\hypertarget{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!\+\_\+n\+Dim@{\+\_\+n\+Dim}}
+\index{\+\_\+n\+Dim@{\+\_\+n\+Dim}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{\+\_\+n\+Dim}]{\setlength{\rightskip}{0pt plus 5cm}short Boundary\+Surface\+::\+\_\+n\+Dim\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classBoundarySurface_af3ed79310c6ba6cdc8e9f176bf463eb1}
+
+
+Dimensionality of surface. 
+
+
+
+Definition at line 36 of file Boundary\+Surface.\+h.
+
+\hypertarget{classHalfSphereZ_a23ff67377b4ab2432ec6fdd73187e058}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!\+\_\+radius@{\+\_\+radius}}
+\index{\+\_\+radius@{\+\_\+radius}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{\+\_\+radius}]{\setlength{\rightskip}{0pt plus 5cm}double Half\+Sphere\+Z\+::\+\_\+radius\hspace{0.3cm}{\ttfamily [private]}}}\label{classHalfSphereZ_a23ff67377b4ab2432ec6fdd73187e058}
+
+
+Radius of half-\/sphere. 
+
+
+
+Definition at line 76 of file Boundary\+Surface\+Impl.\+h.
+
+\hypertarget{classHalfSphereZ_a6e7d1ea96f0f16716ebc5dd5434d601a}{\index{Half\+Sphere\+Z@{Half\+Sphere\+Z}!\+\_\+up@{\+\_\+up}}
+\index{\+\_\+up@{\+\_\+up}!Half\+Sphere\+Z@{Half\+Sphere\+Z}}
+\subsubsection[{\+\_\+up}]{\setlength{\rightskip}{0pt plus 5cm}bool Half\+Sphere\+Z\+::\+\_\+up\hspace{0.3cm}{\ttfamily [private]}}}\label{classHalfSphereZ_a6e7d1ea96f0f16716ebc5dd5434d601a}
+
+
+Facing up or down. 
+
+
+
+Definition at line 77 of file Boundary\+Surface\+Impl.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundarySurfaceImpl_8h}{Boundary\+Surface\+Impl.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{BoundarySurfaceImpl_8cpp}{Boundary\+Surface\+Impl.\+cpp}\end{DoxyCompactItemize}

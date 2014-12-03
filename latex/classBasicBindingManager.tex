@@ -1,0 +1,195 @@
+\hypertarget{classBasicBindingManager}{\section{Basic\+Binding\+Manager Class Reference}
+\label{classBasicBindingManager}\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+}
+
+
+Manager for basic binding.  
+
+
+
+
+{\ttfamily \#include $<$Reaction\+Manager.\+h$>$}
+
+
+
+Inheritance diagram for Basic\+Binding\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classBasicBindingManager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Basic\+Binding\+Manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classBasicBindingManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBasicBindingManager_ad57b38f098621ae0408069c49c17db52}{Basic\+Binding\+Manager} (vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ reactants, vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$$>$ products, float rate)
+\item 
+\hyperlink{classBasicBindingManager_ab382b0c661238e95df9d64f556ddc6d4}{$\sim$\+Basic\+Binding\+Manager} ()
+\item 
+virtual void \hyperlink{classBasicBindingManager_a9dbb688abc218187913b23fa3dccd97d}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classBasicBindingManager_aea22a428f792f83f02ba58796ccd882e}{add\+Reaction} (\hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc1, \hyperlink{classCCylinder}{C\+Cylinder} $\ast$cc2)
+\begin{DoxyCompactList}\small\item\em Add this chemical reaction cross two C\+Cylinders. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\+\_\+reactants}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSpecies}{Species} identifier vectors. \end{DoxyCompactList}\item 
+vector$<$ tuple$<$ int, \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} $>$ $>$ \hyperlink{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\+\_\+products}
+\begin{DoxyCompactList}\small\item\em Products in this reaction. \end{DoxyCompactList}\item 
+float \hyperlink{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Rate of reaction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\+\_\+ps} = 0
+\begin{DoxyCompactList}\small\item\em A subsystem pointer to initialize and call chemical callbacks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Manager for basic binding. 
+
+Definition at line 126 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBasicBindingManager_ad57b38f098621ae0408069c49c17db52}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{Basic\+Binding\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Basic\+Binding\+Manager\+::\+Basic\+Binding\+Manager (
+\begin{DoxyParamCaption}
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{reactants, }
+\item[{vector$<$ tuple$<$ int, {\bf Species\+Type} $>$$>$}]{products, }
+\item[{float}]{rate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBasicBindingManager_ad57b38f098621ae0408069c49c17db52}
+
+
+Definition at line 129 of file Reaction\+Manager.\+h.
+
+\hypertarget{classBasicBindingManager_ab382b0c661238e95df9d64f556ddc6d4}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!````~Basic\+Binding\+Manager@{$\sim$\+Basic\+Binding\+Manager}}
+\index{````~Basic\+Binding\+Manager@{$\sim$\+Basic\+Binding\+Manager}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{$\sim$\+Basic\+Binding\+Manager}]{\setlength{\rightskip}{0pt plus 5cm}Basic\+Binding\+Manager\+::$\sim$\+Basic\+Binding\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBasicBindingManager_ab382b0c661238e95df9d64f556ddc6d4}
+
+
+Definition at line 132 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBasicBindingManager_a9dbb688abc218187913b23fa3dccd97d}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}void Basic\+Binding\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classBasicBindingManager_a9dbb688abc218187913b23fa3dccd97d}
+
+
+Add this chemical reaction to a \hyperlink{classCCylinder}{C\+Cylinder}. Adds all extension and retraction callbacks needed. 
+
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_a45f1ff9c676e41db408669ab6c5242e9}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 605 of file Reaction\+Manager.\+cpp.
+
+
+
+References C\+Cylinder\+::add\+Internal\+Reaction(), B\+A\+S\+I\+C\+B\+I\+N\+D\+I\+N\+G, B\+U\+L\+K, D\+I\+F\+F\+U\+S\+I\+N\+G, Compartment\+::find\+Species\+By\+Molecule(), C\+Cylinder\+::get\+C\+Monomer(), C\+Cylinder\+::get\+Compartment(), C\+Cylinder\+::get\+Size(), Compartment\+Grid\+::instance(), Reaction\+Base\+::set\+Reaction\+Type(), and C\+Monomer\+::species\+Bound().
+
+\hypertarget{classBasicBindingManager_aea22a428f792f83f02ba58796ccd882e}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!add\+Reaction@{add\+Reaction}}
+\index{add\+Reaction@{add\+Reaction}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{add\+Reaction}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Basic\+Binding\+Manager\+::add\+Reaction (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+Cylinder} $\ast$}]{cc1, }
+\item[{{\bf C\+Cylinder} $\ast$}]{cc2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classBasicBindingManager_aea22a428f792f83f02ba58796ccd882e}
+
+
+Add this chemical reaction cross two C\+Cylinders. 
+
+\begin{DoxyNote}{Note}
+assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
+\end{DoxyNote}
+
+
+Implements \hyperlink{classInternalFilamentRxnManager_ac8152bcd9f6aa5d69f85a98cff86d2b0}{Internal\+Filament\+Rxn\+Manager}.
+
+
+
+Definition at line 135 of file Reaction\+Manager.\+h.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!\+\_\+products@{\+\_\+products}}
+\index{\+\_\+products@{\+\_\+products}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{\+\_\+products}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+products\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_afd213da1a3706e2e88962e5da886a5dc}
+
+
+Products in this reaction. 
+
+
+
+Definition at line 54 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System} $\ast$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+ps = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a973ce9cc2aae811e6867afa46193c5f2}
+
+
+A subsystem pointer to initialize and call chemical callbacks. 
+
+
+
+Definition at line 50 of file Reaction\+Manager.\+h.
+
+
+
+Referenced by Simple\+Manager\+Impl\+::initialize().
+
+\hypertarget{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!\+\_\+rate@{\+\_\+rate}}
+\index{\+\_\+rate@{\+\_\+rate}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{\+\_\+rate}]{\setlength{\rightskip}{0pt plus 5cm}float Internal\+Filament\+Rxn\+Manager\+::\+\_\+rate\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a8b98dd9e6f5d016149f5434b891806df}
+
+
+Rate of reaction. 
+
+
+
+Definition at line 56 of file Reaction\+Manager.\+h.
+
+\hypertarget{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}{\index{Basic\+Binding\+Manager@{Basic\+Binding\+Manager}!\+\_\+reactants@{\+\_\+reactants}}
+\index{\+\_\+reactants@{\+\_\+reactants}!Basic\+Binding\+Manager@{Basic\+Binding\+Manager}}
+\subsubsection[{\+\_\+reactants}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$tuple$<$int,{\bf Species\+Type}$>$ $>$ Internal\+Filament\+Rxn\+Manager\+::\+\_\+reactants\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [inherited]}}}\label{classInternalFilamentRxnManager_a63de9061c3da4ad03cf4c530d2774979}
+
+
+\hyperlink{classSpecies}{Species} identifier vectors. 
+
+Reactants in this reaction 
+
+Definition at line 53 of file Reaction\+Manager.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8h}{Reaction\+Manager.\+h}\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ReactionManager_8cpp}{Reaction\+Manager.\+cpp}\end{DoxyCompactItemize}

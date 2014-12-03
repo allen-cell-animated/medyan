@@ -1,0 +1,257 @@
+\hypertarget{classReactionVisitorLambda}{\section{Reaction\+Visitor\+Lambda Class Reference}
+\label{classReactionVisitorLambda}\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+}
+
+
+Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classReaction}{Reaction} of the node and its descendent nodes.  
+
+
+
+
+{\ttfamily \#include $<$Visitor.\+h$>$}
+
+
+
+Inheritance diagram for Reaction\+Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classReactionVisitorLambda__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Reaction\+Visitor\+Lambda\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classReactionVisitorLambda__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classReactionVisitorLambda_ad36a99954e16f1ca538459271a0f429f}{Reaction\+Visitor\+Lambda} ()=default
+\begin{DoxyCompactList}\small\item\em Default Constructor. \end{DoxyCompactList}\item 
+\hyperlink{classReactionVisitorLambda_ad41ac087aa7c2e2daa85604893a28a56}{Reaction\+Visitor\+Lambda} (std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ g, std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ pred=\mbox{[}$\,$\mbox{]}(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)\{return true;\})
+\begin{DoxyCompactList}\small\item\em Constructor\+: \end{DoxyCompactList}\item 
+void \hyperlink{classReactionVisitorLambda_ade8528f4fbc1d980e043df2787dfe317}{set\+Lambda} (std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ g)
+\begin{DoxyCompactList}\small\item\em Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+void \hyperlink{classReactionVisitorLambda_acadd3371a2546c5b9a13974db708877a}{set\+Lambda\+Pred} (std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ pred)
+\begin{DoxyCompactList}\small\item\em Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. \end{DoxyCompactList}\item 
+bool \hyperlink{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}{visit} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\begin{DoxyCompactList}\small\item\em When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classReactionVisitorLambda_aaadac898ea6650cd79774b14ac0b16d7}{visit\+Impl} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r) override
+\begin{DoxyCompactList}\small\item\em Implementation of the visit(...) method. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classReactionVisitorLambda_af6f228e3a7e53ebe476f7cf9ff7cae33}{pred\+Impl} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r) override
+\begin{DoxyCompactList}\small\item\em Implementation of the pred(...) method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ \hyperlink{classReactionVisitorLambda_a14552291fb7778f68e6d18b311f48dea}{\+\_\+f}
+\begin{DoxyCompactList}\small\item\em The function to be perfomed on each node. \end{DoxyCompactList}\item 
+std\+::function$<$ bool(\hyperlink{classReactionBase}{Reaction\+Base} $\ast$)$>$ \hyperlink{classReactionVisitorLambda_aa23e41358778181613f193ef325b5813}{\+\_\+pred}
+\begin{DoxyCompactList}\small\item\em The predicate which checks whether the \hyperlink{classReaction}{Reaction} should be evaluated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Allows using C++11 lambda expressions to set the action to be performed on each \hyperlink{classReaction}{Reaction} of the node and its descendent nodes. 
+
+Definition at line 179 of file Visitor.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classReactionVisitorLambda_ad36a99954e16f1ca538459271a0f429f}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{Reaction\+Visitor\+Lambda}]{\setlength{\rightskip}{0pt plus 5cm}Reaction\+Visitor\+Lambda\+::\+Reaction\+Visitor\+Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [default]}}}\label{classReactionVisitorLambda_ad36a99954e16f1ca538459271a0f429f}
+
+
+Default Constructor. 
+
+\hypertarget{classReactionVisitorLambda_ad41ac087aa7c2e2daa85604893a28a56}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{Reaction\+Visitor\+Lambda}]{\setlength{\rightskip}{0pt plus 5cm}Reaction\+Visitor\+Lambda\+::\+Reaction\+Visitor\+Lambda (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Reaction\+Base} $\ast$)$>$}]{g, }
+\item[{std\+::function$<$ bool({\bf Reaction\+Base} $\ast$)$>$}]{pred = {\ttfamily \mbox{[}\mbox{]}({\bf Reaction\+Base}~$\ast$)\{return~true;\}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionVisitorLambda_ad41ac087aa7c2e2daa85604893a28a56}
+
+
+Constructor\+: 
+
+
+\begin{DoxyParams}{Parameters}
+{\em std\+::function$<$bool} & (Reaction$\ast$)$>$ g defines the action to be perfomed on each \hyperlink{classReaction}{Reaction} of the node \\
+\hline
+{\em std\+::function$<$bool} & (Reaction$\ast$)$>$ pred defines the predicate whether the particular \hyperlink{classReaction}{Reaction} should be processed \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 187 of file Visitor.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classReactionVisitorLambda_af6f228e3a7e53ebe476f7cf9ff7cae33}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!pred\+Impl@{pred\+Impl}}
+\index{pred\+Impl@{pred\+Impl}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{pred\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Reaction\+Visitor\+Lambda\+::pred\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classReactionVisitorLambda_af6f228e3a7e53ebe476f7cf9ff7cae33}
+
+
+Implementation of the pred(...) method. 
+
+
+
+Implements \hyperlink{classReactionVisitor_acee5a012f810080164130eb47865472f}{Reaction\+Visitor}.
+
+
+
+Definition at line 202 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+\hypertarget{classReactionVisitorLambda_ade8528f4fbc1d980e043df2787dfe317}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!set\+Lambda@{set\+Lambda}}
+\index{set\+Lambda@{set\+Lambda}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{set\+Lambda}]{\setlength{\rightskip}{0pt plus 5cm}void Reaction\+Visitor\+Lambda\+::set\+Lambda (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Reaction\+Base} $\ast$)$>$}]{g}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionVisitorLambda_ade8528f4fbc1d980e043df2787dfe317}
+
+
+Sets the action to be perfomed on each node as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 190 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+Referenced by main().
+
+\hypertarget{classReactionVisitorLambda_acadd3371a2546c5b9a13974db708877a}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!set\+Lambda\+Pred@{set\+Lambda\+Pred}}
+\index{set\+Lambda\+Pred@{set\+Lambda\+Pred}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{set\+Lambda\+Pred}]{\setlength{\rightskip}{0pt plus 5cm}void Reaction\+Visitor\+Lambda\+::set\+Lambda\+Pred (
+\begin{DoxyParamCaption}
+\item[{std\+::function$<$ bool({\bf Reaction\+Base} $\ast$)$>$}]{pred}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classReactionVisitorLambda_acadd3371a2546c5b9a13974db708877a}
+
+
+Sets the predicate which checks whether the node should be evaluated as std\+::function$<$bool (\+Component$\ast$)$>$ g. 
+
+
+
+Definition at line 193 of file Visitor.\+h.
+
+
+
+References \+\_\+pred.
+
+
+
+Referenced by main().
+
+\hypertarget{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!visit@{visit}}
+\index{visit@{visit}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{visit}]{\setlength{\rightskip}{0pt plus 5cm}bool Reaction\+Visitor\+::visit (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classReactionVisitor_a2a2381f0f0fcd0067537af8d965a32d3}
+
+
+When this visitor, $\ast$v, is propagated through the \hyperlink{classComposite}{Composite} hieararchy, at each \hyperlink{classComponent}{Component} node pointer $\ast$c, the following method is called\+: v-\/$>$visit(s), for each of the \hyperlink{classReaction}{Reaction} $\ast$r of that node. 
+
+If a false value is returned from this function called, then the further propagation of the tree is terminated. 
+
+Definition at line 156 of file Visitor.\+h.
+
+
+
+References Reaction\+Visitor\+::pred\+Impl(), and Reaction\+Visitor\+::visit\+Impl().
+
+
+
+Referenced by Compartment\+::apply\+\_\+impl().
+
+\hypertarget{classReactionVisitorLambda_aaadac898ea6650cd79774b14ac0b16d7}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!visit\+Impl@{visit\+Impl}}
+\index{visit\+Impl@{visit\+Impl}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{visit\+Impl}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Reaction\+Visitor\+Lambda\+::visit\+Impl (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classReactionVisitorLambda_aaadac898ea6650cd79774b14ac0b16d7}
+
+
+Implementation of the visit(...) method. 
+
+
+
+Implements \hyperlink{classReactionVisitor_ab8ca562e38925467ae17eb2425f61a4c}{Reaction\+Visitor}.
+
+
+
+Definition at line 199 of file Visitor.\+h.
+
+
+
+References \+\_\+f.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classReactionVisitorLambda_a14552291fb7778f68e6d18b311f48dea}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!\+\_\+f@{\+\_\+f}}
+\index{\+\_\+f@{\+\_\+f}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{\+\_\+f}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Reaction\+Base} $\ast$)$>$ Reaction\+Visitor\+Lambda\+::\+\_\+f\hspace{0.3cm}{\ttfamily [protected]}}}\label{classReactionVisitorLambda_a14552291fb7778f68e6d18b311f48dea}
+
+
+The function to be perfomed on each node. 
+
+
+
+Definition at line 195 of file Visitor.\+h.
+
+
+
+Referenced by set\+Lambda(), and visit\+Impl().
+
+\hypertarget{classReactionVisitorLambda_aa23e41358778181613f193ef325b5813}{\index{Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}!\+\_\+pred@{\+\_\+pred}}
+\index{\+\_\+pred@{\+\_\+pred}!Reaction\+Visitor\+Lambda@{Reaction\+Visitor\+Lambda}}
+\subsubsection[{\+\_\+pred}]{\setlength{\rightskip}{0pt plus 5cm}std\+::function$<$bool ({\bf Reaction\+Base} $\ast$)$>$ Reaction\+Visitor\+Lambda\+::\+\_\+pred\hspace{0.3cm}{\ttfamily [protected]}}}\label{classReactionVisitorLambda_aa23e41358778181613f193ef325b5813}
+
+
+The predicate which checks whether the \hyperlink{classReaction}{Reaction} should be evaluated. 
+
+
+
+Definition at line 196 of file Visitor.\+h.
+
+
+
+Referenced by pred\+Impl(), and set\+Lambda\+Pred().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\hyperlink{Visitor_8h}{Visitor.\+h}\end{DoxyCompactItemize}

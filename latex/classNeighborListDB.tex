@@ -1,0 +1,283 @@
+\hypertarget{classNeighborListDB}{\section{Neighbor\+List\+D\+B Class Reference}
+\label{classNeighborListDB}\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+}
+
+
+A database to store all \hyperlink{classNeighborList}{Neighbor\+Lists} in the system.  
+
+
+
+
+{\ttfamily \#include $<$Neighbor\+List\+D\+B.\+h$>$}
+
+
+
+Inheritance diagram for Neighbor\+List\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classNeighborListDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Neighbor\+List\+D\+B\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=250pt]{classNeighborListDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classNeighborListDB_a66e17ea4c1ed6843a9cbf341d81dd319}{Neighbor\+List\+D\+B} (const \hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Copying is not allowed. \end{DoxyCompactList}\item 
+\hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} \& \hyperlink{classNeighborListDB_a0dc149500a566f2f28f89955b3290431}{operator=} (\hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} \&rhs)=delete
+\begin{DoxyCompactList}\small\item\em Assignment is not allowed. \end{DoxyCompactList}\item 
+void \hyperlink{classNeighborListDB_a26b04783c598f4cb5423a4bcce8554ce}{add\+Neighbor\+List} (\hyperlink{classNeighborList}{Neighbor\+List} $\ast$n)
+\begin{DoxyCompactList}\small\item\em Add a cylinder neighbor list. \end{DoxyCompactList}\item 
+void \hyperlink{classNeighborListDB_a01c426f9c5a014a529958d66129f772f}{remove\+Neighbor\+List} (\hyperlink{classNeighborList}{Neighbor\+List} $\ast$n)
+\begin{DoxyCompactList}\small\item\em Remove a neighborlist. \end{DoxyCompactList}\item 
+void \hyperlink{classNeighborListDB_a0c4edc8d767cab8ce1e59dd148615ff8}{reset\+All} ()
+\begin{DoxyCompactList}\small\item\em Reset all neighbors lists. \end{DoxyCompactList}\item 
+void \hyperlink{classNeighborListDB_acef95255a2c5080ee9d51227e176bcd8}{add\+Neighbor} (\hyperlink{classNeighbor}{Neighbor} $\ast$n)
+\begin{DoxyCompactList}\small\item\em Add a neighbor to the db. adds to all possible lists. \end{DoxyCompactList}\item 
+void \hyperlink{classNeighborListDB_a061560a7c9cdcc50c9a5b1d66e2e1b7f}{remove\+Neighbor} (\hyperlink{classNeighbor}{Neighbor} $\ast$n)
+\begin{DoxyCompactList}\small\item\em Remove a neighbor from the db. removes from all possible lists. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} $\ast$ \hyperlink{classNeighborListDB_a1009e4ce12cc4c5047cd0408a045a813}{instance} ()
+\begin{DoxyCompactList}\small\item\em Get instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef list$<$ \hyperlink{classNeighborList}{Neighbor\+List} $\ast$ $>$ \hyperlink{classNeighborListDB_a56451d8a1f6d124899ce2f1013fd20ee}{ndb}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classNeighborListDB_aeb307476e4de89f53058771fc31d7af2}{Neighbor\+List\+D\+B} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T {\bfseries elements}
+\begin{DoxyCompactList}\small\item\em S\+T\+L member. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} $\ast$ \hyperlink{classNeighborListDB_adb0e2dff13272e00d98a1028908065c6}{\+\_\+instance} = 0
+\begin{DoxyCompactList}\small\item\em Singleton instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A database to store all \hyperlink{classNeighborList}{Neighbor\+Lists} in the system. 
+
+This \hyperlink{classNeighborListDB}{Neighbor\+List\+D\+B} inherits from list and manage all creations and removing of \hyperlink{classNeighborList}{Neighbor\+Lists} objects, as well as some standard list functions and iterators. 
+
+Definition at line 31 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classNeighborListDB_a56451d8a1f6d124899ce2f1013fd20ee}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!ndb@{ndb}}
+\index{ndb@{ndb}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{ndb}]{\setlength{\rightskip}{0pt plus 5cm}typedef list$<${\bf Neighbor\+List}$\ast$$>$ {\bf Neighbor\+List\+D\+B\+::ndb}\hspace{0.3cm}{\ttfamily [private]}}}\label{classNeighborListDB_a56451d8a1f6d124899ce2f1013fd20ee}
+
+
+Definition at line 33 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classNeighborListDB_a66e17ea4c1ed6843a9cbf341d81dd319}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{Neighbor\+List\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Neighbor\+List\+D\+B\+::\+Neighbor\+List\+D\+B (
+\begin{DoxyParamCaption}
+\item[{const {\bf Neighbor\+List\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classNeighborListDB_a66e17ea4c1ed6843a9cbf341d81dd319}
+
+
+Copying is not allowed. 
+
+\hypertarget{classNeighborListDB_aeb307476e4de89f53058771fc31d7af2}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{Neighbor\+List\+D\+B}]{\setlength{\rightskip}{0pt plus 5cm}Neighbor\+List\+D\+B\+::\+Neighbor\+List\+D\+B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classNeighborListDB_aeb307476e4de89f53058771fc31d7af2}
+
+
+Definition at line 66 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classNeighborListDB_acef95255a2c5080ee9d51227e176bcd8}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!add\+Neighbor@{add\+Neighbor}}
+\index{add\+Neighbor@{add\+Neighbor}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{add\+Neighbor}]{\setlength{\rightskip}{0pt plus 5cm}void Neighbor\+List\+D\+B\+::add\+Neighbor (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor} $\ast$}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classNeighborListDB_acef95255a2c5080ee9d51227e176bcd8}
+
+
+Add a neighbor to the db. adds to all possible lists. 
+
+
+
+Definition at line 60 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+::\+Boundary\+Element(), and Cylinder\+::\+Cylinder().
+
+\hypertarget{classNeighborListDB_a26b04783c598f4cb5423a4bcce8554ce}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!add\+Neighbor\+List@{add\+Neighbor\+List}}
+\index{add\+Neighbor\+List@{add\+Neighbor\+List}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{add\+Neighbor\+List}]{\setlength{\rightskip}{0pt plus 5cm}void Neighbor\+List\+D\+B\+::add\+Neighbor\+List (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor\+List} $\ast$}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classNeighborListDB_a26b04783c598f4cb5423a4bcce8554ce}
+
+
+Add a cylinder neighbor list. 
+
+
+
+Definition at line 51 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+N\+L\+Container\+::\+Boundary\+Element\+N\+L\+Container(), and Cylinder\+N\+L\+Container\+::\+Cylinder\+N\+L\+Container().
+
+\hypertarget{classNeighborListDB_a1009e4ce12cc4c5047cd0408a045a813}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!instance@{instance}}
+\index{instance@{instance}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Neighbor\+List\+D\+B} $\ast$ Neighbor\+List\+D\+B\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classNeighborListDB_a1009e4ce12cc4c5047cd0408a045a813}
+
+
+Get instance. 
+
+
+
+Definition at line 18 of file Neighbor\+List\+D\+B.\+cpp.
+
+
+
+References \+\_\+instance, and Neighbor\+List\+D\+B().
+
+
+
+Referenced by Boundary\+Element\+::\+Boundary\+Element(), Boundary\+Element\+N\+L\+Container\+::\+Boundary\+Element\+N\+L\+Container(), Cylinder\+::\+Cylinder(), Cylinder\+N\+L\+Container\+::\+Cylinder\+N\+L\+Container(), Controller\+::update\+System(), Boundary\+Element\+::$\sim$\+Boundary\+Element(), Boundary\+Element\+N\+L\+Container\+::$\sim$\+Boundary\+Element\+N\+L\+Container(), Cylinder\+::$\sim$\+Cylinder(), and Cylinder\+N\+L\+Container\+::$\sim$\+Cylinder\+N\+L\+Container().
+
+\hypertarget{classNeighborListDB_a0dc149500a566f2f28f89955b3290431}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!operator=@{operator=}}
+\index{operator=@{operator=}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Neighbor\+List\+D\+B}\& Neighbor\+List\+D\+B\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor\+List\+D\+B} \&}]{rhs}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}}\label{classNeighborListDB_a0dc149500a566f2f28f89955b3290431}
+
+
+Assignment is not allowed. 
+
+\hypertarget{classNeighborListDB_a061560a7c9cdcc50c9a5b1d66e2e1b7f}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!remove\+Neighbor@{remove\+Neighbor}}
+\index{remove\+Neighbor@{remove\+Neighbor}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{remove\+Neighbor}]{\setlength{\rightskip}{0pt plus 5cm}void Neighbor\+List\+D\+B\+::remove\+Neighbor (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor} $\ast$}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classNeighborListDB_a061560a7c9cdcc50c9a5b1d66e2e1b7f}
+
+
+Remove a neighbor from the db. removes from all possible lists. 
+
+
+
+Definition at line 62 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+::$\sim$\+Boundary\+Element(), and Cylinder\+::$\sim$\+Cylinder().
+
+\hypertarget{classNeighborListDB_a01c426f9c5a014a529958d66129f772f}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!remove\+Neighbor\+List@{remove\+Neighbor\+List}}
+\index{remove\+Neighbor\+List@{remove\+Neighbor\+List}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{remove\+Neighbor\+List}]{\setlength{\rightskip}{0pt plus 5cm}void Neighbor\+List\+D\+B\+::remove\+Neighbor\+List (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor\+List} $\ast$}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classNeighborListDB_a01c426f9c5a014a529958d66129f772f}
+
+
+Remove a neighborlist. 
+
+
+
+Definition at line 54 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by Boundary\+Element\+N\+L\+Container\+::$\sim$\+Boundary\+Element\+N\+L\+Container(), and Cylinder\+N\+L\+Container\+::$\sim$\+Cylinder\+N\+L\+Container().
+
+\hypertarget{classNeighborListDB_a0c4edc8d767cab8ce1e59dd148615ff8}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!reset\+All@{reset\+All}}
+\index{reset\+All@{reset\+All}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{reset\+All}]{\setlength{\rightskip}{0pt plus 5cm}void Neighbor\+List\+D\+B\+::reset\+All (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classNeighborListDB_a0c4edc8d767cab8ce1e59dd148615ff8}
+
+
+Reset all neighbors lists. 
+
+
+
+Definition at line 57 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by Controller\+::update\+System().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classNeighborListDB_adb0e2dff13272e00d98a1028908065c6}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!\+\_\+instance@{\+\_\+instance}}
+\index{\+\_\+instance@{\+\_\+instance}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{\+\_\+instance}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Neighbor\+List\+D\+B} $\ast$ Neighbor\+List\+D\+B\+::\+\_\+instance = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}}\label{classNeighborListDB_adb0e2dff13272e00d98a1028908065c6}
+
+
+Singleton instance. 
+
+
+
+Definition at line 65 of file Neighbor\+List\+D\+B.\+h.
+
+
+
+Referenced by instance().
+
+\hypertarget{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}{\index{Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}!elements@{elements}}
+\index{elements@{elements}!Neighbor\+List\+D\+B@{Neighbor\+List\+D\+B}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}T std\+::list$<$ T $>$\+::elements\hspace{0.3cm}{\ttfamily [inherited]}}}\label{classstd_1_1list_a682e5c7c91eb377d0cb4f019b2b81a5d}
+
+
+S\+T\+L member. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{NeighborListDB_8h}{Neighbor\+List\+D\+B.\+h}\item 
+M3\+S\+Y\+M/\+Structure/\hyperlink{NeighborListDB_8cpp}{Neighbor\+List\+D\+B.\+cpp}\end{DoxyCompactItemize}

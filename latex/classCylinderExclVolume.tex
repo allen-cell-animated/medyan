@@ -1,0 +1,187 @@
+\hypertarget{classCylinderExclVolume}{\section{Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$ Class Template Reference}
+\label{classCylinderExclVolume}\index{Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$@{Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$}}
+}
+
+
+Represents an excuded volume interaction between two \hyperlink{classCylinder}{Cylinders}.  
+
+
+
+
+{\ttfamily \#include $<$Cylinder\+Excl\+Volume.\+h$>$}
+
+
+
+Inheritance diagram for Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{classCylinderExclVolume__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classCylinderExclVolume__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual double \hyperlink{classCylinderExclVolume_aecf7fab088af9724172bf3e661f6cd24}{compute\+Energy} (\hyperlink{classCylinder}{Cylinder} $\ast$, \hyperlink{classCylinder}{Cylinder} $\ast$, double d)
+\begin{DoxyCompactList}\small\item\em Template specializations. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classCylinderExclVolume_a9dc80225d575be7b585bcf28a925c635}{compute\+Forces} (\hyperlink{classCylinder}{Cylinder} $\ast$, \hyperlink{classCylinder}{Cylinder} $\ast$)
+\begin{DoxyCompactList}\small\item\em Compute the forces of this interaction. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classCylinderExclVolume_a5f7b24639331e4dc42c93c850fcec4af}{compute\+Forces\+Aux} (\hyperlink{classCylinder}{Cylinder} $\ast$, \hyperlink{classCylinder}{Cylinder} $\ast$)
+\begin{DoxyCompactList}\small\item\em Compute the auxiliary forces of this interaction. \end{DoxyCompactList}\item 
+const string \& \hyperlink{classCylinderVolumeInteractions_ad9a9e25c4567d273dc5347d4d0c1e834}{get\+Name} ()
+\begin{DoxyCompactList}\small\item\em Get name of interaction. \end{DoxyCompactList}\item 
+\hyperlink{classCylinderNeighborList}{Cylinder\+Neighbor\+List} $\ast$ \hyperlink{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}{get\+Neighbor\+List} ()
+\begin{DoxyCompactList}\small\item\em Get neighbor list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+C\+Volume\+Interaction\+Type \hyperlink{classCylinderExclVolume_a715ac884a949e7be970e7ffb636d60c9}{\+\_\+\+F\+F\+Type}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class C\+Volume\+Interaction\+Type$>$class Cylinder\+Excl\+Volume$<$ C\+Volume\+Interaction\+Type $>$}
+
+Represents an excuded volume interaction between two \hyperlink{classCylinder}{Cylinders}. 
+
+Definition at line 26 of file Cylinder\+Excl\+Volume.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCylinderExclVolume_aecf7fab088af9724172bf3e661f6cd24}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!compute\+Energy@{compute\+Energy}}
+\index{compute\+Energy@{compute\+Energy}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{compute\+Energy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class C\+Volume\+Interaction\+Type $>$ template double {\bf Cylinder\+Excl\+Volume}$<$ C\+Volume\+Interaction\+Type $>$\+::compute\+Energy (
+\begin{DoxyParamCaption}
+\item[{{\bf Cylinder} $\ast$}]{, }
+\item[{{\bf Cylinder} $\ast$}]{, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCylinderExclVolume_aecf7fab088af9724172bf3e661f6cd24}
+
+
+Template specializations. 
+
+
+
+Implements \hyperlink{classCylinderVolumeInteractions_a6874e7feffad1b76c0915f274c55968d}{Cylinder\+Volume\+Interactions}.
+
+
+
+Definition at line 22 of file Cylinder\+Excl\+Volume.\+cpp.
+
+
+
+References M\+Cylinder\+::get\+Ex\+Vol\+Const(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), and Cylinder\+::get\+Second\+Bead().
+
+\hypertarget{classCylinderExclVolume_a9dc80225d575be7b585bcf28a925c635}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!compute\+Forces@{compute\+Forces}}
+\index{compute\+Forces@{compute\+Forces}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{compute\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class C\+Volume\+Interaction\+Type $>$ template void {\bf Cylinder\+Excl\+Volume}$<$ C\+Volume\+Interaction\+Type $>$\+::compute\+Forces (
+\begin{DoxyParamCaption}
+\item[{{\bf Cylinder} $\ast$}]{, }
+\item[{{\bf Cylinder} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCylinderExclVolume_a9dc80225d575be7b585bcf28a925c635}
+
+
+Compute the forces of this interaction. 
+
+
+
+Implements \hyperlink{classCylinderVolumeInteractions_a34b2eebbe07da2bf93716b57bb2f93fa}{Cylinder\+Volume\+Interactions}.
+
+
+
+Definition at line 39 of file Cylinder\+Excl\+Volume.\+cpp.
+
+
+
+References M\+Cylinder\+::get\+Ex\+Vol\+Const(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), and Cylinder\+::get\+Second\+Bead().
+
+\hypertarget{classCylinderExclVolume_a5f7b24639331e4dc42c93c850fcec4af}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!compute\+Forces\+Aux@{compute\+Forces\+Aux}}
+\index{compute\+Forces\+Aux@{compute\+Forces\+Aux}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{compute\+Forces\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class C\+Volume\+Interaction\+Type $>$ template void {\bf Cylinder\+Excl\+Volume}$<$ C\+Volume\+Interaction\+Type $>$\+::compute\+Forces\+Aux (
+\begin{DoxyParamCaption}
+\item[{{\bf Cylinder} $\ast$}]{, }
+\item[{{\bf Cylinder} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classCylinderExclVolume_a5f7b24639331e4dc42c93c850fcec4af}
+
+
+Compute the auxiliary forces of this interaction. 
+
+Needed for Conjugated Gradient minimization; 
+
+Implements \hyperlink{classCylinderVolumeInteractions_ad29d0e3399ff15116e58a60826bbdf85}{Cylinder\+Volume\+Interactions}.
+
+
+
+Definition at line 54 of file Cylinder\+Excl\+Volume.\+cpp.
+
+
+
+References M\+Cylinder\+::get\+Ex\+Vol\+Const(), Cylinder\+::get\+First\+Bead(), Cylinder\+::get\+M\+Cylinder(), and Cylinder\+::get\+Second\+Bead().
+
+\hypertarget{classCylinderVolumeInteractions_ad9a9e25c4567d273dc5347d4d0c1e834}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{get\+Name}]{\setlength{\rightskip}{0pt plus 5cm}const string\& Cylinder\+Volume\+Interactions\+::get\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCylinderVolumeInteractions_ad9a9e25c4567d273dc5347d4d0c1e834}
+
+
+Get name of interaction. 
+
+
+
+Definition at line 42 of file Cylinder\+Volume\+Interactions.\+h.
+
+
+
+References Cylinder\+Volume\+Interactions\+::\+\_\+name.
+
+\hypertarget{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!get\+Neighbor\+List@{get\+Neighbor\+List}}
+\index{get\+Neighbor\+List@{get\+Neighbor\+List}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{get\+Neighbor\+List}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Cylinder\+Neighbor\+List}$\ast$ Cylinder\+N\+L\+Container\+::get\+Neighbor\+List (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [inherited]}}}\label{classCylinderNLContainer_afce343b3251cf0ed087cf5a62fb6aaee}
+
+
+Get neighbor list. 
+
+
+
+Definition at line 41 of file Neighbor\+List\+Container.\+h.
+
+
+
+References Cylinder\+N\+L\+Container\+::\+\_\+neighbor\+List.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCylinderExclVolume_a715ac884a949e7be970e7ffb636d60c9}{\index{Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}!\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}}
+\index{\+\_\+\+F\+F\+Type@{\+\_\+\+F\+F\+Type}!Cylinder\+Excl\+Volume@{Cylinder\+Excl\+Volume}}
+\subsubsection[{\+\_\+\+F\+F\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class C\+Volume\+Interaction\+Type $>$ C\+Volume\+Interaction\+Type {\bf Cylinder\+Excl\+Volume}$<$ C\+Volume\+Interaction\+Type $>$\+::\+\_\+\+F\+F\+Type\hspace{0.3cm}{\ttfamily [private]}}}\label{classCylinderExclVolume_a715ac884a949e7be970e7ffb636d60c9}
+
+
+Definition at line 29 of file Cylinder\+Excl\+Volume.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{CylinderExclVolume_8h}{Cylinder\+Excl\+Volume.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Force\+Field/\hyperlink{CylinderExclVolume_8cpp}{Cylinder\+Excl\+Volume.\+cpp}\end{DoxyCompactItemize}

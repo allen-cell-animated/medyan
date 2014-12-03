@@ -1,0 +1,664 @@
+\hypertarget{classCGMethod}{\section{C\+G\+Method Class Reference}
+\label{classCGMethod}\index{C\+G\+Method@{C\+G\+Method}}
+}
+
+
+For performing a conjugate gradient minimization method.  
+
+
+
+
+{\ttfamily \#include $<$C\+G\+Method.\+h$>$}
+
+
+
+Inheritance diagram for C\+G\+Method\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{classCGMethod__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classCGMethod_a7a03bce08f9b88d41392894d071a1ff7}{minimize} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)=0
+\begin{DoxyCompactList}\small\item\em Minimize the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classCGMethod_a98910fcbef9f0af69076c955b887c254}{swap} (double \&a, double \&b)
+\begin{DoxyCompactList}\small\item\em helpers for searching and bracketing \end{DoxyCompactList}\item 
+void \hyperlink{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}{shift2} (double \&a, double \&b, double c)
+\item 
+void \hyperlink{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}{shift3} (double \&a, double \&b, double \&c, double d)
+\item 
+double \hyperlink{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}{sign} (double a, double b)
+\item 
+void \hyperlink{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}{make\+Bracket} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M, double \&ax, double \&bx, double \&cx, double \&fa, double \&fb, double \&fc)
+\begin{DoxyCompactList}\small\item\em Gracketing function (from Numerical Recipes in C++, second edition) \end{DoxyCompactList}\item 
+void \hyperlink{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}{print\+Forces} ()
+\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}{grad\+Square} ()
+\begin{DoxyCompactList}\small\item\em For use in minimization. \end{DoxyCompactList}\item 
+double \hyperlink{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}{grad\+Aux\+Square} ()
+\item 
+double \hyperlink{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}{grad\+Dot\+Product} ()
+\item 
+void \hyperlink{classCGMethod_afe717a6a06f677933b55628ea4d0014d}{move\+Beads} (double d)
+\item 
+void \hyperlink{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}{move\+Beads\+Aux} (double d)
+\item 
+void \hyperlink{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}{shift\+Gradient} (double d)
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}{golden\+Section1} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\begin{DoxyCompactList}\small\item\em Linear search method. \end{DoxyCompactList}\item 
+double \hyperlink{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}{golden\+Section2} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}{binary\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}{backtracking\+Line\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\item 
+double \hyperlink{classCGMethod_aa77b006b710d67b248dd18517db7709c}{quadratic\+Line\+Search} (\hyperlink{classForceFieldManager}{Force\+Field\+Manager} \&F\+F\+M)
+\end{DoxyCompactItemize}
+
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_a084794992bdcec9285f6512b56e6c578}{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L} = 1e-\/6
+\begin{DoxyCompactList}\small\item\em Line search energy tolerance for all linesearch methods. \end{DoxyCompactList}\item 
+int \hyperlink{classCGMethod_aadb778c988685e46d7d109350973d826}{\+\_\+energy\+Change\+Counter} = 0
+\begin{DoxyCompactList}\small\item\em Energy counter, for use in linear search methods. \end{DoxyCompactList}\item 
+const int \hyperlink{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R} = 20
+\begin{DoxyCompactList}\small\item\em Max number of iterations allowed where \char`\"{}\char`\"{}". \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}{G\+R\+A\+D\+T\+O\+L} = 1e-\/10
+\begin{DoxyCompactList}\small\item\em Gradient minimization tolerance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}{L\+A\+M\+B\+D\+A\+M\+I\+N} = 0.\+001
+\begin{DoxyCompactList}\small\item\em Lambda parameter for use in linear search methods. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a04127fd877e82fdf4f71cd3709581419}{L\+A\+M\+B\+D\+A\+M\+A\+X} = 1
+\begin{DoxyCompactList}\small\item\em Max lambda that can be returned, used in all methods. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}{M\+A\+X\+D\+I\+S\+T} = 1
+\begin{DoxyCompactList}\small\item\em Max distance beads can be moved, used only in backtracking line search. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Parameter used in backtracking line search. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Backtrack slope parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L} = 0.\+1
+\begin{DoxyCompactList}\small\item\em Parameter used in quadratic line search. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}{E\+P\+S\+Q\+U\+A\+D} = 1e-\/28
+\end{DoxyCompactItemize}
+
+{\bf }\par
+\begin{DoxyCompactItemize}
+\item 
+const double \hyperlink{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}{P\+H\+I} = (1 + sqrt(5)) / 2
+\begin{DoxyCompactList}\small\item\em Parameter used in golden section. \end{DoxyCompactList}\item 
+const double \hyperlink{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{R} = 0.\+61803399
+\item 
+const double \hyperlink{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}{C} = 1 -\/ \hyperlink{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{R}
+\end{DoxyCompactItemize}
+
+
+
+\subsection{Detailed Description}
+For performing a conjugate gradient minimization method. 
+
+\hyperlink{classCGMethod}{C\+G\+Method} is an abstract class that contains methods for conjugate gradient minimization. It has functions for various line search techniques, including golden section, backtracking, and quadratic line search. This base class also contains parameters for tolerance criterion and other helpful parameters. 
+
+Definition at line 31 of file C\+G\+Method.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}{\index{C\+G\+Method@{C\+G\+Method}!backtracking\+Line\+Search@{backtracking\+Line\+Search}}
+\index{backtracking\+Line\+Search@{backtracking\+Line\+Search}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{backtracking\+Line\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::backtracking\+Line\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a432019c8a52f50b0cb8cb39b937db978}
+
+
+Definition at line 263 of file C\+G\+Method.\+cpp.
+
+
+
+References \+\_\+energy\+Change\+Counter, B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E, Force\+Field\+Manager\+::compute\+Energy(), Bead\+D\+B\+::instance(), L\+A\+M\+B\+D\+A\+M\+A\+X, L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E, L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, and M\+A\+X\+D\+I\+S\+T.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}{\index{C\+G\+Method@{C\+G\+Method}!binary\+Search@{binary\+Search}}
+\index{binary\+Search@{binary\+Search}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{binary\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::binary\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a2d9a41ddbf7d54e6f89ee02966c7d85c}
+
+
+Definition at line 249 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), and L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L.
+
+\hypertarget{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}{\index{C\+G\+Method@{C\+G\+Method}!golden\+Section1@{golden\+Section1}}
+\index{golden\+Section1@{golden\+Section1}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{golden\+Section1}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::golden\+Section1 (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_ace5a720fe0f5d6ffcefeb9f4afcfe28f}
+
+
+Linear search method. 
+
+
+
+Definition at line 180 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), L\+A\+M\+B\+D\+A\+M\+A\+X, L\+A\+M\+B\+D\+A\+M\+I\+N, and L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L.
+
+\hypertarget{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}{\index{C\+G\+Method@{C\+G\+Method}!golden\+Section2@{golden\+Section2}}
+\index{golden\+Section2@{golden\+Section2}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{golden\+Section2}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::golden\+Section2 (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aa1fcbcd087af6fa3aa9aab67b0b60103}
+
+
+Definition at line 209 of file C\+G\+Method.\+cpp.
+
+
+
+References C, Force\+Field\+Manager\+::compute\+Energy(), L\+A\+M\+B\+D\+A\+M\+A\+X, L\+A\+M\+B\+D\+A\+M\+I\+N, L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, R, shift2(), and shift3().
+
+\hypertarget{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}{\index{C\+G\+Method@{C\+G\+Method}!grad\+Aux\+Square@{grad\+Aux\+Square}}
+\index{grad\+Aux\+Square@{grad\+Aux\+Square}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{grad\+Aux\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Aux\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_ab9c35ec6681e97472d0442a37163d46d}
+
+
+Definition at line 116 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}{\index{C\+G\+Method@{C\+G\+Method}!grad\+Dot\+Product@{grad\+Dot\+Product}}
+\index{grad\+Dot\+Product@{grad\+Dot\+Product}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{grad\+Dot\+Product}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Dot\+Product (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a531b7d0bc38b6372dc323185f51233dc}
+
+
+Definition at line 125 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), Polak\+Ribiere\+::minimize(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}{\index{C\+G\+Method@{C\+G\+Method}!grad\+Square@{grad\+Square}}
+\index{grad\+Square@{grad\+Square}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{grad\+Square}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::grad\+Square (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aa2af8a3ecad085f6c07f759bfe50ccb1}
+
+
+For use in minimization. 
+
+
+
+Definition at line 108 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}{\index{C\+G\+Method@{C\+G\+Method}!make\+Bracket@{make\+Bracket}}
+\index{make\+Bracket@{make\+Bracket}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{make\+Bracket}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::make\+Bracket (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M, }
+\item[{double \&}]{ax, }
+\item[{double \&}]{bx, }
+\item[{double \&}]{cx, }
+\item[{double \&}]{fa, }
+\item[{double \&}]{fb, }
+\item[{double \&}]{fc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a276c57252367bec9fcf08ae1e7c7df71}
+
+
+Gracketing function (from Numerical Recipes in C++, second edition) 
+
+
+
+Definition at line 42 of file C\+G\+Method.\+cpp.
+
+
+
+References Force\+Field\+Manager\+::compute\+Energy(), P\+H\+I, shift3(), sign(), and swap().
+
+\hypertarget{classCGMethod_a7a03bce08f9b88d41392894d071a1ff7}{\index{C\+G\+Method@{C\+G\+Method}!minimize@{minimize}}
+\index{minimize@{minimize}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{minimize}]{\setlength{\rightskip}{0pt plus 5cm}virtual void C\+G\+Method\+::minimize (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classCGMethod_a7a03bce08f9b88d41392894d071a1ff7}
+
+
+Minimize the system. 
+
+
+
+Implemented in \hyperlink{classPolakRibiere_af177d214c9d7b0f285ae93525be16329}{Polak\+Ribiere}, and \hyperlink{classFletcherRieves_a022e95e7331cb494bc281a5f53a7198a}{Fletcher\+Rieves}.
+
+\hypertarget{classCGMethod_afe717a6a06f677933b55628ea4d0014d}{\index{C\+G\+Method@{C\+G\+Method}!move\+Beads@{move\+Beads}}
+\index{move\+Beads@{move\+Beads}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{move\+Beads}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::move\+Beads (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_afe717a6a06f677933b55628ea4d0014d}
+
+
+Definition at line 135 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}{\index{C\+G\+Method@{C\+G\+Method}!move\+Beads\+Aux@{move\+Beads\+Aux}}
+\index{move\+Beads\+Aux@{move\+Beads\+Aux}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{move\+Beads\+Aux}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::move\+Beads\+Aux (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a885a9627cc4e8b2db8f3384f29cd4069}
+
+
+Definition at line 148 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}{\index{C\+G\+Method@{C\+G\+Method}!print\+Forces@{print\+Forces}}
+\index{print\+Forces@{print\+Forces}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{print\+Forces}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::print\+Forces (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_abd5135fdbe89793bfb5926f9dcc6de7e}
+
+
+Definition at line 169 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_aa77b006b710d67b248dd18517db7709c}{\index{C\+G\+Method@{C\+G\+Method}!quadratic\+Line\+Search@{quadratic\+Line\+Search}}
+\index{quadratic\+Line\+Search@{quadratic\+Line\+Search}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{quadratic\+Line\+Search}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::quadratic\+Line\+Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Force\+Field\+Manager} \&}]{F\+F\+M}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aa77b006b710d67b248dd18517db7709c}
+
+
+Definition at line 316 of file C\+G\+Method.\+cpp.
+
+
+
+References \+\_\+energy\+Change\+Counter, B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E, Force\+Field\+Manager\+::compute\+Energy(), Force\+Field\+Manager\+::compute\+Forces\+Aux(), E\+P\+S\+Q\+U\+A\+D, grad\+Dot\+Product(), Bead\+D\+B\+::instance(), L\+A\+M\+B\+D\+A\+M\+A\+X, L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E, L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L, and move\+Beads\+Aux().
+
+\hypertarget{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}{\index{C\+G\+Method@{C\+G\+Method}!shift2@{shift2}}
+\index{shift2@{shift2}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{shift2}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift2 (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b, }
+\item[{double}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}}\label{classCGMethod_ac091059dd8c44e8e4ec372767f18f1c9}
+
+
+Definition at line 25 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by golden\+Section2().
+
+\hypertarget{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}{\index{C\+G\+Method@{C\+G\+Method}!shift3@{shift3}}
+\index{shift3@{shift3}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{shift3}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift3 (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b, }
+\item[{double \&}]{c, }
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}}\label{classCGMethod_a947d6e38d75fe84a08f0fc071c94c225}
+
+
+Definition at line 30 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by golden\+Section2(), and make\+Bracket().
+
+\hypertarget{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}{\index{C\+G\+Method@{C\+G\+Method}!shift\+Gradient@{shift\+Gradient}}
+\index{shift\+Gradient@{shift\+Gradient}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{shift\+Gradient}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::shift\+Gradient (
+\begin{DoxyParamCaption}
+\item[{double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a7e8d5b8d77aff6c4564c4b1d72ab5ace}
+
+
+Definition at line 159 of file C\+G\+Method.\+cpp.
+
+
+
+References Bead\+D\+B\+::instance().
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}{\index{C\+G\+Method@{C\+G\+Method}!sign@{sign}}
+\index{sign@{sign}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{sign}]{\setlength{\rightskip}{0pt plus 5cm}double C\+G\+Method\+::sign (
+\begin{DoxyParamCaption}
+\item[{double}]{a, }
+\item[{double}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}}\label{classCGMethod_aea6d1129677d44e11fe2afb08b5ca52c}
+
+
+Definition at line 36 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by make\+Bracket().
+
+\hypertarget{classCGMethod_a98910fcbef9f0af69076c955b887c254}{\index{C\+G\+Method@{C\+G\+Method}!swap@{swap}}
+\index{swap@{swap}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}void C\+G\+Method\+::swap (
+\begin{DoxyParamCaption}
+\item[{double \&}]{a, }
+\item[{double \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}}\label{classCGMethod_a98910fcbef9f0af69076c955b887c254}
+
+
+helpers for searching and bracketing 
+
+
+
+Definition at line 19 of file C\+G\+Method.\+cpp.
+
+
+
+Referenced by make\+Bracket().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCGMethod_aadb778c988685e46d7d109350973d826}{\index{C\+G\+Method@{C\+G\+Method}!\+\_\+energy\+Change\+Counter@{\+\_\+energy\+Change\+Counter}}
+\index{\+\_\+energy\+Change\+Counter@{\+\_\+energy\+Change\+Counter}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{\+\_\+energy\+Change\+Counter}]{\setlength{\rightskip}{0pt plus 5cm}int C\+G\+Method\+::\+\_\+energy\+Change\+Counter = 0\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aadb778c988685e46d7d109350973d826}
+
+
+Energy counter, for use in linear search methods. 
+
+Number of iterations where energy has not changed by an amount more than L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L 
+
+Definition at line 72 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search(), Fletcher\+Rieves\+::minimize(), Polak\+Ribiere\+::minimize(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}{\index{C\+G\+Method@{C\+G\+Method}!B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E@{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}}
+\index{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E@{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+B\+A\+C\+K\+T\+R\+A\+C\+K\+S\+L\+O\+P\+E = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aa7a8cad90cb1961052e323ded645b4c2}
+
+
+Backtrack slope parameter. 
+
+
+
+Definition at line 45 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}{\index{C\+G\+Method@{C\+G\+Method}!C@{C}}
+\index{C@{C}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{C}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+C = 1 -\/ {\bf R}\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_af8587ca1c0394c244ce84fe8a6ad29ff}
+
+
+Definition at line 58 of file C\+G\+Method.\+h.
+
+
+
+Referenced by golden\+Section2().
+
+\hypertarget{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}{\index{C\+G\+Method@{C\+G\+Method}!E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R@{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}}
+\index{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R@{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R}]{\setlength{\rightskip}{0pt plus 5cm}const int C\+G\+Method\+::\+E\+N\+E\+R\+G\+Y\+C\+H\+A\+N\+G\+E\+I\+T\+E\+R = 20\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_aaee1e11813855cc66c360f7cb3d9665a}
+
+
+Max number of iterations allowed where \char`\"{}\char`\"{}". 
+
+
+
+Definition at line 73 of file C\+G\+Method.\+h.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}{\index{C\+G\+Method@{C\+G\+Method}!E\+P\+S\+Q\+U\+A\+D@{E\+P\+S\+Q\+U\+A\+D}}
+\index{E\+P\+S\+Q\+U\+A\+D@{E\+P\+S\+Q\+U\+A\+D}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{E\+P\+S\+Q\+U\+A\+D}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+E\+P\+S\+Q\+U\+A\+D = 1e-\/28\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_adb2a688fe52a8729d703d81e52b9fdb3}
+
+
+Definition at line 51 of file C\+G\+Method.\+h.
+
+
+
+Referenced by quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}{\index{C\+G\+Method@{C\+G\+Method}!G\+R\+A\+D\+T\+O\+L@{G\+R\+A\+D\+T\+O\+L}}
+\index{G\+R\+A\+D\+T\+O\+L@{G\+R\+A\+D\+T\+O\+L}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{G\+R\+A\+D\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+G\+R\+A\+D\+T\+O\+L = 1e-\/10\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_ad0118dc4da7526f196a4b4172bba9625}
+
+
+Gradient minimization tolerance. 
+
+
+
+Definition at line 75 of file C\+G\+Method.\+h.
+
+
+
+Referenced by Fletcher\+Rieves\+::minimize(), and Polak\+Ribiere\+::minimize().
+
+\hypertarget{classCGMethod_a04127fd877e82fdf4f71cd3709581419}{\index{C\+G\+Method@{C\+G\+Method}!L\+A\+M\+B\+D\+A\+M\+A\+X@{L\+A\+M\+B\+D\+A\+M\+A\+X}}
+\index{L\+A\+M\+B\+D\+A\+M\+A\+X@{L\+A\+M\+B\+D\+A\+M\+A\+X}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+M\+A\+X}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+A\+X = 1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a04127fd877e82fdf4f71cd3709581419}
+
+
+Max lambda that can be returned, used in all methods. 
+
+
+
+Definition at line 38 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search(), golden\+Section1(), golden\+Section2(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}{\index{C\+G\+Method@{C\+G\+Method}!L\+A\+M\+B\+D\+A\+M\+I\+N@{L\+A\+M\+B\+D\+A\+M\+I\+N}}
+\index{L\+A\+M\+B\+D\+A\+M\+I\+N@{L\+A\+M\+B\+D\+A\+M\+I\+N}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+M\+I\+N}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+M\+I\+N = 0.\+001\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_ae28b20ab18f9a0b7c6a1c443add1026e}
+
+
+Lambda parameter for use in linear search methods. 
+
+Minimum lambda that can be returned, used only in golden section for now 
+
+Definition at line 37 of file C\+G\+Method.\+h.
+
+
+
+Referenced by golden\+Section1(), and golden\+Section2().
+
+\hypertarget{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}{\index{C\+G\+Method@{C\+G\+Method}!L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E@{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}}
+\index{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E@{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+A\+M\+B\+D\+A\+R\+E\+D\+U\+C\+E = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a0fa651bde0efa2e195ec6a367a0e346e}
+
+
+Parameter used in backtracking line search. 
+
+Lambda reduction parameter for backtracking 
+
+Definition at line 44 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_a084794992bdcec9285f6512b56e6c578}{\index{C\+G\+Method@{C\+G\+Method}!L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L@{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}}
+\index{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L@{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+L\+S\+E\+N\+E\+R\+G\+Y\+T\+O\+L = 1e-\/6\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a084794992bdcec9285f6512b56e6c578}
+
+
+Line search energy tolerance for all linesearch methods. 
+
+
+
+Definition at line 61 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search(), binary\+Search(), golden\+Section1(), golden\+Section2(), and quadratic\+Line\+Search().
+
+\hypertarget{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}{\index{C\+G\+Method@{C\+G\+Method}!M\+A\+X\+D\+I\+S\+T@{M\+A\+X\+D\+I\+S\+T}}
+\index{M\+A\+X\+D\+I\+S\+T@{M\+A\+X\+D\+I\+S\+T}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{M\+A\+X\+D\+I\+S\+T}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+M\+A\+X\+D\+I\+S\+T = 1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a814ea57c3493f31f4ffd1cfa71795871}
+
+
+Max distance beads can be moved, used only in backtracking line search. 
+
+
+
+Definition at line 39 of file C\+G\+Method.\+h.
+
+
+
+Referenced by backtracking\+Line\+Search().
+
+\hypertarget{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}{\index{C\+G\+Method@{C\+G\+Method}!P\+H\+I@{P\+H\+I}}
+\index{P\+H\+I@{P\+H\+I}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{P\+H\+I}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+P\+H\+I = (1 + sqrt(5)) / 2\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_ab6ca0706dec56fe6e35f15f9791b3e23}
+
+
+Parameter used in golden section. 
+
+
+
+Definition at line 56 of file C\+G\+Method.\+h.
+
+
+
+Referenced by make\+Bracket().
+
+\hypertarget{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}{\index{C\+G\+Method@{C\+G\+Method}!Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L@{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}}
+\index{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L@{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+Q\+U\+A\+D\+R\+A\+T\+I\+C\+T\+O\+L = 0.\+1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_acd9c51fe93f6d563f731dd2e30eb7922}
+
+
+Parameter used in quadratic line search. 
+
+
+
+Definition at line 50 of file C\+G\+Method.\+h.
+
+\hypertarget{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}{\index{C\+G\+Method@{C\+G\+Method}!R@{R}}
+\index{R@{R}!C\+G\+Method@{C\+G\+Method}}
+\subsubsection[{R}]{\setlength{\rightskip}{0pt plus 5cm}const double C\+G\+Method\+::\+R = 0.\+61803399\hspace{0.3cm}{\ttfamily [protected]}}}\label{classCGMethod_a2e7906b4b29a1b76dca43d56eaf2efac}
+
+
+Definition at line 57 of file C\+G\+Method.\+h.
+
+
+
+Referenced by golden\+Section2().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Mechanics/\+Minimizer/\hyperlink{CGMethod_8h}{C\+G\+Method.\+h}\item 
+M3\+S\+Y\+M/\+Mechanics/\+Minimizer/\hyperlink{CGMethod_8cpp}{C\+G\+Method.\+cpp}\end{DoxyCompactItemize}

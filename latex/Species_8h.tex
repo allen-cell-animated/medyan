@@ -1,25 +1,23 @@
-\hypertarget{Species_8h}{\section{Cyto\-Sim/\-Species.h File Reference}
-\label{Species_8h}\index{Cyto\-Sim/\-Species.\-h@{Cyto\-Sim/\-Species.\-h}}
+\hypertarget{Species_8h}{\section{M3\+S\+Y\+M/\+Structure/\+Species.h File Reference}
+\label{Species_8h}\index{M3\+S\+Y\+M/\+Structure/\+Species.\+h@{M3\+S\+Y\+M/\+Structure/\+Species.\+h}}
 }
-
-
-this header file will contain defininition of the \hyperlink{classSpecies}{Species} hieararchy and associated D\-B and helper classes.  
-
-
+{\ttfamily \#include $<$vector$>$}\\*
 {\ttfamily \#include $<$string$>$}\\*
-{\ttfamily \#include $<$map$>$}\\*
-{\ttfamily \#include $<$boost/flyweight.\-hpp$>$}\\*
-{\ttfamily \#include \char`\"{}Object.\-h\char`\"{}}\\*
-Include dependency graph for Species.\-h\-:
-\nopagebreak
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$cassert$>$}\\*
+{\ttfamily \#include $<$stdexcept$>$}\\*
+{\ttfamily \#include $<$type\+\_\+traits$>$}\\*
+{\ttfamily \#include \char`\"{}common.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}R\+Species.\+h\char`\"{}}\\*
+Include dependency graph for Species.\+h\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{Species_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\-:
-\nopagebreak
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -29,42 +27,101 @@ This graph shows which files directly or indirectly include this file\-:
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-struct \hyperlink{structspecies__type__tag}{species\-\_\-type\-\_\-tag}
-\begin{DoxyCompactList}\small\item\em Create a tag for the corresponding Species\-Type flywheights. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesNamesDB}{Species\+Names\+D\+B}
+\begin{DoxyCompactList}\small\item\em Used to associate unique integers with character based names of \hyperlink{classSpecies}{Species}. \end{DoxyCompactList}\item 
 class \hyperlink{classSpecies}{Species}
-\item 
-class \hyperlink{classSBulk}{S\-Bulk}
-\begin{DoxyCompactList}\small\item\em This class represent Bulk species that have no spatial component, i.\-e. are not connected to any Compartmens. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{Typedefs}
+\begin{DoxyCompactList}\small\item\em Represents chemical molecules, tracks their copy number and can be used in \hyperlink{classReaction}{Reactions}. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesBulk}{Species\+Bulk}
+\begin{DoxyCompactList}\small\item\em Used for \hyperlink{classSpecies}{Species} without spatial information (i.\+e. well-\/mixed in the container) \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesDiffusing}{Species\+Diffusing}
+\begin{DoxyCompactList}\small\item\em Used for \hyperlink{classSpecies}{Species} which can move spatially from one compartment to the neighboring one (i.\+e. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesFilament}{Species\+Filament}
+\begin{DoxyCompactList}\small\item\em Used for species that can be in a filament. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesBound}{Species\+Bound}
+\begin{DoxyCompactList}\small\item\em Used for species that can be bound to a filament. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesLinker}{Species\+Linker}
+\begin{DoxyCompactList}\small\item\em Used for linker species that can be bound to a filament. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesMotor}{Species\+Motor}
+\begin{DoxyCompactList}\small\item\em Used for motor species that can be bound to a filament. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesPlusEnd}{Species\+Plus\+End}
+\begin{DoxyCompactList}\small\item\em Used for a plus end species on a filament. \end{DoxyCompactList}\item 
+class \hyperlink{classSpeciesMinusEnd}{Species\+Minus\+End}
+\begin{DoxyCompactList}\small\item\em Used for a minus end species on a filament. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-typedef flyweight$<$ std\-::string, \\*
-tag$<$ \hyperlink{structspecies__type__tag}{species\-\_\-type\-\_\-tag} $>$ $>$ \hyperlink{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{Species\-Type}
-\begin{DoxyCompactList}\small\item\em Species\-Type indicates the molecule. For example, it can be \char`\"{}\-Arp2/3\char`\"{}. It is implemented as a flyweight. \end{DoxyCompactList}\end{DoxyCompactItemize}
+enum \hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cf}{Species\+Type} \{ \\*
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfa7cf8c698367d8a7e5f568d30b4b17910}{B\+U\+L\+K}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfaeeaca4feca72d6318a4872d2a99974ee}{D\+I\+F\+F\+U\+S\+I\+N\+G}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfa8092891c785d1ee8a04eefe7b7a76d06}{F\+I\+L\+A\+M\+E\+N\+T}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfa86a60267aa7b85040d2bf45177fc1e3c}{B\+O\+U\+N\+D}, 
+\\*
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfa9f815d55cc48f593e6aebe3a765a93d3}{L\+I\+N\+K\+E\+R}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfab68c2dc00a4681c10297284f6b803e2a}{M\+O\+T\+O\+R}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfabe356ec9d470ed0a78240e7d4bb6f0d1}{P\+L\+U\+S\+E\+N\+D}, 
+\hyperlink{Species_8h_a50651af47c56ea0e27235468d23542cfa2d5e0f0eef32809b20fce09baadf60dd}{M\+I\+N\+U\+S\+E\+N\+D}
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration for species types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+ostream \& \hyperlink{Species_8h_a4816bb7d9ee0557b45580bb9ece06e0d}{operator$<$$<$} (ostream \&os, const \hyperlink{classSpecies}{Species} \&s)
+\begin{DoxyCompactList}\small\item\em Print self into an iostream. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-this header file will contain defininition of the \hyperlink{classSpecies}{Species} hieararchy and associated D\-B and helper classes. \begin{DoxyAuthor}{Author}
-Garegin Papoian $\ast$ 
-\end{DoxyAuthor}
-\begin{DoxyDate}{Date}
-4/8/2012 
-\end{DoxyDate}
+\subsection{Enumeration Type Documentation}
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cf}{\index{Species.\+h@{Species.\+h}!Species\+Type@{Species\+Type}}
+\index{Species\+Type@{Species\+Type}!Species.\+h@{Species.\+h}}
+\subsubsection[{Species\+Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Species\+Type}}}\label{Species_8h_a50651af47c56ea0e27235468d23542cf}
 
 
-Definition in file \hyperlink{Species_8h_source}{Species.\-h}.
+Enumeration for species types. 
+
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{B\+U\+L\+K@{B\+U\+L\+K}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!B\+U\+L\+K@{B\+U\+L\+K}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfa7cf8c698367d8a7e5f568d30b4b17910}{B\+U\+L\+K}\label{Species_8h_a50651af47c56ea0e27235468d23542cfa7cf8c698367d8a7e5f568d30b4b17910}
+}]\index{D\+I\+F\+F\+U\+S\+I\+N\+G@{D\+I\+F\+F\+U\+S\+I\+N\+G}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!D\+I\+F\+F\+U\+S\+I\+N\+G@{D\+I\+F\+F\+U\+S\+I\+N\+G}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfaeeaca4feca72d6318a4872d2a99974ee}{D\+I\+F\+F\+U\+S\+I\+N\+G}\label{Species_8h_a50651af47c56ea0e27235468d23542cfaeeaca4feca72d6318a4872d2a99974ee}
+}]\index{F\+I\+L\+A\+M\+E\+N\+T@{F\+I\+L\+A\+M\+E\+N\+T}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!F\+I\+L\+A\+M\+E\+N\+T@{F\+I\+L\+A\+M\+E\+N\+T}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfa8092891c785d1ee8a04eefe7b7a76d06}{F\+I\+L\+A\+M\+E\+N\+T}\label{Species_8h_a50651af47c56ea0e27235468d23542cfa8092891c785d1ee8a04eefe7b7a76d06}
+}]\index{B\+O\+U\+N\+D@{B\+O\+U\+N\+D}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!B\+O\+U\+N\+D@{B\+O\+U\+N\+D}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfa86a60267aa7b85040d2bf45177fc1e3c}{B\+O\+U\+N\+D}\label{Species_8h_a50651af47c56ea0e27235468d23542cfa86a60267aa7b85040d2bf45177fc1e3c}
+}]\index{L\+I\+N\+K\+E\+R@{L\+I\+N\+K\+E\+R}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!L\+I\+N\+K\+E\+R@{L\+I\+N\+K\+E\+R}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfa9f815d55cc48f593e6aebe3a765a93d3}{L\+I\+N\+K\+E\+R}\label{Species_8h_a50651af47c56ea0e27235468d23542cfa9f815d55cc48f593e6aebe3a765a93d3}
+}]\index{M\+O\+T\+O\+R@{M\+O\+T\+O\+R}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!M\+O\+T\+O\+R@{M\+O\+T\+O\+R}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfab68c2dc00a4681c10297284f6b803e2a}{M\+O\+T\+O\+R}\label{Species_8h_a50651af47c56ea0e27235468d23542cfab68c2dc00a4681c10297284f6b803e2a}
+}]\index{P\+L\+U\+S\+E\+N\+D@{P\+L\+U\+S\+E\+N\+D}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!P\+L\+U\+S\+E\+N\+D@{P\+L\+U\+S\+E\+N\+D}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfabe356ec9d470ed0a78240e7d4bb6f0d1}{P\+L\+U\+S\+E\+N\+D}\label{Species_8h_a50651af47c56ea0e27235468d23542cfabe356ec9d470ed0a78240e7d4bb6f0d1}
+}]\index{M\+I\+N\+U\+S\+E\+N\+D@{M\+I\+N\+U\+S\+E\+N\+D}!Species.\+h@{Species.\+h}}\index{Species.\+h@{Species.\+h}!M\+I\+N\+U\+S\+E\+N\+D@{M\+I\+N\+U\+S\+E\+N\+D}}\item[{\em 
+\hypertarget{Species_8h_a50651af47c56ea0e27235468d23542cfa2d5e0f0eef32809b20fce09baadf60dd}{M\+I\+N\+U\+S\+E\+N\+D}\label{Species_8h_a50651af47c56ea0e27235468d23542cfa2d5e0f0eef32809b20fce09baadf60dd}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 35 of file Species.\+h.
 
 
 
-\subsection{Typedef Documentation}
-\hypertarget{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}{\index{Species.\-h@{Species.\-h}!Species\-Type@{Species\-Type}}
-\index{Species\-Type@{Species\-Type}!Species.h@{Species.\-h}}
-\subsubsection[{Species\-Type}]{\setlength{\rightskip}{0pt plus 5cm}typedef flyweight$<$std\-::string,tag$<${\bf species\-\_\-type\-\_\-tag}$>$ $>$ {\bf Species\-Type}}}\label{Species_8h_af8f3afcc030f67a124aa4a6b5badf495}
+\subsection{Function Documentation}
+\hypertarget{Species_8h_a4816bb7d9ee0557b45580bb9ece06e0d}{\index{Species.\+h@{Species.\+h}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!Species.\+h@{Species.\+h}}
+\subsubsection[{operator$<$$<$}]{\setlength{\rightskip}{0pt plus 5cm}ostream\& operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{ostream \&}]{os, }
+\item[{const {\bf Species} \&}]{s}
+\end{DoxyParamCaption}
+)}}\label{Species_8h_a4816bb7d9ee0557b45580bb9ece06e0d}
 
 
-Species\-Type indicates the molecule. For example, it can be \char`\"{}\-Arp2/3\char`\"{}. It is implemented as a flyweight. 
+Print self into an iostream. 
 
 
 
-Definition at line 34 of file Species.\-h.
+Definition at line 43 of file Species.\+cpp.
+
+
+
+References Species\+::get\+Full\+Name(), and Species\+::get\+N().
 

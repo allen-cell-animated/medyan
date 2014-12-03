@@ -1,7 +1,7 @@
 var NAVTREE =
 [
   [ "M3Sym", "index.html", [
-    [ "The main page for the M3SYM software package", "index.html", [
+    [ "M3SYM software package", "index.html", [
       [ "Introduction", "index.html#intro_sec", null ],
       [ "Installation", "index.html#install_sec", [
         [ "Step 1: Prerequisites", "index.html#step1", null ],

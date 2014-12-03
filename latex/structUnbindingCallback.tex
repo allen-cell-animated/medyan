@@ -1,0 +1,105 @@
+\hypertarget{structUnbindingCallback}{\section{Unbinding\+Callback Struct Reference}
+\label{structUnbindingCallback}\index{Unbinding\+Callback@{Unbinding\+Callback}}
+}
+
+
+Callback to unbind a bound to filaments.  
+
+
+
+
+{\ttfamily \#include $<$Chem\+Callbacks.\+h$>$}
+
+
+
+Collaboration diagram for Unbinding\+Callback\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structUnbindingCallback__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structUnbindingCallback_af56dfa37467fed8f79f345b8ab85fedd}{Unbinding\+Callback} (\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$s1, \hyperlink{classSubSystem}{Sub\+System} $\ast$ps)
+\item 
+void \hyperlink{structUnbindingCallback_a9e2633d821ddd1442cb89561f3212eab}{operator()} (\hyperlink{classReactionBase}{Reaction\+Base} $\ast$r)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSubSystem}{Sub\+System} $\ast$ \hyperlink{structUnbindingCallback_a1f765dfa9321fa8bba9924350f785985}{\+\_\+ps}
+\item 
+\hyperlink{classSpeciesBound}{Species\+Bound} $\ast$ \hyperlink{structUnbindingCallback_a46d4f3151efafaee548438cd83d65122}{\+\_\+s1}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Callback to unbind a bound to filaments. 
+
+Definition at line 171 of file Chem\+Callbacks.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structUnbindingCallback_af56dfa37467fed8f79f345b8ab85fedd}{\index{Unbinding\+Callback@{Unbinding\+Callback}!Unbinding\+Callback@{Unbinding\+Callback}}
+\index{Unbinding\+Callback@{Unbinding\+Callback}!Unbinding\+Callback@{Unbinding\+Callback}}
+\subsubsection[{Unbinding\+Callback}]{\setlength{\rightskip}{0pt plus 5cm}Unbinding\+Callback\+::\+Unbinding\+Callback (
+\begin{DoxyParamCaption}
+\item[{{\bf Species\+Bound} $\ast$}]{s1, }
+\item[{{\bf Sub\+System} $\ast$}]{ps}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structUnbindingCallback_af56dfa37467fed8f79f345b8ab85fedd}
+
+
+Definition at line 176 of file Chem\+Callbacks.\+h.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{structUnbindingCallback_a9e2633d821ddd1442cb89561f3212eab}{\index{Unbinding\+Callback@{Unbinding\+Callback}!operator()@{operator()}}
+\index{operator()@{operator()}!Unbinding\+Callback@{Unbinding\+Callback}}
+\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}void Unbinding\+Callback\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf Reaction\+Base} $\ast$}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structUnbindingCallback_a9e2633d821ddd1442cb89561f3212eab}
+
+
+Definition at line 178 of file Chem\+Callbacks.\+h.
+
+
+
+References \+\_\+ps, \+\_\+s1, Species\+Bound\+::get\+C\+Bound(), Sub\+System\+::remove\+Linker(), and Sub\+System\+::remove\+Motor\+Ghost().
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structUnbindingCallback_a1f765dfa9321fa8bba9924350f785985}{\index{Unbinding\+Callback@{Unbinding\+Callback}!\+\_\+ps@{\+\_\+ps}}
+\index{\+\_\+ps@{\+\_\+ps}!Unbinding\+Callback@{Unbinding\+Callback}}
+\subsubsection[{\+\_\+ps}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Sub\+System}$\ast$ Unbinding\+Callback\+::\+\_\+ps}}\label{structUnbindingCallback_a1f765dfa9321fa8bba9924350f785985}
+
+
+Definition at line 173 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by operator()().
+
+\hypertarget{structUnbindingCallback_a46d4f3151efafaee548438cd83d65122}{\index{Unbinding\+Callback@{Unbinding\+Callback}!\+\_\+s1@{\+\_\+s1}}
+\index{\+\_\+s1@{\+\_\+s1}!Unbinding\+Callback@{Unbinding\+Callback}}
+\subsubsection[{\+\_\+s1}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Species\+Bound}$\ast$ Unbinding\+Callback\+::\+\_\+s1}}\label{structUnbindingCallback_a46d4f3151efafaee548438cd83d65122}
+
+
+Definition at line 174 of file Chem\+Callbacks.\+h.
+
+
+
+Referenced by Unbinding\+Manager\+::add\+Reaction(), and operator()().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+M3\+S\+Y\+M/\+Chemistry/\hyperlink{ChemCallbacks_8h}{Chem\+Callbacks.\+h}\end{DoxyCompactItemize}
