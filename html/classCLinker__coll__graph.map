@@ -8,11 +8,11 @@
 <area shape="rect" id="node47" href="$classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="454,1193,511,1219"/>
 <area shape="rect" id="node4" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="825,279,911,304"/>
 <area shape="rect" id="node5" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="894,5,984,31"/>
-<area shape="rect" id="node19" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="1408,366,1512,391"/>
+<area shape="rect" id="node19" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="1408,366,1512,391"/>
 <area shape="rect" id="node44" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="720,366,789,391"/>
 <area shape="rect" id="node24" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="1026,1087,1107,1112"/>
 <area shape="rect" id="node10" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="1302,460,1378,485"/>
-<area shape="rect" id="node32" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="655,560,782,585"/>
+<area shape="rect" id="node32" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="655,560,782,585"/>
 <area shape="rect" id="node11" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1251,781,1323,807"/>
 <area shape="rect" id="node12" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1385,868,1466,893"/>
 <area shape="rect" id="node45" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="629,460,707,485"/>

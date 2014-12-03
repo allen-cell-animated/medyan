@@ -5,10 +5,10 @@
 <area shape="rect" id="node2" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="1179,5,1264,31"/>
 <area shape="rect" id="node3" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="1064,92,1155,117"/>
 <area shape="rect" id="node18" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="1414,392,1483,417"/>
-<area shape="rect" id="node21" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="1615,92,1719,117"/>
+<area shape="rect" id="node21" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="1615,92,1719,117"/>
 <area shape="rect" id="node29" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="777,1137,858,1163"/>
 <area shape="rect" id="node8" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="573,479,649,504"/>
-<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="835,572,963,597"/>
+<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="835,572,963,597"/>
 <area shape="rect" id="node9" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="526,787,597,812"/>
 <area shape="rect" id="node10" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="348,912,429,937"/>
 <area shape="rect" id="node15" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="1861,572,1948,597"/>

@@ -69,7 +69,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
 
-/// Manager for polymerization at plus end
+/// Manager for polymerization at plus end of Filament
 class PolyPlusEndManager : public InternalFilamentRxnManager {
 
 public:
@@ -82,7 +82,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for polymerization at minus end
+/// Manager for polymerization at minus end of Filament
 class PolyMinusEndManager : public InternalFilamentRxnManager {
     
 public:
@@ -96,7 +96,7 @@ public:
 };
 
 
-/// Manager for depolymerization at plus end
+/// Manager for depolymerization at plus end of Filament
 class DepolyPlusEndManager : public InternalFilamentRxnManager {
     
 public:
@@ -109,7 +109,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for depolymerization at minus end
+/// Manager for depolymerization at minus end of Filament
 class DepolyMinusEndManager : public InternalFilamentRxnManager {
     
 public:
@@ -122,7 +122,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for basic binding
+/// Manager for basic binding to Filament
 class BasicBindingManager : public InternalFilamentRxnManager {
     
 public:
@@ -135,7 +135,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
 };
 
-/// Manager for all unbinding
+/// Manager for all unbinding from Filament
 class UnbindingManager : public InternalFilamentRxnManager {
     
 public:

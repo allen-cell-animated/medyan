@@ -1,7 +1,7 @@
 <map id="BoundaryElement" name="BoundaryElement">
-<area shape="rect" id="node3" href="$classCylindricalZBoundaryElement.html" title="A cylinder implementation of a boundary element. " alt="" coords="307,5,504,31"/>
-<area shape="rect" id="node4" href="$classHalfSphereZBoundaryElement.html" title="A half&#45;sphere implementation of a boundary element. " alt="" coords="304,55,506,80"/>
-<area shape="rect" id="node5" href="$classPlaneBoundaryElement.html" title="A plane implementation of a boundary element. " alt="" coords="324,104,486,129"/>
-<area shape="rect" id="node6" href="$classSphereBoundaryElement.html" title="A spherical implementation of a boundary element. " alt="" coords="320,153,490,179"/>
+<area shape="rect" id="node3" href="$classCylindricalZBoundaryElement.html" title="A cylinder implementation of a BoundaryElement. " alt="" coords="307,5,504,31"/>
+<area shape="rect" id="node4" href="$classHalfSphereZBoundaryElement.html" title="A half&#45;sphere implementation of a BoundaryElement. " alt="" coords="304,55,506,80"/>
+<area shape="rect" id="node5" href="$classPlaneBoundaryElement.html" title="A plane implementation of a BoundaryElement. " alt="" coords="324,104,486,129"/>
+<area shape="rect" id="node6" href="$classSphereBoundaryElement.html" title="A spherical implementation of a BoundaryElement. " alt="" coords="320,153,490,179"/>
 <area shape="rect" id="node2" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="5,80,81,105"/>
 </map>

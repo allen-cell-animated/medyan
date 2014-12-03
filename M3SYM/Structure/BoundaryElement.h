@@ -28,7 +28,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// Represents an element of a boundary surface.
+/// Represents an element of a BoundarySurface.
 /*!
  * The BoundaryElement class is a representation of a BoundarySurface element, which can interact
  * with other elements in the system, including other BoundaryElements as well as [Beads] (@ref Bead) in [Filaments](@ref Filament).

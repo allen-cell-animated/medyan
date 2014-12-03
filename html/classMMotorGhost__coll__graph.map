@@ -5,7 +5,7 @@
 <area shape="rect" id="node4" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="2151,92,2241,117"/>
 <area shape="rect" id="node9" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="1522,725,1592,751"/>
 <area shape="rect" id="node16" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="1478,507,1580,532"/>
-<area shape="rect" id="node28" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="1957,92,2062,117"/>
+<area shape="rect" id="node28" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="1957,92,2062,117"/>
 <area shape="rect" id="node34" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="656,92,725,117"/>
 <area shape="rect" id="node23" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="1659,600,1712,625"/>
 <area shape="rect" id="node7" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="607,507,679,532"/>
@@ -13,7 +13,7 @@
 <area shape="rect" id="node12" href="$classCCylinder.html" title="Holds all CMonomers and Reactions associated with it. " alt="" coords="2031,839,2111,864"/>
 <area shape="rect" id="node38" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="1653,839,1734,864"/>
 <area shape="rect" id="node10" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="1881,185,1956,211"/>
-<area shape="rect" id="node19" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="1675,285,1802,311"/>
+<area shape="rect" id="node19" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="1675,285,1802,311"/>
 <area shape="rect" id="node49" href="$classCBound.html" title="Represents a chemical object that is bound to a Filament. " alt="" coords="1023,600,1092,625"/>
 <area shape="rect" id="node24" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="1436,393,1623,418"/>
 <area shape="rect" id="node25" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="1284,285,1466,311"/>

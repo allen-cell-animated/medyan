@@ -20,7 +20,7 @@
 
 #include "BoundaryElement.h"
 
-/// A plane implementation of a boundary element.
+/// A plane implementation of a BoundaryElement.
 class PlaneBoundaryElement : public BoundaryElement {
     
 private:
@@ -42,7 +42,7 @@ public:
     virtual double getScreeningLength();
 };
 
-/// A spherical implementation of a boundary element.
+/// A spherical implementation of a BoundaryElement.
 class SphereBoundaryElement : public BoundaryElement {
     
 private:
@@ -63,7 +63,7 @@ public:
     virtual double getScreeningLength();
 };
 
-/// A cylinder implementation of a boundary element.
+/// A cylinder implementation of a BoundaryElement.
 class CylindricalZBoundaryElement : public BoundaryElement {
     
 private:
@@ -85,7 +85,7 @@ public:
     virtual double getScreeningLength();
 };
 
-/// A half-sphere implementation of a boundary element.
+/// A half-sphere implementation of a BoundaryElement.
 class HalfSphereZBoundaryElement : public BoundaryElement {
     
 private:

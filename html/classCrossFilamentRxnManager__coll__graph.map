@@ -3,7 +3,7 @@
 <area shape="rect" id="node3" href="$classCylinderNeighborList.html" title="An implementation of NeighborList for Cylinder&#45;Cylinder interactions. " alt="" coords="1319,25,1464,50"/>
 <area shape="rect" id="node4" href="$classNeighborList.html" title="To hold an external neighbor list of general type. " alt="" coords="1037,25,1134,50"/>
 <area shape="rect" id="node6" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="41,29,116,54"/>
-<area shape="rect" id="node20" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="278,93,405,118"/>
+<area shape="rect" id="node20" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="278,93,405,118"/>
 <area shape="rect" id="node9" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="2494,119,2583,145"/>
 <area shape="rect" id="node11" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1914,146,1986,171"/>
 <area shape="rect" id="node13" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1909,209,1991,234"/>

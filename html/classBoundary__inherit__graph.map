@@ -1,5 +1,5 @@
 <map id="Boundary" name="Boundary">
-<area shape="rect" id="node2" href="$classBoundaryCapsule.html" title="A capsule boundary implementation. " alt="" coords="5,79,133,104"/>
-<area shape="rect" id="node3" href="$classBoundaryCubic.html" title="A cubic boundary implementation. " alt="" coords="157,79,269,104"/>
-<area shape="rect" id="node4" href="$classBoundarySpherical.html" title="A spherical boundary implementation. " alt="" coords="293,79,427,104"/>
+<area shape="rect" id="node2" href="$classBoundaryCapsule.html" title="A capsule Boundary implementation. " alt="" coords="5,79,133,104"/>
+<area shape="rect" id="node3" href="$classBoundaryCubic.html" title="A cubic Boundary implementation. " alt="" coords="157,79,269,104"/>
+<area shape="rect" id="node4" href="$classBoundarySpherical.html" title="A spherical Boundary implementation. " alt="" coords="293,79,427,104"/>
 </map>

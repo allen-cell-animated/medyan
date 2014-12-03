@@ -1,6 +1,6 @@
 <map id="RSpecies" name="RSpecies">
 <area shape="rect" id="node9" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="327,379,396,404"/>
-<area shape="rect" id="node3" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="352,92,457,117"/>
+<area shape="rect" id="node3" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="352,92,457,117"/>
 <area shape="rect" id="node4" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="210,5,295,31"/>
 <area shape="rect" id="node5" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="138,92,228,117"/>
 <area shape="rect" id="node8" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="390,5,453,31"/>

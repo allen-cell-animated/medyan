@@ -9,6 +9,6 @@
 <area shape="rect" id="node13" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1611,174,1692,199"/>
 <area shape="rect" id="node14" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="1959,230,2038,255"/>
 <area shape="rect" id="node17" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="1084,230,1209,255"/>
-<area shape="rect" id="node20" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="250,230,378,255"/>
+<area shape="rect" id="node20" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="250,230,378,255"/>
 <area shape="rect" id="node21" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="41,205,116,230"/>
 </map>

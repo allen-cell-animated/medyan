@@ -4,9 +4,9 @@
 <area shape="rect" id="node3" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="957,5,1043,31"/>
 <area shape="rect" id="node8" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="901,889,1003,915"/>
 <area shape="rect" id="node19" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="539,399,608,424"/>
-<area shape="rect" id="node22" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="262,92,367,117"/>
+<area shape="rect" id="node22" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="262,92,367,117"/>
 <area shape="rect" id="node6" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="1070,399,1146,424"/>
-<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="803,539,930,564"/>
+<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="803,539,930,564"/>
 <area shape="rect" id="node7" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1332,399,1404,424"/>
 <area shape="rect" id="node13" href="$classCCylinder.html" title="Holds all CMonomers and Reactions associated with it. " alt="" coords="897,983,977,1008"/>
 <area shape="rect" id="node28" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="1501,789,1582,815"/>

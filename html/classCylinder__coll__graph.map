@@ -5,10 +5,10 @@
 <area shape="rect" id="node3" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="1099,5,1189,31"/>
 <area shape="rect" id="node16" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="398,372,466,397"/>
 <area shape="rect" id="node19" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="1268,800,1370,825"/>
-<area shape="rect" id="node31" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="961,372,1065,397"/>
+<area shape="rect" id="node31" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="961,372,1065,397"/>
 <area shape="rect" id="node26" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="1675,893,1728,919"/>
 <area shape="rect" id="node6" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="1477,472,1552,497"/>
-<area shape="rect" id="node22" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="1418,572,1545,597"/>
+<area shape="rect" id="node22" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="1418,572,1545,597"/>
 <area shape="rect" id="node7" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="2485,472,2557,497"/>
 <area shape="rect" id="node8" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="2002,472,2083,497"/>
 <area shape="rect" id="node13" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="159,572,246,597"/>

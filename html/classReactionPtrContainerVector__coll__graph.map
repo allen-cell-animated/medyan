@@ -1,6 +1,6 @@
 <map id="ReactionPtrContainerVector" name="ReactionPtrContainerVector">
 <area shape="rect" id="node2" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="5,285,187,311"/>
-<area shape="rect" id="node5" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="442,92,546,117"/>
+<area shape="rect" id="node5" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="442,92,546,117"/>
 <area shape="rect" id="node6" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="281,5,366,31"/>
 <area shape="rect" id="node7" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="193,92,283,117"/>
 <area shape="rect" id="node11" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="462,5,525,31"/>

@@ -1106,7 +1106,7 @@
       <Scope>BasicBindingManager</Scope>
     </TokenIdentifier>
     <Path>classBasicBindingManager.html</Path>
-    <Abstract>Manager for basic binding. </Abstract>
+    <Abstract>Manager for basic binding to Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -1871,7 +1871,7 @@
       <Scope>BoundaryCapsule</Scope>
     </TokenIdentifier>
     <Path>classBoundaryCapsule.html</Path>
-    <Abstract>A capsule boundary implementation. </Abstract>
+    <Abstract>A capsule Boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -1963,7 +1963,7 @@
       <Scope>BoundaryCubic</Scope>
     </TokenIdentifier>
     <Path>classBoundaryCubic.html</Path>
-    <Abstract>A cubic boundary implementation. </Abstract>
+    <Abstract>A cubic Boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -2055,7 +2055,7 @@
       <Scope>BoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classBoundaryElement.html</Path>
-    <Abstract>Represents an element of a boundary surface. </Abstract>
+    <Abstract>Represents an element of a BoundarySurface. </Abstract>
     <DeclaredIn>BoundaryElement.h</DeclaredIn>
   </Token>
   <Token>
@@ -2844,7 +2844,7 @@
       <Scope>BoundarySpherical</Scope>
     </TokenIdentifier>
     <Path>classBoundarySpherical.html</Path>
-    <Abstract>A spherical boundary implementation. </Abstract>
+    <Abstract>A spherical Boundary implementation. </Abstract>
     <DeclaredIn>BoundaryImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -4830,7 +4830,7 @@
       <Scope>ChemNRMImpl</Scope>
     </TokenIdentifier>
     <Path>classChemNRMImpl.html</Path>
-    <Abstract>The chemical Next Reaction Method Implementation. </Abstract>
+    <Abstract>The chemical NRM implementation. </Abstract>
     <DeclaredIn>ChemNRMImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -10569,7 +10569,7 @@
       <Scope>CylindricalZBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classCylindricalZBoundaryElement.html</Path>
-    <Abstract>A cylinder implementation of a boundary element. </Abstract>
+    <Abstract>A cylinder implementation of a BoundaryElement. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -10717,7 +10717,7 @@
       <Scope>DepolyMinusEndManager</Scope>
     </TokenIdentifier>
     <Path>classDepolyMinusEndManager.html</Path>
-    <Abstract>Manager for depolymerization at minus end. </Abstract>
+    <Abstract>Manager for depolymerization at minus end of Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -10818,7 +10818,7 @@
       <Scope>DepolyPlusEndManager</Scope>
     </TokenIdentifier>
     <Path>classDepolyPlusEndManager.html</Path>
-    <Abstract>Manager for depolymerization at plus end. </Abstract>
+    <Abstract>Manager for depolymerization at plus end of Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -13096,7 +13096,7 @@
       <Scope>HalfSphereZBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classHalfSphereZBoundaryElement.html</Path>
-    <Abstract>A half-sphere implementation of a boundary element. </Abstract>
+    <Abstract>A half-sphere implementation of a BoundaryElement. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -17897,7 +17897,7 @@
       <Scope>PlaneBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classPlaneBoundaryElement.html</Path>
-    <Abstract>A plane implementation of a boundary element. </Abstract>
+    <Abstract>A plane implementation of a BoundaryElement. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -18441,7 +18441,7 @@
       <Scope>PolyMinusEndManager</Scope>
     </TokenIdentifier>
     <Path>classPolyMinusEndManager.html</Path>
-    <Abstract>Manager for polymerization at minus end. </Abstract>
+    <Abstract>Manager for polymerization at minus end of Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -18542,7 +18542,7 @@
       <Scope>PolyPlusEndManager</Scope>
     </TokenIdentifier>
     <Path>classPolyPlusEndManager.html</Path>
-    <Abstract>Manager for polymerization at plus end. </Abstract>
+    <Abstract>Manager for polymerization at plus end of Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>
@@ -19527,7 +19527,7 @@
       <Scope>ReactionBase</Scope>
     </TokenIdentifier>
     <Path>classReactionBase.html</Path>
-    <Abstract>Represents an abstract interface for simple chemical Reactions of the form A + B -&gt; C...</Abstract>
+    <Abstract>Represents an abstract interface for simple chemical reactions of the form A + B -&gt; C...</Abstract>
     <DeclaredIn>ReactionBase.h</DeclaredIn>
   </Token>
   <Token>
@@ -25334,7 +25334,7 @@
       <Scope>SphereBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classSphereBoundaryElement.html</Path>
-    <Abstract>A spherical implementation of a boundary element. </Abstract>
+    <Abstract>A spherical implementation of a BoundaryElement. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -26231,7 +26231,7 @@
       <Scope>UnbindingManager</Scope>
     </TokenIdentifier>
     <Path>classUnbindingManager.html</Path>
-    <Abstract>Manager for all unbinding. </Abstract>
+    <Abstract>Manager for all unbinding from Filament. </Abstract>
     <DeclaredIn>ReactionManager.h</DeclaredIn>
   </Token>
   <Token>

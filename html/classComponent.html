@@ -152,7 +152,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <a class="el" href="classSpeciesVisitor.html" title="The Visitor pattern allows a functor to visit each node of the Composite pattern. ...">SpeciesVisitor</a> v to every Species* object directly owned by this node.  <a href="#a20f6f5a1f7da3238c069dfc35f174a4b">More...</a><br /></td></tr>
 <tr class="separator:a20f6f5a1f7da3238c069dfc35f174a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa911f6c2be71a33eeeb44f03c82cd421"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#aa911f6c2be71a33eeeb44f03c82cd421">apply</a> (<a class="el" href="classReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
-<tr class="memdesc:aa911f6c2be71a33eeeb44f03c82cd421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a>.  <a href="#aa911f6c2be71a33eeeb44f03c82cd421">More...</a><br /></td></tr>
+<tr class="memdesc:aa911f6c2be71a33eeeb44f03c82cd421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a>.  <a href="#aa911f6c2be71a33eeeb44f03c82cd421">More...</a><br /></td></tr>
 <tr class="separator:aa911f6c2be71a33eeeb44f03c82cd421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9296f41e0b9c254d5adea9df3b4b07a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#ac9296f41e0b9c254d5adea9df3b4b07a">apply_impl</a> (<a class="el" href="classReactionVisitor.html">ReactionVisitor</a> &amp;v)</td></tr>
 <tr class="memdesc:ac9296f41e0b9c254d5adea9df3b4b07a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node.  <a href="#ac9296f41e0b9c254d5adea9df3b4b07a">More...</a><br /></td></tr>
@@ -179,13 +179,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0daf865ff32aff9e68316c65b681cbf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node contains non-zero number of <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a>.  <a href="#a0daf865ff32aff9e68316c65b681cbf9">More...</a><br /></td></tr>
 <tr class="separator:a0daf865ff32aff9e68316c65b681cbf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a506e080028078ef9a753d854c60904a3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a506e080028078ef9a753d854c60904a3">isReactionsContainer</a> () const </td></tr>
-<tr class="memdesc:a506e080028078ef9a753d854c60904a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> pointers)  <a href="#a506e080028078ef9a753d854c60904a3">More...</a><br /></td></tr>
+<tr class="memdesc:a506e080028078ef9a753d854c60904a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> pointers)  <a href="#a506e080028078ef9a753d854c60904a3">More...</a><br /></td></tr>
 <tr class="separator:a506e080028078ef9a753d854c60904a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae99bcb165a9403e64ffea2b840192b4c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#ae99bcb165a9403e64ffea2b840192b4c">numberOfSpecies</a> () const </td></tr>
 <tr class="memdesc:ae99bcb165a9403e64ffea2b840192b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> being immediately managed by this node (i.e.  <a href="#ae99bcb165a9403e64ffea2b840192b4c">More...</a><br /></td></tr>
 <tr class="separator:ae99bcb165a9403e64ffea2b840192b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a116a02dd48baa6bf46c1162998548814"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a116a02dd48baa6bf46c1162998548814">numberOfReactions</a> () const </td></tr>
-<tr class="memdesc:a116a02dd48baa6bf46c1162998548814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> objets being immediately managed by this node (i.e.  <a href="#a116a02dd48baa6bf46c1162998548814">More...</a><br /></td></tr>
+<tr class="memdesc:a116a02dd48baa6bf46c1162998548814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> objets being immediately managed by this node (i.e.  <a href="#a116a02dd48baa6bf46c1162998548814">More...</a><br /></td></tr>
 <tr class="separator:a116a02dd48baa6bf46c1162998548814"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42dd891a934150f6d6ef74b9850d4b5c"><td class="memItemLeft" align="right" valign="top">virtual string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a42dd891a934150f6d6ef74b9850d4b5c">getFullName</a> () const </td></tr>
 <tr class="memdesc:a42dd891a934150f6d6ef74b9850d4b5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a string indicating the full name of this node (presumably used mainly for debugging)  <a href="#a42dd891a934150f6d6ef74b9850d4b5c">More...</a><br /></td></tr>
@@ -197,7 +197,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae4b35cc8ce749e1219bec0eeea16b4bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> contained under this node's hieararchy.  <a href="#ae4b35cc8ce749e1219bec0eeea16b4bc">More...</a><br /></td></tr>
 <tr class="separator:ae4b35cc8ce749e1219bec0eeea16b4bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a446ee3fa9e36a6b56642a9d2a14d983d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a446ee3fa9e36a6b56642a9d2a14d983d">countReactions</a> () const </td></tr>
-<tr class="memdesc:a446ee3fa9e36a6b56642a9d2a14d983d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> objects contained under this node's hieararchy.  <a href="#a446ee3fa9e36a6b56642a9d2a14d983d">More...</a><br /></td></tr>
+<tr class="memdesc:a446ee3fa9e36a6b56642a9d2a14d983d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> objects contained under this node's hieararchy.  <a href="#a446ee3fa9e36a6b56642a9d2a14d983d">More...</a><br /></td></tr>
 <tr class="separator:a446ee3fa9e36a6b56642a9d2a14d983d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a871fbdc783ea600ed667dd37eb8adf1e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classComponent.html#a871fbdc783ea600ed667dd37eb8adf1e">printSelf</a> ()</td></tr>
 <tr class="memdesc:a871fbdc783ea600ed667dd37eb8adf1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints information about this node. Useful for debugging.  <a href="#a871fbdc783ea600ed667dd37eb8adf1e">More...</a><br /></td></tr>
@@ -211,7 +211,7 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The base class for the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern hieararchy. </p>
-<p>The <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern allows building of complex hieararchical objects, with convenient methods for applying a function to all nodes (i.e. the <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a> pattern). Each node in the hieararchy may have a parent and may contain several children nodes. A class that is derived directly from <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> and not from <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a>, cannot contain children, i.e. it is a leaf node. </p><dl class="section note"><dt>Note</dt><dd><a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> objects may contain <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> collections, however, this is treated seperately from the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern (i.e. separate methods exist for the corresponding access to elements, changes, etc.) </dd></dl>
+<p>The <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern allows building of complex hieararchical objects, with convenient methods for applying a function to all nodes (i.e. the <a class="el" href="classVisitor.html" title="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic...">Visitor</a> pattern). Each node in the hieararchy may have a parent and may contain several children nodes. A class that is derived directly from <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> and not from <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a>, cannot contain children, i.e. it is a leaf node. </p><dl class="section note"><dt>Note</dt><dd><a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> objects may contain <a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> collections, however, this is treated seperately from the <a class="el" href="classComposite.html" title="The aggregating class for the Composite pattern. ">Composite</a> pattern (i.e. separate methods exist for the corresponding access to elements, changes, etc.) </dd></dl>
 
 <p>Definition at line <a class="el" href="Component_8h_source.html#l00036">36</a> of file <a class="el" href="Component_8h_source.html">Component.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -358,7 +358,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a>. </p>
+<p>Implements the apply_if() method of the <a class="el" href="classComponent.html" title="The base class for the Composite pattern hieararchy. ">Component</a> class by recursively applying it to itself and all its children that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a>. </p>
 
 <p>Reimplemented in <a class="el" href="classComposite.html#aa4a608ee92aaaa6e0d63278595707474">Composite</a>.</p>
 
@@ -424,7 +424,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node. </p>
-<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a>. </p>
+<p>This method needs to be overriden by descendent classes that contain <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a>. </p>
 
 <p>Reimplemented in <a class="el" href="classCompartment.html#a37bd8d3a6d3a21bf50716979c6694adb">Compartment</a>.</p>
 
@@ -483,7 +483,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Return the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> objects contained under this node's hieararchy. </p>
+<p>Return the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> objects contained under this node's hieararchy. </p>
 <dl class="section note"><dt>Note</dt><dd>This is a recursive call, and all nodes under this node are visited. </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classComposite.html#a14108b9a4f9e903ba0fd9cc40fbbd8ae">Composite</a>.</p>
@@ -655,7 +655,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> pointers) </p>
+<p>Returns true if this node contains non-zero number of reactions (i.e. <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> pointers) </p>
 
 <p>Reimplemented in <a class="el" href="classCompartment.html#a87a624dd83cc42e752454645a5484f6e">Compartment</a>.</p>
 
@@ -750,7 +750,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the number of children of this node. </p>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> objects are not counted. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. ">Species</a> and <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> objects are not counted. </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classComposite.html#ab00f34ad7c8f7cd90ea9392bd54fd62a">Composite</a>.</p>
 
@@ -779,7 +779,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B -> C...">ReactionBase</a> objets being immediately managed by this node (i.e. </p>
+<p>Returns the number of <a class="el" href="classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B -> C...">ReactionBase</a> objets being immediately managed by this node (i.e. </p>
 <p>not counting reactions belonging to children nodes, etc. </p>
 
 <p>Reimplemented in <a class="el" href="classCompartment.html#a2a8090f8a6df14b5d8ab528425333cca">Compartment</a>, and <a class="el" href="classComposite.html#aee77e531ab9ccb8dcea12a307bd75539">Composite</a>.</p>
@@ -916,7 +916,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classComponent.html">Component</a></li>
-    <li class="footer">Generated on Wed Dec 3 2014 15:06:13 for M3Sym by
+    <li class="footer">Generated on Wed Dec 3 2014 15:16:38 for M3Sym by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

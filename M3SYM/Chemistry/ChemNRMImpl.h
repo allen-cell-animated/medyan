@@ -201,7 +201,7 @@ private:
 
 
     
-/// The chemical Next Reaction Method Implementation. 
+/// The chemical NRM implementation. 
 
 /*! 
  *  ChemNRMImpl manages the NRM algorithm at the level of the network of reactions. In particular, this class contains

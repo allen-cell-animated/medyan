@@ -1,7 +1,7 @@
 <map id="RNodeNRM" name="RNodeNRM">
 <area shape="rect" id="node2" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="197,5,260,31"/>
-<area shape="rect" id="node7" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="252,92,357,117"/>
-<area shape="rect" id="node3" href="$classChemNRMImpl.html" title="The chemical Next Reaction Method Implementation. " alt="" coords="91,479,203,504"/>
+<area shape="rect" id="node7" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="252,92,357,117"/>
+<area shape="rect" id="node3" href="$classChemNRMImpl.html" title="The chemical NRM implementation. " alt="" coords="91,479,203,504"/>
 <area shape="rect" id="node4" href="$classChemSimImpl.html" title="An abstract base class for algorithms that run stochastic chemical kinetics. " alt="" coords="5,379,110,404"/>
 <area shape="rect" id="node8" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="478,5,563,31"/>
 <area shape="rect" id="node9" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="541,92,631,117"/>

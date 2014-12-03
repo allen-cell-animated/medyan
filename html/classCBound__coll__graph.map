@@ -7,10 +7,10 @@
 <area shape="rect" id="node3" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="513,279,599,304"/>
 <area shape="rect" id="node4" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="698,5,788,31"/>
 <area shape="rect" id="node18" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="408,665,477,691"/>
-<area shape="rect" id="node21" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="560,365,664,391"/>
+<area shape="rect" id="node21" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="560,365,664,391"/>
 <area shape="rect" id="node29" href="$classMCylinder.html" title="Used to hold mechanical properties of a Cylinder. " alt="" coords="1467,1479,1549,1505"/>
 <area shape="rect" id="node9" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="730,1265,806,1291"/>
-<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="616,1372,744,1397"/>
+<area shape="rect" id="node39" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="616,1372,744,1397"/>
 <area shape="rect" id="node10" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1883,1265,1955,1291"/>
 <area shape="rect" id="node11" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1482,1265,1563,1291"/>
 <area shape="rect" id="node16" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="556,859,644,884"/>

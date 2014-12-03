@@ -1,5 +1,5 @@
 <map id="Reaction&lt; M, N &gt;" name="Reaction&lt; M, N &gt;">
-<area shape="rect" id="node2" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="141,92,245,117"/>
+<area shape="rect" id="node2" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="141,92,245,117"/>
 <area shape="rect" id="node3" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="415,5,500,31"/>
 <area shape="rect" id="node4" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="525,92,616,117"/>
 <area shape="rect" id="node11" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="260,385,329,411"/>
