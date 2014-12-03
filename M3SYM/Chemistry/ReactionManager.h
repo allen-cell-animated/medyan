@@ -30,17 +30,17 @@ enum FilamentReactionDirection {
 class SubSystem;
 class CCylinder;
 
-/// To store filament chemical reaction information read from an input file
+/// To store Filament chemical reaction information read from an input file
 /*!
  *  InternalFilamentRxnManager is used to store a filament reaction. It contains vectors of tuples that represent
- *  the position in the [CMonomer] (@ref CMonomer) in which the species is stored (for products and reactants), as well as the rate
- *  of the reaction. The integer value that is the position of the species in the CMonomer vector is held by the [ChemManager] (@ref ChemManager).
+ *  the position in the CMonomer in which the species is stored (for products and reactants), as well as the rate
+ *  of the reaction. The integer value that is the position of the species in the CMonomer vector is held by the ChemManager.
  *
  *  @note if the species is a bulk or diffusing species, the integer molecule value in the tuple 
- *  stored in the [SpeciesNamesDB] (@ref SpeciesNamesDB).
+ *  stored in the SpeciesNamesDB.
  *
- *  This class also has functions to add the filament reaction to a [CCylinder] (@ref CCylinder), as well as add a 
- *  connection reaction between two neighboring CCylinders.
+ *  This class also has functions to add the filament reaction to a CCylinder, as well as add a
+ *  connection reaction between two neighboring [CCylinders](@ref CCylinder).
  */
 class InternalFilamentRxnManager {
     
@@ -64,7 +64,7 @@ public:
     ///Add this chemical reaction to a CCylinder. Adds all extension and retraction callbacks needed
     virtual void addReaction(CCylinder* cc) = 0;
     
-    ///Add this chemical reaction cross two CCylinders.
+    ///Add this chemical reaction cross two [CCylinders](@ref CCylinder).
     ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
@@ -149,7 +149,7 @@ public:
 
 };
 
-/// Manager for motor walking
+/// Manager for MotorGhost walking
 class MotorWalkFManager : public InternalFilamentRxnManager {
     
 public:
@@ -164,7 +164,7 @@ public:
 
 };
 
-/// Manager for motor walking
+/// Manager for MotorGhost walking
 class MotorWalkBManager : public InternalFilamentRxnManager {
     
 public:
@@ -178,19 +178,19 @@ public:
     
 };
 
-/// To store cross-filament reactions, including linker and motor binding
+/// To store cross-filament reactions, including Linker and MotorGhost binding
 
 /*!
  *  CrossFilamentRxnManager is used to store a cross-filament reaction. It contains vectors of tuples that represent
- *  the position in the [CMonomer] (@ref CMonomer) in which the species is stored (for products and reactants), as well as the rate
+ *  the position in the CMonomer in which the species is stored (for products and reactants), as well as the rate
  *  of the reaction and direction. The integer value that is the position of the species in the CMonomer vector
- *  is held by the [ChemManager] (@ref ChemManager). Also contains the range of this reaction.
+ *  is held by the ChemManager. Also contains the range of this reaction.
  *
- *  Also a subclass of [CylinderNLContainer] (@ref CylinderNLContainer), contains a cylinder neighbors list of active reactions
+ *  Also a subclass of CylinderNLContainer, contains a cylinder neighbors list of active reactions
  *
- *  @note if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the [SpeciesNamesDB] (@ref SpeciesNamesDB).
+ *  @note if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the SpeciesNamesDB.
  *
- *  This class also has functions to add the cross filament reaction to two [CCylinders] (@ref CCylinder)
+ *  This class also has functions to add the cross filament reaction to two [CCylinders] (@ref CCylinder).
  */
 
 class CrossFilamentRxnManager : public CylinderNLContainer {
@@ -230,7 +230,7 @@ public:
     
 };
 
-/// Manager for linker binding
+/// Manager for Linker binding
 class LinkerBindingManager : public CrossFilamentRxnManager {
     
 public:
@@ -243,7 +243,7 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for motor binding
+/// Manager for MotorGhost binding
 class MotorBindingManager : public CrossFilamentRxnManager {
     
 public:

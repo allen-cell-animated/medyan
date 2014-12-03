@@ -27,20 +27,20 @@ class InternalFilamentRxnManager;
 class CrossFilamentRxnManager;
 struct ChemistryData;
 
-/// A concrete implementation of the [ChemManagerImpl] (@ref ChemManagerImpl) class.
+/// A concrete implementation of the ChemManagerImpl class.
 /// @see ChemManager for documentation on implemented methods.
 class SimpleManagerImpl : public ChemManagerImpl {
     
 private:
     SubSystem* _subSystem; ///< A pointer to subsytem for creation of callbacks, etc.
     
-    /// A list of reactions to add to every new [CCylinder] (@ref CCylinder)
+    /// A list of reactions to add to every new CCylinder
     vector<unique_ptr<InternalFilamentRxnManager>> _IFRxnManagers;
     /// A list of cross filament reactions to add to [CCylinders] (@ref CCylinder)
     vector<unique_ptr<CrossFilamentRxnManager>> _CFRxnManagers;
     
     //@{
-    /// Vector of filament-related species in system
+    /// Vector of Filament -related species in system
     vector<string> _speciesFilament, _speciesPlusEnd,
                    _speciesMinusEnd, _speciesBound,
                    _speciesLinker, _speciesMotor;

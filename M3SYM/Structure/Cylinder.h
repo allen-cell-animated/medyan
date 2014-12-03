@@ -32,32 +32,32 @@
 class Filament;
 class Compartment;
 
-/// A container to store a [MCylinder] (@ref MCylinder) and [CCylinder](@ref CCylinder).
+/// A container to store a MCylinder and CCylinder.
 /*!
- * Cylinder class is used to manage and store a [MCylinder] (@ref MCylinder) and [CCylinder](@ref CCylinder).
- * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)
+ * Cylinder class is used to manage and store a MCylinder and CCylinder.
+ * Upon intialization, both of these components are created. Extending the Movable and Reactable
  * classes, the Cylinder can update its position and reactions according to mechanical equilibration.
  */
 
 class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
     
 private:
-    Bead* _b1;  ///< Pointer to the first bead, associated with this cylinder.
-    Bead* _b2; ///< Pointer to the end bead in the cylinder.
+    Bead* _b1;  ///< Pointer to the first bead.
+    Bead* _b2; ///< Pointer to the end bead.
     
-    unique_ptr<MCylinder> _mCylinder; ///< Pointer to MCylinder
-    unique_ptr<CCylinder> _cCylinder; ///< Pointer to CCylinder
+    unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
+    unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
-    Filament* _pFilament; //< Pointer to filament where this cylinder belongs;
+    Filament* _pFilament; //< Pointer to parent filament where this cylinder belongs;
     int _positionFilament; ///< Position on filament (1st, 2nd, ... etc)
     bool _last = false; ///< If the cylinder is last in the filament's cylinder list
     
     int _ID; ///< Unique ID of cylinder, managed by CylinderDB
     
-    Compartment* _compartment = nullptr; ///< Compartment this Cylinder is currently in
+    Compartment* _compartment = nullptr; ///< Compartment this cylinder is currently in
     
 public:
-    vector<double> coordinate; ///< Coordinates of midpoint of cylinder, updated with updatePosition()
+    vector<double> coordinate; ///< Coordinates of midpoint, updated with updatePosition()
     
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
              bool extensionFront = false, bool extensionBack = false, bool creation = false);
@@ -69,7 +69,7 @@ public:
     /// Get CCylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
     /// set CCylinder
-    /// @note: since this is a unique ptr, will implicitly delete old CCylinder
+    /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
     /// Get parent filament
@@ -94,11 +94,11 @@ public:
     
     int getPositionFilament() {return _positionFilament;}
     
-    /// Update the position of this cylinder
-    /// @note - changes compartment of ccylinder if needed
+    /// Update the position
+    /// @note - changes compartment of CCylinder if needed
     virtual void updatePosition();
     
-    /// Update the reaction rates of this cylinder
+    /// Update the reaction rates
     virtual void updateReactionRates();
 
 };

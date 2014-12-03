@@ -30,14 +30,14 @@ class Bead;
 
 /// Represents an element of a boundary surface.
 /*!
- * The BoundaryElement class is a representation of a [BoundarySurface](@ref BoundarySurface) element, which can interact
- * with other elements in the system, including other BoundaryElements as well as [Beads] (@ref Bead) in filaments.
- * Together, a collection of boundary elements make up a [BoundarySurface](@ref BoundarySurface).
+ * The BoundaryElement class is a representation of a BoundarySurface element, which can interact
+ * with other elements in the system, including other BoundaryElements as well as [Beads] (@ref Bead) in [Filaments](@ref Filament).
+ * Together, a collection of boundary elements make up a BoundarySurface.
  */
 class BoundaryElement : public Neighbor {
     
 protected:
-    vector<double> _coords; ///< coordinates of this boundary element
+    vector<double> _coords; ///< coordinates 
     
 public:
     /// Default constructor

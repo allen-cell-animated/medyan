@@ -29,18 +29,18 @@ enum class BoundaryShape {Cube, Capsule, Sphere};
 class Boundary {
     
 protected:
-    /// Vector of boundary surfaces (could be different implementations)
+    /// Vector of boundarysurfaces (could be different implementations)
     vector<unique_ptr<BoundarySurface>> _boundarySurfaces;
-    BoundaryShape _shape; ///< Boundary type of this boundary
-    short _nDim; ///< Dimensionality of this boundary
+    BoundaryShape _shape; ///< Shape of boundary
+    short _nDim; ///< Dimensionality
     
 public:
     Boundary(int nDim, BoundaryShape shape) : _nDim(nDim), _shape(shape) {};
     ~Boundary() {};
 
-    /// Get shape of boundary
+    /// Get shape
     BoundaryShape getShape() {return _shape;}
-    /// Get boundary surfaces
+    /// Get boundarysurfaces
     const vector<unique_ptr<BoundarySurface>>& getBoundarySurfaces() {return _boundarySurfaces;}
     
     /// Check if coordinates are within boundary

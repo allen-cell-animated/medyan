@@ -18,10 +18,10 @@
 
 #include "Compartment.h"
 
-/// A simple n-dimensional grid of [Compartment](@ref Compartment) objects (singleton).
+/// A simple n-dimensional grid of Compartment objects (singleton).
 
 /*!
- *  The CompartmentGrid class is a singleton grid of [Compartment](@ref Compartment) objects, each of them seperately
+ *  The CompartmentGrid class is a singleton grid of Compartment objects, each of them seperately
  *  holding internal and diffusion reactions, species information, as well as spatial information.
  *  This class is n-dimensional, and the dimension is specified at runtime.
  *

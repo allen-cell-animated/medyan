@@ -31,8 +31,8 @@ class Bead;
 /// Used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads](@ref Bead).
 /*!
  * This class contains information about [Cylinders](@ref Cylinder) and [Beads](@ref Bead) connectivity. It has
- * functionality to polymerize and depolymerize, as well as extend and retract by creating and deleting Cylinders and 
- * Beads in the system. 
+ * functionality to polymerize and depolymerize, as well as extend and retract by creating and deleting Cylinder and
+ * Bead in the system. 
  * 
  * A Filament can also be initialized as a number of shapes, including a zig zag and arc projection.
  */

@@ -38,8 +38,6 @@ class ReactionBase;
         ChemSim::run(key)
  * @endcode
  *
- *  Specific functions in this class require a key to be accessed. The key declarations are above. These keys can
- *  only be created and/or destroyed by the classes that are "friends" with the key.
  */
 class ChemSim {
 public:

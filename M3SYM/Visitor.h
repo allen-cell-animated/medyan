@@ -25,7 +25,7 @@ class ReactionBase;
 /// An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predicate.
 
 /*! 
- *  The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+ *  The Visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
  *  classes derived from Visitor must implement the visit(Component *c) method. Visitor, v, allows a
  *  predicate to be applied at each node, *c, and cv->visit(c) is called only if that node
  *  satisfies the predicate. For example, this can be used to visit only filaments in the
@@ -33,7 +33,7 @@ class ReactionBase;
  */
 class Visitor {
 public:
-    /// When this conditional visitor, *cv, is propagated through the Composite hieararchy, at each
+    /// When this conditional Visitor, *cv, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: v->visit(c), if v->pred(c) returns true.
     /// If v->visit(c) returns a false value,  then the further propagation of the tree is terminated.
     bool visit(Component *c) {
@@ -49,7 +49,7 @@ public:
     virtual ~Visitor() {}
     
 protected:
-    /// When this visitor, *cv, is propagated through the Composite hieararchy, at each
+    /// When this Visitor, *cv, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: cv->visit(c).
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.
@@ -96,11 +96,11 @@ protected:
     }
 };
 
-/// The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+/// The Visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
 /// classes derived from Visitor must implement the visit(Component *c) method.
 class SpeciesVisitor {
 public:
-    /// When this visitor, *v, is propagated through the Composite hieararchy, at each
+    /// When this Visitor, *v, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: v->visit(s), for each of the
     /// Species *s of that node.
     /// If a false value is returned from this function called, then the further
@@ -113,7 +113,7 @@ public:
     /// Virtual destructor
     virtual ~SpeciesVisitor() {}
 protected:
-    /// When this visitor, *cv, is propagated through the Composite hieararchy, at each
+    /// When this Visitor, *cv, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: cv->visit(c).
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.
@@ -144,11 +144,11 @@ protected:
 };
 
 
-/// The visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
+/// The Visitor pattern allows a functor to visit each node of the Composite pattern. Concrete
 /// classes derived from Visitor must implement the visit(Component *c) method.
 class ReactionVisitor {
 public:
-    /// When this visitor, *v, is propagated through the Composite hieararchy, at each
+    /// When this Visitor, *v, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: v->visit(s), for each of the
     /// Reaction *r of that node.
     /// If a false value is returned from this function called, then the further
@@ -163,7 +163,7 @@ public:
     virtual ~ReactionVisitor() {}
     
 protected:
-    /// When this visitor, *cv, is propagated through the Composite hieararchy, at each
+    /// When this Visitor, *cv, is propagated through the Composite hieararchy, at each
     /// Component node pointer *c, the following method is called: cv->visit(c).
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.

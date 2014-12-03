@@ -27,17 +27,17 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// A container to store a [MMotorGhost] (@ref MMotorGhost) and [CMotorGhost](@ref CMotorGhost).
+/// A container to store a MMotorGhost and CMotorGhost.
 /*!
- * MotorGhost class is used to manage and store a [MMotorGhost] (@ref MMotorGhost) and [CMotorGhost](@ref CMotorGhost).
- * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)
+ * MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
+ * Upon intialization, both of these components are created. Extending the Movable and Reactable
  * classes, the MotorGhost can update its position and reactions according to mechanical equilibration.
  */
 class MotorGhost : public Composite, public Movable, public Reactable {
    
 private:
-    unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to MMotorGhost
-    unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to CMotorGhost
+    unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
+    unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to chem motor ghost
     
     Cylinder* _c1; ///< First cylinder the linker is bound to
     Cylinder* _c2; ///< Second cylinder the linker is bound to
@@ -48,9 +48,9 @@ private:
     short _motorType; ///< Integer specifying the type of linker
     int _motorID; ///< Integer ID of this motor
     
-    float _birthTime; ///< Birth time of this motor
+    float _birthTime; ///< Birth time
     
-    Compartment* _compartment; ///< Compartment that this linker is in
+    Compartment* _compartment; ///< Compartment that this motor is in
     
     
 public:
@@ -94,11 +94,11 @@ public:
     int getMotorID() {return _motorID;}
     //@}
     
-    /// Update the position of this Linker
-    /// @note - changes compartment of clinker if needed
+    /// Update the position
+    /// @note - changes compartment of CMotorGhost if needed
     virtual void updatePosition();
 
-    /// Update the reaction rates of this linker
+    /// Update the reaction rates
     virtual void updateReactionRates();
 
 };

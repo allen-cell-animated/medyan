@@ -31,7 +31,7 @@ class Compartment;
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
 /*!
  *  Beads are the "hinges" between [Cylinders](@ref Cylinder). In the minimization algorithms, beads are moved corresponding to external forces,
- *  for example, filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate
+ *  for example, Filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate
  *  dot products for the minimization algorithms.
  */
 
@@ -66,26 +66,26 @@ public:
                                           force[2]*forceAux[2]; }
     //@}
     
-    /// Get compartment
+    /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
     
-    /// Update the position of this bead
+    /// Update the position
     virtual void updatePosition();
     
-    /// Set position on the local filament
+    /// Set position on the local Filament
     void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
-    /// Get position on the local filament
+    /// Get position on the local Filament
     int getPositionFilament() {return _positionFilament;}
     
-    /// Get the birth time of this bead
+    /// Get the birth time
     float getBirthTime() {return _birthTime;}
 
     
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
-    int _positionFilament; ///< Position of bead on filament
-    float _birthTime; ///< Time of birth of bead;
+    int _positionFilament; ///< Position on Filament
+    float _birthTime; ///< Time of birth
 };
 
 

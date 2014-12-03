@@ -26,9 +26,9 @@ struct ChemistryData;
 
 /// For initailizing chemical reactions based on a specific system
 /*!
- *  ChemManager is a singleton used for initailizing all chemistry in the system. Initialized by the [CController] (@ref CController),
- *  the ChemManager initializes the chemical components of the [CompartmentGrid] (@ref CompartmentGrid) as well as initializes all 
- *  [CCylinders] (@ref CCylinder) created. The ChemManager can also update chemical components of a [CCylinder] (@ref CCylinder).
+ *  ChemManager is a singleton used for initailizing all chemistry in the system. Initialized by the CController,
+ *  the ChemManager initializes the chemical components of the CompartmentGrid as well as initializes all 
+ *  [CCylinders] (@ref CCylinder) created. The ChemManager can also update chemical components of a CCylinder.
  */
 class ChemManager {
     
@@ -42,7 +42,7 @@ public:
     ///Initializer, based on the given simulation
     static void initializeCCylinder(CCylinder* cc, Filament* f,bool extensionFront, bool extensionBack, bool creation);
     
-    ///add/update cross cylinder reactions that are within range
+    ///Add/update cross cylinder reactions that are within range
     static void updateCCylinder(CCylinder* cc);
     
     

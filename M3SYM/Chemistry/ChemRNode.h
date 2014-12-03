@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-/// This is an abstract base class for classes that need to be associated with the given [Reaction] (@ref Reaction) object.
+/// This is an abstract base class for classes that need to be associated with the given Reaction object.
 class RNode{
 public:
     /// Dtor

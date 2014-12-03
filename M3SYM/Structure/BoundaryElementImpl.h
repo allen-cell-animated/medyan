@@ -90,7 +90,7 @@ class HalfSphereZBoundaryElement : public BoundaryElement {
     
 private:
     double _radius; ///< Radius of half sphere
-    bool _up; ///< whether the half sphere faces up or down
+    bool _up; ///< Whether the half sphere faces up or down
     double _k_rep;
     double _r0;
     

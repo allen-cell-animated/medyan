@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-/// For a reactable object in the [SubSystem] (@ref SubSystem).
+/// For a reactable object in the SubSystem.
 class Reactable {
     
 public:

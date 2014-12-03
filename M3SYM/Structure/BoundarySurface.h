@@ -20,10 +20,10 @@
 
 #include "BoundaryElement.h"
 
-/// A boundary shape that holds BoundaryElements.
+/// A boundary shape that holds [BoundaryElements](@ref BoundaryElement).
 /*!
  *  The BoundarySurface class is a basic boundary shape that is owned and
- *  controlled by the [Boundary](@ref Boundary] that created it. It holds a vector of
+ *  controlled by the Boundary that created it. It holds a vector of
  *  [BoundaryElements](@ref BoundaryElement) as well as any other geometrical information needed
  *  for the given implementation.
  */

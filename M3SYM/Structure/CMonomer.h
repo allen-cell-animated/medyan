@@ -19,12 +19,11 @@
 #include "Species.h"
 #include "Compartment.h"
 
-/// Rpresents a container for all [Species] (@ref Species) that could be contained in a
+/// Rpresents a container for all Species that could be contained in a
 /// particular filament element at a given position.
 /*!
- *  CMonomer provides a container to hold all [Species] (@ref Species) that are possibly held at a given
- *  filament position. The species are held in an standard vector. Functions to lookup species
- *  as well as a filament element checker are provided.
+ *  CMonomer provides a container to hold all Species that are possibly held at a given
+ *  filament position. The species are held in an standard vector.
  */
 class CMonomer {
     
@@ -61,7 +60,7 @@ public:
     }
     
     ///@{
-    /// Add a species
+    /// Add Species
     /// @note should only be called at initialization
     void addSpeciesFilament (SpeciesFilament* s);
     void addSpeciesPlusEnd  (SpeciesPlusEnd* s);
@@ -71,11 +70,11 @@ public:
     void addSpeciesMotor    (SpeciesMotor* s);
     //@}
     
-    ///Print the species in this filament element
+    ///Print the Species
     void print();
 
     //@{
-    /// Get species at a specific index
+    /// Get Species at a specific index
     /// @note no check on this index. The index value of a species is stored in the chemical initializer
     /// when all reactions are initialized from the chemical input file
     SpeciesFilament* speciesFilament (int index)  {return _speciesFilament[index];}
@@ -86,12 +85,6 @@ public:
     SpeciesMotor*    speciesMotor    (int index)  {return _speciesMotor[index];}
     //@}
     
-    ///Check if this filament element is valid. Involves checking copy numbers
-    virtual bool checkSpecies(int sum) {return true;}
-    
 };
 
-
-
-
-#endif /* defined(__CytoSim__CMonomer__) */
+#endif

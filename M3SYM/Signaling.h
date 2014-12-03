@@ -37,7 +37,7 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
 /// reaction simulation algorithm
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
-/// Manages callbacks for RSpecies and Reactions objects. 
+/// Manages callbacks for RSpecies and [Reactions](@ref Reaction) objects. 
 
 /*!  One ChemSignal should be instantiated per chemical network. RSpecies and Reactions that need to be monitored 
  *   can be made to signal, based on the boost:signal2 library. Multiple receiving slots can be connected to signals. 
@@ -70,8 +70,8 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ChemSignal {
 private:
-    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal; ///< Keep track of signals corresponding to various RSpecies
-    unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various Reactions
+    unordered_map<RSpecies *, unique_ptr<RSpeciesCopyNChangedSignal>> _map_RSpecies_signal; ///< Keep track of signals corresponding to various rspecies
+    unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>> _map_reaction_signal;///< Keep track of signals corresponding to various reactions
 private:
     /// Search the map for a signal corresponding to parameter, ReactionBase *r. Throw out_of_range exception if not found.
     unordered_map<ReactionBase *, unique_ptr<ReactionEventSignal>>::const_iterator 

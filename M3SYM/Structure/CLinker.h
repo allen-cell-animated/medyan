@@ -22,15 +22,15 @@
 class Linker;
 class Compartment;
 
-/// To represent the chemical component of a [Linker](@ref Linker).
+/// To represent the chemical component of a Linker.
 /*! 
- *  The CLinker class contains chemical info of the parent [Linker](@ref Linker).
+ *  The CLinker class contains chemical info of the parent Linker.
  */
 
 class CLinker : public CBound {
     
 private:
-    Linker* _pLinker; ///< Pointer to parent linker
+    Linker* _pLinker; ///< Pointer to parent
 
 public:
     CLinker(Compartment* c) :CBound(c) {}
@@ -51,9 +51,9 @@ public:
         return new CLinker(*this, c);
     }
     
-    /// Set parent linker
+    /// Set parent
     void setLinker(Linker* linker) {_pLinker = linker;}
-    /// Get parent linker
+    /// Get parent 
     Linker* getLinker() {return _pLinker;}
     
 };

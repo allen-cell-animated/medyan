@@ -24,8 +24,8 @@
 
 #include "SystemParameters.h"
 
-/// Callback to extend the front of a filament after a polymerization
-/// reaction occurs in the system.
+/// Callback to extend the front of a Filament after a polymerization
+/// Reaction occurs in the system.
 struct FilamentExtensionFrontCallback {
     
     Filament* _filament;
@@ -36,8 +36,8 @@ struct FilamentExtensionFrontCallback {
     void operator() (ReactionBase *r){ _filament->extendFront(); }
 };
 
-/// Callback to extend the back of a filament after a polymerization
-/// reaction occurs in the system.
+/// Callback to extend the back of a Filament after a polymerization
+/// Reaction occurs in the system.
 struct FilamentExtensionBackCallback {
     
     Filament* _filament;
@@ -48,8 +48,8 @@ struct FilamentExtensionBackCallback {
     void operator() (ReactionBase *r){ _filament->extendBack(); }
 };
 
-/// Callback to retract the front of a filament after a depolymerization
-/// reaction occurs in the system.
+/// Callback to retract the front of a Filament after a depolymerization
+/// Reaction occurs in the system.
 struct FilamentRetractionFrontCallback {
     
     Filament* _filament;
@@ -60,8 +60,8 @@ struct FilamentRetractionFrontCallback {
     void operator() (ReactionBase *r){ _filament->retractFront(); }
 };
 
-/// Callback to retract the back of a filament after a depolymerization
-/// reaction occurs in the system.
+/// Callback to retract the back of a Filament after a depolymerization
+/// Reaction occurs in the system.
 struct FilamentRetractionBackCallback {
     
     Filament* _filament;
@@ -72,8 +72,8 @@ struct FilamentRetractionBackCallback {
     void operator() (ReactionBase *r){ _filament->retractBack(); }
 };
 
-/// Callback to polymerize the front of a filament after a polymerization
-/// reaction occurs in the system.
+/// Callback to polymerize the front of a Filament after a polymerization
+/// Reaction occurs in the system.
 struct FilamentPolymerizationFrontCallback {
     
     Filament* _filament;
@@ -84,8 +84,8 @@ struct FilamentPolymerizationFrontCallback {
     void operator() (ReactionBase *r){ _filament->polymerizeFront();}
 };
 
-/// Callback to polymerize the back of a filament after a polymerization
-/// reaction occurs in the system.
+/// Callback to polymerize the back of a Filament after a polymerization
+/// Reaction occurs in the system.
 struct FilamentPolymerizationBackCallback {
     
     Filament* _filament;
@@ -96,8 +96,8 @@ struct FilamentPolymerizationBackCallback {
     void operator() (ReactionBase *r){ _filament->polymerizeBack(); }
 };
 
-/// Callback to depolymerize the front of a filament after a depolymerization
-/// reaction occurs in the system.
+/// Callback to depolymerize the front of a Filament after a depolymerization
+/// Reaction occurs in the system.
 struct FilamentDepolymerizationFrontCallback {
     
     Filament* _filament;
@@ -108,8 +108,8 @@ struct FilamentDepolymerizationFrontCallback {
     void operator() (ReactionBase *r){ _filament->depolymerizeFront(); }
 };
 
-/// Callback to depolymerize the back of a filament after a depolymerization
-/// reaction occurs in the system.
+/// Callback to depolymerize the back of a Filament after a depolymerization
+/// Reaction occurs in the system.
 struct FilamentDepolymerizationBackCallback {
     
     Filament* _filament;
@@ -120,7 +120,7 @@ struct FilamentDepolymerizationBackCallback {
     void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
 };
 
-/// Callback to bind a linker to filaments
+/// Callback to bind a Linker to Filament
 struct LinkerBindingCallback {
     
     SubSystem* _ps;
@@ -143,7 +143,7 @@ struct LinkerBindingCallback {
     }
 };
 
-/// Callback to bind a motor to filaments
+/// Callback to bind a MotorGhost to Filament
 struct MotorBindingCallback {
     
     SubSystem* _ps;
@@ -167,7 +167,7 @@ struct MotorBindingCallback {
 };
 
 
-/// Callback to unbind a bound to filaments
+/// Callback to unbind a CBound from a Filament
 struct UnbindingCallback {
     
     SubSystem* _ps;
@@ -191,7 +191,7 @@ struct UnbindingCallback {
 };
 
 
-/// Callback to walk a motor on a filament
+/// Callback to walk a MotorGhost on a Filament
 struct MotorWalkingForwardCallback {
     
     SpeciesMotor* _sm1;
@@ -227,7 +227,7 @@ struct MotorWalkingForwardCallback {
     }
 };
 
-/// Callback to walk a motor on a filament
+/// Callback to walk a MotorGhost on a Filament
 struct MotorWalkingBackwardCallback {
     
     SpeciesMotor* _sm1;
@@ -263,7 +263,7 @@ struct MotorWalkingBackwardCallback {
     }
 };
 
-/// Callback to walk a motor on a filament to a new cylinder
+/// Callback to walk a MotorGhost on a Filament to a new Cylinder
 struct MotorMovingCylinderForwardCallback {
     
     //members
@@ -301,7 +301,7 @@ struct MotorMovingCylinderForwardCallback {
 };
 
 
-/// Callback to walk a motor on a filament to a new cylinder
+/// Callback to walk a MotorGhost on a Filament to a new Cylinder
 struct MotorMovingCylinderBackwardCallback {
     
     //members

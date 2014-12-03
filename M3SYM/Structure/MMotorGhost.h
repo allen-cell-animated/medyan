@@ -49,16 +49,16 @@ public:
     double getEqLength(){return _eqLength;}
     //@}
     
-    /// Set parent linker
+    /// Set parent
     void setMotorGhost(MotorGhost* motor) {_pMotorGhost = motor;}
-    /// Get parent linker
+    /// Get parent
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
     
 private:
     double _eqLength;  ///< Equilibrium length, set at construction
     double _kStretch;  ///< Stretching parameter
     
-    MotorGhost* _pMotorGhost; ///< Pointer to parent linker
+    MotorGhost* _pMotorGhost; ///< Pointer to parent
     
 };
 

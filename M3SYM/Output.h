@@ -20,7 +20,7 @@
 
 /// To print a specified output into a file
 /*!
- *  An output object, initialized by the [Controller] (@ref Controller), can print a number of specific output formats, including 
+ *  An output object, initialized by the Controller, can print a number of specific output formats, including 
  *  current snapshot, forces, stresses, and birth times. Upon destruction, the output file is closed.
  */
 
@@ -42,16 +42,16 @@ public:
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
     
-    /// Print basic information about filaments, linkers, motors (DEPRECATED)
+    /// Print basic information about all Filament, Linker, MotorGhost in system (DEPRECATED).
     void printBasicSnapshot(int step);
     
     /// New snapshot output
     void printSnapshot(int step);
-    /// Print birth times of beads for each filament
+    /// Print birth times of beads for each Filament
     void printBirthTimes(int step);
-    /// Print forces on beads for each filament
+    /// Print forces on beads for each Filament
     void printForces(int step);
-    /// Print stresses on beads for each filament
+    /// Print stresses on beads for each Filament
     void printStresses(int step);
 };
 

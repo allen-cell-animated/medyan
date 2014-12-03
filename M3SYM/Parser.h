@@ -39,15 +39,15 @@ struct ChemistryAlgorithm {
 /// Struct to hold chemistry species and reaction information
 struct ChemistryData {
     
-    /// Reactions happening between bulk and diffusing species ONLY
+    /// Reaction happening between bulk and diffusing species ONLY
     vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
-    /// Reactions happening between bulk species ONLY
+    /// Reaction happening between bulk species ONLY
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
     
     //@{
     /// Filament reactions
     /*!
-     *  All filament reactions are held using a vector containing a tuple with the string
+     *  All Filament reactions are held using a vector containing a tuple with the string
      *  of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
@@ -68,18 +68,18 @@ struct ChemistryData {
      */
     /// Linker binding reactions
     vector<tuple<vector<string>, vector<string>, double, double, double>> linkerBindingReactions = {};
-    /// Motor binding reactions
+    /// MotorGhost reactions
     vector<tuple<vector<string>, vector<string>, double, double, double>> motorBindingReactions = {};
     //@}
     
-    /// Motor walking reactions
+    /// MotorGhost walking reactions
     vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
     
-    ///[SpeciesBulk] (@ref SpeciesBulk) parsed, in the form of a tuple which contains the name and
+    /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number.
     vector<tuple<string, int>> speciesBulk = {};
     
-    /// [SpeciesDiffusing] (@ref SpeciesDiffusing) parsed, in the form of a tuple which contains name,
+    /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
     /// initial copy number per compartment, and the rate of diffusion.
     vector<tuple<string, int, double>> speciesDiffusing = {};
     
@@ -139,7 +139,7 @@ struct ChemistrySetup {
     string inputFile = "";
 };
 
-/// Struct to hold filament setup information
+/// Struct to hold Filament setup information
 struct FilamentSetup {
     
     string inputFile = "";
@@ -178,7 +178,7 @@ public:
 };
 
 
-/// To parse a system input file, initialized by the [Controller] (@ref Controller).
+/// To parse a system input file, initialized by the Controller.
 class SystemParser : public Parser{
 public:
     SystemParser(string inputFileName) : Parser(inputFileName) {}
@@ -212,14 +212,14 @@ public:
 
 };
 
-/// Used to parse initial filament information, initialized by the [Controller] (@ref Controller).
+/// Used to parse initial Filament information, initialized by the Controller.
 class FilamentParser : public Parser {
     
 public:
     FilamentParser(string inputFileName) : Parser(inputFileName) {}
     ~FilamentParser() {}
     
-    /// Reads filament input file. Returns a vector of filament positions,
+    /// Reads filament input file. Returns a vector of Filament positions,
     /// all containing starting and ending points.
     vector<vector<vector<double>>> readFilaments();
 };
@@ -232,7 +232,7 @@ public:
     ~ChemistryParser() {}
     
     /// Reads chemical reactions and species from input file. Returns a
-    /// chemistry setup struct containing this data
+    /// ChemistryData struct containing this data
     ChemistryData readChemistryInput();
 };
 

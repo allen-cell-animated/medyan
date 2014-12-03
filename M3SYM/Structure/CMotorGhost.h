@@ -22,15 +22,15 @@
 //FORWARD DECLARATIONS
 class MotorGhost;
 
-/// A class to represent the chemical component of a [MotorGhost](@ref MotorGhost).
+/// A class to represent the chemical component of a MotorGhost.
 /*!
- *  The CMotorGhost class contains chemical info of the parent [MotorGhost](@ref MotorGhost).
+ *  The CMotorGhost class contains chemical info of the parent MotorGhost.
  */
 
 class CMotorGhost : public CBound {
     
 private:
-    MotorGhost* _pMotorGhost; ///< Pointer to parent motorghost
+    MotorGhost* _pMotorGhost; ///< Pointer to parent
     
 public:
     /// Default constructor and destructor
@@ -52,9 +52,9 @@ public:
         return new CMotorGhost(*this, c);
     }
     
-    /// Set parent motor ghost
+    /// Set parent
     void setMotorGhost(MotorGhost* MotorGhost) {_pMotorGhost = MotorGhost;}
-    /// Get parent motor ghost
+    /// Get parent
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
     
 };

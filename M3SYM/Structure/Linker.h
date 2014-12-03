@@ -37,14 +37,14 @@ class Cylinder;
 class Linker : public Composite, public Movable, public Reactable {
 
 private:
-    unique_ptr<MLinker> _mLinker; ///< Pointer to MLinker
-    unique_ptr<CLinker> _cLinker; ///< Pointer to CLinker
+    unique_ptr<MLinker> _mLinker; ///< Pointer to mech linker
+    unique_ptr<CLinker> _cLinker; ///< Pointer to chem linker
     
     Cylinder* _c1; ///< First cylinder the linker is bound to
     Cylinder* _c2; ///< Second cylinder the linker is bound to
     
-    double _position1; ///< Position on first cylinder
-    double _position2; ///< Position on second cylinder
+    double _position1; ///< Position on first Cylinder
+    double _position2; ///< Position on second Cylinder
     
     short _linkerType; ///< Integer specifying the type of linker
     int _linkerID; ///< Integer ID of this specific linker
@@ -88,11 +88,11 @@ public:
     int getLinkerID() {return _linkerID;}
     //@}
     
-    /// Update the position of this Linker
-    /// @note - changes compartment of clinker if needed
+    /// Update the position
+    /// @note - changes Compartment of CLinker if needed
     virtual void updatePosition();
     
-    /// Update the reaction rates of this linker
+    /// Update the reaction rates
     virtual void updateReactionRates();
     
 };

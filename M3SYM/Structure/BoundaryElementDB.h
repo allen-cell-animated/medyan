@@ -24,7 +24,7 @@ class BoundaryElement;
 /// A database for all [BoundaryElements](@ref BoundaryElement) in the system.
 /*!
  *   This BoundaryElementDB inherits from list and manage all creations and removing of
- *   [BoundaryElement](@ref BoundaryElement) objects, as well as some standard list functions and iterators.
+ *   BoundaryElement objects, as well as some standard list functions and iterators.
  */
 class BoundaryElementDB: private list<BoundaryElement*>
 {

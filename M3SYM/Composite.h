@@ -40,7 +40,7 @@ class ReactionVisitor;
  */    
 class Composite : public Component {
 private:
-    vector<unique_ptr<Component>> _children;///< Child node pointers of this Composite node
+    vector<unique_ptr<Component>> _children;///< Child node pointers of this composite node
 
 public:
     /// Default Constructor does nothing.

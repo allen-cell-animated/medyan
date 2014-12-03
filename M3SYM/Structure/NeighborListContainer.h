@@ -18,7 +18,7 @@
 
 #include "NeighborListDB.h"
 
-/// Holds a [CylinderNeighborList](@ref CylinderNeighborList).
+/// Holds a CylinderNeighborList.
 class CylinderNLContainer {
 
 private:
@@ -42,7 +42,7 @@ public:
     
 };
 
-/// Holds a [BoundaryElementNeighborList](@ref BoundaryElementNeighborList).
+/// Holds a BoundaryElementNeighborList.
 class BoundaryElementNLContainer {
     
 private:

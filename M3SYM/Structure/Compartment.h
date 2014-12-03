@@ -31,12 +31,12 @@ class Bead;
 class Cylinder;
 class BoundaryElement;
 
-/// A compartment for holding [Species](@ref Species) and [Reactions](@ref Reactions).
+/// A container or holding Species and [Reactions](@ref Reactions).
 
-/*! The Compartment class is a container for species, internal reactions, and diffusion
- *  reactions that can occur. A compartment object keeps track of the above while also
- *  holding pointers to its neighbors in order to generate diffusion reactions and other
- *  cross-compartment reactions.
+/*! The Compartment class is a container for Species, [Reactions](@ref Reactions), and diffusion
+ *  [Reactions](@ref Reactions) that can occur. A Compartment object keeps track of the above while also
+ *  holding pointers to its neighbors in order to generate diffusion [Reactions](@ref Reactions) and other
+ *  cross-compartment [Reactions](@ref Reactions).
  *
  *  Compartment initialization looks like the following:
  *  @code
@@ -52,7 +52,7 @@ protected:
     ReactionPtrContainerVector _internal_reactions; ///< Container with all internal reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion reactions in compartment
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
-    unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of species in compartment
+    unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species in compartment
 
     unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element that are in this compartment
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
@@ -74,7 +74,7 @@ public:
         _diffusion_rates = C._diffusion_rates;
         _activated = C._activated;
         
-        ///Should eventuall clone beads, cylinders, boundary elements.... not clear yet
+        // Should eventuall clone beads, cylinders, boundary elements.... not clear yet
         
     }
     
