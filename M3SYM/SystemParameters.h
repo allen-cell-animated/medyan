@@ -99,7 +99,7 @@ struct GeometryParameters {
     
 };
 
-/// Struct to hold boundary parameters for the system
+/// Struct to hold Boundary parameters for the system
 struct BoundaryParameters {
     
     double boundaryCutoff = 0;

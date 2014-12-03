@@ -1769,7 +1769,7 @@
       <Scope>Boundary</Scope>
     </TokenIdentifier>
     <Path>classBoundary.html</Path>
-    <Abstract>To store all boundary surfaces that are in the system. </Abstract>
+    <Abstract>To store all BoundarySurfaces that are in the SubSystem. </Abstract>
     <DeclaredIn>Boundary.h</DeclaredIn>
   </Token>
   <Token>
@@ -2624,7 +2624,7 @@
       <Scope>BoundaryParameters</Scope>
     </TokenIdentifier>
     <Path>structBoundaryParameters.html</Path>
-    <Abstract>Struct to hold boundary parameters for the system. </Abstract>
+    <Abstract>Struct to hold Boundary parameters for the system. </Abstract>
     <DeclaredIn>SystemParameters.h</DeclaredIn>
   </Token>
   <Token>
@@ -13096,7 +13096,7 @@
       <Scope>HalfSphereZBoundaryElement</Scope>
     </TokenIdentifier>
     <Path>classHalfSphereZBoundaryElement.html</Path>
-    <Abstract>A half-sphere implementat of a boundary element. </Abstract>
+    <Abstract>A half-sphere implementation of a boundary element. </Abstract>
     <DeclaredIn>BoundaryElementImpl.h</DeclaredIn>
   </Token>
   <Token>
@@ -22179,7 +22179,7 @@
       <Scope>SpeciesBound</Scope>
     </TokenIdentifier>
     <Path>classSpeciesBound.html</Path>
-    <Abstract>Used for species that can be bound to a filament. </Abstract>
+    <Abstract>Used for species that can be bound to a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -22470,7 +22470,7 @@
       <Scope>SpeciesBulk</Scope>
     </TokenIdentifier>
     <Path>classSpeciesBulk.html</Path>
-    <Abstract>Used for Species without spatial information (i.e. well-mixed in the container) </Abstract>
+    <Abstract>Used for species without spatial information (i.e. well-mixed in the container) </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23024,7 +23024,7 @@
       <Scope>SpeciesDiffusing</Scope>
     </TokenIdentifier>
     <Path>classSpeciesDiffusing.html</Path>
-    <Abstract>Used for Species which can move spatially from one compartment to the neighboring one (i...</Abstract>
+    <Abstract>Used for species which can move spatially from one compartment to the neighboring one (i...</Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23269,7 +23269,7 @@
       <Scope>SpeciesFilament</Scope>
     </TokenIdentifier>
     <Path>classSpeciesFilament.html</Path>
-    <Abstract>Used for species that can be in a filament. </Abstract>
+    <Abstract>Used for species that can be in a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23514,7 +23514,7 @@
       <Scope>SpeciesLinker</Scope>
     </TokenIdentifier>
     <Path>classSpeciesLinker.html</Path>
-    <Abstract>Used for linker species that can be bound to a filament. </Abstract>
+    <Abstract>Used for species that can be bound to a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -23805,7 +23805,7 @@
       <Scope>SpeciesMinusEnd</Scope>
     </TokenIdentifier>
     <Path>classSpeciesMinusEnd.html</Path>
-    <Abstract>Used for a minus end species on a filament. </Abstract>
+    <Abstract>Used for a minus end species on a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -24050,7 +24050,7 @@
       <Scope>SpeciesMotor</Scope>
     </TokenIdentifier>
     <Path>classSpeciesMotor.html</Path>
-    <Abstract>Used for motor species that can be bound to a filament. </Abstract>
+    <Abstract>Used for species that can be bound to a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>
@@ -24465,7 +24465,7 @@
       <Scope>SpeciesPlusEnd</Scope>
     </TokenIdentifier>
     <Path>classSpeciesPlusEnd.html</Path>
-    <Abstract>Used for a plus end species on a filament. </Abstract>
+    <Abstract>Used for a plus end species on a Filament. </Abstract>
     <DeclaredIn>Species.h</DeclaredIn>
   </Token>
   <Token>

@@ -12,13 +12,13 @@
 <area shape="rect" id="node9" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="526,787,597,812"/>
 <area shape="rect" id="node10" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="348,912,429,937"/>
 <area shape="rect" id="node15" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="1861,572,1948,597"/>
-<area shape="rect" id="node16" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="1850,479,1953,504"/>
-<area shape="rect" id="node17" href="$classSpeciesFilament.html" title="Used for species that can be in a filament. " alt="" coords="1562,479,1682,504"/>
+<area shape="rect" id="node16" href="$classSpeciesMotor.html" title="Used for species that can be bound to a Filament. " alt="" coords="1850,479,1953,504"/>
+<area shape="rect" id="node17" href="$classSpeciesFilament.html" title="Used for species that can be in a Filament. " alt="" coords="1562,479,1682,504"/>
 <area shape="rect" id="node19" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="1468,299,1546,324"/>
 <area shape="rect" id="node22" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="1635,5,1698,31"/>
 <area shape="rect" id="node30" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="339,1244,411,1269"/>
 <area shape="rect" id="node31" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="197,1137,286,1163"/>
-<area shape="rect" id="node34" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="69,1037,147,1063"/>
+<area shape="rect" id="node34" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="69,1037,147,1063"/>
 <area shape="rect" id="node42" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="1626,392,1812,417"/>
 <area shape="rect" id="node43" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="1570,299,1753,324"/>
 <area shape="rect" id="node47" href="$classSpeciesPtrContainerVector.html" title="A concrete class implementing the SpeciesPtrContainerIFace, using vector&lt;unique_ptr&lt;Species&gt;&gt; as the ..." alt="" coords="1356,679,1538,705"/>

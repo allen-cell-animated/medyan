@@ -1,5 +1,5 @@
 <map id="SpeciesBound" name="SpeciesBound">
-<area shape="rect" id="node3" href="$classSpeciesLinker.html" title="Used for linker species that can be bound to a filament. " alt="" coords="5,152,110,177"/>
-<area shape="rect" id="node4" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="134,152,237,177"/>
+<area shape="rect" id="node3" href="$classSpeciesLinker.html" title="Used for species that can be bound to a Filament. " alt="" coords="5,152,110,177"/>
+<area shape="rect" id="node4" href="$classSpeciesMotor.html" title="Used for species that can be bound to a Filament. " alt="" coords="134,152,237,177"/>
 <area shape="rect" id="node2" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="87,5,156,31"/>
 </map>

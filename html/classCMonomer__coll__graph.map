@@ -1,13 +1,13 @@
 <map id="CMonomer" name="CMonomer">
-<area shape="rect" id="node2" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="1696,399,1799,425"/>
-<area shape="rect" id="node3" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="1339,303,1447,329"/>
+<area shape="rect" id="node2" href="$classSpeciesMotor.html" title="Used for species that can be bound to a Filament. " alt="" coords="1696,399,1799,425"/>
+<area shape="rect" id="node3" href="$classSpeciesBound.html" title="Used for species that can be bound to a Filament. " alt="" coords="1339,303,1447,329"/>
 <area shape="rect" id="node13" href="$classCBound.html" title="Represents a chemical object that is bound to a Filament. " alt="" coords="2630,131,2700,157"/>
-<area shape="rect" id="node50" href="$classSpeciesLinker.html" title="Used for linker species that can be bound to a filament. " alt="" coords="1695,350,1800,375"/>
+<area shape="rect" id="node50" href="$classSpeciesLinker.html" title="Used for species that can be bound to a Filament. " alt="" coords="1695,350,1800,375"/>
 <area shape="rect" id="node4" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="1108,357,1177,382"/>
 <area shape="rect" id="node5" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="806,339,884,365"/>
-<area shape="rect" id="node47" href="$classSpeciesFilament.html" title="Used for species that can be in a filament. " alt="" coords="1511,433,1631,458"/>
-<area shape="rect" id="node48" href="$classSpeciesMinusEnd.html" title="Used for a minus end species on a filament. " alt="" coords="1507,174,1635,199"/>
-<area shape="rect" id="node49" href="$classSpeciesPlusEnd.html" title="Used for a plus end species on a filament. " alt="" coords="1512,233,1630,258"/>
+<area shape="rect" id="node47" href="$classSpeciesFilament.html" title="Used for species that can be in a Filament. " alt="" coords="1511,433,1631,458"/>
+<area shape="rect" id="node48" href="$classSpeciesMinusEnd.html" title="Used for a minus end species on a Filament. " alt="" coords="1507,174,1635,199"/>
+<area shape="rect" id="node49" href="$classSpeciesPlusEnd.html" title="Used for a plus end species on a Filament. " alt="" coords="1512,233,1630,258"/>
 <area shape="rect" id="node7" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical Reactions of the form A + B &#45;&gt; C..." alt="" coords="187,362,292,387"/>
 <area shape="rect" id="node8" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="5,750,90,775"/>
 <area shape="rect" id="node9" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="194,818,285,843"/>

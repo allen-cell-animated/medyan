@@ -295,7 +295,7 @@ public:
     virtual size_t countSpecies() const {return 1;}
 };
 
-/// Used for Species without spatial information (i.e. well-mixed in the container)
+/// Used for species without spatial information (i.e. well-mixed in the container)
 class SpeciesBulk : public Species {
 public:
     /// Default constructor
@@ -337,7 +337,7 @@ public:
     ~SpeciesBulk () noexcept {};
 };
 
-/// Used for Species which can move spatially from one compartment to
+/// Used for species which can move spatially from one compartment to
 /// the neighboring one (i.e. they are the stochastic analogue of determenistic reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
 public:
@@ -380,7 +380,7 @@ public:
     ~SpeciesDiffusing () noexcept {};
 };
 
-/// Used for species that can be in a filament.
+/// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
 public:
@@ -424,7 +424,7 @@ public:
     ~SpeciesFilament () noexcept {};
 };
 
-/// Used for species that can be bound to a filament.
+/// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CBound object that this represents.
 class SpeciesBound : public Species {
@@ -481,7 +481,7 @@ public:
     void removeCBound() {_cBound = nullptr;}
 };
 
-/// Used for linker species that can be bound to a filament.
+/// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CLinker object that this represents.
 class SpeciesLinker : public SpeciesBound {
@@ -528,7 +528,7 @@ public:
 };
 
 
-/// Used for motor species that can be bound to a filament.
+/// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CLinker object that this represents.
 class SpeciesMotor : public SpeciesBound {
@@ -575,7 +575,7 @@ public:
 };
 
 
-/// Used for a plus end species on a filament.
+/// Used for a plus end species on a Filament.
 /// This allows for various polymerization/depolymerization rates on filaments
 /// These species can not move cross-compartment.
 class SpeciesPlusEnd : public Species {
@@ -620,7 +620,7 @@ public:
     ~SpeciesPlusEnd () noexcept {};
 };
 
-/// Used for a minus end species on a filament.
+/// Used for a minus end species on a Filament.
 /// This allows for various polymerization/depolymerization rates on filaments
 /// These species can not move cross-compartment.
 class SpeciesMinusEnd : public Species {

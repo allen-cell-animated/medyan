@@ -1,4 +1,4 @@
 <map id="SpeciesLinker" name="SpeciesLinker">
-<area shape="rect" id="node2" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="5,79,113,104"/>
+<area shape="rect" id="node2" href="$classSpeciesBound.html" title="Used for species that can be bound to a Filament. " alt="" coords="5,79,113,104"/>
 <area shape="rect" id="node3" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="25,5,93,31"/>
 </map>

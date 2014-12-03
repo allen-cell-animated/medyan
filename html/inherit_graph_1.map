@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="5,55,84,80"/>
+<area shape="rect" id="node1" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="5,55,84,80"/>
 <area shape="rect" id="node2" href="$classBoundaryCapsule.html" title="A capsule boundary implementation. " alt="" coords="135,5,262,31"/>
 <area shape="rect" id="node3" href="$classBoundaryCubic.html" title="A cubic boundary implementation. " alt="" coords="142,55,255,80"/>
 <area shape="rect" id="node4" href="$classBoundarySpherical.html" title="A spherical boundary implementation. " alt="" coords="132,104,266,129"/>

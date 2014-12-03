@@ -1,6 +1,6 @@
 <map id="MotorWalkingForwardCallback" name="MotorWalkingForwardCallback">
-<area shape="rect" id="node2" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="2523,101,2626,126"/>
-<area shape="rect" id="node3" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="2222,102,2329,127"/>
+<area shape="rect" id="node2" href="$classSpeciesMotor.html" title="Used for species that can be bound to a Filament. " alt="" coords="2523,101,2626,126"/>
+<area shape="rect" id="node3" href="$classSpeciesBound.html" title="Used for species that can be bound to a Filament. " alt="" coords="2222,102,2329,127"/>
 <area shape="rect" id="node13" href="$classCBound.html" title="Represents a chemical object that is bound to a Filament. " alt="" coords="2539,170,2609,195"/>
 <area shape="rect" id="node4" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="1108,94,1177,119"/>
 <area shape="rect" id="node5" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="806,57,884,82"/>
@@ -19,7 +19,7 @@
 <area shape="rect" id="node19" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="2533,931,2615,957"/>
 <area shape="rect" id="node31" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="3642,769,3714,794"/>
 <area shape="rect" id="node32" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="3256,961,3345,986"/>
-<area shape="rect" id="node35" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="2916,1047,2994,1073"/>
+<area shape="rect" id="node35" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="2916,1047,2994,1073"/>
 <area shape="rect" id="node42" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="1049,241,1236,266"/>
 <area shape="rect" id="node43" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="754,251,936,277"/>
 <area shape="rect" id="node47" href="$classSpeciesPtrContainerVector.html" title="A concrete class implementing the SpeciesPtrContainerIFace, using vector&lt;unique_ptr&lt;Species&gt;&gt; as the ..." alt="" coords="1870,177,2051,202"/>

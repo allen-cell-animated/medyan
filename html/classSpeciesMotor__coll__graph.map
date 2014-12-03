@@ -1,6 +1,6 @@
 <map id="SpeciesMotor" name="SpeciesMotor">
 <area shape="rect" id="node23" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="302,43,389,69"/>
-<area shape="rect" id="node2" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="3301,289,3408,314"/>
+<area shape="rect" id="node2" href="$classSpeciesBound.html" title="Used for species that can be bound to a Filament. " alt="" coords="3301,289,3408,314"/>
 <area shape="rect" id="node12" href="$classCBound.html" title="Represents a chemical object that is bound to a Filament. " alt="" coords="3010,379,3079,405"/>
 <area shape="rect" id="node3" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="638,486,707,511"/>
 <area shape="rect" id="node4" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="942,491,1020,517"/>
@@ -19,7 +19,7 @@
 <area shape="rect" id="node18" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1680,1277,1762,1302"/>
 <area shape="rect" id="node31" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="2677,1165,2750,1190"/>
 <area shape="rect" id="node32" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="2320,1327,2410,1353"/>
-<area shape="rect" id="node35" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="2011,1346,2089,1371"/>
+<area shape="rect" id="node35" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="2011,1346,2089,1371"/>
 <area shape="rect" id="node42" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="1628,533,1814,558"/>
 <area shape="rect" id="node43" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="1244,589,1426,614"/>
 <area shape="rect" id="node47" href="$classSpeciesPtrContainerVector.html" title="A concrete class implementing the SpeciesPtrContainerIFace, using vector&lt;unique_ptr&lt;Species&gt;&gt; as the ..." alt="" coords="1630,437,1812,462"/>

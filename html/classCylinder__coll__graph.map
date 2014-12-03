@@ -12,9 +12,9 @@
 <area shape="rect" id="node7" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="2485,472,2557,497"/>
 <area shape="rect" id="node8" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="2002,472,2083,497"/>
 <area shape="rect" id="node13" href="$classCMonomer.html" title="Rpresents a container for all Species that could be contained in a particular filament element at a g..." alt="" coords="159,572,246,597"/>
-<area shape="rect" id="node14" href="$classSpeciesMotor.html" title="Used for motor species that can be bound to a filament. " alt="" coords="150,472,253,497"/>
-<area shape="rect" id="node15" href="$classSpeciesFilament.html" title="Used for species that can be in a filament. " alt="" coords="5,472,125,497"/>
-<area shape="rect" id="node17" href="$classSpeciesMinusEnd.html" title="Used for a minus end species on a filament. " alt="" coords="277,472,405,497"/>
+<area shape="rect" id="node14" href="$classSpeciesMotor.html" title="Used for species that can be bound to a Filament. " alt="" coords="150,472,253,497"/>
+<area shape="rect" id="node15" href="$classSpeciesFilament.html" title="Used for species that can be in a Filament. " alt="" coords="5,472,125,497"/>
+<area shape="rect" id="node17" href="$classSpeciesMinusEnd.html" title="Used for a minus end species on a Filament. " alt="" coords="277,472,405,497"/>
 <area shape="rect" id="node27" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="803,679,989,705"/>
 <area shape="rect" id="node28" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="804,572,986,597"/>
 <area shape="rect" id="node33" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="1023,279,1086,304"/>
@@ -22,5 +22,5 @@
 <area shape="rect" id="node36" href="$classSpeciesPtrContainerIFace.html" title="An abstract interface for a container of pointers to Species objects. " alt="" coords="553,572,730,597"/>
 <area shape="rect" id="node43" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="2445,800,2518,825"/>
 <area shape="rect" id="node44" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="2575,679,2665,705"/>
-<area shape="rect" id="node47" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="2703,572,2782,597"/>
+<area shape="rect" id="node47" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="2703,572,2782,597"/>
 </map>

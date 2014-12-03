@@ -5,7 +5,7 @@
 <area shape="rect" id="node5" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="824,597,896,623"/>
 <area shape="rect" id="node34" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="700,1331,753,1356"/>
 <area shape="rect" id="node7" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="194,597,275,623"/>
-<area shape="rect" id="node8" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="418,737,497,763"/>
+<area shape="rect" id="node8" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="418,737,497,763"/>
 <area shape="rect" id="node11" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="339,404,464,429"/>
 <area shape="rect" id="node14" href="$classBoundaryElement.html" title="Represents an element of a boundary surface. " alt="" coords="442,92,569,117"/>
 <area shape="rect" id="node15" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="30,5,106,31"/>

@@ -7,6 +7,6 @@
 <area shape="rect" id="node9" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="2494,119,2583,145"/>
 <area shape="rect" id="node11" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1914,146,1986,171"/>
 <area shape="rect" id="node13" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1909,209,1991,234"/>
-<area shape="rect" id="node14" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="2235,90,2314,115"/>
+<area shape="rect" id="node14" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="2235,90,2314,115"/>
 <area shape="rect" id="node17" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="1171,93,1295,118"/>
 </map>

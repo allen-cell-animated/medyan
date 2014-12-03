@@ -85,7 +85,7 @@ public:
     virtual double getScreeningLength();
 };
 
-/// A half-sphere implementat of a boundary element.
+/// A half-sphere implementation of a boundary element.
 class HalfSphereZBoundaryElement : public BoundaryElement {
     
 private:

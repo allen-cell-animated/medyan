@@ -19,8 +19,8 @@
 <area shape="rect" id="node25" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="1284,285,1466,311"/>
 <area shape="rect" id="node30" href="$classSpeciesPtrContainerVector.html" title="A concrete class implementing the SpeciesPtrContainerIFace, using vector&lt;unique_ptr&lt;Species&gt;&gt; as the ..." alt="" coords="932,393,1113,418"/>
 <area shape="rect" id="node31" href="$classSpeciesPtrContainerIFace.html" title="An abstract interface for a container of pointers to Species objects. " alt="" coords="948,285,1124,311"/>
-<area shape="rect" id="node50" href="$classSpeciesBound.html" title="Used for species that can be bound to a filament. " alt="" coords="1022,725,1130,751"/>
+<area shape="rect" id="node50" href="$classSpeciesBound.html" title="Used for species that can be bound to a Filament. " alt="" coords="1022,725,1130,751"/>
 <area shape="rect" id="node39" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="1289,945,1362,971"/>
 <area shape="rect" id="node40" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="818,839,907,864"/>
-<area shape="rect" id="node43" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="763,725,842,751"/>
+<area shape="rect" id="node43" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="763,725,842,751"/>
 </map>

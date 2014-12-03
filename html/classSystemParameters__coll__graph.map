@@ -2,5 +2,5 @@
 <area shape="rect" id="node2" href="$structChemistryParameters.html" title="Struct to hold chemistry parameters for the system. " alt="" coords="5,225,156,251"/>
 <area shape="rect" id="node3" href="$structMechanicsParameters.html" title="Struct to hold mechanical parameters for the system. " alt="" coords="179,225,333,251"/>
 <area shape="rect" id="node5" href="$structGeometryParameters.html" title="Struct to hold geometry parameters for the system. " alt="" coords="358,225,507,251"/>
-<area shape="rect" id="node6" href="$structBoundaryParameters.html" title="Struct to hold boundary parameters for the system. " alt="" coords="531,225,678,251"/>
+<area shape="rect" id="node6" href="$structBoundaryParameters.html" title="Struct to hold Boundary parameters for the system. " alt="" coords="531,225,678,251"/>
 </map>

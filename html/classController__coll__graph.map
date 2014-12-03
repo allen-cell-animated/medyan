@@ -6,7 +6,7 @@
 <area shape="rect" id="node19" href="$classMController.html" title="Used to initialize, control, and run the mechanical components of a simulation. " alt="" coords="2670,151,2760,177"/>
 <area shape="rect" id="node8" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="1698,213,1770,238"/>
 <area shape="rect" id="node10" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="1693,325,1774,350"/>
-<area shape="rect" id="node11" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="2042,269,2120,294"/>
+<area shape="rect" id="node11" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="2042,269,2120,294"/>
 <area shape="rect" id="node14" href="$classBoundarySurface.html" title="A boundary shape that holds BoundaryElements. " alt="" coords="1148,267,1273,293"/>
 <area shape="rect" id="node18" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="41,251,116,277"/>
 <area shape="rect" id="node21" href="$classMinimizer.html" title="A mechanical minimzer used by the MController. " alt="" coords="2042,107,2120,133"/>

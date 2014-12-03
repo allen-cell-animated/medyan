@@ -18,7 +18,7 @@
 <area shape="rect" id="node17" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="2966,894,3048,919"/>
 <area shape="rect" id="node30" href="$classFilament.html" title="Used to store data about connectivity of Cylinders and Beads. " alt="" coords="3918,809,3990,834"/>
 <area shape="rect" id="node31" href="$classSubSystem.html" title="Manages all objects in the system, including Filaments, Linkers, and MotorGhosts. ..." alt="" coords="3561,1069,3650,1094"/>
-<area shape="rect" id="node34" href="$classBoundary.html" title="To store all boundary surfaces that are in the system. " alt="" coords="3297,1187,3375,1213"/>
+<area shape="rect" id="node34" href="$classBoundary.html" title="To store all BoundarySurfaces that are in the SubSystem. " alt="" coords="3297,1187,3375,1213"/>
 <area shape="rect" id="node42" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="1049,77,1236,102"/>
 <area shape="rect" id="node43" href="$classReactionPtrContainerIFace.html" title="An abstract interface for a container of pointers to reaction objects. " alt="" coords="754,77,936,102"/>
 <area shape="rect" id="node47" href="$classSpeciesPtrContainerVector.html" title="A concrete class implementing the SpeciesPtrContainerIFace, using vector&lt;unique_ptr&lt;Species&gt;&gt; as the ..." alt="" coords="1927,178,2109,203"/>
