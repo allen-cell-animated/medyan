@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classCGMethod.html" title="For performing a conjugate gradient minimization method. " alt="" coords="5,31,91,56"/>
-<area shape="rect" id="node2" href="$classFletcherRieves.html" title="The Fletcher&#45;Rieves method for conjugate gradient minimization. " alt="" coords="139,5,249,31"/>
-<area shape="rect" id="node3" href="$classPolakRibiere.html" title="The Polak&#45;Ribiere method for conjugate gradient minimization. " alt="" coords="146,55,243,80"/>
-</map>

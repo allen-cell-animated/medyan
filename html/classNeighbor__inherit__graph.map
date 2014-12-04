@@ -1,9 +1,0 @@
-<map id="Neighbor" name="Neighbor">
-<area shape="rect" id="node2" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="166,31,219,56"/>
-<area shape="rect" id="node3" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="129,80,256,105"/>
-<area shape="rect" id="node8" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="157,129,228,155"/>
-<area shape="rect" id="node4" href="$classCylindricalZBoundaryElement.html" title="A cylinder implementation of a BoundaryElement. " alt="" coords="307,5,504,31"/>
-<area shape="rect" id="node5" href="$classHalfSphereZBoundaryElement.html" title="A half&#45;sphere implementation of a BoundaryElement. " alt="" coords="304,55,506,80"/>
-<area shape="rect" id="node6" href="$classPlaneBoundaryElement.html" title="A plane implementation of a BoundaryElement. " alt="" coords="324,104,486,129"/>
-<area shape="rect" id="node7" href="$classSphereBoundaryElement.html" title="A spherical implementation of a BoundaryElement. " alt="" coords="320,153,490,179"/>
-</map>

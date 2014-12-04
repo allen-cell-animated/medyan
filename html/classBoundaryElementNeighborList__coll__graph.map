@@ -1,4 +1,0 @@
-<map id="BoundaryElementNeighborList" name="BoundaryElementNeighborList">
-<area shape="rect" id="node2" href="$classNeighborList.html" title="To hold an external neighbor list of general type. " alt="" coords="58,292,155,317"/>
-<area shape="rect" id="node4" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="93,5,168,31"/>
-</map>

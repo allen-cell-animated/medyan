@@ -1,5 +1,0 @@
-<map id="CylinderNLContainer" name="CylinderNLContainer">
-<area shape="rect" id="node2" href="$classCylinderNeighborList.html" title="An implementation of NeighborList for Cylinder&#45;Cylinder interactions. " alt="" coords="5,367,150,392"/>
-<area shape="rect" id="node3" href="$classNeighborList.html" title="To hold an external neighbor list of general type. " alt="" coords="30,292,126,317"/>
-<area shape="rect" id="node5" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="64,5,140,31"/>
-</map>

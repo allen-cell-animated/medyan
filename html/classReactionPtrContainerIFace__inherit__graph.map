@@ -1,3 +1,0 @@
-<map id="ReactionPtrContainerIFace" name="ReactionPtrContainerIFace">
-<area shape="rect" id="node2" href="$classReactionPtrContainerVector.html" title="A concrete class implementing the ReactionPtrContainerIFace, using vector&lt;unique_ptr&lt;ReactionBase&gt;&gt; a..." alt="" coords="5,79,192,104"/>
-</map>

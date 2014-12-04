@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classNeighborList.html" title="To hold an external neighbor list of general type. " alt="" coords="5,31,102,56"/>
-<area shape="rect" id="node2" href="$classBoundaryElementNeighborList.html" title="An implementation of NeighborList for Bead&#45;BoundaryElement interactions. " alt="" coords="150,5,352,31"/>
-<area shape="rect" id="node3" href="$classCylinderNeighborList.html" title="An implementation of NeighborList for Cylinder&#45;Cylinder interactions. " alt="" coords="178,55,323,80"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="RNodeGillespie" name="RNodeGillespie">
-<area shape="rect" id="node2" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="16,135,79,160"/>
-<area shape="rect" id="node3" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="187,200,292,225"/>
-<area shape="rect" id="node4" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="5,321,90,347"/>
-<area shape="rect" id="node5" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="194,355,285,380"/>
-<area shape="rect" id="node9" href="$classChemGillespieImpl.html" title="Implements a slightly optimized version of the Gillespie algorithm. " alt="" coords="1409,81,1542,107"/>
-<area shape="rect" id="node10" href="$classChemSimImpl.html" title="An abstract base class for algorithms that run stochastic chemical kinetics. " alt="" coords="1137,81,1242,107"/>
-</map>

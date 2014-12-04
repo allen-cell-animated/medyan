@@ -1,4 +1,0 @@
-<map id="PlaneBoundaryElement" name="PlaneBoundaryElement">
-<area shape="rect" id="node2" href="$classBoundaryElement.html" title="Represents an element of a BoundarySurface. " alt="" coords="46,92,173,117"/>
-<area shape="rect" id="node3" href="$classNeighbor.html" title="An abstract class for any object that can be added/removed from a NeighborList. " alt="" coords="5,5,81,31"/>
-</map>

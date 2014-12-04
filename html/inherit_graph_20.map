@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classChemSimImpl.html" title="An abstract base class for algorithms that run stochastic chemical kinetics. " alt="" coords="5,55,110,80"/>
-<area shape="rect" id="node2" href="$classChemGillespieImpl.html" title="Implements a slightly optimized version of the Gillespie algorithm. " alt="" coords="179,5,312,31"/>
-<area shape="rect" id="node3" href="$classChemNRMImpl.html" title="The chemical NRM implementation. " alt="" coords="189,55,302,80"/>
-<area shape="rect" id="node4" href="$classChemSimpleGillespieImpl.html" title="Implements the simplest version of the Gillespie algorithm, without caching, etc. ..." alt="" coords="158,104,332,129"/>
-</map>

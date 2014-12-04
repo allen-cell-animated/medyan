@@ -1,4 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classChemManagerImpl.html" title="An abstract base class for initialization of all chemistry in the system. " alt="" coords="5,5,140,31"/>
-<area shape="rect" id="node2" href="$classSimpleManagerImpl.html" title="A concrete implementation of the ChemManagerImpl class. " alt="" coords="188,5,328,31"/>
-</map>

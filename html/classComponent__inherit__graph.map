@@ -1,9 +1,0 @@
-<map id="Component" name="Component">
-<area shape="rect" id="node2" href="$classBead.html" title="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..." alt="" coords="198,79,251,104"/>
-<area shape="rect" id="node3" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="275,79,360,104"/>
-<area shape="rect" id="node4" href="$classCompartment.html" title="A container or holding Species and Reactions. " alt="" coords="5,152,107,177"/>
-<area shape="rect" id="node5" href="$classCompartmentGrid.html" title="A simple n&#45;dimensional grid of Compartment objects (singleton). " alt="" coords="131,152,259,177"/>
-<area shape="rect" id="node6" href="$classCylinder.html" title="A container to store a MCylinder and CCylinder. " alt="" coords="283,152,353,177"/>
-<area shape="rect" id="node7" href="$classLinker.html" title="A container to store a MLinker and CLinker. " alt="" coords="377,152,435,177"/>
-<area shape="rect" id="node8" href="$classMotorGhost.html" title="A container to store a MMotorGhost and CMotorGhost. " alt="" coords="459,152,550,177"/>
-</map>

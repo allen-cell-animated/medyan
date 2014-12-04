@@ -27,8 +27,8 @@ class SubSystem;
 /*!
  *  ChemController is a class used by the SubSystem to instantiate, control, and run the chemical
  *  dynamics of a simulation. It has functions to initialize a chemical system, which, based on a choice
- *  of the reaction-diffusion algorithm as well as the type of manager which controls the reactions in the simulation, 
- *  as well as run the chemical components of the simulation.
+ *  of the reaction-diffusion algorithm as well as the type of manager which controls the reactions in 
+ *  the simulation, as well as run the chemical components of the simulation.
  *
  *  The controller initializes all chemical singletons used, including ChemSim
  *  and ChemManager to the correct implementations, given that they are implemented.

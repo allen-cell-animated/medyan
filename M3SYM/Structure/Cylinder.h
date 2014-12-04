@@ -54,7 +54,7 @@ private:
     
     int _ID; ///< Unique ID of cylinder, managed by CylinderDB
     
-    Compartment* _compartment = nullptr; ///< Compartment this cylinder is currently in
+    Compartment* _compartment = nullptr; ///< Where this cylinder is
     
 public:
     vector<double> coordinate; ///< Coordinates of midpoint, updated with updatePosition()
@@ -63,18 +63,18 @@ public:
              bool extensionFront = false, bool extensionBack = false, bool creation = false);
     ~Cylinder();
     
-    /// Get MCylinder
+    /// Get mech cylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}
     
-    /// Get CCylinder
+    /// Get chem cylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
-    /// set CCylinder
+    /// set chem cylinder
     /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
-    /// Get parent filament
+    /// Get parent
     Filament* getFilament() {return _pFilament;}
-    /// Set parent filament
+    /// Set parent
     void setFilament(Filament* pf) {_pFilament = pf;}
     
     //@{
@@ -83,10 +83,10 @@ public:
     Bead* getSecondBead() {return _b2;}
     //@}
     
-    /// Get current Compartment
+    /// Get compartment
     Compartment* getCompartment() {return _compartment;}
     
-    /// Get ID of Cylinder
+    /// Get ID
     const int getID() {return _ID;}
     
     bool last(){ return _last;}
@@ -95,7 +95,7 @@ public:
     int getPositionFilament() {return _positionFilament;}
     
     /// Update the position
-    /// @note - changes compartment of CCylinder if needed
+    /// @note - changes compartment if needed
     virtual void updatePosition();
     
     /// Update the reaction rates

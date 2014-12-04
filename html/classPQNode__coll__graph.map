@@ -1,9 +1,0 @@
-<map id="PQNode" name="PQNode">
-<area shape="rect" id="node2" href="$classRNodeNRM.html" title="Reaction Node for the Next Reaction Method. " alt="" coords="87,179,180,204"/>
-<area shape="rect" id="node3" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="184,5,247,31"/>
-<area shape="rect" id="node8" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="239,92,343,117"/>
-<area shape="rect" id="node4" href="$classChemNRMImpl.html" title="The chemical NRM implementation. " alt="" coords="91,479,203,504"/>
-<area shape="rect" id="node5" href="$classChemSimImpl.html" title="An abstract base class for algorithms that run stochastic chemical kinetics. " alt="" coords="5,379,110,404"/>
-<area shape="rect" id="node9" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="465,5,550,31"/>
-<area shape="rect" id="node10" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="527,92,618,117"/>
-</map>

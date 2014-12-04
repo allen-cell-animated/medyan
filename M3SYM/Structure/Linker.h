@@ -27,10 +27,10 @@
 //FORWARD DECLARATIONS
 class Cylinder;
 
-/// A container to store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker).
+/// A container to store a MLinker and CLinker.
 /*!
- * Linker class is used to manage and store a [MLinker] (@ref MLinker) and [CLinker](@ref CLinker).
- * Upon intialization, both of these components are created. Extending the [Movable](@ref Movable) and [Reactable] (@ref Reactable)
+ * Linker class is used to manage and store a MLinker and CLinker.
+ * Upon intialization, both of these components are created. Extending the Movable and Reactable
  * classes, the Linker can update its position and reactions according to mechanical equilibration.
  */
 
@@ -43,15 +43,15 @@ private:
     Cylinder* _c1; ///< First cylinder the linker is bound to
     Cylinder* _c2; ///< Second cylinder the linker is bound to
     
-    double _position1; ///< Position on first Cylinder
-    double _position2; ///< Position on second Cylinder
+    double _position1; ///< Position on first cylinder
+    double _position2; ///< Position on second cylinder
     
-    short _linkerType; ///< Integer specifying the type of linker
-    int _linkerID; ///< Integer ID of this specific linker
+    short _linkerType; ///< Integer specifying the type
+    int _linkerID; ///< Integer ID of this specific linker, managed by LinkerDB
     
-    float _birthTime; ///Birth time of this linker
+    float _birthTime; ///Birth time
     
-    Compartment* _compartment; ///< Compartment that this linker is in
+    Compartment* _compartment; ///< Where this linker is
     
 public:
     vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
@@ -65,16 +65,16 @@ public:
     Cylinder* getSecondCylinder() {return _c2;}
     //@}
     
-    /// Set CLinker
+    /// Set chem linker
     void setCLinker(CLinker* cLinker) {_cLinker = unique_ptr<CLinker>(cLinker);}
     /// Get CLinker
     CLinker* getCLinker() {return _cLinker.get();}
     
-    /// Get MLinker
+    /// Get mech linker
     MLinker* getMLinker() {return _mLinker.get();}
     
     //@{
-    /// Linker position management
+    /// Position management
     double getFirstPosition() {return _position1;}
     void setFirstPosition(double position1) {_position1 = position1;}
     
@@ -89,7 +89,7 @@ public:
     //@}
     
     /// Update the position
-    /// @note - changes Compartment of CLinker if needed
+    /// @note - changes compartment if needed
     virtual void updatePosition();
     
     /// Update the reaction rates

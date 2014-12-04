@@ -17,7 +17,7 @@
 #include "common.h"
 
 /// An abstract class for any object that can be added/removed from a NeighborList.
-/// @note - any subclass that inherits from Neighbor MUST add and remove itself to the neighbors list DB.
+/// @note - any subclass that inherits from Neighbor MUST add and remove itself to the NeighborListDB.
 class Neighbor {
     
 protected:

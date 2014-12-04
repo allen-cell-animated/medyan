@@ -1,9 +1,0 @@
-<map id="SpeciesPtrContainerVector" name="SpeciesPtrContainerVector">
-<area shape="rect" id="node2" href="$classSpeciesPtrContainerIFace.html" title="An abstract interface for a container of pointers to Species objects. " alt="" coords="5,273,182,299"/>
-<area shape="rect" id="node5" href="$classSpecies.html" title="Represents chemical molecules, tracks their copy number and can be used in Reactions. " alt="" coords="419,93,488,118"/>
-<area shape="rect" id="node6" href="$classRSpecies.html" title="Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in ..." alt="" coords="388,180,466,205"/>
-<area shape="rect" id="node8" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="275,93,379,118"/>
-<area shape="rect" id="node9" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="551,5,636,31"/>
-<area shape="rect" id="node10" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="662,93,752,118"/>
-<area shape="rect" id="node13" href="$classRNode.html" title="This is an abstract base class for classes that need to be associated with the given Reaction object..." alt="" coords="337,5,400,31"/>
-</map>

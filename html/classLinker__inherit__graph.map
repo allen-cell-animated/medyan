@@ -1,6 +1,0 @@
-<map id="Linker" name="Linker">
-<area shape="rect" id="node2" href="$classComposite.html" title="The aggregating class for the Composite pattern. " alt="" coords="8,79,93,104"/>
-<area shape="rect" id="node3" href="$classComponent.html" title="The base class for the Composite pattern hieararchy. " alt="" coords="5,5,96,31"/>
-<area shape="rect" id="node4" href="$classMovable.html" title="For a movable object in the SubSystem. " alt="" coords="117,79,189,104"/>
-<area shape="rect" id="node5" href="$classReactable.html" title="For a reactable object in the SubSystem. " alt="" coords="212,79,294,104"/>
-</map>

@@ -36,12 +36,12 @@ struct ChemistryAlgorithm {
     int numStepsPerMech = 0;
 };
 
-/// Struct to hold chemistry species and reaction information
+/// Struct to hold Species and Reaction information
 struct ChemistryData {
     
-    /// Reaction happening between bulk and diffusing species ONLY
+    /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
     vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
-    /// Reaction happening between bulk species ONLY
+    /// Reaction happening between SpeciesBulk ONLY
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
     
     //@{
@@ -61,9 +61,9 @@ struct ChemistryData {
     //@}
     
     //@{
-    /// Cross filament binding reactions
+    /// Cross Filament binding reactions
     /*!
-     *  All cross filament reactions are held using a vector containing a tuple with the string
+     *  All cross Filament reactions are held using a vector containing a tuple with the string
      *  of reactants, string of products, the reaction rate, and binding range.
      */
     /// Linker binding reactions
@@ -95,40 +95,40 @@ struct ChemistryData {
     
 };
 
-/// Struct to hold the parameters of the boundary
+/// Struct to hold the parameters of the Boundary
 struct BoundaryType {
     
     string boundaryShape = "";
 };
 
-/// Struct to hold the force field types
+/// Struct to hold the ForceField types
 struct MechanicsFFType {
     
     //@{
-    /// Filament FF types
+    /// FilamentFF types
     string FStretchingType = "";
     string FBendingType = "";
     string FTwistingType = "";
     //@}
     
     //@{
-    /// Linker FF types
+    /// LinkerFF types
     string LStretchingType = "";
     string LBendingType = "";
     string LTwistingType = "";
     //@}
     
     //@{
-    /// Motor FF type
+    /// MotorFF type
     string MStretchingType = "";
     string MBendingType = "";
     string MTwistingType = "";
     //@}
     
-    /// Volume FF type
+    /// VolumeFF type
     string VolumeFFType = "";
     
-    /// Boundary FF Type
+    /// BoundaryFF Type
     string BoundaryFFType = "";
     
 };

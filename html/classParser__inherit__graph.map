@@ -1,5 +1,0 @@
-<map id="Parser" name="Parser">
-<area shape="rect" id="node2" href="$classChemistryParser.html" title="Used to parse all chemical information. " alt="" coords="5,79,126,104"/>
-<area shape="rect" id="node3" href="$classFilamentParser.html" title="Used to parse initial Filament information, initialized by the Controller. " alt="" coords="150,79,262,104"/>
-<area shape="rect" id="node4" href="$classSystemParser.html" title="To parse a system input file, initialized by the Controller. " alt="" coords="285,79,390,104"/>
-</map>

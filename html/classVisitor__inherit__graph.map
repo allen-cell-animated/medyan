@@ -1,5 +1,0 @@
-<map id="Visitor" name="Visitor">
-<area shape="rect" id="node2" href="$classTypeVisitor.html" title="TypeVisitor\&lt; ComponentType \&gt;" alt="" coords="5,79,213,104"/>
-<area shape="rect" id="node3" href="$classVisitorLambda.html" title="Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. " alt="" coords="237,79,344,104"/>
-<area shape="rect" id="node4" href="$classTypeVisitorLambda.html" title="TypeVisitorLambda\&lt;\l ComponentType \&gt;" alt="" coords="219,152,362,191"/>
-</map>

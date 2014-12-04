@@ -1,4 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classReactionBase.html" title="Represents an abstract interface for simple chemical reactions of the form A + B &#45;&gt; C..." alt="" coords="5,5,110,31"/>
-<area shape="rect" id="node2" href="$classReaction.html" title="Represents a concrete chemical reaction, such as A + B &#45;&gt; C, where M is the number of reactants and N..." alt="" coords="158,5,283,31"/>
-</map>

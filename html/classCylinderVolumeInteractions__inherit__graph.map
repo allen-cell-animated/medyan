@@ -1,4 +1,0 @@
-<map id="CylinderVolumeInteractions" name="CylinderVolumeInteractions">
-<area shape="rect" id="node3" href="$classCylinderExclVolume.html" title="Represents an excuded volume interaction between two Cylinders. " alt="" coords="5,152,195,191"/>
-<area shape="rect" id="node2" href="$classCylinderNLContainer.html" title="Holds a CylinderNeighborList. " alt="" coords="28,5,173,31"/>
-</map>

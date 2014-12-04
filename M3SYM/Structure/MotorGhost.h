@@ -46,11 +46,11 @@ private:
     double _position2; ///< Position on second cylinder
     
     short _motorType; ///< Integer specifying the type of linker
-    int _motorID; ///< Integer ID of this motor
+    int _motorID; ///< Integer ID of this motor, managed by MotorGhostDB
     
     float _birthTime; ///< Birth time
     
-    Compartment* _compartment; ///< Compartment that this motor is in
+    Compartment* _compartment; ///< Where this motorghost is
     
     
 public:
@@ -72,12 +72,12 @@ public:
     void setSecondCylinder(Cylinder* cylinder) {_c2 = cylinder;}
     //@}
     
-    /// Set CMotorGhost
+    /// Set chem motor ghost
     void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = unique_ptr<CMotorGhost>(cMotorGhost);}
-    /// Get CMotorGhost
+    /// Get chem motor ghost
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}
     
-    /// Get MMotorGhost
+    /// Get mech motor ghost
     MMotorGhost* getMMotorGhost() {return _mMotorGhost.get();}
     
     //@{
@@ -95,7 +95,7 @@ public:
     //@}
     
     /// Update the position
-    /// @note - changes compartment of CMotorGhost if needed
+    /// @note - changes compartment if needed
     virtual void updatePosition();
 
     /// Update the reaction rates
