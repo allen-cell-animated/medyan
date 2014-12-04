@@ -24,6 +24,7 @@
 #include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "BranchPoint.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
@@ -194,6 +195,10 @@ void Controller::updateSystem() {
     for(auto &m : *MotorGhostDB::instance()) {
         m->updatePosition();
         m->updateReactionRates();
+    }
+    for(auto &b : *BranchPointDB::instance()) {
+        b->updatePosition();
+        b->updateReactionRates();
     }
 
     //reset neighbor lists
