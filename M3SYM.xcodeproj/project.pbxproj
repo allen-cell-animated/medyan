@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F7199B2A1A30B8F700CD5DCC /* BranchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B281A30B8F700CD5DCC /* BranchPoint.cpp */; };
+		F7199B2B1A30B8F700CD5DCC /* BranchPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B291A30B8F700CD5DCC /* BranchPoint.h */; };
+		F7199B2E1A30C24D00CD5DCC /* BranchPointDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B2C1A30C24D00CD5DCC /* BranchPointDB.cpp */; };
+		F7199B2F1A30C24D00CD5DCC /* BranchPointDB.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B2D1A30C24D00CD5DCC /* BranchPointDB.h */; };
+		F7199B361A30C84600CD5DCC /* MBranchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B341A30C84600CD5DCC /* MBranchPoint.cpp */; };
+		F7199B371A30C84600CD5DCC /* MBranchPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B351A30C84600CD5DCC /* MBranchPoint.h */; };
+		F7199B3A1A30CCE500CD5DCC /* CBranchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B381A30CCE500CD5DCC /* CBranchPoint.cpp */; };
+		F7199B3B1A30CCE500CD5DCC /* CBranchPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B391A30CCE500CD5DCC /* CBranchPoint.h */; };
 		F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7531A2D16F200AE21D1 /* CController.cpp */; };
 		F735B76E1A2D16F200AE21D1 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7541A2D16F200AE21D1 /* CController.h */; };
 		F735B76F1A2D16F200AE21D1 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7551A2D16F200AE21D1 /* common.cpp */; };
@@ -214,6 +222,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F7199B281A30B8F700CD5DCC /* BranchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchPoint.cpp; sourceTree = "<group>"; };
+		F7199B291A30B8F700CD5DCC /* BranchPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPoint.h; sourceTree = "<group>"; };
+		F7199B2C1A30C24D00CD5DCC /* BranchPointDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchPointDB.cpp; sourceTree = "<group>"; };
+		F7199B2D1A30C24D00CD5DCC /* BranchPointDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPointDB.h; sourceTree = "<group>"; };
+		F7199B341A30C84600CD5DCC /* MBranchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MBranchPoint.cpp; sourceTree = "<group>"; };
+		F7199B351A30C84600CD5DCC /* MBranchPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBranchPoint.h; sourceTree = "<group>"; };
+		F7199B381A30CCE500CD5DCC /* CBranchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBranchPoint.cpp; sourceTree = "<group>"; };
+		F7199B391A30CCE500CD5DCC /* CBranchPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBranchPoint.h; sourceTree = "<group>"; };
 		F735B7531A2D16F200AE21D1 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
 		F735B7541A2D16F200AE21D1 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		F735B7551A2D16F200AE21D1 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
@@ -449,15 +465,21 @@
 				F7C9CFAE1A2D165D0087434A /* BoundarySurface.h */,
 				F7C9CFAF1A2D165D0087434A /* BoundarySurfaceImpl.cpp */,
 				F7C9CFB01A2D165D0087434A /* BoundarySurfaceImpl.h */,
-				F7C9CFB11A2D165D0087434A /* CBound.h */,
+				F7199B281A30B8F700CD5DCC /* BranchPoint.cpp */,
+				F7199B291A30B8F700CD5DCC /* BranchPoint.h */,
+				F7199B2C1A30C24D00CD5DCC /* BranchPointDB.cpp */,
+				F7199B2D1A30C24D00CD5DCC /* BranchPointDB.h */,
 				F7C9CFB21A2D165D0087434A /* CCylinder.cpp */,
 				F7C9CFB31A2D165D0087434A /* CCylinder.h */,
 				F7C9CFB41A2D165D0087434A /* CLinker.cpp */,
 				F7C9CFB51A2D165D0087434A /* CLinker.h */,
-				F7C9CFB61A2D165D0087434A /* CMonomer.cpp */,
-				F7C9CFB71A2D165D0087434A /* CMonomer.h */,
+				F7199B381A30CCE500CD5DCC /* CBranchPoint.cpp */,
+				F7199B391A30CCE500CD5DCC /* CBranchPoint.h */,
 				F7C9CFB81A2D165D0087434A /* CMotorGhost.cpp */,
 				F7C9CFB91A2D165D0087434A /* CMotorGhost.h */,
+				F7C9CFB11A2D165D0087434A /* CBound.h */,
+				F7C9CFB61A2D165D0087434A /* CMonomer.cpp */,
+				F7C9CFB71A2D165D0087434A /* CMonomer.h */,
 				F7C9CFBA1A2D165D0087434A /* Compartment.cpp */,
 				F7C9CFBB1A2D165D0087434A /* Compartment.h */,
 				F7C9CFBC1A2D165D0087434A /* CompartmentContainer.cpp */,
@@ -480,6 +502,8 @@
 				F7C9CFCD1A2D165D0087434A /* MLinker.h */,
 				F7C9CFCE1A2D165D0087434A /* MMotorGhost.cpp */,
 				F7C9CFCF1A2D165D0087434A /* MMotorGhost.h */,
+				F7199B341A30C84600CD5DCC /* MBranchPoint.cpp */,
+				F7199B351A30C84600CD5DCC /* MBranchPoint.h */,
 				F7C9CFD01A2D165D0087434A /* MotorGhost.cpp */,
 				F7C9CFD11A2D165D0087434A /* MotorGhost.h */,
 				F7C9CFD21A2D165D0087434A /* MotorGhostDB.cpp */,
@@ -735,6 +759,7 @@
 				F735B7A81A2D172800AE21D1 /* ReactionManager.h in Headers */,
 				F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */,
 				F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */,
+				F7199B371A30C84600CD5DCC /* MBranchPoint.h in Headers */,
 				F7C9D02C1A2D165D0087434A /* Species.h in Headers */,
 				F7C9D0231A2D165D0087434A /* Reactable.h in Headers */,
 				F7C9D02D1A2D165D0087434A /* SpeciesContainer.h in Headers */,
@@ -763,6 +788,7 @@
 				F7C9CFFE1A2D165D0087434A /* CMonomer.h in Headers */,
 				F735B7991A2D172800AE21D1 /* ChemCallbacks.h in Headers */,
 				F7C9D0281A2D165D0087434A /* ReactionContainer.h in Headers */,
+				F7199B2B1A30B8F700CD5DCC /* BranchPoint.h in Headers */,
 				F7C9D0141A2D165D0087434A /* MLinker.h in Headers */,
 				F735B81B1A2D175800AE21D1 /* VolumeCylindricalFF.h in Headers */,
 				F735B79B1A2D172800AE21D1 /* ChemGillespieImpl.h in Headers */,
@@ -789,12 +815,14 @@
 				F735B7BA1A2D173F00AE21D1 /* ConjugateGradient.h in Headers */,
 				F735B7841A2D16F200AE21D1 /* SystemParameters.h in Headers */,
 				F735B8061A2D175800AE21D1 /* FilamentStretchingHarmonic.h in Headers */,
+				F7199B3B1A30CCE500CD5DCC /* CBranchPoint.h in Headers */,
 				F735B7EE1A2D175800AE21D1 /* BoundaryFF.h in Headers */,
 				F7C9D0121A2D165D0087434A /* MCylinder.h in Headers */,
 				F735B7701A2D16F200AE21D1 /* common.h in Headers */,
 				F735B7F11A2D175800AE21D1 /* BoundaryRepulsion.h in Headers */,
 				F7C9D0081A2D165D0087434A /* CylinderDB.h in Headers */,
 				F7C9D0041A2D165D0087434A /* CompartmentContainer.h in Headers */,
+				F7199B2F1A30C24D00CD5DCC /* BranchPointDB.h in Headers */,
 				F735B7F91A2D175800AE21D1 /* CylinderExclVolume.h in Headers */,
 				F7C9CFEE1A2D165D0087434A /* BoundaryElement.h in Headers */,
 				F735B7821A2D16F200AE21D1 /* Signaling.h in Headers */,
@@ -921,6 +949,7 @@
 				F735B79F1A2D172800AE21D1 /* ChemNRMImpl.cpp in Sources */,
 				F735B7A71A2D172800AE21D1 /* ReactionManager.cpp in Sources */,
 				F7C9CFFB1A2D165D0087434A /* CLinker.cpp in Sources */,
+				F7199B2A1A30B8F700CD5DCC /* BranchPoint.cpp in Sources */,
 				F735B7831A2D16F200AE21D1 /* SystemParameters.cpp in Sources */,
 				F735B77C1A2D16F200AE21D1 /* MController.cpp in Sources */,
 				F735B7F61A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp in Sources */,
@@ -934,12 +963,14 @@
 				F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */,
 				F7C9CFE91A2D165D0087434A /* Bead.cpp in Sources */,
 				F7C9D0111A2D165D0087434A /* MCylinder.cpp in Sources */,
+				F7199B361A30C84600CD5DCC /* MBranchPoint.cpp in Sources */,
 				F7C9D0151A2D165D0087434A /* MMotorGhost.cpp in Sources */,
 				F7C9D0211A2D165D0087434A /* NeighborListDB.cpp in Sources */,
 				F7C9D0171A2D165D0087434A /* MotorGhost.cpp in Sources */,
 				F7C9D00D1A2D165D0087434A /* Linker.cpp in Sources */,
 				F7C9D0241A2D165D0087434A /* Reaction.cpp in Sources */,
 				F735B7F01A2D175800AE21D1 /* BoundaryRepulsion.cpp in Sources */,
+				F7199B3A1A30CCE500CD5DCC /* CBranchPoint.cpp in Sources */,
 				F7C9CFF61A2D165D0087434A /* BoundarySurfaceImpl.cpp in Sources */,
 				F7C9D00F1A2D165D0087434A /* LinkerDB.cpp in Sources */,
 				F735B7731A2D16F200AE21D1 /* Composite.cpp in Sources */,
@@ -956,6 +987,7 @@
 				F735B7A21A2D172800AE21D1 /* ChemSim.cpp in Sources */,
 				F735B7F41A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp in Sources */,
 				F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */,
+				F7199B2E1A30C24D00CD5DCC /* BranchPointDB.cpp in Sources */,
 				F7C9D0011A2D165D0087434A /* Compartment.cpp in Sources */,
 				F7C9D0131A2D165D0087434A /* MLinker.cpp in Sources */,
 				F735B77A1A2D16F200AE21D1 /* MathFunctions.cpp in Sources */,

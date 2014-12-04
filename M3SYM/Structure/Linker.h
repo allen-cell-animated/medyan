@@ -67,7 +67,7 @@ public:
     
     /// Set chem linker
     void setCLinker(CLinker* cLinker) {_cLinker = unique_ptr<CLinker>(cLinker);}
-    /// Get CLinker
+    /// Get chem linker
     CLinker* getCLinker() {return _cLinker.get();}
     
     /// Get mech linker

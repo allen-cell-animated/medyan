@@ -16,6 +16,7 @@
 #include "Filament.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "BranchPoint.h"
 
 #include "MathFunctions.h"
 #include "SystemParameters.h"
@@ -72,6 +73,18 @@ void SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
     new MotorGhost(c1, c2, motorType, position1, position2, true);
 }
 void SubSystem::removeMotorGhost(MotorGhost* m) { delete m; }
+
+void SubSystem::addNewBranchPoints(vector<vector<Cylinder* >>& v, short branchType) {
+    
+    for (auto it: v)
+        new BranchPoint(it[0], it[1], branchType);
+}
+void SubSystem::addNewBranchPoint(Cylinder* c1, Cylinder* c2,
+                                 short branchType, double position) {
+    
+    new BranchPoint(c1, c2, branchType, position, true);
+}
+void SubSystem::removeBranchPoint(BranchPoint* b) { delete b; }
 
 
 double SubSystem::getSubSystemEnergy() {return _energy;}

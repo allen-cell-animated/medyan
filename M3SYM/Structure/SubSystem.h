@@ -25,12 +25,14 @@ class Filament;
 class Cylinder;
 class Linker;
 class MotorGhost;
+class BranchPoint;
 
 class Movable;
 class Reactable;
 
 
-/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker), and [MotorGhosts] (@ref MotorGhost).
+/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker),
+/// [MotorGhosts] (@ref MotorGhost), and [BranchPoints](@ref BranchPoint).
 
 /*! This is a class which handles all changes and information regarding the system.
  *  This class operates as a top manager and provides connections between smaller parts of the system.
@@ -43,53 +45,61 @@ public:
     /// Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
     
-    /// Add new filaments.
+    /// Add new [Filaments](@ref Filament).
     /// @param v - coordinates of the first and last bead in the filament.
     void addNewFilaments(vector<vector<vector<double>>>& v);
-    /// Add a new filament at runtime
+    /// Add a new Filament at runtime
     void addNewFilament(vector<vector<double>>& v);
-    /// Remove a filament from the system
+    /// Remove a Filament from the system
     void removeFilament(Filament* f);
     
-    /// Add a linker at initialization
+    /// Add [Linkers](@ref Linker) at initialization
     /// @param v - vector of cylinders to connect to
     void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
-    /// Add a single linker during runtime
+    /// Add a single Linker during runtime
     void addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2);
-    /// Remove a linker from the system
+    /// Remove a Linker from the system
     void removeLinker(Linker* l);
     
-    /// Add a motor at initialization
+    /// Add [MotorGhosts](@ref MotorGhost) at initialization
     /// @param v - vector of cylinders to connect to
     void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
-    /// Add a motor during runtime
+    /// Add a MotorGhost during runtime
     void addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2);
-    /// remove a motor ghost from the system
+    /// remove a MotorGhost ghost from the system
     void removeMotorGhost(MotorGhost* m);
     
+    /// Add [BranchPoints](@ref BranchPoint) at initialization
+    /// @param v - vector of cylinders to connect to
+    void addNewBranchPoints(vector<vector<Cylinder*>>& v, short branchType);
+    /// Add a BranchPoint during runtime
+    void addNewBranchPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
+    /// remove a BranchPoint from the system
+    void removeBranchPoint(BranchPoint* b);
+    
     //@{
-    /// Setter functions for movables
+    /// Setter functions for Movable
     void addMovable(Movable* mov) { _movables.insert(mov); }
     void removeMovable(Movable* mov) {
         auto it = _movables.find(mov);
         if(it != _movables.end()) _movables.erase(it);
     }
     //@}
-    /// Get all movables in the subsystem
+    /// Get all Movable
     const unordered_set<Movable*>& getMovables() {return _movables;}
     
     //@{
-    /// Setter function for reactables
+    /// Setter function for Reactable
     void addReactable(Reactable* r) { _reactables.insert(r); }
     void removeReactable(Reactable* r) {
         auto it = _reactables.find(r);
         if(it != _reactables.end()) _reactables.erase(it);
     }
     //@}
-    /// Get all reactables in the subsystem
+    /// Get all Reactable
     const unordered_set<Reactable*>& getReactables() {return _reactables;}
     
-    /// Return the number of beads in the system
+    /// Return the number of [Beads](@ref Bead) in the system
     int getSystemSize();
     
     double getSubSystemEnergy();
@@ -97,8 +107,8 @@ public:
     
     void setSubSystemEnergy(double energy);
 private:
-    double _energy = 0; ///< energy of subsystem
-    Boundary* _boundary; ///< subsystem boundary
+    double _energy = 0; ///< energy
+    Boundary* _boundary; ///< boundary pointer
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem

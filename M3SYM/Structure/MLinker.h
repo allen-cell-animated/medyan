@@ -44,9 +44,9 @@ public:
     double getEqLength(){return _eqLength;}
     //@}
     
-    /// Set parent linker
+    /// Set parent
     void setLinker(Linker* linker) {_pLinker = linker;}
-    /// Get parent linker
+    /// Get parent 
     Linker* getLinker() {return _pLinker;}
     
 private:

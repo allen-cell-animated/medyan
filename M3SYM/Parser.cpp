@@ -314,6 +314,39 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.MTwistingType = lineVector[1];
             }
         }
+        if (line.find("BRSTRETCHINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at Filament stretching type. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BrStretchingType = lineVector[1];
+            }
+        }
+        else if (line.find("BRBENDINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at Filament bending type. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BrBendingType = lineVector[1];
+            }
+        }
+        else if (line.find("BRTWISTINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at Filament twisting type. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BrTwistingType = lineVector[1];
+            }
+        }
         else if (line.find("BOUNDARYTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -515,6 +548,68 @@ void SystemParser::readMechanicsParameters() {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
                     MParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        
+        //Branch stretching
+        if (line.find("BRSTRETCHINGK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("BRSTRETCHINGL") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        
+        
+        //Branch bending
+        else if (line.find("BRBENDINGK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("BRBENDINGTHETA") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+            
+        }
+        
+        //Branch twisting
+        else if (line.find("BRTWISTINGK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrTwistingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("BRTWISTINGPHI") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrTwistingPhi.push_back(atof((lineVector[i].c_str())));
             }
         }
         

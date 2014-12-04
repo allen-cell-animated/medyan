@@ -40,12 +40,22 @@ struct MechanicsParameters {
     //@}
     
     //@{
-    /// Motor parameter
+    /// MotorGhost parameter
     vector<double> MStretchingK = {};
     vector<double> MBendingK = {};
     vector<double> MBendingTheta = {};
     vector<double> MTwistingK = {};
     vector<double> MTwistingPhi = {};
+    //@}
+    
+    //@{
+    /// BranchPoint parameter
+    vector<double> BrStretchingK = {};
+    vector<double> BrStretchingL = {};
+    vector<double> BrBendingK = {};
+    vector<double> BrBendingTheta = {};
+    vector<double> BrTwistingK = {};
+    vector<double> BrTwistingPhi = {};
     //@}
     
     //@{

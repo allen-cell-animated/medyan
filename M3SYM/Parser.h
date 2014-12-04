@@ -105,14 +105,14 @@ struct BoundaryType {
 struct MechanicsFFType {
     
     //@{
-    /// FilamentFF types
+    /// FilamentFF type
     string FStretchingType = "";
     string FBendingType = "";
     string FTwistingType = "";
     //@}
     
     //@{
-    /// LinkerFF types
+    /// LinkerFF type
     string LStretchingType = "";
     string LBendingType = "";
     string LTwistingType = "";
@@ -123,6 +123,13 @@ struct MechanicsFFType {
     string MStretchingType = "";
     string MBendingType = "";
     string MTwistingType = "";
+    //@}
+    
+    //@{
+    /// BranchingFF type
+    string BrStretchingType = "";
+    string BrBendingType = "";
+    string BrTwistingType = "";
     //@}
     
     /// VolumeFF type

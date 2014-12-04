@@ -33,7 +33,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
         
     //Find compartment
     auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->coordinate, _position2);
+    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
     coordinate = MidPointCoordinate(m1, m2, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
