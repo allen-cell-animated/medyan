@@ -78,7 +78,7 @@ public:
     //@}
     
     //@{
-    /// Get br parameter
+    /// Get branch parameter
     short getBranchType() {return _branchType;}
     int getBranchID() {return _branchID;}
     //@}

@@ -823,7 +823,79 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         else
             _IFRxnManagers.emplace_back(new MotorWalkBManager(reactantTemplate, productTemplate, get<2>(r)));
     }
- 
+    
+    //set up reaction templates
+    for(auto &r: chem.agingReactions) {
+        
+        vector<tuple<int, SpeciesType>> reactantTemplate;
+        vector<tuple<int, SpeciesType>> productTemplate;
+        
+        vector<string> reactants = get<0>(r);
+        vector<string> products = get<1>(r);
+        //read strings, and look up type
+        
+        //Checks on number of reactants, products
+        if(reactants.size() != 1 || products.size() != 1) {
+            cout << "Invalid aging reaction. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //FIRST REACTANT SPECIES MUST BE FILAMENT
+        auto reactant = reactants[0];
+        //read strings, and look up type
+        if(reactant.find("FILAMENT") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            int position = 0;
+            
+            if(it != _speciesFilament.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesFilament.begin(), it);
+                reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+            }
+            else {
+                cout << "A filament species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            cout << "First species listed in an aging reaction must be filament. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //FIRST PRODUCT SPECIES MUST BE FILAMENT
+        auto product = products[0];
+        //read strings, and look up type
+        if(product.find("FILAMENT") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            int position = 0;
+            
+            if(it != _speciesFilament.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesFilament.begin(), it);
+                productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+            }
+            else {
+                cout << "A filament species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            cout << "Second species listed in an aging reaction must be bound. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        
+        //add reaction
+        _IFRxnManagers.emplace_back(new AgingManager(reactantTemplate, productTemplate, get<2>(r)));
+    }
 }
 
 void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {

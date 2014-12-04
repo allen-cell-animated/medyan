@@ -11,10 +11,11 @@ Goals for November 2014
     -Move bead / boundary element neighbors list to global                      X
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
-    -Add branching reaction + coupling to mechanics
+    -Add branching + coupling to mechanics
+    -Fix signal copying
     -Add poly/depoly/unbinding + coupling to mechanics
-    -Motor step size, rethinking of binding/stepping
-    -Add aging reaction + coupling to mechanics
+    -Motor step size, rethinking of binding/stepping (numbindingsites)
+    -Add aging reaction
     -Add severing reaction + coupling to mechanics
     -Optimizations (Data structures (especially reaction dependents, dbs),
                     Neighbor list updates,

@@ -61,10 +61,10 @@ public:
                                float rate) : _reactants(reactants), _products(products), _rate(rate) {}
     ~InternalFilamentRxnManager() {}
 
-    ///Add this chemical reaction to a CCylinder. Adds all extension and retraction callbacks needed
+    ///Add this chemical reaction. Adds all extension and retraction callbacks needed
     virtual void addReaction(CCylinder* cc) = 0;
     
-    ///Add this chemical reaction cross two [CCylinders](@ref CCylinder).
+    ///Add this chemical reaction along a filament
     ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
@@ -177,6 +177,20 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
     
 };
+
+/// Manager for Filament aging
+class AgingManager : public InternalFilamentRxnManager {
+    
+public:
+    AgingManager(vector<tuple<int, SpeciesType>> reactants,
+                 vector<tuple<int, SpeciesType>> products,
+                 float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+    ~AgingManager() {}
+    
+    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
 
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 

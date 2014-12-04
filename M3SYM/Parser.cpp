@@ -1319,6 +1319,35 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
         }
+        
+        else if(line.find("AGINGREACTION") != string::npos) {
+            
+            vector<string> reactants;
+            vector<string> products;
+            
+            vector<string> lineVector = split<string>(line);
+            
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+                
+                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chem.agingReactions.push_back(tuple<vector<string>, vector<string>, double>
+                                    (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                
+            }
+            else {
+                cout << "Error reading a binding reaction. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
     }
     return chem;
 }

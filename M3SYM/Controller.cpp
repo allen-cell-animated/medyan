@@ -244,7 +244,7 @@ void Controller::run() {
         updatePositions();
         o.printBasicSnapshot(1);
 #else
-        updatePositions();
+        updateSystem();
         o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
         

@@ -98,13 +98,13 @@ BSCREENLENGTH:               2.0
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    100000
+NUMSTEPS:                    20
 NUMSTEPSPERM:                1
 
-NUMBULKSPECIES:              2
-NUMDIFFUSINGSPECIES:         1
+NUMBULKSPECIES:              0
+NUMDIFFUSINGSPECIES:         0
 
-NUMFILAMENTSPECIES:          1
+NUMFILAMENTSPECIES:          2
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
@@ -116,7 +116,7 @@ NUMMOTORSPECIES:             1
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-#FILAMENTFILE:               testfilamentinput.txt
+FILAMENTFILE:               testfilamentinput.txt
 
 
 NUMFILAMENTS:                1

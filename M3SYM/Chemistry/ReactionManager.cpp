@@ -972,6 +972,45 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
 }
 
+
+void AgingManager::addReaction(CCylinder* cc) {
+    
+    //loop through all monomers of filament
+    int maxlength = cc->getSize();
+    
+    //loop through all monomers
+    for(int i = 0; i < maxlength - 1; i++) {
+        
+        CMonomer* m1 = cc->getCMonomer(i);
+        vector<Species*> reactantSpecies;
+        vector<Species*> productSpecies;
+        
+        //FIRST REACTANT SHOULD BE FILAMENT SPECIES
+        auto r = _reactants[0];
+        auto type = get<1>(r);
+        int speciesInt = get<0>(r);
+        
+        reactantSpecies.push_back(m1->speciesFilament(speciesInt));
+        
+        //FIRST PRODUCT MUST BE FILAMENT SPECIES
+        auto p = _products[0];
+        type = get<1>(p);
+        speciesInt = get<0>(p);
+        
+        productSpecies.push_back(m1->speciesFilament(speciesInt));
+        
+        //Add the reaction
+        vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn = new Reaction<1, 1>(species, _rate);
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::AGING);
+    }
+}
+
+void AgingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 void LinkerBindingManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     //Add reaction to middle of both cylinders

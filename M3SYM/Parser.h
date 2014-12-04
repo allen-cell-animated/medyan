@@ -58,6 +58,8 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> bindingReactions = {};
     /// Unbinding reactions
     vector<tuple<vector<string>, vector<string>, double>> unbindingReactions = {};
+    /// Aging reactions
+    vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
     //@}
     
     //@{
