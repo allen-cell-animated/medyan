@@ -61,6 +61,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
+    
+    
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
@@ -135,6 +137,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
+    
     
     double invJJ = 1/JJ;
     
