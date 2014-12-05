@@ -840,7 +840,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         
-        //FIRST REACTANT SPECIES MUST BE FILAMENT
+        //FIRST REACTANT SPECIES MUST BE FILAMENT, PLUS OR MINUS END
         auto reactant = reactants[0];
         //read strings, and look up type
         if(reactant.find("FILAMENT") != string::npos) {
@@ -861,12 +861,48 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
         }
+        else if(reactant.find("PLUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            int position = 0;
+            
+            if(it != _speciesPlusEnd.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesPlusEnd.begin(), it);
+                reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+            }
+            else {
+                cout << "A plus end species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if(reactant.find("MINUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMinusEnd.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesMinusEnd.begin(), it);
+                reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+            }
+            else {
+                cout << "A minus end species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
         else{
             cout << "First species listed in an aging reaction must be filament. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
         
-        //FIRST PRODUCT SPECIES MUST BE FILAMENT
+        //FIRST PRODUCT SPECIES MUST BE FILAMENT, PLUS, OR MINUS END
         auto product = products[0];
         //read strings, and look up type
         if(product.find("FILAMENT") != string::npos) {
@@ -887,11 +923,46 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
         }
+        else if(product.find("PLUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            int position = 0;
+            
+            if(it != _speciesPlusEnd.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesPlusEnd.begin(), it);
+                productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+            }
+            else {
+                cout << "A plus end species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if(product.find("MINUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            int position = 0;
+            
+            if(it != _speciesMinusEnd.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesMinusEnd.begin(), it);
+                productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+            }
+            else {
+                cout << "A minus end species that was included in a reaction was not initialized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
         else{
             cout << "Second species listed in an aging reaction must be bound. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        
         
         //add reaction
         _IFRxnManagers.emplace_back(new AgingManager(reactantTemplate, productTemplate, get<2>(r)));
@@ -1542,7 +1613,6 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     }
 
     else if(creation) {
-        
         CMonomer* m2 = lastcc->getCMonomer(int(cc->getSize() / 2));
         CMonomer* m1 = lastcc->getCMonomer(int(cc->getSize() / 2) - 1);
         m2->speciesPlusEnd(0)->getRSpecies().setN(1);
@@ -1557,18 +1627,17 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 2);
-            m1->speciesPlusEnd(0)->getRSpecies().setN(0);
+            m1->speciesPlusEnd(0)->getRSpecies().down();
             
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 2);
             m2->speciesPlusEnd(0)->getRSpecies().setN(1);
             m2->speciesBound(0)->getRSpecies().setN(1);
             
             //fill last cylinder with default filament value
-            for(int i = lastcc->getSize() - 2; i < lastcc->getSize(); i++) {
-                lastcc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
-                lastcc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
-                
-            }
+            m1->speciesFilament(0)->getRSpecies().up();
+            lastcc->getCMonomer(lastcc->getSize() - 1)->speciesFilament(0)->getRSpecies().up();
+            lastcc->getCMonomer(lastcc->getSize() - 1)->speciesBound(0)->getRSpecies().up();
+
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 2; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);

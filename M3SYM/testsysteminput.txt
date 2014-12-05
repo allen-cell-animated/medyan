@@ -3,13 +3,13 @@
 
 NDIM:                        3
 
-NX:                          100
-NY:                          100
-NZ:                          100
+NX:                          10
+NY:                          10
+NZ:                          10
 
-COMPARTMENTSIZEX:            10.0
-COMPARTMENTSIZEY:            10.0
-COMPARTMENTSIZEZ:            10.0
+COMPARTMENTSIZEX:            1000.0
+COMPARTMENTSIZEY:            1000.0
+COMPARTMENTSIZEZ:            1000.0
 
 MONOMERSIZE:                 2.7
 
@@ -98,28 +98,28 @@ BSCREENLENGTH:               2.0
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    20
-NUMSTEPSPERM:                1
+NUMSTEPS:                    10000
+NUMSTEPSPERM:                1000
 
-NUMBULKSPECIES:              0
+NUMBULKSPECIES:              1
 NUMDIFFUSINGSPECIES:         0
 
 NUMFILAMENTSPECIES:          2
-NUMPLUSENDSPECIES:           1
-NUMMINUSENDSPECIES:          1
+NUMPLUSENDSPECIES:           2
+NUMMINUSENDSPECIES:          2
 
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             1
+NUMLINKERSPECIES:            0
+NUMMOTORSPECIES:             0
 
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-FILAMENTFILE:               testfilamentinput.txt
+#FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                1
+NUMFILAMENTS:                100
 
 
 

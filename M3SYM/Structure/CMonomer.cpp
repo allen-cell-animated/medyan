@@ -219,37 +219,37 @@ void CMonomer::print()
     short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
     short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = _speciesPlusEnd[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
     short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = _speciesMinusEnd[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
     short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
     short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = _speciesLinker[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
     short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = _speciesMotor[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName().at(0);
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
 }

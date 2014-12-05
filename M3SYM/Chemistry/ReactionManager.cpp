@@ -608,7 +608,7 @@ void BasicBindingManager::addReaction(CCylinder* cc) {
     int maxlength = cc->getSize();
     
     //loop through all monomers
-    for(int i = 0; i < maxlength - 1; i++) {
+    for(int i = 0; i <= maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
         vector<Species*> reactantSpecies;
@@ -662,7 +662,7 @@ void UnbindingManager::addReaction(CCylinder* cc) {
     int maxlength = cc->getSize();
     
     //loop through all monomers
-    for(int i = 0; i < maxlength - 1; i++) {
+    for(int i = 0; i <= maxlength - 1; i++) {
         
         SpeciesType boundType; ReactionType reactionType;
         
@@ -979,25 +979,29 @@ void AgingManager::addReaction(CCylinder* cc) {
     int maxlength = cc->getSize();
     
     //loop through all monomers
-    for(int i = 0; i < maxlength - 1; i++) {
+    for(int i = 0; i <= maxlength - 1; i++) {
         
         CMonomer* m1 = cc->getCMonomer(i);
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        //FIRST REACTANT SHOULD BE FILAMENT SPECIES
+        //FIRST REACTANT SHOULD BE FILAMENT, PLUS OR MINUS SPECIES
         auto r = _reactants[0];
         auto type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        reactantSpecies.push_back(m1->speciesFilament(speciesInt));
+        if(type == SpeciesType::FILAMENT) reactantSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND) reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND) reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
-        //FIRST PRODUCT MUST BE FILAMENT SPECIES
+        //FIRST PRODUCT MUST BE FILAMENT, PLUS OR MINUS SPECIES
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
         
-        productSpecies.push_back(m1->speciesFilament(speciesInt));
+        if(type == SpeciesType::FILAMENT) productSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND) productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND) productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
