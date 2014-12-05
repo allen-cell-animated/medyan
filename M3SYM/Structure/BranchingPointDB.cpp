@@ -11,4 +11,13 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "CBranchPoint.h"
+#include "BranchingPointDB.h"
+
+int BranchingPointDB::_currentBranchID = 0;
+BranchingPointDB* BranchingPointDB::_instance = 0;
+
+BranchingPointDB* BranchingPointDB::instance() {
+    if(_instance==0)
+        _instance = new BranchingPointDB;
+    return _instance;
+}

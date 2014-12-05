@@ -158,6 +158,7 @@ namespace mathfunc {
             newP4.push_back(p4[2] + v1[2]*d);
             return newP4;
         }
+    }
 }
 
 #endif

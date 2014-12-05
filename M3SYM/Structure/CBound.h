@@ -24,7 +24,7 @@ class Compartment;
 /// Represents a chemical object that is bound to a Filament.
 /*!
  *  The CBound class is an abstract representation of a chemically bound object to a Filament
- *  (Could be a Linker, MotorGhost, BranchPoint, etc). Each CBound object has a pointer
+ *  (Could be a Linker, MotorGhost, BranchingPoint, etc). Each CBound object has a pointer
  *  to the corresponding [SpeciesBound] (@ref SpeciesBound) on a Filament. Different implementations of CBound class will
  *  have different functions to bind, move, etc. See documentation of subclass for more details on function.
  */

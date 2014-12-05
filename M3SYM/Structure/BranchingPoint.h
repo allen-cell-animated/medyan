@@ -11,15 +11,15 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_BranchPoint_h
-#define M3SYM_BranchPoint_h
+#ifndef M3SYM_BranchingPoint_h
+#define M3SYM_BranchingPoint_h
 
 #include "common.h"
 
-#include "BranchPointDB.h"
+#include "BranchingPointDB.h"
 
-#include "MBranchPoint.h"
-#include "CBranchPoint.h"
+#include "MBranchingPoint.h"
+#include "CBranchingPoint.h"
 #include "Movable.h"
 #include "Reactable.h"
 
@@ -27,17 +27,17 @@
 class Compartment;
 class Cylinder;
 
-/// A container to store a MBranchPoint and CBranchPoint.
+/// A container to store a MBranchingPoint and CBranchingPoint.
 /*!
- * BranchPoint class is used to manage and store a MBranchPoint and CBranchPoint.
+ * BranchingPoint class is used to manage and store a MBranchingPoint and CBranchingPoint.
  * Upon intialization, both of these components are created. Extending the Movable and Reactable
- * classes, the BranchPoint can update its position and reactions according to mechanical equilibration.
+ * classes, the BranchingPoint can update its position and reactions according to mechanical equilibration.
  */
-class BranchPoint : public Movable, Reactable {
+class BranchingPoint : public Movable, Reactable {
     
 private:
-    unique_ptr<MBranchPoint> _mBranchPoint; ///< Pointer to mech branch point
-    unique_ptr<CBranchPoint> _cBranchPoint; ///< Pointer to chem branch point
+    unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
+    unique_ptr<CBranchingPoint> _cBranchingPoint; ///< Pointer to chem branch point
     
     Cylinder* _c1; ///< Mother cylinder
     Cylinder* _c2; ///< Branching cylinder
@@ -45,7 +45,7 @@ private:
     double _position; ///< Position on mother cylinder
     
     short _branchType; ///< Integer specifying the type
-    int _branchID; ///< Integer ID of this specific branch point, managed by BranchPointDB
+    int _branchID; ///< Integer ID of this specific branch point, managed by BranchingPointDB
     
     float _birthTime; ///Birth time
     
@@ -54,8 +54,8 @@ private:
 public:
     vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    BranchPoint(Cylinder* c1, Cylinder* c2, short branchType, double position = 0.5, bool creation = false);
-    ~BranchPoint();
+    BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position = 0.5, bool creation = false);
+    ~BranchingPoint();
     
     //@{
     ///Get attached cylinder
@@ -64,12 +64,12 @@ public:
     //@}
     
     /// Set chem branch point
-    void setCBranchPoint(CBranchPoint* cBranchPoint) {_cBranchPoint = unique_ptr<CBranchPoint>(cBranchPoint);}
+    void setCBranchingPoint(CBranchingPoint* cBranchingPoint) {_cBranchingPoint = unique_ptr<CBranchingPoint>(cBranchingPoint);}
     /// Get chem branch point
-    CBranchPoint* getCBranchPoint() {return _cBranchPoint.get();}
+    CBranchingPoint* getCBranchingPoint() {return _cBranchingPoint.get();}
     
     /// Get mech branch point
-    MBranchPoint* getMBranchPoint() {return _mBranchPoint.get();}
+    MBranchingPoint* getMBranchingPoint() {return _mBranchingPoint.get();}
     
     //@{
     /// Position management

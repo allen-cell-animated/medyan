@@ -20,6 +20,7 @@
 #include "MotorGhostFF.h"
 #include "BoundaryFF.h"
 #include "VolumeCylindricalFF.h"
+#include "BranchingFF.h"
 
 #include "ConjugateGradient.h"
 
@@ -51,6 +52,14 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     if(forceFields.MTwistingType != "") cout << "Twisting: " << forceFields.MTwistingType <<endl;
     
     _FFManager._forceFields.push_back(new VolumeCylindricalFF(forceFields.VolumeFFType));
+    
+    cout << "Branching force field initialized:"<<endl;
+    if(forceFields.BrStretchingType != "") cout << "Stretching: " << forceFields.BrStretchingType<< endl;
+    if(forceFields.BrBendingType != "") cout << "Bending: " << forceFields.BrBendingType<< endl;
+    if(forceFields.BrTwistingType != "") cout << "Twisting: " << forceFields.BrTwistingType <<endl;
+    
+    _FFManager._forceFields.push_back(
+        new BranchingFF(forceFields.BrStretchingType, forceFields.BrBendingType, forceFields.BrTwistingType));
     
     cout << "Volume force field initialized: " <<endl;
     if(forceFields.VolumeFFType != "") cout << "Volume: " << forceFields.VolumeFFType << endl;

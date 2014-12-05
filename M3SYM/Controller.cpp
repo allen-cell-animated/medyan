@@ -24,7 +24,7 @@
 #include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
-#include "BranchPoint.h"
+#include "BranchingPoint.h"
 
 #include "SystemParameters.h"
 #include "MathFunctions.h"
@@ -170,6 +170,12 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     _subSystem->addNewFilaments(filamentData);
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
     
+    //add an artificial branch
+    Cylinder* c1 = (*FilamentDB::instance()).front()->getCylinderVector()[1];
+    Cylinder* c2 = ((*FilamentDB::instance()).back())->getCylinderVector()[0];
+    
+    _subSystem->addNewBranchingPoint(c1, c2, 0, 0.5);
+    
     //First update of system
     updateSystem();
 }
@@ -196,7 +202,7 @@ void Controller::updateSystem() {
         m->updatePosition();
         m->updateReactionRates();
     }
-    for(auto &b : *BranchPointDB::instance()) {
+    for(auto &b : *BranchingPointDB::instance()) {
         b->updatePosition();
         b->updateReactionRates();
     }
@@ -241,7 +247,7 @@ void Controller::run() {
         o.printBasicSnapshot(i + _numStepsPerMech);
 #elif defined(MECHANICS)
         _mController.run();
-        updatePositions();
+        updateSystem();
         o.printBasicSnapshot(1);
 #else
         updateSystem();

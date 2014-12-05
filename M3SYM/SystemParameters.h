@@ -49,7 +49,7 @@ struct MechanicsParameters {
     //@}
     
     //@{
-    /// BranchPoint parameter
+    /// BranchingPoint parameter
     vector<double> BrStretchingK = {};
     vector<double> BrStretchingL = {};
     vector<double> BrBendingK = {};

@@ -25,14 +25,14 @@ class Filament;
 class Cylinder;
 class Linker;
 class MotorGhost;
-class BranchPoint;
+class BranchingPoint;
 
 class Movable;
 class Reactable;
 
 
 /// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker),
-/// [MotorGhosts] (@ref MotorGhost), and [BranchPoints](@ref BranchPoint).
+/// [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref BranchingPoint).
 
 /*! This is a class which handles all changes and information regarding the system.
  *  This class operates as a top manager and provides connections between smaller parts of the system.
@@ -69,13 +69,13 @@ public:
     /// remove a MotorGhost ghost from the system
     void removeMotorGhost(MotorGhost* m);
     
-    /// Add [BranchPoints](@ref BranchPoint) at initialization
+    /// Add [BranchingPoints](@ref BranchingPoint) at initialization
     /// @param v - vector of cylinders to connect to
-    void addNewBranchPoints(vector<vector<Cylinder*>>& v, short branchType);
-    /// Add a BranchPoint during runtime
-    void addNewBranchPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
-    /// remove a BranchPoint from the system
-    void removeBranchPoint(BranchPoint* b);
+    void addNewBranchingPoints(vector<vector<Cylinder*>>& v, short branchType);
+    /// Add a BranchingPoint during runtime
+    void addNewBranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
+    /// remove a BranchingPoint from the system
+    void removeBranchingPoint(BranchingPoint* b);
     
     //@{
     /// Setter functions for Movable

@@ -61,6 +61,30 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
+    if (JJ==0){
+        
+        auto v = MovePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        
+        a = ScalarProduct(v, b2->coordinate, v, b2->coordinate);
+        b = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
+        c = ScalarProduct(b3->coordinate, v, b3->coordinate, v);
+        d = ScalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
+        e = ScalarProduct(v, b2->coordinate, b3->coordinate, v);
+        f = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, v);
+        
+        AA = sqrt(a*c - e*e);
+        BB = sqrt(b*c - f*f);
+        
+        CC = d*e - a*f;
+        DD = b*e - d*f;
+        
+        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
+        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
+        
+        GG = d*d - a*b - CC;
+        HH = CC + GG - DD;
+        JJ = c*(GG + CC) + e*DD - f*CC;
+    }
     
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
@@ -104,25 +128,55 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
+    if (JJ==0){
+        
+        auto v = MovePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        
+        a = ScalarProductStretched(v, b1->force, b2->coordinate, b2->force,
+                                   v, b1->force, b2->coordinate, b2->force, lambda);
+        b = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+        c = ScalarProductStretched(b3->coordinate, b3->force, v, b1->force,
+                                   b3->coordinate, b3->force, v, b1->force, lambda);
+        d = ScalarProductStretched(v, b1->force, b2->coordinate, b2->force,
+                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+        e = ScalarProductStretched(v, b1->force, b2->coordinate, b2->force,
+                                   b3->coordinate, b3->force, v, b1->force, lambda);
+        f = ScalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+                                   b3->coordinate, b3->force, v, b1->force, lambda);
+        
+        AA = sqrt(a*c - e*e);
+        BB = sqrt(b*c - f*f);
+        
+        CC = d*e - a*f;
+        DD = b*e - d*f;
+        
+        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
+        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
+        
+        GG = d*d - a*b - CC;
+        HH = CC + GG - DD;
+        JJ = c*(GG + CC) + e*DD - f*CC;
+    }
+    
+    
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    
-    
-    
+
 }
 
 void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls)
 {
-    double a = ScalarProduct(b1->coordinateAux, b2->coordinateAux, b1->coordinateAux, b2->coordinateAux);
-    double b = ScalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);
-    double c = ScalarProduct(b3->coordinateAux, b1->coordinateAux, b3->coordinateAux, b1->coordinateAux);
-    double d = ScalarProduct(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
-    double e = ScalarProduct(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b1->coordinateAux);
-    double f = ScalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b1->coordinateAux);
+    double a = ScalarProduct(b1->coordinate, b2->coordinate, b1->coordinate, b2->coordinate);
+    double b = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
+    double c = ScalarProduct(b3->coordinate, b1->coordinate, b3->coordinate, b1->coordinate);
+    double d = ScalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate);
+    double e = ScalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b1->coordinate);
+    double f = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b1->coordinate);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -137,6 +191,31 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
+    
+    if (JJ==0){
+        
+        auto v = MovePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        
+        a = ScalarProduct(v, b2->coordinate, v, b2->coordinate);
+        b = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
+        c = ScalarProduct(b3->coordinate, v, b3->coordinate, v);
+        d = ScalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
+        e = ScalarProduct(v, b2->coordinate, b3->coordinate, v);
+        f = ScalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, v);
+        
+        AA = sqrt(a*c - e*e);
+        BB = sqrt(b*c - f*f);
+        
+        CC = d*e - a*f;
+        DD = b*e - d*f;
+        
+        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
+        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
+        
+        GG = d*d - a*b - CC;
+        HH = CC + GG - DD;
+        JJ = c*(GG + CC) + e*DD - f*CC;
+    }
     
     
     double invJJ = 1/JJ;
@@ -182,26 +261,19 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
     double F14 = (F1*HH)/(FF*FF);
 
-    //i1:(DIVIDING BY TWO)
     b1->force[0] +=  - 0.5*invJJ*( (b2->coordinate[0] - b1->coordinate[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinate[0] - b3->coordinate[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinate[0] - b3->coordinate[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
-    
     b1->force[1] +=  - 0.5*invJJ*( (b2->coordinate[1] - b1->coordinate[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinate[1] - b3->coordinate[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinate[1] - b3->coordinate[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    
     
     b1->force[2] +=  - 0.5*invJJ*( (b2->coordinate[2] - b1->coordinate[2] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinate[2] - b3->coordinate[2] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinate[2] - b3->coordinate[2] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
     
-    
-    //i2:(DIVIDING BY TWO)
     b2->force[0] +=  - invJJ*( (b2->coordinate[0] - b1->coordinate[0] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinate[0] - b3->coordinate[0])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinate[0] - b3->coordinate[0] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
     b2->force[1] += - invJJ*( (b2->coordinate[1] - b1->coordinate[1] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinate[1] - b3->coordinate[1])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinate[1] - b3->coordinate[1] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
     b2->force[2] += - invJJ*( (b2->coordinate[2] - b1->coordinate[2] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinate[2] - b3->coordinate[2])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinate[2] - b3->coordinate[2] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
-    //j1:(DIVIDING BY TWO)
     b3->force[0] +=  - 0.5*invJJ*( (b2->coordinate[0] - b1->coordinate[0] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinate[0] - b3->coordinate[0] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinate[0] - b3->coordinate[0] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
     b3->force[1] +=  - 0.5*invJJ*( (b2->coordinate[1] - b1->coordinate[1] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinate[1] - b3->coordinate[1] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinate[1] - b3->coordinate[1] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) ) ;
@@ -209,7 +281,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     b3->force[2] +=  - 0.5*invJJ*( (b2->coordinate[2] - b1->coordinate[2] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinate[2] - b3->coordinate[2] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinate[2] - b3->coordinate[2] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
     
-    //j2: (DIVIDING BY TWO)
     b4->force[0] +=  - invJJ*( 0.5*(b2->coordinate[0] - b1->coordinate[0] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (b4->coordinate[0] - b3->coordinate[0])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(b1->coordinate[0] - b3->coordinate[0] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) )  ;
     
     b4->force[1] +=  - invJJ*( 0.5*(b2->coordinate[1] - b1->coordinate[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (b4->coordinate[1] - b3->coordinate[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(b1->coordinate[1] - b3->coordinate[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
@@ -241,6 +312,32 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
+    if (JJ==0){
+        
+        auto v = MovePointOutOfPlane(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux, 1, 0.001);
+        
+        a = ScalarProduct(v, b2->coordinateAux, v, b2->coordinateAux);
+        b = ScalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);
+        c = ScalarProduct(b3->coordinateAux, v, b3->coordinateAux, v);
+        d = ScalarProduct(v, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
+        e = ScalarProduct(v, b2->coordinateAux, b3->coordinateAux, v);
+        f = ScalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, v);
+        
+        AA = sqrt(a*c - e*e);
+        BB = sqrt(b*c - f*f);
+        
+        CC = d*e - a*f;
+        DD = b*e - d*f;
+        
+        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
+        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
+        
+        GG = d*d - a*b - CC;
+        HH = CC + GG - DD;
+        JJ = c*(GG + CC) + e*DD - f*CC;
+    }
+    
+    
     double invJJ = 1/JJ;
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
@@ -284,32 +381,24 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
     double F14 = (F1*HH)/(FF*FF);
     
-    //(DIVIDING BY TWO)
     b1->forceAux[0] +=  - 0.5*invJJ*( (b2->coordinateAux[0] - b1->coordinateAux[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinateAux[0] - b3->coordinateAux[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinateAux[0] - b3->coordinateAux[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
-     //(DIVIDING BY TWO)
     b1->forceAux[1] +=  - 0.5*invJJ*( (b2->coordinateAux[1] - b1->coordinateAux[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinateAux[1] - b3->coordinateAux[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinateAux[1] - b3->coordinateAux[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
-     //(DIVIDING BY TWO)
     b1->forceAux[2] +=  - 0.5*invJJ*( (b2->coordinateAux[2] - b1->coordinateAux[2] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (b4->coordinateAux[2] - b3->coordinateAux[2] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (b1->coordinateAux[2] - b3->coordinateAux[2] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
-    
-     //(DIVIDING BY TWO)
     b2->forceAux[0] +=  - invJJ*( (b2->coordinateAux[0] - b1->coordinateAux[0] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinateAux[0] - b3->coordinateAux[0])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinateAux[0] - b3->coordinateAux[0] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
     b2->forceAux[1] += - invJJ*( (b2->coordinateAux[1] - b1->coordinateAux[1] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinateAux[1] - b3->coordinateAux[1])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinateAux[1] - b3->coordinateAux[1] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
     b2->forceAux[2] += - invJJ*( (b2->coordinateAux[2] - b1->coordinateAux[2] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(b4->coordinateAux[2] - b3->coordinateAux[2])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(b1->coordinateAux[2] - b3->coordinateAux[2] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
     
-     //(DIVIDING BY TWO)
     b3->forceAux[0] +=  - 0.5*invJJ*( (b2->coordinateAux[0] - b1->coordinateAux[0] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinateAux[0] - b3->coordinateAux[0] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinateAux[0] - b3->coordinateAux[0] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
     b3->forceAux[1] +=  - 0.5*invJJ*( (b2->coordinateAux[1] - b1->coordinateAux[1] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinateAux[1] - b3->coordinateAux[1] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinateAux[1] - b3->coordinateAux[1] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) ) / 2;
     
     b3->forceAux[2] +=  - 0.5*invJJ*( (b2->coordinateAux[2] - b1->coordinateAux[2] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (b4->coordinateAux[2] - b3->coordinateAux[2] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (b1->coordinateAux[2] - b3->coordinateAux[2] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
-    
-     //(DIVIDING BY TWO)
     b4->forceAux[0] +=  - invJJ*( 0.5*(b2->coordinateAux[0] - b1->coordinateAux[0] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (b4->coordinateAux[0] - b3->coordinateAux[0])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(b1->coordinateAux[0] - b3->coordinateAux[0] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
     
     b4->forceAux[1] +=  - invJJ*( 0.5*(b2->coordinateAux[1] - b1->coordinateAux[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (b4->coordinateAux[1] - b3->coordinateAux[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(b1->coordinateAux[1] - b3->coordinateAux[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;

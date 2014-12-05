@@ -11,25 +11,25 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_MBranchPoint_h
-#define M3SYM_MBranchPoint_h
+#ifndef M3SYM_MBranchingPoint_h
+#define M3SYM_MBranchingPoint_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
-class BranchPoint;
+class BranchingPoint;
 
-/// Represents the mechanical component of a BranchPoint.
+/// Represents the mechanical component of a BranchingPoint.
 
-/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a BranchPoint, and its 
+/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a BranchingPoint, and its 
  *  associated equilibrium constants. The branch is a connection between two [Cylinders](@ref cylinder), 
  *  where one resides on the mother Filament and the other is the actual branch.
  */
-class MBranchPoint {
+class MBranchingPoint {
     
 public:
     /// Main constructor, sets constants
-    MBranchPoint(double stretchConst, double eqLength,
+    MBranchingPoint(double stretchConst, double eqLength,
                  double bendConst, double bendTheta,
                  double twistConst, double twistAngle)
                  : _kStretch(stretchConst), _eqLength(eqLength), _kBend(bendConst),
@@ -48,9 +48,9 @@ public:
     //@}
     
     /// Set parent
-    void setBranchPoint(BranchPoint* branchPoint) {_pBranchPoint = branchPoint;}
+    void setBranchingPoint(BranchingPoint* BranchingPoint) {_pBranchingPoint = BranchingPoint;}
     /// Get parent
-    BranchPoint* getBranchPoint() {return _pBranchPoint;}
+    BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
 private:
     double _eqLength;  ///< Equilibrium length
@@ -62,7 +62,7 @@ private:
     double _eqPhi; ///< Twisiting angle
     double _kTwist; ///< Twisting constant
     
-    BranchPoint* _pBranchPoint; ///< Pointer to parent branch point
+    BranchingPoint* _pBranchingPoint; ///< Pointer to parent branch point
     
 };
 

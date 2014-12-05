@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_CBranchPoint_h
-#define M3SYM_CBranchPoint_h
+#ifndef M3SYM_CBranchingPoint_h
+#define M3SYM_CBranchingPoint_h
 
 #include "common.h"
 
@@ -20,42 +20,42 @@
 #include "Compartment.h"
 
 //FORWARD DECLARATIONS
-class BranchPoint;
+class BranchingPoint;
 
-/// A class to represent the chemical component of a BranchPoint.
+/// A class to represent the chemical component of a BranchingPoint.
 /*!
- *  The CBranchPoint class contains chemical info of the parent BranchPoint.
+ *  The CBranchingPoint class contains chemical info of the parent BranchingPoint.
  */
 
-class CBranchPoint : public CBound {
+class CBranchingPoint : public CBound {
     
 private:
-    BranchPoint* _pBranchPoint; ///< Pointer to parent
+    BranchingPoint* _pBranchingPoint; ///< Pointer to parent
     
 public:
     /// Default constructor and destructor
-    CBranchPoint(Compartment* c) :CBound(c) {}
-    ~CBranchPoint() {}
+    CBranchingPoint(Compartment* c) :CBound(c) {}
+    ~CBranchingPoint() {}
     
     /// Copy constructor, standard
-    CBranchPoint(const CBranchPoint& rhs, Compartment* c) : _pBranchPoint(rhs._pBranchPoint), CBound(c) {
+    CBranchingPoint(const CBranchingPoint& rhs, Compartment* c) : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
         
 //        setFirstSpecies(rhs._firstSpecies);
 //        setSecondSpecies(rhs._secondSpecies);
     }
     
     /// Assignment is not allowed
-    CBranchPoint& operator=(CBranchPoint &rhs) = delete;
+    CBranchingPoint& operator=(CBranchingPoint &rhs) = delete;
     
     /// Clone, calls copy constructor
-    virtual CBranchPoint* clone(Compartment* c) {
-        return new CBranchPoint(*this, c);
+    virtual CBranchingPoint* clone(Compartment* c) {
+        return new CBranchingPoint(*this, c);
     }
     
     /// Set parent
-    void setBranchPoint(BranchPoint* branchPoint) {_pBranchPoint = branchPoint;}
+    void setBranchingPoint(BranchingPoint* BranchingPoint) {_pBranchingPoint = BranchingPoint;}
     /// Get parent
-    BranchPoint* getBranchPoint() {return _pBranchPoint;}
+    BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
 };
 
 #endif

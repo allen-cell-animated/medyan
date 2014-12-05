@@ -27,7 +27,7 @@ MD:
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.2
 
-FBENDINGTYPE:                HARMONIC
+FBENDINGTYPE:
 FBENDINGK:                   0.5
 FBENDINGTHETA:
 
@@ -37,7 +37,7 @@ FTWISTINGPHI:
 
 ### LINKERS ###
 
-LSTRETCHINGTYPE:             HARMONIC
+LSTRETCHINGTYPE:
 LSTRETCHINGK:                0.5
 
 LBENDINGTYPE:
@@ -50,7 +50,7 @@ LTWISTINGPHI:
 
 ### MOTORS ###
 
-MSTRETCHINGTYPE:             HARMONIC
+MSTRETCHINGTYPE:
 MSTRETCHINGK:                0.5
 
 MBENDINGTYPE:
@@ -63,21 +63,21 @@ MTWISTINGPHI:
 
 ### BRANCHING ###
 
-BRSTRETCHINGTYPE:
-BRSTRETCHINGK:
-BRSTRETCHINGL:
+BRSTRETCHINGTYPE:            HARMONIC
+BRSTRETCHINGK:               2
+BRSTRETCHINGL:               5
 
-BRBENDINGTYPE:
-BRBENDINGK
-BRBENDINGTHETA:
+BRBENDINGTYPE:               COSINE
+BRBENDINGK:                  2
+BRBENDINGTHETA:              0.5
 
 BRTWISTINGTYPE:
-BRTWISTINGK:
-BRTWISTINGTHETA:
+BRTWISTINGK:                 0.5
+BRTWISTINGPHI:               10
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:                  REPULSION
+VOLUMETYPE:
 VOLUMEK:                     1.0
 VOLUMECUTOFF:                27.0
 
@@ -116,10 +116,10 @@ NUMMOTORSPECIES:             0
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-#FILAMENTFILE:               testfilamentinput.txt
+FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                100
+#NUMFILAMENTS:                100
 
 
 

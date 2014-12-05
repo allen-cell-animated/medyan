@@ -26,7 +26,7 @@ class Filament;
  *   This FilamentDB inherits from list and manage all creations and removing of
  *   [Filaments](@ref Filament) objects, as well as some standard list functions and iterators.
  */
-class FilamentDB: private list<Filament*> {
+class FilamentDB: public list<Filament*> {
     typedef list<Filament*> fdb;
     
 public:

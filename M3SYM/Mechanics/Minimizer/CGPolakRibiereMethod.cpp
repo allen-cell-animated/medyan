@@ -20,13 +20,15 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
     
     //cout<<"Forces before minimization:" <<endl;
 	//PrintForces();
+    Output o("/Users/jameskomianos/Code/M3SYM/M3SYM/beadoutput.txt");
+    o.printBasicSnapshot(0);
     
     int SpaceSize = 3 * BeadDB::instance()->size(); //// !!! change
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.computeForces();
-    //printForces();
+    printForces();
     
     //PrintForces();
 	double gSquare = gradSquare();
@@ -49,6 +51,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         
         FFM.computeForcesAux();
         //PrintForces();
+        o.printBasicSnapshot(numIter);
         
 		newGradSquare = gradAuxSquare();
 

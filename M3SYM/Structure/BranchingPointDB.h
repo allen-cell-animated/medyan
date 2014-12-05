@@ -11,24 +11,24 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_BranchPointDB_h
-#define M3SYM_BranchPointDB_h
+#ifndef M3SYM_BranchingPointDB_h
+#define M3SYM_BranchingPointDB_h
 
 #include <list>
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
-class BranchPoint;
+class BranchingPoint;
 
-/// A database for all [BranchPoints](@ref BranchPoint) in the system.
+/// A database for all [BranchingPoints](@ref BranchingPoint) in the system.
 /*!
- *   This BranchPointDB inherits from list and manage all creations and removing of
- *   [BranchPoints](@ref BranchPoint) objects, as well as some standard list functions and iterators.
+ *   This BranchingPointDB inherits from list and manage all creations and removing of
+ *   [BranchingPoints](@ref BranchingPoint) objects, as well as some standard list functions and iterators.
  */
-class BranchPointDB: private list<BranchPoint*>
+class BranchingPointDB: private list<BranchingPoint*>
 {
-    typedef list<BranchPoint*> bpdb;
+    typedef list<BranchingPoint*> bpdb;
     
 public:
     using bpdb::size;
@@ -37,18 +37,18 @@ public:
     using bpdb::erase;
     
     /// Copying is not allowed
-    BranchPointDB(const BranchPointDB &rhs) = delete;
+    BranchingPointDB(const BranchingPointDB &rhs) = delete;
     
     /// Assignment is not allowed
-    BranchPointDB& operator=(BranchPointDB &rhs) = delete;
+    BranchingPointDB& operator=(BranchingPointDB &rhs) = delete;
     
     /// Get instance
-    static BranchPointDB* instance();
+    static BranchingPointDB* instance();
     
     /// Create a new branch point
-    void addBranchPoint(BranchPoint* b) { push_back(b); }
+    void addBranchingPoint(BranchingPoint* b) { push_back(b); }
     /// Remove a branch point
-    void removeBranchPoint(BranchPoint* b) { remove(b); };
+    void removeBranchingPoint(BranchingPoint* b) { remove(b); };
     
     /// Get current branch point ID, and update the ID counter
     int getBranchID() { return _currentBranchID++; }
@@ -56,8 +56,8 @@ public:
 private:
     static int _currentBranchID;   ///< To assign branch IDs
     
-    static BranchPointDB* _instance;    ///< Singleton instance
-    BranchPointDB() {};
+    static BranchingPointDB* _instance;    ///< Singleton instance
+    BranchingPointDB() {};
 };
 
 

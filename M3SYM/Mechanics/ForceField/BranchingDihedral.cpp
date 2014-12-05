@@ -18,61 +18,53 @@
 template <class BDihedralInteractionType>
 double BranchingDihedral<BDihedralInteractionType>::computeEnergy(BranchingPoint* b, double d) {
     
-    //    Bead* b1 =
-    //    Bead* b2 =
-    //    Bead* b3 =
-    //    Bead* b4 =
-    //    double kStretch =
-    //    double phi0 =
-    //
-    //    double position =
-    //
+    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
+    
+    double position = b->getPosition();
     
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, b4, kdihedr, phi0);
+        return _FFType.energy(b1, b2, b3, b4, kDihedr, position);
     else
-        return _FFType.energy(b1, b2, b3, b4, kdihedr, phi0, d);
+        return _FFType.energy(b1, b2, b3, b4, kDihedr, position, d);
     
 }
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::computeForces(BranchingPoint* b) {
     
-    //    Bead* b1 =
-    //    Bead* b2 =
-    //    Bead* b3 =
-    //    Bead* b4 =
-    //    double kStretch =
-    //    double phi0 =
-    //
-    //    double position =
-    //
+    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
     
+    double position = b->getPosition();
     
-    _FFType.forces(b1, b2, b3, b4, kdihedr, phi0);
+    _FFType.forces(b1, b2, b3, b4, kDihedr, position);
     
 }
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::computeForcesAux(BranchingPoint* b) {
     
-    //    Bead* b1 =
-    //    Bead* b2 =
-    //    Bead* b3 =
-    //    Bead* b4 =
-    //    double kStretch =
-    //    double phi0 =
-    //
-    //    double position =
-    //
+    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
     
+    double position = b->getPosition();
     
-     _FFType.forcesAux(b1, b2, b3, b4, kbend, phi0);
+     _FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
     
 }
 
 
 ///Template specializations
-template double BranchingDihedral<BranchingBendingCosine>::computeEnerg(BranchingPoint* b, double d);
-template void  BranchingDihedral<BranchingBendingCosine>::computeForces(BranchingPoint* b);
-template void  BranchingDihedral<BranchingBendingCosine>::computeForcesAux(BranchingPoint* b);
+//template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);
+//template void  BranchingDihedral<BranchingDihedralCosine>::computeForces(BranchingPoint* b);
+//template void  BranchingDihedral<BranchingDihedralCosine>::computeForcesAux(BranchingPoint* b);

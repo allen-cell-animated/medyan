@@ -116,7 +116,7 @@ void BranchingBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4, d
     
     //force on i, f = k*(-A*l2 + 2*B*l1):
     b1->forceAux[0] +=  k * ( (b3->coordinateAux[0] - b4->coordinateAux[0])*A + (b2->coordinateAux[0] - b1->coordinateAux[0])*B );
-    b1->forceAux[1] +=  k * ( (b3->coordinate[1] - b4->coordinate[1])*A + (b2->coordinate[1] - b1->coordinateAux[1])*B );
+    b1->forceAux[1] +=  k * ( (b3->coordinateAux[1] - b4->coordinateAux[1])*A + (b2->coordinateAux[1] - b1->coordinateAux[1])*B );
     b1->forceAux[2] +=  k * ( (b3->coordinateAux[2] - b4->coordinateAux[2])*A + (b2->coordinateAux[2] - b1->coordinateAux[2])*B );
     
     
