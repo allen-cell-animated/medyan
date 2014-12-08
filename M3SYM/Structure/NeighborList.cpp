@@ -62,7 +62,7 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
             }
             
             ///Dont add if not within range
-            double dist = TwoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
+            double dist = twoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
             
             ///If we got through all of this, add it!

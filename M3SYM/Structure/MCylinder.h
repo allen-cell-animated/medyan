@@ -31,7 +31,8 @@ private:
     Cylinder* _pCylinder;  ///< parent cylinder
 
     double _eqLength; ///< Length of unstretched cylinder
-    double _eqAngle;  ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS
+    double _eqTheta;  ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS
+    double _eqPhi; ///< Equilibrium value of twisiting potential
     double _kStretch; ///< Local stretching constant, describes axial stretching of a single cylinder
     double _kBend;  ///< Local bending constant, which describes bending interaction between current and PREVIOUS cylinders
     double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
@@ -52,8 +53,11 @@ public:
     
     //@{
     /// Mechanical parameter management function
-    void setAngle(double alpha) {_eqAngle = alpha;}
-    double getAngle() {return _eqAngle;}
+    void setEqTheta(double theta) {_eqTheta = theta;}
+    double getEqTheta() {return _eqTheta;}
+    
+    void setEqPhi(double phi) {_eqPhi = phi;}
+    double getEqPhi() {return _eqPhi;}
     
     void setStretchingConst(double k) {_kStretch = k;}
     double getStretchingConst() {return _kStretch;}

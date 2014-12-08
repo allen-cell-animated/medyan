@@ -25,10 +25,11 @@ BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral)
         _branchingInteractionVector.emplace_back(new BranchingStretching<BranchingStretchingHarmonic>());
     if (bending == "COSINE")
         _branchingInteractionVector.emplace_back(new BranchingBending<BranchingBendingCosine>());
-//    if (dihedral == "COSINE")
-//        _branchingInteractionVector.emplace_back(new BranchingDihedral<BranchingDihedralCosine>());
-
-    //if (Twisting == "HARMONIC") {_filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());}
+//  if (dihedral == "COSINE")
+//      _branchingInteractionVector.emplace_back(new BranchingDihedral<BranchingDihedralCosine>());
+//
+//    if (Twisting == "HARMONIC")
+//        _filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());
 }
 
 

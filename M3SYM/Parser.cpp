@@ -336,7 +336,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrBendingType = lineVector[1];
             }
         }
-        else if (line.find("BRTWISTINGTYPE") != string::npos) {
+        else if (line.find("BRDIHEDRALTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -344,7 +344,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BrTwistingType = lineVector[1];
+                MTypes.BrDihedralType = lineVector[1];
             }
         }
         else if (line.find("BOUNDARYTYPE") != string::npos) {
@@ -593,23 +593,14 @@ void SystemParser::readMechanicsParameters() {
             
         }
         
-        //Branch twisting
-        else if (line.find("BRTWISTINGK") != string::npos) {
+        //Branch dihedral
+        else if (line.find("BRDIHEDRALK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BRTWISTINGPHI") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrTwistingPhi.push_back(atof((lineVector[i].c_str())));
+                    MParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
             }
         }
         

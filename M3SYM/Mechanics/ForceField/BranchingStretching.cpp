@@ -1,13 +1,17 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingStretching.cpp
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BranchingStretching.h"
-
 
 #include "BranchingStretchingHarmonic.h"
 
@@ -23,13 +27,13 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(BranchingP
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
 
     double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double l0 = b->getMBranchingPoint()->getEqLength();
+    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, position, kStretch, l0);
+        return _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
     else
-        return _FFType.energy(b1, b2, b3, position, kStretch, l0, d);
+        return _FFType.energy(b1, b2, b3, position, kStretch, eqLength, d);
     
 }
 
@@ -41,10 +45,10 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(BranchingPoi
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
     double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double l0 = b->getMBranchingPoint()->getEqLength();
+    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
-    _FFType.forces(b1, b2, b3, position, kStretch, l0);
+    _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
     
 }
 
@@ -57,10 +61,10 @@ void BranchingStretching<BStretchingInteractionType>::computeForcesAux(Branching
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
     double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double l0 = b->getMBranchingPoint()->getEqLength();
+    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
-    _FFType.forcesAux(b1, b2, b3, position, kStretch, l0);
+    _FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
     
 }
 

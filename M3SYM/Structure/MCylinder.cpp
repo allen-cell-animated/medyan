@@ -24,7 +24,11 @@ MCylinder::MCylinder(double eqLength){
     setEqLength(eqLength);
     
     //set excluded volume const
-    setExVolConst(SystemParameters::Mechanics().VolumeK);
+    _kExVol = SystemParameters::Mechanics().VolumeK;
+    
+    //set angle
+    _eqTheta = SystemParameters::Mechanics().FBendingTheta;
+    _eqPhi = SystemParameters::Mechanics().FTwistingPhi;
 }
 
 void MCylinder::setEqLength(double l) {

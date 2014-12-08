@@ -23,10 +23,10 @@ class Bead;
 class MotorGhostStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
-    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L, double d);
-    void forces(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStr, double L);
+    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
+    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength, double d);
+    void forces(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
+    void forcesAux(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
     
 };
 

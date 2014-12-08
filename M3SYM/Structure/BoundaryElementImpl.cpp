@@ -57,19 +57,19 @@ SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radiu
 
 double SphereBoundaryElement::distance(const vector<double>& point) {
     
-    return _radius - TwoPointDistance(_coords, point);
+    return _radius - twoPointDistance(_coords, point);
 }
 
 double SphereBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
     
     vector<double> stretchedPoint{point[0] + d * force[0], point[1] + d * force[1], point[2] + d * force[2]};
-    return _radius - TwoPointDistance(_coords, stretchedPoint);
+    return _radius - twoPointDistance(_coords, stretchedPoint);
     
 }
 
 const vector<double> SphereBoundaryElement::normal(const vector<double>& point) {
     
-    return TwoPointDirection(point, _coords);
+    return twoPointDirection(point, _coords);
 }
 
 double SphereBoundaryElement::getRepulsionConst(){ return _k_rep; }
@@ -85,7 +85,7 @@ double CylindricalZBoundaryElement::distance(const vector<double>& point) {
     if(point[2] > (_coords[2] + _height / 2) || point[2] < (_coords[2] - _height / 2))
         return numeric_limits<double>::infinity();
     
-    return _radius - TwoPointDistance({_coords[0],_coords[1], 0}, {point[0],point[1],0});
+    return _radius - twoPointDistance({_coords[0],_coords[1], 0}, {point[0],point[1],0});
 }
 
 double CylindricalZBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
@@ -94,13 +94,13 @@ double CylindricalZBoundaryElement::stretchedDistance(const vector<double>& poin
     if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
        (point[2] + d * force[2]) < (_coords[2] - _height / 2)) return numeric_limits<double>::infinity();
     
-    return _radius - TwoPointDistance({_coords[0],_coords[1], 0},
+    return _radius - twoPointDistance({_coords[0],_coords[1], 0},
                      {(point[0] + d * force[0]), (point[1] + d * force[1]) ,0});
 }
 
 const vector<double> CylindricalZBoundaryElement::normal(const vector<double>& point) {
     
-    return TwoPointDirection({point[0],point[1], 0}, {_coords[0],_coords[1], 0});
+    return twoPointDirection({point[0],point[1], 0}, {_coords[0],_coords[1], 0});
 }
 
 double CylindricalZBoundaryElement::getRepulsionConst(){ return _k_rep; }
@@ -116,7 +116,7 @@ double HalfSphereZBoundaryElement::distance(const vector<double>& point) {
     if(_up && (point[2] > _coords[2])) return numeric_limits<double>::infinity();
     if(!_up && (point[2] < _coords[2])) return numeric_limits<double>::infinity();
     
-    return _radius - TwoPointDistance(_coords, point);
+    return _radius - twoPointDistance(_coords, point);
 }
 
 double HalfSphereZBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
@@ -126,13 +126,13 @@ double HalfSphereZBoundaryElement::stretchedDistance(const vector<double>& point
     if(!_up && (point[2] + d * force[2] < _coords[2])) return numeric_limits<double>::infinity();
     
     vector<double> stretchedPoint{point[0] + d * force[0], point[1] + d * force[1], point[2] + d * force[2]};
-    return _radius - TwoPointDistance(_coords, stretchedPoint);
+    return _radius - twoPointDistance(_coords, stretchedPoint);
     
 }
 
 const vector<double> HalfSphereZBoundaryElement::normal(const vector<double>& point) {
     
-    return TwoPointDirection(point, _coords);
+    return twoPointDirection(point, _coords);
 }
 
 double HalfSphereZBoundaryElement::getRepulsionConst(){ return _k_rep; }

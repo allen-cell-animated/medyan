@@ -31,7 +31,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _ID = CylinderDB::instance()->getCylinderID();
                        
     //Set coordinate
-    coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -62,9 +62,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     else eqLength = SystemParameters::Geometry().cylinderSize;
     
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
-    
     _mCylinder->setCylinder(this);
-    
 #endif
 }
 
@@ -83,7 +81,7 @@ Cylinder::~Cylinder() {
 void Cylinder::updatePosition() {
 
     //check if were still in same compartment, set new position
-    coordinate = MidPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
     
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}

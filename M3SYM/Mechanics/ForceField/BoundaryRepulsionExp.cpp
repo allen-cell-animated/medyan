@@ -15,16 +15,16 @@
 
 #include "Bead.h"
 
-double BoundaryRepulsionExp::computeEnergy(Bead* b, double r, double k_rep, double screenLength)
+double BoundaryRepulsionExp::computeEnergy(Bead* b, double r, double kRep, double screenLength)
 {
     double R = -r/screenLength;
-    return k_rep * exp(R);
+    return kRep * exp(R);
 }
 
-void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm, double k_rep, double screenLength){
+void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm, double kRep, double screenLength){
     
     double R = -r/screenLength;
-    double f0 = k_rep * exp(R)/screenLength;
+    double f0 = kRep * exp(R)/screenLength;
     
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];
@@ -32,10 +32,10 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
     
 }
 
-void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,  double k_rep, double screenLength){
+void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,  double kRep, double screenLength){
     
     double R = -r/screenLength;
-    double f0 = k_rep * exp(R)/screenLength;
+    double f0 = kRep * exp(R)/screenLength;
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];

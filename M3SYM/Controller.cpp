@@ -156,7 +156,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
                                         directionY/normFactor,
                                         directionZ/normFactor};
             
-            vector<double> secondPoint = NextPointProjection(firstPoint,
+            vector<double> secondPoint = nextPointProjection(firstPoint,
                     (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
             if(_subSystem->getBoundary()->within(firstPoint)

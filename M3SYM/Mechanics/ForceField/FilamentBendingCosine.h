@@ -1,18 +1,25 @@
-//
-//  FilamentBendingCosine.h
-//  M3SYM
-//
-//  Created by Konstantin Popov on 12/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __M3SYM__FilamentBendingCosine__
-#define __M3SYM__FilamentBendingCosine__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_FilamentBendingCosine_h
+#define M3SYM_FilamentBendingCosine_h
+
+#include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
-/// FilamentBendingHarmonic class is a cosine potential used by the [FilamentBending](@ref FilamentBending) template.
+/// A cosine potential used by the [FilamentBending](@ref FilamentBending) template.
 class FilamentBendingCosine {
     
 public:
@@ -22,4 +29,4 @@ public:
     void forcesAux(Bead*, Bead*, Bead*, double, double);
 };
 
-#endif /* defined(__M3SYM__FilamentBendingCosine__) */
+#endif

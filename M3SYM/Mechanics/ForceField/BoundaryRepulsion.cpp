@@ -22,13 +22,13 @@
 template <class BRepulsionInteractionType>
 double BoundaryRepulsion<BRepulsionInteractionType>::computeEnergy(BoundaryElement* be, Bead* b, double d) {
     double U = 0.0;
-    double k_rep = be->getRepulsionConst();
+    double kRep = be->getRepulsionConst();
     double screenLength = be->getScreeningLength();
     
     if (d == 0.0)
-        U+= _FFType.computeEnergy(b, be->distance(b->coordinate), k_rep, screenLength);
+        U+= _FFType.computeEnergy(b, be->distance(b->coordinate), kRep, screenLength);
     else
-        U+=_FFType.computeEnergy(b, be->stretchedDistance(b->coordinate, b->force, d), k_rep, screenLength);
+        U+=_FFType.computeEnergy(b, be->stretchedDistance(b->coordinate, b->force, d), kRep, screenLength);
     
     return U;
 }
@@ -36,11 +36,11 @@ double BoundaryRepulsion<BRepulsionInteractionType>::computeEnergy(BoundaryEleme
 template <class BRepulsionInteractionType>
 void BoundaryRepulsion<BRepulsionInteractionType>::computeForces(BoundaryElement* be, Bead* b) {
     
-    double k_rep = be->getRepulsionConst();
+    double kRep = be->getRepulsionConst();
     double screenLength = be->getScreeningLength();
     
     auto normal = be->normal(b->coordinate);
-    _FFType.computeForces(b, be->distance(b->coordinate), normal, k_rep, screenLength);
+    _FFType.computeForces(b, be->distance(b->coordinate), normal, kRep, screenLength);
     
 }
 
@@ -48,11 +48,11 @@ void BoundaryRepulsion<BRepulsionInteractionType>::computeForces(BoundaryElement
 template <class BRepulsionInteractionType>
 void BoundaryRepulsion<BRepulsionInteractionType>::computeForcesAux(BoundaryElement* be, Bead* b) {
     
-    double k_rep = be->getRepulsionConst();
+    double kRep = be->getRepulsionConst();
     double screenLength = be->getScreeningLength();
     
     auto normal = be->normal(b->coordinateAux);
-    _FFType.computeForcesAux(b, be->distance(b->coordinateAux), normal, k_rep, screenLength);
+    _FFType.computeForcesAux(b, be->distance(b->coordinateAux), normal, kRep, screenLength);
 }
 
 ///Template specializations

@@ -1,22 +1,25 @@
-//
-//  BranchingBendingCosine.h
-//  M3SYM
-//
-//  Created by Konstantin Popov on 12/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __M3SYM__BranchingBendingCosine__
-#define __M3SYM__BranchingBendingCosine__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
-
+#ifndef M3SYM_BranchingBendingCosine_h
+#define M3SYM_BranchingBendingCosine_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
-/// BranchingBendingCosine class is a cosine potential used by the [BrancingBending](@ref BrancingBending) template.
+/// A cosine potential used by the [BrancingBending](@ref BrancingBending) template.
 class BranchingBendingCosine {
     
 public:
@@ -29,4 +32,4 @@ public:
 
 
 
-#endif /* defined(__M3SYM__BranchingBendingCosine__) */
+#endif

@@ -18,14 +18,15 @@
 
 using namespace mathfunc;
 
-MMotorGhost::MMotorGhost(double stretchConst, double position1, double position2,
+MMotorGhost::MMotorGhost(int motorType, double position1, double position2,
                  const vector<double>& coord11, const vector<double>& coord12,
                  const vector<double>& coord21, const vector<double>& coord22) {
     
-    _kStretch = stretchConst;
+    if(SystemParameters::Mechanics().MStretchingK.size() != 0)
+        _kStretch = SystemParameters::Mechanics().MStretchingK[motorType];
     
-    auto m1 = MidPointCoordinate(coord11, coord12, position1);
-    auto m2 = MidPointCoordinate(coord21, coord22, position2);
-    _eqLength = TwoPointDistance(m1, m2);
+    auto m1 = midPointCoordinate(coord11, coord12, position1);
+    auto m2 = midPointCoordinate(coord21, coord22, position2);
+    _eqLength = twoPointDistance(m1, m2);
 }
 

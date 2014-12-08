@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingBendinig.cpp
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/3/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BranchingBending.h"
 
@@ -22,12 +27,12 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(BranchingPoint* 
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
     double kBend = b->getMBranchingPoint()->getBendingConstant();
-    double phi0 = b->getMBranchingPoint()->getEqPhi();
+    double eqTheta = b->getMBranchingPoint()->getEqTheta();
 
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, b4, kBend, phi0);
+        return _FFType.energy(b1, b2, b3, b4, kBend, eqTheta);
     else
-        return _FFType.energy(b1, b2, b3, b4, kBend, phi0, d);
+        return _FFType.energy(b1, b2, b3, b4, kBend, eqTheta, d);
     
 }
 
@@ -39,9 +44,9 @@ void BranchingBending<BBendingInteractionType>::computeForces(BranchingPoint* b)
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
     double kBend = b->getMBranchingPoint()->getBendingConstant();
-    double phi0 = b->getMBranchingPoint()->getEqPhi();
+    double eqTheta = b->getMBranchingPoint()->getEqTheta();
   
-    _FFType.forces(b1, b2, b3, b4, kBend, phi0);
+    _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
     
 }
 
@@ -53,9 +58,9 @@ void BranchingBending<BBendingInteractionType>::computeForcesAux(BranchingPoint*
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
     double kBend = b->getMBranchingPoint()->getBendingConstant();
-    double phi0 = b->getMBranchingPoint()->getEqPhi();
+    double eqTheta = b->getMBranchingPoint()->getEqTheta();
     
-    _FFType.forcesAux(b1, b2, b3, b4, kBend, phi0);
+    _FFType.forcesAux(b1, b2, b3, b4, kBend, eqTheta);
 }
 
 

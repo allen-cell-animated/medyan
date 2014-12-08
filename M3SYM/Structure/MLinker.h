@@ -34,7 +34,7 @@ public:
     /// Main constructor
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
-    MLinker(double stretchConst, double position1, double position2,
+    MLinker(int linkerType, double position1, double position2,
             const vector<double>& coord11, const vector<double>& coord12,
             const vector<double>& coord21, const vector<double>& coord22);
     

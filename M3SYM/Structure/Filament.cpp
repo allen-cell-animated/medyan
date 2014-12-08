@@ -31,7 +31,7 @@ Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direc
  
     //create beads
     Bead* b1 = new Bead(position, 0);
-    auto pos2 = NextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
+    auto pos2 = nextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
     Bead* b2 = new Bead(pos2, 1);
     
     //create cylinder
@@ -57,7 +57,7 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads
     else {}
    
     //create beads
-    auto direction = TwoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
+    auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
     Bead* b1 = new Bead(tmpBeadsCoord[0], 0);
     Bead* b2 = new Bead(tmpBeadsCoord[1], 1);
     
@@ -90,8 +90,8 @@ void Filament::extendFront(vector<double>& coordinates) {
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
-    auto direction = TwoPointDirection(b2->coordinate, coordinates);
-    auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+    auto direction = twoPointDirection(b2->coordinate, coordinates);
+    auto newBeadCoords = nextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() + 1);
     
@@ -110,8 +110,8 @@ void Filament::extendBack(vector<double>& coordinates) {
     Bead* b2 = cFront->getFirstBead();
     
     //create a new bead
-    auto direction = TwoPointDirection(b2->coordinate, coordinates);
-    auto newBeadCoords = NextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+    auto direction = twoPointDirection(b2->coordinate, coordinates);
+    auto newBeadCoords = nextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() - 1);
     
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1);
@@ -130,8 +130,8 @@ void Filament::extendFront() {
         Bead* b2 = cBack->getSecondBead();
         
         //move last bead of last cylinder forward
-        auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
-        auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+        auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
+        auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         //create a new bead in same place as b2
         Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
@@ -157,8 +157,8 @@ void Filament::extendBack() {
         Bead* b1 = cFront->getSecondBead();
         
         //move last bead of last cylinder forward
-        auto direction1 = TwoPointDirection(b1->coordinate, b2->coordinate);
-        auto npp = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+        auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
+        auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
         
         //create a new bead in same place as b2
         Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
@@ -209,8 +209,8 @@ void Filament::polymerizeFront() {
     Bead* b1 = cBack->getFirstBead();
     Bead* b2 = cBack->getSecondBead();
     
-    auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
-    b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
+    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     //increase length, update
 #ifdef MECHANICS
@@ -225,8 +225,8 @@ void Filament::polymerizeBack() {
     Bead* b2 = cFront->getFirstBead();
     Bead* b1 = cFront->getSecondBead();
 
-    auto direction = TwoPointDirection(b1->coordinate, b2->coordinate);
-    b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
+    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
 
     //increase length
 #ifdef MECHANICS
@@ -241,8 +241,8 @@ void Filament::depolymerizeFront() {
     Bead* b1 = cBack->getFirstBead();
     Bead* b2 = cBack->getSecondBead();
 
-    auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
-    b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
+    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     //increase length, update
 #ifdef MECHANICS
@@ -257,8 +257,8 @@ void Filament::depolymerizeBack() {
     Bead* b2 = cFront->getFirstBead();
     Bead* b1 = cFront->getSecondBead();
     
-    auto direction = TwoPointDirection(b2->coordinate, b1->coordinate);
-    b2->coordinate = NextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
+    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
     //increase length
 #ifdef MECHANICS
@@ -277,7 +277,7 @@ vector<vector<double> > Filament::straightFilamentProjection(vector<vector<doubl
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
     vector<double> tau (3, 0);
-    double invD = 1/TwoPointDistance(v[1], v[0]);
+    double invD = 1/twoPointDistance(v[1], v[0]);
     tau[0] = invD * ( v[1][0] - v[0][0] );
     tau[1] = invD * ( v[1][1] - v[0][1] );
     tau[2] = invD * ( v[1][2] - v[0][2] );
@@ -298,7 +298,7 @@ vector<vector<double> > Filament::zigZagFilamentProjection(vector<vector<double>
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
     vector<double> tau (3, 0);
-    double invD = 1/TwoPointDistance(v[1], v[0]);
+    double invD = 1/twoPointDistance(v[1], v[0]);
     tau[0] = invD * ( v[1][0] - v[0][0] );
     tau[1] = invD * ( v[1][1] - v[0][1] );
     tau[2] = invD * ( v[1][2] - v[0][2] );

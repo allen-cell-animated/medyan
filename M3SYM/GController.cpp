@@ -244,7 +244,7 @@ void GController::findCompartments(const vector<double>& coords, Compartment* cc
                                    double dist, vector<Compartment*>& compartments) {
     
     //base case : if c and ccheck are not within range, return
-    if(TwoPointDistance(coords, ccheck->coordinates()) > dist ) return;
+    if(twoPointDistance(coords, ccheck->coordinates()) > dist ) return;
     
     //recursive case, c and ccheck are in range. call for all neighbors
     else {

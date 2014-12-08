@@ -1,10 +1,15 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingDihedral.cpp
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/4/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BranchingDihedral.h"
 
@@ -22,7 +27,7 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(BranchingPoint
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
-    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
+    double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
     
     double position = b->getPosition();
     
@@ -40,7 +45,7 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(BranchingPoint* 
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
-    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
+    double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
     
     double position = b->getPosition();
     
@@ -55,14 +60,13 @@ void BranchingDihedral<BDihedralInteractionType>::computeForcesAux(BranchingPoin
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     Bead* b4 = b->getSecondCylinder()->getSecondBead();
-    double kDihedr = b->getMBranchingPoint()->getTwistingConstant();
+    double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
     
     double position = b->getPosition();
     
      _FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
     
 }
-
 
 ///Template specializations
 //template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);

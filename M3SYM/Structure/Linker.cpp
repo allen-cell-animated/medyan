@@ -22,9 +22,9 @@
 
 using namespace mathfunc;
 
-Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2, bool creation) :
-                                        _c1(c1), _c2(c2), _linkerType(linkerType),
-                                        _position1(position1), _position2(position2) {
+Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2, bool creation)
+                : _c1(c1), _c2(c2), _linkerType(linkerType), _position1(position1), _position2(position2) {
+                    
     //Add to linker db
     LinkerDB::instance()->addLinker(this);
     _linkerID = LinkerDB::instance()->getLinkerID();
@@ -32,9 +32,9 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
     _birthTime = tau();
         
     //Find compartment
-    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
-    coordinate = MidPointCoordinate(m1, m2, 0.5);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    coordinate = midPointCoordinate(m1, m2, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -45,7 +45,6 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
         
     //Find species on cylinder that should be marked. If initialization, this should be done. But,
     //if this is because of a reaction callback, it will have already been done.
-        
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -53,16 +52,14 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
     SpeciesLinker* sl2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
         
     if(!creation) {
-        if(sl1->getN() != 1) {
-            SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-            sl1->getRSpecies().up();
-            se1->getRSpecies().down();
-        }
-        if(sl2->getN() != 1) {
-            SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-            sl2->getRSpecies().up();
-            se2->getRSpecies().down();
-        }
+        
+        SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+        sl1->getRSpecies().up();
+        se1->getRSpecies().down();
+        
+        SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+        sl2->getRSpecies().up();
+        se2->getRSpecies().down();
     }
         
     //attach this linker to the species
@@ -71,10 +68,9 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
 #endif
     
 #ifdef MECHANICS
-    _mLinker = unique_ptr<MLinker>(
-        new MLinker(SystemParameters::Mechanics().LStretchingK[linkerType], position1, position2,
-                _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-                _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+    _mLinker = unique_ptr<MLinker>(new MLinker(linkerType, position1, position2,
+                                   _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+                                   _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mLinker->setLinker(this);
 #endif
 }
@@ -111,9 +107,9 @@ Linker::~Linker() {
 void Linker::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
-    coordinate = MidPointCoordinate(m1, m2, 0.5);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    coordinate = midPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}

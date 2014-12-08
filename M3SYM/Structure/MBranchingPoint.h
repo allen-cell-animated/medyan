@@ -29,11 +29,7 @@ class MBranchingPoint {
     
 public:
     /// Main constructor, sets constants
-    MBranchingPoint(double stretchConst, double eqLength,
-                 double bendConst, double bendTheta,
-                 double twistConst, double twistAngle)
-                 : _kStretch(stretchConst), _eqLength(eqLength), _kBend(bendConst),
-                   _eqTheta(bendTheta), _kTwist(twistConst), _eqPhi(twistAngle) {}
+    MBranchingPoint(int branchType);
     
     //@{
     /// Getter for constants
@@ -43,8 +39,7 @@ public:
     double getBendingConstant(){return _kBend;}
     double getEqTheta(){return _eqTheta;}
     
-    double getTwistingConstant(){return _kTwist;}
-    double getEqPhi(){return _eqPhi;}
+    double getDihedralConstant(){return _kDihedr;}
     //@}
     
     /// Set parent
@@ -59,8 +54,7 @@ private:
     double _eqTheta; ///< Bending equilibrium angle
     double _kBend; //< Bending constant
     
-    double _eqPhi; ///< Twisiting angle
-    double _kTwist; ///< Twisting constant
+    double _kDihedr; ///< Twisting constant
     
     BranchingPoint* _pBranchingPoint; ///< Pointer to parent branch point
     

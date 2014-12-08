@@ -54,8 +54,7 @@ struct MechanicsParameters {
     vector<double> BrStretchingL = {};
     vector<double> BrBendingK = {};
     vector<double> BrBendingTheta = {};
-    vector<double> BrTwistingK = {};
-    vector<double> BrTwistingPhi = {};
+    vector<double> BrDihedralK = {};
     //@}
     
     //@{
@@ -142,9 +141,4 @@ public:
     //@}
 };
 
-
-
-
-
-
-#endif /* defined(__Cyto__SystemParameters__) */
+#endif

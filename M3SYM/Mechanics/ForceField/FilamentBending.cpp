@@ -14,6 +14,8 @@
 #include "FilamentBending.h"
 
 #include "FilamentBendingHarmonic.h"
+#include "FilamentBendingCosine.h"
+
 #include "Filament.h"
 #include "Cylinder.h"
 
@@ -30,9 +32,10 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
                 Bead* b1 = (*it2)->getFirstBead();
                 Bead* b2 = (*it)->getFirstBead();
                 Bead* b3 = (*it)->getSecondBead();
-                double k_bend = (*it)->getMCylinder()->getBendingConst();
+                double kBend = (*it)->getMCylinder()->getBendingConst();
+                double eqTheta = (*it)->getMCylinder()->getEqTheta();
                 
-                U += _FFType.energy( b1, b2, b3, k_bend );
+                U += _FFType.energy(b1, b2, b3, kBend, eqTheta);
             }
         }
         else {
@@ -43,9 +46,10 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
                 Bead* b1 = (*it2)->getFirstBead();
                 Bead* b2 = (*it)->getFirstBead();
                 Bead* b3 = (*it)->getSecondBead();
-                double k_bend = (*it)->getMCylinder()->getBendingConst();
+                double kBend = (*it)->getMCylinder()->getBendingConst();
+                double eqTheta = (*it)->getMCylinder()->getEqTheta();
                 
-                U += _FFType.energy( b1, b2, b3, k_bend, d );
+                U += _FFType.energy(b1, b2, b3, kBend, eqTheta, d);
                 index++;
             }
         }
@@ -65,15 +69,16 @@ void FilamentBending<FBendingInteractionType>::computeForces(Filament* f)
             Bead* b1 = (*it2)->getFirstBead();
             Bead* b2 = (*it)->getFirstBead();
             Bead* b3 = (*it)->getSecondBead();
-            double k_bend = (*it)->getMCylinder()->getBendingConst();
+            double kBend = (*it)->getMCylinder()->getBendingConst();
+            double eqTheta = (*it)->getMCylinder()->getEqTheta();
             
-            _FFType.forces( b1, b2, b3, k_bend );
+            _FFType.forces(b1, b2, b3, kBend, eqTheta);
         }
     }
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f) /// Needed for Conjugated Gradient minimization;
+void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f)
 {
     if (f->getCylinderVector().size()>1){
         for (auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
@@ -82,9 +87,10 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f) ///
             Bead* b1 = (*it2)->getFirstBead();
             Bead* b2 = (*it)->getFirstBead();
             Bead* b3 = (*it)->getSecondBead();
-            double k_bend = (*it)->getMCylinder()->getBendingConst();
+            double kBend = (*it)->getMCylinder()->getBendingConst();
+            double eqTheta = (*it)->getMCylinder()->getEqTheta();
 
-            _FFType.forcesAux( b1, b2, b3, k_bend );
+            _FFType.forcesAux(b1, b2, b3, kBend, eqTheta);
         }
     }
 }
@@ -93,3 +99,6 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f) ///
 template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(Filament* f, double d);
 template void  FilamentBending<FilamentBendingHarmonic>::computeForces(Filament* f);
 template void  FilamentBending<FilamentBendingHarmonic>::computeForcesAux(Filament* f);
+template double FilamentBending<FilamentBendingCosine>::computeEnergy(Filament* f, double d);
+template void  FilamentBending<FilamentBendingCosine>::computeForces(Filament* f);
+template void  FilamentBending<FilamentBendingCosine>::computeForcesAux(Filament* f);

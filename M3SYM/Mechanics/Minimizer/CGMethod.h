@@ -41,8 +41,8 @@ protected:
     
     //@{
     /// Parameter used in backtracking line search
-    const double LAMBDAREDUCE = 0.1; ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
+    const double LAMBDAREDUCE = 0.4; ///< Lambda reduction parameter for backtracking
+    const double BACKTRACKSLOPE = 0.5; ///< Backtrack slope parameter
     //@}
     
     //@{
@@ -72,7 +72,7 @@ protected:
     int _energyChangeCounter = 0; ///< Number of iterations where energy has not changed by an amount more than LSENERGYTOL
     const int ENERGYCHANGEITER = 20; ///< Max number of iterations allowed where """
     
-    const double GRADTOL = 1e-10; ///< Gradient minimization tolerance
+    const double GRADTOL = 1e-6; ///< Gradient minimization tolerance
     
     /// Gracketing function (from Numerical Recipes in C++, second edition)
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);

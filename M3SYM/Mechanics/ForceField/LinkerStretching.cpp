@@ -27,14 +27,14 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(Linker* l, do
     Bead* b3 = l->getSecondCylinder()->getFirstBead();
     Bead* b4 = l->getSecondCylinder()->getSecondBead();
     double kStretch = l->getMLinker()->getStretchingConstant();
-    double L = l->getMLinker()->getEqLength();
+    double eqLength = l->getMLinker()->getEqLength();
     double pos1 = l->getFirstPosition();
     double pos2 = l->getSecondPosition();
     
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
     else
-        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L, d);
+        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
     
 }
 
@@ -46,12 +46,12 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(Linker* l) {
     Bead* b3 = l->getSecondCylinder()->getFirstBead();
     Bead* b4 = l->getSecondCylinder()->getSecondBead();
     double kStretch = l->getMLinker()->getStretchingConstant();
-    double L = l->getMLinker()->getEqLength();
+    double eqLength = l->getMLinker()->getEqLength();
     
     double pos1 = l->getFirstPosition();
     double pos2 = l->getSecondPosition();
     
-    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
 }
 
 
@@ -63,12 +63,12 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) {
     Bead* b3 = l->getSecondCylinder()->getFirstBead();
     Bead* b4 = l->getSecondCylinder()->getSecondBead();
     double kStretch = l->getMLinker()->getStretchingConstant();
-    double L = l->getMLinker()->getEqLength();
+    double eqLength = l->getMLinker()->getEqLength();
     
     double pos1 = l->getFirstPosition();
     double pos2 = l->getSecondPosition();
     
-    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
 }
 
 ///Temlate specializations

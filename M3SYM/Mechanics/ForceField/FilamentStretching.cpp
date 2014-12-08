@@ -26,19 +26,19 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f
             
             Bead* b1 = it->getFirstBead();
             Bead* b2 = it->getSecondBead();
-            double kStr = it->getMCylinder()->getStretchingConst();
-            double L = it->getMCylinder()->getEqLength();
-            U += _FFType.energy(b1, b2, kStr, L);
+            double kStretch = it->getMCylinder()->getStretchingConst();
+            double eqLength = it->getMCylinder()->getEqLength();
+            U += _FFType.energy(b1, b2, kStretch, eqLength);
         }
     }
     else {
         for(auto it : f->getCylinderVector()){
             Bead* b1 = it->getFirstBead();
             Bead* b2 = it->getSecondBead();
-            double kStr =it->getMCylinder()->getStretchingConst();
-            double L = it->getMCylinder()->getEqLength();
+            double kStretch =it->getMCylinder()->getStretchingConst();
+            double eqLength = it->getMCylinder()->getEqLength();
             
-            U += _FFType.energy(b1, b2, kStr, L, d);
+            U += _FFType.energy(b1, b2, kStretch, eqLength, d);
         }
     }
     
@@ -51,10 +51,10 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(Filament* f) 
        
        Bead* b1 = it->getFirstBead();
        Bead* b2 = it->getSecondBead();
+       double kStretch =it->getMCylinder()->getStretchingConst();
+       double eqLength = it->getMCylinder()->getEqLength();
        
-       double kStr =it->getMCylinder()->getStretchingConst();
-       double L = it->getMCylinder()->getEqLength();
-       _FFType.forces(b1, b2, kStr, L);
+       _FFType.forces(b1, b2, kStretch, eqLength);
    }
 }
 
@@ -65,10 +65,10 @@ void FilamentStretching<FStretchingInteractionType>::computeForcesAux(Filament* 
         
         Bead* b1 = it->getFirstBead();
         Bead* b2 = it->getSecondBead();
-        double kStr =it->getMCylinder()->getStretchingConst();
-        double L = it->getMCylinder()->getEqLength();
+        double kStretch =it->getMCylinder()->getStretchingConst();
+        double eqLength = it->getMCylinder()->getEqLength();
         
-        _FFType.forcesAux(b1, b2, kStr, L);
+        _FFType.forcesAux(b1, b2, kStretch, eqLength);
     }
 }
 

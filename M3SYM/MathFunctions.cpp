@@ -18,7 +18,7 @@
 
 namespace mathfunc {
     
-    double TwoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
+    double twoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
                               const vector<double>& v3, const vector<double>& v4){
         
 /*!         
@@ -40,12 +40,12 @@ namespace mathfunc {
 */
         
         double SMALL_NUM = 0.0001;
-        double a = ScalarProduct(v1, v2, v1, v2);
-        double b = ScalarProduct(v1, v2, v3, v4);
-        double c = ScalarProduct(v3, v4, v3, v4);
-        double d = ScalarProduct(v1, v2, v1, v3);
-        double e = ScalarProduct(v3, v4, v1, v3);
-        double f = ScalarProduct(v1, v3, v1, v3);
+        double a = scalarProduct(v1, v2, v1, v2);
+        double b = scalarProduct(v1, v2, v3, v4);
+        double c = scalarProduct(v3, v4, v3, v4);
+        double d = scalarProduct(v1, v2, v1, v3);
+        double e = scalarProduct(v3, v4, v1, v3);
+        double f = scalarProduct(v1, v3, v1, v3);
         
         double D = a*c - b*b;
         double sc, sN, tc, tN;

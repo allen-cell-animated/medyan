@@ -1,13 +1,18 @@
-//
-//  BranchingFF.h
-//  M3SYM
-//
-//  Created by Konstantin Popov on 12/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __M3SYM__BranchingFF__
-#define __M3SYM__BranchingFF__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_BranchingFF_h
+#define M3SYM_BranchingFF_h
 
 #include <vector>
 
@@ -19,7 +24,7 @@
 class BranchingInteractions;
 
 /// Branching FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Branching] (@ref Branching)
-/// position of branced chain, angle of branced chain , and dihedral for branchinf chain.
+/// position of branched chain, angle of branched chain, and dihedral for branching chain.
 class BranchingFF : public ForceField {
     
 private:
@@ -34,4 +39,4 @@ public:
     virtual void computeForcesAux();
 };
 
-#endif /* defined(__M3SYM__BranchingFF__) */
+#endif

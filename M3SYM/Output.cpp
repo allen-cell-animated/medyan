@@ -62,12 +62,12 @@ void Output::printBasicSnapshot(int step) {
         _outputFile << "L " << linker->getLinkerID()<< " " << linker->getLinkerType() << endl;
         
         //print coordinates
-        auto x = MidPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
+        auto x = midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
                                     linker->getFirstCylinder()->getSecondBead()->coordinate,
                                     linker->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
-        x = MidPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
+        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
                                     linker->getSecondCylinder()->getSecondBead()->coordinate,
                                     linker->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
@@ -81,12 +81,12 @@ void Output::printBasicSnapshot(int step) {
         _outputFile << "M " << motor->getMotorID() << " " << motor->getMotorType() << endl;
         
         //print coordinates
-        auto x = MidPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
+        auto x = midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
                                     motor->getFirstCylinder()->getSecondBead()->coordinate,
                                     motor->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
-        x = MidPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
+        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
                                motor->getSecondCylinder()->getSecondBead()->coordinate,
                                motor->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];

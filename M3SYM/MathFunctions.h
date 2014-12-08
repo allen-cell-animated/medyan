@@ -24,7 +24,7 @@
 namespace mathfunc {
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3);
-    inline double TwoPointDistance(const vector<double>& v1, const vector<double>& v2) {
+    inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
         return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
@@ -32,7 +32,7 @@ namespace mathfunc {
     
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
-    inline double TwoPointDistanceStretched(const vector<double>& v1, const vector<double>& p1,
+    inline double twoPointDistanceStretched(const vector<double>& v1, const vector<double>& p1,
                                             const vector<double>& v2, const vector<double>& p2, double d){
         
         return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))*((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
@@ -42,9 +42,9 @@ namespace mathfunc {
 
     
     /// Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2);
-    inline vector<double> TwoPointDirection(const vector<double>& v1, const vector<double>& v2) {
+    inline vector<double> twoPointDirection(const vector<double>& v1, const vector<double>& v2) {
         vector<double> tau (3, 0);
-        double invD = 1/TwoPointDistance(v1, v2);
+        double invD = 1/twoPointDistance(v1, v2);
         tau[0] = invD * ( v2[0] - v1[0] );
         tau[1] = invD * ( v2[1] - v1[1] );
         tau[2] = invD * ( v2[2] - v1[2] );
@@ -52,7 +52,7 @@ namespace mathfunc {
     }
     
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and (x4-x3,y4-y3,z4-z3)
-    inline double ScalarProduct(const vector<double>& v1, const vector<double>& v2,
+    inline double scalarProduct(const vector<double>& v1, const vector<double>& v2,
                                 const vector<double>& v3, const vector<double>& v4) {
         return ((v2[0] - v1[0])*(v4[0] - v3[0]) +
                 (v2[1] - v1[1])*(v4[1] - v3[1]) +
@@ -61,7 +61,7 @@ namespace mathfunc {
     
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and (x4-x3,y4-y3,z4-z3)
     /// but with x-d*p coordinates
-    inline double ScalarProductStretched(const vector<double>& v1, const vector<double>& p1,
+    inline double scalarProductStretched(const vector<double>& v1, const vector<double>& p1,
                                          const vector<double>& v2, const vector<double>& p2,
                                          const vector<double>& v3, const vector<double>& p3,
                                          const vector<double>& v4, const vector<double>& p4, double d){
@@ -75,7 +75,7 @@ namespace mathfunc {
     }
     
     /// Projection of a new point based on a given direction and starting point
-    inline vector<double> NextPointProjection(const vector<double>& coordinate, double d, const vector<double>& tau) {
+    inline vector<double> nextPointProjection(const vector<double>& coordinate, double d, const vector<double>& tau) {
         vector<double> v;
         v.push_back(coordinate[0] + d * tau[0]);
         v.push_back(coordinate[1] + d * tau[1]);
@@ -84,7 +84,7 @@ namespace mathfunc {
     }
     
     /// Returns coordinates of a point v located on a line between v1 and v2. |v-v1|/|v2-v| = alpha.
-    inline vector<double> MidPointCoordinate(const vector<double>& v1, const vector<double>& v2, double alpha)  {
+    inline vector<double> midPointCoordinate(const vector<double>& v1, const vector<double>& v2, double alpha)  {
         vector<double> v;
         v.push_back(v1[0]*(1.0 - alpha) + alpha*v2[0]);
         v.push_back(v1[1]*(1.0 - alpha) + alpha*v2[1]);
@@ -95,7 +95,7 @@ namespace mathfunc {
     
     /// Returns coordinates of a point v located on a line between v1 and v2. |v-v1|/|v2-v| = alpha,
     /// but with x-d*p coordinates
-    inline vector<double> MidPointCoordinateStretched(const vector<double>& v1, const vector<double>& p1,
+    inline vector<double> midPointCoordinateStretched(const vector<double>& v1, const vector<double>& p1,
                                                       const vector<double>& v2, const vector<double>& p2,
                                                       double alpha , double d) {
         
@@ -107,16 +107,15 @@ namespace mathfunc {
     }
     
     /// Function to calculate a diatance between two segments
-    double TwoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
+    double twoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
                               const vector<double>& v3, const vector<double>& v4);
     
-    // Function to move bead out of plane
-    inline vector<double> MovePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
-                                const vector<double>& p3, const vector<double>& p4, int i, double d) {
+    /// Function to move bead out of plane by specified amount
+    inline vector<double> movePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
+                                              const vector<double>& p3, const vector<double>& p4, int i, double d) {
         vector<double> v;
         vector<double> v1;
         
-       
         v.push_back( (p2[2]-p1[2])*(p4[3]-p3[3]) -  (p2[3]-p1[3])*(p4[2]-p3[2]) );
         v.push_back( (p2[3]-p1[3])*(p4[1]-p3[1]) -  (p2[1]-p1[1])*(p4[3]-p3[3]) );
         v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );

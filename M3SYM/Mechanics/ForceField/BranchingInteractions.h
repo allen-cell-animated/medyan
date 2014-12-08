@@ -1,14 +1,18 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingInteraction.h
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #ifndef M3SYM_BranchingInteractions_h
 #define M3SYM_BranchingInteractions_h
-
 
 #include <iostream>
 
@@ -17,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// BranchingInteractions class represents an interaction in a branching point
+/// Represents an interaction at a BranchingPoint
 class BranchingInteractions {
 private:
     string _name;
@@ -32,9 +36,6 @@ public:
     
     /// Get the name of this interaction
     const string& getName() {return _name;}
-    
 };
-
-
 
 #endif

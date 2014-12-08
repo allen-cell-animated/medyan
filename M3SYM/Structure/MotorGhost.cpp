@@ -22,8 +22,7 @@
 
 using namespace mathfunc;
 
-MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       double position1, double position2, bool creation)
+MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2, bool creation)
                        : _c1(c1), _c2(c2), _motorType(motorType), _position1(position1), _position2(position2) {
     
     //add to motor ghost db
@@ -32,9 +31,9 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _birthTime = tau();
     
     //Find compartment
-    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
-    coordinate = MidPointCoordinate(m1, m2, 0.5);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    coordinate = midPointCoordinate(m1, m2, 0.5);
     
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -54,15 +53,12 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
     if(!creation) {
         SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-        if(sm1->getN() != 0) {
-            sm1->getRSpecies().up();
-            se1->getRSpecies().down();
-        }
+        sm1->getRSpecies().up();
+        se1->getRSpecies().down();
+        
         SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-        if(sm2->getN() != 0) {
-            sm2->getRSpecies().up();
-            se2->getRSpecies().down();
-        }
+        sm2->getRSpecies().up();
+        se2->getRSpecies().down();
     }
     
     //attach this linker to the species
@@ -72,10 +68,9 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #endif
     
 #ifdef MECHANICS
-    _mMotorGhost = unique_ptr<MMotorGhost>(
-            new MMotorGhost(SystemParameters::Mechanics().MStretchingK[motorType], position1, position2,
-                _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-                _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+    _mMotorGhost = unique_ptr<MMotorGhost>(new MMotorGhost(motorType, position1, position2,
+                                           _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+                                           _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -113,9 +108,9 @@ MotorGhost::~MotorGhost() {
 void MotorGhost::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = MidPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
-    coordinate = MidPointCoordinate(m1, m2, 0.5);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    coordinate = midPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}

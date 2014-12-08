@@ -131,7 +131,7 @@ struct MechanicsFFType {
     /// BranchingFF type
     string BrStretchingType = "";
     string BrBendingType = "";
-    string BrTwistingType = "";
+    string BrDihedralType = "";
     //@}
     
     /// VolumeFF type

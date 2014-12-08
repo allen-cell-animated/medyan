@@ -24,8 +24,8 @@
 void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
     
     for (auto it: v) {
-        double d = mathfunc::TwoPointDistance(it[0], it[1]);
-        vector<double> tau = mathfunc::TwoPointDirection(it[0], it[1]);
+        double d = mathfunc::twoPointDistance(it[0], it[1]);
+        vector<double> tau = mathfunc::twoPointDirection(it[0], it[1]);
         
         int numSegment = d / SystemParameters::Geometry().cylinderSize;
         
@@ -37,8 +37,8 @@ void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
 
 void SubSystem::addNewFilament(vector<vector<double>>& v) {
     
-    double d = mathfunc::TwoPointDistance(v[0], v[1]);
-    vector<double> tau = mathfunc::TwoPointDirection(v[0], v[1]);
+    double d = mathfunc::twoPointDistance(v[0], v[1]);
+    vector<double> tau = mathfunc::twoPointDirection(v[0], v[1]);
     
     int numSegment = d / SystemParameters::Geometry().cylinderSize;
     

@@ -27,15 +27,15 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(MotorGhos
     Bead* b3 = m->getSecondCylinder()->getFirstBead();
     Bead* b4 = m->getSecondCylinder()->getSecondBead();
     double kStretch = m->getMMotorGhost()->getStretchingConstant();
-    double L = m->getMMotorGhost()->getEqLength();
+    double eqLength = m->getMMotorGhost()->getEqLength();
     
     double pos1 = m->getFirstPosition();
     double pos2 = m->getSecondPosition();
     
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
     else
-        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, L, d);
+        return _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
     
 }
 
@@ -47,12 +47,12 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(MotorGhost*
     Bead* b3 = m->getSecondCylinder()->getFirstBead();
     Bead* b4 = m->getSecondCylinder()->getSecondBead();
     double kStretch = m->getMMotorGhost()->getStretchingConstant();
-    double L = m->getMMotorGhost()->getEqLength();
+    double eqLength = m->getMMotorGhost()->getEqLength();
     
     double pos1 = m->getFirstPosition();
     double pos2 = m->getSecondPosition();
     
-    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
     
 }
 
@@ -65,12 +65,12 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux(MotorGho
     Bead* b3 = m->getSecondCylinder()->getFirstBead();
     Bead* b4 = m->getSecondCylinder()->getSecondBead();
     double kStretch = m->getMMotorGhost()->getStretchingConstant();
-    double L = m->getMMotorGhost()->getEqLength();
+    double eqLength = m->getMMotorGhost()->getEqLength();
     
     double pos1 = m->getFirstPosition();
     double pos2 = m->getSecondPosition();
     
-    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, L);
+    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
 }
 
 ///Template specializations

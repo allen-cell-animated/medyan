@@ -20,6 +20,7 @@
 
 #include "FilamentBending.h"
 #include "FilamentBendingHarmonic.h"
+#include "FilamentBendingCosine.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting)
 {
@@ -27,8 +28,11 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting)
         _filamentInteractionVector.emplace_back(new FilamentStretching<FilamentStretchingHarmonic>());
     if (bending == "HARMONIC")
         _filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingHarmonic>());
+    else if(bending == "COSINE")
+        _filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingCosine>());
     
-    //if (Twisting == "HARMONIC") {_filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());}
+//    if (Twisting == "HARMONIC")
+//        _filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());}
 }
 
 

@@ -32,7 +32,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, dou
     _birthTime = tau();
     
     //Find compartment
-    coordinate = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
@@ -42,13 +42,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, dou
 #endif
     
 #ifdef MECHANICS
-    _mBranchingPoint = unique_ptr<MBranchingPoint>(
-      new MBranchingPoint(SystemParameters::Mechanics().BrStretchingK[branchType],
-                       SystemParameters::Mechanics().BrStretchingL[branchType],
-                       SystemParameters::Mechanics().BrBendingK[branchType],
-                       SystemParameters::Mechanics().BrBendingTheta[branchType],
-                       SystemParameters::Mechanics().BrTwistingK[branchType],
-                       SystemParameters::Mechanics().BrTwistingPhi[branchType]));
+    _mBranchingPoint = unique_ptr<MBranchingPoint>(new MBranchingPoint(branchType));
     _mBranchingPoint->setBranchingPoint(this);
 #endif
 }
@@ -62,7 +56,7 @@ BranchingPoint::~BranchingPoint() {
 void BranchingPoint::updatePosition() {
     
     //Find compartment
-    coordinate = MidPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
 
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}

@@ -1,13 +1,18 @@
-//
-//  BranchingStretching.h
-//  M3SYM
-//
-//  Created by Konstantin Popov on 12/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
-//
 
-#ifndef __M3SYM__BranchingStretching__
-#define __M3SYM__BranchingStretching__
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
+//
+//  Copyright (2014) Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
+
+#ifndef M3SYM_BranchingStretching_h
+#define M3SYM_BranchingStretching_h
 
 #include "common.h"
 
@@ -16,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Branching stratching class represents an interaction fixing a branching chain on the main chain
+/// Represents an interaction fixing a Cylinder fixed by a BranchingPoint on the main.
 template <class BStretchingInteractionType>
 class BranchingStretching : public BranchingInteractions {
     
@@ -29,6 +34,4 @@ public:
     virtual void computeForcesAux(BranchingPoint*);
 };
 
-
-
-#endif /* defined(__M3SYM__BranchingStretching__) */
+#endif
