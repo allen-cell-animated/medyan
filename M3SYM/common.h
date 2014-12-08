@@ -20,7 +20,7 @@
 
 ///Defining chemical and mechanical capablilites turned on/off
 #define MECHANICS
-//#define CHEMISTRY
+#define CHEMISTRY
 
 ///If compiling for testing
 #define TESTING
