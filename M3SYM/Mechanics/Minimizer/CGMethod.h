@@ -36,7 +36,7 @@ protected:
     /// Lambda parameter for use in linear search methods
     const double LAMBDAMIN = 0.1; ///< Minimum lambda that can be returned, used only in golden section for now
     const double LAMBDAMAX = 10.0; ///< Max lambda that can be returned, used in all methods
-    const double MAXDIST = 0.1; ///< Max distance parameter, used only in backtracking line search
+    const double MAXDIST = 1; ///< Max distance parameter, used only in backtracking line search
     //@}
     
     //@{
@@ -72,7 +72,7 @@ protected:
     int _energyChangeCounter = 0; ///< Number of iterations where energy has not changed by an amount more than LSENERGYTOL
     const int ENERGYCHANGEITER = 10; ///< Max number of iterations allowed where """
     
-    const double GRADTOL = 1e-8; ///< Gradient minimization tolerance
+    const double GRADTOL = 1e-3; ///< Gradient minimization tolerance
     
     /// Gracketing function (from Numerical Recipes in C++, second edition)
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);

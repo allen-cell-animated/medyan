@@ -272,20 +272,16 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         directionDotForce += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxForce = max(maxForce, fabs(it->force[i]));
     }
-    //cout << "Max force = " << maxForce << endl;
     
     //return error if in wrong direction
     if(directionDotForce < 0.0) return -1.0;
-    
     //return zero if no forces
     if(maxForce == 0.0) return 0.0;
 
     //calculate first lambda. cannot be greater than lambda max
     double lambda = min(LAMBDAMAX, MAXDIST * maxForce);
     double currentEnergy = FFM.computeEnergy(0.0);
-    
-    //cout << "Lambda = " << lambda << endl;
-    
+
     //backtracking loop
     while(true) {
         
@@ -300,9 +296,6 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
-        
-        //cout << "Lambda reduced = " << lambda << endl;
-        
         if(lambda <= 0 || idealEnergyChange >= -LSENERGYTOL) {
             
             if(energyChange < 0) {

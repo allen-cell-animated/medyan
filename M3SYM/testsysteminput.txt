@@ -118,7 +118,7 @@ NUMMOTORSPECIES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                100
+NUMFILAMENTS:                1
 
 
 

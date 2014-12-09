@@ -27,7 +27,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 	double prevEnergy = curEnergy;
 	FFM.computeForces();
     //printForces();
-    
 
 	double gSquare = gradSquare();
     
@@ -40,8 +39,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         
         lambda = backtrackingLineSearch(FFM);
         if(lambda < 0) { return; }
-    
-		//PrintForces();
+
         moveBeads(lambda);
         //PrintForces();
         
@@ -55,14 +53,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
             if(gSquare == 0) beta = 0;
 			else beta = max(0.0, (newGradSquare - gradDotProduct())/ gSquare);
         }
-        //cout << "beta = " << beta <<endl;
         shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0); 
-        
-        cout<<"Current energy = "<< curEnergy <<endl;
-        
+
         //PrintForces();
 		gSquare = newGradSquare;
         //cout<<"GradSq before end=  "<< gSquare <<endl;
