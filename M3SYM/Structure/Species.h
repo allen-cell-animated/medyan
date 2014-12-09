@@ -452,7 +452,6 @@ public:
     /// Regular Assignment
     SpeciesBound& operator=(const SpeciesBound& rhs)  {
         Species::operator=(rhs);
-        _cBound = rhs._cBound;
         return *this;
     }
     

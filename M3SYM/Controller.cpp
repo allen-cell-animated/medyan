@@ -33,7 +33,9 @@ using namespace mathfunc;
 
 void Controller::initialize(string inputDirectory, string outputDirectory) {
     
-    cout << "******************** CYTOSIM **********************" << endl;
+    cout << "******************** M3SYM **********************" << endl;
+    
+    cout.precision(10);
     
     //init input directory
     _inputDirectory = inputDirectory;

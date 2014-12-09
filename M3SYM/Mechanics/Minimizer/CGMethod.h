@@ -34,15 +34,15 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used only in golden section for now
-    const double LAMBDAMAX = 1; ///< Max lambda that can be returned, used in all methods
-    const double MAXDIST = 1; ///< Max distance beads can be moved, used only in backtracking line search
+    const double LAMBDAMIN = 0.1; ///< Minimum lambda that can be returned, used only in golden section for now
+    const double LAMBDAMAX = 10.0; ///< Max lambda that can be returned, used in all methods
+    const double MAXDIST = 0.1; ///< Max distance parameter, used only in backtracking line search
     //@}
     
     //@{
     /// Parameter used in backtracking line search
-    const double LAMBDAREDUCE = 0.4; ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.5; ///< Backtrack slope parameter
+    const double LAMBDAREDUCE = 0.5; ///< Lambda reduction parameter for backtracking
+    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
     //@}
     
     //@{
@@ -70,9 +70,9 @@ protected:
     
     ///Energy counter, for use in linear search methods
     int _energyChangeCounter = 0; ///< Number of iterations where energy has not changed by an amount more than LSENERGYTOL
-    const int ENERGYCHANGEITER = 20; ///< Max number of iterations allowed where """
+    const int ENERGYCHANGEITER = 10; ///< Max number of iterations allowed where """
     
-    const double GRADTOL = 1e-6; ///< Gradient minimization tolerance
+    const double GRADTOL = 1e-8; ///< Gradient minimization tolerance
     
     /// Gracketing function (from Numerical Recipes in C++, second edition)
     void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
@@ -95,7 +95,7 @@ protected:
     double binarySearch(ForceFieldManager& FFM);
     
     double backtrackingLineSearch(ForceFieldManager& FFM);
-    double quadraticLineSearch(ForceFieldManager& FFM);
+//    double quadraticLineSearch(ForceFieldManager& FFM);
     //@}
     
     void printForces();

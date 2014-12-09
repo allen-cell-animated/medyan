@@ -63,7 +63,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     
     if (JJ==0){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
         b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
@@ -127,7 +127,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     
     if (JJ==0){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    v, b1->force, b2->coordinate, b2->force, lambda);
@@ -191,7 +191,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     
     if (JJ==0){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.001);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
         b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
@@ -311,7 +311,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     if (JJ==0){
         
-        auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux, 1, 0.001);
+        auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinateAux, v, b2->coordinateAux);
         b = scalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);

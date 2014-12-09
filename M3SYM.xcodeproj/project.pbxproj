@@ -401,7 +401,7 @@
 		F7C9CFA91A2D165D0087434A /* BoundaryElementDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryElementDB.h; sourceTree = "<group>"; };
 		F7C9CFAA1A2D165D0087434A /* BoundaryElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryElementImpl.cpp; sourceTree = "<group>"; };
 		F7C9CFAB1A2D165D0087434A /* BoundaryElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryElementImpl.h; sourceTree = "<group>"; };
-		F7C9CFAC1A2D165D0087434A /* BoundaryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryImpl.cpp; path = ../../Structure/BoundaryImpl.cpp; sourceTree = "<group>"; };
+		F7C9CFAC1A2D165D0087434A /* BoundaryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryImpl.cpp; sourceTree = "<group>"; };
 		F7C9CFAD1A2D165D0087434A /* BoundaryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryImpl.h; sourceTree = "<group>"; };
 		F7C9CFAE1A2D165D0087434A /* BoundarySurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundarySurface.h; sourceTree = "<group>"; };
 		F7C9CFAF1A2D165D0087434A /* BoundarySurfaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundarySurfaceImpl.cpp; sourceTree = "<group>"; };
@@ -499,6 +499,7 @@
 				F7C9CFA41A2D165D0087434A /* BeadDB.cpp */,
 				F7C9CFA51A2D165D0087434A /* BeadDB.h */,
 				F7C9CFA61A2D165D0087434A /* Boundary.h */,
+				F7C9CFAC1A2D165D0087434A /* BoundaryImpl.cpp */,
 				F7C9CFAD1A2D165D0087434A /* BoundaryImpl.h */,
 				F7C9CFA71A2D165D0087434A /* BoundaryElement.h */,
 				F7C9CFA81A2D165D0087434A /* BoundaryElementDB.cpp */,
@@ -668,7 +669,6 @@
 				F735B7D61A2D175800AE21D1 /* ForceField.h */,
 				F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */,
 				F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */,
-				F7C9CFAC1A2D165D0087434A /* BoundaryImpl.cpp */,
 				F735B7BC1A2D175800AE21D1 /* BoundaryFF.cpp */,
 				F735B7BD1A2D175800AE21D1 /* BoundaryFF.h */,
 				F735B7BE1A2D175800AE21D1 /* BoundaryInteractions.h */,

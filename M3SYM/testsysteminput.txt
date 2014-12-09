@@ -7,13 +7,16 @@ NX:                          10
 NY:                          10
 NZ:                          10
 
-COMPARTMENTSIZEX:            1000.0
-COMPARTMENTSIZEY:            1000.0
-COMPARTMENTSIZEZ:            1000.0
+COMPARTMENTSIZEX:            100.0
+COMPARTMENTSIZEY:            100.0
+COMPARTMENTSIZEZ:            100.0
 
 MONOMERSIZE:                 2.7
 
 CYLINDERSIZE:                27.0
+
+BOUNDARYSHAPE:               CUBIC
+BDIAMETER:                   700.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -27,9 +30,9 @@ MD:
 FSTRETCHINGTYPE:             HARMONIC
 FSTRETCHINGK:                0.2
 
-FBENDINGTYPE:
+FBENDINGTYPE:                HARMONIC
 FBENDINGK:                   0.5
-FBENDINGTHETA:
+FBENDINGTHETA:               0.0
 
 FTWISTINGTYPE:
 FTWISTINGK:
@@ -37,7 +40,7 @@ FTWISTINGPHI:
 
 ### LINKERS ###
 
-LSTRETCHINGTYPE:
+LSTRETCHINGTYPE:             HARMONIC
 LSTRETCHINGK:                0.5
 
 LBENDINGTYPE:
@@ -50,8 +53,8 @@ LTWISTINGPHI:
 
 ### MOTORS ###
 
-MSTRETCHINGTYPE:
-MSTRETCHINGK:                0.5
+MSTRETCHINGTYPE:             HARMONIC
+MSTRETCHINGK:                2
 
 MBENDINGTYPE:
 MBENDINGK:
@@ -69,26 +72,23 @@ BRSTRETCHINGL:              2
 
 BRBENDINGTYPE:              COSINE
 BRBENDINGK:                 0.5
-BRBENDINGTHETA:             1
+BRBENDINGTHETA:             1.0
 
 BRDIHEDRALTYPE:
 BRDIHEDRALK:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:
-VOLUMEK:                     1.0
+VOLUMETYPE:                  
+VOLUMEK:                     2.0
 VOLUMECUTOFF:                27.0
 
 ### BOUNDARY ###
 
 BOUNDARYTYPE:                REPULSIONEXP
-
-BOUNDARYSHAPE:               CUBIC
-BDIAMETER:                   900.0
 BCUTOFF:                     50.0
 
-BINTERACTIONK:               10.0
+BINTERACTIONK:               100.0
 BSCREENLENGTH:               2.0
 
 ##################################################
@@ -97,28 +97,28 @@ BSCREENLENGTH:               2.0
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    10000
-NUMSTEPSPERM:                1000
+NUMSTEPS:                    10000000
+NUMSTEPSPERM:                100
 
-NUMBULKSPECIES:              1
-NUMDIFFUSINGSPECIES:         0
+NUMBULKSPECIES:              0
+NUMDIFFUSINGSPECIES:         2
 
-NUMFILAMENTSPECIES:          2
-NUMPLUSENDSPECIES:           2
-NUMMINUSENDSPECIES:          2
+NUMFILAMENTSPECIES:          1
+NUMPLUSENDSPECIES:           1
+NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
 NUMLINKERSPECIES:            0
-NUMMOTORSPECIES:             0
+NUMMOTORSPECIES:             1
 
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-FILAMENTFILE:               testfilamentinput.txt
+#FILAMENTFILE:               testfilamentinput.txt
 
 
-#NUMFILAMENTS:                100
+NUMFILAMENTS:                100
 
 
 
