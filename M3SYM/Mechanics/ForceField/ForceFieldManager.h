@@ -51,7 +51,6 @@ public:
     /// Compute the forcesAux of all force fields
     void computeForcesAux() {
         resetForcesAux();
-        
         for(auto &f : _forceFields)
             f->computeForcesAux();
     }
@@ -59,17 +58,15 @@ public:
     /// Reset the forces of all objects
     void resetForces() {
         
-        for(auto it: *BeadDB::instance()) {
+        for(auto it: *BeadDB::instance())
             it->force.assign (3, 0); //Set force to zero;
-        }
     }
     
     /// Reset the forcesAux of all objects
     void resetForcesAux() {
         
-        for(auto it: *BeadDB::instance()) {
+        for(auto it: *BeadDB::instance())
             it->forceAux.assign (3, 0); //Set forceAux to zero;
-        }
     }
 };
 

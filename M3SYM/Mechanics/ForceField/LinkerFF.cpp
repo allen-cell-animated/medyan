@@ -22,9 +22,6 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
         _linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());
-    
-    //if (Bending == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerBending<FilamentBendingHarmonic>());}
-    //if (Twisting == "HARMONIC") {_linkerInteractionVector.push_back(new LinkerTwisting<FilamentTwistingHarmonic>());}
 }
 
 double LinkerFF::computeEnergy(double d) {

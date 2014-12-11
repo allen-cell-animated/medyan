@@ -22,13 +22,10 @@
  *  Specific implementations of the ForceField class will have different potentials.
  */
 class ForceField {
-
-private:
-    string _name; ///< Name of this forcefield
     
 public:
     /// Get the name of this forcefield
-    const string& getName() {return _name;}
+    virtual string getName() = 0;
     /// Compute total energy of this forcefield in the system
     virtual double computeEnergy(double d) = 0;
     /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead) forces accordingly.

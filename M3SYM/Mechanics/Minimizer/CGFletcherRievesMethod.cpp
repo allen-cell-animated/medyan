@@ -24,48 +24,44 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.computeForces();
-    
-    //PrintForces();
-    
+
+    //compute first gradient
 	double gSquare = gradSquare();
-    //cout<<"GradSq=  "<<gradSquare<<endl;
     
 	int numIter = 0;
-	do
-	{
+	do {
 		numIter++;
 		double lambda, beta, newGradSquare;
 		vector<double> newGrad;
 
+        //compute lambda by line search, move beads
         lambda = backtrackingLineSearch(FFM);
-        if(lambda < 0) {return; }
-        //cout<<"lambda= "<<lambda<<endl;
-        
-		//PrintForces();
         moveBeads(lambda);
-        //PrintForces();
         
+        //compute new forces
         FFM.computeForcesAux();
-        //PrintForces();
         
+        //compute new direction
 		newGradSquare = gradAuxSquare();
 		
+        //calculate beta
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
             if(gSquare == 0) beta = 0;
-            else beta = newGradSquare / gSquare;
+            else beta = min(newGradSquare / gSquare, 1.0);
             
         }
-		shiftGradient(beta);
+        //shift gradient by beta
+        if(gradDotProduct() < 0) shiftGradient(0.0);
+        else shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
         
 		gSquare = newGradSquare;
-        //cout<<"GradSq=  "<<gradSquare<<endl;
         
 	}
-	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
+	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
     
 	//cout << "Fletcher-Rieves Method: " << endl;
     //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;

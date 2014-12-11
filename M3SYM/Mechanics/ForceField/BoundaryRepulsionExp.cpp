@@ -25,7 +25,7 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
     
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
-    
+
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];
     b->force[2] += f0 *norm[2];

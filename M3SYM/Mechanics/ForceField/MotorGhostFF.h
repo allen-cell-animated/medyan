@@ -34,6 +34,8 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     MotorGhostFF(string& stretching, string& bending, string& twisting);
     
+    virtual string getName() {return "MotorGhost";}
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

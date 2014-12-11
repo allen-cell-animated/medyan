@@ -22,9 +22,6 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
 {
     if (stretching == "HARMONIC")
         _motorGhostInteractionVector.emplace_back(new MotorGhostStretching<MotorGhostStretchingHarmonic>());
-    
-//    if (Bending == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostBending<MotorGhostBendingHarmonic>());}
-//    if (Twisting == "HARMONIC") {_motorGhostInteractionVector.push_back(new MotorGhostTwisting<MotorGhostTwistingHarmonic>());}
 }
 
 double MotorGhostFF::computeEnergy(double d) {

@@ -61,7 +61,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0){
+    if (JJ==0 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
@@ -125,7 +125,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0){
+    if (JJ==0 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
@@ -189,7 +189,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0){
+    if (JJ==0 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
@@ -309,7 +309,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0){
+    if (JJ==0 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux, 1, 0.01);
         

@@ -651,6 +651,9 @@
 		F777FA0719C1F3A800D2850A /* ForceField */ = {
 			isa = PBXGroup;
 			children = (
+				F735B7D61A2D175800AE21D1 /* ForceField.h */,
+				F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */,
+				F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */,
 				F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */,
 				F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */,
 				F71944071A3262F3006F1E08 /* BranchingBending.cpp */,
@@ -666,9 +669,6 @@
 				F71944111A3262F3006F1E08 /* BranchingStretching.h */,
 				F71944121A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp */,
 				F71944131A3262F3006F1E08 /* BranchingStretchingHarmonic.h */,
-				F735B7D61A2D175800AE21D1 /* ForceField.h */,
-				F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */,
-				F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */,
 				F735B7BC1A2D175800AE21D1 /* BoundaryFF.cpp */,
 				F735B7BD1A2D175800AE21D1 /* BoundaryFF.h */,
 				F735B7BE1A2D175800AE21D1 /* BoundaryInteractions.h */,
@@ -720,10 +720,10 @@
 		F777FA6119C1F3C900D2850A /* Minimizer */ = {
 			isa = PBXGroup;
 			children = (
-				F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */,
-				F735B7AD1A2D173F00AE21D1 /* CGFletcherRievesMethod.h */,
 				F735B7AE1A2D173F00AE21D1 /* CGMethod.cpp */,
 				F735B7AF1A2D173F00AE21D1 /* CGMethod.h */,
+				F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */,
+				F735B7AD1A2D173F00AE21D1 /* CGFletcherRievesMethod.h */,
 				F735B7B01A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp */,
 				F735B7B11A2D173F00AE21D1 /* CGPolakRibiereMethod.h */,
 				F735B7B21A2D173F00AE21D1 /* ConjugateGradient.h */,

@@ -87,6 +87,7 @@ Filament::~Filament() {
 void Filament::extendFront(vector<double>& coordinates) {
     
     Cylinder* cBack = _cylinderVector.back();
+    int lastPositionFilament = cBack->getPositionFilament();
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
@@ -96,7 +97,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() + 1);
     
     //create cylinder
-    Cylinder* c0 = new Cylinder(this, b2, bNew, _cylinderVector.size());
+    Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1);
     c0->setLast(true);
     _cylinderVector.push_back(c0);
     
@@ -125,6 +126,7 @@ void Filament::extendFront() {
     
     else{
         Cylinder* cBack = _cylinderVector.back();
+        int lastPositionFilament = cBack->getPositionFilament();
         
         Bead* b1 = cBack->getFirstBead();
         Bead* b2 = cBack->getSecondBead();
@@ -136,7 +138,7 @@ void Filament::extendFront() {
         //create a new bead in same place as b2
         Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
         
-        Cylinder* c0 = new Cylinder(this, b2, bNew, _cylinderVector.size(), true);
+        Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
         _cylinderVector.back()->setLast(false);
         _cylinderVector.push_back(c0);
         _cylinderVector.back()->setLast(true);

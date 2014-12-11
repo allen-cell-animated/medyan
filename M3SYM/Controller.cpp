@@ -189,7 +189,6 @@ void Controller::updateSystem() {
         //update last bead
         f->getCylinderVector().back()->getSecondBead()->updatePosition();
     }
-    
     for(auto &l : *LinkerDB::instance()) {
         l->updatePosition();
         l->updateReactionRates();

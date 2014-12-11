@@ -34,6 +34,8 @@ public:
     /// Constructor, intializes all interaction at the branching point
     BranchingFF(string& stretching, string& bending, string& dihedral);
     
+    virtual string getName() {return "Branching";}
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

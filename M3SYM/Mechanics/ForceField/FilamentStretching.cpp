@@ -28,6 +28,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f
             Bead* b2 = it->getSecondBead();
             double kStretch = it->getMCylinder()->getStretchingConst();
             double eqLength = it->getMCylinder()->getEqLength();
+
             U += _FFType.energy(b1, b2, kStretch, eqLength);
         }
     }
@@ -37,7 +38,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f
             Bead* b2 = it->getSecondBead();
             double kStretch =it->getMCylinder()->getStretchingConst();
             double eqLength = it->getMCylinder()->getEqLength();
-            
+
             U += _FFType.energy(b1, b2, kStretch, eqLength, d);
         }
     }

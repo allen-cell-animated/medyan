@@ -34,9 +34,9 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMIN = 0.1; ///< Minimum lambda that can be returned, used only in golden section for now
-    const double LAMBDAMAX = 10.0; ///< Max lambda that can be returned, used in all methods
-    const double MAXDIST = 1; ///< Max distance parameter, used only in backtracking line search
+    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used in all methods
+    const double LAMBDAMAX = 1.0; ///< Max lambda that can be returned, used in all methods
+    const double MAXDIST = 0.1; ///< Max distance parameter, used only in backtracking line search
     //@}
     
     //@{
@@ -48,7 +48,6 @@ protected:
     //@{
     /// Parameter used in quadratic line search
     const double QUADRATICTOL = 0.1;
-    const double EPSQUAD = 1e-28;
     //@}
     
     //@{
@@ -60,25 +59,12 @@ protected:
     
     const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all linesearch methods
     
-    ///helpers for searching and bracketing
-    void swap(double &a, double &b);
-    void shift2(double &a, double &b, double c);
-    void shift3(double &a, double &b, double &c, double d);
-    double sign(double a, double b);
-    
 protected:
-    
-    ///Energy counter, for use in linear search methods
-    int _energyChangeCounter = 0; ///< Number of iterations where energy has not changed by an amount more than LSENERGYTOL
-    const int ENERGYCHANGEITER = 10; ///< Max number of iterations allowed where """
-    
-    const double GRADTOL = 1e-3; ///< Gradient minimization tolerance
-    
-    /// Gracketing function (from Numerical Recipes in C++, second edition)
-    void makeBracket(ForceFieldManager &FFM, double &ax, double &bx, double &cx, double &fa, double &fb, double &fc);
+    const double GRADTOL = 0.01; ///< Gradient minimization tolerance
+    const double ENERGYTOL = 1e-28; ///< Energy tolerance
     
     //@{
-    ///For use in minimization
+    /// For use in minimization
     double gradSquare();
     double gradAuxSquare();
     double gradDotProduct();
@@ -90,8 +76,7 @@ protected:
     
     //@{
     /// Linear search method
-    double goldenSection1(ForceFieldManager &FFM);
-    double goldenSection2(ForceFieldManager &FFM);
+    double goldenSection(ForceFieldManager &FFM);
     double binarySearch(ForceFieldManager& FFM);
     
     double backtrackingLineSearch(ForceFieldManager& FFM);

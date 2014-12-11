@@ -34,6 +34,8 @@ public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string interaction1, string interaction2, string interaction3);
     
+    virtual string getName() {return "Boundary";}
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

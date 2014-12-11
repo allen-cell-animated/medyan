@@ -15,7 +15,7 @@ MONOMERSIZE:                 2.7
 
 CYLINDERSIZE:                27.0
 
-BOUNDARYSHAPE:               CUBIC
+BOUNDARYSHAPE:               SPHERICAL
 BDIAMETER:                   700.0
 
 ##################################################
@@ -79,17 +79,18 @@ BRDIHEDRALK:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:                  
-VOLUMEK:                     2.0
+VOLUMETYPE:                  REPULSION
 VOLUMECUTOFF:                27.0
+
+VOLUMEK:                     2.0
 
 ### BOUNDARY ###
 
 BOUNDARYTYPE:                REPULSIONEXP
-BCUTOFF:                     50.0
+BCUTOFF:                     10.0
 
 BINTERACTIONK:               100.0
-BSCREENLENGTH:               2.0
+BSCREENLENGTH:               0.1
 
 ##################################################
 ################### CHEMISTRY ####################
@@ -97,8 +98,8 @@ BSCREENLENGTH:               2.0
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    10000000
-NUMSTEPSPERM:                100
+NUMSTEPS:                    100000000
+NUMSTEPSPERM:                1000
 
 NUMBULKSPECIES:              0
 NUMDIFFUSINGSPECIES:         2
@@ -118,7 +119,7 @@ NUMMOTORSPECIES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                1
+NUMFILAMENTS:                1000
 
 
 

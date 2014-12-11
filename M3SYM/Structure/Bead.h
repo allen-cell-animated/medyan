@@ -53,17 +53,17 @@ public:
     
     //@{
     /// Auxiliary method for CG minimization
-    double calcForceSquare() {return force[0]*force[0] +
-                                     force[1]*force[1] +
-                                     force[2]*force[2]; }
+    inline double calcForceSquare() {return force[0]*force[0] +
+                                            force[1]*force[1] +
+                                            force[2]*force[2]; }
     
-    double calcForceAuxSquare() {return forceAux[0]*forceAux[0] +
-                                        forceAux[1]*forceAux[1] +
-                                        forceAux[2]*forceAux[2]; }
+    inline double calcForceAuxSquare() {return forceAux[0]*forceAux[0] +
+                                               forceAux[1]*forceAux[1] +
+                                               forceAux[2]*forceAux[2]; }
     
-    double calcDotForceProduct() { return force[0]*forceAux[0] +
-                                          force[1]*forceAux[1] +
-                                          force[2]*forceAux[2]; }
+    inline double calcDotForceProduct() { return force[0]*forceAux[0] +
+                                                 force[1]*forceAux[1] +
+                                                 force[2]*forceAux[2]; }
     //@}
     
     /// Get Compartment

@@ -34,6 +34,8 @@ public:
     /// Initialize the volume forcefields
     VolumeCylindricalFF(string& interaction);
     
+    virtual string getName() {return "Volume cylindrical";}
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

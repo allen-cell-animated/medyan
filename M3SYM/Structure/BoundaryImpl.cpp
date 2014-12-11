@@ -22,9 +22,9 @@ BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     
     //Get full system size (want planes to be slightly inside compartment grid)
     
-    double zeroX = 0.5 * SystemParameters::Geometry().compartmentSizeX;
-    double zeroY = 0.5 * SystemParameters::Geometry().compartmentSizeY;
-    double zeroZ = 0.5 * SystemParameters::Geometry().compartmentSizeZ;
+    double zeroX = 0.2 * SystemParameters::Geometry().compartmentSizeX;
+    double zeroY = 0.2 * SystemParameters::Geometry().compartmentSizeY;
+    double zeroZ = 0.2 * SystemParameters::Geometry().compartmentSizeZ;
     
     double sysX = SystemParameters::Geometry().compartmentSizeX * SystemParameters::Geometry().NX - zeroX;
     double sysY = SystemParameters::Geometry().compartmentSizeY * SystemParameters::Geometry().NY - zeroY;

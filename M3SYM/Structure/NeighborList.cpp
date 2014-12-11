@@ -29,14 +29,13 @@ void CylinderNeighborList::addNeighbor(Neighbor* n) {
     
     ///update neighbors
     updateNeighbors(n);
-    
 }
 
 void CylinderNeighborList::updateNeighbors(Neighbor* n) {
 
     ///clear existing
     _list[n].clear();
-    Cylinder* cylinder = static_cast<Cylinder*>(n);
+    Cylinder* cylinder = (Cylinder*)(n);
     
     ///Find surrounding compartments (For now its conservative, change soon)
     vector<Compartment*> compartments;
@@ -77,8 +76,8 @@ vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
     vector<Cylinder*> cylinderNeighbors(_list[cylinder].size());
     
     transform(neighbors.begin(), neighbors.end(), cylinderNeighbors.begin(),
-              [](Neighbor* n){return static_cast<Cylinder*>(n);});
-    return vector<Cylinder*>(cylinderNeighbors.begin(), cylinderNeighbors.end());
+                                   [](Neighbor* n){return (Cylinder*)(n);});
+    return cylinderNeighbors;
 }
 
 void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
@@ -95,14 +94,12 @@ void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
     ///clear existing
     _list[n].clear();
     
-    ///loop through beads, add as
+    ///loop through beads, add as neighbor
     for (auto &b : *BeadDB::instance()) {
         
-        double dist = static_cast<BoundaryElement*>(n)->distance(b->coordinate);
-        if(dist > _rMax || dist < _rMin) continue;
-        
-        ///If we got through this, add it!
-        _list[n].push_back(b);
+        double dist = ((BoundaryElement*)(n))->distance(b->coordinate);
+        ///If within range, add it
+        if(dist < _rMax) _list[n].push_back(b);
     }
 }
 
@@ -112,8 +109,8 @@ vector<Bead*> BoundaryElementNeighborList::getNeighbors(BoundaryElement* be) {
     vector<Bead*> beadNeighbors(_list[be].size());
     
     transform(neighbors.begin(), neighbors.end(), beadNeighbors.begin(),
-              [](Neighbor* n){return static_cast<Bead*>(n);});
-    return vector<Bead*>(beadNeighbors.begin(), beadNeighbors.end());
+                                   [](Neighbor* n){return (Bead*)(n);});
+    return beadNeighbors;
 }
 
 

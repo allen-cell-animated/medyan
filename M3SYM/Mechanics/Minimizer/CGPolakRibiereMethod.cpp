@@ -18,56 +18,54 @@
 
 void PolakRibiere::minimize(ForceFieldManager &FFM){
     
-    //cout<<"Forces before minimization:" <<endl;
-	//PrintForces();
-    
     int SpaceSize = 3 * BeadDB::instance()->size(); //// !!! change
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
 	FFM.computeForces();
-    //printForces();
 
+    //compute first gradient
 	double gSquare = gradSquare();
     
 	int numIter = 0;
-	do
-	{
+	do {
 		numIter++;
-		double lambda, beta, newGradSquare;
+		double lambda, beta, newGradSquare, conjSquare;
 		vector<double> newGrad;
         
+        //find lambda by line search, move beads
         lambda = backtrackingLineSearch(FFM);
-        if(lambda < 0) { return; }
-
+        //cout << "Lamba" << lambda << endl;
         moveBeads(lambda);
-        //PrintForces();
-        
-        FFM.computeForcesAux();
-        //PrintForces();
-        
-		newGradSquare = gradAuxSquare();
 
+        //compute new forces
+        FFM.computeForcesAux();
+        
+        //compute direction
+		newGradSquare = gradAuxSquare();
+        conjSquare = gradDotProduct();
+
+        //choose beta, safeguard for blowups
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
             if(gSquare == 0) beta = 0;
-			else beta = max(0.0, (newGradSquare - gradDotProduct())/ gSquare);
+            else beta = min(max(0.0, (newGradSquare - conjSquare)/ gSquare), 1.0);
         }
+        //cout << "Beta = " << beta << endl;
         shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0); 
-
-        //PrintForces();
 		gSquare = newGradSquare;
-        //cout<<"GradSq before end=  "<< gSquare <<endl;
-        
+        cout << "Current energy = " << curEnergy << endl;
+        //cout << "Previous energy = " << prevEnergy << endl;
+        //cout << "GradSquare = " << gSquare << endl;
 	}
-	while (gSquare > GRADTOL && _energyChangeCounter <= ENERGYCHANGEITER);
-    
-    //cout<<"Energy after = "<< curEnergy <<endl;
-    
-	//cout << "Polak-Ribiere Method: " << endl;
-    //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-    //printForces();
+	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
+
+    cout<<"Energy = "<< curEnergy <<endl;
+//    
+//	cout << "Polak-Ribiere Method: " << endl;
+//  cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
+//  printForces();
 }

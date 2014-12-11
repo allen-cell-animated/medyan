@@ -34,6 +34,8 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     LinkerFF(string& stretching, string& bending, string& twisting );
     
+    virtual string getName() {return "Linker";}
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

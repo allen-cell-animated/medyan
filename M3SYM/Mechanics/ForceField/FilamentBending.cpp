@@ -34,7 +34,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
                 Bead* b3 = (*it)->getSecondBead();
                 double kBend = (*it)->getMCylinder()->getBendingConst();
                 double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                
+
                 U += _FFType.energy(b1, b2, b3, kBend, eqTheta);
             }
         }
