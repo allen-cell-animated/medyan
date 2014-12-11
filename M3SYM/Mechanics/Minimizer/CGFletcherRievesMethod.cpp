@@ -66,7 +66,6 @@ void FletcherRieves::minimize(ForceFieldManager &FFM)
 	//cout << "Fletcher-Rieves Method: " << endl;
     //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
 	//printForces();
-	
 }
 
 

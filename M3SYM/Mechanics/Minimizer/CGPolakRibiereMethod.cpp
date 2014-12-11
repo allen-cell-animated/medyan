@@ -18,10 +18,11 @@
 
 void PolakRibiere::minimize(ForceFieldManager &FFM){
     
-    int SpaceSize = 3 * BeadDB::instance()->size(); //// !!! change
+    int SpaceSize = 3 * BeadDB::instance()->size();
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
+    
 	FFM.computeForces();
 
     //compute first gradient
@@ -35,7 +36,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         
         //find lambda by line search, move beads
         lambda = backtrackingLineSearch(FFM);
-        //cout << "Lamba" << lambda << endl;
         moveBeads(lambda);
 
         //compute new forces
@@ -51,16 +51,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
             if(gSquare == 0) beta = 0;
             else beta = min(max(0.0, (newGradSquare - conjSquare)/ gSquare), 1.0);
         }
-        //cout << "Beta = " << beta << endl;
         shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0); 
 		gSquare = newGradSquare;
-        cout << "Current energy = " << curEnergy << endl;
-        //cout << "Previous energy = " << prevEnergy << endl;
-        //cout << "GradSquare = " << gSquare << endl;
 	}
+    
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
 
     cout<<"Energy = "<< curEnergy <<endl;
