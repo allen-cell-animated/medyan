@@ -4,7 +4,7 @@ from mayavi import mlab
 mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
 mlab.show()
 
-filename='/Users/jameskomianos/Documents/Research/filamentoutput.txt'
+filename='/Users/jameskomianos/Code/M3SYM/M3SYM/filamentoutput.txt'
 traj_file=open(filename)
 
 class FilamentSnapshot:
@@ -223,7 +223,7 @@ def show_frame(frame_number=-1):
 
 @mlab.animate(delay=10, ui=True)
 def anim():
-	for i in range(0,len(FrameList), 100):
+	for i in range(0,len(FrameList), 10):
 		show_frame(i)
 		yield
 		

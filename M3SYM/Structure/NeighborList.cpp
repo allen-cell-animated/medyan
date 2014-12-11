@@ -24,20 +24,20 @@ using namespace mathfunc;
 
 void CylinderNeighborList::addNeighbor(Neighbor* n) {
     
-    ///return if not a cylinder!
+    //return if not a cylinder!
     if(!dynamic_cast<Cylinder*>(n)) return;
     
-    ///update neighbors
+    //update neighbors
     updateNeighbors(n);
 }
 
 void CylinderNeighborList::updateNeighbors(Neighbor* n) {
 
-    ///clear existing
+    //clear existing
     _list[n].clear();
     Cylinder* cylinder = (Cylinder*)(n);
     
-    ///Find surrounding compartments (For now its conservative, change soon)
+    //Find surrounding compartments (For now its conservative, change soon)
     vector<Compartment*> compartments;
     
     GController::findCompartments(cylinder->coordinate, cylinder->getCompartment(),
@@ -46,25 +46,25 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     for(auto &c : compartments) {
         for(auto &nearbyCylinder : c->getCylinders()) {
             
-            ///Dont add if ID is more than cylinder
+            //Dont add if ID is more than cylinder
             if(cylinder->getID() <= nearbyCylinder->getID()) continue;
             
-            ///Don't add if on the same filament
+            //Don't add if on the same filament
             if(cylinder->getFilament() == nearbyCylinder->getFilament()) {
                 
-                 ///if cross filament only interaction, dont add
+                 //if cross filament only interaction, dont add
                  if(_crossFilamentOnly) continue;
                 
-                 ///if not cross filament, check if not neighboring
-                 else if(abs(cylinder->getPositionFilament()
-                             - nearbyCylinder->getPositionFilament()) <= 2) continue;
+                 //if not cross filament, check if not neighboring
+                 else if(abs(cylinder->getPositionFilament() -
+                   nearbyCylinder->getPositionFilament()) <= 2) continue;
             }
             
-            ///Dont add if not within range
+            //Dont add if not within range
             double dist = twoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
             
-            ///If we got through all of this, add it!
+            //If we got through all of this, add it!
             _list[cylinder].push_back(nearbyCylinder);
         }
     }
@@ -82,24 +82,46 @@ vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
 
 void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
     
-    ///return if not a boundary element!
+    //return if not a boundary element!
     if(!dynamic_cast<BoundaryElement*>(n)) return;
     
-    ///update neighbors
+    //update neighbors
     updateNeighbors(n);
 }
 
 void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
     
-    ///clear existing
+    //clear existing
     _list[n].clear();
     
-    ///loop through beads, add as neighbor
+    //loop through beads, add as neighbor
     for (auto &b : *BeadDB::instance()) {
         
         double dist = ((BoundaryElement*)(n))->distance(b->coordinate);
-        ///If within range, add it
+        //If within range, add it
         if(dist < _rMax) _list[n].push_back(b);
+    }
+}
+
+void BoundaryElementNeighborList::addDynamicNeighbor(Neighbor* n) {
+    
+    //cast to bead, add in each boundary element
+    Bead* b = (Bead*)n;
+    
+    for(auto it : _list) {
+        BoundaryElement* be = (BoundaryElement*)(it.first);
+        if(be->distance(b->coordinate) < _rMax) it.second.push_back(b);
+    }
+}
+
+void BoundaryElementNeighborList::removeDynamicNeighbor(Neighbor* n) {
+    
+    //cast to bead, remove in each boundary element
+    Bead* b = (Bead*)n;
+    
+    for(auto it : _list) {
+        auto it2 = find(it.second.begin(), it.second.end(), b);
+        if(it2 != it.second.end()) it.second.erase(it2);
     }
 }
 
@@ -112,7 +134,4 @@ vector<Bead*> BoundaryElementNeighborList::getNeighbors(BoundaryElement* be) {
                                    [](Neighbor* n){return (Bead*)(n);});
     return beadNeighbors;
 }
-
-
-
 

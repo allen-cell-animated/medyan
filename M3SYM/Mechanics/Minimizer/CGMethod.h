@@ -48,6 +48,7 @@ protected:
     //@{
     /// Parameter used in quadratic line search
     const double QUADRATICTOL = 0.1;
+    const double EPS_QUAD = 1e-28;
     //@}
     
     //@{
@@ -60,7 +61,7 @@ protected:
     const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all linesearch methods
     
 protected:
-    const double GRADTOL = 0.01; ///< Gradient minimization tolerance
+    const double GRADTOL = 0.05; ///< Gradient minimization tolerance
     const double ENERGYTOL = 1e-28; ///< Energy tolerance
     
     //@{
@@ -80,7 +81,7 @@ protected:
     double binarySearch(ForceFieldManager& FFM);
     
     double backtrackingLineSearch(ForceFieldManager& FFM);
-//    double quadraticLineSearch(ForceFieldManager& FFM);
+    double quadraticLineSearch(ForceFieldManager& FFM);
     //@}
     
     void printForces();

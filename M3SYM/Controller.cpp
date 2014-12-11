@@ -201,7 +201,7 @@ void Controller::updateSystem() {
         b->updatePosition();
         b->updateReactionRates();
     }
-
+    
     //reset neighbor lists
     NeighborListDB::instance()->resetAll();
     
@@ -234,16 +234,15 @@ void Controller::run() {
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
         cout << "Current simulation time = "<< tau() << endl;
+        //run ccontroller
         _cController.run(_numStepsPerMech);
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
+        //run mcontroller, update system
         _mController.run();
         updateSystem();
+        
         o.printBasicSnapshot(i + _numStepsPerMech);
-#elif defined(MECHANICS)
-        _mController.run();
-        updateSystem();
-        o.printBasicSnapshot(1);
 #else
         updateSystem();
         o.printBasicSnapshot(i + _numStepsPerMech);

@@ -38,9 +38,6 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    
    //add to compartment
    _compartment->addCylinder(this);
-                       
-   //add to neighbor list db
-   NeighborListDB::instance()->addNeighbor(this);
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
@@ -64,6 +61,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
 #endif
+                       
+   //add to neighbor list db
+   NeighborListDB::instance()->addDynamicNeighbor(this);
 }
 
 Cylinder::~Cylinder() {
@@ -75,7 +75,7 @@ Cylinder::~Cylinder() {
     _compartment->removeCylinder(this);
     
     //remove from neighbor lists
-    NeighborListDB::instance()->removeNeighbor(this);
+    NeighborListDB::instance()->removeDynamicNeighbor(this);
 }
 
 void Cylinder::updatePosition() {

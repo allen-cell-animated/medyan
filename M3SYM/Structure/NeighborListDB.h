@@ -53,13 +53,22 @@ public:
     /// Remove a neighborlist
     void removeNeighborList(NeighborList* n) { remove(n); };
     
-    /// Reset all neighbors lists
+    /// Reset all neighborlists
     void resetAll() { for(auto &nlist : *this) nlist->reset(); }
     
-    /// Add a neighbor to the db. adds to all possible lists
+    /// Add a neighbor to the DB. adds to all possible lists
     void addNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->addNeighbor(n); }
-    /// Remove a neighbor from the db. removes from all possible lists
+    /// Remove a neighbor from the DB. removes from all possible lists
     void removeNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->removeNeighbor(n); }
+    
+    /// Add a dynamic neighbor to the DB. adds to all possible lists
+    void addDynamicNeighbor(Neighbor* n) {
+        for(auto &nlist : *this) nlist->addDynamicNeighbor(n);
+    }
+    /// Remove a dynamic neighbor from the DB. removes from all possible lists
+    void removeDynamicNeighbor(Neighbor* n) {
+        for(auto &nlist : *this) nlist->removeDynamicNeighbor(n);
+    }
     
 private:
     static NeighborListDB* _instance;   ///< Singleton instance

@@ -67,9 +67,18 @@ public:
     
     /// Add neighbor
     virtual void addNeighbor(Neighbor* n) = 0;
-    ///U pdate a neighbor
+    /// Update a neighbor
     virtual void updateNeighbors(Neighbor* n) = 0;
     
+    /// Add a dynamic neighbor to the system.
+    /// For BoundaryElementNeighborList list, this will be Bead.
+    /// For CylinderNeighborList, all elements in neighbors list are dynamic.
+    virtual void addDynamicNeighbor(Neighbor* n) = 0;
+    
+    /// Remove a dynamic neighbor from the system.
+    /// For BoundaryElementNeighborList list, this will be Bead.
+    /// For CylinderNeighborList, all elements in neighbors list are dynamic.
+    virtual void removeDynamicNeighbor(Neighbor* n) = 0;
 };
 
 
@@ -86,6 +95,12 @@ public:
     virtual void addNeighbor(Neighbor* n);
     virtual void updateNeighbors(Neighbor* n);
     
+    //@{
+    /// The implementation of this function calls the static version, all cylinders are dynamic
+    virtual void addDynamicNeighbor(Neighbor* n) { addNeighbor(n);}
+    virtual void removeDynamicNeighbor(Neighbor* n) { removeNeighbor(n);}
+    //@}
+    
     /// Get all cylinder neighbors
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
 
@@ -99,6 +114,9 @@ public:
 
     virtual void addNeighbor(Neighbor* n);
     virtual void updateNeighbors(Neighbor* n);
+    
+    virtual void addDynamicNeighbor(Neighbor* n);
+    virtual void removeDynamicNeighbor(Neighbor* n);
     
     /// Get all Bead neighbors of a boundary element
     vector<Bead*> getNeighbors(BoundaryElement* be);

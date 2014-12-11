@@ -13,6 +13,7 @@
 #include "Bead.h"
 
 #include "Compartment.h"
+#include "NeighborListDB.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -33,7 +34,9 @@ Bead::Bead (vector<double> v, int positionFilament): _positionFilament(positionF
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     _compartment->addBead(this);
-
+                    
+    //add to neighbor lists
+    NeighborListDB::instance()->addDynamicNeighbor(this);
 }
 
 Bead::~Bead() {
@@ -43,6 +46,9 @@ Bead::~Bead() {
     
     //remove from compartment
     _compartment->removeBead(this);
+    
+    //remove from neighbor lists
+    NeighborListDB::instance()->removeDynamicNeighbor(this);
 }
 
 void Bead::updatePosition() {

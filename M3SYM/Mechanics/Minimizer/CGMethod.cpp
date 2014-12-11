@@ -137,22 +137,19 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
-    double dDotF = 0.0;
+    double conjDirection = 0.0;
     double maxForce = 0.0;
     
     for(auto it: *BeadDB::instance()) {
-        dDotF += it->calcDotForceProduct();
+        conjDirection += it->calcDotForceProduct();
         for(int i=0 ; i < 3; i++) maxForce = max(maxForce, fabs(it->force[i]));
     }
-    //return error if in wrong direction
-    //if(dDotF < 0.0) return -1.0;
     //return zero if no forces
     if(maxForce == 0.0) return 0.0;
  
     //calculate first lambda. cannot be greater than
     //lambda max, less than lambdamin
     double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-    //cout << "MaxForce = " << maxForce << endl;
     double currentEnergy = FFM.computeEnergy(0.0);
     
     //backtracking loop
@@ -163,7 +160,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         //cout << "EnergyLambda = " << energyLambda << endl;
         
         //calculate ideal change
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * dDotF;
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
@@ -176,6 +173,82 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
             if(energyChange < 0) {
                 //see if we can return LAMBDAMIN
                 if(FFM.computeEnergy(LAMBDAMIN) <= currentEnergy) return LAMBDAMIN;
+                else return lambda;
+            }
+            //can't, just return 0
+            else return 0.0;
+        }
+    }
+}
+
+double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
+    
+    double conjDirection = 0.0;
+    double maxForce = 0.0;
+    
+    for(auto it: *BeadDB::instance()) {
+        conjDirection += it->calcDotForceProduct();
+        for(int i=0 ; i < 3; i++) maxForce = max(maxForce, fabs(it->force[i]));
+    }
+    //return zero if no forces
+    if(maxForce == 0.0) return 0.0;
+    
+    //set up backtracking
+    double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
+    double lambdaPrev = 0.0;
+    
+    double conjDirectionPrev = conjDirection;
+    double deltaconjDirection, relErr, lambda0;
+    
+    double energyCurrent = FFM.computeEnergy(0.0);
+    double energyPrev = energyCurrent;
+    double idealEnergyChange, energyChange;
+    
+    //backtracking loop
+    while(true) {
+        
+        //move beads
+        energyCurrent = FFM.computeEnergy(lambda);
+        moveBeadsAux(lambda);
+        
+        //calculate new gradients
+        FFM.computeForcesAux();
+        conjDirection = gradDotProduct();
+        
+        //compute gradient change
+        deltaconjDirection = conjDirection - conjDirectionPrev;
+        
+        //if no gradient change, return 0.0
+        if(fabs(conjDirection) < EPS_QUAD || fabs(deltaconjDirection) < EPS_QUAD)
+            return 0.0;
+        
+        //Check if ready for a quadratic projection
+        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
+                     (conjDirection + conjDirectionPrev) + energyCurrent) / energyPrev);
+        lambda0 = lambda - (lambda - lambdaPrev) * conjDirection / deltaconjDirection;
+        
+        if(relErr <= QUADRATICTOL && lambda0 > 0.0 && lambda0 < LAMBDAMAX)
+            return lambda0;
+        
+        //calculate ideal change
+        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
+        energyChange = energyCurrent - energyPrev;
+        
+        //return if ok
+        if(energyChange <= idealEnergyChange) return lambda;
+        
+        //save previous state
+        conjDirectionPrev = conjDirection;
+        energyPrev = energyCurrent;
+        lambdaPrev = lambda;
+        
+        //reduce lambda
+        lambda *= LAMBDAREDUCE;
+        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL) {
+            
+            if(energyChange < 0) {
+                //see if we can return LAMBDAMIN
+                if(FFM.computeEnergy(LAMBDAMIN) <= energyCurrent) return LAMBDAMIN;
                 else return lambda;
             }
             //can't, just return 0

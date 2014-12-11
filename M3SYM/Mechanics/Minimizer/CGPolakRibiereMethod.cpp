@@ -35,7 +35,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 		vector<double> newGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM);
+        lambda = quadraticLineSearch(FFM);
         moveBeads(lambda);
 
         //compute new forces
@@ -54,14 +54,15 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
         shiftGradient(beta);
         
 		prevEnergy = curEnergy;
-		curEnergy = FFM.computeEnergy(0.0); 
+		curEnergy = FFM.computeEnergy(0.0);
+        
 		gSquare = newGradSquare;
 	}
     
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
 
     cout<<"Energy = "<< curEnergy <<endl;
-//    
+    
 //	cout << "Polak-Ribiere Method: " << endl;
 //  cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
 //  printForces();
