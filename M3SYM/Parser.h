@@ -25,6 +25,9 @@
 /// Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
     string ConjugateGradient = "";
+    double gradientTolerance = 0.001;
+    
+    //not yet used
     string MD = "";
 };
 
@@ -34,6 +37,7 @@ struct ChemistryAlgorithm {
     string algorithm = "";
     int numSteps = 0;
     int numStepsPerMech = 0;
+    int numStepsPerSnapshot = 0;
 };
 
 /// Struct to hold Species and Reaction information

@@ -27,10 +27,14 @@ template <class CGType>
 class ConjugateGradient : public Minimizer {
     
 private:
-    CGType _CGType;
+    CGType _CGType; //< Implementation of a CG method
+    double _GRADTOL; //< Gradient tolerance used;
     
 public:
-    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM);}
+    /// Constructor sets gradient tolerance parameter
+    ConjugateGradient(double gradientTolerance) : _GRADTOL(gradientTolerance) {}
+    
+    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM, _GRADTOL);}
 };
 
 #endif

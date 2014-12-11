@@ -71,13 +71,13 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
 }
 
-void MController::initializeMinAlgorithms (MechanicsAlgorithm& Minimizers) {
+void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
     
-    if (Minimizers.ConjugateGradient == "FLETCHERRIEVES")
-        _minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>());
+    if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
+        _minimizerAlgorithms.push_back(new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance));
     
-    else if (Minimizers.ConjugateGradient == "POLAKRIBIERE")
-        _minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>());
+    else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
+        _minimizerAlgorithms.push_back(new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance));
     
     else {
         cout << "Conjugate gradient method not yet implemented. Exiting" << endl;

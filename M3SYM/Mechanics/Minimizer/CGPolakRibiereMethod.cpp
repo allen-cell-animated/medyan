@@ -16,7 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-void PolakRibiere::minimize(ForceFieldManager &FFM){
+void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
     
     int SpaceSize = 3 * BeadDB::instance()->size();
 	double curEnergy = FFM.computeEnergy(0.0);
@@ -62,7 +62,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM){
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
 
     cout<<"Energy = "<< curEnergy <<endl;
-    
 //	cout << "Polak-Ribiere Method: " << endl;
 //  cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
 //  printForces();

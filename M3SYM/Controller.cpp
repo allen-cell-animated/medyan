@@ -102,7 +102,9 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     auto CAlgorithm = p.readChemistryAlgorithm(); auto CSetup = p.readChemistrySetup();
     
     //num steps for sim
-    _numSteps = CAlgorithm.numSteps; _numStepsPerMech = CAlgorithm.numStepsPerMech;
+    _numSteps = CAlgorithm.numSteps;
+    _numStepsPerMech = CAlgorithm.numStepsPerMech;
+    _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
     
     ChemistryData chem;
     
@@ -242,10 +244,12 @@ void Controller::run() {
         _mController.run();
         updateSystem();
         
-        o.printBasicSnapshot(i + _numStepsPerMech);
+        if(i % _numStepsPerSnapshot == 0)
+            o.printBasicSnapshot(i + _numStepsPerMech);
 #else
         updateSystem();
-        o.printBasicSnapshot(i + _numStepsPerMech);
+        if(i % _numStepsPerSnapshot == 0)
+            o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
         
 #if defined(CHEMISTRY)

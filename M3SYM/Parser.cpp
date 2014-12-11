@@ -169,6 +169,17 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.numStepsPerMech = atoi(lineVector[1].c_str());
             }
         }
+        if (line.find("NUMSTEPSPERS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.numStepsPerSnapshot = atoi(lineVector[1].c_str());
+            }
+        }
         
         
     }
@@ -666,6 +677,13 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 MAlgorithm.MD = lineVector[1];
+            }
+        }
+        else if (line.find("GRADIENTTOLERANCE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
             }
         }
     }

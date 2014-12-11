@@ -16,7 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-void FletcherRieves::minimize(ForceFieldManager &FFM)
+void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 {
     
     int SpaceSize = 3 * BeadDB::instance()->size(); ///!!!!!! need to know

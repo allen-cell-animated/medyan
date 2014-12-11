@@ -45,6 +45,7 @@ private:
     
     int _numSteps; ///< Number of chemical steps we are running
     int _numStepsPerMech; ///< Number of chemical steps before mechanical equilibration
+    int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
 
     /// Update the system, called in run. Will update all positions and reactions
     void updateSystem();

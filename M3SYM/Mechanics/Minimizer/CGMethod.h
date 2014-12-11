@@ -59,9 +59,6 @@ protected:
     //@}
     
     const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all linesearch methods
-    
-protected:
-    const double GRADTOL = 0.05; ///< Gradient minimization tolerance
     const double ENERGYTOL = 1e-28; ///< Energy tolerance
     
     //@{
@@ -87,8 +84,9 @@ protected:
     void printForces();
     
 public:
+
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM) = 0;
+    virtual void minimize(ForceFieldManager &FFM, double GRADTOL) = 0;
 };
 
 

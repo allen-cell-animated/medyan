@@ -23,6 +23,7 @@ BDIAMETER:                   400.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
+GRADIENTTOLERANCE:           0.05
 MD:
 
 ### FILAMENTS ###
@@ -99,7 +100,8 @@ CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMSTEPS:                    1000000000
-NUMSTEPSPERM:                10000
+NUMSTEPSPERM:                20000
+NUMSTEPSPERS:                1000000
 
 NUMBULKSPECIES:              0
 NUMDIFFUSINGSPECIES:         2
