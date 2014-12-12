@@ -108,7 +108,8 @@ template <unsigned short M, unsigned short N>
                 
 #ifdef TRACK_DEPENDENTS
                 //add dependents
-                for(auto &d : getAffectedReactions()) { if(!d->isPassivated()) _dependents.push_back(d); }
+                for(auto &d : getAffectedReactions())
+                    if(!d->isPassivated()) _dependents.push_back(d);
 #endif
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);

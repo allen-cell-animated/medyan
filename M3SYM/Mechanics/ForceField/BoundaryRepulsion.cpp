@@ -59,6 +59,7 @@ void BoundaryRepulsion<BRepulsionInteractionType>::computeForcesAux(BoundaryElem
 template double BoundaryRepulsion<BoundaryRepulsionLJ>::computeEnergy(BoundaryElement* be, Bead* b, double d);
 template void BoundaryRepulsion<BoundaryRepulsionLJ>::computeForces(BoundaryElement* be, Bead* b);
 template void BoundaryRepulsion<BoundaryRepulsionLJ>::computeForcesAux(BoundaryElement* be, Bead* b);
+
 template double BoundaryRepulsion<BoundaryRepulsionExp>::computeEnergy(BoundaryElement* be, Bead* b, double d);
 template void BoundaryRepulsion<BoundaryRepulsionExp>::computeForces(BoundaryElement* be, Bead* b);
 template void BoundaryRepulsion<BoundaryRepulsionExp>::computeForcesAux(BoundaryElement* be, Bead* b);

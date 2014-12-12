@@ -96,7 +96,7 @@ public:
     virtual void updateNeighbors(Neighbor* n);
     
     /// The implementation of this function calls the static version, all cylinders are dynamic
-    virtual void addDynamicNeighbor(Neighbor* n) { addNeighbor(n);}
+    virtual void addDynamicNeighbor(Neighbor* n) {addNeighbor(n);}
     virtual void removeDynamicNeighbor(Neighbor* n);
     
     /// Get all cylinder neighbors

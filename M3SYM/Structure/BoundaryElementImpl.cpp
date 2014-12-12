@@ -32,7 +32,7 @@ PlaneBoundaryElement::PlaneBoundaryElement(vector<double> coords, vector<double>
 double PlaneBoundaryElement::distance(const vector<double>& point) {
     
     return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
-                            sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+                       sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
 }
 
 double PlaneBoundaryElement::stretchedDistance(const vector<double>& point, const vector<double>& force, double d) {
