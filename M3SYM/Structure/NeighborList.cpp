@@ -70,6 +70,19 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     }
 }
 
+void CylinderNeighborList::removeDynamicNeighbor(Neighbor* n) {
+    
+    //remove its own list
+    removeNeighbor(n);
+    
+    //remove from other lists
+    for(auto it : _list) {
+        auto cylinder = find(it.second.begin(), it.second.end(), n);
+        if(cylinder != it.second.end()) it.second.erase(cylinder);
+    }
+}
+
+
 vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
     
     auto neighbors = _list[cylinder];
@@ -116,12 +129,9 @@ void BoundaryElementNeighborList::addDynamicNeighbor(Neighbor* n) {
 
 void BoundaryElementNeighborList::removeDynamicNeighbor(Neighbor* n) {
     
-    //cast to bead, remove in each boundary element
-    Bead* b = (Bead*)n;
-    
     for(auto it : _list) {
-        auto it2 = find(it.second.begin(), it.second.end(), b);
-        if(it2 != it.second.end()) it.second.erase(it2);
+        auto bead = find(it.second.begin(), it.second.end(), n);
+        if(bead != it.second.end()) it.second.erase(bead);
     }
 }
 

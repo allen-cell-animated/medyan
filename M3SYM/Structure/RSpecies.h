@@ -110,9 +110,8 @@ public:
     
     /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method
     /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
-    inline void up() {
+    virtual inline void up() {
         _n+=1;
-#ifdef TRACK_DEPENDENTS
 #ifdef TRACK_ZERO_COPY_N
         if(_n==1)
             activateAssocReactantReactions();
@@ -121,13 +120,11 @@ public:
         if(_n==_ulim)
             passivateAssocProductReactions();
 #endif
-#endif
     }
     
     /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a "callback"-like method 
     /// to passivate [Reactions](@ref Reaction), where this RSpecies is a Reactant.
-    inline void down() {
-#ifdef TRACK_DEPENDENTS
+    virtual inline void down() {
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
 #endif
@@ -139,9 +136,6 @@ public:
 #ifdef TRACK_UPPER_COPY_N
         if(prev_n == _ulim)
             activateAssocProductReactions();
-#endif
-#else
-        _n-=1;
 #endif
     }
     
@@ -263,6 +257,37 @@ public:
     void operator delete(void* ptr) noexcept;
 #endif
 };
+
+/// A constant RSpecies whose copy number does not change.
+/*!
+ *  The RSpeciesConst class represents a RSpecies that does not change copy number upon reacting
+ *  This is used for SpeciesDiffusingor SpeciesBulk species, whose copy numbers are constant throughout 
+ *  the duration of the chemical simulation. Their constant qualifier is set at the Species construction, 
+ *  where a RSpeciesConst object is created in place of a typical RSpecies.
+ */
+class RSpeciesConst : public RSpecies {
+    
+public:
+    /// Constructors
+    /// @param parent - the Species object to which this RSpeciesConst belongs
+    /// @param n - copy number, will not change
+    RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) : RSpecies(parent, n, ulim) {}
+    /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent Species
+    RSpeciesConst(const RSpeciesConst &r) = delete;
+    
+    /// deleted move constructor - each RSpeciesConst is uniquely created by the parent Species
+    RSpeciesConst(RSpeciesConst &&r) = delete;
+    
+    /// deleted assignment operator - each RSpeciesConst is uniquely created by the parent Species
+    RSpeciesConst& operator=(RSpeciesConst&) = delete;
+    
+    //@{
+    /// In constant species, this function does nothing. Copy numbers do not change.
+    virtual inline void up() {}
+    virtual inline void down() {}
+    //@}
+};
+
 
 /// Print self into an iostream
 ostream& operator<<(ostream& os, const RSpecies& s);

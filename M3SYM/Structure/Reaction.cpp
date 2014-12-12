@@ -24,6 +24,7 @@
 
 template <unsigned short M, unsigned short N>
     void Reaction<M,N>::activateReactionUnconditionalImpl(){
+#ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];
@@ -36,6 +37,7 @@ template <unsigned short M, unsigned short N>
                 (*r)->registerNewDependent(this);
         }
     }
+#endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
@@ -46,6 +48,7 @@ template <unsigned short M, unsigned short N>
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::passivateReactionImpl() {
     if(isPassivated()) return;
+#ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];
@@ -56,6 +59,7 @@ void Reaction<M,N>::passivateReactionImpl() {
             (*r)->unregisterDependent(this);
         }
     }
+#endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif

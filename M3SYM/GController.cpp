@@ -20,6 +20,11 @@
 #include "MathFunctions.h"
 #include "SystemParameters.h"
 
+short GController::_nDim = 0;
+vector<int> GController::_grid = {};
+vector<double> GController::_compartmentSize = {};
+
+
 using namespace mathfunc;
 
 Compartment* GController::getCompartment(const vector<size_t> &indices)
@@ -93,7 +98,8 @@ void GController::generateConnections()
                     vector<size_t> indices{i,j,k};
                     Compartment *target = getCompartment(indices);
                     
-                    vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                    vector<double> coordinates =
+                       {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
                         indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2,
                         indices[2] * _compartmentSize[2] + _compartmentSize[2] / 2};
                     target->setCoordinates(coordinates);
@@ -140,7 +146,8 @@ void GController::generateConnections()
                 vector<size_t> indices{i,j};
                 Compartment *target = getCompartment(indices);
                 
-                vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
+                vector<double> coordinates =
+                   {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
                     indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2};
                 target->setCoordinates(coordinates);
                 
@@ -175,7 +182,8 @@ void GController::generateConnections()
             vector<size_t> indices{i};
             Compartment *target = getCompartment(indices);
             
-            vector<double> coordinates = {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2};
+            vector<double> coordinates =
+                {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2};
             target->setCoordinates(coordinates);
             
             for(int ii: {-1,1})
@@ -249,16 +257,16 @@ void GController::findCompartments(const vector<double>& coords, Compartment* cc
     //recursive case, c and ccheck are in range. call for all neighbors
     else {
         //if not already in list, add it
-        if(find(compartments.begin(), compartments.end(), ccheck) == compartments.end()) {
+        auto it = find(compartments.begin(), compartments.end(), ccheck);
+        
+        if( it == compartments.end()) {
+            //add the compartment
             compartments.push_back(ccheck);
+            
             //recursively call for all neighbors
-            for(auto &n : ccheck->getNeighbours())  findCompartments(coords, n, dist, compartments);
+            for(auto &n : ccheck->getNeighbours())
+                findCompartments(coords, n, dist, compartments);
         }
     }
 }
-
-short GController::_nDim = 0;
-vector<int> GController::_grid = {};
-vector<double> GController::_compartmentSize = {};
-
 

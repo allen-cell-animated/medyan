@@ -82,8 +82,8 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number.
-    vector<tuple<string, int>> speciesBulk = {};
+    /// initial copy number, and whether this is a constant species
+    vector<tuple<string, int, string>> speciesBulk = {};
     
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
     /// initial copy number per compartment, and the rate of diffusion.
@@ -92,11 +92,12 @@ struct ChemistryData {
     //@{
     /// Filament species parsed
     vector<string> speciesFilament = {};
-    vector<string> speciesBound = {};
-    vector<string> speciesLinker = {};
-    vector<string> speciesMotor = {};
-    vector<string> speciesPlusEnd = {};
+    vector<string> speciesPlusEnd  = {};
     vector<string> speciesMinusEnd = {};
+    
+    vector<string> speciesBound  = {};
+    vector<string> speciesLinker = {};
+    vector<string> speciesMotor  = {};
     //@}
     
 };

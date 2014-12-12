@@ -105,9 +105,11 @@ template <unsigned short M, unsigned short N>
                       [](Species *s){return &s->getRSpecies();});
             
             if(!_isProtoCompartment) {
+                
+#ifdef TRACK_DEPENDENTS
                 //add dependents
                 for(auto &d : getAffectedReactions()) { if(!d->isPassivated()) _dependents.push_back(d); }
-                
+#endif
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
             }
@@ -148,6 +150,7 @@ template <unsigned short M, unsigned short N>
         /// Implementation of computePropensity()
         inline virtual float computePropensityImpl() const override
         {
+            if(_passivated) return 0.0;
 #ifdef TRACK_UPPER_COPY_N
             if(this->Reaction<M,N>::getProductOfProductsImpl()==0){
                 return float(0.0);

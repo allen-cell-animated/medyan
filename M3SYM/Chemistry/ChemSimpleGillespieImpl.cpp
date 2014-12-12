@@ -57,7 +57,9 @@ bool ChemSimpleGillespieImpl::makeStep() {
     double rates_sum = 0;
     ReactionBase* r_selected = nullptr;
     for (auto &r : _reactions){
+        
         rates_sum+=r->computePropensity();
+    
         if(rates_sum>mu){
             r_selected = r;
             break;

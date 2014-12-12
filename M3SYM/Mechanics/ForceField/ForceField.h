@@ -26,6 +26,7 @@ class ForceField {
 public:
     /// Get the name of this forcefield
     virtual string getName() = 0;
+    
     /// Compute total energy of this forcefield in the system
     virtual double computeEnergy(double d) = 0;
     /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead) forces accordingly.

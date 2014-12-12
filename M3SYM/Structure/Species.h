@@ -70,7 +70,8 @@ public:
     /// Given an integer "i", returns the string associated with that integer. Throws an out of range exception.  
     string intToString(unsigned int i) const {
         if (i>=_vec_int_string.size())
-            throw out_of_range("SpeciesNamesDB::intToString(int i) index error:[" + to_string(i) +"], while the vector size is " + to_string(_vec_int_string.size()));
+            throw out_of_range("SpeciesNamesDB::intToString(int i) index error:["
+            + to_string(i) +"], while the vector size is " + to_string(_vec_int_string.size()));
         return _vec_int_string[i];
     }
     
@@ -130,24 +131,31 @@ private: //Variables
     int _molecule; ///< unique id identifying the molecule (e.g. the integer id corresponding to "Arp2/3") 
     RSpecies* _rspecies; ///< pointer to RSpecies; Species is responsible for creating and destroying RSpecies
     Composite *_parent; ///< pointer to the "container" object holding this Species (could be a nullptr)
+    
+    bool _constant; ///< Whether this species has a constant copy number or not.
 public:
     /// Default Constructor; Should not be used by the end users - only internally (although it is not marked as private)
-    Species()  : _parent(nullptr) {
+    Species()  : _parent(nullptr), _constant(false) {
+        
         _molecule=SpeciesNamesDB::Instance()->stringToInt("");
         _rspecies = new RSpecies(*this);
-//            cout << "Species(): Default ctor called, creating ptr=" << this << endl;
     }
     
     /// The constructor for this base class of Species should not be called directly - only by the concrete subclasses
     /// @param name - a string for the Species name associated with this Species. For example, "G-Actin" or "Arp2/3"
+    /// @param constant - specifying whether the species is constant (copy number will not change)
     /// @param type_enum - SType enum, such as SType::Diffusing
     /// @param n - copy number
     /// @param ulim - upper limit for this species' copy number
-    Species (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr)
-    {
-        _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
-        _rspecies = new RSpecies(*this, n, ulim);
+    Species (const string &name, bool constant=false,
+             species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr), _constant(constant) {
         
+        _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
+        
+        if(_constant)
+            _rspecies = new RSpeciesConst(*this, n, ulim);
+        else
+            _rspecies = new RSpecies(*this, n, ulim);
     }
     
     /// Copy constructor
@@ -155,11 +163,18 @@ public:
     /// the copied destination Species won't be included in any Reaction interactions of the original 
     /// source Species. The species copy numbered is copied to the target.
     /// The A Species parent attriute is not copied, but set to nullptr. 
-    Species (const Species &rhs)  : _molecule(rhs._molecule), _parent(nullptr) {
+    Species (const Species &rhs)  : _molecule(rhs._molecule), _parent(nullptr), _constant(rhs._constant) {
+        
 #ifdef TRACK_UPPER_COPY_N
-        _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+        if(_constant)
+            _rspecies = new RSpeciesConst(*this, rhs.getN(), rhs.getUpperLimitForN());
+        else
+            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
 #else
-        _rspecies = new RSpecies(*this, rhs.getN());
+        if(_constant)
+            _rspecies = new RSpeciesConst(*this, rhs.getN());
+        else
+            _rspecies = new RSpecies(*this, rhs.getN());
 #endif
     }
     
@@ -172,7 +187,7 @@ public:
     /// the Species around, without copying. Moving transfers the RSpecies pointer from source to target, 
     /// stealing resources from the source, leaving it for destruction. The Species parent attriute is moved it. 
     Species (Species &&rhs) noexcept
-    : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent) {
+    : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent), _constant(rhs._constant) {
         rhs._rspecies = nullptr;
     }
     
@@ -183,10 +198,17 @@ public:
     Species& operator=(const Species& rhs)  {
 //            cout << "Species& operator=(const Species& rhs):" << this << ", " << &rhs << endl; 
         _molecule = rhs._molecule;
+        _constant = rhs._constant;
 #ifdef TRACK_UPPER_COPY_N
-        _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+        if(_constant)
+            _rspecies = new RSpeciesConst(*this, rhs.getN(), rhs.getUpperLimitForN());
+        else
+            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
 #else
-        _rspecies = new RSpecies(*this, rhs.getN());
+        if(_constant)
+            _rspecies = new RSpeciesConst(*this, rhs.getN());
+        else
+            _rspecies = new RSpecies(*this, rhs.getN());
 #endif
         _parent = nullptr;
         return *this;
@@ -304,7 +326,8 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesBulk (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
+    SpeciesBulk (const string &name, bool constant,
+                 species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, constant, n, ulim) {};
     
     /// Copy constructor
     SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
@@ -347,7 +370,8 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesDiffusing (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, n, ulim) {};
+    SpeciesDiffusing (const string &name, bool constant,
+                      species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, constant, n, ulim) {};
     
     /// Copy constructor
     SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}
@@ -380,6 +404,7 @@ public:
     ~SpeciesDiffusing () noexcept {};
 };
 
+
 /// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
@@ -391,7 +416,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesFilament (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, n, ulim) {};
+        :  Species(name, false, n, ulim) {};
     
     /// Copy constructor
     SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
@@ -440,7 +465,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  Species(name, n, ulim) {};
+    :  Species(name, false, n, ulim) {};
     
     /// Copy constructor
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
@@ -586,7 +611,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesPlusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  Species(name, n, ulim) {};
+    :  Species(name, false, n, ulim) {};
     
     /// Copy constructor
     SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : Species(rhs) {}
@@ -631,7 +656,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesMinusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  Species(name, n, ulim) {};
+    :  Species(name, false, n, ulim) {};
     
     /// Copy constructor
     SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : Species(rhs) {}

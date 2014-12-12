@@ -984,12 +984,13 @@ ChemistryData ChemistryParser::readChemistryInput() {
         else if(line.find("SPECIESBULK") != string::npos) {
         
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  3) {
+            if(lineVector.size() !=  4) {
                 cout << "Error reading a bulk species. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3) {
-                chem.speciesBulk.push_back(tuple<string, int>(lineVector[1], atoi(lineVector[2].c_str())));
+            else if (lineVector.size() == 4) {
+                chem.speciesBulk.push_back(tuple<string, int, string>
+                    (lineVector[1], atoi(lineVector[2].c_str()), lineVector[3]));
             }
             else {}
         }

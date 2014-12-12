@@ -128,7 +128,8 @@ struct LinkerBindingCallback {
     short _linkerType;
     short _position1, _position2;
 
-    LinkerBindingCallback(CCylinder* cc1, CCylinder* cc2, short linkerType, short position1, short position2, SubSystem* ps)
+    LinkerBindingCallback(CCylinder* cc1, CCylinder* cc2, short linkerType,
+                          short position1, short position2, SubSystem* ps)
         : _ps(ps), _cc1(cc1), _cc2(cc2), _linkerType(linkerType),  _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
@@ -151,7 +152,8 @@ struct MotorBindingCallback {
     short _motorType;
     short _position1, _position2;
     
-    MotorBindingCallback(CCylinder* cc1, CCylinder* cc2, short motorType, short position1, short position2, SubSystem* ps)
+    MotorBindingCallback(CCylinder* cc1, CCylinder* cc2, short motorType,
+                         short position1, short position2, SubSystem* ps)
     : _ps(ps), _cc1(cc1), _cc2(cc2), _motorType(motorType),  _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
@@ -182,10 +184,10 @@ struct UnbindingCallback {
         
         if(cBound != nullptr) {
             if(dynamic_cast<CLinker*>(cBound))
-                _ps->removeLinker(static_cast<CLinker*>(cBound)->getLinker());
+                _ps->removeLinker(((CLinker*)cBound)->getLinker());
 
             else if(dynamic_cast<CMotorGhost*>(cBound))
-                _ps->removeMotorGhost(static_cast<CMotorGhost*>(cBound)->getMotorGhost());
+                _ps->removeMotorGhost(((CMotorGhost*)cBound)->getMotorGhost());
         }
     }
 };
@@ -198,7 +200,7 @@ struct MotorWalkingForwardCallback {
     SpeciesMotor* _sm2;
     
     MotorWalkingForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-        :_sm1(sm1), _sm2(sm2) {}
+                                :_sm1(sm1), _sm2(sm2) {}
     
     void operator() (ReactionBase* r) {
         
@@ -208,7 +210,7 @@ struct MotorWalkingForwardCallback {
             return;
         }
         
-        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
         double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
@@ -234,7 +236,7 @@ struct MotorWalkingBackwardCallback {
     SpeciesMotor* _sm2;
     
     MotorWalkingBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-        :_sm1(sm1), _sm2(sm2) {}
+                                :_sm1(sm1), _sm2(sm2) {}
     
     void operator() (ReactionBase* r) {
         
@@ -244,7 +246,7 @@ struct MotorWalkingBackwardCallback {
             return;
         }
         
-        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
         double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
@@ -272,7 +274,7 @@ struct MotorMovingCylinderForwardCallback {
     CCylinder* _newCCylinder;
     
     MotorMovingCylinderForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
-        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
+                                        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
         
@@ -282,7 +284,7 @@ struct MotorMovingCylinderForwardCallback {
             return;
         }
         
-        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
         double newPosition = 0.0;
@@ -310,7 +312,7 @@ struct MotorMovingCylinderBackwardCallback {
     CCylinder* _newCCylinder;
     
     MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
-        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
+                                        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
         
@@ -320,7 +322,7 @@ struct MotorMovingCylinderBackwardCallback {
             return;
         }
         
-        MotorGhost* m = static_cast<CMotorGhost*>(_sm1->getCBound())->getMotorGhost();
+        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
         double newPosition = 1.0 - 1.0 / SystemParameters::Geometry().cylinderIntSize;

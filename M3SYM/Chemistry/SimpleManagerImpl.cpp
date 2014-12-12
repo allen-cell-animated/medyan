@@ -49,7 +49,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
                                        
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -356,7 +356,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
             
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -483,7 +483,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
             
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -627,7 +627,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
             
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1043,7 +1043,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
             
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1204,7 +1204,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                   [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                   [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
             
             if(it == chem.speciesBulk.end()) {
                 cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1296,6 +1296,19 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
 }
 
 
+void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
+    
+    //Copy all species from chem struct
+    _speciesFilament =  chem.speciesFilament;
+    _speciesPlusEnd  =  chem.speciesPlusEnd;
+    _speciesMinusEnd =  chem.speciesMinusEnd;
+    
+    _speciesBound  =  chem.speciesBound;
+    _speciesLinker =  chem.speciesLinker;
+    _speciesMotor  =  chem.speciesMotor;
+}
+
+
 void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
     
      //go through reactions, add each
@@ -1313,7 +1326,7 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& pr
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                       [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                       [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
                 
                 if(it == chem.speciesBulk.end()) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1346,7 +1359,7 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& pr
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                       [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                       [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
                 
                 if(it == chem.speciesBulk.end()) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1431,7 +1444,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                       [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                       [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
                 
                 if(it == chem.speciesBulk.end()) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1451,7 +1464,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                       [name](tuple<string, int> element) { return get<0>(element) == name ? true : false; });
+                                       [name](tuple<string, int, string> element) { return get<0>(element) == name ? true : false; });
                 
                 if(it == chem.speciesBulk.end()) {
                     cout << "A bulk species that was included in a reaction was not initialized. Exiting." << endl;
@@ -1511,24 +1524,19 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     InternalFilamentRxnManager::_ps = _subSystem;
     CrossFilamentRxnManager::_ps = _subSystem;
     
-    //Copy all species from chem struct
-    _speciesFilament =  chem.speciesFilament;
-    _speciesPlusEnd  =  chem.speciesPlusEnd;
-    _speciesMinusEnd =  chem.speciesMinusEnd;
-    
-    _speciesBound  =  chem.speciesBound;
-    _speciesLinker =  chem.speciesLinker;
-    _speciesMotor  =  chem.speciesMotor;
+    //copy species
+    copySpecies(chem);
     
     //Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::instance()->getProtoCompartment();
     
     for(auto &sd : chem.speciesDiffusing)
         cProto.addSpeciesUnique(unique_ptr<Species>(
-           new SpeciesDiffusing(get<0>(sd), get<1>(sd))), get<2>(sd));
+           new SpeciesDiffusing(get<0>(sd), false, get<1>(sd))), get<2>(sd));
     
     for(auto &sb : chem.speciesBulk)
-        CompartmentGrid::instance()->addSpeciesBulk(get<0>(sb), get<1>(sb));
+        CompartmentGrid::instance()->addSpeciesBulk(
+            get<0>(sb), (get<2>(sb) == "CONST") ? true : false, get<1>(sb));
     
     //add reactions to protocompartment
     genGeneralReactions(chem, cProto);
@@ -1567,32 +1575,38 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
             SpeciesFilament* sf =
-                c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName(f));
+                c->addSpeciesFilament(SpeciesNamesDB::Instance()->
+                                      generateUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
             SpeciesPlusEnd* sp =
-                c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->generateUniqueName(p));
+                c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->
+                                     generateUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
             SpeciesMinusEnd* smi =
-                c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->generateUniqueName(mi));
+                c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->
+                                      generateUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
         for (auto &b : _speciesBound) {
             SpeciesBound* sb =
-                c->addSpeciesBound(SpeciesNamesDB::Instance()->generateUniqueName(b));
+                c->addSpeciesBound(SpeciesNamesDB::Instance()->
+                                   generateUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
             SpeciesLinker* sl =
-                c->addSpeciesLinker(SpeciesNamesDB::Instance()->generateUniqueName(l));
+                c->addSpeciesLinker(SpeciesNamesDB::Instance()->
+                                    generateUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
             SpeciesMotor* sm =
-                c->addSpeciesMotor(SpeciesNamesDB::Instance()->generateUniqueName(mo));
+                c->addSpeciesMotor(SpeciesNamesDB::Instance()->
+                                   generateUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1683,7 +1697,7 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
     for(auto &r : _CFRxnManagers) {
         
         auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
-        for(auto &n : neighbors) r->addReaction(cc, static_cast<Cylinder*>(n)->getCCylinder());
+        for(auto &n : neighbors) r->addReaction(cc, ((Cylinder*)(n))->getCCylinder());
     }
 }
 

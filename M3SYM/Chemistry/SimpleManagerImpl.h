@@ -58,6 +58,9 @@ private:
     ///Generate bulk reactions
     void genBulkReactions(ChemistryData& chem);
     
+    ///Copies species from chem struct
+    void copySpecies(ChemistryData& chem);
+    
 public:
     ///Constructor sets subsystem pointer
     SimpleManagerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
