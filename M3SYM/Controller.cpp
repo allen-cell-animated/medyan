@@ -161,7 +161,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
                                         directionZ/normFactor};
             
             vector<double> secondPoint = nextPointProjection(firstPoint,
-               3.0 * (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+               (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
             if(_subSystem->getBoundary()->within(firstPoint)
                && _subSystem->getBoundary()->within(secondPoint)) {
@@ -210,7 +210,7 @@ void Controller::updateSystem() {
 #ifdef CHEMISTRY
     //Update cross cylinder reactions
     for(auto &filament : *FilamentDB::instance())
-        for (auto cylinder : filament->getCylinderVector())
+        for (auto &cylinder : filament->getCylinderVector())
             ChemManager::updateCCylinder(cylinder->getCCylinder());
 #endif
     

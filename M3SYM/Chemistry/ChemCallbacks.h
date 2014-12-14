@@ -130,7 +130,8 @@ struct LinkerBindingCallback {
 
     LinkerBindingCallback(CCylinder* cc1, CCylinder* cc2, short linkerType,
                           short position1, short position2, SubSystem* ps)
-        : _ps(ps), _cc1(cc1), _cc2(cc2), _linkerType(linkerType),  _position1(position1), _position2(position2){}
+                          : _ps(ps), _cc1(cc1), _cc2(cc2), _linkerType(linkerType),
+                            _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
         
@@ -154,7 +155,8 @@ struct MotorBindingCallback {
     
     MotorBindingCallback(CCylinder* cc1, CCylinder* cc2, short motorType,
                          short position1, short position2, SubSystem* ps)
-    : _ps(ps), _cc1(cc1), _cc2(cc2), _motorType(motorType),  _position1(position1), _position2(position2){}
+                         : _ps(ps), _cc1(cc1), _cc2(cc2), _motorType(motorType),
+                           _position1(position1), _position2(position2){}
     
     void operator() (ReactionBase *r) {
         

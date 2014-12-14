@@ -98,7 +98,7 @@ BSCREENLENGTH:              0.1
 
 CHEMISTRYFILE:               testchemistryinput.txt
 
-NUMSTEPS:                    1000000000000
+NUMSTEPS:                    100000000
 NUMSTEPSPERM:                20000
 NUMSTEPSPERS:                2000000
 
