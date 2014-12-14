@@ -275,7 +275,9 @@ struct MotorMovingCylinderForwardCallback {
     SpeciesMotor* _sm2;
     CCylinder* _newCCylinder;
     
-    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
+    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1,
+                                       SpeciesMotor* sm2,
+                                       CCylinder* newCCylinder)
                                         : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {
@@ -313,7 +315,9 @@ struct MotorMovingCylinderBackwardCallback {
     SpeciesMotor* _sm2;
     CCylinder* _newCCylinder;
     
-    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2, CCylinder* newCCylinder)
+    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1,
+                                        SpeciesMotor* sm2,
+                                        CCylinder* newCCylinder)
                                         : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
     
     void operator() (ReactionBase* r) {

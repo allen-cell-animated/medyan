@@ -52,13 +52,13 @@ private:
     void genCFRxnManagers(ChemistryData& chem);
     //@}
     
-    ///Generate the general, non-filament reactions
+    /// Generate the general, non-filament reactions
     void genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
     
-    ///Generate bulk reactions
+    /// Generate bulk reactions
     void genBulkReactions(ChemistryData& chem);
     
-    ///Copies species from chem struct
+    /// Copies species from chem struct
     void copySpecies(ChemistryData& chem);
     
 public:
@@ -66,7 +66,8 @@ public:
     SimpleManagerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
 
     virtual void initialize(ChemistryData& chem);
-    virtual void initializeCCylinder(CCylinder* cc, Filament* f, bool extensionFront, bool extensionBack, bool creation);
+    virtual void initializeCCylinder(CCylinder* cc, Filament* f,
+                                     bool extensionFront, bool extensionBack, bool creation);
     virtual void updateCCylinder(CCylinder* cc);
     
 };

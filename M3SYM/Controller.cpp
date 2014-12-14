@@ -237,7 +237,7 @@ void Controller::run() {
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
         cout << "Current simulation time = "<< tau() << endl;
         //run ccontroller
-        _cController.run(_numStepsPerMech);
+        if(!_cController.run(_numStepsPerMech)) break;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
         //run mcontroller, update system

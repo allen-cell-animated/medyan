@@ -19,10 +19,12 @@
 void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 {
     
-    int SpaceSize = 3 * BeadDB::instance()->size(); ///!!!!!! need to know
+    int SpaceSize = 3 * BeadDB::instance()->size();
+    
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
+    
 	FFM.computeForces();
 
     //compute first gradient
@@ -62,10 +64,6 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
         
 	}
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
-    
-	//cout << "Fletcher-Rieves Method: " << endl;
-    //cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-	//printForces();
 }
 
 

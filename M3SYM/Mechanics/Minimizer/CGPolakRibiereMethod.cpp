@@ -19,6 +19,7 @@
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
     
     int SpaceSize = 3 * BeadDB::instance()->size();
+    
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
 	double prevEnergy = curEnergy;
@@ -58,11 +59,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
         
 		gSquare = newGradSquare;
 	}
-    
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
-
-    cout<<"Energy = "<< curEnergy <<endl;
-//	cout << "Polak-Ribiere Method: " << endl;
-//  cout<<"numIter= " <<numIter<<"  Spacesize = "<<SpaceSize <<endl;
-//  printForces();
 }

@@ -40,7 +40,8 @@ public:
     static void initialize(ChemistryData& chem);
     
     ///Initializer, based on the given simulation
-    static void initializeCCylinder(CCylinder* cc, Filament* f,bool extensionFront, bool extensionBack, bool creation);
+    static void initializeCCylinder(CCylinder* cc, Filament* f,
+                                    bool extensionFront, bool extensionBack, bool creation);
     
     ///Add/update cross cylinder reactions that are within range
     static void updateCCylinder(CCylinder* cc);

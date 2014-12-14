@@ -1697,7 +1697,8 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
     for(auto &r : _CFRxnManagers) {
         
         auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
-        for(auto &n : neighbors) r->addReaction(cc, ((Cylinder*)(n))->getCCylinder());
+        for(auto &n : neighbors)
+            r->addReaction(cc, ((Cylinder*)(n))->getCCylinder());
     }
 }
 

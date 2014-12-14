@@ -61,7 +61,8 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
             }
             
             //Dont add if not within range
-            double dist = twoPointDistance(cylinder->coordinate, nearbyCylinder->coordinate);
+            double dist = twoPointDistance(cylinder->coordinate,
+                                           nearbyCylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
             
             //If we got through all of this, add it!
@@ -122,11 +123,8 @@ void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
 void BoundaryElementNeighborList::addDynamicNeighbor(Neighbor* n) {
     
     //return if not a boundary element!
-    if(!dynamic_cast<Bead*>(n)) return;
-    
-    //cast to bead, add in each boundary element
-    Bead* b = (Bead*)n;
-    
+    Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
+
     for(auto it = _list.begin(); it != _list.end(); it++) {
         BoundaryElement* be = (BoundaryElement*)(it->first);
         if(be->distance(b->coordinate) < _rMax)
