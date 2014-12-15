@@ -67,7 +67,8 @@ public:
                     _neighbours(), _diffusion_rates() {}
     
     /// Constructor which clones another compartment
-    Compartment(const Compartment &C) : _species(), _internal_reactions(), _diffusion_reactions(), _neighbours()
+    Compartment(const Compartment &C) : _species(), _internal_reactions(),
+                                        _diffusion_reactions(), _neighbours()
     {
         C.cloneSpecies(this);
         C.cloneReactions(this);
