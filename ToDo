@@ -1,6 +1,6 @@
 
 ------
-Goals for November 2014
+Goals for December 2014
 ------
 
 1) More features
@@ -11,11 +11,13 @@ Goals for November 2014
     -Move bead / boundary element neighbors list to global                      X
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
+    -Filament creation and destruction
+    -Debug linker and motors
     -Add branching reaction
     -Add aging reactions                                                        X
     -Add severing reaction
     -Fix signal copying
-    -Add changing reaction rates (poly, linker & motor unbinding)
+    -Add changing reaction rates (poly, linker & motor)
     -Motor step size, rethinking of stepping (numbindingsites)
     -Filament creation and destruction
     -Optimizations (Data structures (especially reaction dependents, dbs),

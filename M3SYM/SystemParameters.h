@@ -81,6 +81,8 @@ struct ChemistryParameters {
     short numBoundSpecies = 0;
     short numLinkerSpecies = 0;
     short numMotorSpecies = 0;
+    
+    short numBindingSites = 0;
     //@}
 };
 

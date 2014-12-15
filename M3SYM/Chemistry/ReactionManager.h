@@ -21,6 +21,8 @@
 #include "NeighborListContainer.h"
 #include "CompartmentContainer.h"
 
+#include "SystemParameters.h"
+
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
@@ -55,10 +57,28 @@ protected:
     
     float _rate; ///< Rate of reaction
     
+    vector<short> _bindingSites; ///< Binding sites on Cylinder
+    
 public:
     InternalFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                                vector<tuple<int, SpeciesType>> products,
-                               float rate) : _reactants(reactants), _products(products), _rate(rate) {}
+                               float rate) : _reactants(reactants), _products(products), _rate(rate) {
+    
+        
+        //Figure out the binding sites
+        int deltaBinding = SystemParameters::Geometry().cylinderIntSize
+        / SystemParameters::Chemistry().numBindingSites;
+        
+        int firstBindingSite = deltaBinding / 2 + 1;
+        int bindingCount = firstBindingSite;
+        
+        //add all other binding sites
+        while(bindingCount < SystemParameters::Geometry().cylinderIntSize) {
+            
+            _bindingSites.push_back(bindingCount);
+            bindingCount += deltaBinding;
+        }
+    }
     ~InternalFilamentRxnManager() {}
 
     ///Add this chemical reaction. Adds all extension and retraction callbacks needed
@@ -136,13 +156,13 @@ public:
 };
 
 /// Manager for all unbinding from Filament
-class UnbindingManager : public InternalFilamentRxnManager {
+class BasicUnbindingManager : public InternalFilamentRxnManager {
     
 public:
-    UnbindingManager(vector<tuple<int, SpeciesType>> reactants,
-                     vector<tuple<int, SpeciesType>> products,
-                     float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
-    ~UnbindingManager() {}
+    BasicUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
+                          vector<tuple<int, SpeciesType>> products,
+                          float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+    ~BasicUnbindingManager() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
@@ -162,20 +182,6 @@ public:
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 
-};
-
-/// Manager for MotorGhost walking
-class MotorWalkBManager : public InternalFilamentRxnManager {
-    
-public:
-    MotorWalkBManager(vector<tuple<int, SpeciesType>> reactants,
-                      vector<tuple<int, SpeciesType>> products,
-                      float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
-    ~MotorWalkBManager() {}
-    
-    virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
-    
 };
 
 /// Manager for Filament aging
@@ -222,14 +228,29 @@ protected:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
     
-    int _reactionID; ///Unique ID of this reaction
+    vector<short> _bindingSites; ///< The binding sites on the Cylinder
 
 public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
-                            float rate, float rMin, float rMax, int ID)
+                            float rate, float rMin, float rMax)
                             : CylinderNLContainer(rMax, rMin, true),
-                              _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax), _reactionID(ID) {}
+                              _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax) {
+                              
+        //Figure out the binding sites
+        int deltaBinding = SystemParameters::Geometry().cylinderIntSize
+                           / SystemParameters::Chemistry().numBindingSites;
+                                  
+        int firstBindingSite = deltaBinding / 2 + 1;
+        int bindingCount = firstBindingSite;
+        
+        //add all other binding sites
+        while(bindingCount < SystemParameters::Geometry().cylinderIntSize) {
+            
+            _bindingSites.push_back(bindingCount);
+            bindingCount += deltaBinding;
+        }
+    }
     ~CrossFilamentRxnManager() {}
     
     /// Add this chemical reaction to two ccylinders if within the reaction range
@@ -239,7 +260,6 @@ public:
     /// Getter for parameters of reaction
     float getRMin() {return _rMin;}
     float getRMax() {return _rMax;}
-    int getReactionID() {return _reactionID;}
     //@}
     
 };
@@ -250,10 +270,24 @@ class LinkerBindingManager : public CrossFilamentRxnManager {
 public:
     LinkerBindingManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
-                    float rate, float rMin, float rMax, int ID)
-                    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax, ID) {}
+                    float rate, float rMin, float rMax)
+                    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
     ~LinkerBindingManager() {}
 
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
+
+/// Manager for Linker unbinding
+class LinkerUnbindingManager : public CrossFilamentRxnManager {
+    
+public:
+    LinkerUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
+                         vector<tuple<int, SpeciesType>> products,
+                         float rate, float rMin, float rMax)
+    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
+    ~LinkerUnbindingManager() {}
+    
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
@@ -263,9 +297,22 @@ class MotorBindingManager : public CrossFilamentRxnManager {
 public:
     MotorBindingManager(vector<tuple<int, SpeciesType>> reactants,
                          vector<tuple<int, SpeciesType>> products,
-                         float rate, float rMin, float rMax, int ID)
-                         : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax, ID) {}
+                         float rate, float rMin, float rMax)
+                         : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
     ~MotorBindingManager() {}
+    
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
+/// Manager for MotorGhost binding
+class MotorUnbindingManager : public CrossFilamentRxnManager {
+    
+public:
+    MotorUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
+                        vector<tuple<int, SpeciesType>> products,
+                        float rate, float rMin, float rMax)
+    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
+    ~MotorUnbindingManager() {}
     
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };

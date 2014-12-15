@@ -61,7 +61,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double posit
         se2->getRSpecies().down();
     }
     
-    //attach this linker to the species
+    //attach this motor to the species
     _cMotorGhost->setFirstSpecies(sm1);
     _cMotorGhost->setSecondSpecies(sm2);
     
@@ -80,29 +80,6 @@ MotorGhost::~MotorGhost() {
     
     //remove from motor ghost db
     MotorGhostDB::instance()->removeMotorGhost(this);
-    
-#ifdef CHEMISTRY
-    
-    //Find species on cylinder that should be unmarked. This should be done if deleting because
-    //of a reaction callback, but needs to be done if deleting for other reasons
-    int pos1 = int(_position1 * SystemParameters::Geometry().cylinderIntSize);
-    int pos2 = int(_position2 * SystemParameters::Geometry().cylinderIntSize);
-    
-    SpeciesMotor* sm1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-    SpeciesMotor* sm2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
-    SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-    
-    if(sm1->getN() != 0) {
-        sm1->getRSpecies().down();
-        se1->getRSpecies().up();
-    }
-    if(sm2->getN() != 0) {
-        sm2->getRSpecies().down();
-        se2->getRSpecies().up();
-    }
-    
-#endif //CHEMISTRY
 }
 
 void MotorGhost::updatePosition() {

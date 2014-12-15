@@ -3,13 +3,13 @@
 
 NDIM:                        3
 
-NX:                          10
-NY:                          10
-NZ:                          10
+NX:                          1
+NY:                          1
+NZ:                          1
 
-COMPARTMENTSIZEX:            100.0
-COMPARTMENTSIZEY:            100.0
-COMPARTMENTSIZEZ:            100.0
+COMPARTMENTSIZEX:            1000.0
+COMPARTMENTSIZEY:            1000.0
+COMPARTMENTSIZEZ:            1000.0
 
 MONOMERSIZE:                 2.7
 
@@ -23,16 +23,16 @@ BDIAMETER:                   400.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
-GRADIENTTOLERANCE:           0.1
+GRADIENTTOLERANCE:           0.01
 MD:
 
 ### FILAMENTS ###
 
 FSTRETCHINGTYPE:             HARMONIC
-FSTRETCHINGK:                0.2
+FSTRETCHINGK:                2.0
 
 FBENDINGTYPE:                HARMONIC
-FBENDINGK:                   0.5
+FBENDINGK:                   5.0
 FBENDINGTHETA:               
 
 FTWISTINGTYPE:
@@ -55,7 +55,7 @@ LTWISTINGPHI:
 ### MOTORS ###
 
 MSTRETCHINGTYPE:             HARMONIC
-MSTRETCHINGK:                2
+MSTRETCHINGK:                0.5
 
 MBENDINGTYPE:
 MBENDINGK:
@@ -80,7 +80,7 @@ BRDIHEDRALK:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:                 REPULSION
+VOLUMETYPE:                 
 VOLUMECUTOFF:               27.0
 
 VOLUMEK:                    2.0
@@ -98,9 +98,9 @@ BSCREENLENGTH:              0.1
 
 CHEMISTRYFILE:               testchemistryinput.txt
 
-NUMSTEPS:                    100000000
-NUMSTEPSPERM:                5000
-NUMSTEPSPERS:                5000
+NUMSTEPS:                    100
+NUMSTEPSPERM:                1
+NUMSTEPSPERS:                1
 
 CALGORITHM:                  NRM
 
@@ -110,19 +110,19 @@ NUMDIFFUSINGSPECIES:         2
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
-
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            0
+NUMLINKERSPECIES:            1
 NUMMOTORSPECIES:             1
 
+NUMBINDINGSITES:             3
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-#FILAMENTFILE:               testfilamentinput.txt
+FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                5000
+#NUMFILAMENTS:               20
 
 
 

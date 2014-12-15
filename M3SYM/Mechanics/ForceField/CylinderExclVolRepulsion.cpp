@@ -62,7 +62,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
     if (JJ==0 || JJ != JJ){
-        
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
@@ -85,7 +84,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
     }
-    
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);

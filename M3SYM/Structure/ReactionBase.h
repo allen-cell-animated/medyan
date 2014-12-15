@@ -71,15 +71,13 @@ protected:
     float _rate; ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
-    shared_ptr<ReactionEventSignal> _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
+    unique_ptr<ReactionEventSignal> _signal; ///< Can be used to broadcast a signal associated with this ReactionBase (usuall when a single step of this ReactionBase occurs)
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
     ReactionType _reactionType; ///< Reaction type enumeration
     bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
-    
-    short _reactionID = -1; ///<Unique id of this reaction
     
 public:
     /// The main constructor:
@@ -131,12 +129,6 @@ public:
     
     /// Returns the bare rate associated with this ReacitonBase
     float getBareRate() const {return _rate_bare;}
-    
-    ///For cross filament reactions (SHOULD EVENTUALLY BE MOVED)
-    
-    ///Set and get ID
-    void setReactionID(int ID) {_reactionID = ID;}
-    int getReactionID() {return _reactionID;}
     
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}

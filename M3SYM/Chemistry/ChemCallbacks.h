@@ -171,26 +171,30 @@ struct MotorBindingCallback {
 };
 
 
-/// Callback to unbind a CBound from a Filament
-struct UnbindingCallback {
+/// Callback to unbind a MotorGhost from a Filament
+struct MotorUnbindingCallback {
     
     SubSystem* _ps;
-    SpeciesBound* _s1;
+    SpeciesMotor* _s1;
     
-    UnbindingCallback(SpeciesBound* s1, SubSystem* ps) : _s1(s1), _ps(ps) {}
+    MotorUnbindingCallback(SpeciesMotor* s1, SubSystem* ps) : _s1(s1), _ps(ps) {}
     
     void operator() (ReactionBase *r) {
-        
-        //check if we have a basic bound element, linker, or motor
-        CBound* cBound = _s1->getCBound();
-        
-        if(cBound != nullptr) {
-            if(dynamic_cast<CLinker*>(cBound))
-                _ps->removeLinker(((CLinker*)cBound)->getLinker());
+        _ps->removeMotorGhost(((CMotorGhost*)_s1->getCBound())->getMotorGhost());
+    }
+};
 
-            else if(dynamic_cast<CMotorGhost*>(cBound))
-                _ps->removeMotorGhost(((CMotorGhost*)cBound)->getMotorGhost());
-        }
+/// Callback to unbind a Linker from a Filament
+struct LinkerUnbindingCallback {
+    
+    SubSystem* _ps;
+    SpeciesLinker* _s1;
+    SpeciesLinker* _s2;
+    
+    LinkerUnbindingCallback(SpeciesLinker* s1, SpeciesLinker* s2, SubSystem* ps) : _s1(s1), _s2(s2), _ps(ps) {}
+    
+    void operator() (ReactionBase *r) {
+        _ps->removeLinker(((CLinker*)_s1->getCBound())->getLinker());
     }
 };
 
@@ -206,16 +210,10 @@ struct MotorWalkingForwardCallback {
     
     void operator() (ReactionBase* r) {
         
-        if(_sm1->getCBound() == nullptr) {
-            
-            cout << "Major bug: motor is in wrong place" << endl;
-            return;
-        }
-        
         MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
-        double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
+        double shift =  1.0 / SystemParameters::Chemistry().numBindingSites;
         double newPosition;
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
@@ -225,42 +223,6 @@ struct MotorWalkingForwardCallback {
         }
         else {
             newPosition = m->getSecondPosition() + shift;
-            m->setSecondPosition(newPosition);
-            m->getCMotorGhost()->setSecondSpecies(_sm2);
-        }
-    }
-};
-
-/// Callback to walk a MotorGhost on a Filament
-struct MotorWalkingBackwardCallback {
-    
-    SpeciesMotor* _sm1;
-    SpeciesMotor* _sm2;
-    
-    MotorWalkingBackwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-                                :_sm1(sm1), _sm2(sm2) {}
-    
-    void operator() (ReactionBase* r) {
-        
-        if(_sm1->getCBound() == nullptr) {
-            
-            cout << "Major bug: motor is in wrong place" << endl;
-            return;
-        }
-        
-        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
-        
-        //shift the position of one side of the motor forward
-        double shift = 1.0 / SystemParameters::Geometry().cylinderIntSize;
-        double newPosition;
-        
-        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
-            newPosition = m->getFirstPosition() - shift;
-            m->setFirstPosition(newPosition);
-            m->getCMotorGhost()->setFirstSpecies(_sm2);
-        }
-        else {
-            newPosition = m->getSecondPosition() - shift;
             m->setSecondPosition(newPosition);
             m->getCMotorGhost()->setSecondSpecies(_sm2);
         }
@@ -282,56 +244,10 @@ struct MotorMovingCylinderForwardCallback {
     
     void operator() (ReactionBase* r) {
         
-        if(_sm1->getCBound() == nullptr) {
-            
-            cout << "Major bug: motor is in wrong place" << endl;
-            return;
-        }
-        
         MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
-        double newPosition = 0.0;
-        
-        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
-            m->setFirstCylinder(_newCCylinder->getCylinder());
-            m->setFirstPosition(newPosition);
-            m->getCMotorGhost()->setFirstSpecies(_sm2);
-        }
-        else {
-            m->setSecondCylinder(_newCCylinder->getCylinder());
-            m->setSecondPosition(newPosition);
-            m->getCMotorGhost()->setSecondSpecies(_sm2);
-        }
-    }
-};
-
-
-/// Callback to walk a MotorGhost on a Filament to a new Cylinder
-struct MotorMovingCylinderBackwardCallback {
-    
-    //members
-    SpeciesMotor* _sm1;
-    SpeciesMotor* _sm2;
-    CCylinder* _newCCylinder;
-    
-    MotorMovingCylinderBackwardCallback(SpeciesMotor* sm1,
-                                        SpeciesMotor* sm2,
-                                        CCylinder* newCCylinder)
-                                        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
-    
-    void operator() (ReactionBase* r) {
-        
-        if(_sm1->getCBound() == nullptr) {
-            
-            cout << "Major bug: motor is in wrong place" << endl;
-            return;
-        }
-        
-        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
-        
-        //shift the position of one side of the motor forward
-        double newPosition = 1.0 - 1.0 / SystemParameters::Geometry().cylinderIntSize;
+        double newPosition = 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
         
         if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
             m->setFirstCylinder(_newCCylinder->getCylinder());

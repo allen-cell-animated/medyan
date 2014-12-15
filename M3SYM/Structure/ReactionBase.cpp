@@ -47,7 +47,7 @@ void ReactionBase::unregisterDependent(ReactionBase *r){
 
 #ifdef REACTION_SIGNALING
 void ReactionBase::startSignaling () {
-    _signal = shared_ptr<ReactionEventSignal>(new ReactionEventSignal);
+    _signal = unique_ptr<ReactionEventSignal>(new ReactionEventSignal);
 }
 
 void ReactionBase::stopSignaling () {
