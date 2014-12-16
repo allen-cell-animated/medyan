@@ -23,7 +23,7 @@ BDIAMETER:                   400.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
-GRADIENTTOLERANCE:           0.05
+GRADIENTTOLERANCE:           0.0001
 MD:
 
 ### FILAMENTS ###
@@ -83,7 +83,7 @@ BRDIHEDRALK:
 VOLUMETYPE:                  REPULSION
 VOLUMECUTOFF:                27.0
 
-VOLUMEK:                     2.0
+VOLUMEK:                     100.0
 
 ### BOUNDARY ###
 
@@ -99,9 +99,9 @@ BSCREENLENGTH:               0.1
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    1000000000
-NUMSTEPSPERM:                20000
-NUMSTEPSPERS:                1000000
+NUMSTEPS:                    10
+NUMSTEPSPERM:                1
+NUMSTEPSPERS:                1
 
 NUMBULKSPECIES:              0
 NUMDIFFUSINGSPECIES:         2
@@ -118,10 +118,10 @@ NUMMOTORSPECIES:             1
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
-#FILAMENTFILE:               testfilamentinput.txt
+FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:                1000
+#NUMFILAMENTS:                1000
 
 
 
