@@ -110,6 +110,22 @@ namespace mathfunc {
     double twoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
                               const vector<double>& v3, const vector<double>& v4);
     
+    
+    /// Returns true if two vectors (p1->p2 and p3->p4) are parallel
+    inline bool ifParallel(const vector<double>& p1, const vector<double>& p2,
+                           const vector<double>& p3, const vector<double>& p4) {
+        
+        vector<double> v;
+        
+        v.push_back( (p2[2]-p1[2])*(p4[3]-p3[3]) -  (p2[3]-p1[3])*(p4[2]-p3[2]) );
+        v.push_back( (p2[3]-p1[3])*(p4[1]-p3[1]) -  (p2[1]-p1[1])*(p4[3]-p3[3]) );
+        v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );
+        
+        double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
+        return norm <= 1e-28 || norm == numeric_limits<double>::infinity();
+    }
+    
+    
     /// Function to move bead out of plane by specified amount
     inline vector<double> movePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
                                               const vector<double>& p3, const vector<double>& p4, int i, double d) {

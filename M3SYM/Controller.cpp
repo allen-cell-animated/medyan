@@ -246,12 +246,10 @@ void Controller::run() {
         
         if(i % _numStepsPerSnapshot == 0)
             o.printBasicSnapshot(i + _numStepsPerMech);
-#else
-        updateSystem();
-        if(i % _numStepsPerSnapshot == 0)
-            o.printBasicSnapshot(i + _numStepsPerMech);
 #endif
-        
+#ifdef MECHANICS
+        o.printBasicSnapshot(1);
+#endif
 #if defined(CHEMISTRY)
     }
 #endif
