@@ -142,33 +142,6 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for basic binding to Filament
-class BasicBindingManager : public InternalFilamentRxnManager {
-    
-public:
-    BasicBindingManager(vector<tuple<int, SpeciesType>> reactants,
-                        vector<tuple<int, SpeciesType>> products,
-                        float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
-    ~BasicBindingManager() {}
-    
-    virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
-};
-
-/// Manager for all unbinding from Filament
-class BasicUnbindingManager : public InternalFilamentRxnManager {
-    
-public:
-    BasicUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
-                          vector<tuple<int, SpeciesType>> products,
-                          float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
-    ~BasicUnbindingManager() {}
-    
-    virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
-
-};
-
 /// Manager for MotorGhost walking
 class MotorWalkFManager : public InternalFilamentRxnManager {
     
@@ -197,6 +170,22 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
+/// Manager for basic binding and unbinding to Filament
+class BoundRxnManager : public InternalFilamentRxnManager {
+    
+private:
+    float _offRate; ///< Off-rate for this bound type
+    
+public:
+    BoundRxnManager(vector<tuple<int, SpeciesType>> reactants,
+                    vector<tuple<int, SpeciesType>> products,
+                    float onRate, float offRate)
+                    : InternalFilamentRxnManager(reactants, products, onRate), _offRate(offRate) {}
+    ~BoundRxnManager() {}
+    
+    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
+};
 
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 
@@ -224,7 +213,9 @@ protected:
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
-    float _rate; ///< Rate of reaction
+    float _onRate; ///< On-rate for interaction
+    float _offRate; ///< Off-rate for interaction
+    
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
     
@@ -233,9 +224,9 @@ protected:
 public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
-                            float rate, float rMin, float rMax)
-                            : CylinderNLContainer(rMax, rMin, true),
-                              _reactants(reactants), _products(products), _rate(rate), _rMin(rMin), _rMax(rMax) {
+                            float onRate, float offRate, float rMin, float rMax)
+                            : CylinderNLContainer(rMax, rMin, true), _reactants(reactants), _products(products),
+                            _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
                               
         //Figure out the binding sites
         int deltaBinding = SystemParameters::Geometry().cylinderIntSize
@@ -264,55 +255,28 @@ public:
     
 };
 
-/// Manager for Linker binding
-class LinkerBindingManager : public CrossFilamentRxnManager {
+/// Manager for Linker binding and unbinding
+class LinkerRxnManager : public CrossFilamentRxnManager {
     
 public:
-    LinkerBindingManager(vector<tuple<int, SpeciesType>> reactants,
+    LinkerRxnManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
-                    float rate, float rMin, float rMax)
-                    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
-    ~LinkerBindingManager() {}
+                    float onRate, float offRate, float rMin, float rMax)
+                    : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
+    ~LinkerRxnManager() {}
 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-
-/// Manager for Linker unbinding
-class LinkerUnbindingManager : public CrossFilamentRxnManager {
+/// Manager for MotorGhost binding and unbinding
+class MotorRxnManager : public CrossFilamentRxnManager {
     
 public:
-    LinkerUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
-                         vector<tuple<int, SpeciesType>> products,
-                         float rate, float rMin, float rMax)
-    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
-    ~LinkerUnbindingManager() {}
-    
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
-};
-
-/// Manager for MotorGhost binding
-class MotorBindingManager : public CrossFilamentRxnManager {
-    
-public:
-    MotorBindingManager(vector<tuple<int, SpeciesType>> reactants,
-                         vector<tuple<int, SpeciesType>> products,
-                         float rate, float rMin, float rMax)
-                         : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
-    ~MotorBindingManager() {}
-    
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
-};
-
-/// Manager for MotorGhost binding
-class MotorUnbindingManager : public CrossFilamentRxnManager {
-    
-public:
-    MotorUnbindingManager(vector<tuple<int, SpeciesType>> reactants,
-                        vector<tuple<int, SpeciesType>> products,
-                        float rate, float rMin, float rMax)
-    : CrossFilamentRxnManager(reactants, products, rate, rMin, rMax) {}
-    ~MotorUnbindingManager() {}
+    MotorRxnManager(vector<tuple<int, SpeciesType>> reactants,
+                    vector<tuple<int, SpeciesType>> products,
+                    float onRate, float offRate, float rMin, float rMax)
+                    : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
+    ~MotorRxnManager() {}
     
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };

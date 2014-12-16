@@ -35,7 +35,7 @@ void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
     }
 }
 
-void SubSystem::addNewFilament(vector<vector<double>>& v) {
+Filament* SubSystem::addNewFilament(vector<vector<double>>& v) {
     
     double d = mathfunc::twoPointDistance(v[0], v[1]);
     vector<double> tau = mathfunc::twoPointDirection(v[0], v[1]);
@@ -43,8 +43,8 @@ void SubSystem::addNewFilament(vector<vector<double>>& v) {
     int numSegment = d / SystemParameters::Geometry().cylinderSize;
     
     // check how many segments can fit between end-to-end of the filament
-    if (numSegment == 0) new Filament(this, v[0], tau);
-    else new Filament(this, v, numSegment + 1, "STRAIGHT");
+    if (numSegment == 0) return new Filament(this, v[0], tau);
+    else return new Filament(this, v, numSegment + 1, "STRAIGHT");
 }
 void SubSystem::removeFilament(Filament* f) { delete f; }
 
@@ -54,10 +54,10 @@ void SubSystem::addNewLinkers(vector<vector<Cylinder* >>& v, short linkerType) {
     for (auto it: v)
         new Linker(it[0], it[1], linkerType);
 }
-void SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2,
+Linker* SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2,
                              short linkerType, double position1, double position2){
     
-    new Linker(c1, c2, linkerType, position1, position2, true);
+    return new Linker(c1, c2, linkerType, position1, position2, true);
 }
 void SubSystem::removeLinker(Linker* l) {delete l;}
 
@@ -67,10 +67,10 @@ void SubSystem::addNewMotorGhosts(vector<vector<Cylinder* >>& v, short motorType
     for (auto it: v)
         new MotorGhost(it[0], it[1], motorType);
 }
-void SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
+MotorGhost* SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
                                  short motorType, double position1, double position2) {
     
-    new MotorGhost(c1, c2, motorType, position1, position2, true);
+    return new MotorGhost(c1, c2, motorType, position1, position2, true);
 }
 void SubSystem::removeMotorGhost(MotorGhost* m) { delete m; }
 
@@ -79,10 +79,10 @@ void SubSystem::addNewBranchingPoints(vector<vector<Cylinder* >>& v, short branc
     for (auto it: v)
         new BranchingPoint(it[0], it[1], branchType);
 }
-void SubSystem::addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
+BranchingPoint* SubSystem::addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
                                  short branchType, double position) {
     
-    new BranchingPoint(c1, c2, branchType, position, true);
+    return new BranchingPoint(c1, c2, branchType, position, true);
 }
 void SubSystem::removeBranchingPoint(BranchingPoint* b) { delete b; }
 

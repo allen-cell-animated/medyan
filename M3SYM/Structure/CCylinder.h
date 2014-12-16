@@ -94,7 +94,8 @@ public:
     const unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     const unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     ///Get map of reactions associated
-    unordered_map<CCylinder*, unordered_set<ReactionBase*>>& getCrossCylinderReactions() {return _crossCylinderReactions;}
+    unordered_map<CCylinder*, unordered_set<ReactionBase*>>& getCrossCylinderReactions()
+        {return _crossCylinderReactions;}
     
     //@{
     /// Reaction management function
@@ -105,7 +106,8 @@ public:
     void removeInternalReaction(ReactionBase* r);
     void removeAllInternalReactions();
     
-    void removeCrossCylinderReactions(CCylinder* other);
+    void removeCrossCylinderReactions(CCylinder* other, bool bindingOnly=false);
+    void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     void removeAllCrossCylinderReactions();
     
     void removeReactingCylinder(CCylinder* other);

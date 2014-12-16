@@ -1198,150 +1198,68 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
         }
-        else if(line.find("LINKERBINDINGREACTION") != string::npos) {
+        else if(line.find("LINKERREACTION") != string::npos) {
             
             vector<string> reactants;
             vector<string> products;
             
             vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
+                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.linkerBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.linkerReactions.push_back(tuple<vector<string>, vector<string>, double, double, double, double>
+                                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
+                                                      atof(lineVector[lineVector.size() - 3].c_str()),
+                                                      atof(lineVector[lineVector.size() - 2].c_str()),
+                                                      atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                cout << "Error reading a linker binding reaction. Exiting" << endl;
+                cout << "Error reading a linker reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
-        else if(line.find("LINKERUNBINDINGREACTION") != string::npos) {
+        else if(line.find("MOTORREACTION") != string::npos) {
             
             vector<string> reactants;
             vector<string> products;
             
             vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
+                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.linkerUnbindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.motorReactions.push_back(tuple<vector<string>, vector<string>, double, double, double, double>
+                                               (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
+                                                atof(lineVector[lineVector.size() - 3].c_str()),
+                                                atof(lineVector[lineVector.size() - 2].c_str()),
+                                                atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                cout << "Error reading a linker unbinding reaction. Exiting" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(line.find("MOTORBINDINGREACTION") != string::npos) {
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.motorBindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
-                
-            }
-            else {
-                cout << "Error reading a motor binding reaction. Exiting" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else if(line.find("MOTORUNBINDINGREACTION") != string::npos) {
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.motorUnbindingReactions.push_back(tuple<vector<string>, vector<string>, double, double, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                     atof(lineVector[lineVector.size() - 2].c_str()), atof(lineVector[lineVector.size() - 1].c_str())));
-                
-            }
-            else {
-                cout << "Error reading a motor unbinding reaction. Exiting" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        
-        else if(line.find("BASICUNBINDINGREACTION") != string::npos) {
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.basicUnbindingReactions.push_back(tuple<vector<string>, vector<string>, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
-                
-            }
-            else {
-                cout << "Error reading an unbinding reaction. Exiting" << endl;
+                cout << "Error reading a motor reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
         
-        else if(line.find("BASICBINDINGREACTION") != string::npos) {
+        else if(line.find("BOUNDREACTION") != string::npos) {
             
             vector<string> reactants;
             vector<string> products;
@@ -1355,16 +1273,17 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                for(auto it = arrowIt + 1; it != lineVector.end() - 2; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.basicBindingReactions.push_back(tuple<vector<string>, vector<string>, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                chem.boundReactions.push_back(tuple<vector<string>, vector<string>, double, double>
+                     (reactants, products, atof(lineVector[lineVector.size() - 2].c_str()),
+                                           atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
-                cout << "Error reading a binding reaction. Exiting" << endl;
+                cout << "Error reading a bound reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }

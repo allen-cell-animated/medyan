@@ -183,11 +183,11 @@ bool ChemNRMImpl::makeStep() {
     }
     
     // Send signals
-#ifdef REACTION_SIGNALING
-    r->emitSignal();
-#endif
 #ifdef RSPECIES_SIGNALING
     r->broadcastRSpeciesSignals();
+#endif
+#ifdef REACTION_SIGNALING
+    r->emitSignal();
 #endif
     
     syncGlobalTime();

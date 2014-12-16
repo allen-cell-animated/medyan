@@ -59,9 +59,7 @@ struct ChemistryData {
     /// Depolymerization reactions
     vector<tuple<vector<string>, vector<string>, double>> depolymerizationReactions = {};
     /// Binding reactions
-    vector<tuple<vector<string>, vector<string>, double>> basicBindingReactions = {};
-    /// Unbinding reactions
-    vector<tuple<vector<string>, vector<string>, double>> basicUnbindingReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double>> boundReactions = {};
     /// Aging reactions
     vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
     //@}
@@ -72,14 +70,10 @@ struct ChemistryData {
      *  All cross Filament reactions are held using a vector containing a tuple with the string
      *  of reactants, string of products, the reaction rate, and binding range.
      */
-    /// Linker binding reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double>> linkerBindingReactions = {};
-    /// MotorGhost unbinding reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double>> motorBindingReactions = {};
-    /// Linker unbinding reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double>> linkerUnbindingReactions = {};
-    /// MotorGhost unbinding reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double>> motorUnbindingReactions = {};
+    /// Linker reactions
+    vector<tuple<vector<string>, vector<string>, double, double, double, double>> linkerReactions = {};
+    /// MotorGhost reactions
+    vector<tuple<vector<string>, vector<string>, double, double, double, double>> motorReactions = {};
     //@}
     
     /// MotorGhost walking reactions

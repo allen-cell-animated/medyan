@@ -49,7 +49,7 @@ public:
     /// @param v - coordinates of the first and last bead in the filament.
     void addNewFilaments(vector<vector<vector<double>>>& v);
     /// Add a new Filament at runtime
-    void addNewFilament(vector<vector<double>>& v);
+    Filament* addNewFilament(vector<vector<double>>& v);
     /// Remove a Filament from the system
     void removeFilament(Filament* f);
     
@@ -57,7 +57,7 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
     /// Add a single Linker during runtime
-    void addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2);
+    Linker* addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2);
     /// Remove a Linker from the system
     void removeLinker(Linker* l);
     
@@ -65,7 +65,7 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
     /// Add a MotorGhost during runtime
-    void addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2);
+    MotorGhost* addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2);
     /// remove a MotorGhost ghost from the system
     void removeMotorGhost(MotorGhost* m);
     
@@ -73,7 +73,7 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewBranchingPoints(vector<vector<Cylinder*>>& v, short branchType);
     /// Add a BranchingPoint during runtime
-    void addNewBranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
+    BranchingPoint* addNewBranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
     /// remove a BranchingPoint from the system
     void removeBranchingPoint(BranchingPoint* b);
     

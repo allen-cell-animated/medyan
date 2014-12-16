@@ -120,18 +120,42 @@ struct FilamentDepolymerizationBackCallback {
     void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
 };
 
+/// Callback to unbind a Linker from a Filament
+struct LinkerUnbindingCallback {
+    
+    SubSystem* _ps;
+    Linker* _linker;
+    
+    LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
+    
+    void operator() (ReactionBase *r) {
+        //remove the unbinding reaction
+        CCylinder* cc1 = _linker->getFirstCylinder()->getCCylinder();
+        CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
+        cc1->removeCrossCylinderReaction(cc2, r);
+        
+        //remove the linker
+        _ps->removeLinker(_linker);
+    }
+};
+
 /// Callback to bind a Linker to Filament
 struct LinkerBindingCallback {
     
-    SubSystem* _ps;
-    CCylinder* _cc1, *_cc2;
-    short _linkerType;
-    short _position1, _position2;
+    SubSystem* _ps;               ///< ptr to subsystem
+    Cylinder* _c1, *_c2;          ///< Cylinders to attach this linker to
+    
+    short _linkerType;            ///< Type of linker
+    short _position1, _position2; ///< Positions to attach this linker
+    
+    vector<Species*> _offSpecies;  ///< Species to add to the unbinding reaction
+    float _offRate;               ///< Rate of the unbinding reaction
 
-    LinkerBindingCallback(CCylinder* cc1, CCylinder* cc2, short linkerType,
-                          short position1, short position2, SubSystem* ps)
-                          : _ps(ps), _cc1(cc1), _cc2(cc2), _linkerType(linkerType),
-                            _position1(position1), _position2(position2){}
+    LinkerBindingCallback(Cylinder* c1, Cylinder* c2, short linkerType, short position1, short position2,
+                          vector<Species*> offSpecies, float offRate, SubSystem* ps)
+                          : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),
+                            _position1(position1), _position2(position2),
+                            _offSpecies(offSpecies), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -141,7 +165,16 @@ struct LinkerBindingCallback {
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->addNewLinker(_cc1->getCylinder(), _cc2->getCylinder(), _linkerType, pos1, pos2);
+        Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
+        
+        //Attach the callback to the off reaction, add it
+        ReactionBase* offRxn = new Reaction<2,3>(_offSpecies, _offRate);
+        offRxn->setReactionType(ReactionType::LINKERUNBINDING);
+        
+        LinkerUnbindingCallback lcallback(l, _ps);
+        boost::signals2::shared_connection_block rcb(offRxn->connect(lcallback,false));
+        
+        _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
     }
 };
 
@@ -183,21 +216,6 @@ struct MotorUnbindingCallback {
         _ps->removeMotorGhost(((CMotorGhost*)_s1->getCBound())->getMotorGhost());
     }
 };
-
-/// Callback to unbind a Linker from a Filament
-struct LinkerUnbindingCallback {
-    
-    SubSystem* _ps;
-    SpeciesLinker* _s1;
-    SpeciesLinker* _s2;
-    
-    LinkerUnbindingCallback(SpeciesLinker* s1, SpeciesLinker* s2, SubSystem* ps) : _s1(s1), _s2(s2), _ps(ps) {}
-    
-    void operator() (ReactionBase *r) {
-        _ps->removeLinker(((CLinker*)_s1->getCBound())->getLinker());
-    }
-};
-
 
 /// Callback to walk a MotorGhost on a Filament
 struct MotorWalkingForwardCallback {
