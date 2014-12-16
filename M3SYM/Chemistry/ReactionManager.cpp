@@ -603,67 +603,16 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
 }
 
-
-void BoundRxnManager::addReaction(CCylinder* cc) {
-    
-    //loop through all monomers of filament
-    int maxlength = cc->getSize();
-    
-    //loop through all monomers
-    for(int i = 0; i <= maxlength - 1; i++) {
-        
-        CMonomer* m1 = cc->getCMonomer(i);
-        vector<Species*> reactantSpecies;
-        vector<Species*> productSpecies;
-    
-        //FIRST REACTANT SHOULD BE BOUND
-        auto r = _reactants[0];
-        auto type = get<1>(r);
-        int speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesBound(speciesInt));
-        
-        //SECOND REACTANT MUST BE BULK OR DIFFUSING
-        r = _reactants[1];
-        type = get<1>(r);
-        speciesInt = get<0>(r);
-        
-        if (type == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(speciesInt));
-        
-        else if(type == SpeciesType::DIFFUSING) {
-            Compartment* c = cc->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-        }
-        
-        //FIRST PRODUCT MUST BE BOUND SPECIES
-        auto p = _products[0];
-        type = get<1>(p);
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m1->speciesBound(speciesInt));
-        
-    
-        //Add the reaction
-        vector<Species*> species = reactantSpecies;
-        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<2, 1>(species, _rate);
-        
-        //boost::signals2::shared_connection_block rcb(rxn->connect(bindingCallback,false));
-        
-        cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::BASICBINDING);
-    }
-}
-
 void MotorWalkFManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = _bindingSites.begin(); it != _bindingSites.end() - 1; it++) {
 
-        CMonomer* m1 = cc->getCMonomer(*(it));
-        CMonomer* m2 = cc->getCMonomer(*(it+1));
+        int site1 = *(it);
+        int site2 = *(it+1);
+        
+        CMonomer* m1 = cc->getCMonomer(site1);
+        CMonomer* m2 = cc->getCMonomer(site2);
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
@@ -674,6 +623,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
+        int motorType = speciesInt;
         
         //FIRST REACTANT MUST BE MOTOR
         sm1 = m1->speciesMotor(speciesInt);
@@ -702,7 +652,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
         //callbacks
-        MotorWalkingForwardCallback motorMoveCallback(sm1, sm2);
+        MotorWalkingForwardCallback motorMoveCallback(cc->getCylinder(), site1, site2, motorType);
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -730,6 +680,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
+    int motorType = speciesInt;
     
     //FIRST REACTANT MUST BE MOTOR
     sm1 = m1->speciesMotor(speciesInt);
@@ -758,7 +709,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
     //callbacks
-    MotorMovingCylinderForwardCallback motorChangeCallback(sm1, sm2, cc2);
+    MotorMovingCylinderForwardCallback motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
+                                                           _bindingSites.back(), motorType);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -955,7 +907,6 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                     reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
                 }
                 
-                
                 //FIRST AND SECOND PRODUCT SHOULD BE MOTOR
                 auto p = _products[0];
                 type = get<1>(p);
@@ -970,18 +921,23 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 
                 productSpecies.push_back(m2->speciesMotor(speciesInt));
                 
+                //create the off reaction (reactants and products just reversed)
+                vector<Species*> offSpecies = productSpecies;
+                offSpecies.insert(offSpecies.end(), reactantSpecies.begin(), reactantSpecies.end());
+                
                 //set up callbacks
-                MotorBindingCallback mcallback(cc1, cc2, motorNumber, i, j, _ps);
+                MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(),
+                                               motorNumber, i, j, offSpecies, _offRate, _ps);
                 
                 //Add the reaction. If it needs a callback then attach
-                vector<Species*> species = reactantSpecies;
-                species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-                ReactionBase* rxn = new Reaction<3, 2>(species, _onRate);
+                vector<Species*> onSpecies = reactantSpecies;
+                onSpecies.insert(onSpecies.end(), productSpecies.begin(), productSpecies.end());
+                ReactionBase* onRxn = new Reaction<3, 2>(onSpecies, _onRate);
+                onRxn->setReactionType(ReactionType::MOTORBINDING);
                 
-                boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
+                boost::signals2::shared_connection_block rcb(onRxn->connect(mcallback,false));
                 
-                cc1->addCrossCylinderReaction(cc2, rxn);
-                rxn->setReactionType(ReactionType::MOTORBINDING);
+                cc1->addCrossCylinderReaction(cc2, onRxn);
             }
         }
     }

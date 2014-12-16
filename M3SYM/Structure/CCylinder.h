@@ -51,7 +51,8 @@ private:
     Compartment* _compartment; ///< Compartment this ccylinder is in
     Cylinder* _pCylinder; ///< Parent cylinder
     
-    short _size = SystemParameters::Geometry().cylinderSize / SystemParameters::Geometry().monomerSize; ///< Max length of full Cylinder
+    short _size = SystemParameters::Geometry().cylinderSize /
+                  SystemParameters::Geometry().monomerSize; ///< Max length of full Cylinder
     
 public:
     /// Default constructor, sets compartment
@@ -100,16 +101,15 @@ public:
     //@{
     /// Reaction management function
     void addInternalReaction(ReactionBase* r);
-    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
-    void addReactingCylinder(CCylinder* other);
-
     void removeInternalReaction(ReactionBase* r);
     void removeAllInternalReactions();
     
-    void removeCrossCylinderReactions(CCylinder* other, bool bindingOnly=false);
+    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
+    void removeCrossCylinderReactions(CCylinder* other, bool bindingOnly=false);
     void removeAllCrossCylinderReactions();
     
+    void addReactingCylinder(CCylinder* other);
     void removeReactingCylinder(CCylinder* other);
     void removeAllReactingCylinders();
     //@}
@@ -123,4 +123,4 @@ public:
 };
 
 
-#endif /* defined(__CytoSim__CCylinder__) */
+#endif

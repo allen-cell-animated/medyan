@@ -161,7 +161,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
                                         directionZ/normFactor};
             
             vector<double> secondPoint = nextPointProjection(firstPoint,
-               10*(double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+               (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
             if(_subSystem->getBoundary()->within(firstPoint)
                && _subSystem->getBoundary()->within(secondPoint)) {
@@ -181,16 +181,6 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
 void Controller::updateSystem() {
     
     /// update all reactables and moveables
-    for(auto &f : *FilamentDB::instance()) {
-       
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->getFirstBead()->updatePosition();
-            cylinder->updatePosition();
-            cylinder->updateReactionRates();
-        }
-        //update last bead
-        f->getCylinderVector().back()->getSecondBead()->updatePosition();
-    }
     for(auto &l : *LinkerDB::instance()) {
         l->updatePosition();
         l->updateReactionRates();
@@ -202,6 +192,16 @@ void Controller::updateSystem() {
     for(auto &b : *BranchingPointDB::instance()) {
         b->updatePosition();
         b->updateReactionRates();
+    }
+    for(auto &f : *FilamentDB::instance()) {
+       
+        for (auto cylinder : f->getCylinderVector()){
+            cylinder->getFirstBead()->updatePosition();
+            cylinder->updatePosition();
+            cylinder->updateReactionRates();
+        }
+        //update last bead
+        f->getCylinderVector().back()->getSecondBead()->updatePosition();
     }
     
     //reset neighbor lists
@@ -246,8 +246,7 @@ void Controller::run() {
         
         if(i % _numStepsPerSnapshot == 0)
             o.printBasicSnapshot(i + _numStepsPerMech);
-#endif
-#ifdef MECHANICS
+#elif defined(MECHANICS)
         o.printBasicSnapshot(1);
 #endif
 #if defined(CHEMISTRY)

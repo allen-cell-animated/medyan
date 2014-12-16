@@ -109,7 +109,9 @@ namespace mathfunc {
     /// Function to calculate a diatance between two segments
     double twoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
                               const vector<double>& v3, const vector<double>& v4);
-    
+    /// Function to move bead out of plane by specified amount
+    vector<double> movePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
+                                       const vector<double>& p3, const vector<double>& p4, int i, double d);
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are parallel
     inline bool ifParallel(const vector<double>& p1, const vector<double>& p2,
@@ -123,56 +125,6 @@ namespace mathfunc {
         
         double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
         return norm <= 1e-28 || norm == numeric_limits<double>::infinity();
-    }
-    
-    
-    /// Function to move bead out of plane by specified amount
-    inline vector<double> movePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
-                                              const vector<double>& p3, const vector<double>& p4, int i, double d) {
-        vector<double> v;
-        vector<double> v1;
-        
-        v.push_back( (p2[2]-p1[2])*(p4[3]-p3[3]) -  (p2[3]-p1[3])*(p4[2]-p3[2]) );
-        v.push_back( (p2[3]-p1[3])*(p4[1]-p3[1]) -  (p2[1]-p1[1])*(p4[3]-p3[3]) );
-        v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );
-        
-        double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
-        
-        v1.push_back(v[0]/norm);
-        v1.push_back(v[1]/norm);
-        v1.push_back(v[2]/norm);
-
-        if (i == 1){
-            vector<double> newP1;
-            newP1.push_back(p1[0] + v1[0]*d);
-            newP1.push_back(p1[1] + v1[1]*d);
-            newP1.push_back(p1[2] + v1[2]*d);
-            return newP1;
-        }
-        
-        else if (i == 2){
-            vector<double> newP2;
-            newP2.push_back(p2[0] + v1[0]*d);
-            newP2.push_back(p2[1] + v1[1]*d);
-            newP2.push_back(p2[2] + v1[2]*d);
-            return newP2;
-        }
-        
-        else if (i == 3){
-            vector<double> newP3;
-            newP3.push_back(p3[0] + v1[0]*d);
-            newP3.push_back(p3[1] + v1[1]*d);
-            newP3.push_back(p3[2] + v1[2]*d);
-            return newP3;
-        }
-
-        else {
-            vector<double> newP4;
-            newP4.push_back(p4[0] + v1[0]*d);
-            newP4.push_back(p4[1] + v1[1]*d);
-            newP4.push_back(p4[2] + v1[2]*d);
-            return newP4;
-        }
     }
 }
 

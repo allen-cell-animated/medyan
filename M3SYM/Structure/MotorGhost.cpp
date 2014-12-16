@@ -23,7 +23,7 @@
 using namespace mathfunc;
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2, bool creation)
-                       : _c1(c1), _c2(c2), _motorType(motorType), _position1(position1), _position2(position2) {
+                               : _c1(c1), _c2(c2), _motorType(motorType), _position1(position1), _position2(position2) {
     
     //add to motor ghost db
     MotorGhostDB::instance()->addMotorGhost(this);
@@ -97,12 +97,14 @@ void MotorGhost::updatePosition() {
         
         _compartment = c;
 #ifdef CHEMISTRY
+        SpeciesBound* firstSpecies = _cMotorGhost->getFirstSpecies();
+        SpeciesBound* secondSpecies = _cMotorGhost->getSecondSpecies();
+        
         CMotorGhost* clone = _cMotorGhost->clone(c);
-        
-        clone->setFirstSpecies(_cMotorGhost->getFirstSpecies());
-        clone->setSecondSpecies(_cMotorGhost->getSecondSpecies());
-        
         setCMotorGhost(clone);
+        
+        _cMotorGhost->setFirstSpecies(firstSpecies);
+        _cMotorGhost->setSecondSpecies(secondSpecies);
 #endif
     }
 }

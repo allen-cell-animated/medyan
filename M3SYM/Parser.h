@@ -58,8 +58,6 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> polymerizationReactions = {};
     /// Depolymerization reactions
     vector<tuple<vector<string>, vector<string>, double>> depolymerizationReactions = {};
-    /// Binding reactions
-    vector<tuple<vector<string>, vector<string>, double, double>> boundReactions = {};
     /// Aging reactions
     vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
     //@}

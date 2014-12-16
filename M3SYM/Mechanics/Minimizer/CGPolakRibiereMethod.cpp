@@ -60,4 +60,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 		gSquare = newGradSquare;
 	}
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
+    
+    cout<<"Energy = "<< curEnergy <<endl;
 }

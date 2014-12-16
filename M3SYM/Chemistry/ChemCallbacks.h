@@ -178,71 +178,96 @@ struct LinkerBindingCallback {
     }
 };
 
+/// Callback to unbind a MotorGhost from a Filament
+struct MotorUnbindingCallback {
+    
+    SubSystem* _ps;
+    MotorGhost* _motor;
+    
+    MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) : _ps(ps), _motor(m) {}
+    
+    void operator() (ReactionBase *r) {
+        //remove the unbinding reaction
+        CCylinder* cc1 = _motor->getFirstCylinder()->getCCylinder();
+        CCylinder* cc2 = _motor->getSecondCylinder()->getCCylinder();
+        cc1->removeCrossCylinderReaction(cc2, r);
+        
+        //remove the linker
+        _ps->removeMotorGhost(_motor);
+    }
+};
+
+
 /// Callback to bind a MotorGhost to Filament
 struct MotorBindingCallback {
     
-    SubSystem* _ps;
-    CCylinder* _cc1, *_cc2;
-    short _motorType;
-    short _position1, _position2;
+    SubSystem* _ps;               ///< Ptr to subsystem
+    Cylinder* _c1, *_c2;          ///< Cylinders to attach this motor to
     
-    MotorBindingCallback(CCylinder* cc1, CCylinder* cc2, short motorType,
-                         short position1, short position2, SubSystem* ps)
-                         : _ps(ps), _cc1(cc1), _cc2(cc2), _motorType(motorType),
-                           _position1(position1), _position2(position2){}
+    short _motorType;             ///< Type of motor
+    short _position1, _position2; ///< Positions to attach this motor
+    
+    vector<Species*> _offSpecies; ///< Species to add to the unbinding reaction
+    float _offRate;               ///< Rate of the unbinding reaction
+    
+    MotorBindingCallback(Cylinder* c1, Cylinder* c2, short motorType, short position1, short position2,
+                          vector<Species*> offSpecies, float offRate, SubSystem* ps)
+                          : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),
+                            _position1(position1), _position2(position2),
+                            _offSpecies(offSpecies), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
-        // Create a motor
+        // Create a linker
         int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
         
-        _ps->addNewMotorGhost(_cc1->getCylinder(), _cc2->getCylinder(), _motorType, pos1, pos2);
-    }
-};
-
-
-/// Callback to unbind a MotorGhost from a Filament
-struct MotorUnbindingCallback {
-    
-    SubSystem* _ps;
-    SpeciesMotor* _s1;
-    
-    MotorUnbindingCallback(SpeciesMotor* s1, SubSystem* ps) : _s1(s1), _ps(ps) {}
-    
-    void operator() (ReactionBase *r) {
-        _ps->removeMotorGhost(((CMotorGhost*)_s1->getCBound())->getMotorGhost());
+        MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
+        
+        //Attach the callback to the off reaction, add it
+        ReactionBase* offRxn = new Reaction<2,3>(_offSpecies, _offRate);
+        offRxn->setReactionType(ReactionType::MOTORUNBINDING);
+        
+        MotorUnbindingCallback mcallback(m, _ps);
+        boost::signals2::shared_connection_block rcb(offRxn->connect(mcallback,false));
+        
+        _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
     }
 };
 
 /// Callback to walk a MotorGhost on a Filament
 struct MotorWalkingForwardCallback {
     
-    SpeciesMotor* _sm1;
-    SpeciesMotor* _sm2;
+    Cylinder* _c;        ///< Cylinder this callback is attached to
+    short _oldPosition;  ///< Old position of motor head
+    short _newPosition;  ///< New position of motor head
+    short _motorType;    ///< Type of motor
     
-    MotorWalkingForwardCallback(SpeciesMotor* sm1, SpeciesMotor* sm2)
-                                :_sm1(sm1), _sm2(sm2) {}
+    MotorWalkingForwardCallback(Cylinder* c, short oldPosition, short newPosition, short motorType)
+                   :_c(c), _motorType(motorType), _oldPosition(oldPosition), _newPosition(newPosition) {}
     
     void operator() (ReactionBase* r) {
         
-        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
+        //Find the motor
+        SpeciesMotor* sm1 = _c->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 = _c->getCCylinder()->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
         double shift =  1.0 / SystemParameters::Chemistry().numBindingSites;
         double newPosition;
         
-        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
+        if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
             newPosition = m->getFirstPosition() + shift;
             m->setFirstPosition(newPosition);
-            m->getCMotorGhost()->setFirstSpecies(_sm2);
+            m->getCMotorGhost()->setFirstSpecies(sm2);
         }
         else {
             newPosition = m->getSecondPosition() + shift;
             m->setSecondPosition(newPosition);
-            m->getCMotorGhost()->setSecondSpecies(_sm2);
+            m->getCMotorGhost()->setSecondSpecies(sm2);
         }
     }
 };
@@ -250,32 +275,33 @@ struct MotorWalkingForwardCallback {
 /// Callback to walk a MotorGhost on a Filament to a new Cylinder
 struct MotorMovingCylinderForwardCallback {
     
-    //members
-    SpeciesMotor* _sm1;
-    SpeciesMotor* _sm2;
-    CCylinder* _newCCylinder;
+    Cylinder* _oldC;        ///< Old cylinder the motor is attached to
+    Cylinder* _newC;        ///< New cylinder motor will be attached to
+    short _oldPosition;     ///< Old position of motor head
+    short _motorType;       ///< Type of motor
     
-    MotorMovingCylinderForwardCallback(SpeciesMotor* sm1,
-                                       SpeciesMotor* sm2,
-                                       CCylinder* newCCylinder)
-                                        : _sm1(sm1), _sm2(sm2), _newCCylinder(newCCylinder) {}
+    MotorMovingCylinderForwardCallback(Cylinder* oldC, Cylinder* newC, short oldPosition, short motorType)
+                                  :_oldC(oldC), _newC(newC), _motorType(motorType), _oldPosition(oldPosition){}
     
     void operator() (ReactionBase* r) {
         
-        MotorGhost* m = ((CMotorGhost*)_sm1->getCBound())->getMotorGhost();
-        
+        //Find the motor
+        SpeciesMotor* sm1 = _oldC->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         //shift the position of one side of the motor forward
         double newPosition = 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
+        int newIntPosition = newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
+        SpeciesMotor* sm2 = _newC->getCCylinder()->getCMonomer(newIntPosition)->speciesMotor(_motorType);
         
-        if(m->getCMotorGhost()->getFirstSpecies() == _sm1) {
-            m->setFirstCylinder(_newCCylinder->getCylinder());
+        if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
+            m->setFirstCylinder(_newC);
             m->setFirstPosition(newPosition);
-            m->getCMotorGhost()->setFirstSpecies(_sm2);
+            m->getCMotorGhost()->setFirstSpecies(sm2);
         }
         else {
-            m->setSecondCylinder(_newCCylinder->getCylinder());
+            m->setSecondCylinder(_newC);
             m->setSecondPosition(newPosition);
-            m->getCMotorGhost()->setSecondSpecies(_sm2);
+            m->getCMotorGhost()->setSecondSpecies(sm2);
         }
     }
 };

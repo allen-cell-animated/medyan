@@ -1259,35 +1259,6 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
         }
         
-        else if(line.find("BOUNDREACTION") != string::npos) {
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 2; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.boundReactions.push_back(tuple<vector<string>, vector<string>, double, double>
-                     (reactants, products, atof(lineVector[lineVector.size() - 2].c_str()),
-                                           atof(lineVector[lineVector.size() - 1].c_str())));
-                
-            }
-            else {
-                cout << "Error reading a bound reaction. Exiting" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
         else if(line.find("MOTORWALKINGREACTION") != string::npos) {
             
             vector<string> reactants;

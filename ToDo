@@ -11,14 +11,13 @@ Goals for December 2014
     -Move bead / boundary element neighbors list to global                      X
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
-    -Filament creation and destruction
-    -Debug linker and motors
+    -Debug linker and motors                                                    X
     -Add branching reaction
     -Add aging reactions                                                        X
     -Add severing reaction
-    -Fix signal copying
+    -Fix signal copying                                                         X
     -Add changing reaction rates (poly, linker & motor)
-    -Motor step size, rethinking of stepping (numbindingsites)
+    -Motor step size, rethinking of stepping (numbindingsites)                  X
     -Filament creation and destruction
     -Optimizations (Data structures (especially reaction dependents, dbs),
                     Neighbor list updates,

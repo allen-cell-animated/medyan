@@ -23,7 +23,7 @@
 using namespace mathfunc;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2, bool creation)
-                : _c1(c1), _c2(c2), _linkerType(linkerType), _position1(position1), _position2(position2) {
+                      : _c1(c1), _c2(c2), _linkerType(linkerType), _position1(position1), _position2(position2) {
                     
     //Add to linker db
     LinkerDB::instance()->addLinker(this);
@@ -97,12 +97,14 @@ void Linker::updatePosition() {
         
         _compartment = c;
 #ifdef CHEMISTRY
+        SpeciesBound* firstSpecies = _cLinker->getFirstSpecies();
+        SpeciesBound* secondSpecies = _cLinker->getSecondSpecies();
+        
         CLinker* clone = _cLinker->clone(c);
-        
-        clone->setFirstSpecies(_cLinker->getFirstSpecies());
-        clone->setSecondSpecies(_cLinker->getSecondSpecies());
-        
         setCLinker(clone);
+        
+        _cLinker->setFirstSpecies(firstSpecies);
+        _cLinker->setSecondSpecies(secondSpecies);
 #endif
     }
 }

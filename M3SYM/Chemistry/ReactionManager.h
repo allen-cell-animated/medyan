@@ -170,23 +170,6 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for basic binding and unbinding to Filament
-class BoundRxnManager : public InternalFilamentRxnManager {
-    
-private:
-    float _offRate; ///< Off-rate for this bound type
-    
-public:
-    BoundRxnManager(vector<tuple<int, SpeciesType>> reactants,
-                    vector<tuple<int, SpeciesType>> products,
-                    float onRate, float offRate)
-                    : InternalFilamentRxnManager(reactants, products, onRate), _offRate(offRate) {}
-    ~BoundRxnManager() {}
-    
-    virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {};
-};
-
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 
 /*!
