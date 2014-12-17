@@ -105,6 +105,7 @@ public:
     void removeAllInternalReactions();
     
     void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
+    
     void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     void removeCrossCylinderReactions(CCylinder* other, bool bindingOnly=false);
     void removeAllCrossCylinderReactions();

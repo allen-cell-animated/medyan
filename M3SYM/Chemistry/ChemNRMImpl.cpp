@@ -64,7 +64,7 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm) : _chem_nrm (chem_nrm
     _react->setRnode(this);
      boost_heap *heap = _chem_nrm.getHeap();
     _handle = heap->emplace(this);
-    _a = _react->computePropensity ();
+    _a = _react->computePropensity();
 }
 
 RNodeNRM::~RNodeNRM() noexcept {

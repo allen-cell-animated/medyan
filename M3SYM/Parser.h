@@ -38,6 +38,7 @@ struct ChemistryAlgorithm {
     int numSteps = 0;
     int numStepsPerMech = 0;
     int numStepsPerSnapshot = 0;
+    int numStepsPerNeighbor = 0;
 };
 
 /// Struct to hold Species and Reaction information
@@ -156,6 +157,8 @@ struct FilamentSetup {
     
     ///If want a random distribution, used if inputFile is left blank
     int numFilaments = 0;
+    ///Filament length, in number of cylinders
+    int filamentLength = 1;
 };
 
 

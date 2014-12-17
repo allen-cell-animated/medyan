@@ -59,7 +59,7 @@ protected:
     //@}
     
     const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all linesearch methods
-    const double ENERGYTOL = 1e-28; ///< Energy tolerance
+    const double ENERGYTOL = 1e-6; ///< Energy tolerance
     
     //@{
     /// For use in minimization

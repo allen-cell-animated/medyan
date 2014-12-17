@@ -156,6 +156,11 @@ public:
             if(rxit!=_as_reactants.end()){
                 _as_reactants.erase(rxit);
             }
+            else {
+                
+                cout << "Did not find the as_reactant" << endl;
+                
+            }
         }
     }
     // \internal This method is called by the Reaction class during destruction
@@ -166,6 +171,9 @@ public:
             auto rxit = find(_as_products.begin(),_as_products.end(),r);
             if(rxit!=_as_products.end()){
                 _as_products.erase(rxit);
+            }
+            else {
+                cout << "Did not find the as_product" << endl;
             }
         }
         

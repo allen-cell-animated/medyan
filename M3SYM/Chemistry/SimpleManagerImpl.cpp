@@ -462,12 +462,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             int position = 0;
             
             if(it != _speciesMotor.end()) {
-                
                 species1 = name;
-                
-                if(reactant.find("N+1") != string::npos)
-                    type = ReactionType::MOTORWALKINGBACKWARD;
-                else type = ReactionType::MOTORWALKINGFORWARD;
+                type = ReactionType::MOTORWALKINGFORWARD;
                 
                 //get position of iterator
                 position = distance(_speciesMotor.begin(), it);

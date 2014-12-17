@@ -240,6 +240,9 @@ public:
     /// because RSpecies is not copyable.
     RSpecies& getRSpecies () {return *_rspecies;}
     
+    /// Return a reference ptr to RSpecies.
+    RSpecies* getRSpeciesPtr () {return _rspecies;}
+    
     /// Return a constant reference to RSpecies. 
     const RSpecies& getRSpecies () const {return *_rspecies;}
     

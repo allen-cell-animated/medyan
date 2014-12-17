@@ -41,6 +41,7 @@ public:
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
+        _offRxn = rhs._offRxn;
     }
     
     /// Assignment is not allowed

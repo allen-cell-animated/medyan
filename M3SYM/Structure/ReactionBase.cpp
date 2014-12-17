@@ -40,7 +40,6 @@ void ReactionBase::registerNewDependent(ReactionBase *r){
 
 void ReactionBase::unregisterDependent(ReactionBase *r){
     auto it=find(_dependents.begin(),_dependents.end(),r);
-    //    cout << "ReactionBase::unregisterDependent: " << this << ", this rxn ptr needs to be erased from the dependent's list" << r << endl;
     if(it!=_dependents.end())
         _dependents.erase(it);
 }

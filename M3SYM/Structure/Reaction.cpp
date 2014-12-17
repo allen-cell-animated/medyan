@@ -74,19 +74,19 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
         
-        ///check if that species exists in the compartment
+        //check if that species exists in the compartment
         auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
            [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
-        ///if we didn't find it, use the old species
+        //if we didn't find it, use the old species
         if(vit==spcv.species().cend()) species.push_back(&rs->getSpecies());
         else species.push_back(vit->get());
     }
-    ///Create new reaction, copy ownership of signal
+    //Create new reaction, copy ownership of signal
     Reaction* newReaction = new Reaction<M,N>(species,_rate);
     newReaction->_signal = std::move(_signal);
     _signal = nullptr;
     
-    ///Copy reaction type
+    //Copy reaction type
     newReaction->_reactionType = _reactionType;
     return newReaction;
 }

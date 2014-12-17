@@ -104,7 +104,9 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //num steps for sim
     _numSteps = CAlgorithm.numSteps;
     _numStepsPerMech = CAlgorithm.numStepsPerMech;
+    
     _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
+    _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
     
     ChemistryData chem;
     
@@ -161,7 +163,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
                                         directionZ/normFactor};
             
             vector<double> secondPoint = nextPointProjection(firstPoint,
-               (double)SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            (double)FSetup.filamentLength * SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
             if(_subSystem->getBoundary()->within(firstPoint)
                && _subSystem->getBoundary()->within(secondPoint)) {
@@ -176,11 +178,23 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     
     //First update of system
     updateSystem();
+    updateNeighborLists();
 }
 
 void Controller::updateSystem() {
     
     /// update all reactables and moveables
+    for(auto &f : *FilamentDB::instance()) {
+        
+        for (auto cylinder : f->getCylinderVector()){
+            cylinder->getFirstBead()->updatePosition();
+            cylinder->updatePosition();
+            cylinder->updateReactionRates();
+        }
+        //update last bead
+        f->getCylinderVector().back()->
+        getSecondBead()->updatePosition();
+    }
     for(auto &l : *LinkerDB::instance()) {
         l->updatePosition();
         l->updateReactionRates();
@@ -193,18 +207,11 @@ void Controller::updateSystem() {
         b->updatePosition();
         b->updateReactionRates();
     }
-    for(auto &f : *FilamentDB::instance()) {
-       
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->getFirstBead()->updatePosition();
-            cylinder->updatePosition();
-            cylinder->updateReactionRates();
-        }
-        //update last bead
-        f->getCylinderVector().back()->getSecondBead()->updatePosition();
-    }
+}
+
+void Controller::updateNeighborLists() {
     
-    //reset neighbor lists
+    //Full reset of neighbor lists
     NeighborListDB::instance()->resetAll();
     
 #ifdef CHEMISTRY
@@ -231,6 +238,7 @@ void Controller::run() {
 #ifdef MECHANICS
     _mController.run();
     updateSystem();
+    updateNeighborLists();
 #endif
     
 #if defined(CHEMISTRY)
@@ -249,6 +257,10 @@ void Controller::run() {
 #elif defined(MECHANICS)
         o.printBasicSnapshot(1);
 #endif
+        // update neighbor lists
+        if(i % _numStepsPerNeighbor == 0 && i != 0)
+            updateNeighborLists();
+        
 #if defined(CHEMISTRY)
     }
 #endif

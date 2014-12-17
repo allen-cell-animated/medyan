@@ -32,9 +32,10 @@ class CMonomer {
     SpeciesFilament** _speciesFilament;
     SpeciesPlusEnd**  _speciesPlusEnd;
     SpeciesMinusEnd** _speciesMinusEnd;
-    SpeciesBound**    _speciesBound;
-    SpeciesLinker**   _speciesLinker;
-    SpeciesMotor**    _speciesMotor;
+    
+    SpeciesBound**  _speciesBound;
+    SpeciesLinker** _speciesLinker;
+    SpeciesMotor**  _speciesMotor;
     //@}
     
 public:
@@ -77,12 +78,12 @@ public:
     /// Get Species at a specific index
     /// @note no check on this index. The index value of a species is stored in the chemical initializer
     /// when all reactions are initialized from the chemical input file
-    SpeciesFilament* speciesFilament (int index)  {return _speciesFilament[index];}
-    SpeciesPlusEnd*  speciesPlusEnd  (int index)  {return _speciesPlusEnd[index];}
-    SpeciesMinusEnd* speciesMinusEnd (int index)  {return _speciesMinusEnd[index];}
-    SpeciesBound*    speciesBound    (int index)  {return _speciesBound[index];}
-    SpeciesLinker*   speciesLinker   (int index)  {return _speciesLinker[index];}
-    SpeciesMotor*    speciesMotor    (int index)  {return _speciesMotor[index];}
+    SpeciesFilament* speciesFilament (int index) {return _speciesFilament[index];}
+    SpeciesPlusEnd*  speciesPlusEnd  (int index) {return _speciesPlusEnd[index];}
+    SpeciesMinusEnd* speciesMinusEnd (int index) {return _speciesMinusEnd[index];}
+    SpeciesBound*    speciesBound    (int index) {return _speciesBound[index];}
+    SpeciesLinker*   speciesLinker   (int index) {return _speciesLinker[index];}
+    SpeciesMotor*    speciesMotor    (int index) {return _speciesMotor[index];}
     //@}
     
 };

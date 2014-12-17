@@ -191,8 +191,17 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.numStepsPerSnapshot = atoi(lineVector[1].c_str());
             }
         }
-        
-        
+        if (line.find("NUMSTEPSPERN:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout << "There was an error parsing input file at Chemistry parameters. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.numStepsPerNeighbor = atoi(lineVector[1].c_str());
+            }
+        } 
     }
     return CAlgorithm;
 }
@@ -945,6 +954,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
             }
             else if (lineVector.size() == 2)
                 FSetup.numFilaments = atoi(lineVector[1].c_str());
+            else {}
+        }
+        else if(line.find("FILAMENTLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading filament length. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                FSetup.filamentLength = atoi(lineVector[1].c_str());
             else {}
         }
     }

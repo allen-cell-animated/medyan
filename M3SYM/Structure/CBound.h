@@ -17,6 +17,7 @@
 #include "common.h"
 
 #include "Species.h"
+#include "ReactionBase.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -35,6 +36,8 @@ protected:
     SpeciesBound* _secondSpecies = nullptr; ///< Corresponding second species on Filament
     
     Compartment* _compartment; ///< Compartment this CBound is in
+    
+    ReactionBase* _offRxn; ///< The off reaction for this bound object
     
 public:
     /// Constructor, just sets species
@@ -73,6 +76,15 @@ public:
     
     /// Get compartment that this CBound is in
     Compartment* getCompartment() {return _compartment;}
+    
+    //@{
+    /// Off reaction management
+    void setOffReaction(ReactionBase* offRxn) {
+        _offRxn = offRxn;
+        _offRxn->setCBound(this);
+    }
+    ReactionBase* getOffReaction() {return _offRxn;}
+    //@}
 };
 
 #endif

@@ -616,9 +616,6 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
         
-        SpeciesMotor* sm1;
-        SpeciesMotor* sm2;
-        
         //loop through reactants, products. find all species
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
@@ -626,13 +623,13 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         int motorType = speciesInt;
         
         //FIRST REACTANT MUST BE MOTOR
-        sm1 = m1->speciesMotor(speciesInt);
-        reactantSpecies.push_back(sm1);
+        reactantSpecies.push_back(m1->speciesMotor(speciesInt));
         
         //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
         type = get<1>(r);
         speciesInt = get<0>(r);
+        int boundType = speciesInt;
         
         reactantSpecies.push_back(m2->speciesBound(speciesInt));
         
@@ -640,9 +637,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
-        
-        sm2 = m2->speciesMotor(speciesInt);
-        productSpecies.push_back(sm2);
+    
+        productSpecies.push_back(m2->speciesMotor(speciesInt));
         
         //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
@@ -652,7 +648,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
         //callbacks
-        MotorWalkingForwardCallback motorMoveCallback(cc->getCylinder(), site1, site2, motorType);
+        MotorWalkingForwardCallback motorMoveCallback(cc->getCylinder(), site1, site2,
+                                                      motorType, boundType, _ps);
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -672,10 +669,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     CMonomer* m2 = cc2->getCMonomer(_bindingSites.front());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
-    
-    SpeciesMotor* sm1;
-    SpeciesMotor* sm2;
-    
+
     //loop through reactants, products. find all species
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
@@ -683,13 +677,13 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     int motorType = speciesInt;
     
     //FIRST REACTANT MUST BE MOTOR
-    sm1 = m1->speciesMotor(speciesInt);
-    reactantSpecies.push_back(sm1);
+    reactantSpecies.push_back(m1->speciesMotor(speciesInt));
     
     //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
     type = get<1>(r);
     speciesInt = get<0>(r);
+    int boundType = speciesInt;
     
     reactantSpecies.push_back(m2->speciesBound(speciesInt));
     
@@ -698,8 +692,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     type = get<1>(p);
     speciesInt = get<0>(p);
     
-    sm2 = m2->speciesMotor(speciesInt);
-    productSpecies.push_back(sm2);
+    productSpecies.push_back(m2->speciesMotor(speciesInt));
     
     //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
@@ -710,7 +703,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //callbacks
     MotorMovingCylinderForwardCallback motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                                                           _bindingSites.back(), motorType);
+                                                 _bindingSites.back(), motorType, boundType, _ps);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -832,13 +825,9 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 
                 productSpecies.push_back(m2->speciesLinker(speciesInt));
 
-                //create the off reaction (reactants and products just reversed
-                vector<Species*> offSpecies = productSpecies;
-                offSpecies.insert(offSpecies.end(), reactantSpecies.begin(), reactantSpecies.end());
-                
                 //set up callbacks
                 LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(),
-                                                linkerNumber, i, j, offSpecies, _offRate, _ps);
+                                                linkerNumber, i, j, _offRate, _ps);
                 
                 //Add the reaction. If it needs a callback then attach
                 vector<Species*> onSpecies = reactantSpecies;
@@ -920,14 +909,10 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 speciesInt = get<0>(p);
                 
                 productSpecies.push_back(m2->speciesMotor(speciesInt));
-                
-                //create the off reaction (reactants and products just reversed)
-                vector<Species*> offSpecies = productSpecies;
-                offSpecies.insert(offSpecies.end(), reactantSpecies.begin(), reactantSpecies.end());
-                
+
                 //set up callbacks
                 MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(),
-                                               motorNumber, i, j, offSpecies, _offRate, _ps);
+                                               motorNumber, i, j, _offRate, _ps);
                 
                 //Add the reaction. If it needs a callback then attach
                 vector<Species*> onSpecies = reactantSpecies;

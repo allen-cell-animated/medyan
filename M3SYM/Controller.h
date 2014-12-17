@@ -46,9 +46,13 @@ private:
     int _numSteps; ///< Number of chemical steps we are running
     int _numStepsPerMech; ///< Number of chemical steps before mechanical equilibration
     int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
+    int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
 
     /// Update the system, called in run. Will update all positions and reactions
     void updateSystem();
+    
+    /// Update neighbors lists, called in run
+    void updateNeighborLists();
     
 public:
     Controller(SubSystem* s) : _mController(s), _cController(s), _gController(), _subSystem(s) {};

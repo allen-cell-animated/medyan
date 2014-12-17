@@ -33,6 +33,7 @@
 #include "Species.h"
 
 //FORWARD DECLARATIONS
+class CBound;
 class RNode;
 class Composite;
 class ReactionBase;
@@ -40,9 +41,9 @@ class SpeciesPtrContainerVector;
 
 ///Enumeration for type of reaction
 enum ReactionType {
-    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION, BASICBINDING,
-    LINKERBINDING, MOTORBINDING, BASICUNBINDING, LINKERUNBINDING, MOTORUNBINDING,
-    MOTORWALKINGFORWARD, MOTORWALKINGBACKWARD, AGING, CREATION, DESTRUCTION
+    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION,
+    LINKERBINDING, MOTORBINDING, LINKERUNBINDING, MOTORUNBINDING,
+    MOTORWALKINGFORWARD, AGING, CREATION, DESTRUCTION
 };
 
 /// This is a ReactionBase signal object that may be called by a ReactionBase simulation algorithm
@@ -77,7 +78,9 @@ protected:
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
     ReactionType _reactionType; ///< Reaction type enumeration
-    bool _isProtoCompartment = false; ///Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
+    bool _isProtoCompartment = false; ///<Reaction is in proto compartment (Do not copy as a dependent, not in chemsim)
+    
+    CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
 public:
     /// The main constructor:
@@ -116,6 +119,11 @@ public:
     
     ///Get reaction type
     ReactionType getReactionType() {return _reactionType;}
+    
+    ///Set CBound
+    void setCBound(CBound* cBound) {_cBound = cBound;}
+    ///Get CBound
+    CBound* getCBound() {return _cBound;}
     
     /// Sets the ReactionBase rate to the parameter "rate"
     void setRate(float rate) {_rate=rate;}
