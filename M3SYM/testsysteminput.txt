@@ -99,11 +99,11 @@ BSCREENLENGTH:              0.1
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    1000000
+NUMSTEPS:                    100000000
 
 NUMSTEPSPERM:                1000
 NUMSTEPSPERS:                10000
-NUMSTEPSPERN:                1000
+NUMSTEPSPERN:                10000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
@@ -121,7 +121,7 @@ NUMBINDINGSITES:             2
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               20
+NUMFILAMENTS:               300
 FILAMENTLENGTH:             10
 
 

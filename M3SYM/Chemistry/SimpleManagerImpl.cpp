@@ -722,7 +722,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
-        ReactionType type;
         string species1;
         
         vector<string> reactants = get<0>(r);
@@ -821,8 +820,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         
         if(product.find("LINKER") != string::npos) {
             
-            type = ReactionType::LINKERBINDING;
-            
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
             auto it = find(_speciesLinker.begin(), _speciesLinker.end(), name);
@@ -886,7 +883,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
-        ReactionType type;
         string species1;
         
         vector<string> reactants = get<0>(r);
@@ -983,8 +979,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         //FIRST TWO SPECIES IN PRODUCTS MUST BE MOTOR
         auto product = products[0];
         if(product.find("MOTOR") != string::npos) {
-            
-            type = ReactionType::MOTORBINDING;
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
@@ -1283,11 +1277,11 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     
     for(auto &sd : chem.speciesDiffusing)
         cProto.addSpeciesUnique(unique_ptr<Species>(
-           new SpeciesDiffusing(get<0>(sd), false, get<1>(sd))), get<2>(sd));
+           new SpeciesDiffusing(get<0>(sd), get<1>(sd))), get<2>(sd));
     
     for(auto &sb : chem.speciesBulk)
-        CompartmentGrid::instance()->addSpeciesBulk(
-            get<0>(sb), (get<2>(sb) == "CONST") ? true : false, get<1>(sb));
+        CompartmentGrid::instance()->
+            addSpeciesBulk(get<0>(sb), get<1>(sb), (get<2>(sb) == "CONST") ? true : false);
     
     //add reactions to protocompartment
     genGeneralReactions(chem, cProto);
@@ -1372,8 +1366,8 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     }
 
     else if(creation) {
-        CMonomer* m2 = lastcc->getCMonomer(int(cc->getSize() / 2));
-        CMonomer* m1 = lastcc->getCMonomer(int(cc->getSize() / 2) - 1);
+        CMonomer* m2 = cc->getCMonomer(int(cc->getSize() / 2));
+        CMonomer* m1 = cc->getCMonomer(int(cc->getSize() / 2) - 1);
         m2->speciesPlusEnd(0)->getRSpecies().setN(1);
         m1->speciesMinusEnd(0)->getRSpecies().setN(1);
     }

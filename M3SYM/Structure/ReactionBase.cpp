@@ -33,16 +33,9 @@ Composite* ReactionBase::getRoot() {
 }
 
 
-void ReactionBase::registerNewDependent(ReactionBase *r){
-    if(find(_dependents.begin(),_dependents.end(),r)==_dependents.end())
-        _dependents.push_back(r);
-}
+void ReactionBase::registerNewDependent(ReactionBase *r){ _dependents.insert(r);}
 
-void ReactionBase::unregisterDependent(ReactionBase *r){
-    auto it=find(_dependents.begin(),_dependents.end(),r);
-    if(it!=_dependents.end())
-        _dependents.erase(it);
-}
+void ReactionBase::unregisterDependent(ReactionBase *r){ _dependents.erase(r); }
 
 #ifdef REACTION_SIGNALING
 void ReactionBase::startSignaling () {

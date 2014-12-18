@@ -42,7 +42,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
-        for(auto &r: ccyl->getCrossCylinderReactions()[const_cast<CCylinder*>(&rhs)]) {
+        CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
+        for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             if(r->getCBound() != nullptr)
@@ -53,6 +54,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
 }
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
+    
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(r);
@@ -65,6 +67,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
 }
 
 void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
+    
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(r);
@@ -106,9 +109,12 @@ void CCylinder:: removeAllInternalReactions() {
 
 void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     
-    if(_crossCylinderReactions[other].find(r) != _crossCylinderReactions[other].end()) {
+    auto it = _crossCylinderReactions[other].find(r);
+    if(it != _crossCylinderReactions[other].end()) {
        
-        _crossCylinderReactions[other].erase(r);
+        //erase the reaction
+        _crossCylinderReactions[other].erase(it);
+        
         //passivate reaction, removing from dependents
         r->passivateReaction();
         
@@ -116,15 +122,17 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
         _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(r);
         
-        //if number of reactions in cross-cylinder has dropped to zero, delete it
+        //if number of reactions in cross-cylinder
+        //has dropped to zero, delete it
         if(_crossCylinderReactions[other].size() == 0) {
             
             _crossCylinderReactions.erase(other);
             
             //also remove from reacting list of other ccylinder
-            auto it = other->_reactingCylinders.find(this);
-            if(it != other->_reactingCylinders.end())
-                other->_reactingCylinders.erase(it);
+            auto it2 =other->_reactingCylinders.find(this);
+            
+            if(it2 != other->_reactingCylinders.end())
+                other->_reactingCylinders.erase(it2);
         }
     }
 }
@@ -173,35 +181,41 @@ CCylinder::~CCylinder() {
     //Remove all species
     for(auto &m: _monomers) {
         
-        short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+        short numFilamentSpecies =
+            SystemParameters::Chemistry().numFilamentSpecies;
         for(int i = 0; i < numFilamentSpecies; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+        short numPlusEndSpecies =
+            SystemParameters::Chemistry().numPlusEndSpecies;
         for(int i = 0; i < numPlusEndSpecies; i++) {
             SpeciesPlusEnd* s = m->speciesPlusEnd(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+        short numMinusEndSpecies =
+            SystemParameters::Chemistry().numMinusEndSpecies;
         for(int i = 0; i < numMinusEndSpecies; i++) {
             SpeciesMinusEnd* s = m->speciesMinusEnd(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+        short numBoundSpecies =
+            SystemParameters::Chemistry().numBoundSpecies;
         for(int i = 0; i < numBoundSpecies; i++) {
             SpeciesBound* s = m->speciesBound(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+        short numLinkerSpecies =
+            SystemParameters::Chemistry().numLinkerSpecies;
         for(int i = 0; i < numLinkerSpecies; i++) {
             SpeciesLinker* s = m->speciesLinker(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+        short numMotorSpecies =
+            SystemParameters::Chemistry().numMotorSpecies;
         for(int i = 0; i < numMotorSpecies; i++) {
             SpeciesMotor* s = m->speciesMotor(i);
-            if(s != nullptr) {_compartment->removeSpecies(s);}
+            if(s != nullptr) _compartment->removeSpecies(s);
         }
     }
 }

@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-//#define DO_THIS_REACTION_TEST
+#define DO_THIS_REACTION_TEST
 
 #ifdef DO_THIS_REACTION_TEST
 
@@ -22,7 +22,7 @@
 #include "Species.h"
 #include "Reaction.h"
 #include "Compartment.h"
-#include "ReactionTemplate.h"
+#include "ReactionManager.h"
 
 void rspecies_callback (RSpecies *r, int delta){
     r->getSpecies().setN(33);
@@ -203,9 +203,9 @@ TEST(ReactionTest, Dependents2) {
     
     // Let's add artificial dependencies by hand
     rxn1.registerNewDependent(&rxn2);
-    EXPECT_EQ(&rxn2, rxn1.dependents()[0]);
+    EXPECT_TRUE(rxn1.dependents().find(&rxn2) != rxn1.dependents().end());
     rxn1.registerNewDependent(&rxn3);
-    EXPECT_EQ(&rxn3, rxn1.dependents()[1]);
+    EXPECT_TRUE(rxn1.dependents().find(&rxn3) != rxn1.dependents().end());
     EXPECT_EQ(2U, rxn1.dependents().size());
     rxn1.unregisterDependent(&rxn3);
     EXPECT_EQ(1U, rxn1.dependents().size());
@@ -215,12 +215,14 @@ TEST(ReactionTest, Propensities) {
     SpeciesBulk A("A",  8);
     SpeciesBulk B("B",  12);
     SpeciesBulk C("C",  14);
-
+    
     Reaction<2,1> rxn = { {&A,&B,&C}, 3.14 }; // A+B -> C
+    rxn.activateReaction();
     EXPECT_FLOAT_EQ(8*12*3.14, rxn.computePropensity());
     EXPECT_EQ(8*12, rxn.getProductOfReactants());
     
     Reaction<1,1> rxn2 = { {&A,&B}, 3.14 }; // A->B
+    rxn2.activateReaction();
     EXPECT_FLOAT_EQ(8*3.14, rxn2.computePropensity());
     EXPECT_EQ(8, rxn2.getProductOfReactants());
 
@@ -284,7 +286,7 @@ TEST(ReactionTest, ReactionCloning) {
     auto c = r1->connect([](ReactionBase *r){r->setRate(9.0);});
     
     ///Clone, check if valid
-    ReactionBase* r2 = r1->clone(C2->speciesContainer());
+    ReactionBase* r2 = r1->clone(C2->getSpeciesContainer());
     
     EXPECT_EQ(1, r2->getM());
     EXPECT_EQ(1, r2->getN());
@@ -302,7 +304,7 @@ TEST(ReactionTest, ReactionCloning) {
     Species* ADiff3 = C3->addSpeciesDiffusing("ADiff", 10);
     
     ReactionBase* r3 = C3->addInternal<Reaction,1,1>({ADiff3, CDiff3}, 100.0);
-    ReactionBase* r4 = r3->clone(C1->speciesContainer());
+    ReactionBase* r4 = r3->clone(C1->getSpeciesContainer());
     
     ///Should keep cdiff3 in reactants
     EXPECT_TRUE(r4->containsSpecies(CDiff3));

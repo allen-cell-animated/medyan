@@ -147,8 +147,8 @@ public:
     /// @param type_enum - SType enum, such as SType::Diffusing
     /// @param n - copy number
     /// @param ulim - upper limit for this species' copy number
-    Species (const string &name, bool constant=false,
-             species_copy_t n=0, species_copy_t ulim=max_ulim)  : _parent(nullptr), _constant(constant) {
+    Species (const string &name, species_copy_t n=0,
+             bool constant=false, species_copy_t ulim=max_ulim)  : _parent(nullptr), _constant(constant) {
         
         _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
         
@@ -329,8 +329,8 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesBulk (const string &name, bool constant,
-                 species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, constant, n, ulim) {};
+    SpeciesBulk (const string &name, species_copy_t n=0,
+                 bool constant=false, species_copy_t ulim=max_ulim)  :  Species(name, n, constant, ulim) {};
     
     /// Copy constructor
     SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
@@ -373,8 +373,8 @@ public:
     /// The main constructor 
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesDiffusing (const string &name, bool constant,
-                      species_copy_t n=0, species_copy_t ulim=max_ulim)  :  Species(name, constant, n, ulim) {};
+    SpeciesDiffusing (const string &name, species_copy_t n=0,
+                      bool constant=false, species_copy_t ulim=max_ulim)  :  Species(name, n, constant, ulim) {};
     
     /// Copy constructor
     SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}

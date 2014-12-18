@@ -20,6 +20,7 @@
 #include <array>
 #include <algorithm>
 #include <utility>
+#include <set>
 #include <unordered_set>
 #include <cmath>
 #include <initializer_list>
@@ -66,7 +67,7 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 
 class ReactionBase {
 protected:
-    vector<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
+    set<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used to implement a Gillespie-like algorithm (e.g. NRM)
     Composite *_parent; ///< A pointer to a Composite object to which this Reaction belongs
     float _rate; ///< the rate for this ReactionBase
@@ -233,12 +234,12 @@ public:
     virtual void broadcastRSpeciesSignals() = 0;
 #endif
     
-    /// Return a const reference to the vector of dependent ReactionBases
+    /// Return a const reference to the set of dependent ReactionBases
     /// @note One can obtain two different lists of affected ReactionBases:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the
     /// dependencies, and 2) via dependents(), where dependencies stop being counted
     /// if the copy numbers of reactant species drop to 0.
-    const vector<ReactionBase*>& dependents() {return _dependents;}
+    const set<ReactionBase*>& dependents() {return _dependents;}
     
     /// Returns true if two ReactionBase objects are equal.
     /// Two ReactionBase objects are equal if each of their reactants and products are equal
@@ -320,10 +321,6 @@ public:
     /// Request that the ReactionBase *r removes this ReactionBase from its list of dependents which it affects. 
     /// This is usually requested when the ReactionBase propensity drops to zero (i.e. via passivateReactionBase()).
     void unregisterDependent(ReactionBase *r);
-    
-//        
-//        ///Replace a given species with a new one. Registers and unregisters new dependents accordingly
-//        virtual void replaceRSpecies(RSpecies* oldRSpecies, RSpecies* newRSpecies) = 0;
     
     virtual void printToStream(ostream& os) const = 0;
     

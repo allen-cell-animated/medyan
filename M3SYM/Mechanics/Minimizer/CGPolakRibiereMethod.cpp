@@ -22,7 +22,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
     
 	double curEnergy = FFM.computeEnergy(0.0);
     cout<<"Energy = "<< curEnergy <<endl;
-	double prevEnergy = curEnergy;
+    double prevEnergy;
     
 	FFM.computeForces();
 
