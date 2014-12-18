@@ -61,7 +61,6 @@
 		F735B77F1A2D16F200AE21D1 /* Output.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7651A2D16F200AE21D1 /* Output.h */; };
 		F735B7801A2D16F200AE21D1 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7661A2D16F200AE21D1 /* Parser.cpp */; };
 		F735B7811A2D16F200AE21D1 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7671A2D16F200AE21D1 /* Parser.h */; };
-		F735B7821A2D16F200AE21D1 /* Signaling.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7681A2D16F200AE21D1 /* Signaling.h */; };
 		F735B7831A2D16F200AE21D1 /* SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7691A2D16F200AE21D1 /* SystemParameters.cpp */; };
 		F735B7841A2D16F200AE21D1 /* SystemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B76A1A2D16F200AE21D1 /* SystemParameters.h */; };
 		F735B7851A2D16F200AE21D1 /* utility.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B76B1A2D16F200AE21D1 /* utility.h */; };
@@ -294,7 +293,6 @@
 		F735B7651A2D16F200AE21D1 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		F735B7661A2D16F200AE21D1 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		F735B7671A2D16F200AE21D1 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
-		F735B7681A2D16F200AE21D1 /* Signaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signaling.h; sourceTree = "<group>"; };
 		F735B7691A2D16F200AE21D1 /* SystemParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemParameters.cpp; sourceTree = "<group>"; };
 		F735B76A1A2D16F200AE21D1 /* SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemParameters.h; sourceTree = "<group>"; };
 		F735B76B1A2D16F200AE21D1 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
@@ -739,7 +737,6 @@
 				F735B7551A2D16F200AE21D1 /* common.cpp */,
 				F735B7561A2D16F200AE21D1 /* common.h */,
 				F735B76B1A2D16F200AE21D1 /* utility.h */,
-				F735B7681A2D16F200AE21D1 /* Signaling.h */,
 				F735B76C1A2D16F200AE21D1 /* Visitor.h */,
 				F735B7571A2D16F200AE21D1 /* Component.cpp */,
 				F735B7581A2D16F200AE21D1 /* Component.h */,
@@ -895,7 +892,6 @@
 				F735B7F91A2D175800AE21D1 /* CylinderExclVolume.h in Headers */,
 				F719441F1A3262F3006F1E08 /* BranchingFF.h in Headers */,
 				F7C9CFEE1A2D165D0087434A /* BoundaryElement.h in Headers */,
-				F735B7821A2D16F200AE21D1 /* Signaling.h in Headers */,
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

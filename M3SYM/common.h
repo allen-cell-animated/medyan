@@ -9,7 +9,7 @@
 //
 //  See the Papoian lab page for installation and documentation:
 //  http://papoian.chem.umd.edu/
-//------------------------------------------------------------------
+//------------------------------------------------------------------                    
 
 #ifndef M3SYM_common_h
 #define M3SYM_common_h
