@@ -67,7 +67,8 @@ public:
 
     virtual void initialize(ChemistryData& chem);
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
-                                     bool extensionFront, bool extensionBack, bool creation);
+                                     bool extensionFront, bool extensionBack,
+                                     bool creation);
     virtual void updateCCylinder(CCylinder* cc);
     
 };

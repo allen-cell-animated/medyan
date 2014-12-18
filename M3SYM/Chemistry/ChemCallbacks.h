@@ -150,10 +150,13 @@ struct LinkerBindingCallback {
     
     float _offRate;               ///< Rate of the unbinding reaction
 
-    LinkerBindingCallback(Cylinder* c1, Cylinder* c2, short linkerType,
-                          short position1, short position2, float offRate, SubSystem* ps)
-                          : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),
-                            _position1(position1), _position2(position2), _offRate(offRate) {}
+    LinkerBindingCallback(Cylinder* c1, Cylinder* c2,
+                          short linkerType,
+                          short position1, short position2,
+                          float offRate, SubSystem* ps)
+        : _ps(ps), _c1(c1), _c2(c2),
+          _linkerType(linkerType),
+          _position1(position1), _position2(position2), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -216,10 +219,13 @@ struct MotorBindingCallback {
     
     float _offRate;               ///< Rate of the unbinding reaction
     
-    MotorBindingCallback(Cylinder* c1, Cylinder* c2, short motorType,
-                         short position1, short position2, float offRate, SubSystem* ps)
-                          : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),
-                            _position1(position1), _position2(position2), _offRate(offRate) {}
+    MotorBindingCallback(Cylinder* c1, Cylinder* c2,
+                         short motorType,
+                         short position1, short position2,
+                         float offRate, SubSystem* ps)
+        : _ps(ps), _c1(c1), _c2(c2),
+          _motorType(motorType),
+          _position1(position1), _position2(position2), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -256,23 +262,31 @@ struct MotorBindingCallback {
 struct MotorWalkingForwardCallback {
     
     Cylinder* _c;        ///< Cylinder this callback is attached to
+    
     short _oldPosition;  ///< Old position of motor head
     short _newPosition;  ///< New position of motor head
+    
     short _motorType;    ///< Type of motor
     short _boundType;    ///< Type of bound this motor took place of
+    
     SubSystem* _ps;      ///< Ptr to subsystem
     
-    MotorWalkingForwardCallback(Cylinder* c, short oldPosition, short newPosition,
-                                short motorType, short boundType, SubSystem* ps)
-                                 :_c(c), _motorType(motorType), _boundType(boundType),
-                                  _oldPosition(oldPosition), _newPosition(newPosition), _ps(ps) {}
+    MotorWalkingForwardCallback(Cylinder* c,
+                                short oldPosition, short newPosition,
+                                short motorType, short boundType,
+                                SubSystem* ps)
+        :_c(c), _motorType(motorType), _boundType(boundType),
+         _oldPosition(oldPosition), _newPosition(newPosition), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
         
         //Find the motor
-        SpeciesMotor* sm1 = _c->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 = _c->getCCylinder()->getCMonomer(_newPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 = _c->getCCylinder()->getCMonomer(_newPosition)->speciesBound(_boundType);
+        SpeciesMotor* sm1 =
+        _c->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 =
+        _c->getCCylinder()->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 =
+        _c->getCCylinder()->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
@@ -296,7 +310,8 @@ struct MotorWalkingForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
+            newOffRxn =
+            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
         }
         else {
             newPosition = m->getSecondPosition() + shift;
@@ -312,13 +327,15 @@ struct MotorWalkingForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
+            newOffRxn =
+            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
         }
         //set new reaction type
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
         //attach signal
         MotorUnbindingCallback mcallback(m, _ps);
-        boost::signals2::shared_connection_block rcb(newOffRxn->connect(mcallback,false));
+        boost::signals2::shared_connection_block
+            rcb(newOffRxn->connect(mcallback,false));
         
         CCylinder* cc1 = m->getFirstCylinder()->getCCylinder();
         CCylinder* cc2 = m->getSecondCylinder()->getCCylinder();
@@ -337,25 +354,36 @@ struct MotorMovingCylinderForwardCallback {
     
     Cylinder* _oldC;        ///< Old cylinder the motor is attached to
     Cylinder* _newC;        ///< New cylinder motor will be attached to
+    
     short _oldPosition;     ///< Old position of motor head
+    
     short _motorType;       ///< Type of motor
     short _boundType;       ///< Type of bound this motor is taking place of
+    
     SubSystem* _ps;         ///< Ptr to subsystem
     
-    MotorMovingCylinderForwardCallback(Cylinder* oldC, Cylinder* newC, short oldPosition,
+    MotorMovingCylinderForwardCallback(Cylinder* oldC, Cylinder* newC,
+                                       short oldPosition,
                                        short motorType, short boundType, SubSystem* ps)
-                                  :_oldC(oldC), _newC(newC), _motorType(motorType),
-                                   _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
+        :_oldC(oldC), _newC(newC), _motorType(motorType),
+         _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
     
     void operator() (ReactionBase* r) {
         
         //Find the motor
         double newPosition = 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
-        int newIntPosition = newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
+        int newIntPosition =
+            newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
 
-        SpeciesMotor* sm1 = _oldC->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 = _newC->getCCylinder()->getCMonomer(newIntPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 = _newC->getCCylinder()->getCMonomer(newIntPosition)->speciesBound(_boundType);
+        SpeciesMotor* sm1 =
+            _oldC->getCCylinder()->getCMonomer(_oldPosition)->
+            speciesMotor(_motorType);
+        SpeciesMotor* sm2 =
+            _newC->getCCylinder()->getCMonomer(newIntPosition)->
+            speciesMotor(_motorType);
+        SpeciesBound* sb2 =
+            _newC->getCCylinder()->getCMonomer(newIntPosition)->
+            speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         ReactionBase* newOffRxn, *offRxn;
@@ -379,7 +407,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
+            newOffRxn =
+                new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -398,7 +427,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
+            newOffRxn =
+                new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -407,7 +437,8 @@ struct MotorMovingCylinderForwardCallback {
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
         //attach signal
         MotorUnbindingCallback mcallback(m, _ps);
-        boost::signals2::shared_connection_block rcb(newOffRxn->connect(mcallback,false));
+        boost::signals2::shared_connection_block
+            rcb(newOffRxn->connect(mcallback,false));
         
         //add new reaction
         cc1 = m->getFirstCylinder()->getCCylinder();

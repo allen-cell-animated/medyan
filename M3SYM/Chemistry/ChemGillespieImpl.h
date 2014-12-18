@@ -29,16 +29,19 @@ class ChemGillespieImpl;
     
 /// Used by ChemGillespieImpl to implement the cached version of the Gillespie algorithm.
 
-/*! RNodeGillespie manages a single chemical reaction within the Gillespie algorithm. When the propensity drops to zero, 
- *  the RNodeGillespie can execute the passivateReaction() method. Alternatively, passivated RNodeGillespie can be 
- *  activated via activateReaction(). The main part of the Gillespie algoritm is implemented in the makeStep() method.
+/*! RNodeGillespie manages a single chemical reaction within the Gillespie algorithm. 
+ *  When the propensity drops to zero, the RNodeGillespie can execute the 
+ *  passivateReaction() method. Alternatively, passivated RNodeGillespie can be
+ *  activated via activateReaction(). The main part of the Gillespie algoritm is 
+ *  implemented in the makeStep() method.
  */
 class RNodeGillespie : public RNode {
 public:
     /// Ctor:
     /// @param *r is the Reaction object corresponding to this RNodeGillespie
-    /// @param &chem_Gillespie is a refernce to ChemGillespieImpl object, which does the overall management of the Gillespie scheme (e.g.
-    /// random distribution generators, etc.)
+    /// @param &chem_Gillespie is a refernce to ChemGillespieImpl object, which does
+    /// the overall management of the Gillespie scheme (e.g. random distribution
+    /// generators, etc.)
     RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie);
     
     /// Copying is not allowed
@@ -48,23 +51,27 @@ public:
     RNodeGillespie& operator=(RNodeGillespie &rhs) = delete;
     
     /// Dtor: The RNode pointer of the tracked Reaction object is set to nullptr
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~RNodeGillespie() noexcept;
             
     /// Returns a pointer to the Reaction which corresponds to this RNodeGillespie.
     ReactionBase* getReaction() const {return _react;};
     
     /// Return the currently stored propensity, "a", for this Reaction.
-    /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
+    /// @note The propensity is not recomputed in this method, so it potentially
+    /// can be out of sync.
     double getPropensity() const {return _a;}
     
     /// Set the propensity, "a", for this Reaction.
     void setA(double a) {_a=a;}
     
-    /// Return the propensity, "a", associated with the penultimate step of this Reaction.
-    /// @note The propensity is not recomputed in this method, so it potentially can be out of sync.
+    /// Return the propensity, "a", associated with the penultimate step
+    /// of this Reaction.
+    /// @note The propensity is not recomputed in this method, so it potentially
+    /// can be out of sync.
     double getPenultStepPropensity() const {return _a_prev;}
 
     /// Set the propensity, "a", associated with the penultimate step of this Reaction.
@@ -103,19 +110,26 @@ public:
     /// Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependencies)
     void printDependents() const;
 private:
-    ChemGillespieImpl &_chem_Gillespie; ///< A reference to the ChemGillespieImpl which containts the heap, random number generators, etc.
-    ReactionBase *_react; ///< The pointer to the associated Reaction object. The corresponding memory is not managed by RNodeGillespie.
-    double _a; ///< The propensity associated with the Reaction. It may be outdated and may need to be recomputed if needed.
-    double _a_prev; ///< The propensity associated with the penultimate step of this Reaction.
+    ChemGillespieImpl &_chem_Gillespie; ///< A reference to the ChemGillespieImpl
+                                        ///< which containts the heap, random number
+                                        ///< generators, etc.
+    ReactionBase *_react; ///< The pointer to the associated Reaction object. The
+                          ///<corresponding memory is not managed by RNodeGillespie.
+    double _a; ///< The propensity associated with the Reaction. It may be outdated
+               ///< and may need to be recomputed if needed.
+    double _a_prev; ///< The propensity associated with the penultimate
+                    ///< step of this Reaction.
 };
 
 
 
 /// Implements a slightly optimized version of the Gillespie algorithm.
 
-/*! ChemGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects can be 
- *  added and removed from the ChemGillespieImpl instance. The propensities of all Reactions are cached, and they are 
- *  recomputed only when the copy number of associated reactant species gets changed (due to the currently occurring Reaction).
+/*! ChemGillespieImpl manages the Gillespie algorithm at the level of the network of 
+ *  reactions. Reaction objects can be added and removed from the ChemGillespieImpl 
+ *  instance. The propensities of all Reactions are cached, and they are recomputed 
+ *  only when the copy number of associated reactant species gets changed (due to the
+ *  currently occurring Reaction).
  *  @note The algorithm used by this class relies on tracking dependent
  *  Reactions, so TRACK_DEPENDENTS must be defined. The algorithm can work
  *  both when TRACK_ZERO_COPY_N and TRACK_UPPER_COPY_N are either defined or
@@ -124,11 +138,11 @@ private:
  */
 class ChemGillespieImpl : public ChemSimImpl {
 public:
-    /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number of reactions to 0
+    /// Ctor: Seeds the random number generator, sets global time to 0.0
+    ///and the number of reactions to 0
     ChemGillespieImpl() :
-    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _uniform_distr(), _a_total(0),_n_reacts(0) {
-        resetTime();
-    }
+    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0),
+    _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
     ChemGillespieImpl(const ChemGillespieImpl &rhs) = delete;
@@ -136,10 +150,12 @@ public:
     /// Assignment is not allowed
     ChemGillespieImpl& operator=(ChemGillespieImpl &rhs) = delete;
     
-    ///Dtor: The reaction network is cleared. The RNodeGillespie objects will be destructed, but Reaction objects will stay intact.
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    ///Dtor: The reaction network is cleared. The RNodeGillespie objects will be
+    /// destructed, but Reaction objects will stay intact.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~ChemGillespieImpl() noexcept;
     
     /// Return the number of reactions in the network.
@@ -170,11 +186,14 @@ public:
     /// Returns a random number between 0 and 1, drawn from the uniform distribution
    double generateUniform();
     
-    /// This function iterates over all RNodeGillespie objects in the network, activating all Reaction objects and calling reset().
+    /// This function iterates over all RNodeGillespie objects in the network,
+    /// activating all Reaction objects and calling reset().
     /// The total propentsity for the network is computed.
     /// @note This method needs to be called before calling run(...).
-    /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting the simulation from scratch,
-    /// except with the Species copy numbers given at that moment in time. The global time is reset to zero again.
+    /// @note If somewhere in the middle of simulaiton initialize() is called, it will
+    /// be analogous to starting the simulation from scratch, except with the Species
+    /// copy numbers given at that moment in time. The global time is reset to zero
+    /// again.
     virtual void initialize();
     
     /// This method runs the Gillespie algorithm for the given number of steps.
@@ -188,12 +207,12 @@ public:
         return true;
     }
     
-    /// This method is used to track the change in the total propensity of the network as
-    /// the previously passivated ReactionBase *r has become activated
+    /// This method is used to track the change in the total propensity of the network
+    /// as the previously passivated ReactionBase *r has become activated
     void activateReaction(ReactionBase *r);
     
-    /// This method is used to track the change in the total propensity of the network as
-    /// the ReactionBase *r has become passivated
+    /// This method is used to track the change in the total propensity of the network
+    /// as the ReactionBase *r has become passivated
     void passivateReaction(ReactionBase *r);
     
     /// Prints all RNodes in the reaction network
@@ -201,15 +220,21 @@ public:
     
 private:
 
-    /// This subroutine, along with with passivateReaction() and activateReaction() implements a cached version of the Gillespie algorith.
-    /// Two random numbers get thrown, one for obtaining tau, the time to the next reaction event, and a uniform number to select which
-    /// Reaction has occurred. Instead of computing the total propensity of the  network from scratch, the cached value is being modified as Reaction events occur.
-    /// Returns true if successful, and false if the heap is exchausted and there no more reactions to fire
+    /// This subroutine, along with with passivateReaction() and activateReaction()
+    /// implements a cached version of the Gillespie algorith.
+    /// Two random numbers get thrown, one for obtaining tau, the time to the next
+    /// reaction event, and a uniform number to select which
+    /// Reaction has occurred. Instead of computing the total propensity of the network
+    /// from scratch, the cached value is being modified as Reaction events occur.
+    /// Returns true if successful, and false if the heap is exchausted and there no
+    /// more reactions to fire
     bool makeStep();
 private:
-    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
+    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>>
+        _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
     mt19937 _eng; ///< Random number generator
-    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
+    exponential_distribution<double>
+        _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time
     double _a_total; 

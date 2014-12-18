@@ -94,8 +94,8 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(r);
+        _compartment->removeInternalReaction(r);
             
         _internalReactions.erase(r);
     }
@@ -119,8 +119,8 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        _compartment->removeInternalReaction(r);
         ChemSim::removeReaction(r);
+        _compartment->removeInternalReaction(r);
         
         //if number of reactions in cross-cylinder
         //has dropped to zero, delete it

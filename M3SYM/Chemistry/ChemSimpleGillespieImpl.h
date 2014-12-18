@@ -26,16 +26,16 @@
 /// Implements the simplest version of the Gillespie algorithm, without caching, etc.
 
 /*! 
- *  ChemSimpleGillespieImpl manages the Gillespie algorithm at the level of the network of reactions. Reaction objects
- *  can be added and removed from the ChemSimpleGillespieImpl instance.
+ *  ChemSimpleGillespieImpl manages the Gillespie algorithm at the level of the network
+ *  of reactions. Reaction objects can be added and removed from the 
+ *  ChemSimpleGillespieImpl instance.
  */
 class ChemSimpleGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0), _uniform_distr() {
-        resetTime();
-    }
+    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))),
+    _exp_distr(0.0), _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
     ChemSimpleGillespieImpl(const ChemSimpleGillespieImpl &rhs) = delete;
@@ -44,15 +44,17 @@ public:
     ChemSimpleGillespieImpl& operator=(ChemSimpleGillespieImpl &rhs) = delete;
     
     ///Dtor: The reaction network is cleared.
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~ChemSimpleGillespieImpl() noexcept;
     
     /// Return the number of reactions in the network.
     size_t getSize() const {return _reactions.size();}
     
-    /// Return the current global time (which should be the sum of all previously occurred tau-s of the Gillespie algorithm)
+    /// Return the current global time (which should be the sum of all previously
+    /// occurred tau-s of the Gillespie algorithm)
     double getTime() const {return _t;}
     
     /// Sets global time to 0.0
@@ -67,20 +69,21 @@ public:
     /// Remove ReactionBase *r from the network
     virtual void removeReaction(ReactionBase *r);
     
-    /// Compute the total propensity of the reaction network, by adding all individual reaction propensities
+    /// Compute the total propensity of the reaction network, by adding all individual
+    /// reaction propensities
     double computeTotalA();
     
-    /// A pure function (without sideeffects), which returns a random time tau, drawn from the exponential distribution,
-    /// with the propensity given by a.
+    /// A pure function (without sideeffects), which returns a random time tau, drawn
+    /// from the exponential distribution, with the propensity given by a.
     double generateTau(double a);
     
     /// This function generates a random number between 0 and 1
     double generateUniform();
     
     /// This function needs to be called before calling run(...).
-    /// @note If somewhere in the middle of simulaiton initialize() is called, it will be analogous to starting
-    /// the simulation from scratch, except with the Species copy numbers given at that moment in time. The global time
-    /// is reset to zero again.
+    /// @note If somewhere in the middle of simulaiton initialize() is called, it will
+    /// be analogous to starting the simulation from scratch, except with the Species
+    /// copy numbers given at that moment in time. The global time is reset to zero again.
     void initialize();
     
     /// This method runs the Gillespie algorithm for the given number of steps.
@@ -100,10 +103,13 @@ private:
     /// This subroutine implements the vanilla version of the Gillespie algorithm
     bool makeStep();
 private:
-    vector<ReactionBase*> _reactions; ///< The database of Reaction objects, representing the reaction network
+    vector<ReactionBase*> _reactions; ///< The database of Reaction objects,
+                                      ///< representing the reaction network
     mt19937 _eng; ///< Random number generator
-    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution
+    exponential_distribution<double>
+        _exp_distr; ///< Adaptor for the exponential distribution
+    uniform_real_distribution<double>
+        _uniform_distr; ///< Adaptor for the uniform distribution
     double _t; ///< global time
 };
 

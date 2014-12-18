@@ -65,11 +65,11 @@ bool ChemSimpleGillespieImpl::makeStep() {
             break;
         }
     }
-    
     if(r_selected==nullptr){
-        cout << "ChemSimpleGillespieImpl::makeStep() for loop: rates_sum=" << rates_sum << ", mu="
-        << mu << ", a_total=" << a_total << endl;
-        throw runtime_error("ChemSimpleGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
+        cout << "ChemSimpleGillespieImpl::makeStep() for loop: rates_sum=" <<
+            rates_sum << ", mu="
+            << mu << ", a_total=" << a_total << endl;
+        throw runtime_error( "ChemSimpleGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
     }
     r_selected->makeStep();
 
@@ -86,19 +86,18 @@ bool ChemSimpleGillespieImpl::makeStep() {
 }
 
 void ChemSimpleGillespieImpl::addReaction(ReactionBase *r) {
-    vector<ReactionBase*>::iterator vit = find(_reactions.begin(), _reactions.end(), r);
+    auto vit = find(_reactions.begin(), _reactions.end(), r);
     if(vit==_reactions.end())
         _reactions.push_back(r);
 }
 
 void ChemSimpleGillespieImpl::removeReaction(ReactionBase *r) {
-    vector<ReactionBase*>::iterator vit = find(_reactions.begin(), _reactions.end(), r);
+    auto vit = find(_reactions.begin(), _reactions.end(), r);
     if(vit!=_reactions.end())
         _reactions.erase(vit);
 }
 
 void ChemSimpleGillespieImpl::printReactions() const {
-    for (auto &r : _reactions){
-        cout << (*r); 
-    }
+    for (auto &r : _reactions)
+        cout << (*r);
 }

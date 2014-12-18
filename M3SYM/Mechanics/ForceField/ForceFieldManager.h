@@ -38,7 +38,13 @@ public:
         double energy = 0;
         for(auto &f : _forceFields)
             energy += f->computeEnergy(d);
-        // pass it to subsystem!!!
+        
+        //if energy is infinity, exit ungracefully.
+        if(energy == numeric_limits<double>::infinity()) {
+            cout <<
+            "Energy became infinite. Try adjusting equilibration step size." << endl;
+            exit(EXIT_FAILURE);
+        }
         return energy;
     }
     

@@ -74,13 +74,16 @@ RNodeNRM::~RNodeNRM() noexcept {
 }
 
 void RNodeNRM::printSelf() const {
-    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() << ", a=" << _a << ", points to Reaction:\n";
+    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
+        ", a=" << _a << ", points to Reaction:\n";
     cout << (*_react);
 }
 
 void RNodeNRM::printDependents() const {
-    cout << "RNodeNRM: ptr=" << this << ", the following RNodeNRM objects are dependents:\n\n";
-    for(auto rit = _react->dependents().begin(); rit!=_react->dependents().end(); ++rit){
+    cout << "RNodeNRM: ptr=" << this
+    << ", the following RNodeNRM objects are dependents:\n\n";
+    for(auto rit = _react->dependents().begin();
+        rit!=_react->dependents().end(); ++rit){
         RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
         rn_other->printSelf();
     }
@@ -142,7 +145,8 @@ bool ChemNRMImpl::makeStep() {
     RNodeNRM *rn = _heap.top()._rn;
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
-        cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
+        cout <<
+        "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
     _t=tau_top;

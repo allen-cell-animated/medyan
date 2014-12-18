@@ -101,9 +101,9 @@ CHEMISTRYFILE:               testchemistryinput.txt
 CALGORITHM:                  NRM
 NUMSTEPS:                    100000000
 
-NUMSTEPSPERM:                1000
-NUMSTEPSPERS:                10000
-NUMSTEPSPERN:                10000
+NUMSTEPSPERM:                10
+NUMSTEPSPERS:                100
+NUMSTEPSPERN:                100
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1

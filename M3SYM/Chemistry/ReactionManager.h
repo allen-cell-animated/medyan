@@ -34,24 +34,25 @@ class CCylinder;
 
 /// To store Filament chemical reaction information read from an input file
 /*!
- *  InternalFilamentRxnManager is used to store a filament reaction. It contains vectors of tuples that represent
- *  the position in the CMonomer in which the species is stored (for products and reactants), as well as the rate
- *  of the reaction. The integer value that is the position of the species in the CMonomer vector is held by the ChemManager.
+ *  InternalFilamentRxnManager is used to store a filament reaction. It contains vectors 
+ *  of tuples that represent the position in the CMonomer in which the species is stored 
+ *  (for products and reactants), as well as the rate of the reaction. The integer value 
+ *  that is the position of the species in the CMonomer vector is held by the 
+ *  ChemManager.
+ *  @note if the species is a bulk or diffusing species, the integer molecule value in 
+ *  the tuple stored in the SpeciesNamesDB.
  *
- *  @note if the species is a bulk or diffusing species, the integer molecule value in the tuple 
- *  stored in the SpeciesNamesDB.
- *
- *  This class also has functions to add the filament reaction to a CCylinder, as well as add a
- *  connection reaction between two neighboring [CCylinders](@ref CCylinder).
+ *  This class also has functions to add the filament reaction to a CCylinder, as well 
+ *  as add a connection reaction between two neighboring [CCylinders](@ref CCylinder).
  */
 class InternalFilamentRxnManager {
     
     friend class SimpleManagerImpl;
     
 protected:
-    static SubSystem* _ps; ///< A subsystem pointer to initialize and call chemical callbacks
-    
-    ///Species identifier vectors
+    static SubSystem* _ps; ///< A subsystem pointer to initialize and
+                           ///< call chemical callbacks
+
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
@@ -62,7 +63,8 @@ protected:
 public:
     InternalFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                                vector<tuple<int, SpeciesType>> products,
-                               float rate) : _reactants(reactants), _products(products), _rate(rate) {
+                               float rate)
+        : _reactants(reactants), _products(products), _rate(rate) {
     
         
         //Figure out the binding sites
@@ -81,11 +83,12 @@ public:
     }
     ~InternalFilamentRxnManager() {}
 
-    ///Add this chemical reaction. Adds all extension and retraction callbacks needed
+    /// Add this chemical reaction. Adds all extension and retraction callbacks needed
     virtual void addReaction(CCylinder* cc) = 0;
     
-    ///Add this chemical reaction along a filament
-    ///@note assumes cc1 and cc2 are in order, that is, cc2 is the next cylinder after cc1 
+    /// Add this chemical reaction along a filament
+    /// @note assumes cc1 and cc2 are in order, that is, cc2 is the next
+    /// cylinder after cc1
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
 
@@ -95,7 +98,8 @@ class PolyPlusEndManager : public InternalFilamentRxnManager {
 public:
     PolyPlusEndManager(vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
-                       float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                       float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~PolyPlusEndManager() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -108,7 +112,8 @@ class PolyMinusEndManager : public InternalFilamentRxnManager {
 public:
     PolyMinusEndManager(vector<tuple<int, SpeciesType>> reactants,
                         vector<tuple<int, SpeciesType>> products,
-                        float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                        float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~PolyMinusEndManager() {}
 
     virtual void addReaction(CCylinder* cc);
@@ -122,7 +127,8 @@ class DepolyPlusEndManager : public InternalFilamentRxnManager {
 public:
     DepolyPlusEndManager(vector<tuple<int, SpeciesType>> reactants,
                          vector<tuple<int, SpeciesType>> products,
-                         float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                         float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~DepolyPlusEndManager() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -135,7 +141,8 @@ class DepolyMinusEndManager : public InternalFilamentRxnManager {
 public:
     DepolyMinusEndManager(vector<tuple<int, SpeciesType>> reactants,
                           vector<tuple<int, SpeciesType>> products,
-                          float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                          float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~DepolyMinusEndManager() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -149,7 +156,8 @@ public:
     ///default constructor and destructor
     MotorWalkFManager(vector<tuple<int, SpeciesType>> reactants,
                       vector<tuple<int, SpeciesType>> products,
-                      float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                      float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~MotorWalkFManager() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -163,7 +171,8 @@ class AgingManager : public InternalFilamentRxnManager {
 public:
     AgingManager(vector<tuple<int, SpeciesType>> reactants,
                  vector<tuple<int, SpeciesType>> products,
-                 float rate) : InternalFilamentRxnManager(reactants, products, rate) {}
+                 float rate)
+        : InternalFilamentRxnManager(reactants, products, rate) {}
     ~AgingManager() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -173,24 +182,25 @@ public:
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 
 /*!
- *  CrossFilamentRxnManager is used to store a cross-filament reaction. It contains vectors of tuples that represent
- *  the position in the CMonomer in which the species is stored (for products and reactants), as well as the rate
- *  of the reaction and direction. The integer value that is the position of the species in the CMonomer vector
- *  is held by the ChemManager. Also contains the range of this reaction.
- *
- *  Also a subclass of CylinderNLContainer, contains a cylinder neighbors list of active reactions
- *
- *  @note if the species is a bulk or diffusing species, the integer molecule value in the tuple stored in the SpeciesNamesDB.
- *
- *  This class also has functions to add the cross filament reaction to two [CCylinders] (@ref CCylinder).
+ *  CrossFilamentRxnManager is used to store a cross-filament reaction. It contains 
+ *  vectors of tuples that represent the position in the CMonomer in which the species 
+ *  is stored (for products and reactants), as well as the rate of the reaction and 
+ *  direction. The integer value that is the position of the species in the CMonomer 
+ *  vector is held by the ChemManager. Also contains the range of this reaction.
+ *  Also a subclass of CylinderNLContainer, contains a cylinder neighbors list of 
+ *  active reactions.
+ *  @note if the species is a bulk or diffusing species, the integer molecule value in 
+ *  the tuple stored in the SpeciesNamesDB.
+ *  This class also has functions to add the cross filament reaction to two 
+ *  [CCylinders] (@ref CCylinder).
  */
-
 class CrossFilamentRxnManager : public CylinderNLContainer {
 
     friend class SimpleManagerImpl;
     
 protected:
-    static SubSystem* _ps; ///< A subsystem pointer to intialize and call chemical callbacks
+    static SubSystem* _ps; ///< A subsystem pointer to intialize
+                           ///< and call chemical callbacks
     
     ///Species identifier vectors
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
@@ -208,8 +218,9 @@ public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
                             float onRate, float offRate, float rMin, float rMax)
-                            : CylinderNLContainer(rMax, rMin, true), _reactants(reactants), _products(products),
-                            _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
+        : CylinderNLContainer(rMax, rMin, true),
+        _reactants(reactants), _products(products),
+        _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
                               
         //Figure out the binding sites
         int deltaBinding = SystemParameters::Geometry().cylinderIntSize
@@ -245,7 +256,7 @@ public:
     LinkerRxnManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
                     float onRate, float offRate, float rMin, float rMax)
-                    : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
+        : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
     ~LinkerRxnManager() {}
 
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
@@ -258,7 +269,7 @@ public:
     MotorRxnManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
                     float onRate, float offRate, float rMin, float rMax)
-                    : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
+        : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
     ~MotorRxnManager() {}
     
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);

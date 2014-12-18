@@ -20,17 +20,20 @@
 class RNode{
 public:
     /// Dtor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~RNode() noexcept {}
     
-    /// This method is called by Reaction::activateReaction(). Its effect depends on the underlying stochastic 
-    /// simulatio algorithm. For example, in the NRM algorithm, a new tau and a are computed and the heap is updated. 
+    /// This method is called by Reaction::activateReaction(). Its effect depends on the
+    /// underlying stochastic simulation algorithm. For example, in the NRM algorithm, a
+    /// new tau and a are computed and the heap is updated.
     virtual void activateReaction() = 0;
 
-    /// This method is called by Reaction::passivateReaction(). Its effect depends on the underlying stochastic 
-    /// simulatio algorithm. For example, in the NRM algorithm, a tau is set to infinity and the heap is updated. 
+    /// This method is called by Reaction::passivateReaction(). Its effect depends on
+    /// the underlying stochastic simulatin algorithm. For example, in the NRM
+    /// algorithm, a tau is set to infinity and the heap is updated.
     virtual void passivateReaction() = 0;
     
     /// Return true if the Reaction is currently passivated

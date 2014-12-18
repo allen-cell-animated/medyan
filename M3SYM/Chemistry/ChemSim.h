@@ -24,10 +24,11 @@ class ReactionBase;
 
 /// Used to manage running a network of chemical reactions.
 
-/*! ChemSim implements a Strategy pattern, allowing custom algorithms for running stochastic chemical simulations. 
- *  It itself is a singleton, with a pointer to a single static implementation of ChemSimImpl.
- *  After the specific algorithm is chosen and ChemSim is instantiated, ChemSim can be used to manage simulations, through 
- *  such methods as run(steps) etc. Here is an example (assuming key is valid for all functions):
+/*! ChemSim implements a Strategy pattern, allowing custom algorithms for running 
+ *  stochastic chemical simulations. It itself is a singleton, with a pointer to a 
+ *  single static implementation of ChemSimImpl. After the specific algorithm is chosen
+ *  and ChemSim is instantiated, ChemSim can be used to manage simulations, through
+ *  such methods as run(steps) etc.
  *  @code
         SpeciesBulk A1("A1", 25);
         SpeciesBulk A2("A2", 25);
@@ -42,9 +43,10 @@ class ReactionBase;
 class ChemSim {
 public:
     /// SetInstance
-    /// @param ChemSimImpl *csi is a pointer the concrete implementation of stochastic simulation algorithm.
-    /// @note ChemSim simply stores the csi pointer but does not manage its memory. Make sure that csi is always 
-    /// a valid pointer while ChemSim is used.
+    /// @param ChemSimImpl *csi is a pointer the concrete implementation of stochastic
+    /// simulation algorithm.
+    /// @note ChemSim simply stores the csi pointer but does not manage its memory. Make
+    /// sure that csi is always a valid pointer while ChemSim is used.
     static void setInstance(ChemSimImpl *csi);
     
     /// Copying is not allowed
@@ -53,7 +55,8 @@ public:
     /// Assignment is not allowed
     ChemSim& operator=(ChemSim &rhs) = delete;
     
-    /// After all initial reactions have been added via addReaction(...) method, invoke initialize() prior to invoking run() 
+    /// After all initial reactions have been added via addReaction(...) method,
+    /// invoke initialize() prior to invoking run()
     static void initialize();
     
     /// Add Reaction *r to the chemical network which needs to be simulated
@@ -65,11 +68,13 @@ public:
     /// Run the chemical dynamics for a specific number of steps
     static bool run(int steps);
     
-    /// Mainly used for debugging: print chemical reactions in the network at this moment
+    /// Mainly used for debugging: print chemical reactions in the network at
+    /// this moment
     static void printReactions();
 private:
 
-    static ChemSimImpl* _pimpl; ///< Store a pointer to a specific implementation of stochastic chemical kinetics; no ownership
+    static ChemSimImpl* _pimpl; ///< Store a pointer to a specific implementation
+                                ///< of stochastic chemical kinetics; no ownership
     ChemSim() {};
 };
 #endif

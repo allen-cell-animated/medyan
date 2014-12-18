@@ -25,13 +25,17 @@ RNodeGillespie::~RNodeGillespie() noexcept {
 
 
 void RNodeGillespie::printSelf() const {
-    cout << "RNodeGillespie: ptr=" << this << ", a=" << _a << ", a_penult=" << _a_prev << ", points to Reaction:\n";
+    cout << "RNodeGillespie: ptr=" << this << ", a=" << _a << ", a_penult=" <<
+        _a_prev << ", points to Reaction:\n";
     cout << (*_react);
 }
 
 void RNodeGillespie::printDependents() const {
-    cout << "RNodeGillespie: ptr=" << this << ", the following RNodeGillespie objects are dependents:\n\n";
-    for(auto rit = _react->dependents().begin(); rit!=_react->dependents().end(); ++rit){
+    cout << "RNodeGillespie: ptr=" << this <<
+        ", the following RNodeGillespie objects are dependents:\n\n";
+    for(auto rit = _react->dependents().begin();
+        rit!=_react->dependents().end(); ++rit){
+        
         RNodeGillespie *rn_other = static_cast<RNodeGillespie*>((*rit)->getRnode());
         rn_other->printSelf();
     }
@@ -106,10 +110,9 @@ bool ChemGillespieImpl::makeStep() {
             break;
         }
     }
-            
     if(rn_selected==nullptr){
-        cout << "ChemGillespieImpl::makeStep() for loop: rates_sum=" << rates_sum << ", mu="
-                    << mu << ", _a_total=" << _a_total << endl;
+        cout << "ChemGillespieImpl::makeStep() for loop: rates_sum=" <<
+            rates_sum << ", mu=" << mu << ", _a_total=" << _a_total << endl;
         throw runtime_error("ChemGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
     }
     double a_new, a_penult;
@@ -169,13 +172,15 @@ void ChemGillespieImpl::activateReaction(ReactionBase *r) {
         _a_total = _a_total - a_penult + a_new;
     }
     else
-        throw out_of_range("ChemGillespieImpl::activateReaction(...): Reaction not found!");
+        throw out_of_range(
+        "ChemGillespieImpl::activateReaction(...): Reaction not found!");
 }
 
 void ChemGillespieImpl::passivateReaction(ReactionBase *r) {
     auto mit = _map_rnodes.find(r);
     if(mit==_map_rnodes.end())
-        throw out_of_range("ChemGillespieImpl::passivateReaction(...): Reaction not found!");
+        throw out_of_range(
+        "ChemGillespieImpl::passivateReaction(...): Reaction not found!");
     RNodeGillespie *rn_this = mit->second.get();
     
     double a_new, a_penult;

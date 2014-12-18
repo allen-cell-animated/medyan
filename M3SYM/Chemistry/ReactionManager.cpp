@@ -79,9 +79,10 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
         //callbacks
-        FilamentExtensionFrontCallback extCallback(cc->getCylinder()->getFilament());
-        FilamentPolymerizationFrontCallback polyCallback(cc->getCylinder()->getFilament());
-        
+        FilamentExtensionFrontCallback
+            extCallback(cc->getCylinder()->getFilament());
+        FilamentPolymerizationFrontCallback
+            polyCallback(cc->getCylinder()->getFilament());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -89,9 +90,11 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
 
         if(i == maxlength - 2)
-            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(extCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATION);
@@ -153,8 +156,10 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
         
-        FilamentExtensionBackCallback extCallback(cc->getCylinder()->getFilament());
-        FilamentPolymerizationBackCallback polyCallback(cc->getCylinder()->getFilament());
+        FilamentExtensionBackCallback
+            extCallback(cc->getCylinder()->getFilament());
+        FilamentPolymerizationBackCallback
+            polyCallback(cc->getCylinder()->getFilament());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -162,17 +167,17 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
         
         if(i == 1)
-            boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(extCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATION);
     }
 
 }
-
-
 
 void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
@@ -220,14 +225,16 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
-    FilamentPolymerizationFrontCallback polyCallback(cc1->getCylinder()->getFilament());
+    FilamentPolymerizationFrontCallback
+        polyCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+    boost::signals2::shared_connection_block
+        rcb(rxn->connect(polyCallback,false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATION);
@@ -279,14 +286,16 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
 
-    FilamentPolymerizationBackCallback polyCallback(cc1->getCylinder()->getFilament());
+    FilamentPolymerizationBackCallback
+        polyCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+    boost::signals2::shared_connection_block
+        rcb(rxn->connect(polyCallback,false));
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATION);
@@ -345,8 +354,10 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
         
-        FilamentRetractionFrontCallback retCallback(cc->getCylinder()->getFilament());
-        FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder()->getFilament());
+        FilamentRetractionFrontCallback
+            retCallback(cc->getCylinder()->getFilament());
+        FilamentDepolymerizationFrontCallback
+            depolyCallback(cc->getCylinder()->getFilament());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -354,9 +365,11 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
         if(i == maxlength - 1)
-            boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(retCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(depolyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
@@ -415,8 +428,10 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
-        FilamentRetractionBackCallback retCallback(cc->getCylinder()->getFilament());
-        FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder()->getFilament());
+        FilamentRetractionBackCallback
+            retCallback(cc->getCylinder()->getFilament());
+        FilamentDepolymerizationBackCallback
+            depolyCallback(cc->getCylinder()->getFilament());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -424,9 +439,11 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
         if(i == 0)
-            boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(retCallback,false));
         else
-            boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
+            boost::signals2::shared_connection_block
+                rcb(rxn->connect(depolyCallback,false));
             
         
         cc->addInternalReaction(rxn);
@@ -481,14 +498,16 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
-    FilamentDepolymerizationFrontCallback depolyCallback(cc1->getCylinder()->getFilament());
+    FilamentDepolymerizationFrontCallback
+        depolyCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block
+        rcb(rxn->connect(depolyCallback,false));
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
@@ -540,14 +559,16 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
     
-    FilamentDepolymerizationBackCallback depolyCallback(cc1->getCylinder()->getFilament());
+    FilamentDepolymerizationBackCallback
+        depolyCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(rxn->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block
+        rcb(rxn->connect(depolyCallback,false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
@@ -594,15 +615,17 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m1->speciesBound(speciesInt));
         
         //callbacks
-        MotorWalkingForwardCallback motorMoveCallback(cc->getCylinder(), site1, site2,
-                                                      motorType, boundType, _ps);
+        MotorWalkingForwardCallback
+            motorMoveCallback(cc->getCylinder(), site1, site2,
+                              motorType, boundType, _ps);
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
         
-        boost::signals2::shared_connection_block rcb(rxn->connect(motorMoveCallback, false));
+        boost::signals2::shared_connection_block
+            rcb(rxn->connect(motorMoveCallback, false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
@@ -644,15 +667,17 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     productSpecies.push_back(m1->speciesBound(speciesInt));
     
     //callbacks
-    MotorMovingCylinderForwardCallback motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                                                 _bindingSites.back(), motorType, boundType, _ps);
+    MotorMovingCylinderForwardCallback
+        motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
+                            _bindingSites.back(), motorType, boundType, _ps);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block rcb(rxn->connect(motorChangeCallback, false));
+    boost::signals2::shared_connection_block
+        rcb(rxn->connect(motorChangeCallback, false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
@@ -675,18 +700,24 @@ void AgingManager::addReaction(CCylinder* cc) {
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
         
-        if(type == SpeciesType::FILAMENT) reactantSpecies.push_back(m1->speciesFilament(speciesInt));
-        else if(type == SpeciesType::PLUSEND) reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-        else if(type == SpeciesType::MINUSEND) reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        if(type == SpeciesType::FILAMENT)
+            reactantSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND)
+            reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND)
+            reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         //FIRST PRODUCT MUST BE FILAMENT, PLUS OR MINUS SPECIES
         auto p = _products[0];
         type = get<1>(p);
         speciesInt = get<0>(p);
         
-        if(type == SpeciesType::FILAMENT) productSpecies.push_back(m1->speciesFilament(speciesInt));
-        else if(type == SpeciesType::PLUSEND) productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-        else if(type == SpeciesType::MINUSEND) productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        if(type == SpeciesType::FILAMENT)
+            productSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND)
+            productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND)
+            productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
@@ -707,13 +738,15 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         for(int j : _bindingSites) {
             
             //check if these sites are within range
-            auto coord1 = midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
-                                             cc1->getCylinder()->getSecondBead()->coordinate,
-                                             (double)i / SystemParameters::Geometry().cylinderIntSize);
+            auto coord1 =
+                midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
+                                   cc1->getCylinder()->getSecondBead()->coordinate,
+                         (double)i / SystemParameters::Geometry().cylinderIntSize);
             
-            auto coord2 = midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
-                                             cc2->getCylinder()->getSecondBead()->coordinate,
-                                             (double)j / SystemParameters::Geometry().cylinderIntSize);
+            auto coord2 =
+                midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
+                                   cc2->getCylinder()->getSecondBead()->coordinate,
+                         (double)j / SystemParameters::Geometry().cylinderIntSize);
             
             double dist = twoPointDistance(coord1, coord2);
             
@@ -764,16 +797,19 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 productSpecies.push_back(m2->speciesLinker(speciesInt));
 
                 //set up callbacks
-                LinkerBindingCallback lcallback(cc1->getCylinder(), cc2->getCylinder(),
-                                                linkerNumber, i, j, _offRate, _ps);
+                LinkerBindingCallback
+                    lcallback(cc1->getCylinder(), cc2->getCylinder(),
+                              linkerNumber, i, j, _offRate, _ps);
                 
                 //Add the reaction. If it needs a callback then attach
                 vector<Species*> onSpecies = reactantSpecies;
-                onSpecies.insert(onSpecies.end(), productSpecies.begin(), productSpecies.end());
+                onSpecies.insert(onSpecies.end(), productSpecies.begin(),
+                                 productSpecies.end());
                 ReactionBase* onRxn = new Reaction<3, 2>(onSpecies, _onRate);
                 onRxn->setReactionType(ReactionType::LINKERBINDING);
                 
-                boost::signals2::shared_connection_block rcb(onRxn->connect(lcallback,false));
+                boost::signals2::shared_connection_block
+                    rcb(onRxn->connect(lcallback,false));
                 
                 cc1->addCrossCylinderReaction(cc2, onRxn);
             }
@@ -788,13 +824,15 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         for(int j : _bindingSites) {
             
             //check if these sites are within range
-            auto coord1 = midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
-                                             cc1->getCylinder()->getSecondBead()->coordinate,
-                                             (double)i / SystemParameters::Geometry().cylinderIntSize);
+            auto coord1 =
+                midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
+                                   cc1->getCylinder()->getSecondBead()->coordinate,
+                         (double)i / SystemParameters::Geometry().cylinderIntSize);
             
-            auto coord2 = midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
-                                             cc2->getCylinder()->getSecondBead()->coordinate,
-                                             (double)j / SystemParameters::Geometry().cylinderIntSize);
+            auto coord2 =
+                midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
+                                   cc2->getCylinder()->getSecondBead()->coordinate,
+                         (double)j / SystemParameters::Geometry().cylinderIntSize);
             
             double dist = twoPointDistance(coord1, coord2);
             
@@ -845,16 +883,19 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 productSpecies.push_back(m2->speciesMotor(speciesInt));
 
                 //set up callbacks
-                MotorBindingCallback mcallback(cc1->getCylinder(), cc2->getCylinder(),
-                                               motorNumber, i, j, _offRate, _ps);
+                MotorBindingCallback
+                    mcallback(cc1->getCylinder(), cc2->getCylinder(),
+                              motorNumber, i, j, _offRate, _ps);
                 
                 //Add the reaction. If it needs a callback then attach
                 vector<Species*> onSpecies = reactantSpecies;
-                onSpecies.insert(onSpecies.end(), productSpecies.begin(), productSpecies.end());
+                onSpecies.insert(onSpecies.end(), productSpecies.begin(),
+                                 productSpecies.end());
                 ReactionBase* onRxn = new Reaction<3, 2>(onSpecies, _onRate);
                 onRxn->setReactionType(ReactionType::MOTORBINDING);
                 
-                boost::signals2::shared_connection_block rcb(onRxn->connect(mcallback,false));
+                boost::signals2::shared_connection_block
+                    rcb(onRxn->connect(mcallback,false));
                 
                 cc1->addCrossCylinderReaction(cc2, onRxn);
             }
