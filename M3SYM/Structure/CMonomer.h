@@ -19,7 +19,7 @@
 #include "Species.h"
 #include "Compartment.h"
 
-/// Rpresents a container for all Species that could be contained in a
+/// Represents a container for all Species that could be contained in a
 /// particular filament element at a given position.
 /*!
  *  CMonomer provides a container to hold all Species that are possibly held at a given
@@ -43,14 +43,16 @@ public:
     CMonomer();
     
     /// Default destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing,
+    /// which in turn disables move operations by the STL containers. This behaviour is
+    /// a gcc bug (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~CMonomer () noexcept;
     
     /// Copy constructor
-    /// This constructor will create a new CMonomer, identical to the copied, in a new compartment. The
-    /// original species will remain intact, while new identical species will be initialized.
+    /// This constructor will create a new CMonomer, identical to the copied, in a new
+    /// compartment. The original species will remain intact, while new identical
+    /// species will be initialized.
     CMonomer(const CMonomer& rhs, Compartment* c);
     /// Assignment is not allowed
     CMonomer& operator=(CMonomer &rhs) = delete;
@@ -76,8 +78,9 @@ public:
 
     //@{
     /// Get Species at a specific index
-    /// @note no check on this index. The index value of a species is stored in the chemical initializer
-    /// when all reactions are initialized from the chemical input file
+    /// @note no check on this index. The index value of a species is stored in the
+    /// chemical initializer when all reactions are initialized from the chemical input
+    /// file.
     SpeciesFilament* speciesFilament (int index) {return _speciesFilament[index];}
     SpeciesPlusEnd*  speciesPlusEnd  (int index) {return _speciesPlusEnd[index];}
     SpeciesMinusEnd* speciesMinusEnd (int index) {return _speciesMinusEnd[index];}

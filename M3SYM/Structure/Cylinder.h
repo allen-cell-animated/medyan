@@ -35,8 +35,9 @@ class Compartment;
 /// A container to store a MCylinder and CCylinder.
 /*!
  * Cylinder class is used to manage and store a MCylinder and CCylinder.
- * Upon intialization, both of these components are created. Extending the Movable and Reactable
- * classes, the Cylinder can update its position and reactions according to mechanical equilibration.
+ * Upon intialization, both of these components are created. Extending the Movable and 
+ * Reactable classes, the Cylinder can update its position and reactions according to 
+ * mechanical equilibration.
  */
 
 class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
@@ -60,7 +61,8 @@ public:
     vector<double> coordinate; ///< Coordinates of midpoint, updated with updatePosition()
     
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
-             bool extensionFront = false, bool extensionBack = false, bool creation = false);
+             bool extensionFront = false, bool extensionBack = false,
+             bool creation = false);
     ~Cylinder();
     
     /// Get mech cylinder

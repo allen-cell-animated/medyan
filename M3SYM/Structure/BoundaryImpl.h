@@ -45,8 +45,10 @@ public:
 class BoundaryCapsule: public Boundary {
     
 public:
-    ///Default constructor, will create a capsule with given diameter, and height equal to current grid
-    ///@param diameter - diameter of capsule (will set half sphere radii as well as cylinder radius)
+    /// Default constructor, will create a capsule with given diameter, and height equal
+    /// to current grid.
+    /// @param diameter - diameter of capsule (will set half sphere radii as well as
+    /// cylinder radius)
     BoundaryCapsule(double diameter);
     
     virtual bool within(const vector<double>& coordinates);

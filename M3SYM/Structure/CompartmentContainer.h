@@ -21,17 +21,18 @@
 /// A simple n-dimensional grid of Compartment objects (singleton).
 
 /*!
- *  The CompartmentGrid class is a singleton grid of Compartment objects, each of them seperately
- *  holding internal and diffusion reactions, species information, as well as spatial information.
- *  This class is n-dimensional, and the dimension is specified at runtime.
+ *  The CompartmentGrid class is a singleton grid of Compartment objects, each of them 
+ *  seperately holding internal and diffusion reactions, species information, as well as
+ *  spatial information. This class is n-dimensional, and the dimension is specified at 
+ *  runtime.
+ *  All compartments within CompartmentGrid are indexed by the geometry controller, and 
+ *  this class is responsible for assignment of compartment neighbors upon 
+ *  initialization. All initialization of the CompartmentGrid should be done through 
+ *  GController.initializeGrid().
  *
- *  All compartments within CompartmentGrid are indexed by the geometry controller, and this class 
- *  is responsible for assignment of compartment neighbors upon initialization. All initialization
- *  of the CompartmentGrid should be done through GController.initializeGrid().
- *
- *  The _prototype_compartment is used such that all reactions and species can be added to 
- *  the prototype, and this configuration can be copied to all compartments in the grid.
- *  An example of such is below:
+ *  The _prototype_compartment is used such that all reactions and species can be added 
+ *  to the prototype, and this configuration can be copied to all compartments in the 
+ *  grid. An example of such is below:
  *
  *  @code
  *
@@ -48,11 +49,12 @@
  */
 class CompartmentGrid : public Composite {
 private:
-    Compartment _prototype_compartment; ///< Prototype compartment, to be configured before initialization
-    SpeciesPtrContainerVector _bulkSpecies; ///<B ulk species in this grid
+    Compartment _prototype_compartment; ///< Prototype compartment, to be configured
+                                        ///< before initialization
+    SpeciesPtrContainerVector _bulkSpecies; ///< Bulk species in this grid
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
-    int _numCompartments; ///< Num compartments in the grid
+    int _numCompartments; ///< Number of compartments in the grid
     
     static CompartmentGrid* _instance; ///singleton instance
     
@@ -169,7 +171,6 @@ public:
 
     /// Remove a bulk reaction
     virtual void removeBulkReaction(ReactionBase *r) {_bulkReactions.removeReaction(r);}
-    
 
 };
 

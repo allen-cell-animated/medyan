@@ -24,16 +24,17 @@ class Compartment;
 
 /// Represents a chemical object that is bound to a Filament.
 /*!
- *  The CBound class is an abstract representation of a chemically bound object to a Filament
- *  (Could be a Linker, MotorGhost, BranchingPoint, etc). Each CBound object has a pointer
- *  to the corresponding [SpeciesBound] (@ref SpeciesBound) on a Filament. Different implementations of CBound class will
- *  have different functions to bind, move, etc. See documentation of subclass for more details on function.
+ *  The CBound class is an abstract representation of a chemically bound object to a 
+ *  Filament (Could be a Linker, MotorGhost, BranchingPoint, etc). Each CBound object 
+ *  has a pointer to the corresponding [SpeciesBound] (@ref SpeciesBound) on a Filament. 
+ *  Different implementations of CBound class will have different functions to bind,
+ *  move, etc. See documentation of subclass for more details on function.
  */
 class CBound {
     
 protected:
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
-    SpeciesBound* _secondSpecies = nullptr; ///< Corresponding second species on Filament
+    SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
     
     Compartment* _compartment; ///< Compartment this CBound is in
     
@@ -44,9 +45,10 @@ public:
     CBound(Compartment* c) : _compartment(c) {}
     
     /// Virtual destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~CBound() noexcept {
         _firstSpecies->removeCBound();
         _secondSpecies->removeCBound();

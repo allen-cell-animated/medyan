@@ -29,9 +29,10 @@ class Cylinder;
 
 /// A container to store a MBranchingPoint and CBranchingPoint.
 /*!
- * BranchingPoint class is used to manage and store a MBranchingPoint and CBranchingPoint.
- * Upon intialization, both of these components are created. Extending the Movable and Reactable
- * classes, the BranchingPoint can update its position and reactions according to mechanical equilibration.
+ * BranchingPoint class is used to manage and store a MBranchingPoint and 
+ * CBranchingPoint. Upon intialization, both of these components are created. Extending
+ * the Movable and Reactable classes, the BranchingPoint can update its position and 
+ * reactions according to mechanical equilibration.
  */
 class BranchingPoint : public Movable, Reactable {
     
@@ -45,16 +46,20 @@ private:
     double _position; ///< Position on mother cylinder
     
     short _branchType; ///< Integer specifying the type
-    int _branchID; ///< Integer ID of this specific branch point, managed by BranchingPointDB
+    int _branchID; ///< Integer ID of this specific branch point,
+                   ///< managed by BranchingPointDB
     
     float _birthTime; ///Birth time
     
     Compartment* _compartment; ///< Where this linker is
     
 public:
-    vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    vector<double> coordinate; ///< coordinate of midpoint,
+                               ///< updated with updatePosition()
     
-    BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position = 0.5, bool creation = false);
+    BranchingPoint(Cylinder* c1, Cylinder* c2,
+                   short branchType, double position = 0.5,
+                   bool creation = false);
     ~BranchingPoint();
     
     //@{
@@ -64,7 +69,9 @@ public:
     //@}
     
     /// Set chem branch point
-    void setCBranchingPoint(CBranchingPoint* cBranchingPoint) {_cBranchingPoint = unique_ptr<CBranchingPoint>(cBranchingPoint);}
+    void setCBranchingPoint(CBranchingPoint* cBranchingPoint) {
+        _cBranchingPoint = unique_ptr<CBranchingPoint>(cBranchingPoint);
+    }
     /// Get chem branch point
     CBranchingPoint* getCBranchingPoint() {return _cBranchingPoint.get();}
     

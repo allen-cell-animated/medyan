@@ -26,7 +26,6 @@ class BranchingPoint;
 /*!
  *  The CBranchingPoint class contains chemical info of the parent BranchingPoint.
  */
-
 class CBranchingPoint : public CBound {
     
 private:
@@ -38,7 +37,8 @@ public:
     ~CBranchingPoint() {}
     
     /// Copy constructor, standard
-    CBranchingPoint(const CBranchingPoint& rhs, Compartment* c) : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
+    CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
+        : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
         
 //        setFirstSpecies(rhs._firstSpecies);
 //        setSecondSpecies(rhs._secondSpecies);
@@ -53,7 +53,8 @@ public:
     }
     
     /// Set parent
-    void setBranchingPoint(BranchingPoint* BranchingPoint) {_pBranchingPoint = BranchingPoint;}
+    void setBranchingPoint(BranchingPoint* BranchingPoint)
+        {_pBranchingPoint = BranchingPoint;}
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
 };

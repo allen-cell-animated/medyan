@@ -24,7 +24,7 @@ using namespace mathfunc;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
-                   : _pFilament(f), _b1(b1), _b2(b2), _positionFilament(positionFilament) {
+    : _pFilament(f), _b1(b1), _b2(b2), _positionFilament(positionFilament) {
     
     //Add to cylinder DB
     CylinderDB::instance()->addCylinder(this);
@@ -42,7 +42,8 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
     _cCylinder->setCylinder(this);
-    ChemManager::initializeCCylinder(_cCylinder.get(), f, extensionFront, extensionBack, creation);
+    ChemManager::initializeCCylinder(
+        _cCylinder.get(), f, extensionFront, extensionBack, creation);
     
     if(creation || extensionFront || extensionBack)
         //Update filament reactions, only if not initialization

@@ -133,8 +133,8 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add filament species to a monomer.\
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add filament species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -148,8 +148,8 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add plus end species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add plus end species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -163,8 +163,8 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add minus end species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add minus end species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -178,8 +178,8 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add bound species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add bound species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -193,8 +193,8 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add linker species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add linker species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 
@@ -208,8 +208,8 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
         }
     }
     //return error if we get here
-    cout << "Could not add motor species to a monomer. \
-        Check that the numer of species in the system input file matches the chemistry input. Exiting" << endl;
+    cout << "Could not add motor species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
     exit(EXIT_FAILURE);
 }
 

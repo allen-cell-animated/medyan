@@ -24,9 +24,6 @@ Compartment& Compartment::operator=(const Compartment &other) {
     other.cloneReactions(this);
     _diffusion_rates = other._diffusion_rates;
     return *this;
-    // Note that _neighbours is not copied, as well as activated
-    
-    // Should copy cylinders, beads, etc in future... not clear yet
     
 }
     
@@ -51,8 +48,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
         int diff_rate = _diffusion_rates[molecule];
-        if(diff_rate<0) // Based on a convention that diffusing reactions require positive rates
-            continue;
+        if(diff_rate<0)  continue;
     
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
@@ -74,24 +70,29 @@ void Compartment::generateAllDiffusionReactions() {
 }
 
 bool operator==(const Compartment& a, const Compartment& b) {
-    if(a.numberOfSpecies()!=b.numberOfSpecies() or a.numberOfInternalReactions()!=b.numberOfInternalReactions())
+    if(a.numberOfSpecies()!=b.numberOfSpecies() or
+       a.numberOfInternalReactions()!=b.numberOfInternalReactions())
         return false;
     
     if(typeid(a)!=typeid(b))
         return false;
     
     bool spec_bool = false;
-    auto sit_pair = mismatch(a._species.species().begin(),a._species.species().end(),b._species.species().begin(),
-                                  [](const unique_ptr<Species> &A, const unique_ptr<Species> &B)
-                                  {return (*A)==(*B); });
+    auto sit_pair = mismatch(a._species.species().begin(),
+                             a._species.species().end(),
+                             b._species.species().begin(),
+            [](const unique_ptr<Species> &A, const unique_ptr<Species> &B)
+            {return (*A)==(*B); });
     if(sit_pair.first==a._species.species().end())
         spec_bool=true;
     
     
     bool reac_bool = false;
-    auto rit_pair = mismatch(a._internal_reactions.reactions().begin(),a._internal_reactions.reactions().end(),b._internal_reactions.reactions().begin(),
-                                  [](const unique_ptr<ReactionBase> &A, const unique_ptr<ReactionBase> &B)
-                                  {return (*A)==(*B);});
+    auto rit_pair = mismatch(a._internal_reactions.reactions().begin(),
+                             a._internal_reactions.reactions().end(),
+                             b._internal_reactions.reactions().begin(),
+            [](const unique_ptr<ReactionBase> &A, const unique_ptr<ReactionBase> &B)
+            {return (*A)==(*B);});
     if(rit_pair.first==a._internal_reactions.reactions().end())
         reac_bool=true;
     

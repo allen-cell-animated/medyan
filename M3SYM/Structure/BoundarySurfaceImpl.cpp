@@ -29,7 +29,8 @@ Plane::Plane(vector<double> coords, vector<double> normal ) :
                                    SystemParameters::Boundaries().screenLength));
 }
 
-Sphere::Sphere(vector<double> coords, double radius) : _coords(coords), _radius(radius), BoundarySurface(3){
+Sphere::Sphere(vector<double> coords, double radius)
+    : _coords(coords), _radius(radius), BoundarySurface(3){
     
     //Create a sphere boundary element
     _boundaryElements.emplace_back(new SphereBoundaryElement(coords, radius,
@@ -39,7 +40,7 @@ Sphere::Sphere(vector<double> coords, double radius) : _coords(coords), _radius(
 }
 
 CylinderZ::CylinderZ(vector<double> coords, double radius, double height)
-                     : _coords(coords), _radius(radius), _height(height), BoundarySurface(3){
+    : _coords(coords), _radius(radius), _height(height), BoundarySurface(3){
     
     //Create a cylindricalZ boundary element
     _boundaryElements.emplace_back(new CylindricalZBoundaryElement(coords, radius, height,
@@ -48,7 +49,7 @@ CylinderZ::CylinderZ(vector<double> coords, double radius, double height)
 }
 
 HalfSphereZ::HalfSphereZ(vector<double> coords, double radius, bool up)
-                          : _coords(coords), _radius(radius), _up(up), BoundarySurface(3){
+    : _coords(coords), _radius(radius), _up(up), BoundarySurface(3){
     
     //Create a half sphere Z boundary element
     _boundaryElements.emplace_back(new HalfSphereZBoundaryElement(coords, radius, up,

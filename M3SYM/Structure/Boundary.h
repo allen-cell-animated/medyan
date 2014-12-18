@@ -23,8 +23,9 @@ enum class BoundaryShape {Cube, Capsule, Sphere};
 
 /// To store all [BoundarySurfaces](@ref BoundarySurface) that are in the SubSystem.
 /*!
- *  The boundary class stores all [BoundarySurfaces](@ref BoundarySurface) in the given shape. Its constructors can create
- *  basic boundary shapes (for now). Eventually will be extended to more complex surfaces.
+ *  The boundary class stores all [BoundarySurfaces](@ref BoundarySurface) in the given 
+ *  shape. Its constructors can create basic boundary shapes (for now). Eventually will 
+ *  be extended to more complex surfaces.
  */
 class Boundary {
     

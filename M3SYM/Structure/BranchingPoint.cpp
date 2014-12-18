@@ -22,8 +22,10 @@
 
 using namespace mathfunc;
 
-BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position, bool creation)
-                         : _c1(c1), _c2(c2), _branchType(branchType), _position(position){
+BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
+                               short branchType, double position,
+                               bool creation)
+    : _c1(c1), _c2(c2), _branchType(branchType), _position(position){
                              
     //Add to branch point db
     BranchingPointDB::instance()->addBranchingPoint(this);
@@ -32,7 +34,8 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, dou
     _birthTime = tau();
     
     //Find compartment
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                    _c1->getSecondBead()->coordinate, _position);
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
@@ -56,7 +59,8 @@ BranchingPoint::~BranchingPoint() {
 void BranchingPoint::updatePosition() {
     
     //Find compartment
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position);
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                    _c1->getSecondBead()->coordinate, _position);
 
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}

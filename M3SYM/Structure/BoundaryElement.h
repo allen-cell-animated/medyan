@@ -30,9 +30,10 @@ class Bead;
 
 /// Represents an element of a BoundarySurface.
 /*!
- * The BoundaryElement class is a representation of a BoundarySurface element, which can interact
- * with other elements in the system, including other BoundaryElements as well as [Beads] (@ref Bead) in [Filaments](@ref Filament).
- * Together, a collection of boundary elements make up a BoundarySurface.
+ * The BoundaryElement class is a representation of a BoundarySurface element, which can
+ * interact with other elements in the system, including other BoundaryElements as well 
+ * as [Beads] (@ref Bead) in [Filaments](@ref Filament). Together, a collection of 
+ * boundary elements make up a BoundarySurface.
  */
 class BoundaryElement : public Neighbor {
     
@@ -50,9 +51,10 @@ public:
         NeighborListDB::instance()->addNeighbor(this);
     }
     /// Destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~BoundaryElement() noexcept {
         
         //remove from boundary element db
@@ -73,7 +75,8 @@ public:
     virtual double distance(const vector<double>& point) = 0;
     
     /// Returns stretched distance, similar to distance above
-    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d) = 0;
+    virtual double stretchedDistance(const vector<double>& point,
+                                     const vector<double>& force, double d) = 0;
     
     /// Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;

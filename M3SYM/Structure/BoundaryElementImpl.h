@@ -35,7 +35,8 @@ public:
                          double repulsConst, double screenLength);
     
     virtual double distance(const vector<double>& point);
-    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point,
+                                     const vector<double>& force, double d);
     virtual const vector<double> normal(const vector<double>& point);
     
     virtual double getRepulsionConst();
@@ -56,7 +57,8 @@ public:
                           double repulsConst, double screenLength);
     
     virtual double distance(const vector<double>& point);
-    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point,
+                                     const vector<double>& force, double d);
     virtual const vector<double> normal(const vector<double>& point);
     
     virtual double getRepulsionConst();
@@ -78,7 +80,8 @@ public:
                                 double height, double repulsConst, double screenLength);
     
     virtual double distance(const vector<double>& point);
-    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point,
+                                     const vector<double>& force, double d);
     virtual const vector<double> normal(const vector<double>& point);
     
     virtual double getRepulsionConst();
@@ -100,7 +103,8 @@ public:
                                bool up, double repulsConst, double screenLength);
 
     virtual double distance(const vector<double>& point);
-    virtual double stretchedDistance(const vector<double>& point, const vector<double>& force, double d);
+    virtual double stretchedDistance(const vector<double>& point,
+                                     const vector<double>& force, double d);
     virtual const vector<double> normal(const vector<double>& point);
     
     virtual double getRepulsionConst();

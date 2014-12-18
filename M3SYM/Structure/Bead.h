@@ -28,27 +28,32 @@
 //FORWARD DECLARATIONS
 class Compartment;
 
-/// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces needed for mechanical equilibration.
+/// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
+/// needed for mechanical equilibration.
 /*!
- *  Beads are the "hinges" between [Cylinders](@ref Cylinder). In the minimization algorithms, beads are moved corresponding to external forces,
- *  for example, Filament stretching and bending. The bead class contains currernt coordinates and forces, and has functions to calculate
- *  dot products for the minimization algorithms.
+ *  Beads are the "hinges" between [Cylinders](@ref Cylinder). In the minimization 
+ *  algorithms, beads are moved corresponding to external forces, for example, Filament 
+ *  stretching and bending. The bead class contains currernt coordinates and forces, and 
+ *  has functions to calculate dot products for the minimization algorithms.
  */
 
 class Bead : public Component, public Neighbor, public Movable {
 public:
 
     vector<double> coordinate; ///< Coordinates of the bead
-    vector<double> coordinateAux; ///< An auxiliary coordinate field needed during CG minimization
-	vector<double> force; ///< Forces based on curent coordinates. Forces should always correspond to current coordinates.
+    vector<double> coordinateAux; ///< An auxiliary coordinate field needed
+                                  ///< during CG minimization
+	vector<double> force; ///< Forces based on curent coordinates.
+                          ///< Forces should always correspond to current coordinates.
     vector<double> forceAux; ///< An auxiliary field needed during CG minimization.
     
     ///Main constructor
     Bead (vector<double> v, int positionFilament);
     
     ///Default constructor
-    Bead(int positionFilament) : _positionFilament(positionFilament), coordinate (3, 0),
-                                 coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
+    Bead(int positionFilament) :
+        _positionFilament(positionFilament), coordinate (3, 0), coordinateAux(3, 0),
+                                                        force(3, 0), forceAux(3, 0) {}
     ~Bead();
     
     //@{
@@ -73,7 +78,9 @@ public:
     virtual void updatePosition();
     
     /// Set position on the local Filament
-    void setPositionFilament(int positionFilament) {_positionFilament = positionFilament;}
+    void setPositionFilament(int positionFilament) {
+        _positionFilament = positionFilament;
+    }
     /// Get position on the local Filament
     int getPositionFilament() {return _positionFilament;}
     
@@ -82,7 +89,8 @@ public:
 
     
 private:
-    Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
+    Compartment* _compartment = nullptr;
+        ///< Pointer to the compartment that this bead is in
     
     int _positionFilament; ///< Position on Filament
     float _birthTime; ///< Time of birth
