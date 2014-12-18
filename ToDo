@@ -13,16 +13,15 @@ Goals for December 2014
     -Excluded volume working                                                    X
     -Debug linker and motors                                                    X
     -Add branching reaction
-    -Add aging reactions                                                        X
     -Add severing reaction
+    -Add aging reactions                                                        X
     -Fix signal copying                                                         X
     -Add changing reaction rates (poly, linker & motor)
     -Motor step size, rethinking of stepping (numbindingsites)                  X
     -Filament creation and destruction
-    -Optimizations (Data structures (especially reaction dependents, dbs),
-                    Neighbor list updates,
+    -Optimizations (Data structures (especially reaction dependents, dbs),      
                     Virtuals, inlines, friends of db!)
-    -Formatting (80C lines, cleaning up other things, document)                 X
+    -Formatting (80C lines, cleaning up other things, usage, googlecode)
     -Timings for larger systems
 
 2) Testing:

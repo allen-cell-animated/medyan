@@ -68,7 +68,7 @@ private: //Variables
 #endif
 #ifdef RSPECIES_SIGNALING
     RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of
-#endif                                              ///< this RSpecies (usually when a single step of this Reaction occurs)
+#endif                                   ///< this RSpecies (usually when a single step of this Reaction occurs)
     
 public:
     /// Constructors 
