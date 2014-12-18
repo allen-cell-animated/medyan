@@ -64,8 +64,10 @@ TEST(CCylinder, Basic) {
     for(int i = 0; i < 10; i++) {
     
         CMonomer* m = new CMonomer;
-        sf1 = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
-        sf2 = c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        sf1 =
+        c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        sf2 =
+        c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);

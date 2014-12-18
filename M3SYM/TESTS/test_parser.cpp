@@ -57,7 +57,8 @@ TEST(FilamentParserTest, Main) {
     FilamentParser p("/Users/jimmy/Code/Cyto/Cyto/testfilamentinput.txt");
     
     auto filaments = p.readFilaments();
-    vector<vector<vector<double>>> expectedValues = { {{100.0,100.0,100.0},{200.0,200.0,200.0}}};
+    vector<vector<vector<double>>> expectedValues =
+        {{{100.0,100.0,100.0},{200.0,200.0,200.0}}};
     
     EXPECT_TRUE(equal(filaments.begin(), filaments.end(), expectedValues.begin()));
 }
@@ -97,8 +98,5 @@ TEST(ChemParserTest, Main) {
     EXPECT_EQ(10.0, get<2>(chem.reactions[2]));
     
 }
-
-
-
 
 #endif ///DO_THIS_PARSER_TEST

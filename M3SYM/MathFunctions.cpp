@@ -33,10 +33,11 @@ namespace mathfunc {
             f = (l0,l0);
             D = a*c - b*b;
             
-            lines are given by a parametric equation v1 + s*(v2-v1) and v3 + t*(v4-v3). 
-            Closes distance is given by l = l0 + sc*l1 - tc*l2, where tc and sc are numbers between[0,1], 
-            so points are withing the segments. Algorithm is the following: find closes points between infinite 
-            lines and then move tc and sc to 0 or 1 if they are out of [0,1].
+            lines are given by a parametric equation v1 + s*(v2-v1) and v3 + t*(v4-v3).
+            Closes distance is given by l = l0 + sc*l1 - tc*l2, where tc and sc are 
+            numbers between[0,1], so points are withing the segments. Algorithm is the 
+            following: find closes points between infinite lines and then move tc 
+            and sc to 0 or 1 if they are out of [0,1].
 */
         
         double SMALL_NUM = 0.0001;
@@ -115,8 +116,10 @@ namespace mathfunc {
     }
     
     /// Function to move bead out of plane by specified amount
-    vector<double> movePointOutOfPlane(const vector<double>& p1, const vector<double>& p2,
-                                       const vector<double>& p3, const vector<double>& p4, int i, double d) {
+    vector<double> movePointOutOfPlane(const vector<double>& p1,
+                                       const vector<double>& p2,
+                                       const vector<double>& p3,
+                                       const vector<double>& p4, int i, double d) {
         vector<double> v;
         vector<double> v1;
         

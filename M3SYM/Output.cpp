@@ -28,14 +28,17 @@ void Output::printBasicSnapshot(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments, linkers, motors)
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() <<
-    " " << LinkerDB::instance()->size() << " " << MotorGhostDB::instance()->size() << endl;
+    _outputFile << step << " " << tau() << " " <<
+        FilamentDB::instance()->size() << " " <<
+        LinkerDB::instance()->size() << " " <<
+        MotorGhostDB::instance()->size() << endl;
     
     for(auto &filament : *FilamentDB::instance()) {
 
         //print first line(Filament ID, length, left_delta, right_delta
-        _outputFile << "F " << filament->getID() << " " << filament->getCylinderVector().size() + 1
-            << " " << filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        _outputFile << "F " << filament->getID() << " " <<
+            filament->getCylinderVector().size() + 1 << " " <<
+            filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
 
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -59,17 +62,19 @@ void Output::printBasicSnapshot(int step) {
     for(auto &linker : *LinkerDB::instance()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
-        _outputFile << "L " << linker->getLinkerID()<< " " << linker->getLinkerType() << endl;
+        _outputFile << "L " << linker->getLinkerID()<< " " <<
+            linker->getLinkerType() << endl;
         
         //print coordinates
-        auto x = midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
-                                    linker->getFirstCylinder()->getSecondBead()->coordinate,
-                                    linker->getFirstPosition());
+        auto x =
+            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
+                               linker->getFirstCylinder()->getSecondBead()->coordinate,
+                               linker->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
         x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
-                                    linker->getSecondCylinder()->getSecondBead()->coordinate,
-                                    linker->getSecondPosition());
+                               linker->getSecondCylinder()->getSecondBead()->coordinate,
+                               linker->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
         _outputFile << endl;
@@ -78,12 +83,14 @@ void Output::printBasicSnapshot(int step) {
     for(auto &motor : *MotorGhostDB::instance()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
-        _outputFile << "M " << motor->getMotorID() << " " << motor->getMotorType() << endl;
+        _outputFile << "M " << motor->getMotorID() << " " <<
+            motor->getMotorType() << endl;
         
         //print coordinates
-        auto x = midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
-                                    motor->getFirstCylinder()->getSecondBead()->coordinate,
-                                    motor->getFirstPosition());
+        auto x =
+            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
+                               motor->getFirstCylinder()->getSecondBead()->coordinate,
+                               motor->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
         x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
@@ -104,14 +111,19 @@ void Output::printSnapshot(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
+    _outputFile << step << " " << tau() << " " <<
+        FilamentDB::instance()->size() << endl;
     
     for(auto &filament : *FilamentDB::instance()) {
         
         //print first line(Filament ID, length, index of first bead, index of last bead
-        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
+        _outputFile << filament->getID() << " " <<
+            filament->getCylinderVector().size() + 1
+            << " " <<
+            filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+            << " " <<
+            filament->getCylinderVector().back()->getSecondBead()->getPositionFilament()
+            << endl;
         
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -135,14 +147,19 @@ void Output::printBirthTimes(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
+    _outputFile << step << " " << tau() << " " <<
+        FilamentDB::instance()->size() << endl;
     
     for(auto &filament : *FilamentDB::instance()) {
         
         //print first line(Filament ID, length, index of first bead, index of last bead
-        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
+        _outputFile << filament->getID() << " " <<
+            filament->getCylinderVector().size() + 1
+            << " " <<
+            filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+            << " " <<
+            filament->getCylinderVector().back()->getSecondBead()->getPositionFilament()
+            << endl;
         
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -163,14 +180,19 @@ void Output::printForces(int step) {
     _outputFile.precision(10);
     
     //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " << FilamentDB::instance()->size() << endl;
+    _outputFile << step << " " << tau() << " " <<
+        FilamentDB::instance()->size() << endl;
     
     for(auto &filament : *FilamentDB::instance()) {
         
         //print first line(Filament ID, length, index of first bead, index of last bead
-        _outputFile << filament->getID() << " " << filament->getCylinderVector().size() + 1
-        << " " << filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
-        << " " << filament->getCylinderVector().back()->getSecondBead()->getPositionFilament() << endl;
+        _outputFile << filament->getID() << " " <<
+            filament->getCylinderVector().size() + 1
+            << " " <<
+            filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
+            << " " <<
+            filament->getCylinderVector().back()->getSecondBead()->getPositionFilament()
+            << endl;
         
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){

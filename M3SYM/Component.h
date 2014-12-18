@@ -25,57 +25,63 @@ class ReactionVisitor;
 /// The base class for the Composite pattern hieararchy
 
 /*! 
- *  The Composite pattern allows building of complex hieararchical objects, with convenient
- *  methods for applying a function to all nodes (i.e. the Visitor pattern). Each node in the 
- *  hieararchy may have a parent and may contain several children nodes. A class that is derived 
- *  directly from Component and not from Composite, cannot contain children, i.e. it is a leaf node.
- *  @note Component objects may contain Species and ReactionBase collections, however, this is 
- *  treated seperately from the Composite pattern (i.e. separate methods exist for the corresponding 
- *  access to elements, changes, etc.)
+ *  The Composite pattern allows building of complex hieararchical objects, with 
+ *  convenient methods for applying a function to all nodes (i.e. the Visitor pattern).
+ *  Each node in the hieararchy may have a parent and may contain several children 
+ *  nodes. A class that is derived directly from Component and not from Composite,
+ *  cannot contain children, i.e. it is a leaf node.
+ *  @note Component objects may contain Species and ReactionBase collections, however, 
+ *  this is treated seperately from the Composite pattern (i.e. separate methods exist 
+ *  for the corresponding access to elements, changes, etc.)
  */
 class Component {
 private:
-    Composite *_parent; ///< The parent of this object. May be a nullptr if this object has no parent.
+    Composite *_parent; ///< The parent of this object. May be a nullptr if this object
+                        ///< has no parent.
 
 public:
     /// Default Constructor; Parent is assigned to nullptr
     Component() : _parent(nullptr) {}
     
     /// Virtual Destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~Component() noexcept {};
     
-    /// When this function is applied to a ConditionalVisitor v, the corresponding v.visit(this) is called,
-    /// and v is further applied to all children of this node recursively. However, the ConditionalVisitor
-    /// allows the visit() function to be applied only selectively to nodes that conform to specific criteria.
+    /// When this function is applied to a ConditionalVisitor v, the corresponding
+    /// v.visit(this) is called, and v is further applied to all children of this node
+    /// recursively. However, the ConditionalVisitor allows the visit() function to be
+    /// applied only selectively to nodes that conform to specific criteria.
     virtual bool apply (Visitor &v);
 
-    /// Implements the apply_if() method of the Component class by recursively applying it
-    /// to itself and all its children that contain Species.
+    /// Implements the apply_if() method of the Component class by recursively applying
+    /// it to itself and all its children that contain Species.
     virtual bool apply (SpeciesVisitor &v) {return apply_impl(v);}
 
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
     /// This method needs to be overriden by descendent classes that contain Species.
     virtual bool apply_impl(SpeciesVisitor &v) {return true;}
 
-    /// Implements the apply_if() method of the Component class by recursively applying it
-    /// to itself and all its children that contain ReactionBase.
+    /// Implements the apply_if() method of the Component class by recursively applying
+    /// it to itself and all its children that contain ReactionBase.
     virtual bool apply (ReactionVisitor &v) {return apply_impl(v);}
     
-    /// Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by this node.
-    /// This method needs to be overriden by descendent classes that contain ReactionBase.
+    /// Applies ReactionBaseVisitor v to every ReactionBase* object directly owned by
+    /// this node. This method needs to be overriden by descendent classes that contain
+    /// ReactionBase.
     virtual bool apply_impl(ReactionVisitor &v) {return true;}
 
-    /// Returns the pointer to the parent node. The returned value could be a nullptr if a parent does not exist.
+    /// Returns the pointer to the parent node. The returned value could be a nullptr if
+    /// a parent does not exist.
     Composite* getParent() {return _parent;}
     
     /// Sets the parent of this node to other.
     void setParent (Composite *other) {_parent=other;}
     
-    /// Returns true if this node is the root node. A root node has no parent, and the corresponding getParent()
-    /// call would return a nullptr.
+    /// Returns true if this node is the root node. A root node has no parent, and the
+    /// corresponding getParent() call would return a nullptr.
     bool isRoot() const {return _parent==nullptr? true : false;}
     
     /// Returns the root node of the hieararchy to which this node belongs to.
@@ -94,15 +100,16 @@ public:
     /// Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)
     virtual bool isReactionsContainer() const {return false;}
     
-    /// Returns the number of Species being immediately managed by this node (i.e. not counting Species
-    /// belonging to children nodes, etc.
+    /// Returns the number of Species being immediately managed by this node (i.e. not
+    /// counting Species belonging to children nodes, etc.
     virtual size_t numberOfSpecies () const {return 0;}
     
-    /// Returns the number of ReactionBase objets being immediately managed by this node (i.e. not counting reactions
-    /// belonging to children nodes, etc.
+    /// Returns the number of ReactionBase objets being immediately managed by this node
+    /// (i.e. not counting reactions belonging to children nodes, etc.
     virtual size_t numberOfReactions() const {return 0;}
 
-    /// Return a string indicating the full name of this node (presumably used mainly for debugging)
+    /// Return a string indicating the full name of this node (presumably used mainly
+    /// for debugging)
     virtual string getFullName() const {return "Component";};
     
     /// Return the total number of nodes contained under this node's hieararchy

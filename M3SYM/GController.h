@@ -30,11 +30,13 @@ class OutOfBoundsException : public exception {
 class Boundary;
 class Compartment;
 
-/// Used to control the geometry of the CompartmentGrid, as well as the geometry of entire system
+/// Used to control the geometry of the CompartmentGrid, as well as the geometry of
+/// the entire system
 /*!
- *  The GeometryController class is used by the SubSystem to control the geometry of the simulation, which 
- *  includes the CompartmentGrid geometry as well as any [Boundaries] (@ref Boundary) that are in place. It has 
- *  functionality to initialize a CompartmentGrid based on the given dimensionality as well as find the correct 
+ *  The GeometryController class is used by the SubSystem to control the geometry of 
+ *  the simulation, which includes the CompartmentGrid geometry as well as any 
+ *  [Boundaries] (@ref Boundary) that are in place. It has functionality to initialize
+ *  a CompartmentGrid based on the given dimensionality as well as find the correct
  *  Compartment based on a set of coordinates.
  */
 class GController {

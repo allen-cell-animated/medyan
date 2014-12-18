@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-// Note: This test omits many functions of Species that interact with Reaction objects. 
+// Note: This test omits many functions of Species that interact with Reaction objects.
 //        Separate tests weill cover those methods.
 
 //#define DO_THIS_SPECIES_TEST
@@ -67,7 +67,6 @@ TEST(SpeciesTest, CTors) {
     //Copy Ctor
     SpeciesBulk B(A);
     EXPECT_EQ(A,B);
-
     
     //Move Assignment
     SpeciesBulk D{"G-Actin",300};
@@ -104,12 +103,10 @@ TEST(SpeciesTest, Iostream) {
 TEST(SpeciesTest, Vector) {
     vector<SpeciesBulk> vsb;
     vsb.push_back({"G-Actin",133});
-//    cout << vsb.back() << endl;
     EXPECT_EQ(133,vsb.back().getN());
     EXPECT_EQ("G-Actin",vsb.back().getName());
     
     vsb.emplace_back("Arp2/3",244);
-//    cout << vsb.back() << endl;
     EXPECT_EQ("Arp2/3",vsb.back().getName());
 
     EXPECT_NE(vsb[0],vsb[1]);
@@ -119,9 +116,7 @@ TEST(SpeciesTest, Vector) {
     RSpecies &rs_before = vsb[2].getRSpecies();
     
     for(int i=0; i<10; ++i){
-//        cout << i << ":" << endl;
         vsb.push_back({"Motor",900});
-//        cout << vsb.back() << endl;
     }
     
     /// To make sure that move should be enabled:
@@ -130,13 +125,9 @@ TEST(SpeciesTest, Vector) {
     
     /// Now checking if Species have been moved and not copied by the vector<Species> reallocators
     RSpecies &rs_after = vsb[2].getRSpecies();
-    EXPECT_EQ(&rs_before,&rs_after); // This makes sure that the move constructors were involved during the internal 
-                                     // reallocation of the vector<Species>, and RSpecies pointer was conserved
-    
-//    cout << "Type Traits: " << boolalpha << is_nothrow_move_constructible<SpeciesBulk>::value << ", " 
-//    << is_copy_constructible<SpeciesBulk>::value << endl;
-//
-//    cout << "Still in TEST(SpeciesTest, Vector) {..." << endl;
+    EXPECT_EQ(&rs_before,&rs_after);
+    // This makes sure that the move constructors were involved during the internal
+    // reallocation of the vector<Species>, and RSpecies pointer was conserved
 }
 
 TEST(SpeciesContainerTest, SpeciesPtrContainerVector) {
@@ -153,24 +144,14 @@ TEST(SpeciesContainerTest, SpeciesPtrContainerVector) {
     EXPECT_EQ(x3, scv.findSpeciesByIndex(3));
 
     EXPECT_EQ("Capping", scv.findSpeciesByIndex(3)->getName());
-
-    //cout << (*x1) << (*x2) << endl;
-    //scv.printSpecies();
-    //cout << endl;
     
     scv.removeSpecies(x0);
     EXPECT_EQ(x3, scv.findSpeciesByIndex(2));
-//    scv.printSpecies();
-//    cout << endl;
     
     scv.removeSpecies("Actin");
-//    scv.printSpecies();
     EXPECT_EQ(x3, scv.findSpeciesByIndex(1));
-//    cout << endl;
-    
     Species *y = scv.findSpeciesByName("Arp2/3");
     EXPECT_EQ(x2, y);
-//    cout << (*y) << endl;
 }
 
 TEST(SpeciesContainerTest, SpeciesContainerVector) {
@@ -193,10 +174,8 @@ TEST(SpeciesContainerTest, SpeciesContainerVector) {
     
     scv.removeSpecies("Profilin");
     EXPECT_EQ("Capping", scv.findSpecies(2).getName());
-    //    scv.printSpecies();
     
     scv.removeSpecies("Actin");
-    //    scv.printSpecies();
     EXPECT_EQ("Capping", scv.findSpecies(1).getName());
     
     Species &y = scv.findSpecies("Arp2/3");

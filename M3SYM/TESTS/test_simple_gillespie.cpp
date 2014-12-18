@@ -85,7 +85,8 @@ TEST(ChemSimpleGillespieTest, SimpleSteadyState) {
     double var_expected = double(Nstart)/2/2;
     double mean_error = sqrt(var_expected/N_SAMPLE_POINTS);
     EXPECT_TRUE(fabs(A1mean-Nstart/2)<10*mean_error);
-    EXPECT_TRUE(fabs(var_expected-A1var)<0.1*var_expected);// within 10% of the expected variance
+    EXPECT_TRUE(fabs(var_expected-A1var)<0.1*var_expected);
+    // within 10% of the expected variance
     EXPECT_FLOAT_EQ(-1.0,covariance(accCov)/(A1var));
 }
 
@@ -125,7 +126,8 @@ TEST(ChemSimpleGillespieTest, SimpleTransient) {
     for(auto num: n_hist)
         sum+=double(num)/N_SAMPLE_POINTS;
     
-    // The results below are for N=10 (coming from both analytical formula and numerical integration)
+    // The results below are for N=10 (coming from both analytical
+    // formula and numerical integration)
     vector<double> n_hist_analyt {0.0003773 ,  0.00452585,  0.02443017,  0.0781464 ,  0.1640442 , 0.23613261,  0.23604161,  0.1617947,  0.07277957,  0.01940041, 0.00232715};
     double relative_error=0.15; //i.e. allow a 15% relative error
     for(int n=0; n<(Nstart+1); ++n){
@@ -133,11 +135,13 @@ TEST(ChemSimpleGillespieTest, SimpleTransient) {
         double p_analyt=n_hist_analyt[n];
         EXPECT_NEAR(p_est,p_analyt,relative_error*p_analyt);
     }
-    // Note that the error for P[0] is hard to converge, most likely because of P[0] being very small
+    // Note that the error for P[0] is hard to converge, most likely
+    // because of P[0] being very small
 }
 
 
-// Testing transient dynamics for the A->B->C cycle, where A, B, and C can only take two values, n=0,1
+// Testing transient dynamics for the A->B->C cycle, where A, B, and C
+// can only take two values, n=0,1
 TEST(ChemSimpleGillespieTest, CyclicTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);
     const double tau_snapshot = 0.25; //seconds
@@ -195,7 +199,8 @@ TEST(ChemSimpleGillespieTest, CyclicTransient) {
     
 }
 
-// Testing transient dynamics for the X<->A->B->C cycle, where A, B, and C can only take two values, n=0,1
+// Testing transient dynamics for the X<->A->B->C cycle, where A, B, and C
+// can only take two values, n=0,1
 #ifdef TRACK_UPPER_COPY_N
 TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
     const long long int N_SAMPLE_POINTS=pow(10,6);

@@ -15,9 +15,21 @@
  
  \section intro_sec Introduction
  
- Cell motility plays a key role in human biology and disease, contributing ubiquitously to such important processes as embryonic development, wound repair and cancer metastasis. Papoian laboratory is interested in gaining deeper understanding of the physical chemistry behind these complex, far-from-equilibrium mechano-chemical processes. His approach and model, named Mechano-chemical Dynamics of Active Networks, 3rd Generation (MEDYAN3), is based on combining stochastic reaction-diffusion treatment of cellular biochemical processes with polymer physics of cytoskeletal filament network growth, while explicitly coupling chemistry and mechanics.
+ Cell motility plays a key role in human biology and disease, contributing ubiquitously
+ to such important processes as embryonic development, wound repair and cancer 
+ metastasis. Papoian laboratory is interested in gaining deeper understanding of the
+ physical chemistry behind these complex, far-from-equilibrium mechano-chemical 
+ processes. His approach and model, named Mechano-chemical Dynamics of Active Networks,
+ 3rd Generation (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
+ of cellular biochemical processes with polymer physics of cytoskeletal filament network 
+ growth, while explicitly coupling chemistry and mechanics.
  
- Papoian laboratory has developed **M3SYM**, a software package based on the MEDYAN3 model, to simulate growth dynamics of actin based filamentous networks *in vitro* and *in vivo*. Recent papers where **M3SYM** or its predecessor, **StochTools**, were used can be found on the publication section of [the Papoian group's main web page: ](http://papoian.chem.umd.edu/ ). The **M3SYM** package can also be extended to simulate the dynamics of any active matter network.
+ Papoian laboratory has developed **M3SYM**, a software package based on the MEDYAN3
+ model, to simulate growth dynamics of actin based filamentous networks *in vitro* and 
+ *in vivo*. Recent papers where **M3SYM** or its predecessor, **StochTools**, were used 
+ can be found on the publication section of [the Papoian group's main web page: ]
+ (http://papoian.chem.umd.edu/ ). The **M3SYM** package can also be extended to simulate
+ the dynamics of any active matter network.
  
  \section install_sec Installation
  
@@ -30,7 +42,8 @@
  
  \subsection step2 Step 2: Installation of M3SYM itself
  
- Untar the **M3SYM** source code into some directory, enter into the "M3SYM" and execute "make" from the command line.
+ Untar the **M3SYM** source code into some directory, enter 
+ into the "M3SYM" and execute "make" from the command line.
  
  */
 

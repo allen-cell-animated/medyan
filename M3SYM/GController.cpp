@@ -49,7 +49,8 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         
         i++;
     }
-    return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
+    return static_cast<Compartment*>(
+        CompartmentGrid::instance()->children().at(index).get());
 }
 
 Compartment* GController::getCompartment(const vector<double> &coords)
@@ -80,7 +81,8 @@ Compartment* GController::getCompartment(const vector<double> &coords)
         }
         i++;
     }
-    return static_cast<Compartment*>(CompartmentGrid::instance()->children().at(index).get());
+    return static_cast<Compartment*>(
+        CompartmentGrid::instance()->children().at(index).get());
 }
 
 void GController::generateConnections()
@@ -214,12 +216,22 @@ void GController::initializeGrid() {
                         SystemParameters::Geometry().compartmentSizeZ};
     
     //Check that grid and compartmentSize match nDim
-    if((_nDim == 1 && _grid[0] != 0 && _grid[1] == 0 && _grid[2]==0 &&
-        _compartmentSize[0] != 0 && _compartmentSize[1] == 0 && _compartmentSize[2] == 0) ||
-       (_nDim == 2 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]==0 &&
-        _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] == 0) ||
-       (_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
-        _compartmentSize[0] != 0 && _compartmentSize[1] != 0 && _compartmentSize[2] != 0)){
+    if((_nDim == 1 &&
+        _grid[0] != 0 && _grid[1] == 0 &&
+        _grid[2]==0 && _compartmentSize[0] != 0 &&
+        _compartmentSize[1] == 0 &&
+        _compartmentSize[2] == 0) ||
+       (_nDim == 2 &&
+        _grid[0] != 0 && _grid[1] != 0 &&
+        _grid[2]==0 &&
+        _compartmentSize[0] != 0 &&
+        _compartmentSize[1] != 0 &&
+        _compartmentSize[2] == 0) ||
+       (_nDim == 3 &&
+        _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
+        _compartmentSize[0] != 0 &&
+        _compartmentSize[1] != 0 &&
+        _compartmentSize[2] != 0)){
     }
     else {
         cout << "Grid parameters are invalid. Exiting" << endl;

@@ -56,14 +56,16 @@ TEST(RSpeciesTest, Main) {
     SpeciesBulk B("B",  10);
     RSpecies& RB(B.getRSpecies());
     
-    // Using a reaction A->B to see if copy number n is correctly driven (implicitly tests up() and down() methods
+    // Using a reaction A->B to see if copy number n is correctly driven
+    // (implicitly tests up() and down() methods
     Reaction<1,1> rxn1 = {{&A,&B}, 10.0 };
     rxn1.makeStep();
     rxn1.makeStep();
     EXPECT_EQ(8, RA.getN());
     EXPECT_EQ(12, RB.getN());
     
-    // Introducing the back reaction, B->A, to bring the RSpecies back to their original state
+    // Introducing the back reaction, B->A, to bring the RSpecies back to
+    // their original state
     Reaction<1,1> rxn2 = {{&B,&A}, 10.0 };
     rxn2.makeStep();
     rxn2.makeStep();
@@ -157,9 +159,11 @@ TEST(ReactionTest, Dependents1) {
     EXPECT_EQ(&rxn1, ar3[0]);// (3) affects (1)
     
     // Testing passivateAssocReacts() and activateAssocReactions()
-    // We run A->C 10 times, so A's copy number drops to 0. Hence, the reaction (1) & (3) should be passivated. 
-    // In the context of this test, where we do not run a Gillespie-like algorithm, this should lead 
-    // to reaction (2) not having (1) or (3) as dependents - the dependent count of (2) should become zero
+    // We run A->C 10 times, so A's copy number drops to 0.
+    // Hence, the reaction (1) & (3) should be passivated.
+    // In the context of this test, where we do not run a Gillespie-like algorithm,
+    // this should lead to reaction (2) not having (1) or (3) as dependents - the
+    // dependent count of (2) should become zero
     
     for (int i=0; i<10; ++i){
         rxn3.makeStep();
@@ -168,8 +172,8 @@ TEST(ReactionTest, Dependents1) {
 
     EXPECT_EQ(0U, rxn2.dependents().size());
     
-    // But not that the getAffectedReactions() still returns the original depedencices, ignoring the fact 
-    // that copy number of A is zero. 
+    // But not that the getAffectedReactions() still returns the original
+    // depedencices, ignoring the fact that copy number of A is zero.
     ar1 = rxn1.getAffectedReactions();
     ar2 = rxn2.getAffectedReactions();
     ar3 = rxn3.getAffectedReactions();
@@ -235,24 +239,27 @@ TEST(ReactionTest, ReactionSignaling) {
     Reaction<1,1> rxn = { {&A,&B}, 3.14 }; // A->B
     rxn.startSignaling();
     
-    // There are at least ways to set up callbacks: 1) functions; 2) functors; 3) lambda functions
-    // In terms of connection management, the return of sm.connect(...) can be captured and 
-    // used later to temporarily block the callback or permanently disconnect it. See the 
-    // boost documentation for signals2.
+    // There are at least ways to set up callbacks: 1) functions; 2) functors; 3) lambda
+    // functions. In terms of connection management, the return of sm.connect(...) can
+    // be captured and used later to temporarily block the callback or permanently
+    // disconnect it. See the boost documentation for signals2.
     
-    //  function<void (Reaction *)> rcb(reaction_callback);
+    // function<void (Reaction *)> rcb(reaction_callback);
 
-    boost::signals2::shared_connection_block rcb(rxn.connect(reaction_callback), false);
+    boost::signals2::shared_connection_block
+        rcb(rxn.connect(reaction_callback), false);
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-    boost::signals2::shared_connection_block RCB(rxn.connect(ReactionCallback()), false);
+    boost::signals2::shared_connection_block
+        RCB(rxn.connect(ReactionCallback()), false);
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(1.05, rxn.getRate());
     RCB.block();
     
-    boost::signals2::connection clambda = rxn.connect([](ReactionBase *r){r->setRate(2.05);});
+    boost::signals2::connection clambda =
+        rxn.connect([](ReactionBase *r){r->setRate(2.05);});
     boost::signals2::shared_connection_block Rlambda (clambda, false); 
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(2.05, rxn.getRate());
@@ -313,8 +320,6 @@ TEST(ReactionTest, ReactionCloning) {
     ///Check reaction equality
     EXPECT_TRUE(r3->is_equal(*r4));
 }
-
-
 
 
 #endif // DO_THIS_REACTION_TEST

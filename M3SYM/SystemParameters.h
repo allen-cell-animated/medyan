@@ -121,7 +121,8 @@ struct BoundaryParameters {
 };
 
 
-/// Static class that holds all simulation parameters, initialized by the [SystemParser] (@ref SystemParser)
+/// Static class that holds all simulation parameters,
+/// initialized by the SystemParser
 class SystemParameters {
 friend class SystemParser;
     

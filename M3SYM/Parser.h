@@ -45,40 +45,58 @@ struct ChemistryAlgorithm {
 struct ChemistryData {
     
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> genReactions = {};
     /// Reaction happening between SpeciesBulk ONLY
-    vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
-    
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> bulkReactions = {};
     //@{
     /// Filament reactions
     /*!
-     *  All Filament reactions are held using a vector containing a tuple with the string
-     *  of reactants, string of products, and the reaction rate.
+     *  All Filament reactions are held using a vector containing a tuple with the 
+     *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<tuple<vector<string>, vector<string>, double>> polymerizationReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> polymerizationReactions = {};
     /// Depolymerization reactions
-    vector<tuple<vector<string>, vector<string>, double>> depolymerizationReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> depolymerizationReactions = {};
     /// Aging reactions
-    vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> agingReactions = {};
     /// Severing reactions
-    vector<tuple<vector<string>, vector<string>, double>> severingReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> severingReactions = {};
     //@}
     
     //@{
     /// Cross Filament binding and unbinding reactions
     /*!
-     *  All cross Filament reactions are held using a vector containing a tuple with the string
-     *  of reactants, string of products, the reaction rate, and binding range.
+     *  All cross Filament reactions are held using a vector containing a tuple with 
+     *  the string of reactants, string of products, the reaction rate, and binding 
+     *  range.
      */
     /// Linker reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double, double>> linkerReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                 double, double, double, double>> linkerReactions = {};
     /// MotorGhost reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double, double>> motorReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                 double, double, double, double>> motorReactions = {};
     //@}
     
     /// MotorGhost walking reactions
-    vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> motorWalkingReactions = {};
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, and whether this is a constant species
@@ -174,7 +192,8 @@ vector<T> split(const string& line) {
 
 /// A general parser
 /*!
- *  A parser object, when initialized, opens an input file. Upon destruction, it closes the file.
+ *  A parser object, when initialized, opens an input file. Upon destruction, it 
+ *  closes the file.
  */
 class Parser {
 protected:
@@ -184,7 +203,8 @@ public:
     Parser(string inputFileName) {
         _inputFile.open(inputFileName);
         if(!_inputFile.is_open()) {
-            cout << "There was an error parsing file " << inputFileName << ". Exiting" << endl;
+            cout << "There was an error parsing file " << inputFileName <<
+                ". Exiting" << endl;
             exit(EXIT_FAILURE);
         }
         cout << "Loading file " << inputFileName << endl;
@@ -250,8 +270,6 @@ public:
     /// ChemistryData struct containing this data
     ChemistryData readChemistryInput();
 };
-
-
 
 
 #endif

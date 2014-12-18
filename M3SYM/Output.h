@@ -20,8 +20,9 @@
 
 /// To print a specified output into a file
 /*!
- *  An output object, initialized by the Controller, can print a number of specific output formats, including 
- *  current snapshot, forces, stresses, and birth times. Upon destruction, the output file is closed.
+ *  An output object, initialized by the Controller, can print a number of specific
+ *  output formats, including current snapshot, forces, stresses, and birth times. 
+ *  Upon destruction, the output file is closed.
  */
 
 class Output {

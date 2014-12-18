@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A cosine potential used by the [BrancingBending](@ref BrancingBending) template.
+/// A cosine potential used by the BranchingBending template.
 class BranchingBendingCosine {
     
 public:

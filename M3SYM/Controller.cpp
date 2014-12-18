@@ -48,13 +48,15 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     
 #ifdef MECHANICS
     //read algorithm and types
-    auto MTypes = p.readMechanicsFFType(); auto MAlgorithm = p.readMechanicsAlgorithm();
+    auto MTypes = p.readMechanicsFFType();
+    auto MAlgorithm = p.readMechanicsAlgorithm();
     
     //read const parameters
     p.readMechanicsParameters();
 #endif
     //Always read boundary type
-    auto BTypes = p.readBoundaryType(); p.readBoundaryParameters();
+    auto BTypes = p.readBoundaryType();
+    p.readBoundaryParameters();
     
     //Always read geometry
     p.readGeometryParameters();
@@ -78,10 +80,12 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
         _subSystem->addBoundary(new BoundaryCubic());
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
-        _subSystem->addBoundary(new BoundarySpherical(SystemParameters::Boundaries().diameter));
+        _subSystem->addBoundary(
+            new BoundarySpherical(SystemParameters::Boundaries().diameter));
     }
     else if(BTypes.boundaryShape == "CAPSULE") {
-        _subSystem->addBoundary(new BoundaryCapsule(SystemParameters::Boundaries().diameter));
+        _subSystem->addBoundary(
+            new BoundaryCapsule(SystemParameters::Boundaries().diameter));
     }
     else{
         cout << endl << "Given boundary not yet implemented. Exiting" <<endl;
@@ -99,7 +103,8 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Initialize chemical controller
     cout << "Initializing chemistry...";
     //read algorithm
-    auto CAlgorithm = p.readChemistryAlgorithm(); auto CSetup = p.readChemistrySetup();
+    auto CAlgorithm = p.readChemistryAlgorithm();
+    auto CSetup = p.readChemistrySetup();
     
     //num steps for sim
     _numSteps = CAlgorithm.numSteps;
@@ -163,7 +168,8 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
                                         directionZ/normFactor};
             
             vector<double> secondPoint = nextPointProjection(firstPoint,
-            (double)FSetup.filamentLength * SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            (double)FSetup.filamentLength *
+            SystemParameters::Geometry().cylinderSize - 0.01, direction);
             
             if(_subSystem->getBoundary()->within(firstPoint)
                && _subSystem->getBoundary()->within(secondPoint)) {

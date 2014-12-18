@@ -26,11 +26,12 @@ class SubSystem;
 /// Used to initialize, manage, and run an entire simulation.
 
 /*!
- *  The Controller is initialized in the main program, and initializes the SubSystem given an initial input directory.
- *  After initialization of all member controllers, the Controller class can run a simulation given the already read
- *  input parameters, by iteratively switching between mechanical equilibration and stochastic chemical steps.
+ *  The Controller is initialized in the main program, and initializes the SubSystem 
+ *  given an initial input directory. After initialization of all member controllers,
+ *  the Controller class can run a simulation given the already read input parameters, 
+ *  by iteratively switching between mechanical equilibration and stochastic chemical 
+ *  steps.
  */
-
 class Controller {
 
 private:

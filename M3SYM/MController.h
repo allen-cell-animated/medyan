@@ -31,15 +31,18 @@ class FletcherRieves;
 /// Used to initialize, control, and run the mechanical components of a simulation
 
 /*!
- *  MechanicalController is a class used by the SubSystem to initialize [ForceFields] (@ref ForceField), 
- *  given an initial selection of which force fields should be included. It can compute forces and energies 
- *  over all force fields, as well as run energy [Minimization] (@ref Minimizer) algorithms.
+ *  MechanicalController is a class used by the SubSystem to initialize [ForceFields]
+ *  (@ref ForceField), given an initial selection of which force fields should be 
+ *  included. It can compute forces and energies over all force fields, as well as run
+ *  energy [Minimization] (@ref Minimizer) algorithms.
  */
 class MController {
     
 private:
-    ForceFieldManager _FFManager;  ///< Container and methods for all force fields in system
-    vector<Minimizer*> _minimizerAlgorithms; ///< Vector with algorithms for system minimization
+    ForceFieldManager _FFManager;  ///< Container and methods for all force
+                                   ///< fields in system
+    vector<Minimizer*> _minimizerAlgorithms; ///< Vector with algorithms
+                                             ///< for system minimization
     
     SubSystem* _subSystem; ///< A pointer to the subsystem
 

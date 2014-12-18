@@ -20,7 +20,8 @@
 #include "ChemSimpleGillespieImpl.h"
 #include "SimpleManagerImpl.h"
 
-void CController::initialize(string& chemAlgorithm, string chemManager, ChemistryData& chem) {
+void CController::initialize(string& chemAlgorithm, string chemManager,
+                             ChemistryData& chem) {
     
     // Set instance of chemsim algorithm
     ChemSimImpl* csi;
