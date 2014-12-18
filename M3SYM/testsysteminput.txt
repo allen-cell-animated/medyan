@@ -103,7 +103,7 @@ NUMSTEPS:                    1000000
 
 NUMSTEPSPERM:                1000
 NUMSTEPSPERS:                10000
-NUMSTEPSPERN:                10000
+NUMSTEPSPERN:                1000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1

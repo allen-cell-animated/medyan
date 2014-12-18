@@ -352,7 +352,7 @@ struct MotorMovingCylinderForwardCallback {
         //Find the motor
         double newPosition = 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
         int newIntPosition = newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
-        
+
         SpeciesMotor* sm1 = _oldC->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
         SpeciesMotor* sm2 = _newC->getCCylinder()->getCMonomer(newIntPosition)->speciesMotor(_motorType);
         SpeciesBound* sb2 = _newC->getCCylinder()->getCMonomer(newIntPosition)->speciesBound(_boundType);

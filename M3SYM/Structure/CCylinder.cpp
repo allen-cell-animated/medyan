@@ -32,10 +32,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
         for(auto &r : it->second) {
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
-            if(r->getCBound() != nullptr) {
+            if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
-                rxnClone->setCBound(r->getCBound());
-            }
             addCrossCylinderReaction(it->first, rxnClone);
         }
     }
@@ -47,10 +45,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _p
         for(auto &r: ccyl->getCrossCylinderReactions()[const_cast<CCylinder*>(&rhs)]) {
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
-            if(r->getCBound() != nullptr) {
+            if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
-                rxnClone->setCBound(r->getCBound());
-            }
             ccyl->addCrossCylinderReaction(this, rxnClone);
         }
     }
