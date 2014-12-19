@@ -28,7 +28,8 @@ class CylinderVolumeInteractions;
 class VolumeCylindricalFF : public ForceField {
     
 private:
-    vector <unique_ptr<CylinderVolumeInteractions>> _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    vector <unique_ptr<CylinderVolumeInteractions>>
+        _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
 public:
     /// Initialize the volume forcefields

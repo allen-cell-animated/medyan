@@ -54,8 +54,8 @@ void SubSystem::addNewLinkers(vector<vector<Cylinder* >>& v, short linkerType) {
     for (auto it: v)
         new Linker(it[0], it[1], linkerType);
 }
-Linker* SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2,
-                             short linkerType, double position1, double position2){
+Linker* SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType,
+                                double position1, double position2){
     
     return new Linker(c1, c2, linkerType, position1, position2, true);
 }
@@ -67,8 +67,8 @@ void SubSystem::addNewMotorGhosts(vector<vector<Cylinder* >>& v, short motorType
     for (auto it: v)
         new MotorGhost(it[0], it[1], motorType);
 }
-MotorGhost* SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
-                                 short motorType, double position1, double position2) {
+MotorGhost* SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                                        double position1, double position2) {
     
     return new MotorGhost(c1, c2, motorType, position1, position2, true);
 }
@@ -80,7 +80,7 @@ void SubSystem::addNewBranchingPoints(vector<vector<Cylinder* >>& v, short branc
         new BranchingPoint(it[0], it[1], branchType);
 }
 BranchingPoint* SubSystem::addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
-                                 short branchType, double position) {
+                                                short branchType, double position) {
     
     return new BranchingPoint(c1, c2, branchType, position, true);
 }

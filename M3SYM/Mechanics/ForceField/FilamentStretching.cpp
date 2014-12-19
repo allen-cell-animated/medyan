@@ -18,7 +18,8 @@
 #include "Cylinder.h"
 
 template <class FStretchingInteractionType>
-double FilamentStretching<FStretchingInteractionType>::computeEnergy(Filament* f, double d) {
+double FilamentStretching<FStretchingInteractionType>::computeEnergy(
+                                                Filament* f, double d) {
     double U = 0.0;
     
     if (d == 0.0){
@@ -74,6 +75,9 @@ void FilamentStretching<FStretchingInteractionType>::computeForcesAux(Filament* 
 }
 
 ///Template specializations
-template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(Filament* f, double d);
-template void  FilamentStretching<FilamentStretchingHarmonic>::computeForces(Filament* f);
-template void  FilamentStretching<FilamentStretchingHarmonic>::computeForcesAux(Filament* f);
+template double
+FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(Filament* f, double d);
+template void
+FilamentStretching<FilamentStretchingHarmonic>::computeForces(Filament* f);
+template void
+FilamentStretching<FilamentStretchingHarmonic>::computeForcesAux(Filament* f);

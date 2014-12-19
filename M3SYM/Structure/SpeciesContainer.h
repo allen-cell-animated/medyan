@@ -61,7 +61,8 @@ public:
     virtual void printSpecies() const = 0;
 };
 
-/// A concrete class implementing the SpeciesPtrContainerIFace, using vector<unique_ptr<Species>> as the container implementation
+/// A concrete class implementing the SpeciesPtrContainerIFace, using
+/// vector<unique_ptr<Species>> as the container implementation
 class SpeciesPtrContainerVector : public  SpeciesPtrContainerIFace {
 protected:
     vector<unique_ptr<Species>> _species;///< Species pointers container
@@ -73,7 +74,7 @@ public:
     SpeciesPtrContainerVector(const SpeciesPtrContainerVector &) = delete;
     
     /// The equality operator is not allowed
-    SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;  // no assignment
+    SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;
     
     /// Empty the container. All memories are freed.
     virtual void clear() override {_species.clear();}
@@ -92,12 +93,12 @@ public:
         return _species.back().get();
     }
     
-    /// Add species of type T to the container, forwarding Args to the corresponding Species constructor 
+    /// Add species of type T to the container, forwarding Args to the corresponding
+    /// Species constructor
     template<typename T, typename ...Args>
     Species* addSpecies( Args&& ...args )
     {
         _species.emplace_back(unique_ptr<Species>( new T( forward<Args>(args)...) ));
-        //        _species.emplace_back(make_unique(Args...));
         return _species.back().get();
     }
     
@@ -106,10 +107,8 @@ public:
         size_t counter=0;
         while(true){
             auto child_iter = find_if(_species.begin(),_species.end(),
-                                           [&name](const unique_ptr<Species> &element)
-                                           {
-                                               return element->getName()==name ? true : false;
-                                           });
+               [&name](const unique_ptr<Species> &element) {
+               return element->getName()==name ? true : false; });
             if(child_iter!=_species.end()){
                 _species.erase(child_iter);
                 ++counter;
@@ -125,8 +124,8 @@ public:
         size_t counter=0;
         while(true) {
             auto child_iter = find_if(_species.begin(),_species.end(),
-                                           [&species](const unique_ptr<Species> &element)
-                                           {return element.get()==species ? true : false;});
+               [&species](const unique_ptr<Species> &element) {
+                return element.get()==species ? true : false;});
             if(child_iter!=_species.end()){
                 _species.erase(child_iter);
                 ++counter;
@@ -137,24 +136,26 @@ public:
         return counter;
     }
     
-    /// Return a pointer to Species which has a name matching the argument. Otherwise, return a nullptr.
+    /// Return a pointer to Species which has a name matching the argument. Otherwise,
+    /// return a nullptr.
     /// @note The first match is returned.
     virtual Species* findSpeciesByName(const string &name) const override {
         auto child_iter = find_if(_species.begin(),_species.end(),
-                                       [&name](const unique_ptr<Species> &element)
-                                       {return element->getName()==name ? true : false;});
+          [&name](const unique_ptr<Species> &element) {
+          return element->getName()==name ? true : false;});
         if(child_iter!=_species.end())
             return child_iter->get();
         else
             return nullptr;
     }
     
-    /// Return a pointer to Species matching the molecule field of Species. Otherwise, return a nullptr.
+    /// Return a pointer to Species matching the molecule field of Species. Otherwise,
+    /// return a nullptr.
     /// @note The first match is returned.
     virtual Species* findSpeciesByMolecule (int molecule) const override {
         auto child_iter = find_if(_species.begin(),_species.end(),
-                                       [molecule](const unique_ptr<Species> &element)
-                                       {return element->getMolecule()==molecule ? true : false;});
+          [molecule](const unique_ptr<Species> &element)
+          {return element->getMolecule()==molecule ? true : false;});
         if(child_iter!=_species.end())
             return child_iter->get();
         else
@@ -182,15 +183,16 @@ public:
     /// Return a reference to the underlying vector<unique_ptr<Species>> container.
     vector<unique_ptr<Species>>& species() {return _species;}
     
-    /// Return a const reference to the underlying vector<unique_ptr<Species>> container.
+    /// Return a const reference to the underlying vector<unique_ptr<Species>>
+    /// container.
     const vector<unique_ptr<Species>>& species() const {return _species;}
     
-    /// Returns true, if all contained Species are different from each other as determined by Species.getMolecule() method.
+    /// Returns true, if all contained Species are different from each other as
+    /// determined by Species.getMolecule() method.
     virtual bool areAllSpeciesUnique () const override {
         vector<int> molecs;
         transform(_species.cbegin(),_species.cend(), back_inserter(molecs),
-                       [](const unique_ptr<Species> &us)
-                            {return us->getMolecule();});
+            [](const unique_ptr<Species> &us) {return us->getMolecule();});
         sort(molecs.begin(), molecs.end());
         auto vit = adjacent_find(molecs.begin(), molecs.end());
         if(vit==molecs.end())
@@ -224,17 +226,20 @@ public:
     virtual Species& findSpecies(const string &name) = 0;
     
     /// Find the index of Species with the specified name in the container.
-    /// @note The first match is returned. An exception is thrown if the Species is not found.
+    /// @note The first match is returned. An exception is thrown if the Species
+    /// is not found.
     virtual size_t findSpeciesIndex(const string &name) const = 0;
     
     /// Return a reference to Species at the position index in the container
     virtual Species& findSpecies (size_t index) = 0;
     
-    /// Return a reference to Species which satisfies the equality operator with s. Otherwise, return a nullptr.
+    /// Return a reference to Species which satisfies the equality operator with s.
+    /// Otherwise, return a nullptr.
     /// @note The first match is returned.
     virtual Species& findSimilarSpecies (const Species &s) = 0;
     
-    /// Return a reference to Species matching the molecule field of Species. Otherwise, return a nullptr.
+    /// Return a reference to Species matching the molecule field of Species. Otherwise,
+    /// return a nullptr.
     /// @note The first match is returned.
     virtual Species& findSpeciesByMolecule (int molecule) = 0;
 
@@ -251,19 +256,20 @@ public:
 
 /// A concrete class implementing the SpeciesContainerIFace, using vector<SpeciesSpecific> as the container implementation.
 
-/*! Because in the class the Species are held by value, and not as pointers, the container must be homogeneous,
- *  i.e. consist of Species of the same derived type. This is the SpeciesSpecific template paramter, which 
- *  for example can be SpeciesDiffuse.
- *
- *  When adding Species to this class, the return value of the addSpecies() method could be remembered, so 
- *  to access that Species in the future by index.
+/*! Because in the class the Species are held by value, and not as pointers, the 
+ *  container must be homogeneous, i.e. consist of Species of the same derived type. 
+ *  This is the SpeciesSpecific template paramter, which for example can be 
+ *  SpeciesDiffusing.
+ *  When adding Species to this class, the return value of the addSpecies() method could 
+ *  be remembered, so to access that Species in the future by index.
  */
 template <class SpeciesSpecific>
 class SpeciesContainerVector : public  SpeciesContainerIFace {
 protected:
-    vector<SpeciesSpecific> _species; ///< The container of Species of type SpeciesSpecific
+    vector<SpeciesSpecific> _species; ///< The container of Species of type
 public:
-    /// Add species of type SpeciesSpecific to the container, forwarding Args to the corresponding Species constructor.
+    /// Add species of type SpeciesSpecific to the container, forwarding Args to the
+    /// corresponding Species constructor.
     /// @return the index of the added Species in the container
     template<typename ...Args>
     size_t addSpecies(Args&& ...args){
@@ -273,7 +279,8 @@ public:
     
     /// Remove all Species with the specified index from the container
     virtual size_t removeSpecies(size_t index) override {
-        assert(index<size() && "SpeciesContainerVector::removeSpecies(): Invalid index.");
+        assert(index<size()
+        && "SpeciesContainerVector::removeSpecies(): Invalid index.");
         _species.erase(_species.begin()+index);
         return 1;
     }
@@ -283,10 +290,8 @@ public:
         size_t counter = 0;
         while(true) {
             auto child_iter = find_if(_species.begin(),_species.end(),
-                                           [&name](const Species &element)
-                                           {
-                                               return element.getName()==name ? true : false;
-                                           });
+               [&name](const Species &element){
+               return element.getName()==name ? true : false;});
             if(child_iter!=_species.end()){
                 _species.erase(child_iter);
                 ++counter;
@@ -301,10 +306,8 @@ public:
     /// @note Throw an exception if the Species is not found.
     virtual SpeciesSpecific& findSpecies(const string &name) override {
         auto child_iter = find_if(_species.begin(),_species.end(),
-                                       [&name](const Species &element)
-                                       {
-                                           return element.getName()==name ? true : false;
-                                       });
+           [&name](const Species &element){
+           return element.getName()==name ? true : false;});
         if(child_iter!=_species.end())
             return (*child_iter);
         else
@@ -312,7 +315,8 @@ public:
     }
     
     /// Find the index of Species with the specified name in the container.
-    /// @note The first match is returned. An exception is thrown if the Species is not found.
+    /// @note The first match is returned. An exception is thrown if the Species is
+    /// not found.
     virtual size_t findSpeciesIndex(const string &name) const override {
         size_t index = 0;
         for(auto &s : _species){
@@ -331,7 +335,8 @@ public:
         return _species[index];
     }
     
-    /// Returns true, if all contained Species are different from each other as determined by Species.getMolecule() method.
+    /// Returns true, if all contained Species are different from each other as
+    /// determined by Species.getMolecule() method.
     virtual bool areAllSpeciesUnique () const override {
         vector<int> molecs;
         transform(_species.cbegin(),_species.cend(), back_inserter(molecs),
@@ -345,7 +350,8 @@ public:
             return false;
     }
     
-    /// Return a reference to Species which satisfies the equality operator with s. Otherwise, return a nullptr.
+    /// Return a reference to Species which satisfies the equality operator with s.
+    /// Otherwise, return a nullptr.
     /// @note The first match is returned.
     virtual SpeciesSpecific& findSimilarSpecies (const Species &s) override {
         auto it = find_if(_species.begin(),_species.end(),
@@ -354,21 +360,22 @@ public:
         if(it!=_species.end())
             return *it;
         else
-            throw out_of_range("SpeciesContainerVector::findSimilarSpecies(): The name was not found");
+            throw out_of_range(
+            "SpeciesContainerVector::findSimilarSpecies(): The name was not found");
     }
     
-    /// Return a reference to Species matching the molecule field of Species. Otherwise, return a nullptr.
+    /// Return a reference to Species matching the molecule field of Species. Otherwise,
+    /// return a nullptr.
     /// @note The first match is returned.
     virtual SpeciesSpecific& findSpeciesByMolecule (int molecule) override {
         auto child_iter = find_if(_species.begin(),_species.end(),
-                                       [molecule](const Species &element)
-                                       {
-                                           return element.getMolecule()==molecule ? true : false;
-                                       });
+            [molecule](const Species &element) {
+            return element.getMolecule()==molecule ? true : false;});
         if(child_iter!=_species.end())
             return *child_iter;
         else
-            throw out_of_range("SpeciesContainerVector::findSpeciesByMolecule(): The molecule was not found");
+            throw out_of_range(
+            "SpeciesContainerVector::findSpeciesByMolecule(): The molecule was not found");
     }
     
     /// Return the number of Species in the container
@@ -383,7 +390,8 @@ public:
     /// Return a reference to the underlying vector<unique_ptr<Species>> container.
     vector<SpeciesSpecific>& species() {return _species;}
     
-    /// Return a const reference to the underlying vector<unique_ptr<Species>> container.
+    /// Return a const reference to the underlying vector<unique_ptr<Species>>
+    /// container.
     const vector<SpeciesSpecific>& species() const {return _species;}
 
 };

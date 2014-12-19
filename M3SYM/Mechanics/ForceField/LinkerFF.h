@@ -28,7 +28,8 @@ class LinkerInteractions;
 class LinkerFF : public ForceField {
     
 private:
-    vector<unique_ptr<LinkerInteractions>> _linkerInteractionVector; ///< Vector of initialized linker interactions
+    vector<unique_ptr<LinkerInteractions>>
+        _linkerInteractionVector; ///< Vector of initialized linker interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

@@ -28,7 +28,8 @@ class MotorGhostInteractions;
 class MotorGhostFF : public ForceField {
     
 private:
-    vector <unique_ptr<MotorGhostInteractions>> _motorGhostInteractionVector; ///< Vector of initialized motor interactions
+    vector <unique_ptr<MotorGhostInteractions>>
+        _motorGhostInteractionVector; ///< Vector of initialized motor interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

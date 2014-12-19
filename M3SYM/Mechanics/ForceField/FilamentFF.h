@@ -28,7 +28,8 @@ class FilamentInteractions;
 class FilamentFF : public ForceField {
  
 private:
-    vector<unique_ptr<FilamentInteractions>> _filamentInteractionVector; ///< Vector of initialized filament interactions
+    vector<unique_ptr<FilamentInteractions>>
+        _filamentInteractionVector; ///< Vector of initialized filament interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

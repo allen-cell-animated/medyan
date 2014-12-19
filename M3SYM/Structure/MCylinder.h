@@ -31,14 +31,21 @@ private:
     Cylinder* _pCylinder;  ///< parent cylinder
 
     double _eqLength; ///< Length of unstretched cylinder
-    double _eqTheta;  ///< Equilibrium value for angle in bending potential. For interaction between this cylinder and PREVIOUS
-    double _eqPhi; ///< Equilibrium value of twisiting potential
-    double _kStretch; ///< Local stretching constant, describes axial stretching of a single cylinder
-    double _kBend;  ///< Local bending constant, which describes bending interaction between current and PREVIOUS cylinders
-    double _kTwist; ///< Local twisting constant, which describes stretching interaction between current and PREVIOUS cylinders
-    double _kExVol; ///< Local excluded volume constant, which describes excluded volume interactions between cylinders
+    double _eqTheta;  ///< Equilibrium value for angle in bending potential.
+                      ///< For interaction between this cylinder and PREVIOUS
+    double _eqPhi;    ///< Equilibrium value of twisiting potential
+    double _kStretch; ///< Local stretching constant, describes axial stretching
+                      ///< of a single cylinder
+    double _kBend;    ///< Local bending constant, which describes bending
+                      ///< interaction between current and PREVIOUS cylinders
+    double _kTwist;   ///< Local twisting constant, which describes stretching
+                      ///< interaction between current and PREVIOUS cylinders
+    double _kExVol;   ///< Local excluded volume constant, which describes
+                      ///< excluded volume interactions between cylinders
     
 public:
+    /// Constructor sets equlilibrium length, and also adjusts other
+    /// parameters according to this length
     MCylinder(double eqLength);
     ~MCylinder() {};
 

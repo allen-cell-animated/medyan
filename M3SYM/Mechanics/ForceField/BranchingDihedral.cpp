@@ -21,7 +21,8 @@
 #include "Bead.h"
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(BranchingPoint* b, double d) {
+double BranchingDihedral<BDihedralInteractionType>::computeEnergy(
+                                      BranchingPoint* b, double d) {
     
     Bead* b1 = b->getFirstCylinder()->getFirstBead();
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
@@ -69,6 +70,9 @@ void BranchingDihedral<BDihedralInteractionType>::computeForcesAux(BranchingPoin
 }
 
 ///Template specializations
-//template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);
-//template void  BranchingDihedral<BranchingDihedralCosine>::computeForces(BranchingPoint* b);
-//template void  BranchingDihedral<BranchingDihedralCosine>::computeForcesAux(BranchingPoint* b);
+//template double
+//BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);
+//template void
+//BranchingDihedral<BranchingDihedralCosine>::computeForces(BranchingPoint* b);
+//template void
+//BranchingDihedral<BranchingDihedralCosine>::computeForcesAux(BranchingPoint* b);

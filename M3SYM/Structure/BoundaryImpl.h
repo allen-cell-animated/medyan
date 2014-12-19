@@ -24,7 +24,8 @@
 class BoundaryCubic: public Boundary {
     
 public:
-    ///Default constructor, this will create a cube with given corners at edges of current CompartmentGrid
+    ///Default constructor, this will create a cube with given corners at edges of
+    ///current CompartmentGrid
     BoundaryCubic();
     
     virtual bool within(const vector<double>& coordinates);

@@ -20,7 +20,8 @@
 #include "Bead.h"
 
 template <class BStretchingInteractionType>
-double BranchingStretching<BStretchingInteractionType>::computeEnergy(BranchingPoint* b, double d) {
+double BranchingStretching<BStretchingInteractionType>::computeEnergy(
+                                          BranchingPoint* b, double d) {
     
     Bead* b1 = b->getFirstCylinder()->getFirstBead();
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
@@ -54,7 +55,8 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(BranchingPoi
 
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForcesAux(BranchingPoint* b) {
+void BranchingStretching<BStretchingInteractionType>::computeForcesAux(
+                                                     BranchingPoint* b) {
     
     Bead* b1 = b->getFirstCylinder()->getFirstBead();
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
@@ -70,6 +72,9 @@ void BranchingStretching<BStretchingInteractionType>::computeForcesAux(Branching
 
 
 ///Template specializations
-template double BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(BranchingPoint* b, double d);
-template void  BranchingStretching<BranchingStretchingHarmonic>::computeForces(BranchingPoint* b);
-template void  BranchingStretching<BranchingStretchingHarmonic>::computeForcesAux(BranchingPoint* b);
+template double
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(BranchingPoint* b, double d);
+template void
+BranchingStretching<BranchingStretchingHarmonic>::computeForces(BranchingPoint* b);
+template void
+BranchingStretching<BranchingStretchingHarmonic>::computeForcesAux(BranchingPoint* b);

@@ -28,13 +28,13 @@ template <unsigned short M, unsigned short N>
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];
-        for(auto r = s->beginReactantReactions(); r!=s->endReactantReactions(); ++r){
-            if(this!=(*r))
-                (*r)->registerNewDependent(this);
+        for(auto r = s->beginReactantReactions();
+                 r!=s->endReactantReactions(); ++r){
+            if(this!=(*r)) (*r)->registerNewDependent(this);
         }
-        for(auto r = s->beginProductReactions(); r!=s->endProductReactions(); ++r){
-            if(this!=(*r))
-                (*r)->registerNewDependent(this);
+        for(auto r = s->beginProductReactions();
+                 r!=s->endProductReactions(); ++r){
+            if(this!=(*r)) (*r)->registerNewDependent(this);
         }
     }
 #endif
@@ -52,10 +52,12 @@ void Reaction<M,N>::passivateReactionImpl() {
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];
-        for(auto r = s->beginReactantReactions(); r!=s->endReactantReactions(); ++r){
+        for(auto r = s->beginReactantReactions();
+                 r!=s->endReactantReactions(); ++r){
             (*r)->unregisterDependent(this);
         }
-        for(auto r = s->beginProductReactions(); r!=s->endProductReactions(); ++r){
+        for(auto r = s->beginProductReactions();
+                 r!=s->endProductReactions(); ++r){
             (*r)->unregisterDependent(this);
         }
     }
@@ -94,20 +96,13 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 #ifdef BOOST_MEM_POOL
 // boost::pool<> allocator_reaction(sizeof(Reaction<1,1>),BOOL_POOL_NSIZE);
 template <unsigned short M, unsigned short N>
-void* Reaction<M,N>::operator new(size_t size)
-{
-    //    cout << "Reaction<M,N>::operator new(size_t size) called..." << endl;
-    //    void *ptr = allocator_ReactionBase.malloc();
+void* Reaction<M,N>::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<Reaction<M,N>>::allocate();
     return ptr;
-    // RSpecies* cell = new (ptr) RSpecies();
 }
 
 template <unsigned short M, unsigned short N>
-void Reaction<M,N>::operator delete(void* ptr) noexcept
-{
-    //    cout << "ReactionBase::operator operator delete(void* ptr) called..." << endl;
-    //    allocator_ReactionBase.free(ptr);
+void Reaction<M,N>::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<Reaction<M,N>>::deallocate((Reaction<M,N>*)ptr);
 }
 #endif

@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class LStretchingInteractionType>
-double LinkerStretching<LStretchingInteractionType>::computeEnergy(Linker* l, double d) {
+double LinkerStretching<LStretchingInteractionType>::computeEnergy(Linker* l, double d){
     
     Bead* b1 = l->getFirstCylinder()->getFirstBead();
     Bead* b2 = l->getFirstCylinder()->getSecondBead();
@@ -72,6 +72,9 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) {
 }
 
 ///Temlate specializations
-template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(Linker* l, double d);
-template void  LinkerStretching<LinkerStretchingHarmonic>::computeForces(Linker* l);
-template void  LinkerStretching<LinkerStretchingHarmonic>::computeForcesAux(Linker* l);
+template double
+LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(Linker* l, double d);
+template void
+LinkerStretching<LinkerStretchingHarmonic>::computeForces(Linker* l);
+template void
+LinkerStretching<LinkerStretchingHarmonic>::computeForcesAux(Linker* l);

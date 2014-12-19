@@ -25,6 +25,7 @@ class FilamentStretchingHarmonic {
 public:
     double energy(Bead*, Bead*, double, double);
     double energy(Bead*, Bead*, double, double, double);
+    
     void forces(Bead*, Bead*, double, double);
     void forcesAux(Bead*, Bead*, double, double);
 };

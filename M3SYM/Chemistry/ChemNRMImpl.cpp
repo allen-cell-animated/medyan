@@ -54,13 +54,8 @@ void RNodeNRM::operator delete(void* ptr) noexcept {
 #endif
 #endif
 
-long long int elapsed14 = 0;
-long long int elapsed16 = 0;
-long long int elapsed23 = 0;
-long long int elapsed45 = 0;
-long long int elapsed56 = 0;
-
-RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm) : _chem_nrm (chem_nrm), _react(r) {
+RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
+    : _chem_nrm (chem_nrm), _react(r) {
     _react->setRnode(this);
      boost_heap *heap = _chem_nrm.getHeap();
     _handle = heap->emplace(this);

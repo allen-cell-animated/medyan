@@ -27,8 +27,8 @@ template <class CGType>
 class ConjugateGradient : public Minimizer {
     
 private:
-    CGType _CGType; //< Implementation of a CG method
-    double _GRADTOL; //< Gradient tolerance used;
+    CGType _CGType;  ///< Implementation of a CG method
+    double _GRADTOL; ///< Gradient tolerance used;
     
 public:
     /// Constructor sets gradient tolerance parameter

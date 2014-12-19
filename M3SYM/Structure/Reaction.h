@@ -21,22 +21,27 @@
 
 /// Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N is the number of products.
 
-/*! Reaction<M,N> encodes a chemical reaction between M reactants and N products. It follows the ReactionBase interface, where 
- *  many methods are defined. Most of the methods defined in Reaction<M,N> are specific implementations of virtual functions 
- *  declared in ReactionBase. Hence, to a very large degree, Reaction<M,N> is an implementation class, while ReactionBase 
- *  provides the public interface for reaction objects. The documentation of the latter should be mainly consulted when 
+/*! Reaction<M,N> encodes a chemical reaction between M reactants and N products. It 
+ *  follows the ReactionBase interface, where many methods are defined. Most of the 
+ *  methods defined in Reaction<M,N> are specific implementations of virtual functions
+ *  declared in ReactionBase. Hence, to a very large degree, Reaction<M,N> is an 
+ *  implementation class, while ReactionBase provides the public interface for reaction 
+ *  objects. The documentation of the latter should be mainly consulted when
  *  working with reactions.
  */
 template <unsigned short M, unsigned short N>
     class Reaction : public ReactionBase {
     private:
-        array<RSpecies*, M+N> _rspecies;///< An array of RSpecies objects (reactants followed by products)
+        array<RSpecies*, M+N> _rspecies; ///< An array of RSpecies objects
+                                         ///< (reactants followed by products)
     public:
         /// The main constructor:
-        /// @param species - are reactants and products put together into a single list (starting from reactants)
+        /// @param species - are reactants and products put together into a single list
+        /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
-        Reaction(initializer_list<Species*> species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
-        {
+        Reaction(initializer_list<Species*> species,
+                float rate = 0.0, bool isProtoCompartment = false)
+            : ReactionBase(rate, isProtoCompartment) {
             initializeSpecies(species);
         }
         
@@ -45,9 +50,9 @@ template <unsigned short M, unsigned short N>
         /// @param it_end - an iterator to the end of an RSpecies* container
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
-        Reaction(const InputContainer &species, float rate = 0.0, bool isProtoCompartment = false) : ReactionBase(rate, isProtoCompartment)
-        {
-            //            cout << "Reaction<M,N>(const vector<Species*> &species, float rate) called..." << endl;
+        Reaction(const InputContainer &species,
+                 float rate = 0.0, bool isProtoCompartment = false)
+            : ReactionBase(rate, isProtoCompartment) {
             initializeSpecies(species);
         }
         
@@ -65,9 +70,10 @@ template <unsigned short M, unsigned short N>
 #endif
         /// Destructor
         /// Tell Rspecies to remove this Reaction from its internal lists of reactions
-        /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-        /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-        /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+        /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+        /// potentially throwing, which in turn disables move operations by the STL
+        /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will
+        /// presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
             for(auto i=0U; i<M; ++i) _rspecies[i]->removeAsReactant(this);
@@ -75,8 +81,9 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Returns a pointer to the first element of array<RSpecies*, M+N>
-        /// The type of the pointer is RSpecies**. In conjunction with getM() and getN(),
-        /// this pointer can be used to iterate over RSpecies associated with this reaction.
+        /// The type of the pointer is RSpecies**. In conjunction with getM() and
+        /// getN(), this pointer can be used to iterate over RSpecies associated with
+        /// this reaction.
         inline virtual RSpecies** rspecies() override {return &_rspecies[0];}
         
         /// Return a list of reactions which rates would be affected if this
@@ -86,7 +93,8 @@ template <unsigned short M, unsigned short N>
             unordered_set<ReactionBase*> rxns;
             for(auto s : _rspecies){
                 
-                for(auto it = s->beginReactantReactions(); it != s->endReactantReactions(); it++) {
+                for(auto it = s->beginReactantReactions();
+                    it != s->endReactantReactions(); it++) {
                     ReactionBase* r = (*it);
                     rxns.insert(r);
                 }
@@ -100,7 +108,8 @@ template <unsigned short M, unsigned short N>
         template <typename InputContainer>
         void initializeSpecies(const InputContainer &species)
         {
-            assert(species.size()==(M+N) && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+            assert(species.size()==(M+N)
+                   && "Reaction<M,N> Ctor: The species number does not match the template M+N");
             transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             
@@ -131,8 +140,9 @@ template <unsigned short M, unsigned short N>
         {
             const Reaction<M,N> *a = this;
             const Reaction<M,N> *b = static_cast<const Reaction<M,N>*>(&other);
-            auto it_pair = mismatch(a->_rspecies.begin(),a->_rspecies.end(),b->_rspecies.begin(),
-                                         [](RSpecies* A, RSpecies* B){return A->getSpecies()==B->getSpecies();});
+            auto it_pair = mismatch(a->_rspecies.begin(),a->_rspecies.end(),
+                                    b->_rspecies.begin(),
+            [](RSpecies* A, RSpecies* B){return A->getSpecies()==B->getSpecies();});
             if(it_pair.first==a->_rspecies.end())
                 return true;
             return false;
@@ -178,7 +188,7 @@ template <unsigned short M, unsigned short N>
         inline virtual bool containsSpeciesImpl(Species *s) const override
         {
             auto it = find_if(_rspecies.begin(), _rspecies.end(),
-                                   [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
+                [s](const RSpecies *rs){return (&rs->getSpecies())==s;});
             return it!=_rspecies.end();
             
         }
@@ -220,13 +230,15 @@ template <unsigned short M, unsigned short N>
                     os << " + ";
                 ++i;
             }
-            os << ", " << "curr_rate = " << getRate() << ", a=" << computePropensity() << ", ReactionBase ptr=" << this << "\n";
+            os << ", " << "curr_rate = " << getRate() << ", a="
+               << computePropensity() << ", ReactionBase ptr=" << this << "\n";
         }
         
 #ifdef RSPECIES_SIGNALING
-        /// This method may be called after a makeStep() took place. It iterates over all
-        /// reactants and products, and call the emitSignal(delta) of the corresponding
-        /// RSpecies objects, where delta=-1 for reactants and delta=+1 for products.
+        /// This method may be called after a makeStep() took place. It iterates over
+        /// all reactants and products, and call the emitSignal(delta) of the
+        /// corresponding RSpecies objects, where delta=-1 for reactants and delta=+1
+        /// for products.
         virtual void broadcastRSpeciesSignals() 
         {
             for(auto i=0U; i<M; ++i)
@@ -244,7 +256,8 @@ template <unsigned short M, unsigned short N>
 #endif
         
         /// Implementation of  clone()
-        virtual Reaction<M,N>* cloneImpl(const SpeciesPtrContainerVector &spcv) override;
+        virtual Reaction<M,N>* cloneImpl(
+            const SpeciesPtrContainerVector &spcv) override;
     };
     
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency

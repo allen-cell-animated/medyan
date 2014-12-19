@@ -22,8 +22,10 @@
 
 using namespace mathfunc;
 
-Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2, bool creation)
-                      : _c1(c1), _c2(c2), _linkerType(linkerType), _position1(position1), _position2(position2) {
+Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
+               double position1, double position2, bool creation)
+    : _c1(c1), _c2(c2), _linkerType(linkerType),
+      _position1(position1), _position2(position2) {
                     
     //Add to linker db
     LinkerDB::instance()->addLinker(this);
@@ -32,8 +34,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
     _birthTime = tau();
         
     //Find compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                 _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                 _c2->getSecondBead()->coordinate, _position2);
     coordinate = midPointCoordinate(m1, m2, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
@@ -43,8 +47,9 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
     _cLinker = unique_ptr<CLinker>(new CLinker(_compartment));
     _cLinker->setLinker(this);
         
-    //Find species on cylinder that should be marked. If initialization, this should be done. But,
-    //if this is because of a reaction callback, it will have already been done.
+    //Find species on cylinder that should be marked. If initialization,
+    //this should be done. But, if this is because of a reaction callback,
+    //it will have already been done.
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
@@ -68,9 +73,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, d
 #endif
     
 #ifdef MECHANICS
-    _mLinker = unique_ptr<MLinker>(new MLinker(linkerType, position1, position2,
-                                   _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-                                   _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+    _mLinker = unique_ptr<MLinker>(
+        new MLinker(linkerType, position1, position2,
+                    _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+                    _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mLinker->setLinker(this);
 #endif
 }
@@ -85,8 +91,10 @@ Linker::~Linker() {
 void Linker::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                 _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                 _c2->getSecondBead()->coordinate, _position2);
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;

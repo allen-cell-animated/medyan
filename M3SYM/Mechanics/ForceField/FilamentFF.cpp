@@ -22,14 +22,16 @@
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
 
-FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting)
-{
+FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
     if (stretching == "HARMONIC")
-        _filamentInteractionVector.emplace_back(new FilamentStretching<FilamentStretchingHarmonic>());
+        _filamentInteractionVector.emplace_back(
+            new FilamentStretching<FilamentStretchingHarmonic>());
     if (bending == "HARMONIC")
-        _filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingHarmonic>());
+        _filamentInteractionVector.emplace_back(
+            new FilamentBending<FilamentBendingHarmonic>());
     else if(bending == "COSINE")
-        _filamentInteractionVector.emplace_back(new FilamentBending<FilamentBendingCosine>());
+        _filamentInteractionVector.emplace_back(
+            new FilamentBending<FilamentBendingCosine>());
 }
 
 

@@ -21,9 +21,10 @@ class BranchingPoint;
 
 /// Represents the mechanical component of a BranchingPoint.
 
-/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a BranchingPoint, and its 
- *  associated equilibrium constants. The branch is a connection between two [Cylinders](@ref cylinder), 
- *  where one resides on the mother Filament and the other is the actual branch.
+/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a 
+ *  BranchingPoint, and its associated equilibrium constants. The branch is a connection 
+ *  between two [Cylinders](@ref Cylinder), where one resides on the mother Filament and
+ *  the other is the actual branch.
  */
 class MBranchingPoint {
     

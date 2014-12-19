@@ -31,13 +31,15 @@ class Movable;
 class Reactable;
 
 
-/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers] (@ref Linker),
-/// [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref BranchingPoint).
+/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers]
+/// (@ref Linker), [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref
+/// BranchingPoint).
 
 /*! This is a class which handles all changes and information regarding the system.
- *  This class operates as a top manager and provides connections between smaller parts of the system.
- *  All creation and changes go through this class and will be redirected to lower levels. See databases for more
- *  documentation on the explicit creation of subsystem objects at initialization and during runtime.
+ *  This class operates as a top manager and provides connections between smaller parts 
+ *  of the system. All creation and changes go through this class and will be redirected 
+ *  to lower levels. See databases for more documentation on the explicit creation of 
+ *  subsystem objects at initialization and during runtime.
  */
 class SubSystem {
 public:
@@ -57,7 +59,8 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
     /// Add a single Linker during runtime
-    Linker* addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType, double position1, double position2);
+    Linker* addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType,
+                         double position1, double position2);
     /// Remove a Linker from the system
     void removeLinker(Linker* l);
     
@@ -65,7 +68,8 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
     /// Add a MotorGhost during runtime
-    MotorGhost* addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2);
+    MotorGhost* addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                                 double position1, double position2);
     /// remove a MotorGhost ghost from the system
     void removeMotorGhost(MotorGhost* m);
     
@@ -73,7 +77,8 @@ public:
     /// @param v - vector of cylinders to connect to
     void addNewBranchingPoints(vector<vector<Cylinder*>>& v, short branchType);
     /// Add a BranchingPoint during runtime
-    BranchingPoint* addNewBranchingPoint(Cylinder* c1, Cylinder* c2, short branchType, double position);
+    BranchingPoint* addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
+                                         short branchType, double position);
     /// remove a BranchingPoint from the system
     void removeBranchingPoint(BranchingPoint* b);
     

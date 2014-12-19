@@ -15,13 +15,15 @@
 
 #include "Bead.h"
 
-double BoundaryRepulsionLJ::computeEnergy(Bead* b, double r, double kRep, double screenLength)
+double BoundaryRepulsionLJ::computeEnergy(Bead* b, double r, double kRep,
+                                          double screenLength)
 {
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     return kRep * inv_r4;
 }
 
-void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm, double kRep, double screenLength) {
+void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm,
+                                        double kRep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     
@@ -30,7 +32,8 @@ void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm,
     b->force[2] +=  kRep * inv_r4 * inv_r4 * inv_r4 * 1/r *norm[2];
 }
 
-void BoundaryRepulsionLJ::computeForcesAux(Bead* b, double r, vector<double>& norm,  double kRep, double screenLength) {
+void BoundaryRepulsionLJ::computeForcesAux(Bead* b, double r, vector<double>& norm,
+                                           double kRep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
     

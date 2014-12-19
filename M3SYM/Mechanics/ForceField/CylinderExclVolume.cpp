@@ -19,7 +19,8 @@
 #include "Bead.h"
 
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(Cylinder* c1, Cylinder* c2, double d) {
+double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(
+                             Cylinder* c1, Cylinder* c2, double d) {
     
     Bead* b1 = c1->getFirstBead();
     Bead* b2 = c1->getSecondBead();
@@ -36,7 +37,8 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(Cylinder* c1, C
 }
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForces(Cylinder* c1, Cylinder* c2) {
+void CylinderExclVolume<CVolumeInteractionType>::computeForces(
+                                     Cylinder* c1, Cylinder* c2) {
 
     Bead* b1 = c1->getFirstBead();
     Bead* b2 = c1->getSecondBead();
@@ -51,9 +53,8 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(Cylinder* c1, Cyl
 
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux(Cylinder* c1, Cylinder* c2) {
-    /// Needed for Conjugated Gradient minimization;
-    
+void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux(
+                                        Cylinder* c1, Cylinder* c2) {
     Bead* b1 = c1->getFirstBead();
     Bead* b2 = c1->getSecondBead();
     Bead* b3 = c2->getFirstBead();
@@ -65,7 +66,10 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux(Cylinder* c1, 
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(Cylinder* c1, Cylinder* c2, double d);
-template void  CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(Cylinder* c1, Cylinder* c2);
-template void  CylinderExclVolume<CylinderExclVolRepulsion>::computeForcesAux(Cylinder* c1, Cylinder* c2);
+template double
+CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(Cylinder* c1, Cylinder* c2, double d);
+template void
+CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(Cylinder* c1, Cylinder* c2);
+template void
+CylinderExclVolume<CylinderExclVolRepulsion>::computeForcesAux(Cylinder* c1, Cylinder* c2);
 

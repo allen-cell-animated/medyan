@@ -20,7 +20,8 @@
 #include "Bead.h"
 
 template <class MStretchingInteractionType>
-double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(MotorGhost* m, double d) {
+double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(
+                                                MotorGhost* m, double d) {
     
     Bead* b1 = m->getFirstCylinder()->getFirstBead();
     Bead* b2 = m->getFirstCylinder()->getSecondBead();
@@ -74,7 +75,10 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux(MotorGho
 }
 
 ///Template specializations
-template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(MotorGhost* m, double d);
-template void  MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(MotorGhost* m);
-template void  MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForcesAux(MotorGhost* m);
+template double
+MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(MotorGhost* m, double d);
+template void
+MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(MotorGhost* m);
+template void
+MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForcesAux(MotorGhost* m);
 

@@ -21,7 +21,8 @@
 LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
-        _linkerInteractionVector.emplace_back(new LinkerStretching<LinkerStretchingHarmonic>());
+        _linkerInteractionVector.emplace_back(
+            new LinkerStretching<LinkerStretchingHarmonic>());
 }
 
 double LinkerFF::computeEnergy(double d) {

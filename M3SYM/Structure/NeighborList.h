@@ -38,7 +38,8 @@ class Bead;
 class NeighborList {
     
 protected:
-    unordered_map<Neighbor*, vector<Neighbor*>> _list; ///< The neighbors list, as a hash map
+    unordered_map<Neighbor*, vector<Neighbor*>>
+        _list; ///< The neighbors list, as a hash map
     float _rMax;  ///< max distance cutoff
     float _rMin;  ///< min distance cutoff
     
@@ -47,9 +48,10 @@ public:
     NeighborList(float rMax = 0.0, float rMin = 0.0) : _rMax(rMax), _rMin(rMin) {}
     
     ///Destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~NeighborList() noexcept {}
     
     /// Remove a neighbor if possible
@@ -89,13 +91,15 @@ private:
     bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
     
 public:
-    CylinderNeighborList(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false)
-                         : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
+    CylinderNeighborList(float rMax = 0.0,
+                         float rMin = 0.0, bool crossFilamentOnly = false)
+        : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void updateNeighbors(Neighbor* n);
     
-    /// The implementation of this function calls the static version, all cylinders are dynamic
+    /// The implementation of this function calls the static version, all cylinders
+    /// are dynamic
     virtual void addDynamicNeighbor(Neighbor* n) {addNeighbor(n);}
     virtual void removeDynamicNeighbor(Neighbor* n);
     
@@ -108,7 +112,7 @@ public:
 class BoundaryElementNeighborList : public NeighborList {
     
 public:
-    BoundaryElementNeighborList(float rMax, float rMin) : NeighborList(rMax, rMin) {}
+    BoundaryElementNeighborList(float rMax, float rMin): NeighborList(rMax, rMin) {}
 
     virtual void addNeighbor(Neighbor* n);
     virtual void updateNeighbors(Neighbor* n);

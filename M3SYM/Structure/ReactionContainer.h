@@ -41,7 +41,7 @@ public:
 /// using vector<unique_ptr<ReactionBase>> as the container implementation
 class ReactionPtrContainerVector : public  ReactionPtrContainerIFace {
 protected:
-    vector<unique_ptr<ReactionBase>> _reactions;  ///Reaction ptr container
+    vector<unique_ptr<ReactionBase>> _reactions;  ///< Reaction ptr container
 public:
     
     /// Default constructor
@@ -53,7 +53,8 @@ public:
     /// Assignment not allowed
     ReactionPtrContainerVector& operator=(ReactionPtrContainerVector &) = delete;
 
-    friend void swap(ReactionPtrContainerVector& first, ReactionPtrContainerVector& second) // nothrow
+    friend void swap(ReactionPtrContainerVector& first,
+                     ReactionPtrContainerVector& second) // nothrow
     {
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
@@ -73,25 +74,25 @@ public:
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addReaction( Args&& ...args )
     {
-        _reactions.push_back(unique_ptr<ReactionBase>( new Reaction<M,N>( forward<Args>(args)...) ));
+        _reactions.push_back(unique_ptr<ReactionBase>(
+            new Reaction<M,N>( forward<Args>(args)...) ));
         return _reactions.back().get();
     }
     
     /// Add a general reaction class to this container
-    template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
+    template<template <unsigned short M, unsigned short N> class RXN,
+                       unsigned short M, unsigned short N>
     ReactionBase* add(initializer_list<Species*> species, float rate)
     {
-        _reactions.push_back(unique_ptr<ReactionBase>( new RXN<M,N>(species,rate) ));
+        _reactions.push_back(unique_ptr<ReactionBase>( new RXN<M,N>(species,rate)));
         return _reactions.back().get();
     }
     
     /// Remove a reaction from this container
     virtual void removeReaction (ReactionBase* R) {
         auto child_iter = find_if(_reactions.begin(),_reactions.end(),
-                                       [R](const unique_ptr<ReactionBase> &element)
-                                       {
-                                           return element.get()==R ? true : false;
-                                       });
+                [R](const unique_ptr<ReactionBase> &element) {
+                    return element.get()==R ? true : false; });
         if(child_iter!=_reactions.end()) {
             _reactions.erase(child_iter);
         }
@@ -131,8 +132,8 @@ public:
         auto it = find_if(_reactions.begin(),_reactions.end(),
                                [&r](const unique_ptr<ReactionBase> &element)
                                {return r==(*element);});
-        if(it==_reactions.end())
-            throw out_of_range("Reaction::findSimilarReaction(): The analogous Reaction was not found");
+        if(it==_reactions.end()) throw out_of_range(
+        "Reaction::findSimilarReaction(): The analogous Reaction was not found");
         return it->get();
     }
 };

@@ -33,47 +33,17 @@ public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
     
     /// Compute the energy using all available force fields
-    double computeEnergy(double d) {
-        
-        double energy = 0;
-        for(auto &f : _forceFields)
-            energy += f->computeEnergy(d);
-        
-        //if energy is infinity, exit ungracefully.
-        if(energy == numeric_limits<double>::infinity()) {
-            cout <<
-            "Energy became infinite. Try adjusting equilibration step size." << endl;
-            exit(EXIT_FAILURE);
-        }
-        return energy;
-    }
+    double computeEnergy(double d);
     
     /// Compute the forces of all force fields
-    void computeForces() {
-        resetForces();
-        for(auto &f : _forceFields) f->computeForces();
-    }
-    
+    void computeForces();
     /// Compute the forcesAux of all force fields
-    void computeForcesAux() {
-        resetForcesAux();
-        for(auto &f : _forceFields)
-            f->computeForcesAux();
-    }
+    void computeForcesAux();
     
     /// Reset the forces of all objects
-    void resetForces() {
-        
-        for(auto it: *BeadDB::instance())
-            it->force.assign (3, 0); //Set force to zero;
-    }
-    
+    void resetForces();
     /// Reset the forcesAux of all objects
-    void resetForcesAux() {
-        
-        for(auto it: *BeadDB::instance())
-            it->forceAux.assign (3, 0); //Set forceAux to zero;
-    }
+    void resetForcesAux();
 };
 
 #endif

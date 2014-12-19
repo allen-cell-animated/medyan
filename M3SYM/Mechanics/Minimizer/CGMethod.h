@@ -24,9 +24,10 @@ class ForceFieldManager;
 /// For performing a conjugate gradient minimization method
 
 /*!
- *  CGMethod is an abstract class that contains methods for conjugate gradient minimization. It has functions
- *  for various line search techniques, including golden section, backtracking, and quadratic line search.
- *  This base class also contains parameters for tolerance criterion and other helpful parameters.
+ *  CGMethod is an abstract class that contains methods for conjugate gradient 
+ *  minimization. It has functions for various line search techniques, including golden 
+ *  section, backtracking, and quadratic line search. This base class also contains 
+ *  parameters for tolerance criterion and other helpful parameters.
  */
 class CGMethod {
 
@@ -34,14 +35,17 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned, used in all methods
-    const double LAMBDAMAX = 1.0; ///< Max lambda that can be returned, used in all methods
-    const double MAXDIST = 0.1; ///< Max distance parameter, used only in backtracking line search
+    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned,
+                                    ///< used in all methods
+    const double LAMBDAMAX = 1.0;   ///< Max lambda that can be returned,
+                                    ///<used in all methods
+    const double MAXDIST = 0.1;     ///< Max distance parameter,
+                                    ///< used only in backtracking line search
     //@}
     
     //@{
     /// Parameter used in backtracking line search
-    const double LAMBDAREDUCE = 0.5; ///< Lambda reduction parameter for backtracking
+    const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
     const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
     //@}
     
@@ -58,8 +62,9 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all linesearch methods
-    const double ENERGYTOL = 1e-6; ///< Energy tolerance
+    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all
+                                     ///< linesearch methods
+    const double ENERGYTOL = 1e-6;   ///< Energy tolerance
     
     //@{
     /// For use in minimization

@@ -65,7 +65,8 @@ public:
 
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
-    /// @param compartments - List of compartments that are within range. This will be populated by the function
+    /// @param compartments - List of compartments that are within range. This will be
+    /// populated by the function
     static void findCompartments(const vector<double>& coords, Compartment* ccheck,
                                  double dist, vector<Compartment*>& compartments);
     

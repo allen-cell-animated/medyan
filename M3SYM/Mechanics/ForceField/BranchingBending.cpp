@@ -65,6 +65,9 @@ void BranchingBending<BBendingInteractionType>::computeForcesAux(BranchingPoint*
 
 
 ///Template specializations
-template double BranchingBending<BranchingBendingCosine>::computeEnergy(BranchingPoint* b, double d);
-template void  BranchingBending<BranchingBendingCosine>::computeForces(BranchingPoint* b);
-template void  BranchingBending<BranchingBendingCosine>::computeForcesAux(BranchingPoint* b);
+template double
+BranchingBending<BranchingBendingCosine>::computeEnergy(BranchingPoint* b, double d);
+template void
+BranchingBending<BranchingBendingCosine>::computeForces(BranchingPoint* b);
+template void
+BranchingBending<BranchingBendingCosine>::computeForcesAux(BranchingPoint* b);

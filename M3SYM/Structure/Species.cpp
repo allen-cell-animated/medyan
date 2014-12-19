@@ -25,7 +25,8 @@ SpeciesNamesDB* SpeciesNamesDB::Instance() {
 }
 
 #ifdef RSPECIES_SIGNALING
-boost::signals2::connection Species::connect(function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
+boost::signals2::connection Species::connect(
+    function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
 {
     if (!isSignaling())
         startSignaling(); 

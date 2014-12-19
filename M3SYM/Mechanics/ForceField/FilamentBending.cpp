@@ -20,13 +20,13 @@
 #include "Cylinder.h"
 
 template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, double d)
-{
+double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, double d) {
     if (f->getCylinderVector().size()>1){
     double U = 0.0;
     
         if (d == 0.0){
-            for ( auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
+            for ( auto it = f->getCylinderVector().begin()+1;
+                       it != f->getCylinderVector().end(); it++){
                 
                 auto it2 = it - 1;
                 Bead* b1 = (*it2)->getFirstBead();
@@ -40,7 +40,8 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
         }
         else {
             int index = 0;
-            for ( auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
+            for ( auto it = f->getCylinderVector().begin()+1;
+                       it != f->getCylinderVector().end(); it++){
                 
                 auto it2 = it - 1;
                 Bead* b1 = (*it2)->getFirstBead();
@@ -63,7 +64,8 @@ void FilamentBending<FBendingInteractionType>::computeForces(Filament* f)
 {
     
     if (f->getCylinderVector().size()>1){
-        for (auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
+        for (auto it = f->getCylinderVector().begin()+1;
+                  it != f->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;
             Bead* b1 = (*it2)->getFirstBead();
@@ -81,7 +83,8 @@ template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f)
 {
     if (f->getCylinderVector().size()>1){
-        for (auto it = f->getCylinderVector().begin()+1; it != f->getCylinderVector().end(); it++){
+        for (auto it = f->getCylinderVector().begin()+1;
+                  it != f->getCylinderVector().end(); it++){
             
             auto it2 = it - 1;
             Bead* b1 = (*it2)->getFirstBead();
@@ -96,9 +99,15 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux(Filament* f)
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(Filament* f, double d);
-template void  FilamentBending<FilamentBendingHarmonic>::computeForces(Filament* f);
-template void  FilamentBending<FilamentBendingHarmonic>::computeForcesAux(Filament* f);
-template double FilamentBending<FilamentBendingCosine>::computeEnergy(Filament* f, double d);
-template void  FilamentBending<FilamentBendingCosine>::computeForces(Filament* f);
-template void  FilamentBending<FilamentBendingCosine>::computeForcesAux(Filament* f);
+template double
+FilamentBending<FilamentBendingHarmonic>::computeEnergy(Filament* f, double d);
+template void
+FilamentBending<FilamentBendingHarmonic>::computeForces(Filament* f);
+template void
+FilamentBending<FilamentBendingHarmonic>::computeForcesAux(Filament* f);
+template double
+FilamentBending<FilamentBendingCosine>::computeEnergy(Filament* f, double d);
+template void
+FilamentBending<FilamentBendingCosine>::computeForces(Filament* f);
+template void
+FilamentBending<FilamentBendingCosine>::computeForcesAux(Filament* f);

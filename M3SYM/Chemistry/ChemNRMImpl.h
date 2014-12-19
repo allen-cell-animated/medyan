@@ -102,7 +102,8 @@ private:
                    ///< represents (or tracks)
     double _tau;   ///< tau for this reaction for the Gibson-Bruck NRM algoritm
 private:
-    // Think of PQNode as a simple C-like structure (i.e. no methods), but that is private to ChemNRMImpl and RNodeNRM
+    // Think of PQNode as a simple C-like structure (i.e. no methods),
+    // but that is private to ChemNRMImpl and RNodeNRM
     friend class ChemNRMImpl;
     friend class RNodeNRM;
 };
@@ -111,11 +112,13 @@ private:
 /// Reaction Node for the Next Reaction Method.
 
 /*! 
- *  RNodeNRM manages a single chemical reaction within the NRM algorithm. It has a pointer to the PQ element
- *  containing the Reaction via a handle_t object (and hence can modify both the corresponding PQNode, such as PQNode's tau 
- *  or the underlying Reaction instance). RNodeNRM can recompute tau if needed and has auxiliary methods for computing 
- *  reaction's propensity. When the propensity drops to zero, the RNodeNRM can execute the passivateReaction() method. 
- *  Alternatively, passivated RNodeNRM can be activated via activateReaction(). The main part of the NRM algoritm is 
+ *  RNodeNRM manages a single chemical reaction within the NRM algorithm. It has a 
+ *  pointer to the PQ element containing the Reaction via a handle_t object (and hence 
+ *  can modify both the corresponding PQNode, such as PQNode's tau or the underlying 
+ *  Reaction instance). RNodeNRM can recompute tau if needed and has auxiliary method
+ *  for computing reaction's propensity. When the propensity drops to zero, the RNodeNRM 
+ *  can execute the passivateReaction() method. Alternatively, passivated RNodeNRM can 
+ *  be activated via activateReaction(). The main part of the NRM algoritm is
  *  implemented in the makeStep() method. 
  */
 class RNodeNRM : public RNode {

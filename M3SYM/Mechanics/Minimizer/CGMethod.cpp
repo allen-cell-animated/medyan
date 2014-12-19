@@ -84,7 +84,8 @@ void CGMethod::printForces()
     for(auto it: *BeadDB::instance()) {
         
 		for (int i = 0; i<3; i++)
-            cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "<<(*it).forceAux[i]<<endl;
+            cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "
+                 <<(*it).forceAux[i]<<endl;
 	}
     cout << "End of Print Forces" << endl;
 }

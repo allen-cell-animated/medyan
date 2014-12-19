@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Represents an interaction keeping BranchingPoint angle at theta0 (~270 for Arp2/3)
+/// Represents an interaction keeping BranchingPoint angle (~270 for Arp2/3)
 template <class BBendingInteractionType>
 class BranchingBending : public BranchingInteractions {
     

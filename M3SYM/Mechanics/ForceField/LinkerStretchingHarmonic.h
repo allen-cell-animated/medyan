@@ -23,12 +23,19 @@ class Bead;
 class LinkerStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
-    double energy(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength, double d);
-    void forces(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double position1, double position2, double kStretch, double eqLength);
+    double energy(Bead*, Bead*, Bead*, Bead*,
+                  double position1, double position2,
+                  double kStretch, double eqLength);
+    double energy(Bead*, Bead*, Bead*, Bead*,
+                  double position1, double position2,
+                  double kStretch, double eqLength, double d);
+    
+    void forces(Bead*, Bead*, Bead*, Bead*,
+                double position1, double position2,
+                double kStretch, double eqLength);
+    void forcesAux(Bead*, Bead*, Bead*, Bead*,
+                   double position1, double position2,
+                   double kStretch, double eqLength);
 };
-
-
 
 #endif 

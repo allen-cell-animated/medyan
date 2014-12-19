@@ -23,10 +23,12 @@ class Linker;
 
 /// Represents the mechanical component of a Linker.
 
-/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a Linker, and its associated equilibrium constants.
- *  Initial length of a Linker is determinated by the condition of zero initial stress, i.e., it calculated within the constructor
- *  at initiation. A Linker heads positions on a segment (between two consecutive beads on a Filament)
- *  determined by two numbers (double from 0 to 1) position1 and position2.
+/*! The class describes interaction between 4 [Beads](@ref Bead) connected by a Linker,
+ *  and its associated equilibrium constants. Initial length of a Linker is determined
+ *  by the condition of zero initial stress, i.e., it calculated within the constructor
+ *  at initiation. A Linker heads positions on a segment (between two consecutive beads 
+ *  on a Filament) determined by two numbers (double from 0 to 1) position1 and 
+ *  position2.
  */
 class MLinker {
     

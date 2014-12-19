@@ -30,7 +30,8 @@ private:
     
 public:
     /// Constructor, intializes the neighbor list needed
-    BoundaryInteractions() : BoundaryElementNLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
+    BoundaryInteractions()
+        : BoundaryElementNLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
     
     /// Compute energy of this interaction
     virtual double computeEnergy(BoundaryElement*, Bead*, double d) = 0;

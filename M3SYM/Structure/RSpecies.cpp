@@ -22,9 +22,8 @@
 
 RSpecies::~RSpecies(){
 
-    assert((_as_reactants.empty() and _as_products.empty()) && "Major bug: RSpecies should not contain Reactions when being destroyed.");
-    //Should not throw an exception from a destructor - that would be undefined behavior
-
+    assert((_as_reactants.empty() and _as_products.empty())
+    && "Major bug: RSpecies should not contain Reactions when being destroyed.");
 #ifdef RSPECIES_SIGNALING
     if(_signal!=nullptr)
         delete _signal;

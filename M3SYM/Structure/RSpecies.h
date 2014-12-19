@@ -41,34 +41,45 @@ typedef vector<ReactionBase*>::const_iterator vr_const_iterator;
 typedef vector<RSpecies*>::iterator vrsp_iterator; 
 typedef vector<RSpecies*>::const_iterator vrsp_const_iterator; 
 
-/// This is a RSpecies signal object that can be used to signal when the copy number changes
+/// This is a RSpecies signal object that can be used to signal when the
+/// copy number changes
 typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSignal;
 
-/// Represents the reactive aspect of chemical molecules. It tracks their copy number and can be used in [Reactions](@ref Reaction).
+/// Represents the reactive aspect of chemical molecules. It tracks their copy
+/// number and can be used in [Reactions](@ref Reaction).
 
-/*!  This class represents the reactivity of chemical species. The name RSpecies stems from reacting species.
- *   RSpecies tracks the copy number of molecules and the [Reactions](@ref Reaction)
- *   in which it is involed (@see Reaction). 
- *   @note Each intantiation of RSpecies is unique, and hence, cannot be neither copied nor moved (C++11). 
- *   This has significant implications - e.g., RSpecies cannot be used in vector<RSpecies>. Instead, 
- *   one should use either vector<RSpecies*> if not owning the RSpecies pointers, or 
- *   vector<unique_ptr<RSpecies>> if owning the RSpecies pointers. A special allocator can 
- *   be written such that dynamically allocated RSpecies (through new), are arranged contigiously in memory.
+/*!  This class represents the reactivity of chemical species. The name RSpecies stems
+ *   from reacting species. RSpecies tracks the copy number of molecules and the 
+ *   [Reactions](@ref Reaction) in which it is involed (@see Reaction).
+ *   @note Each intantiation of RSpecies is unique, and hence, cannot be neither copied
+ *   nor moved (C++11). This has significant implications - e.g., RSpecies cannot be 
+ *   used in vector<RSpecies>. Instead, one should use either vector<RSpecies*> if not 
+ *   owning the RSpecies pointers, or vector<unique_ptr<RSpecies>> if owning the 
+ *   RSpecies pointers. A special allocator can be written such that dynamically 
+ *   allocated RSpecies (through new), are arranged contigiously in memory.
  */
 class RSpecies {
     friend Species;
-    /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call        
+    /// Reactions calls addAsReactant(), removeAsReactant() - which other classes
+    /// should not call
 private: //Variables
-    vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Reactant
-    vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions](@ref Reaction) where this RSpecies is a Product
+    vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions]
+                                               ///< (@ref Reaction) where this RSpecies
+                                               ///< is a Reactant
+    vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions]
+                                              ///< (@ref Reaction) where this RSpecies
+                                              ///< is a Product
     Species& _species; ///< reference to the **parent** Species object
     species_copy_t _n; ///< Current copy number of this RSpecies
 #ifdef TRACK_UPPER_COPY_N
-    species_copy_t _ulim; ///< Upper limit for the copy number, afterwards all reactions leading to further accum. are turned off
+    species_copy_t _ulim; ///< Upper limit for the copy number, afterwards all
+                          ///< reactions leading to further accum. are turned off
 #endif
 #ifdef RSPECIES_SIGNALING
-    RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal associated with change of n of
-#endif                                   ///< this RSpecies (usually when a single step of this Reaction occurs)
+    RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal
+                                         ///< associated with change of n of
+#endif                                   ///< this RSpecies (usually when a single step
+                                         ///< of this Reaction occurs)
     
 public:
     /// Constructors 
@@ -85,13 +96,16 @@ public:
 #endif
     }
     
-    /// deleted copy constructor - each RSpecies is uniquely created by the parent Species
+    /// deleted copy constructor - each RSpecies is uniquely created by the parent
+    /// Species
     RSpecies(const RSpecies &r) = delete;
     
-    /// deleted move constructor - each RSpecies is uniquely created by the parent Species
+    /// deleted move constructor - each RSpecies is uniquely created by the parent
+    /// Species
     RSpecies(RSpecies &&r) = delete;
     
-    /// deleted assignment operator - each RSpecies is uniquely created by the parent Species
+    /// deleted assignment operator - each RSpecies is uniquely created by the parent
+    /// Species
     RSpecies& operator=(RSpecies&) = delete;
            
     /// Sets the copy number for this RSpecies. 
@@ -108,8 +122,9 @@ public:
     species_copy_t getUpperLimitForN() const {return _ulim;}
 #endif
     
-    /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a "callback"-like method
-    /// to activated previously passivated [Reactions](@ref Reaction), where this RSpecies is a Reactant.
+    /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a
+    /// "callback"-like method to activated previously passivated [Reactions](@ref
+    /// Reaction), where this RSpecies is a Reactant.
     virtual inline void up() {
         _n+=1;
 #ifdef TRACK_ZERO_COPY_N
@@ -122,8 +137,9 @@ public:
 #endif
     }
     
-    /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a "callback"-like method 
-    /// to passivate [Reactions](@ref Reaction), where this RSpecies is a Reactant.
+    /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a
+    /// "callback"-like method to passivate [Reactions](@ref Reaction), where this
+    /// RSpecies is a Reactant.
     virtual inline void down() {
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
@@ -179,40 +195,47 @@ public:
         
     }
 
-    /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction) where this RSpecies is involved as a 
-    /// Reactant. Usually, the Reaction was first passivated, for example if the RSpecies copy number of 
-    /// one of the reactants dropeed to zero. This attempt may not succeed if there are still other
-    /// reactants in the same Reaction with zero copy count.
+    /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction)
+    /// where this RSpecies is involved as a Reactant. Usually, the Reaction was first
+    /// passivated, for example if the RSpecies copy number of one of the reactants
+    /// dropeed to zero. This attempt may not succeed if there are still other reactants
+    /// in the same Reaction with zero copy count.
     void activateAssocReactantReactions();
     
-    /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction) where this RSpecies is involved as a
-    /// Product. Usually, the Reaction was first passivated, for example if the RSpecies copy number of
-    /// one of the reactants went up to max_ulim. 
+    /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction)
+    /// where this RSpecies is involved as a Product. Usually, the Reaction was first
+    /// passivated, for example if the RSpecies copy number of one of the reactants went
+    /// up to max_ulim.
     void activateAssocProductReactions();
     
-    /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the reactants.
+    /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among
+    /// the reactants.
     void passivateAssocReactantReactions();
     
-    /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among the products.
+    /// \internal Passivates all [Reactions](@ref Reaction) where this RSpecies is among
+    /// the products.
     void passivateAssocProductReactions();
            
 #ifdef RSPECIES_SIGNALING
     /// Set the signaling behavior of this RSpecies
     void startSignaling();
     
-    /// Destroy the signal associated with this RSpecies; all associated slots will be destroyed
-    /// @note To start signaling again, startSignaling() needs to be called
+    /// Destroy the signal associated with this RSpecies; all associated slots will be
+    /// destroyed @note To start signaling again, startSignaling() needs to be called
     void stopSignaling();
 #endif
     
 public:
-     /// It is required that all [Reactions](@ref Reaction) associated with this RSpecies are destructed before this RSpecies is destructed. 
-    /// Most of the time, this will occur naturally. If not, an assertion will ungracefully terminate the program.
+    /// It is required that all [Reactions](@ref Reaction) associated with this
+    /// RSpecies are destructed before this RSpecies is destructed. Most of the time,
+    /// this will occur naturally. If not, an assertion will ungracefully terminate the
+    /// program.
     ~RSpecies();
     
 #ifdef RSPECIES_SIGNALING
     /// Broadcasts signal indicating that the copy number of this RSpecies has changed
-    /// This method should usually called by the code which runs the chemical dynamics (i.e. Gillespie-like algorithm)
+    /// This method should usually called by the code which runs the chemical dynamics
+    /// (i.e. Gillespie-like algorithm)
     inline void emitSignal(int delta) {
         if(isSignaling())
             (*_signal)(this, delta);
@@ -234,12 +257,12 @@ public:
     /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
     string getFullName() const;
             
-    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
-    /// is involved as a Reactant
+    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref
+    /// Reaction) where this RSpecies is involved as a Reactant
     inline vector<ReactionBase *>& ReactantReactions(){return _as_reactants;}
     
-    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref Reaction) where this RSpecies 
-    /// is involved as a Product
+    /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref
+    /// Reaction) where this RSpecies is involved as a Product
     inline vector<ReactionBase *>& ProductReactions(){return _as_products;}
     
     /// Return vector<ReactionBase *>::iterator, which points to the beginning of all 
@@ -268,10 +291,11 @@ public:
 
 /// A constant RSpecies whose copy number does not change.
 /*!
- *  The RSpeciesConst class represents a RSpecies that does not change copy number upon reacting
- *  This is used for SpeciesDiffusingor SpeciesBulk species, whose copy numbers are constant throughout 
- *  the duration of the chemical simulation. Their constant qualifier is set at the Species construction, 
- *  where a RSpeciesConst object is created in place of a typical RSpecies.
+ *  The RSpeciesConst class represents a RSpecies that does not change copy number upon 
+ *  reacting This is used for SpeciesDiffusing or SpeciesBulk species, whose copy 
+ *  numbers are constant throughout the duration of the chemical simulation. Their
+ *  constant qualifier is set at the Species construction, where a RSpeciesConst object 
+ *  is created in place of a typical RSpecies.
  */
 class RSpeciesConst : public RSpecies {
     
@@ -280,13 +304,16 @@ public:
     /// @param parent - the Species object to which this RSpeciesConst belongs
     /// @param n - copy number, will not change
     RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) : RSpecies(parent, n, ulim) {}
-    /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent Species
+    /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent
+    /// Species
     RSpeciesConst(const RSpeciesConst &r) = delete;
     
-    /// deleted move constructor - each RSpeciesConst is uniquely created by the parent Species
+    /// deleted move constructor - each RSpeciesConst is uniquely created by the parent
+    /// Species
     RSpeciesConst(RSpeciesConst &&r) = delete;
     
-    /// deleted assignment operator - each RSpeciesConst is uniquely created by the parent Species
+    /// deleted assignment operator - each RSpeciesConst is uniquely created by the
+    /// parent Species
     RSpeciesConst& operator=(RSpeciesConst&) = delete;
     
     //@{

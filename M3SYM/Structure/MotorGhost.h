@@ -30,8 +30,9 @@ class Cylinder;
 /// A container to store a MMotorGhost and CMotorGhost.
 /*!
  * MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
- * Upon intialization, both of these components are created. Extending the Movable and Reactable
- * classes, the MotorGhost can update its position and reactions according to mechanical equilibration.
+ * Upon intialization, both of these components are created. Extending the Movable and
+ * Reactable classes, the MotorGhost can update its position and reactions according to 
+ * mechanical equilibration.
  */
 class MotorGhost : public Composite, public Movable, public Reactable {
    
@@ -73,7 +74,9 @@ public:
     //@}
     
     /// Set chem motor ghost
-    void setCMotorGhost(CMotorGhost* cMotorGhost) {_cMotorGhost = unique_ptr<CMotorGhost>(cMotorGhost);}
+    void setCMotorGhost(CMotorGhost* cMotorGhost) {
+        _cMotorGhost = unique_ptr<CMotorGhost>(cMotorGhost);
+    }
     /// Get chem motor ghost
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}
     

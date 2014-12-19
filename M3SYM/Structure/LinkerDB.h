@@ -24,7 +24,8 @@ class Linker;
 /// A database for all [Linkers](@ref Linker) in the system.
 /*!
  *   This LinkerDB inherits from list and manage all creations and removing of
- *   [Linkers](@ref Linker) objects, as well as some standard list functions and iterators.
+ *   [Linkers](@ref Linker) objects, as well as some standard list functions 
+ *   and iterators.
  */
 class LinkerDB: private list<Linker*>
 {

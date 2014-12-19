@@ -26,7 +26,8 @@ private:
     
 public:
     /// Constructor, adds a cylinder neighbor list to the database
-    CylinderNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
+    CylinderNLContainer(float rMax = 0.0,
+                        float rMin = 0.0, bool crossFilamentOnly = false) {
         
         _neighborList = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
         NeighborListDB::instance()->addNeighborList(_neighborList);

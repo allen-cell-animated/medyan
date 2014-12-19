@@ -33,7 +33,8 @@
 
 using namespace mathfunc;
 
-Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direction) {
+Filament::Filament(SubSystem* s, vector<double>& position,
+                                 vector<double>& direction) {
    
     _subSystem = s;
     
@@ -43,7 +44,8 @@ Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direc
  
     //create beads
     Bead* b1 = new Bead(position, 0);
-    auto pos2 = nextPointProjection(position, SystemParameters::Geometry().cylinderSize, direction);
+    auto pos2 = nextPointProjection(
+        position,SystemParameters::Geometry().cylinderSize, direction);
     Bead* b2 = new Bead(pos2, 1);
     
     //create cylinder
@@ -52,7 +54,8 @@ Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direc
 }
 
 
-Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads, string projectionType){
+Filament::Filament(SubSystem* s, vector<vector<double> >& position,
+                   int numBeads, string projectionType) {
 
     _subSystem = s;
     
@@ -63,11 +66,12 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads
     vector<vector<double> > tmpBeadsCoord;
     
     //create a projection of beads
-    if(projectionType == "STRAIGHT") tmpBeadsCoord = straightFilamentProjection(position, numBeads);
-    else if(projectionType == "ZIGZAG") tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
-    else if(projectionType == "ARC") tmpBeadsCoord = arcFilamentProjection(position, numBeads);
-    
-    else {}
+    if(projectionType == "STRAIGHT")
+        tmpBeadsCoord = straightFilamentProjection(position, numBeads);
+    else if(projectionType == "ZIGZAG")
+        tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
+    else if(projectionType == "ARC")
+        tmpBeadsCoord = arcFilamentProjection(position, numBeads);
    
     //create beads
     auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
@@ -77,20 +81,17 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position, int numBeads
     Cylinder* c0 = new Cylinder(this, b1, b2, 0);
     _cylinderVector.push_back(c0);
     
-    for (int i = 2; i<numBeads; i++) {
-        extendFront(tmpBeadsCoord[i]);  //Create n beads and n cylinders: x---x----x...x----x----o.
-    }
+    for (int i = 2; i<numBeads; i++)
+        extendFront(tmpBeadsCoord[i]);
 }
 
 Filament::~Filament() {
     
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
-        //remove first bead
         delete c->getFirstBead();
         //remove second bead if last
         if(c->last()) delete c->getSecondBead();
-        //remove cylinder
         delete c;
     }
 }
@@ -105,7 +106,8 @@ void Filament::extendFront(vector<double>& coordinates) {
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
-    auto newBeadCoords = nextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+    auto newBeadCoords = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() + 1);
     
@@ -125,7 +127,8 @@ void Filament::extendBack(vector<double>& coordinates) {
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
-    auto newBeadCoords = nextPointProjection(b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+    auto newBeadCoords = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() - 1);
     
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1);
@@ -135,86 +138,72 @@ void Filament::extendBack(vector<double>& coordinates) {
 
 //extend front at runtime
 void Filament::extendFront() {
-    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  // Delete later
+    Cylinder* cBack = _cylinderVector.back();
+    int lastPositionFilament = cBack->getPositionFilament();
     
-    else{
-        Cylinder* cBack = _cylinderVector.back();
-        int lastPositionFilament = cBack->getPositionFilament();
-        
-        Bead* b1 = cBack->getFirstBead();
-        Bead* b2 = cBack->getSecondBead();
-        
-        //move last bead of last cylinder forward
-        auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
-        auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
-        
-        //create a new bead in same place as b2
-        Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
-        
-        Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
-        _cylinderVector.back()->setLast(false);
-        _cylinderVector.push_back(c0);
-        _cylinderVector.back()->setLast(true);
-        
-        _deltaPlusEnd++;
-    }
+    Bead* b1 = cBack->getFirstBead();
+    Bead* b2 = cBack->getSecondBead();
+    
+    //move last bead of last cylinder forward
+    auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
+    auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+    
+    //create a new bead in same place as b2
+    Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
+    
+    Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
+    _cylinderVector.back()->setLast(false);
+    _cylinderVector.push_back(c0);
+    _cylinderVector.back()->setLast(true);
+    
+    _deltaPlusEnd++;
 }
 
 //extend back at runtime
 void Filament::extendBack() {
-    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}
-    
-    else{
-        Cylinder* cFront = _cylinderVector.front();
-        int lastPositionFilament = cFront->getPositionFilament();
-        
-        Bead* b2 = cFront->getFirstBead();
-        Bead* b1 = cFront->getSecondBead();
-        
-        //move last bead of last cylinder forward
-        auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
-        auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
-        
-        //create a new bead in same place as b2
-        Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
 
-        Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1, false, true);
-        _cylinderVector.push_front(c0);
-        
-        _deltaMinusEnd++;
-    }
+    Cylinder* cFront = _cylinderVector.front();
+    int lastPositionFilament = cFront->getPositionFilament();
+    
+    Bead* b2 = cFront->getFirstBead();
+    Bead* b1 = cFront->getSecondBead();
+    
+    //move last bead of last cylinder forward
+    auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
+    auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+    
+    //create a new bead in same place as b2
+    Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
+
+    Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1, false, true);
+    _cylinderVector.push_front(c0);
+    
+    _deltaMinusEnd++;
 }
 
 //Depolymerize front at runtime
 void Filament::retractFront() {
-    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  // Delete later
     
-    else {
-        Cylinder* retractionCylinder = _cylinderVector.back();
-        _cylinderVector.pop_back();
-        
-        delete retractionCylinder->getSecondBead();
-        delete retractionCylinder;
-        
-        _cylinderVector.back()->setLast(true);
+    Cylinder* retractionCylinder = _cylinderVector.back();
+    _cylinderVector.pop_back();
+    
+    delete retractionCylinder->getSecondBead();
+    delete retractionCylinder;
+    
+    _cylinderVector.back()->setLast(true);
 
-        _deltaPlusEnd--;
-    }
-    
+    _deltaPlusEnd--;
 }
 
 void Filament::retractBack() {
-    if (_cylinderVector.size()<1) {cout<<"ERROR FILAMENT TO SHORT"<<endl;}  // Delete later
     
-    else {
-        Cylinder* retractionCylinder = _cylinderVector.front();
-        _cylinderVector.pop_front();
-        
-        delete retractionCylinder->getFirstBead();
-        delete retractionCylinder;
-        
-        _deltaMinusEnd--;
-    }
+    Cylinder* retractionCylinder = _cylinderVector.front();
+    _cylinderVector.pop_front();
+    
+    delete retractionCylinder->getFirstBead();
+    delete retractionCylinder;
+    
+    _deltaMinusEnd--;
 }
 
 void Filament::polymerizeFront() {
@@ -225,12 +214,14 @@ void Filament::polymerizeFront() {
     Bead* b2 = cBack->getSecondBead();
     
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
-    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    b2->coordinate = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
-    //increase length, update
+    //increase eq length, update
 #ifdef MECHANICS
-    cBack->getMCylinder()->setEqLength(cBack->getMCylinder()->getEqLength() +
-                                       SystemParameters::Geometry().monomerSize);
+    cBack->getMCylinder()->setEqLength(
+        cBack->getMCylinder()->getEqLength() +
+        SystemParameters::Geometry().monomerSize);
 #endif
 }
 
@@ -242,12 +233,14 @@ void Filament::polymerizeBack() {
     Bead* b1 = cFront->getSecondBead();
 
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
-    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    b2->coordinate = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
 
-    //increase length
+    //increase eq length, update
 #ifdef MECHANICS
-    cFront->getMCylinder()->setEqLength(cFront->getMCylinder()->getEqLength() +
-                                        SystemParameters::Geometry().monomerSize);
+    cFront->getMCylinder()->setEqLength(
+        cFront->getMCylinder()->getEqLength() +
+        SystemParameters::Geometry().monomerSize);
 #endif
 }
 
@@ -259,12 +252,14 @@ void Filament::depolymerizeFront() {
     Bead* b2 = cBack->getSecondBead();
 
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
-    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    b2->coordinate = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
-    //increase length, update
+    //decrease eq length, update
 #ifdef MECHANICS
-    cBack->getMCylinder()->setEqLength(cBack->getMCylinder()->getEqLength() -
-                                       SystemParameters::Geometry().monomerSize);
+    cBack->getMCylinder()->setEqLength(
+        cBack->getMCylinder()->getEqLength() -
+        SystemParameters::Geometry().monomerSize);
 #endif
 }
 
@@ -276,12 +271,14 @@ void Filament::depolymerizeBack() {
     Bead* b1 = cFront->getSecondBead();
     
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
-    b2->coordinate = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+    b2->coordinate = nextPointProjection(
+        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
     
-    //increase length
+    //decrease eq length, update
 #ifdef MECHANICS
-    cFront->getMCylinder()->setEqLength(cFront->getMCylinder()->getEqLength() -
-                                        SystemParameters::Geometry().monomerSize);
+    cFront->getMCylinder()->setEqLength(
+        cFront->getMCylinder()->getEqLength() -
+        SystemParameters::Geometry().monomerSize);
 #endif
 }
 
@@ -291,7 +288,8 @@ void Filament::printChemComposition() {
     }
 }
 
-vector<vector<double> > Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::straightFilamentProjection(
+                       vector<vector<double>>& v, int numBeads) {
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -312,7 +310,8 @@ vector<vector<double> > Filament::straightFilamentProjection(vector<vector<doubl
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::zigZagFilamentProjection(
+                       vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -328,14 +327,20 @@ vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>
     for (int i = 0; i<numBeads; i++) {
         
         if(i%2 == 0) {
-            tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * tau[0];
-            tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * tau[1];
-            tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * tau[2];
+            tmpVec[0] = v[0][0] +
+                SystemParameters::Geometry().cylinderSize * i * tau[0];
+            tmpVec[1] = v[0][1] +
+                SystemParameters::Geometry().cylinderSize * i * tau[1];
+            tmpVec[2] = v[0][2] +
+                SystemParameters::Geometry().cylinderSize * i * tau[2];
         }
         else {
-            tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * perptau[0];
-            tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * perptau[1];
-            tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * perptau[2];
+            tmpVec[0] = v[0][0] +
+                SystemParameters::Geometry().cylinderSize * i * perptau[0];
+            tmpVec[1] = v[0][1] +
+                SystemParameters::Geometry().cylinderSize * i * perptau[1];
+            tmpVec[2] = v[0][2] +
+                SystemParameters::Geometry().cylinderSize * i * perptau[2];
         }
         
         coordinate.push_back(tmpVec);
@@ -421,9 +426,11 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     transform(dz.begin(), dz.end(),dz.begin(),back_inserter(dz2), multiplies<double>());
     
     //array of sum(dx^2+dy^2)
-    transform(dx2.begin(),dx2.end(),dy2.begin(),back_inserter(dxdy2),plus<double>());
+    transform(dx2.begin(),dx2.end(),dy2.begin(),
+              back_inserter(dxdy2),plus<double>());
     //array of sum(dx^2+dy^2+dz^2)
-    transform(dxdy2.begin(),dxdy2.end(),dz2.begin(),back_inserter(length2),plus<double>());
+    transform(dxdy2.begin(),dxdy2.end(),dz2.begin(),
+              back_inserter(length2),plus<double>());
     // HERE
     //std::transform(length2.begin(), length2.end(), length2.begin(), sqrt);
     length2[0]=0.0;
@@ -452,7 +459,8 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
 }
 
 /// @note - Created by Aravind 12/2014
-vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::arcFilamentProjection(
+                       vector<vector<double>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
     
@@ -467,17 +475,22 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     marsagila(x4);
     
     std::transform(v[0].begin(), v[0].end(), v[1].begin(), temp, std::minus<double>()); //vector difference.
-    std::transform(temp, temp+3, temp, temp, std::multiplies<double>());//squaring elements of a vector.
+    std::transform(temp, temp+3, temp, temp, std::multiplies<double>());
+    //squaring elements of a vector.
     mod=std::accumulate(temp,temp+3,temp4,std::plus<double>()); //modulus^2.
     mod=pow(mod,0.5); //MODULUS.
     mod=mod*0.5;
     
-    std::transform(x3.begin(), x3.end(),x3.begin(), std::bind1st(std::multiplies<double>(), mod));
-    std::transform(x4.begin(), x4.end(),x4.begin(), std::bind1st(std::multiplies<double>(), mod));
+    std::transform(x3.begin(), x3.end(),x3.begin(),
+                   std::bind1st(std::multiplies<double>(), mod));
+    std::transform(x4.begin(), x4.end(),x4.begin(),
+                   std::bind1st(std::multiplies<double>(), mod));
     //transform point on sphere to the one centred at x1.
-    std::transform(x3.begin(), x3.end(), v[0].begin(), std::back_inserter(X3) , std::plus<double>());
+    std::transform(x3.begin(), x3.end(), v[0].begin(),
+                   std::back_inserter(X3) , std::plus<double>());
     //transform sphere centre to x2.
-    std::transform(x4.begin(), x4.end(), v[1].begin(), std::back_inserter(X4) , std::plus<double>());
+    std::transform(x4.begin(), x4.end(), v[1].begin(),
+                   std::back_inserter(X4) , std::plus<double>());
     
     // The four points that the beizer curve passes through.
     X(0,0)=v[0][0]; X(1,0)=X3[0]; X(2,0)=X4[0]; X(3,0)=v[1][0];

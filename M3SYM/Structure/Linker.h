@@ -29,11 +29,11 @@ class Cylinder;
 
 /// A container to store a MLinker and CLinker.
 /*!
- * Linker class is used to manage and store a MLinker and CLinker.
- * Upon intialization, both of these components are created. Extending the Movable and Reactable
- * classes, the Linker can update its position and reactions according to mechanical equilibration.
+ * Linker class is used to manage and store a MLinker and CLinker. Upon intialization,
+ * both of these components are created. Extending the Movable and Reactable classes, 
+ * the Linker can update its position and reactions according to mechanical 
+ * equilibration.
  */
-
 class Linker : public Composite, public Movable, public Reactable {
 
 private:
@@ -56,7 +56,8 @@ private:
 public:
     vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
     
-    Linker(Cylinder* c1, Cylinder* c2, short linkerType, double position1 = 0.5, double position2 = 0.5, bool creation = false);
+    Linker(Cylinder* c1, Cylinder* c2, short linkerType,
+           double position1 = 0.5, double position2 = 0.5, bool creation = false);
     ~Linker();
     
     //@{

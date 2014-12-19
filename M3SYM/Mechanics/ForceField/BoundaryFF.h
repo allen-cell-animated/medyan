@@ -28,7 +28,8 @@ class BoundaryInteractions;
 class BoundaryFF : public ForceField {
     
 private:
-    vector<unique_ptr<BoundaryInteractions>> _BoundaryInteractionVector; ///< Vector of initialized boundary element interactions
+    vector<unique_ptr<BoundaryInteractions>>
+    _BoundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)

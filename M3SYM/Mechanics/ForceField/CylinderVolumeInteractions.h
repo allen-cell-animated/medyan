@@ -29,7 +29,8 @@ private:
     
 public:
     ///Constructor, initializes a cylinder neighbor list
-    CylinderVolumeInteractions() : CylinderNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
+    CylinderVolumeInteractions()
+        : CylinderNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
     
     /// Compute the energy of this interaction
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;

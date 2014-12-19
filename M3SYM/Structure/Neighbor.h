@@ -17,16 +17,18 @@
 #include "common.h"
 
 /// An abstract class for any object that can be added/removed from a NeighborList.
-/// @note - any subclass that inherits from Neighbor MUST add and remove itself to the NeighborListDB.
+/// @note - any subclass that inherits from Neighbor MUST add and remove itself to
+/// the NeighborListDB.
 class Neighbor {
     
 protected:
     Neighbor() {}
     
     ///Destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is a gcc bug
-    /// (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
     virtual ~Neighbor() noexcept {}
 };
 

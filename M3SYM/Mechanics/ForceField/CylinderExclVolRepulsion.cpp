@@ -38,8 +38,8 @@
 using namespace mathfunc;
 
 
-double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls)
-{
+double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        double kRepuls) {
     if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
 
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
@@ -47,12 +47,18 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
         return kRepuls * invDSquare * invDSquare;
     }
     
-    double a = scalarProduct(b1->coordinate, b2->coordinate, b1->coordinate, b2->coordinate);
-    double b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-    double c = scalarProduct(b3->coordinate, b1->coordinate, b3->coordinate, b1->coordinate);
-    double d = scalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate);
-    double e = scalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b1->coordinate);
-    double f = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b1->coordinate);
+    double a = scalarProduct(b1->coordinate, b2->coordinate,
+                             b1->coordinate, b2->coordinate);
+    double b = scalarProduct(b3->coordinate, b4->coordinate,
+                             b3->coordinate, b4->coordinate);
+    double c = scalarProduct(b3->coordinate, b1->coordinate,
+                             b3->coordinate, b1->coordinate);
+    double d = scalarProduct(b1->coordinate, b2->coordinate,
+                             b3->coordinate, b4->coordinate);
+    double e = scalarProduct(b1->coordinate, b2->coordinate,
+                             b3->coordinate, b1->coordinate);
+    double f = scalarProduct(b3->coordinate, b4->coordinate,
+                             b3->coordinate, b1->coordinate);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -69,10 +75,12 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
     if (JJ==0 || JJ != JJ){
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
+                                     b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
+        b = scalarProduct(b3->coordinate, b4->coordinate,
+                          b3->coordinate, b4->coordinate);
         c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
         d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
         e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
@@ -100,29 +108,41 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
 }
 
-double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls, double lambda)
-{
+double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        double kRepuls, double lambda) {
     
     if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
         
-        double d = twoPointDistanceStretched(b1->coordinate, b1->force, b3->coordinate, b3->force, lambda);
+        double d = twoPointDistanceStretched(b1->coordinate, b1->force,
+                                             b3->coordinate, b3->force, lambda);
         double invDSquare =  1/ (d * d);
         return kRepuls * invDSquare * invDSquare;
     }
     
-    double a = scalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
-                                      b1->coordinate, b1->force, b2->coordinate, b2->force, lambda);
-    double b = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
-                                      b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-    double c = scalarProductStretched(b3->coordinate, b3->force, b1->coordinate, b1->force,
-                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
-    double d = scalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
-                                      b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-    double e = scalarProductStretched(b1->coordinate, b1->force, b2->coordinate, b2->force,
-                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
-    double f = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
-                                      b3->coordinate, b3->force, b1->coordinate, b1->force, lambda);
-    
+    double a = scalarProductStretched(b1->coordinate, b1->force,
+                                      b2->coordinate, b2->force,
+                                      b1->coordinate, b1->force,
+                                      b2->coordinate, b2->force, lambda);
+    double b = scalarProductStretched(b3->coordinate, b3->force,
+                                      b4->coordinate, b4->force,
+                                      b3->coordinate, b3->force,
+                                      b4->coordinate, b4->force, lambda);
+    double c = scalarProductStretched(b3->coordinate, b3->force,
+                                      b1->coordinate, b1->force,
+                                      b3->coordinate, b3->force,
+                                      b1->coordinate, b1->force, lambda);
+    double d = scalarProductStretched(b1->coordinate, b1->force,
+                                      b2->coordinate, b2->force,
+                                      b3->coordinate, b3->force,
+                                      b4->coordinate, b4->force, lambda);
+    double e = scalarProductStretched(b1->coordinate, b1->force,
+                                      b2->coordinate, b2->force,
+                                      b3->coordinate, b3->force,
+                                      b1->coordinate, b1->force, lambda);
+    double f = scalarProductStretched(b3->coordinate, b3->force,
+                                      b4->coordinate, b4->force,
+                                      b3->coordinate, b3->force,
+                                      b1->coordinate, b1->force, lambda);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -140,19 +160,24 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
     
     if (JJ==0 || JJ != JJ){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
+                                     b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    v, b1->force, b2->coordinate, b2->force, lambda);
-        b = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
-                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+        b = scalarProductStretched(b3->coordinate, b3->force,
+                                   b4->coordinate, b4->force,
+                                   b3->coordinate, b3->force,
+                                   b4->coordinate, b4->force, lambda);
         c = scalarProductStretched(b3->coordinate, b3->force, v, b1->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
         d = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
-                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
+                                   b3->coordinate, b3->force,
+                                   b4->coordinate, b4->force, lambda);
         e = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
-        f = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+        f = scalarProductStretched(b3->coordinate, b3->force,
+                                   b4->coordinate, b4->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
         
         AA = sqrt(a*c - e*e);
@@ -179,8 +204,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4, 
 
 }
 
-void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls)
-{
+void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                      double kRepuls) {
     if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
         
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
@@ -206,12 +231,18 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
         return;
     }
 
-    double a = scalarProduct(b1->coordinate, b2->coordinate, b1->coordinate, b2->coordinate);
-    double b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-    double c = scalarProduct(b3->coordinate, b1->coordinate, b3->coordinate, b1->coordinate);
-    double d = scalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate);
-    double e = scalarProduct(b1->coordinate, b2->coordinate, b3->coordinate, b1->coordinate);
-    double f = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b1->coordinate);
+    double a = scalarProduct(b1->coordinate, b2->coordinate,
+                             b1->coordinate, b2->coordinate);
+    double b = scalarProduct(b3->coordinate, b4->coordinate,
+                             b3->coordinate, b4->coordinate);
+    double c = scalarProduct(b3->coordinate, b1->coordinate,
+                             b3->coordinate, b1->coordinate);
+    double d = scalarProduct(b1->coordinate, b2->coordinate,
+                             b3->coordinate, b4->coordinate);
+    double e = scalarProduct(b1->coordinate, b2->coordinate,
+                             b3->coordinate, b1->coordinate);
+    double f = scalarProduct(b3->coordinate, b4->coordinate,
+                             b3->coordinate, b1->coordinate);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -229,10 +260,12 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     
     if (JJ==0 || JJ != JJ){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate, 1, 0.01);
+        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
+                                     b3->coordinate, b4->coordinate, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
+        b = scalarProduct(b3->coordinate, b4->coordinate,
+                          b3->coordinate, b4->coordinate);
         c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
         d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
         e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
@@ -277,22 +310,26 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
     
     
     double A11 = ATG1/AA;
-    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) - (A2*CC*(a + e))/(AA*AA*AA);
+    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
+                (A2*CC*(a + e))/(AA*AA*AA);
     double A13 = -((A1*CC)/(AA*AA)) + (A2*CC)/(AA*AA);
     double A14 = (A2*CC)/(AA*AA);
     
     double E11 = ATG2/EE;
-    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) - (ATG2*GG)/(EE*EE);
+    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) -
+                 (ATG2*GG)/(EE*EE);
     double E13 = -((E1*GG)/(EE*EE)) + (E2*GG)/(EE*EE);
     double E14 = (E2*GG)/(EE*EE);
     
     double B11 = ATG3/BB;
-    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) + (B1*DD*(-b + f))/(BB*BB*BB);
+    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) +
+                (B1*DD*(-b + f))/(BB*BB*BB);
     double B13 = -((B1*DD)/(BB*BB)) + (B2*DD)/(BB*BB);
     double B14 = (B1*DD)/(BB*BB);
     
     double F11 = ATG4/FF;
-    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) - (ATG4*HH)/(FF*FF);
+    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) -
+                 (ATG4*HH)/(FF*FF);
     double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
     double F14 = (F1*HH)/(FF*FF);
 
@@ -324,9 +361,10 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4, do
 
 }
 
-void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4, double kRepuls)
-{
-    if(ifParallel(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux)) {
+void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                         double kRepuls) {
+    if(ifParallel(b1->coordinateAux, b2->coordinateAux,
+                  b3->coordinateAux, b4->coordinateAux)) {
         
         double d = twoPointDistance(b1->coordinateAux, b3->coordinateAux);
         double invDSquare =  1/ (d * d);
@@ -351,12 +389,18 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         return;
     }
     
-    double a = scalarProduct(b1->coordinateAux, b2->coordinateAux, b1->coordinateAux, b2->coordinateAux);
-    double b = scalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);
-    double c = scalarProduct(b3->coordinateAux, b1->coordinateAux, b3->coordinateAux, b1->coordinateAux);
-    double d = scalarProduct(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
-    double e = scalarProduct(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b1->coordinateAux);
-    double f = scalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b1->coordinateAux);
+    double a = scalarProduct(b1->coordinateAux, b2->coordinateAux,
+                             b1->coordinateAux, b2->coordinateAux);
+    double b = scalarProduct(b3->coordinateAux, b4->coordinateAux,
+                             b3->coordinateAux, b4->coordinateAux);
+    double c = scalarProduct(b3->coordinateAux, b1->coordinateAux,
+                             b3->coordinateAux, b1->coordinateAux);
+    double d = scalarProduct(b1->coordinateAux, b2->coordinateAux,
+                             b3->coordinateAux, b4->coordinateAux);
+    double e = scalarProduct(b1->coordinateAux, b2->coordinateAux,
+                             b3->coordinateAux, b1->coordinateAux);
+    double f = scalarProduct(b3->coordinateAux, b4->coordinateAux,
+                             b3->coordinateAux, b1->coordinateAux);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -374,10 +418,12 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     if (JJ==0 || JJ != JJ){
         
-        auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux, 1, 0.01);
+        auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux,
+                                     b3->coordinateAux, b4->coordinateAux, 1, 0.01);
         
         a = scalarProduct(v, b2->coordinateAux, v, b2->coordinateAux);
-        b = scalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);
+        b = scalarProduct(b3->coordinateAux, b4->coordinateAux,
+                          b3->coordinateAux, b4->coordinateAux);
         c = scalarProduct(b3->coordinateAux, v, b3->coordinateAux, v);
         d = scalarProduct(v, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
         e = scalarProduct(v, b2->coordinateAux, b3->coordinateAux, v);
@@ -422,22 +468,26 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     
     double A11 = ATG1/AA;
-    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) - (A2*CC*(a + e))/(AA*AA*AA);
+    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
+                 (A2*CC*(a + e))/(AA*AA*AA);
     double A13 = -((A1*CC)/(AA*AA)) + (A2*CC)/(AA*AA);
     double A14 = (A2*CC)/(AA*AA);
     
     double E11 = ATG2/EE;
-    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) - (ATG2*GG)/(EE*EE);
+    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) -
+                 (ATG2*GG)/(EE*EE);
     double E13 = -((E1*GG)/(EE*EE)) + (E2*GG)/(EE*EE);
     double E14 = (E2*GG)/(EE*EE);
     
     double B11 = ATG3/BB;
-    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) + (B1*DD*(-b + f))/(BB*BB*BB);
+    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) +
+                 (B1*DD*(-b + f))/(BB*BB*BB);
     double B13 = -((B1*DD)/(BB*BB)) + (B2*DD)/(BB*BB);
     double B14 = (B1*DD)/(BB*BB);
     
     double F11 = ATG4/FF;
-    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) - (ATG4*HH)/(FF*FF);
+    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) -
+                 (ATG4*HH)/(FF*FF);
     double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
     double F14 = (F1*HH)/(FF*FF);
     

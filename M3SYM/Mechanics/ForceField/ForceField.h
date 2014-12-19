@@ -29,9 +29,11 @@ public:
     
     /// Compute total energy of this forcefield in the system
     virtual double computeEnergy(double d) = 0;
-    /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead) forces accordingly.
+    /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead)
+    /// forces accordingly.
     virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this forcefield in the system. Update [Bead](@ref Bead) auxiliary forces accordingly.
+    /// Compute auxiliary forces of this forcefield in the system. Update [Bead]
+    /// (@ref Bead) auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
 };
 

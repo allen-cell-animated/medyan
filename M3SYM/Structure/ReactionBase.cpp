@@ -15,9 +15,9 @@
 
 #include "Composite.h"
 
-ReactionBase::ReactionBase (float rate, bool isProtoCompartment) :
-_rnode(nullptr), _rate(rate), _parent(nullptr), _rate_bare(rate), _isProtoCompartment(isProtoCompartment)
-{
+ReactionBase::ReactionBase (float rate, bool isProtoCompartment)
+    : _rnode(nullptr), _rate(rate), _parent(nullptr),
+      _rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
@@ -35,7 +35,7 @@ Composite* ReactionBase::getRoot() {
 
 void ReactionBase::registerNewDependent(ReactionBase *r){ _dependents.insert(r);}
 
-void ReactionBase::unregisterDependent(ReactionBase *r){ _dependents.erase(r); }
+void ReactionBase::unregisterDependent(ReactionBase *r){ _dependents.erase(r);}
 
 #ifdef REACTION_SIGNALING
 void ReactionBase::startSignaling () {
@@ -46,7 +46,8 @@ void ReactionBase::stopSignaling () {
     _signal = nullptr;
 }
 
-boost::signals2::connection ReactionBase::connect(function<void (ReactionBase *)> const &react_callback, int priority) {
+boost::signals2::connection ReactionBase::connect(
+    function<void (ReactionBase *)> const &react_callback, int priority) {
     if (!isSignaling())
         startSignaling();
     return _signal->connect(priority, react_callback);

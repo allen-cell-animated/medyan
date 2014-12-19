@@ -22,14 +22,14 @@
 BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral)
 {
     if (stretching == "HARMONIC")
-        _branchingInteractionVector.emplace_back(new BranchingStretching<BranchingStretchingHarmonic>());
+        _branchingInteractionVector.emplace_back(
+            new BranchingStretching<BranchingStretchingHarmonic>());
     if (bending == "COSINE")
-        _branchingInteractionVector.emplace_back(new BranchingBending<BranchingBendingCosine>());
+        _branchingInteractionVector.emplace_back(
+            new BranchingBending<BranchingBendingCosine>());
 //  if (dihedral == "COSINE")
-//      _branchingInteractionVector.emplace_back(new BranchingDihedral<BranchingDihedralCosine>());
-//
-//    if (Twisting == "HARMONIC")
-//        _filamentInteractionVector.push_back(new FilamentTwisting<FilamentTwistingHarmonic>());
+//      _branchingInteractionVector.emplace_back(new
+//          BranchingDihedral<BranchingDihedralCosine>());
 }
 
 

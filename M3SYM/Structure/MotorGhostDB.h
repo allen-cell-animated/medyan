@@ -24,7 +24,8 @@ class MotorGhost;
 /// A database for all [MotorGhosts](@ref MotorGhost) in the system.
 /*!
  *   This MotorGhostDB inherits from list and manage all creations and removing of
- *   [MotorGhosts](@ref MotorGhost) objects, as well as some standard list functions and iterators.
+ *   [MotorGhosts](@ref MotorGhost) objects, as well as some standard list functions 
+ *   and iterators.
  */
 class MotorGhostDB: private list<MotorGhost*>
 {

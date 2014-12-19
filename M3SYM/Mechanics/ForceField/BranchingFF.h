@@ -23,12 +23,14 @@
 //FORWARD DECLARATIONS
 class BranchingInteractions;
 
-/// Branching FF is an implementation of the [ForceField](@ref ForceField) class that calculates [Branching] (@ref Branching)
-/// position of branched chain, angle of branched chain, and dihedral for branching chain.
+/// Branching FF is an implementation of the [ForceField](@ref ForceField) class that
+/// calculates [Branching] (@ref Branching) position of branched chain, angle of
+/// branched chain, and dihedral for branching chain.
 class BranchingFF : public ForceField {
     
 private:
-    vector<unique_ptr<BranchingInteractions>> _branchingInteractionVector; ///< Vector of initialized branching interactions
+    vector<unique_ptr<BranchingInteractions>>
+        _branchingInteractionVector; ///< Vector of initialized branching interactions
     
 public:
     /// Constructor, intializes all interaction at the branching point

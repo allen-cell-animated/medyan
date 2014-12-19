@@ -26,7 +26,8 @@ class Neighbor;
 /// A database to store all [NeighborLists](@ref NeighborList) in the system.
 /*!
  *   This NeighborListDB inherits from list and manage all creations and removing of
- *   [NeighborLists](@ref NeighborList) objects, as well as some standard list functions and iterators.
+ *   [NeighborLists](@ref NeighborList) objects, as well as some standard list functions
+ *   and iterators.
  */
 class NeighborListDB: private list<NeighborList*>
 {
@@ -57,9 +58,13 @@ public:
     void resetAll() { for(auto &nlist : *this) nlist->reset(); }
     
     /// Add a neighbor to the DB. adds to all possible lists
-    void addNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->addNeighbor(n); }
+    void addNeighbor(Neighbor* n) {
+        for(auto &nlist : *this) nlist->addNeighbor(n);
+    }
     /// Remove a neighbor from the DB. removes from all possible lists
-    void removeNeighbor(Neighbor* n) { for(auto &nlist : *this) nlist->removeNeighbor(n); }
+    void removeNeighbor(Neighbor* n) {
+        for(auto &nlist : *this) nlist->removeNeighbor(n);
+    }
     
     /// Add a dynamic neighbor to the DB. adds to all possible lists
     void addDynamicNeighbor(Neighbor* n) {

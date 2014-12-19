@@ -20,7 +20,8 @@
 
 VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
     if (type == "REPULSION")
-        _cylinderVolInteractionVector.emplace_back(new CylinderExclVolume <CylinderExclVolRepulsion>());
+        _cylinderVolInteractionVector.emplace_back(
+            new CylinderExclVolume <CylinderExclVolRepulsion>());
 }
 
 double VolumeCylindricalFF::computeEnergy(double d) {
