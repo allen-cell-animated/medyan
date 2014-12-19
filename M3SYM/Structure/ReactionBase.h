@@ -69,7 +69,8 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ReactionBase {
 protected:
-    set<ReactionBase*> _dependents; ///< Pointers to ReactionBase objects that depend
+    unordered_set<ReactionBase*>
+        _dependents; ///< Pointers to ReactionBase objects that depend
                                     ///< on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used
                    ///< to implement a Gillespie-like algorithm (e.g. NRM)
@@ -262,7 +263,7 @@ public:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the
     /// dependencies, and 2) via dependents(), where dependencies stop being counted
     /// if the copy numbers of reactant species drop to 0.
-    const set<ReactionBase*>& dependents() {return _dependents;}
+    const unordered_set<ReactionBase*>& dependents() {return _dependents;}
     
     /// Returns true if two ReactionBase objects are equal.
     /// Two ReactionBase objects are equal if each of their reactants and products

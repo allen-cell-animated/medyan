@@ -15,6 +15,7 @@
 
 #include "Controller.h"
 
+#include "FilamentInitializer.h"
 #include "Parser.h"
 #include "Output.h"
 #include "SubSystem.h"
@@ -137,46 +138,11 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
         filamentData = fp.readFilaments();
     }
     else {
-        //Create random distribution of filaments
-        default_random_engine generator;
-        uniform_real_distribution<double> dU(0.0,1.0);
-        uniform_real_distribution<double> dUNeg(-1,1);
-        
-        int filamentCounter = 0;
-        while (filamentCounter < FSetup.numFilaments) {
-            
-            double firstX = dU(generator) * SystemParameters::Geometry().compartmentSizeX *
-                                            SystemParameters::Geometry().NX;
-            double firstY = dU(generator) * SystemParameters::Geometry().compartmentSizeY *
-                                            SystemParameters::Geometry().NY;
-            double firstZ = dU(generator) * SystemParameters::Geometry().compartmentSizeZ *
-                                            SystemParameters::Geometry().NZ;
-            
-            double directionX = dUNeg(generator);
-            double directionY = dUNeg(generator);
-            double directionZ = dUNeg(generator);
-            
-            //Create a random filament vector one cylinder long
-            vector<double> firstPoint = {firstX, firstY, firstZ};
-            
-            auto normFactor = sqrt(directionX * directionX +
-                                   directionY * directionY +
-                                   directionZ * directionZ);
-            
-            vector<double> direction = {directionX/normFactor,
-                                        directionY/normFactor,
-                                        directionZ/normFactor};
-            
-            vector<double> secondPoint = nextPointProjection(firstPoint,
-            (double)FSetup.filamentLength *
-            SystemParameters::Geometry().cylinderSize - 0.01, direction);
-            
-            if(_subSystem->getBoundary()->within(firstPoint)
-               && _subSystem->getBoundary()->within(secondPoint)) {
-                filamentData.push_back({firstPoint, secondPoint});
-                filamentCounter++;
-            }
-        }
+        FilamentInitializer* fInit = new RandomFilamentDist();
+        filamentData = fInit->createFilaments(_subSystem->getBoundary(),
+                                              FSetup.numFilaments,
+                                              FSetup.filamentLength);
+        delete fInit;
     }
     //add filaments
     _subSystem->addNewFilaments(filamentData);
@@ -215,18 +181,19 @@ void Controller::updateSystem() {
     }
 }
 
-void Controller::updateNeighborLists() {
+void Controller::updateNeighborLists(bool updateReactions) {
     
     //Full reset of neighbor lists
     NeighborListDB::instance()->resetAll();
     
+    if(updateReactions) {
 #ifdef CHEMISTRY
-    //Update cross cylinder reactions
-    for(auto &filament : *FilamentDB::instance())
-        for (auto &cylinder : filament->getCylinderVector())
-            ChemManager::updateCCylinder(cylinder->getCCylinder());
+        //Update cross cylinder reactions
+        for(auto &filament : *FilamentDB::instance())
+            for (auto &cylinder : filament->getCylinderVector())
+                ChemManager::updateCCylinder(cylinder->getCCylinder());
 #endif
-    
+    }
 }
 
 void Controller::run() {
@@ -238,14 +205,15 @@ void Controller::run() {
     Output o(_outputDirectory + "filamentoutput.txt");
     o.printBasicSnapshot(0);
     
-    cout << "Starting simulation..." << endl;
+    cout << "Performing an initial minimization..." << endl;
     
     //perform first minimization
 #ifdef MECHANICS
     _mController.run();
     updateSystem();
-    updateNeighborLists();
+    updateNeighborLists(true);
 #endif
+    cout << "Starting simulation..." << endl;
     
 #if defined(CHEMISTRY)
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
@@ -265,7 +233,7 @@ void Controller::run() {
 #endif
         // update neighbor lists
         if(i % _numStepsPerNeighbor == 0 && i != 0)
-            updateNeighborLists();
+            updateNeighborLists(true);
         
 #if defined(CHEMISTRY)
     }

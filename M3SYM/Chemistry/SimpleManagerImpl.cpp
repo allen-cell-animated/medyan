@@ -1026,11 +1026,11 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         //extend range of rMax, rMin by cylinder size
-        double rMax = get<4>(r) + SystemParameters::Geometry().cylinderSize;
-        double rMin = max(get<5>(r) - SystemParameters::Geometry().cylinderSize, 0.0);
+        double rMax = get<4>(r);
+        double rMin = get<5>(r);
         _CFRxnManagers.emplace_back(
             new LinkerRxnManager(reactantTemplate, productTemplate,
-                                 get<2>(r), get<3>(r), rMin, rMax));
+                                 get<2>(r), get<3>(r), rMax, rMin));
     }
    
     for(auto &r: chem.motorReactions) {
@@ -1218,12 +1218,11 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             << endl;
             exit(EXIT_FAILURE);
         }
-        //extend range of rMax, rMin
-        double rMax = get<4>(r) + SystemParameters::Geometry().cylinderSize;
-        double rMin = max(get<5>(r) - SystemParameters::Geometry().cylinderSize, 0.0);
+        double rMax = get<4>(r);
+        double rMin = get<5>(r);
         _CFRxnManagers.emplace_back(
             new MotorRxnManager(reactantTemplate, productTemplate,
-                                get<2>(r), get<3>(r), rMin, rMax));
+                                get<2>(r), get<3>(r), rMax, rMin));
     }
 }
 

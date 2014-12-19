@@ -16,6 +16,8 @@
 		B58E179C1A2FCCD7005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B58E179F1A30EF9D005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B58E17A21A30F462005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		F716AE321A448235001BDBFE /* FilamentInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F716AE301A448235001BDBFE /* FilamentInitializer.cpp */; };
+		F716AE331A448235001BDBFE /* FilamentInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F716AE311A448235001BDBFE /* FilamentInitializer.h */; };
 		F71944161A3262F3006F1E08 /* BranchingBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */; };
 		F71944171A3262F3006F1E08 /* BranchingBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */; };
 		F71944181A3262F3006F1E08 /* BranchingBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944071A3262F3006F1E08 /* BranchingBending.cpp */; };
@@ -247,6 +249,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F716AE301A448235001BDBFE /* FilamentInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentInitializer.cpp; sourceTree = "<group>"; };
+		F716AE311A448235001BDBFE /* FilamentInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInitializer.h; sourceTree = "<group>"; };
 		F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBendingCosine.cpp; sourceTree = "<group>"; };
 		F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingBendingCosine.h; sourceTree = "<group>"; };
 		F71944071A3262F3006F1E08 /* BranchingBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBending.cpp; sourceTree = "<group>"; };
@@ -441,7 +445,7 @@
 		F7C9CFD31A2D165D0087434A /* MotorGhostDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostDB.h; sourceTree = "<group>"; };
 		F7C9CFD41A2D165D0087434A /* Movable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movable.h; sourceTree = "<group>"; };
 		F7C9CFD51A2D165D0087434A /* Neighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Neighbor.h; sourceTree = "<group>"; };
-		F7C9CFD61A2D165D0087434A /* NeighborList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborList.cpp; sourceTree = "<group>"; };
+		F7C9CFD61A2D165D0087434A /* NeighborList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborList.cpp; sourceTree = "<group>"; wrapsLines = 1; };
 		F7C9CFD71A2D165D0087434A /* NeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborList.h; sourceTree = "<group>"; };
 		F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListContainer.cpp; sourceTree = "<group>"; };
 		F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListContainer.h; sourceTree = "<group>"; };
@@ -754,6 +758,8 @@
 				F735B75E1A2D16F200AE21D1 /* GController.h */,
 				F735B7621A2D16F200AE21D1 /* MController.cpp */,
 				F735B7631A2D16F200AE21D1 /* MController.h */,
+				F716AE301A448235001BDBFE /* FilamentInitializer.cpp */,
+				F716AE311A448235001BDBFE /* FilamentInitializer.h */,
 				F735B7641A2D16F200AE21D1 /* Output.cpp */,
 				F735B7651A2D16F200AE21D1 /* Output.h */,
 				F735B7661A2D16F200AE21D1 /* Parser.cpp */,
@@ -837,6 +843,7 @@
 				F7C9CFF01A2D165D0087434A /* BoundaryElementDB.h in Headers */,
 				F7C9D0101A2D165D0087434A /* LinkerDB.h in Headers */,
 				F735B7B71A2D173F00AE21D1 /* CGMethod.h in Headers */,
+				F716AE331A448235001BDBFE /* FilamentInitializer.h in Headers */,
 				F7C9CFF81A2D165D0087434A /* CBound.h in Headers */,
 				F735B8071A2D175800AE21D1 /* ForceField.h in Headers */,
 				F735B7861A2D16F200AE21D1 /* Visitor.h in Headers */,
@@ -1039,6 +1046,7 @@
 				F719441A1A3262F3006F1E08 /* BranchingDihedral.cpp in Sources */,
 				F7C9D00D1A2D165D0087434A /* Linker.cpp in Sources */,
 				F7C9D0241A2D165D0087434A /* Reaction.cpp in Sources */,
+				F716AE321A448235001BDBFE /* FilamentInitializer.cpp in Sources */,
 				F735B7F01A2D175800AE21D1 /* BoundaryRepulsion.cpp in Sources */,
 				F7199B3A1A30CCE500CD5DCC /* CBranchingPoint.cpp in Sources */,
 				F7C9CFF61A2D165D0087434A /* BoundarySurfaceImpl.cpp in Sources */,

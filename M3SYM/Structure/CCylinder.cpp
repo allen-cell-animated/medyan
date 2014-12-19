@@ -15,7 +15,8 @@
 
 #include "CBound.h"
 
-CCylinder::CCylinder(const CCylinder& rhs, Compartment* c) : _compartment(c), _pCylinder(rhs._pCylinder)
+CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
+    : _compartment(c), _pCylinder(rhs._pCylinder)
 {
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)

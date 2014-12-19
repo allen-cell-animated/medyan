@@ -53,10 +53,11 @@ private:
     void updateSystem();
     
     /// Update neighbors lists, called in run
-    void updateNeighborLists();
+    void updateNeighborLists(bool updateReactions=false);
     
 public:
-    Controller(SubSystem* s) : _mController(s), _cController(s), _gController(), _subSystem(s) {};
+    Controller(SubSystem* s)
+        : _mController(s), _cController(s), _gController(), _subSystem(s) {};
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory

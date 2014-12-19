@@ -21,7 +21,6 @@ Goals for December 2014
     -Filament creation and destruction
     -Optimizations: Reaction Dependents                                         X
     -Optimizations: Cylinder reaction management                                X
-    -Optimizations: Virtuals, inlines
     -Formatting (80C lines, cleaning up other things, usage, googlecode)        X
     -Timings for larger systems
 

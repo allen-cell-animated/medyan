@@ -185,6 +185,7 @@ struct LinkerBindingCallback {
         boost::signals2::shared_connection_block rcb(offRxn->connect(lcallback,false));
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
+        l->getCLinker()->setOffReaction(offRxn);
     }
 };
 
@@ -228,8 +229,8 @@ struct MotorBindingCallback {
           _position1(position1), _position2(position2), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        
-        // Create a linker
+
+        // Create a motor
         int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;

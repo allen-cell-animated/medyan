@@ -15,6 +15,7 @@
 #define M3SYM_ReactionManager_h
 
 #include <vector>
+#include <cmath>
 
 #include "common.h"
 
@@ -217,8 +218,9 @@ protected:
 public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
-                            float onRate, float offRate, float rMin, float rMax)
-        : CylinderNLContainer(rMax, rMin, true),
+                            float onRate, float offRate, float rMax, float rMin)
+        : CylinderNLContainer(rMax + SystemParameters::Geometry().cylinderSize,
+                max(rMin - SystemParameters::Geometry().cylinderSize, 0.0), true),
         _reactants(reactants), _products(products),
         _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
                               
@@ -255,7 +257,7 @@ class LinkerRxnManager : public CrossFilamentRxnManager {
 public:
     LinkerRxnManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
-                    float onRate, float offRate, float rMin, float rMax)
+                    float onRate, float offRate, float rMax, float rMin)
         : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
     ~LinkerRxnManager() {}
 
@@ -268,7 +270,7 @@ class MotorRxnManager : public CrossFilamentRxnManager {
 public:
     MotorRxnManager(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
-                    float onRate, float offRate, float rMin, float rMax)
+                    float onRate, float offRate, float rMax, float rMin)
         : CrossFilamentRxnManager(reactants, products, onRate, offRate, rMin, rMax) {}
     ~MotorRxnManager() {}
     
