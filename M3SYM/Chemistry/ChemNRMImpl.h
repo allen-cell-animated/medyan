@@ -57,8 +57,8 @@ typedef boost::heap::pairing_heap<PQNode>::handle_type handle_t;
 #endif
     
 /// Priority Queue Node. It is stored as an element of a heap, such as
-/// boost::heap::pairing_heap<PQNode>. There will be an associated heap handle which can
-/// be used to dynamically access PQNode's fields
+/// boost::heap::pairing_heap<PQNode>. There will be an associated heap handle which
+/// can be used to dynamically access PQNode's fields
 /// (e.g. boost::heap::pairing_heap<PQNode>::handle_type)
 
 /*! 

@@ -116,7 +116,8 @@ public:
     }
 
     
-    /// Returns the number of Species being managed by this node and its descendent nodes
+    /// Returns the number of Species being managed by this node and its
+    /// descendent nodes
     virtual size_t countSpecies() const override {
         size_t sum = 0;
         if(this->isSpeciesContainer())

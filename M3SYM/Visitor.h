@@ -22,15 +22,15 @@
 class Species;
 class ReactionBase;
 
-/// An abstract interface to traverse those nodes in the Composite pattern which fulfill
-/// a certain predicate.
+/// An abstract interface to traverse those nodes in the Composite pattern which
+/// fulfill a certain predicate.
 
 /*! 
  *  The Visitor pattern allows a functor to visit each node of the Composite pattern. 
- *  Concrete classes derived from Visitor must implement the visit(Component *c) method. 
- *  Visitor, v, allows a predicate to be applied at each node, *c, and cv->visit(c) is 
- *  called only if that node satisfies the predicate. For example, this can be used to 
- *  visit only filaments in the hieararchy.
+ *  Concrete classes derived from Visitor must implement the visit(Component *c) 
+ *  method. Visitor, v, allows a predicate to be applied at each node, *c, and 
+ *  cv->visit(c) is called only if that node satisfies the predicate. For example, 
+ *  this can be used to visit only filaments in the hieararchy.
  */
 class Visitor {
 public:
@@ -107,8 +107,8 @@ protected:
 class SpeciesVisitor {
 public:
     /// When this Visitor, *v, is propagated through the Composite hieararchy, at each
-    /// Component node pointer *c, the following method is called: v->visit(s), for each
-    /// of the Species *s of that node.
+    /// Component node pointer *c, the following method is called: v->visit(s), for
+    /// each of the Species *s of that node.
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.
     bool visit(Species *s) {
@@ -158,8 +158,8 @@ protected:
 class ReactionVisitor {
 public:
     /// When this Visitor, *v, is propagated through the Composite hieararchy, at each
-    /// Component node pointer *c, the following method is called: v->visit(s), for each
-    /// of the Reaction *r of that node.
+    /// Component node pointer *c, the following method is called: v->visit(s), for
+    /// each of the Reaction *r of that node.
     /// If a false value is returned from this function called, then the further
     /// propagation of the tree is terminated.
     bool visit(ReactionBase *r)
