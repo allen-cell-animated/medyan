@@ -28,7 +28,7 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
     vector<vector<vector<double>>> filamentData;
     //Create random distribution of filaments
     default_random_engine generator;
-    uniform_real_distribution<double> dU(0.0,1.0);
+    uniform_real_distribution<double> dU(0,1);
     uniform_real_distribution<double> dUNeg(-1,1);
     
     int filamentCounter = 0;

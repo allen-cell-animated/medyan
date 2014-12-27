@@ -33,7 +33,11 @@ private:
     
 public:
     virtual double computeEnergy(BoundaryElement*, Bead*, double d);
+    //@{
+    /// This repulsive force calculation also updates load forces
+    /// on beads within the interaction range.
     virtual void computeForces(BoundaryElement*, Bead*);
     virtual void computeForcesAux(BoundaryElement*, Bead*);
+    //@}
 };
 #endif

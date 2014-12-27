@@ -27,7 +27,6 @@
  *  [BoundaryElements](@ref BoundaryElement) as well as any other geometrical 
  *  information needed for the given implementation.
  */
-
 class BoundarySurface {
     
 protected:

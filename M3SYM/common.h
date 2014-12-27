@@ -22,6 +22,9 @@
 #define MECHANICS
 #define CHEMISTRY
 
+///Defining dynamic reaction rates (chemistry and mechanics both on)
+#define DYNAMICRATES
+
 ///If compiling for testing
 #define TESTING
 

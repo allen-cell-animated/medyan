@@ -44,7 +44,9 @@ public:
     //@}
     
     /// Set parent
-    void setBranchingPoint(BranchingPoint* BranchingPoint) {_pBranchingPoint = BranchingPoint;}
+    void setBranchingPoint(BranchingPoint* BranchingPoint) {
+        _pBranchingPoint = BranchingPoint;
+    }
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     

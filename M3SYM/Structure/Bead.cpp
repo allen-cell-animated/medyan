@@ -64,4 +64,8 @@ void Bead::updatePosition() {
         _compartment = c;
         _compartment->addBead(this);
     }
+#ifdef MECHANICS
+    //reset load force
+    loadForce = 0.0;
+#endif
 }
