@@ -190,7 +190,7 @@ def show_frame(frame_number=-1):
 		# Finally, display the set of lines
 		tube=mlab.pipeline.tube(src, tube_radius=0.25)
 		tube.filter.number_of_sides=12
-		mlab.pipeline.surface(tube, color=(0.8, 0.8, 0.8))
+		mlab.pipeline.surface(tube, color=(0.3, 0.8, 0.4))
 
 	#DISPLAYING MOTORS
 	if(len(local_frame.motors) != 0):
@@ -218,12 +218,12 @@ def show_frame(frame_number=-1):
 		# Finally, display the set of lines
 		tube=mlab.pipeline.tube(src, tube_radius=0.25)
 		tube.filter.number_of_sides=12
-		mlab.pipeline.surface(tube, color=(0.8, 0.4, 0.8))
+		mlab.pipeline.surface(tube, color=(0.2, 0.4, 0.8))
 
 
 @mlab.animate(delay=10, ui=True)
 def anim():
-	for i in range(0,len(FrameList), 1):
+	for i in range(0,len(FrameList), 100000):
 		show_frame(i)
 		yield
 		

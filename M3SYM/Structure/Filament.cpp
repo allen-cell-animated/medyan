@@ -12,7 +12,7 @@
 //------------------------------------------------------------------
 
 #include <time.h>
-//#include <ran3.h>
+#include <random>
 #include <math.h>
 #include <algorithm>
 #include <functional>
@@ -433,6 +433,11 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
               back_inserter(length2),plus<double>());
     // HERE
     //std::transform(length2.begin(), length2.end(), length2.begin(), sqrt);
+    
+    std::vector<double> tempLength;
+    for(auto x: length2) tempLength.push_back(sqrt(x));
+    length2 = tempLength;
+    
     length2[0]=0.0;
     
     length = boost::accumulate(length2, 0.0);//arc length.
