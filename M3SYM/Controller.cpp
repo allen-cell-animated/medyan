@@ -59,6 +59,9 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Always read geometry
     p.readGeometryParameters();
     
+    //INITIALIZE SUBSYSTEM
+    _subSystem = new SubSystem();
+    
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "Initializing geometry...";
@@ -146,24 +149,11 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
     
     //First update of system
-    updateSystem();
+    updatePositions();
     updateNeighborLists();
 }
 
-void Controller::updateSystem() {
-    
-#ifdef DYNAMICRATES
-    /// update all reactables
-    for(auto &f : *FilamentDB::instance())
-        for (auto cylinder : f->getCylinderVector())
-            cylinder->updateReactionRates();
-    
-    for(auto &l : *LinkerDB::instance())
-        l->updateReactionRates();
-
-    for(auto &m : *MotorGhostDB::instance())
-        m->updateReactionRates();
-#endif
+void Controller::updatePositions() {
     
     /// update all moveables
     for(auto &f : *FilamentDB::instance()) {
@@ -183,6 +173,21 @@ void Controller::updateSystem() {
     
     for(auto &b : *BranchingPointDB::instance())
         b->updatePosition();
+}
+
+void Controller::updateReactionRates() {
+    
+#ifdef DYNAMICRATES
+    /// update all reactables
+    for(auto &c : _subSystem->getBoundaryCylinders())
+        c->updateReactionRates();
+    
+    for(auto &l : *LinkerDB::instance())
+        l->updateReactionRates();
+    
+    for(auto &m : *MotorGhostDB::instance())
+        m->updateReactionRates();
+#endif
 }
 
 void Controller::updateNeighborLists(bool updateReactions) {
@@ -214,8 +219,11 @@ void Controller::run() {
     //perform first minimization
 #ifdef MECHANICS
     _mController.run();
-    updateSystem();
+    
+    updatePositions();
     updateNeighborLists(true);
+    updateReactionRates();
+    
 #endif
     cout << "Starting simulation..." << endl;
     
@@ -228,7 +236,7 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
         //run mcontroller, update system
         _mController.run();
-        updateSystem();
+        updatePositions();
         
         if(i % _numStepsPerSnapshot == 0)
             o.printBasicSnapshot(i + _numStepsPerMech);
@@ -238,6 +246,8 @@ void Controller::run() {
         // update neighbor lists
         if(i % _numStepsPerNeighbor == 0 && i != 0)
             updateNeighborLists(true);
+        
+        updateReactionRates();
         
 #if defined(CHEMISTRY)
     }

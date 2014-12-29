@@ -51,7 +51,9 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(Linker* l) {
     double pos1 = l->getFirstPosition();
     double pos2 = l->getSecondPosition();
     
-    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    
+    l->getMLinker()->stretchForce = f0;
 }
 
 
@@ -68,7 +70,9 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux(Linker* l) {
     double pos1 = l->getFirstPosition();
     double pos2 = l->getSecondPosition();
     
-    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    
+    l->getMLinker()->stretchForce = f0;
 }
 
 ///Temlate specializations

@@ -43,9 +43,9 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     return 0.5 * kStretch * distStretched * distStretched ;
 
 }
-void LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                      double position1, double position2,
-                                      double kStretch, double eqLength){
+double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        double position1, double position2,
+                                        double kStretch, double eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
@@ -61,7 +61,6 @@ void LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b1->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - position1);
     b1->force[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - position1);
     
-    
     // force i+1
     b2->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (position1);
     b2->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (position1);
@@ -76,11 +75,13 @@ void LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->force[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
     b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
+    
+    return f0;
 }
 
-void LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                         double position1, double position2,
-                                         double kStretch, double eqLength){
+double LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                           double position1, double position2,
+                                           double kStretch, double eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position1);
     auto v2 = midPointCoordinate(b3->coordinateAux, b4->coordinateAux, position2);
@@ -108,5 +109,7 @@ void LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->forceAux[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
+    
+    return f0;
 }
 

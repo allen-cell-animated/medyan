@@ -16,6 +16,7 @@
 #include "Bead.h"
 #include "NeighborListDB.h"
 #include "ChemManager.h"
+#include "ChemRNode.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -116,32 +117,44 @@ void Cylinder::updatePosition() {
 /// If there is no force on the beads the reaction rates are set to the bare.
 
 void Cylinder::updateReactionRates() {
-
-    double f1 = _b1->loadForce;
-    double f2 = _b2->loadForce;
     
-    //load force from back (affects minus end polymerization)
-    if (f1 > 0.0) {
-        
-        
-        
-        
-    }
+    double force;
     
     //load force from front (affects plus end polymerization)
-    if(f2 > 0.0) {
+    if(_plusEnd) {
+        //get force of front bead
+        force = _b2->loadForce;
         
-
-
+        //change all plus end polymerization rates
+        for(auto &r : _cCylinder->getInternalReactions()) {
+            
+            if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+            
+                float a = SystemParameters::Geometry().monomerSize;
+                float newRate = r->getBareRate() * exp( - force * a / kT);
+                r->setRate(newRate);
+                r->getRNode()->activateReaction();
+            }
+        }
     }
-
-
-
-
-
-
-
-
-
+    
+    //load force from back (affects minus end polymerization)
+    else if(_minusEnd) {
+        
+        //get force of front bead
+        force = _b1->loadForce;
+        
+        //change all plus end polymerization rates
+        for(auto &r : _cCylinder->getInternalReactions()) {
+            
+            if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
+                
+                float a = SystemParameters::Geometry().monomerSize;
+                float newRate = r->getBareRate() * exp( - force * a / kT);
+                r->setRate(newRate);
+                r->getRNode()->activateReaction();
+            }
+        }
+    }
 }
 

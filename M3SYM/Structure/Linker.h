@@ -54,7 +54,8 @@ private:
     Compartment* _compartment; ///< Where this linker is
     
 public:
-    vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    vector<double> coordinate;
+        ///< coordinate of midpoint, updated with updatePosition()
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
            double position1 = 0.5, double position2 = 0.5, bool creation = false);

@@ -55,8 +55,8 @@
 int main(int argc, const char * argv[])
 {
 
-    SubSystem s;
-    Controller c(&s);
+    SubSystem* s;
+    Controller c(s);
 
     c.initialize("/Users/jameskomianos/Code/M3SYM/M3SYM/",
                  "/Users/jameskomianos/Code/M3SYM/M3SYM/");

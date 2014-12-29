@@ -17,10 +17,12 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "BoundaryElement.h"
 
 #include "MathFunctions.h"
 #include "SystemParameters.h"
 
+//FILAMENTS
 void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
     
     for (auto it: v) {
@@ -49,44 +51,67 @@ Filament* SubSystem::addNewFilament(vector<vector<double>>& v) {
 void SubSystem::removeFilament(Filament* f) { delete f; }
 
 
-void SubSystem::addNewLinkers(vector<vector<Cylinder* >>& v, short linkerType) {
+//LINKERS
+void SubSystem::addNewLinkers(vector<vector<Cylinder* >>& v,
+                              short linkerType) {
     
-    for (auto it: v)
-        new Linker(it[0], it[1], linkerType);
+    for (auto it: v) new Linker(it[0], it[1], linkerType);
 }
-Linker* SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType,
-                                double position1, double position2){
-    
+Linker* SubSystem::addNewLinker(Cylinder* c1, Cylinder* c2,
+                                short linkerType,
+                                double position1,
+                                double position2){
     return new Linker(c1, c2, linkerType, position1, position2, true);
 }
 void SubSystem::removeLinker(Linker* l) {delete l;}
 
 
-void SubSystem::addNewMotorGhosts(vector<vector<Cylinder* >>& v, short motorType) {
+//MOTORGHOSTS
+void SubSystem::addNewMotorGhosts(vector<vector<Cylinder* >>& v,
+                                  short motorType) {
     
-    for (auto it: v)
-        new MotorGhost(it[0], it[1], motorType);
+    for (auto it: v) new MotorGhost(it[0], it[1], motorType);
 }
-MotorGhost* SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                                        double position1, double position2) {
-    
+MotorGhost* SubSystem::addNewMotorGhost(Cylinder* c1, Cylinder* c2,
+                                        short motorType,
+                                        double position1,
+                                        double position2) {
     return new MotorGhost(c1, c2, motorType, position1, position2, true);
 }
 void SubSystem::removeMotorGhost(MotorGhost* m) { delete m; }
 
-void SubSystem::addNewBranchingPoints(vector<vector<Cylinder* >>& v, short branchType) {
+
+
+//BRANCHINGPOINTS
+void SubSystem::addNewBranchingPoints(vector<vector<Cylinder* >>& v,
+                                      short branchType) {
     
-    for (auto it: v)
-        new BranchingPoint(it[0], it[1], branchType);
+    for (auto it: v) new BranchingPoint(it[0], it[1], branchType);
 }
 BranchingPoint* SubSystem::addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
-                                                short branchType, double position) {
-    
+                                                short branchType,
+                                                double position) {
     return new BranchingPoint(c1, c2, branchType, position, true);
 }
 void SubSystem::removeBranchingPoint(BranchingPoint* b) { delete b; }
 
 
+//OTHER SUBSYSTEM FUNCTIONS
 double SubSystem::getSubSystemEnergy() {return _energy;}
 void SubSystem::setSubSystemEnergy(double energy) {_energy = energy;}
+
+vector<Cylinder*> SubSystem::getBoundaryCylinders() {
+    
+    vector<Cylinder*> cylinders;
+    auto list = getNeighborList();
+    
+    //loop through neighbor list, construct vector
+    for(auto be : *BoundaryElementDB::instance()) {
+        auto localCylinders = list->getNeighbors(be);
+        cylinders.insert(cylinders.end(), localCylinders.begin(),
+                                          localCylinders.end());
+    }
+    return cylinders;
+}
+
 

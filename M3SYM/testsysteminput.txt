@@ -121,8 +121,8 @@ NUMBINDINGSITES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               500
-FILAMENTLENGTH:             5
+NUMFILAMENTS:               1000
+FILAMENTLENGTH:             10
 
 
 

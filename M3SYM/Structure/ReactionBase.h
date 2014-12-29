@@ -42,7 +42,9 @@ class SpeciesPtrContainerVector;
 
 ///Enumeration for type of reaction
 enum ReactionType {
-    REGULAR, DIFFUSION, POLYMERIZATION, DEPOLYMERIZATION,
+    REGULAR, DIFFUSION,
+    POLYMERIZATIONPLUSEND, POLYMERIZATIONMINUSEND,
+    DEPOLYMERIZATIONPLUSEND, DEPOLYMERIZATIONMINUSEND,
     LINKERBINDING, MOTORBINDING, LINKERUNBINDING, MOTORUNBINDING,
     MOTORWALKINGFORWARD, AGING, CREATION, DESTRUCTION
 };
@@ -144,6 +146,8 @@ public:
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
     /// called only by the Gillespie-like algorithms.
     void setRnode(RNode *rhs) {_rnode=rhs;}
+    /// Get the RNode pointer
+    RNode* getRNode() {return _rnode;}
     
     /// Returns the rate associated with this ReactionBase.
     float getRate() const {return _rate;}

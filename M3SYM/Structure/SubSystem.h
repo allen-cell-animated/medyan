@@ -18,6 +18,9 @@
 #include <unordered_set>
 
 #include "common.h"
+#include "NeighborListContainer.h"
+
+#include "SystemParameters.h"
 
 //FORWARD DECLARATIONS
 class Boundary;
@@ -40,13 +43,21 @@ class Reactable;
  *  of the system. All creation and changes go through this class and will be redirected 
  *  to lower levels. See databases for more documentation on the explicit creation of 
  *  subsystem objects at initialization and during runtime.
+ *
+ *  The SubSystem class also extends CBENLContainer, holding a neighbors list for
+ *  [Cylinders](@ref Cylinder) near boundaries. This is used for reaction rate updating.
  */
-class SubSystem {
+class SubSystem
+#ifdef DYNAMICRATES
+    : public CBENLContainer {
+#else 
+    {
+#endif
 public:
-
-    /// Add a boundary to this subsystem
-    void addBoundary(Boundary* boundary) {_boundary = boundary;}
-    
+#ifdef DYNAMICRATES 
+    SubSystem() : CBENLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
+#endif
+        
     /// Add new [Filaments](@ref Filament).
     /// @param v - coordinates of the first and last bead in the filament.
     void addNewFilaments(vector<vector<vector<double>>>& v);
@@ -107,10 +118,20 @@ public:
     /// Return the number of [Beads](@ref Bead) in the system
     int getSystemSize();
     
+    //@{
+    /// Subsystem energy management
     double getSubSystemEnergy();
-    Boundary* getBoundary() {return _boundary;}
-    
     void setSubSystemEnergy(double energy);
+    //@}
+    
+    /// Get the subsystem boundary
+    Boundary* getBoundary() {return _boundary;}
+    /// Add a boundary to this subsystem
+    void addBoundary(Boundary* boundary) {_boundary = boundary;}
+    
+    /// Get the cylinders that are currently interacting with a boundary
+    vector<Cylinder*> getBoundaryCylinders();
+    
 private:
     double _energy = 0; ///< energy
     Boundary* _boundary; ///< boundary pointer
@@ -118,7 +139,5 @@ private:
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
 };
-
-
 
 #endif

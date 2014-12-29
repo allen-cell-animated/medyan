@@ -97,7 +97,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
                 rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::POLYMERIZATION);
+        rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
     }
 }
 
@@ -174,7 +174,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
                 rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::POLYMERIZATION);
+        rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
     }
 
 }
@@ -237,7 +237,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rcb(rxn->connect(polyCallback,false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
-    rxn->setReactionType(ReactionType::POLYMERIZATION);
+    rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
 }
 
 void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -298,7 +298,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rcb(rxn->connect(polyCallback,false));
     
     cc2->addCrossCylinderReaction(cc1, rxn);
-    rxn->setReactionType(ReactionType::POLYMERIZATION);
+    rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
 }
 
 
@@ -372,7 +372,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
                 rcb(rxn->connect(depolyCallback,false));
         
         cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
+        rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
     }
 }
 
@@ -447,7 +447,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
             
         
         cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
+        rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
     }
 }
 
@@ -510,7 +510,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rcb(rxn->connect(depolyCallback,false));
     
     cc2->addCrossCylinderReaction(cc1, rxn);
-    rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
+    rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
 
 }
 
@@ -571,7 +571,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rcb(rxn->connect(depolyCallback,false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
-    rxn->setReactionType(ReactionType::DEPOLYMERIZATION);
+    rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 }
 
 void MotorWalkFManager::addReaction(CCylinder* cc) {

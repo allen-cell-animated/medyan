@@ -75,8 +75,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #ifdef MECHANICS
     _mLinker = unique_ptr<MLinker>(
         new MLinker(linkerType, position1, position2,
-                    _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-                    _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+            _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+            _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mLinker->setLinker(this);
 #endif
 }
@@ -117,5 +117,13 @@ void Linker::updatePosition() {
     }
 }
 
-void Linker::updateReactionRates() {}
+void Linker::updateReactionRates() {
+
+    //double f0 = _mLinker->stretchForce;
+    
+    
+
+
+
+}
 

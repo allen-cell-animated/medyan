@@ -53,7 +53,8 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(MotorGhost*
     double pos1 = m->getFirstPosition();
     double pos2 = m->getSecondPosition();
     
-    _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    m->getMMotorGhost()->stretchForce = f0;
     
 }
 
@@ -71,7 +72,8 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux(MotorGho
     double pos1 = m->getFirstPosition();
     double pos2 = m->getSecondPosition();
     
-    _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+    m->getMMotorGhost()->stretchForce = f0;
 }
 
 ///Template specializations

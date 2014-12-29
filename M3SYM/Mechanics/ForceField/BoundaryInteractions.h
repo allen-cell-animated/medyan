@@ -24,14 +24,14 @@ class BoundaryElement;
 class Bead;
 
 /// Represents a BoundaryElement interaction with a Bead.
-class BoundaryInteractions : public BoundaryElementNLContainer {
+class BoundaryInteractions : public BBENLContainer {
 private:
     string _name; ///< Name of interaction
     
 public:
     /// Constructor, intializes the neighbor list needed
     BoundaryInteractions()
-        : BoundaryElementNLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
+        : BBENLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
     
     /// Compute energy of this interaction
     virtual double computeEnergy(BoundaryElement*, Bead*, double d) = 0;

@@ -44,6 +44,9 @@ extern double global_time;
 
 inline double tau() {return global_time;}
 
+///Some constants
+const double kT = 4.1; //in pN * nm
+
 ///To use STL containers, libraries, etc
 using namespace std;
 

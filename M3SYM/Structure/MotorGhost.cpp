@@ -15,6 +15,7 @@
 
 #include "Bead.h"
 #include "Cylinder.h"
+#include "ChemRNode.h"
 
 #include "GController.h"
 #include "SystemParameters.h"
@@ -22,8 +23,10 @@
 
 using namespace mathfunc;
 
-MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double position1, double position2, bool creation)
-                               : _c1(c1), _c2(c2), _motorType(motorType), _position1(position1), _position2(position2) {
+MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                       double position1, double position2, bool creation)
+    : _c1(c1), _c2(c2), _motorType(motorType),
+      _position1(position1), _position2(position2) {
     
     //add to motor ghost db
     MotorGhostDB::instance()->addMotorGhost(this);
@@ -31,8 +34,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double posit
     _birthTime = tau();
     
     //Find compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                 _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                 _c2->getSecondBead()->coordinate, _position2);
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
     try {_compartment = GController::getCompartment(coordinate);}
@@ -42,14 +47,17 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double posit
     _cMotorGhost = unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
     _cMotorGhost->setMotorGhost(this);
     
-    //Find species on cylinder that should be marked. If initialization, this should be done. But,
-    //if this is because of a reaction callback, it will have already been done.
+    //Find species on cylinder that should be marked. If initialization,
+    //this should be done. But, if this is because of a reaction callback,
+    //it will have already been done.
     
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
-    SpeciesMotor* sm1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesMotor* sm2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
+    SpeciesMotor* sm1 = _c1->getCCylinder()->
+                        getCMonomer(pos1)->speciesMotor(_motorType);
+    SpeciesMotor* sm2 = _c2->getCCylinder()->
+                        getCMonomer(pos2)->speciesMotor(_motorType);
     
     if(!creation) {
         SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
@@ -68,9 +76,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType, double posit
 #endif
     
 #ifdef MECHANICS
-    _mMotorGhost = unique_ptr<MMotorGhost>(new MMotorGhost(motorType, position1, position2,
-                                           _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-                                           _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+    _mMotorGhost = unique_ptr<MMotorGhost>(
+        new MMotorGhost(motorType, position1, position2,
+            _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
+            _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -85,8 +94,10 @@ MotorGhost::~MotorGhost() {
 void MotorGhost::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                 _c1->getSecondBead()->coordinate, _position1);
+    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                 _c2->getSecondBead()->coordinate, _position2);
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;
@@ -109,4 +120,38 @@ void MotorGhost::updatePosition() {
     }
 }
 
-void MotorGhost::updateReactionRates() {}
+/// @note - This function updates walking rates based on the
+/// following exponential form:
+///
+///                 k = k_0 * exp(f * a / kT)
+///
+/// where the characteristic distance in this case is the size of a step.
+/// The function uses the motor's stretching force at the current state
+/// to change this rate.
+
+void MotorGhost::updateReactionRates() {
+
+    double force = _mMotorGhost->stretchForce;
+    //get all walking reactions
+    Species* s1 = _cMotorGhost->getFirstSpecies();
+    Species* s2 = _cMotorGhost->getSecondSpecies();
+    
+    for(auto r : s1->getRSpecies().reactantReactions()) {
+        
+        if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+            
+            float newRate = r->getBareRate() * exp( force * _stepSize / kT);
+            r->setRate(newRate);
+            r->getRNode()->activateReaction();
+        }
+    }
+    for(auto r : s2->getRSpecies().reactantReactions()) {
+        
+        if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+            
+            float newRate = r->getBareRate() * exp( force * _stepSize / kT);
+            r->setRate(newRate);
+            r->getRNode()->activateReaction();
+        }
+    }
+}

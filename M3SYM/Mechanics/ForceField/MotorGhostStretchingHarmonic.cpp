@@ -43,9 +43,9 @@ double MotorGhostStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* 
     return 0.5 * kStretch * dist * dist;
 }
 // Force calculation methods:
-void MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                          double position1, double position2,
-                                          double kStretch, double eqLength){
+double MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                            double position1, double position2,
+                                            double kStretch, double eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
@@ -74,10 +74,13 @@ void MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4
     b4->force[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
     b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
+    
+    return f0;
 }
-void MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                             double position1, double position2,
-                                             double kStretch, double eqLength){
+
+double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                               double position1, double position2,
+                                               double kStretch, double eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position1);
     auto v2 = midPointCoordinate(b3->coordinateAux, b4->coordinateAux, position2);
@@ -108,4 +111,5 @@ void MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead*
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
+    return f0;
 }

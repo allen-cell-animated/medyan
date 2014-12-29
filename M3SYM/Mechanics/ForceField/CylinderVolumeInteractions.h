@@ -23,14 +23,14 @@
 class Cylinder;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
-class CylinderVolumeInteractions : public CylinderNLContainer {
+class CylinderVolumeInteractions : public CCNLContainer {
 private:
     string _name; ///< Name of interaction
     
 public:
     ///Constructor, initializes a cylinder neighbor list
     CylinderVolumeInteractions()
-        : CylinderNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
+        : CCNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
     
     /// Compute the energy of this interaction
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;

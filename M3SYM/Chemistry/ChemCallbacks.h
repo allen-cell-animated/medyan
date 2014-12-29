@@ -134,6 +134,10 @@ struct LinkerUnbindingCallback {
         CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
         
+        //reset the associated reactions
+        _linker->getMLinker()->stretchForce = 0.0;
+        _linker->updateReactionRates();
+        
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -203,6 +207,10 @@ struct MotorUnbindingCallback {
         CCylinder* cc2 = _motor->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
         
+        //reset the associated reactions
+        _motor->getMMotorGhost()->stretchForce = 0.0;
+        _motor->updateReactionRates();
+        
         //remove the motor
         _ps->removeMotorGhost(_motor);
     }
@@ -256,6 +264,9 @@ struct MotorBindingCallback {
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         m->getCMotorGhost()->setOffReaction(offRxn);
+        
+        //update the reaction rates
+        m->updateReactionRates();
     }
 };
 
@@ -347,6 +358,9 @@ struct MotorWalkingForwardCallback {
     
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
+        
+        //update reaction rates
+        m->updateReactionRates();
     }
 };
 
@@ -449,6 +463,8 @@ struct MotorMovingCylinderForwardCallback {
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
         
+        //update reaction rates
+        m->updateReactionRates();
     }
 };
 

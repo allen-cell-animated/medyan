@@ -18,52 +18,74 @@
 
 #include "NeighborListDB.h"
 
-/// Holds a CylinderNeighborList.
-class CylinderNLContainer {
+/// Holds a CCNeighborList.
+class CCNLContainer {
 
 private:
-    CylinderNeighborList* _neighborList;
+    CCNeighborList* _neighborList;
     
 public:
-    /// Constructor, adds a cylinder neighbor list to the database
-    CylinderNLContainer(float rMax = 0.0,
-                        float rMin = 0.0, bool crossFilamentOnly = false) {
+    /// Constructor, adds a cylinder-cylinder neighbor list to the database
+    CCNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
         
-        _neighborList = new CylinderNeighborList(rMax, rMin, crossFilamentOnly);
+        _neighborList = new CCNeighborList(rMax, rMin,crossFilamentOnly);
         NeighborListDB::instance()->addNeighborList(_neighborList);
     }
-    /// Destructor, removes cylinder neighbor list from the database
-    ~CylinderNLContainer() {
+    /// Destructor, removes cylinder-cylinder neighbor list from the database
+    ~CCNLContainer() {
         NeighborListDB::instance()->removeNeighborList(_neighborList);
         delete _neighborList;
     }
     
     /// Get neighbor list
-    CylinderNeighborList* getNeighborList() {return _neighborList;}
+    CCNeighborList* getNeighborList() {return _neighborList;}
     
 };
 
-/// Holds a BoundaryElementNeighborList.
-class BoundaryElementNLContainer {
+/// Holds a BBENeighborList.
+class BBENLContainer {
     
 private:
-    BoundaryElementNeighborList* _neighborList;
+    BBENeighborList* _neighborList;
 
 public:
-    /// Constructor, adds a cylinder neighbor list to the database
-    BoundaryElementNLContainer(float rMax = 0.0, float rMin = 0.0) {
+    /// Constructor, adds a bead-boundary element neighbor list to the database
+    BBENLContainer(float rMax = 0.0) {
         
-        _neighborList = new BoundaryElementNeighborList(rMax, rMin);
+        _neighborList = new BBENeighborList(rMax);
         NeighborListDB::instance()->addNeighborList(_neighborList);
     }
-    /// Destructor, removes boundary element neighbor list from the database
-    ~BoundaryElementNLContainer() {
+    /// Destructor, removes bead - boundary element neighbor list from the database
+    ~BBENLContainer() {
         NeighborListDB::instance()->removeNeighborList(_neighborList);
         delete _neighborList;
     }
     
     /// Get neighbor list
-    BoundaryElementNeighborList* getNeighborList() {return _neighborList;}
+    BBENeighborList* getNeighborList() {return _neighborList;}
+};
+
+/// Holds a CBENeighborList.
+class CBENLContainer {
+    
+private:
+    CBENeighborList* _neighborList;
+    
+public:
+    /// Constructor, adds a cylinder - boundary element neighbor list to the database
+    CBENLContainer(float rMax = 0.0) {
+        
+        _neighborList = new CBENeighborList(rMax);
+        NeighborListDB::instance()->addNeighborList(_neighborList);
+    }
+    /// Destructor, removes cylinder - boundary element neighbor list from the database
+    ~CBENLContainer() {
+        NeighborListDB::instance()->removeNeighborList(_neighborList);
+        delete _neighborList;
+    }
+    
+    /// Get neighbor list
+    CBENeighborList* getNeighborList() {return _neighborList;}
 };
 
 

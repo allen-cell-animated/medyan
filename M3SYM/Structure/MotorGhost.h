@@ -24,6 +24,8 @@
 #include "Movable.h"
 #include "Reactable.h"
 
+#include "SystemParameters.h"
+
 //FORWARD DECLARATIONS
 class Cylinder;
 
@@ -53,9 +55,12 @@ private:
     
     Compartment* _compartment; ///< Where this motorghost is
     
-    
+    double _stepSize = SystemParameters::Geometry().cylinderSize /
+                       SystemParameters::Chemistry().numBindingSites;
+
 public:
-    vector<double> coordinate; ///< coordinate of midpoint, updated with updatePosition()
+    vector<double> coordinate;
+        ///< coordinate of midpoint, updated with updatePosition()
     
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                double position1 = 0.5, double position2 = 0.5, bool creation = false);

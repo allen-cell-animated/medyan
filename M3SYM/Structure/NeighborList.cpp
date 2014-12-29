@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-void CylinderNeighborList::addNeighbor(Neighbor* n) {
+void CCNeighborList::addNeighbor(Neighbor* n) {
     
     //return if not a cylinder!
     if(!dynamic_cast<Cylinder*>(n)) return;
@@ -31,7 +31,7 @@ void CylinderNeighborList::addNeighbor(Neighbor* n) {
     updateNeighbors(n);
 }
 
-void CylinderNeighborList::updateNeighbors(Neighbor* n) {
+void CCNeighborList::updateNeighbors(Neighbor* n) {
 
     //clear existing
     _list[n].clear();
@@ -71,7 +71,7 @@ void CylinderNeighborList::updateNeighbors(Neighbor* n) {
     }
 }
 
-void CylinderNeighborList::removeDynamicNeighbor(Neighbor* n) {
+void CCNeighborList::removeDynamicNeighbor(Neighbor* n) {
     
     //return if not a cylinder!
     if(!dynamic_cast<Cylinder*>(n)) return;
@@ -87,7 +87,7 @@ void CylinderNeighborList::removeDynamicNeighbor(Neighbor* n) {
 }
 
 
-vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
+vector<Cylinder*> CCNeighborList::getNeighbors(Cylinder* cylinder) {
     
     auto neighbors = _list[cylinder];
     vector<Cylinder*> cylinderNeighbors(_list[cylinder].size());
@@ -97,7 +97,7 @@ vector<Cylinder*> CylinderNeighborList::getNeighbors(Cylinder* cylinder) {
     return cylinderNeighbors;
 }
 
-void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
+void BBENeighborList::addNeighbor(Neighbor* n) {
     
     //return if not a boundary element!
     if(!dynamic_cast<BoundaryElement*>(n)) return;
@@ -106,7 +106,7 @@ void BoundaryElementNeighborList::addNeighbor(Neighbor* n) {
     updateNeighbors(n);
 }
 
-void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
+void BBENeighborList::updateNeighbors(Neighbor* n) {
     
     //clear existing
     _list[n].clear();
@@ -120,7 +120,7 @@ void BoundaryElementNeighborList::updateNeighbors(Neighbor* n) {
     }
 }
 
-void BoundaryElementNeighborList::addDynamicNeighbor(Neighbor* n) {
+void BBENeighborList::addDynamicNeighbor(Neighbor* n) {
     
     //return if not a boundary element!
     Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
@@ -132,7 +132,7 @@ void BoundaryElementNeighborList::addDynamicNeighbor(Neighbor* n) {
     }
 }
 
-void BoundaryElementNeighborList::removeDynamicNeighbor(Neighbor* n) {
+void BBENeighborList::removeDynamicNeighbor(Neighbor* n) {
     
     //return if not a boundary element!
     if(!dynamic_cast<Bead*>(n)) return;
@@ -143,7 +143,7 @@ void BoundaryElementNeighborList::removeDynamicNeighbor(Neighbor* n) {
     }
 }
 
-vector<Bead*> BoundaryElementNeighborList::getNeighbors(BoundaryElement* be) {
+vector<Bead*> BBENeighborList::getNeighbors(BoundaryElement* be) {
     
     auto neighbors = _list[be];
     vector<Bead*> beadNeighbors(_list[be].size());
@@ -151,5 +151,61 @@ vector<Bead*> BoundaryElementNeighborList::getNeighbors(BoundaryElement* be) {
     transform(neighbors.begin(), neighbors.end(), beadNeighbors.begin(),
                                    [](Neighbor* n){return (Bead*)(n);});
     return beadNeighbors;
+}
+
+void CBENeighborList::addNeighbor(Neighbor* n) {
+    
+    //return if not a boundary element!
+    if(!dynamic_cast<BoundaryElement*>(n)) return;
+    
+    //update neighbors
+    updateNeighbors(n);
+}
+
+void CBENeighborList::updateNeighbors(Neighbor* n) {
+    
+    //clear existing
+    _list[n].clear();
+    
+    //loop through beads, add as neighbor
+    for (auto &c : *CylinderDB::instance()) {
+        
+        double dist = ((BoundaryElement*)(n))->distance(c->coordinate);
+        //If within range, add it
+        if(dist < _rMax) _list[n].push_back(c);
+    }
+}
+
+void CBENeighborList::addDynamicNeighbor(Neighbor* n) {
+    
+    //return if not a boundary element!
+    Cylinder* c; if(!(c = dynamic_cast<Cylinder*>(n))) return;
+    
+    for(auto it = _list.begin(); it != _list.end(); it++) {
+        BoundaryElement* be = (BoundaryElement*)(it->first);
+        if(be->distance(c->coordinate) < _rMax)
+            it->second.push_back(c);
+    }
+}
+
+void CBENeighborList::removeDynamicNeighbor(Neighbor* n) {
+    
+    //return if not a boundary element!
+    if(!dynamic_cast<Cylinder*>(n)) return;
+    
+    for(auto it = _list.begin(); it != _list.end(); it++) {
+        auto cylinder = find(it->second.begin(), it->second.end(), n);
+        if(cylinder != it->second.end()) it->second.erase(cylinder);
+    }
+}
+
+vector<Cylinder*> CBENeighborList::getNeighbors(BoundaryElement* be) {
+    
+    auto neighbors = _list[be];
+    vector<Cylinder*> cylinderNeighbors(_list[be].size());
+    
+    transform(neighbors.begin(), neighbors.end(), cylinderNeighbors.begin(),
+              [](Neighbor* n){return (Cylinder*)(n);});
+    return cylinderNeighbors;
 }
 

@@ -33,6 +33,8 @@ class Linker;
 class MLinker {
     
 public:
+    double stretchForce = 0.0; ///< Stretching force of linker at current state
+    
     /// Main constructor
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc

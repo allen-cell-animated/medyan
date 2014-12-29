@@ -50,6 +50,8 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     
     //create cylinder
     Cylinder* c0 = new Cylinder(this, b1, b2, 0);
+    c0->setPlusEnd(true);
+    c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
 }
 
@@ -79,6 +81,7 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
     Bead* b2 = new Bead(tmpBeadsCoord[1], 1);
     
     Cylinder* c0 = new Cylinder(this, b1, b2, 0);
+    c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
     
     for (int i = 2; i<numBeads; i++)
@@ -91,7 +94,7 @@ Filament::~Filament() {
     for(auto &c : _cylinderVector) {
         delete c->getFirstBead();
         //remove second bead if last
-        if(c->last()) delete c->getSecondBead();
+        if(c->isPlusEnd()) delete c->getSecondBead();
         delete c;
     }
 }
@@ -103,6 +106,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     Cylinder* cBack = _cylinderVector.back();
     int lastPositionFilament = cBack->getPositionFilament();
     Bead* b2 = cBack->getSecondBead();
+    cBack->setPlusEnd(false);
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
@@ -113,7 +117,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     
     //create cylinder
     Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1);
-    c0->setLast(true);
+    c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
 }
@@ -124,6 +128,7 @@ void Filament::extendBack(vector<double>& coordinates) {
     Cylinder* cFront = _cylinderVector.front();
     int lastPositionFilament = cFront->getPositionFilament();
     Bead* b2 = cFront->getFirstBead();
+    cFront->setMinusEnd(false);
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
@@ -132,6 +137,7 @@ void Filament::extendBack(vector<double>& coordinates) {
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() - 1);
     
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1);
+    c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
 }
@@ -153,9 +159,9 @@ void Filament::extendFront() {
     Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
     
     Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
-    _cylinderVector.back()->setLast(false);
+    _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
-    _cylinderVector.back()->setLast(true);
+    _cylinderVector.back()->setPlusEnd(true);
     
     _deltaPlusEnd++;
 }
@@ -178,7 +184,9 @@ void Filament::extendBack() {
     Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
 
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1, false, true);
+    _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
+    _cylinderVector.front()->setMinusEnd(true);
     
     _deltaMinusEnd++;
 }
@@ -192,7 +200,7 @@ void Filament::retractFront() {
     delete retractionCylinder->getSecondBead();
     delete retractionCylinder;
     
-    _cylinderVector.back()->setLast(true);
+    _cylinderVector.back()->setPlusEnd(true);
 
     _deltaPlusEnd--;
 }
@@ -204,6 +212,8 @@ void Filament::retractBack() {
     
     delete retractionCylinder->getFirstBead();
     delete retractionCylinder;
+    
+    _cylinderVector.front()->setMinusEnd(true);
     
     _deltaMinusEnd--;
 }

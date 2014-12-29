@@ -85,14 +85,13 @@ public:
 
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
-class CylinderNeighborList : public NeighborList {
+class CCNeighborList : public NeighborList {
     
 private:
     bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
     
 public:
-    CylinderNeighborList(float rMax = 0.0,
-                         float rMin = 0.0, bool crossFilamentOnly = false)
+    CCNeighborList(float rMax, float rMin=0.0, bool crossFilamentOnly = false)
         : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
     
     virtual void addNeighbor(Neighbor* n);
@@ -109,10 +108,10 @@ public:
 };
 
 /// An implementation of NeighborList for Bead-BoundaryElement interactions
-class BoundaryElementNeighborList : public NeighborList {
+class BBENeighborList : public NeighborList {
     
 public:
-    BoundaryElementNeighborList(float rMax, float rMin): NeighborList(rMax, rMin) {}
+    BBENeighborList(float rMax): NeighborList(rMax) {}
 
     virtual void addNeighbor(Neighbor* n);
     virtual void updateNeighbors(Neighbor* n);
@@ -124,6 +123,21 @@ public:
     vector<Bead*> getNeighbors(BoundaryElement* be);
 };
 
+/// An implementation of NeighborList for Cylinder-BoundaryElement interaction
+class CBENeighborList : public NeighborList {
+    
+public:
+    CBENeighborList(float rMax): NeighborList(rMax) {}
+    
+    virtual void addNeighbor(Neighbor* n);
+    virtual void updateNeighbors(Neighbor* n);
+    
+    virtual void addDynamicNeighbor(Neighbor* n);
+    virtual void removeDynamicNeighbor(Neighbor* n);
+    
+    /// Get all Cylinder neighbors of a boundary element
+    vector<Cylinder*> getNeighbors(BoundaryElement* be);
+};
 
 
 #endif

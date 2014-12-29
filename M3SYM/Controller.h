@@ -49,8 +49,10 @@ private:
     int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
     int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
 
-    /// Update the system, called in run. Will update all positions and reactions
-    void updateSystem();
+    /// Update the positions of all elements in the system
+    void updatePositions();
+    /// Update the reaction rates of all elements in the system
+    void updateReactionRates();
     
     /// Update neighbors lists, called in run
     void updateNeighborLists(bool updateReactions=false);

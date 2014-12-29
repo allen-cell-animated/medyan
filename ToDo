@@ -14,11 +14,11 @@ Goals for December 2014
     -Debug linker and motors                                                    X
     -Add branching reaction
     -Add severing reaction
-    -Add changing reaction rates (poly, linker & motor)
+    -Add changing reaction rates (poly, linker & motor)                         X
     -Add aging reactions                                                        X
     -Fix signal copying                                                         X
     -Motor step size, rethinking of stepping (numbindingsites)                  X
-    -Filament creation and destruction
+    -Filament creation and destruction                                          X
     -Optimizations: Reaction Dependents                                         X
     -Optimizations: Cylinder reaction management                                X
     -Formatting (80C lines, cleaning up other things, usage, googlecode)        X

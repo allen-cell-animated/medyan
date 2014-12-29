@@ -49,16 +49,19 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
-    Filament* _pFilament; //< Pointer to parent filament where this cylinder belongs;
+    Filament* _pFilament; //< Pointer to parent filament where this cylinder belongs
     int _positionFilament; ///< Position on filament (1st, 2nd, ... etc)
-    bool _last = false; ///< If the cylinder is last in the filament's cylinder list
+    
+    bool _plusEnd = false; ///< If the cylinder is at the plus end
+    bool _minusEnd = false; ///< If the cylinder is at the minus end
     
     int _ID; ///< Unique ID of cylinder, managed by CylinderDB
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
 public:
-    vector<double> coordinate; ///< Coordinates of midpoint, updated with updatePosition()
+    vector<double> coordinate;
+        ///< Coordinates of midpoint, updated with updatePosition()
     
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
              bool extensionFront = false, bool extensionBack = false,
@@ -91,8 +94,14 @@ public:
     /// Get ID
     const int getID() {return _ID;}
     
-    bool last(){ return _last;}
-    void setLast(bool b){ _last = b;}
+    ///@{
+    /// Set plus and minus end boolean markers
+    bool isPlusEnd() {return _plusEnd;}
+    void setPlusEnd(bool plusEnd) {_plusEnd = plusEnd;}
+    
+    bool isMinusEnd() {return _minusEnd;}
+    void setMinusEnd(bool minusEnd) {_minusEnd = minusEnd;}
+    //@}
     
     int getPositionFilament() {return _positionFilament;}
     

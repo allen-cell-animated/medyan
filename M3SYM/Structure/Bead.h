@@ -54,23 +54,30 @@ public:
     
     ///Default constructor
     Bead(int positionFilament) :
-        _positionFilament(positionFilament), coordinate (3, 0), coordinateAux(3, 0),
-                                                        force(3, 0), forceAux(3, 0) {}
+        _positionFilament(positionFilament), coordinate (3, 0),
+        coordinateAux(3, 0), force(3, 0), forceAux(3, 0) {}
+    
     ~Bead();
     
     //@{
     /// Auxiliary method for CG minimization
-    inline double calcForceSquare() {return force[0]*force[0] +
-                                            force[1]*force[1] +
-                                            force[2]*force[2]; }
+    inline double calcForceSquare() {
+        return force[0]*force[0] +
+               force[1]*force[1] +
+               force[2]*force[2];
+    }
     
-    inline double calcForceAuxSquare() {return forceAux[0]*forceAux[0] +
-                                               forceAux[1]*forceAux[1] +
-                                               forceAux[2]*forceAux[2]; }
+    inline double calcForceAuxSquare() {
+        return forceAux[0]*forceAux[0] +
+               forceAux[1]*forceAux[1] +
+               forceAux[2]*forceAux[2];
+    }
     
-    inline double calcDotForceProduct() { return force[0]*forceAux[0] +
-                                                 force[1]*forceAux[1] +
-                                                 force[2]*forceAux[2]; }
+    inline double calcDotForceProduct() {
+        return force[0]*forceAux[0] +
+               force[1]*forceAux[1] +
+               force[2]*forceAux[2];
+    }
     //@}
     
     /// Get Compartment

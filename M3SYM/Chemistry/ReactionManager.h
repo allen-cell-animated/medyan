@@ -188,14 +188,14 @@ public:
  *  is stored (for products and reactants), as well as the rate of the reaction and 
  *  direction. The integer value that is the position of the species in the CMonomer 
  *  vector is held by the ChemManager. Also contains the range of this reaction.
- *  Also a subclass of CylinderNLContainer, contains a cylinder neighbors list of 
+ *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
  *  active reactions.
  *  @note if the species is a bulk or diffusing species, the integer molecule value in 
  *  the tuple stored in the SpeciesNamesDB.
  *  This class also has functions to add the cross filament reaction to two 
  *  [CCylinders] (@ref CCylinder).
  */
-class CrossFilamentRxnManager : public CylinderNLContainer {
+class CrossFilamentRxnManager : public CCNLContainer {
 
     friend class SimpleManagerImpl;
     
@@ -219,7 +219,7 @@ public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
                             float onRate, float offRate, float rMax, float rMin)
-        : CylinderNLContainer(rMax + SystemParameters::Geometry().cylinderSize,
+        : CCNLContainer(rMax + SystemParameters::Geometry().cylinderSize,
                 max(rMin - SystemParameters::Geometry().cylinderSize, 0.0), true),
         _reactants(reactants), _products(products),
         _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {

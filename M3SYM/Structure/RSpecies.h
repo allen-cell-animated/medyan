@@ -259,11 +259,11 @@ public:
             
     /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref
     /// Reaction) where this RSpecies is involved as a Reactant
-    inline vector<ReactionBase *>& ReactantReactions(){return _as_reactants;}
+    inline vector<ReactionBase *>& reactantReactions(){return _as_reactants;}
     
     /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref
     /// Reaction) where this RSpecies is involved as a Product
-    inline vector<ReactionBase *>& ProductReactions(){return _as_products;}
+    inline vector<ReactionBase *>& productReactions(){return _as_products;}
     
     /// Return vector<ReactionBase *>::iterator, which points to the beginning of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Reactant
