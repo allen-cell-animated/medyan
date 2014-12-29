@@ -28,9 +28,6 @@
 #include "BranchingPoint.h"
 
 #include "SystemParameters.h"
-#include "MathFunctions.h"
-
-using namespace mathfunc;
 
 void Controller::initialize(string inputDirectory, string outputDirectory) {
     
@@ -166,9 +163,6 @@ void Controller::updateSystem() {
 
     for(auto &m : *MotorGhostDB::instance())
         m->updateReactionRates();
-
-    for(auto &b : *BranchingPointDB::instance())
-        b->updateReactionRates();
 #endif
     
     /// update all moveables

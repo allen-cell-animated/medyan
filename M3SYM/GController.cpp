@@ -208,8 +208,8 @@ void GController::initializeGrid() {
     _nDim = SystemParameters::Geometry().nDim;
     
     _grid = {SystemParameters::Geometry().NX,
-                             SystemParameters::Geometry().NY,
-                             SystemParameters::Geometry().NZ};
+             SystemParameters::Geometry().NY,
+             SystemParameters::Geometry().NZ};
     
     _compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
                         SystemParameters::Geometry().compartmentSizeY,
