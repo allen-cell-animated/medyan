@@ -27,6 +27,9 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
 
+    //update the load force of the bead
+    b->loadForce = f0;
+    
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];
     b->force[2] += f0 *norm[2];
@@ -38,6 +41,9 @@ void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& n
     
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
+    
+    //update the load force of the bead
+    b->loadForce = f0;
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];

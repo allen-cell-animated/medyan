@@ -19,7 +19,8 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// Represents a repulsive excluded volume potential used by the CylinderExclVolume template.
+/// Represents a repulsive excluded volume potential used by the
+/// CylinderExclVolume template.
 class CylinderExclVolRepulsion {
     
 public:

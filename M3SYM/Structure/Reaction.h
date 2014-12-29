@@ -19,7 +19,8 @@
 #include "ReactionBase.h"
 #include "ChemSim.h"
 
-/// Represents a concrete chemical reaction, such as A + B -> C, where M is the number of reactants and N is the number of products.
+/// Represents a concrete chemical reaction, such as A + B -> C, where M is the number
+/// of reactants and N is the number of products.
 
 /*! Reaction<M,N> encodes a chemical reaction between M reactants and N products. It 
  *  follows the ReactionBase interface, where many methods are defined. Most of the 

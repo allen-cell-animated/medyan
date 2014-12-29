@@ -146,7 +146,8 @@ void Filament::extendFront() {
     
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
-    auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+    auto npp = nextPointProjection(b2->coordinate,
+                                   SystemParameters::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
@@ -170,7 +171,8 @@ void Filament::extendBack() {
     
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
-    auto npp = nextPointProjection(b2->coordinate, SystemParameters::Geometry().monomerSize, direction1);
+    auto npp = nextPointProjection(b2->coordinate,
+                                   SystemParameters::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
@@ -479,7 +481,8 @@ vector<vector<double>> Filament::arcFilamentProjection(
     marsagila(x3);
     marsagila(x4);
     
-    std::transform(v[0].begin(), v[0].end(), v[1].begin(), temp, std::minus<double>()); //vector difference.
+    std::transform(v[0].begin(), v[0].end(), v[1].begin(), temp, std::minus<double>());
+    //vector difference.
     std::transform(temp, temp+3, temp, temp, std::multiplies<double>());
     //squaring elements of a vector.
     mod=std::accumulate(temp,temp+3,temp4,std::plus<double>()); //modulus^2.

@@ -243,7 +243,8 @@ public:
     /// Do not use priorities 1 and 2 unless absolutely essential.
     /// @return a connection object which can be used to later disconnect this
     /// particular slot or temporarily block it
-    boost::signals2::connection connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
+    boost::signals2::connection
+        connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
     
     /// Broadcasts signal indicating that the ReactionBase event has taken place
     /// This method is only called by the code which runs the chemical dynamics (i.e.

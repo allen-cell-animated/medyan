@@ -28,7 +28,7 @@ private:
     
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(BranchingPoint*,  double d) = 0;
+    virtual double computeEnergy(BranchingPoint*, double d) = 0;
     /// Compute forces of this interaction
     virtual void computeForces(BranchingPoint*) = 0;
     /// Compute auxiliary forces of this interaction

@@ -23,7 +23,8 @@ class Cylinder;
 
 /// Used to hold mechanical properties of a Cylinder.
 /*!
- * MCylinder is a class to hold mechanical properties of a Cylinder, including equilibrium force constants.
+ * MCylinder is a class to hold mechanical properties of a Cylinder, including 
+ * equilibrium force constants.
  */
 class MCylinder {
 

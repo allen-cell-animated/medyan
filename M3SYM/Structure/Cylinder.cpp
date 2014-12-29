@@ -55,9 +55,12 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     double eqLength;
     
     //set eqLength according to cylinder size
-    if(extensionFront || extensionBack) eqLength = SystemParameters::Geometry().monomerSize;
-    else if(creation) eqLength = SystemParameters::Geometry().monomerSize * 2;
-    else eqLength = SystemParameters::Geometry().cylinderSize;
+    if(extensionFront || extensionBack)
+        eqLength = SystemParameters::Geometry().monomerSize;
+    else if(creation)
+        eqLength = SystemParameters::Geometry().monomerSize * 3;
+    else
+        eqLength = SystemParameters::Geometry().cylinderSize;
     
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
@@ -103,5 +106,42 @@ void Cylinder::updatePosition() {
 
 }
 
-void Cylinder::updateReactionRates() {}
+/// @note - This function updates polymerization rates based on the
+/// Elastic Brownian Ratchet Model:
+///
+///                 k = k_0 * exp(-f * a / kT)
+///
+/// where the characteristic distance in this case is the size of a monomer.
+/// The function uses the bead load force to calculate this changed rate.
+/// If there is no force on the beads the reaction rates are set to the bare.
+
+void Cylinder::updateReactionRates() {
+
+    double f1 = _b1->loadForce;
+    double f2 = _b2->loadForce;
+    
+    //load force from back (affects minus end polymerization)
+    if (f1 > 0.0) {
+        
+        
+        
+        
+    }
+    
+    //load force from front (affects plus end polymerization)
+    if(f2 > 0.0) {
+        
+
+
+    }
+
+
+
+
+
+
+
+
+
+}
 

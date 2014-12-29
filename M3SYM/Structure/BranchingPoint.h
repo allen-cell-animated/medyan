@@ -21,7 +21,6 @@
 #include "MBranchingPoint.h"
 #include "CBranchingPoint.h"
 #include "Movable.h"
-#include "Reactable.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -31,10 +30,10 @@ class Cylinder;
 /*!
  * BranchingPoint class is used to manage and store a MBranchingPoint and 
  * CBranchingPoint. Upon intialization, both of these components are created. Extending
- * the Movable and Reactable classes, the BranchingPoint can update its position and 
- * reactions according to mechanical equilibration.
+ * the Movable class, the BranchingPoint can update its position according to mechanical 
+ * equilibration.
  */
-class BranchingPoint : public Movable, Reactable {
+class BranchingPoint : public Movable{
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
@@ -93,9 +92,6 @@ public:
     /// Update the position
     /// @note - changes compartment if needed
     virtual void updatePosition();
-    
-    /// Update the reaction rates
-    virtual void updateReactionRates();
 };
 
 #endif

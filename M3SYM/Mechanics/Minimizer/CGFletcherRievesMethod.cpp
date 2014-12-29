@@ -64,6 +64,8 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
         
 	}
 	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
+    
+    cout<<"Energy = "<< curEnergy <<endl;
 }
 
 

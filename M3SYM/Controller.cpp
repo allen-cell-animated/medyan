@@ -28,9 +28,6 @@
 #include "BranchingPoint.h"
 
 #include "SystemParameters.h"
-#include "MathFunctions.h"
-
-using namespace mathfunc;
 
 void Controller::initialize(string inputDirectory, string outputDirectory) {
     
@@ -155,30 +152,37 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
 
 void Controller::updateSystem() {
     
-    /// update all reactables and moveables
+#ifdef DYNAMICRATES
+    /// update all reactables
+    for(auto &f : *FilamentDB::instance())
+        for (auto cylinder : f->getCylinderVector())
+            cylinder->updateReactionRates();
+    
+    for(auto &l : *LinkerDB::instance())
+        l->updateReactionRates();
+
+    for(auto &m : *MotorGhostDB::instance())
+        m->updateReactionRates();
+#endif
+    
+    /// update all moveables
     for(auto &f : *FilamentDB::instance()) {
-        
         for (auto cylinder : f->getCylinderVector()){
             cylinder->getFirstBead()->updatePosition();
             cylinder->updatePosition();
-            cylinder->updateReactionRates();
         }
         //update last bead
         f->getCylinderVector().back()->
         getSecondBead()->updatePosition();
     }
-    for(auto &l : *LinkerDB::instance()) {
+    for(auto &l : *LinkerDB::instance())
         l->updatePosition();
-        l->updateReactionRates();
-    }
-    for(auto &m : *MotorGhostDB::instance()) {
+    
+    for(auto &m : *MotorGhostDB::instance())
         m->updatePosition();
-        m->updateReactionRates();
-    }
-    for(auto &b : *BranchingPointDB::instance()) {
+    
+    for(auto &b : *BranchingPointDB::instance())
         b->updatePosition();
-        b->updateReactionRates();
-    }
 }
 
 void Controller::updateNeighborLists(bool updateReactions) {

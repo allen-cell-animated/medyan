@@ -75,6 +75,3 @@ void BranchingPoint::updatePosition() {
     }
 }
 
-void BranchingPoint::updateReactionRates() {}
-
-

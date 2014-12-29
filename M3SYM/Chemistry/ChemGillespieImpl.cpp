@@ -13,8 +13,8 @@
 
 #include "ChemGillespieImpl.h"
 
-RNodeGillespie::RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie) :
-                                       _chem_Gillespie (chem_Gillespie), _react(r) {
+RNodeGillespie::RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie)
+    :_chem_Gillespie (chem_Gillespie), _react(r) {
     _react->setRnode(this);
     reset();
 }
