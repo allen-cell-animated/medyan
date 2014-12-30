@@ -1240,7 +1240,8 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
 }
 
 
-void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment) {
+void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
+                                            Compartment& protoCompartment) {
     
      //go through reactions, add each
     for(auto &r: chem.genReactions) {
@@ -1483,6 +1484,67 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
     }
 }
 
+void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem,
+                                                     Compartment& protoCompartment) {
+    
+    
+    //go through reactions, add each
+    for(auto &r: chem.filamentCreationReactions) {
+        
+        vector<Species*> reactantSpecies;
+        vector<Species*> productSpecies;
+        
+        vector<string> reactants = get<0>(r);
+        vector<string> products = get<1>(r);
+        
+        bool bulk = false;
+        
+        for(auto &reactant : reactants) {
+            if(reactant.find("BULK") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
+                                  [name](tuple<string, int, string> element) {
+                                  return get<0>(element) == name ? true : false; });
+                
+                if(it == chem.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(
+                CompartmentGrid::instance()->findSpeciesBulkByName(name));
+            }
+            
+            else if(reactant.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it =
+                find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
+                        [name](tuple<string, int, double> element) {
+                        return get<0>(element) == name ? true : false; });
+                if(it == chem.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(protoCompartment.findSpeciesByName(name));
+            }
+            else {
+                cout <<
+                "All reactants and products in a general reaction must be bulk or diffusing. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+    
+}
+
 void SimpleManagerImpl::initialize(ChemistryData& chem) {
     
     //set static system ptr
@@ -1508,6 +1570,8 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     genGeneralReactions(chem, cProto);
     //generate any bulk reactions
     genBulkReactions(chem);
+    //generate filament creation reactions
+    genFilamentCreationReactions(chem, cProto);
     
     //initialize all compartments equivalent to cproto
     for(auto &c : CompartmentGrid::instance()->children()) {
@@ -1542,32 +1606,38 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         CMonomer* m = new CMonomer();
         for(auto &f : _speciesFilament) {
             SpeciesFilament* sf =
-            c->addSpeciesFilament(SpeciesNamesDB::Instance()->genUniqueName(f));
+            c->addSpeciesFilament(
+               SpeciesNamesDB::Instance()->genUniqueName(f));
             m->addSpeciesFilament(sf);
         }
         for (auto &p : _speciesPlusEnd) {
             SpeciesPlusEnd* sp =
-            c->addSpeciesPlusEnd(SpeciesNamesDB::Instance()->genUniqueName(p));
+            c->addSpeciesPlusEnd(
+               SpeciesNamesDB::Instance()->genUniqueName(p));
             m->addSpeciesPlusEnd(sp);
         }
         for (auto &mi : _speciesMinusEnd) {
             SpeciesMinusEnd* smi =
-            c->addSpeciesMinusEnd(SpeciesNamesDB::Instance()->genUniqueName(mi));
+            c->addSpeciesMinusEnd(
+               SpeciesNamesDB::Instance()->genUniqueName(mi));
             m->addSpeciesMinusEnd(smi);
         }
         for (auto &b : _speciesBound) {
             SpeciesBound* sb =
-            c->addSpeciesBound(SpeciesNamesDB::Instance()->genUniqueName(b));
+            c->addSpeciesBound(
+               SpeciesNamesDB::Instance()->genUniqueName(b));
             m->addSpeciesBound(sb);
         }
         for (auto &l : _speciesLinker) {
             SpeciesLinker* sl =
-            c->addSpeciesLinker(SpeciesNamesDB::Instance()->genUniqueName(l));
+            c->addSpeciesLinker(
+               SpeciesNamesDB::Instance()->genUniqueName(l));
             m->addSpeciesLinker(sl);
         }
         for (auto &mo : _speciesMotor) {
             SpeciesMotor* sm =
-            c->addSpeciesMotor(SpeciesNamesDB::Instance()->genUniqueName(mo));
+            c->addSpeciesMotor(
+               SpeciesNamesDB::Instance()->genUniqueName(mo));
             m->addSpeciesMotor(sm);
         }
         
@@ -1588,10 +1658,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     }
 
     else if(creation) {
-        CMonomer* m2 = cc->getCMonomer(int(cc->getSize() / 2));
-        CMonomer* m1 = cc->getCMonomer(int(cc->getSize() / 2) - 1);
-        m2->speciesPlusEnd(0)->getRSpecies().setN(1);
-        m1->speciesMinusEnd(0)->getRSpecies().setN(1);
+        //do nothing, this will be handled by the callback
     }
     
     //Base case, initialization

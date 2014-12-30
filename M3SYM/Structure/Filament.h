@@ -56,13 +56,14 @@ public:
     /// This constructor creates a short filament, containing only two beads.
     /// Coordinates of the first bead is an input, second is set up by using an input
     /// direction. Using all this, two constructors for beads and cylinders are called.
-	Filament(SubSystem* s, vector<double>& position, vector<double>& direction);
+	Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
+                                                     bool creation = false);
     
     /// This constructor is called to create a longer filament. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point
-    /// determined by position vector and has a direction direction. Number of beads is
-    /// equal to the number of cylinders.
-    Filament(SubSystem* s, vector<vector<double>>& position, int numBeads, string projectionType = "STRAIGHT");
+    /// determined by position vector and has a direction.
+    Filament(SubSystem* s, vector<vector<double>>& position,
+             int numBeads, string projectionType = "STRAIGHT");
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.

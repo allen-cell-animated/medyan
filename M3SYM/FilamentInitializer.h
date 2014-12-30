@@ -14,6 +14,8 @@
 #ifndef M3SYM_FilamentInitializer_h
 #define M3SYM_FilamentInitializer_h
 
+#include <random>
+
 #include "common.h"
 
 #include "SubSystem.h"
@@ -31,6 +33,7 @@ class Boundary;
 class FilamentInitializer {
     
 public:
+    
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL

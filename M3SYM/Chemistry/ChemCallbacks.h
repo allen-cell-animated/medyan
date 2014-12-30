@@ -22,6 +22,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 
+#include "GController.h"
 #include "SystemParameters.h"
 
 /// Callback to extend the front of a Filament after a polymerization
@@ -133,10 +134,6 @@ struct LinkerUnbindingCallback {
         CCylinder* cc1 = _linker->getFirstCylinder()->getCCylinder();
         CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
-        
-        //reset the associated reactions
-        _linker->getMLinker()->stretchForce = 0.0;
-        _linker->updateReactionRates();
         
         //remove the linker
         _ps->removeLinker(_linker);
@@ -264,9 +261,6 @@ struct MotorBindingCallback {
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         m->getCMotorGhost()->setOffReaction(offRxn);
-        
-        //update the reaction rates
-        m->updateReactionRates();
     }
 };
 
@@ -323,7 +317,7 @@ struct MotorWalkingForwardCallback {
             
             //create new reaction
             newOffRxn =
-            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
+            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
         }
         else {
             newPosition = m->getSecondPosition() + shift;
@@ -340,7 +334,7 @@ struct MotorWalkingForwardCallback {
             
             //create new reaction
             newOffRxn =
-            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
+            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
         }
         //set new reaction type
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -358,9 +352,6 @@ struct MotorWalkingForwardCallback {
     
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
-        
-        //update reaction rates
-        m->updateReactionRates();
     }
 };
 
@@ -379,14 +370,17 @@ struct MotorMovingCylinderForwardCallback {
     
     MotorMovingCylinderForwardCallback(Cylinder* oldC, Cylinder* newC,
                                        short oldPosition,
-                                       short motorType, short boundType, SubSystem* ps)
+                                       short motorType,
+                                       short boundType,
+                                       SubSystem* ps)
         :_oldC(oldC), _newC(newC), _motorType(motorType),
          _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
     
     void operator() (ReactionBase* r) {
         
         //Find the motor
-        double newPosition = 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
+        double newPosition =
+            1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
         int newIntPosition =
             newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
 
@@ -423,7 +417,7 @@ struct MotorMovingCylinderForwardCallback {
             
             //create new reaction
             newOffRxn =
-                new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
+                new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -443,7 +437,7 @@ struct MotorMovingCylinderForwardCallback {
             
             //create new reaction
             newOffRxn =
-                new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
+                new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -463,9 +457,60 @@ struct MotorMovingCylinderForwardCallback {
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
         
-        //update reaction rates
-        m->updateReactionRates();
     }
 };
+
+/// Struct to create a new filament based on a given reaction
+struct FilamentCreationCallback {
+    
+    //@{
+    /// Integer specifying the chemical properties of first cylinder
+    short _plusEnd;
+    short _minusEnd;
+    short _filament;
+    //@}
+
+    Compartment* _compartment; ///< compartment to put this filament in
+    SubSystem* _ps; ///< Ptr to the subsystem
+    
+    FilamentCreationCallback(short plusEnd,
+                             short minusEnd,
+                             short filament,
+                             SubSystem* ps, Compartment* c = nullptr)
+        : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
+          _compartment(c), _ps(ps) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        Compartment* c;
+        
+        //no compartment was set, pick a random one
+        if(_compartment == nullptr)
+            c = GController::getRandomCompartment();
+        else c = _compartment;
+        
+        //set up a random initial position and direction
+        auto position = GController::getRandomCoordinates(c);
+        auto direction = vector<double>{((float)rand() / RAND_MAX),
+                                        ((float)rand() / RAND_MAX),
+                                        ((float)rand() / RAND_MAX)};
+        
+        //create filament, set up ends and filament species
+        Filament* f = _ps->addNewFilament(position, direction);
+        
+        CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
+        int monomerPosition = SystemParameters::Geometry().cylinderIntSize / 2 + 1;
+        
+        cc->getCMonomer(monomerPosition - 1)->
+            speciesMinusEnd(_minusEnd)->getRSpecies().up();
+        cc->getCMonomer(monomerPosition)->
+            speciesFilament(_filament)->getRSpecies().up();
+        cc->getCMonomer(monomerPosition + 1)->
+            speciesPlusEnd(_plusEnd)->getRSpecies().up();
+    }
+    
+};
+
+
 
 #endif

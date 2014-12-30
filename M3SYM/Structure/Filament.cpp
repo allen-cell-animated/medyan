@@ -34,7 +34,7 @@
 using namespace mathfunc;
 
 Filament::Filament(SubSystem* s, vector<double>& position,
-                                 vector<double>& direction) {
+                   vector<double>& direction, bool creation) {
    
     _subSystem = s;
     
@@ -49,7 +49,7 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     Bead* b2 = new Bead(pos2, 1);
     
     //create cylinder
-    Cylinder* c0 = new Cylinder(this, b1, b2, 0);
+    Cylinder* c0 = new Cylinder(this, b1, b2, 0, false, false, creation);
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);

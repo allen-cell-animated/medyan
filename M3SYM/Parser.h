@@ -52,6 +52,12 @@ struct ChemistryData {
     vector<tuple<vector<string>,
                  vector<string>,
                         double>> bulkReactions = {};
+    
+    /// Filament creation reaction
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> filamentCreationReactions = {};
+    
     //@{
     /// Filament reactions
     /*!

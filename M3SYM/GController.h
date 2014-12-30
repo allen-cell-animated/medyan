@@ -38,6 +38,7 @@ class Compartment;
  *  [Boundaries] (@ref Boundary) that are in place. It has functionality to initialize
  *  a CompartmentGrid based on the given dimensionality as well as find the correct
  *  Compartment based on a set of coordinates.
+ *  @note - The geometry controller currently only supports three-dimensional grids.
  */
 class GController {
     
@@ -54,7 +55,7 @@ public:
     /// Initialize the grid based on input parameters
     void initializeGrid();
     
-    /// Activate compartments based on a bounda
+    /// Activate compartments based on a boundary
     void activateCompartments(Boundary* boundary);
     
     //@{
@@ -70,6 +71,11 @@ public:
     static void findCompartments(const vector<double>& coords, Compartment* ccheck,
                                  double dist, vector<Compartment*>& compartments);
     
+    /// Choose a random compartment from the grid (that is activated)
+    static Compartment* getRandomCompartment();
+    
+    /// Get random coordinates in a given compartment
+    static vector<double> getRandomCoordinates(Compartment* c);
 };
 
 #endif

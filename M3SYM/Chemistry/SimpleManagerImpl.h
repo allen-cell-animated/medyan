@@ -53,10 +53,15 @@ private:
     //@}
     
     /// Generate the general, non-filament reactions
-    void genGeneralReactions(ChemistryData& chem, Compartment& protoCompartment);
+    void genGeneralReactions(ChemistryData& chem,
+                             Compartment& protoCompartment);
     
     /// Generate bulk reactions
     void genBulkReactions(ChemistryData& chem);
+    
+    /// Generate reactions that create new filaments
+    void genFilamentCreationReactions(ChemistryData& chem,
+                                      Compartment& protoCompartment);
     
     /// Copies species from chem struct
     void copySpecies(ChemistryData& chem);
