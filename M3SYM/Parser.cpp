@@ -980,14 +980,17 @@ void SystemParser::readGeometryParameters() {
     GParams.monomerSize = monomerSize;
     
 #ifdef CHEMISTRY
-    if(cylinderSize / monomerSize < 5) {
+    if(cylinderSize / monomerSize < SystemParameters::Geometry().minCylinderIntSize) {
         cout <<
-        "With chemistry, cylinder size specified needs to be at least 5 monomers long. Exiting"
+        "With chemistry, cylinder size specified is too short. Exiting"
         << endl;
         exit(EXIT_FAILURE);
     }
-    GParams.cylinderIntSize = int(cylinderSize / monomerSize);
 #endif
+    GParams.cylinderIntSize = int(cylinderSize / monomerSize);
+    
+    GParams.minCylinderSize =
+        SystemParameters::Geometry().minCylinderIntSize * GParams.monomerSize;
     
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
     if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
@@ -997,9 +1000,12 @@ void SystemParser::readGeometryParameters() {
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
     
     //find max compartment side
-    if(GParams.compartmentSizeX > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeX;
-    if(GParams.compartmentSizeY > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeY;
-    if(GParams.compartmentSizeZ > GParams.largestCompartmentSide) GParams.largestCompartmentSide = GParams.compartmentSizeZ;
+    if(GParams.compartmentSizeX > GParams.largestCompartmentSide)
+        GParams.largestCompartmentSide = GParams.compartmentSizeX;
+    if(GParams.compartmentSizeY > GParams.largestCompartmentSide)
+        GParams.largestCompartmentSide = GParams.compartmentSizeY;
+    if(GParams.compartmentSizeZ > GParams.largestCompartmentSide)
+        GParams.largestCompartmentSide = GParams.compartmentSizeZ;
     
     SystemParameters::GParams = GParams;
 }

@@ -129,8 +129,10 @@ public:
     /// Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
     
+#ifdef DYNAMICRATES
     /// Get the cylinders that are currently interacting with a boundary
     vector<Cylinder*> getBoundaryCylinders();
+#endif
     
 private:
     double _energy = 0; ///< energy

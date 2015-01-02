@@ -44,8 +44,13 @@ Filament::Filament(SubSystem* s, vector<double>& position,
  
     //create beads
     Bead* b1 = new Bead(position, 0);
-    auto pos2 = nextPointProjection(
-        position,SystemParameters::Geometry().cylinderSize, direction);
+    
+    //choose length
+    double length;
+    if(creation) length = SystemParameters::Geometry().minCylinderSize;
+    else length = SystemParameters::Geometry().cylinderSize;
+    
+    auto pos2 = nextPointProjection(position, length, direction);
     Bead* b2 = new Bead(pos2, 1);
     
     //create cylinder

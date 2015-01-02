@@ -57,8 +57,8 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
                                directionZ * directionZ);
         
         vector<double> direction = {directionX/normFactor,
-            directionY/normFactor,
-            directionZ/normFactor};
+                                    directionY/normFactor,
+                                    directionZ/normFactor};
         
         vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *

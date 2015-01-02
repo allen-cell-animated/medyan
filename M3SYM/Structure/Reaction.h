@@ -110,7 +110,7 @@ template <unsigned short M, unsigned short N>
         void initializeSpecies(const InputContainer &species)
         {
             assert(species.size()==(M+N)
-                   && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+            && "Reaction<M,N> Ctor: The species number does not match the template M+N");
             transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
             

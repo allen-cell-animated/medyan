@@ -29,6 +29,17 @@
 
 #include "SystemParameters.h"
 
+Controller::Controller(SubSystem* s) : _subSystem(s) {
+    
+    //init subsystem
+    _subSystem = new SubSystem();
+    
+    //init controllers
+    _mController = new MController(_subSystem);
+    _cController = new CController(_subSystem);
+    _gController = new GController();
+}
+
 void Controller::initialize(string inputDirectory, string outputDirectory) {
     
     cout << "******************** M3SYM **********************" << endl;
@@ -59,19 +70,16 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Always read geometry
     p.readGeometryParameters();
     
-    //INITIALIZE SUBSYSTEM
-    _subSystem = new SubSystem();
-    
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "Initializing geometry...";
-    _gController.initializeGrid();
+    _gController->initializeGrid();
     cout << "Done." << endl;
     
 #ifdef MECHANICS
     //Initialize Mechanical controller
     cout << "Initializing mechanics...";
-    _mController.initialize(MTypes, MAlgorithm);
+    _mController->initialize(MTypes, MAlgorithm);
     cout << "Done." <<endl;
     
 #endif
@@ -96,7 +104,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
-    _gController.activateCompartments(_subSystem->getBoundary());
+    _gController->activateCompartments(_subSystem->getBoundary());
     
     //read parameters
     p.readChemistryParameters();
@@ -124,7 +132,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
         cout << "Need to specify a chemical input file. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
-    _cController.initialize(CAlgorithm.algorithm, "", chem);
+    _cController->initialize(CAlgorithm.algorithm, "", chem);
     cout << "Done." << endl;
 #endif
     
@@ -175,9 +183,8 @@ void Controller::updatePositions() {
         b->updatePosition();
 }
 
-void Controller::updateReactionRates() {
-    
 #ifdef DYNAMICRATES
+void Controller::updateReactionRates() {
     /// update all reactables
     for(auto &c : _subSystem->getBoundaryCylinders())
         c->updateReactionRates();
@@ -187,8 +194,8 @@ void Controller::updateReactionRates() {
     
     for(auto &m : *MotorGhostDB::instance())
         m->updateReactionRates();
-#endif
 }
+#endif
 
 void Controller::updateNeighborLists(bool updateReactions) {
     
@@ -218,26 +225,31 @@ void Controller::run() {
     
     //perform first minimization
 #ifdef MECHANICS
-    _mController.run();
+    _mController->run();
     
     updatePositions();
     updateNeighborLists(true);
+#ifdef DYNAMICRATES
     updateReactionRates();
+#endif
     
 #endif
     cout << "Starting simulation..." << endl;
     
-#if defined(CHEMISTRY)
+#ifdef CHEMISTRY
     for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
         cout << "Current simulation time = "<< tau() << endl;
         //run ccontroller
-        if(!_cController.run(_numStepsPerMech)) break;
+        if(!_cController->run(_numStepsPerMech)) break;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
         //run mcontroller, update system
-        _mController.run();
+        _mController->run();
         updatePositions();
-        
+
+        if(i % _numStepsPerSnapshot == 0)
+            o.printBasicSnapshot(i + _numStepsPerMech);
+#elif defined(CHEMISTRY)
         if(i % _numStepsPerSnapshot == 0)
             o.printBasicSnapshot(i + _numStepsPerMech);
 #elif defined(MECHANICS)
@@ -246,10 +258,11 @@ void Controller::run() {
         // update neighbor lists
         if(i % _numStepsPerNeighbor == 0 && i != 0)
             updateNeighborLists(true);
-        
+#ifdef DYNAMICRATES
         updateReactionRates();
+#endif
         
-#if defined(CHEMISTRY)
+#ifdef CHEMISTRY
     }
 #endif
     chk2 = chrono::high_resolution_clock::now();

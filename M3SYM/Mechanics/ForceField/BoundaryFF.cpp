@@ -23,14 +23,16 @@
 BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interaction3) {
     
     if (interaction1 == "REPULSIONLJ")
-        _BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionLJ>());
+        _BoundaryInteractionVector.emplace_back(
+            new BoundaryRepulsion<BoundaryRepulsionLJ>());
     if (interaction1 == "REPULSIONEXP")
-        _BoundaryInteractionVector.emplace_back(new BoundaryRepulsion<BoundaryRepulsionExp>());
+        _BoundaryInteractionVector.emplace_back(
+            new BoundaryRepulsion<BoundaryRepulsionExp>());
 }
 
 double BoundaryFF::computeEnergy(double d) {
-    double U = 0;
     
+    double U = 0;
     for (auto &boundaryInteraction : _BoundaryInteractionVector){
         
         auto neighborList = boundaryInteraction->getNeighborList();

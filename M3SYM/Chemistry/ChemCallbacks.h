@@ -15,15 +15,20 @@
 #define M3SYM_ChemCallbacks_h
 
 #include "common.h"
+#include "utility.h"
 
 #include "SubSystem.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "Boundary.h"
 
 #include "GController.h"
+#include "MathFunctions.h"
 #include "SystemParameters.h"
+
+using namespace mathfunc;
 
 /// Callback to extend the front of a Filament after a polymerization
 /// Reaction occurs in the system.
@@ -34,7 +39,7 @@ struct FilamentExtensionFrontCallback {
     //Constructor, sets members
     FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
     //Callback
-    void operator() (ReactionBase *r){ _filament->extendFront(); }
+    void operator() (ReactionBase *r){ _filament->extendFront();}
 };
 
 /// Callback to extend the back of a Filament after a polymerization
@@ -82,7 +87,7 @@ struct FilamentPolymerizationFrontCallback {
     //Constructor, sets members
     FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
     //Callback
-    void operator() (ReactionBase *r){ _filament->polymerizeFront();}
+    void operator() (ReactionBase *r){ _filament->polymerizeFront(); }
 };
 
 /// Callback to polymerize the back of a Filament after a polymerization
@@ -481,7 +486,7 @@ struct FilamentCreationCallback {
           _compartment(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+
         Compartment* c;
         
         //no compartment was set, pick a random one
@@ -490,10 +495,25 @@ struct FilamentCreationCallback {
         else c = _compartment;
         
         //set up a random initial position and direction
-        auto position = GController::getRandomCoordinates(c);
-        auto direction = vector<double>{((float)rand() / RAND_MAX),
-                                        ((float)rand() / RAND_MAX),
-                                        ((float)rand() / RAND_MAX)};
+        vector<double> position;
+        vector<double> direction;
+        
+        while(true) {
+            position = GController::getRandomCoordinates(c);
+            
+            //getting random numbers between -1 and 1
+            direction = {randomDouble(-1,1),
+                         randomDouble(-1,1),
+                         randomDouble(-1,1)};
+            
+            auto npp = nextPointProjection(position,
+                SystemParameters::Geometry().cylinderSize, direction);
+            
+            //check if within boundary
+            if(_ps->getBoundary()->within(position) &&
+               _ps->getBoundary()->within(npp))
+                break;
+        }
         
         //create filament, set up ends and filament species
         Filament* f = _ps->addNewFilament(position, direction);
@@ -501,12 +521,23 @@ struct FilamentCreationCallback {
         CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
         int monomerPosition = SystemParameters::Geometry().cylinderIntSize / 2 + 1;
         
+        //minus end
         cc->getCMonomer(monomerPosition - 1)->
             speciesMinusEnd(_minusEnd)->getRSpecies().up();
+        cc->getCMonomer(monomerPosition - 1)->
+            speciesBound(0)->getRSpecies().up();
+
+        //filament
         cc->getCMonomer(monomerPosition)->
             speciesFilament(_filament)->getRSpecies().up();
+        cc->getCMonomer(monomerPosition)->
+            speciesBound(0)->getRSpecies().up();
+        
+        //plus end
         cc->getCMonomer(monomerPosition + 1)->
             speciesPlusEnd(_plusEnd)->getRSpecies().up();
+        cc->getCMonomer(monomerPosition + 1)->
+            speciesBound(0)->getRSpecies().up();
     }
     
 };

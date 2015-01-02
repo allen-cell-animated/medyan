@@ -106,6 +106,10 @@ struct GeometryParameters {
     double monomerSize = 0;
     double cylinderSize = 0;
     int cylinderIntSize = 0;
+    
+    /// Minimum monomer length of a cylinder
+    int minCylinderIntSize = 5;
+    double minCylinderSize = 0;
     //@}
     
 };

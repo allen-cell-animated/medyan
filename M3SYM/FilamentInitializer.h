@@ -33,7 +33,6 @@ class Boundary;
 class FilamentInitializer {
     
 public:
-    
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL

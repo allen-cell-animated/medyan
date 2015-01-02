@@ -206,12 +206,9 @@ Compartment* GController::getRandomCompartment() {
     while(true) {
         
         //create a random coordinate
-        vector<double> coord = {_grid[0] * _compartmentSize[0]
-                                * ((float)rand() / RAND_MAX),
-                                _grid[1] * _compartmentSize[1]
-                                * ((float)rand() / RAND_MAX),
-                                _grid[2] * _compartmentSize[2]
-                                * ((float)rand() / RAND_MAX)};
+        vector<double> coord = {_grid[0] * _compartmentSize[0] * randomDouble(0,1),
+                                _grid[1] * _compartmentSize[1] * randomDouble(0,1),
+                                _grid[2] * _compartmentSize[2] * randomDouble(0,1)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;
@@ -224,12 +221,12 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     auto coordsCompartment = c->coordinates();
     vector<double> coords;
     
-    coords.push_back(coordsCompartment[0] + _compartmentSize[0]
-                     * ((float)rand() / RAND_MAX));
-    coords.push_back(coordsCompartment[1] + _compartmentSize[1]
-                     * ((float)rand() / RAND_MAX));
-    coords.push_back(coordsCompartment[2] + _compartmentSize[2]
-                     * ((float)rand() / RAND_MAX));
+    coords.push_back(coordsCompartment[0] +
+                     _compartmentSize[0] * randomDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[1] +
+                     _compartmentSize[1] * randomDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[2] +
+                     _compartmentSize[2] * randomDouble(-1,1) / 2);
     return coords;
 }
 

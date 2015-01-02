@@ -16,8 +16,10 @@
 double ForceFieldManager::computeEnergy(double d) {
     
     double energy = 0;
-    for(auto &f : _forceFields)
-        energy += f->computeEnergy(d);
+    for(auto &f : _forceFields) {
+        auto tempEnergy = f->computeEnergy(d);
+        energy += tempEnergy;
+    }
     
     //if energy is infinity, exit ungracefully.
     if(energy == numeric_limits<double>::infinity()) {

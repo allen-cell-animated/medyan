@@ -59,7 +59,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     if(extensionFront || extensionBack)
         eqLength = SystemParameters::Geometry().monomerSize;
     else if(creation)
-        eqLength = SystemParameters::Geometry().monomerSize * 3;
+        eqLength = SystemParameters::Geometry().minCylinderSize;
     else
         eqLength = SystemParameters::Geometry().cylinderSize;
     

@@ -15,6 +15,7 @@
 #define M3SYM_Utility_h
 
 #include <memory>
+#include <random>
 
 using namespace std;
 
@@ -28,5 +29,10 @@ template<typename T, typename U>
 bool isSame(const U& x) {
     return typeid(x) == typeid(T&); 
 }
+
+inline double randomDouble(double low, double high) {
+    return ((float)rand() / RAND_MAX) * (high - low) + low;
+}
+
 
 #endif

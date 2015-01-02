@@ -37,9 +37,9 @@ class Controller {
 private:
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
-    MController _mController; ///< Chemical controller used
-    CController _cController; ///< Mechanical controller used
-    GController _gController; ///< Geometry controller used
+    MController* _mController; ///< Chemical controller used
+    CController* _cController; ///< Mechanical controller used
+    GController* _gController; ///< Geometry controller used
     
     string _inputDirectory; ///< Input directory being used
     string _outputDirectory; ///< Output directory being used
@@ -51,15 +51,17 @@ private:
 
     /// Update the positions of all elements in the system
     void updatePositions();
+    
+#ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
     void updateReactionRates();
+#endif
     
     /// Update neighbors lists, called in run
     void updateNeighborLists(bool updateReactions=false);
     
 public:
-    Controller(SubSystem* s)
-        : _mController(s), _cController(s), _gController(), _subSystem(s) {};
+    Controller(SubSystem* s);
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory

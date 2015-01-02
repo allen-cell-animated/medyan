@@ -1484,65 +1484,180 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
     }
 }
 
-void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem,
-                                                     Compartment& protoCompartment) {
+void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem) {
     
-    
-    //go through reactions, add each
-    for(auto &r: chem.filamentCreationReactions) {
+    //loop through all compartments
+    for(auto &c : CompartmentGrid::instance()->children()) {
+        Compartment *C = (Compartment*)(c.get());
         
-        vector<Species*> reactantSpecies;
-        vector<Species*> productSpecies;
+        if(!C->isActivated()) continue;
         
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        
-        bool bulk = false;
-        
-        for(auto &reactant : reactants) {
-            if(reactant.find("BULK") != string::npos) {
+        //go through reactions, add each
+        for(auto &r: chem.filamentCreationReactions) {
+            
+            vector<Species*> reactantSpecies;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            
+            if(reactants.size() != 2 || products.size() != 3) {
+                cout << "Invalid filament creation reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            bool diffusing = false;
+            
+            for(auto &reactant : reactants) {
+                if(reactant.find("BULK") != string::npos) {
+                    
+                    //Look up species, make sure in list
+                    string name = reactant.substr(0, reactant.find(":"));
+                    auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
+                                      [name](tuple<string, int, string> element) {
+                                      return get<0>(element) == name ? true : false; });
+                    
+                    if(it == chem.speciesBulk.end()) {
+                        cout <<
+                        "A bulk species that was included in a reaction was not initialized. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    reactantSpecies.push_back(
+                    CompartmentGrid::instance()->findSpeciesBulkByName(name));
+                }
                 
-                //Look up species, make sure in list
-                string name = reactant.substr(0, reactant.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                  [name](tuple<string, int, string> element) {
-                                  return get<0>(element) == name ? true : false; });
-                
-                if(it == chem.speciesBulk.end()) {
+                else if(reactant.find("DIFFUSING") != string::npos) {
+                    
+                    //Look up species, make sure in list
+                    string name = reactant.substr(0, reactant.find(":"));
+                    auto it =
+                    find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
+                            [name](tuple<string, int, double> element) {
+                            return get<0>(element) == name ? true : false; });
+                    if(it == chem.speciesDiffusing.end()) {
+                        cout <<
+                        "A diffusing species that was included in a reaction was not initialized. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    reactantSpecies.push_back(C->findSpeciesByName(name));
+                    diffusing = true;
+                }
+                else {
                     cout <<
-                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    "All reactants and products in a general reaction must be bulk or diffusing. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(
-                CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             
-            else if(reactant.find("DIFFUSING") != string::npos) {
+            //add the reaction. The products will only be involved in creating the
+            //callback needed to create a new filament
+            ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r));
+            rxn->setReactionType(ReactionType::FILAMENTCREATION);
+            
+            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            
+            reactantSpecies.clear();
+            
+            //now, loop through products, add callback
+            short plusEnd;
+            short minusEnd;
+            short filament;
+            
+            //FIRST SPECIES MUST BE PLUS END
+            auto product = products[0];
+            if(product.find("PLUSEND") != string::npos) {
                 
-                //Look up species, make sure in list
-                string name = reactant.substr(0, reactant.find(":"));
-                auto it =
-                find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
-                        [name](tuple<string, int, double> element) {
-                        return get<0>(element) == name ? true : false; });
-                if(it == chem.speciesDiffusing.end()) {
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+                
+                if(it != _speciesPlusEnd.end()) {
+                    //get position of iterator
+                    plusEnd = distance(_speciesPlusEnd.begin(), it);
+                }
+                else {
                     cout <<
-                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantSpecies.push_back(protoCompartment.findSpeciesByName(name));
             }
             else {
                 cout <<
-                "All reactants and products in a general reaction must be bulk or diffusing. Exiting."
+                "First product species listed in a filament creation must be plus end. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
+
+            //SECOND SPECIES MUST BE FILAMENT
+            product = products[1];
+            if(product.find("FILAMENT") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+                
+                if(it != _speciesFilament.end()) {
+                    //get position of iterator
+                    filament = distance(_speciesFilament.begin(), it);
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Second product species listed in a filament creation must be filament. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //THIRD SPECIES MUST BE MINUSEND
+            product = products[2];
+            if(product.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+                
+                if(it != _speciesMinusEnd.end()) {
+                    //get position of iterator
+                    minusEnd = distance(_speciesMinusEnd.begin(), it);
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Third product species listed in a filament creation must be minus end. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //if the reaction had any diffusing species, create the filament
+            //in a random position within that compartment
+            Compartment* creationCompartment;
+            if(diffusing)
+                creationCompartment = C;
+            else
+                creationCompartment = GController::getRandomCompartment();
+
+            //now, add the callback
+            FilamentCreationCallback
+            fcallback(plusEnd, filament, minusEnd, _subSystem, creationCompartment);
+
+            boost::signals2::shared_connection_block
+            rcb(rxn->connect(fcallback,false));
         }
     }
-    
 }
 
 void SimpleManagerImpl::initialize(ChemistryData& chem) {
@@ -1570,10 +1685,9 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     genGeneralReactions(chem, cProto);
     //generate any bulk reactions
     genBulkReactions(chem);
-    //generate filament creation reactions
-    genFilamentCreationReactions(chem, cProto);
     
     //initialize all compartments equivalent to cproto
+    //will copy all general and bulk reactions
     for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = (Compartment*)(c.get());
         *C = cProto;
@@ -1582,6 +1696,8 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
         Compartment *C = (Compartment*)(c.get());
         C->generateAllDiffusionReactions();
     }
+    //generate filament creation reactions
+    genFilamentCreationReactions(chem);
     
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();

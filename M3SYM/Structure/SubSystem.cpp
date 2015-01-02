@@ -92,8 +92,9 @@ void SubSystem::removeBranchingPoint(BranchingPoint* b) { delete b; }
 double SubSystem::getSubSystemEnergy() {return _energy;}
 void SubSystem::setSubSystemEnergy(double energy) {_energy = energy;}
 
+#ifdef DYNAMICRATES
 vector<Cylinder*> SubSystem::getBoundaryCylinders() {
-    
+
     vector<Cylinder*> cylinders;
     auto list = getNeighborList();
     
@@ -105,5 +106,6 @@ vector<Cylinder*> SubSystem::getBoundaryCylinders() {
     }
     return cylinders;
 }
+#endif
 
 

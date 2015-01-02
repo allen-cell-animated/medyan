@@ -60,8 +60,7 @@ private:
     void genBulkReactions(ChemistryData& chem);
     
     /// Generate reactions that create new filaments
-    void genFilamentCreationReactions(ChemistryData& chem,
-                                      Compartment& protoCompartment);
+    void genFilamentCreationReactions(ChemistryData& chem);
     
     /// Copies species from chem struct
     void copySpecies(ChemistryData& chem);
