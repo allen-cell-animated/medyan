@@ -36,10 +36,27 @@ struct FilamentExtensionFrontCallback {
     
     Filament* _filament;
     
+    short _plusEnd; ///< Plus end species to mark
+    short _bound;  ///< Bound species to mark
+    
     //Constructor, sets members
-    FilamentExtensionFrontCallback(Filament* filament) : _filament(filament){};
+    FilamentExtensionFrontCallback(Filament* filament,
+                                   short plusEnd, short bound)
+        : _filament(filament), _plusEnd(plusEnd), _bound(bound) {};
+    
     //Callback
-    void operator() (ReactionBase *r){ _filament->extendFront();}
+    void operator() (ReactionBase *r){
+        
+        //extend the front
+        _filament->extendFront();
+        
+        //get last cylinder, mark species
+        auto newCylinder = _filament->getCylinderVector().back();
+        CMonomer* m = newCylinder->getCCylinder()->getCMonomer(0);
+        
+        m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
+        m->speciesBound(_bound)->getRSpecies().up();
+    }
 };
 
 /// Callback to extend the back of a Filament after a polymerization
@@ -48,10 +65,27 @@ struct FilamentExtensionBackCallback {
     
     Filament* _filament;
     
+    short _minusEnd; ///< Minus end species to mark
+    short _bound;  ///< Bound species to mark
+    
     //Constructor, sets members
-    FilamentExtensionBackCallback(Filament* filament) : _filament(filament){};
+    FilamentExtensionBackCallback(Filament* filament,
+                                  short minusEnd, short bound)
+        : _filament(filament), _minusEnd(minusEnd), _bound(bound) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->extendBack(); }
+    void operator() (ReactionBase *r){
+        
+        //extend the back
+        _filament->extendBack();
+        
+        //get first cylinder, mark species
+        auto newCylinder = _filament->getCylinderVector().front();
+        auto newCCylinder = newCylinder->getCCylinder();
+        CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
+        
+        m->speciesMinusEnd(_minusEnd)->getRSpecies().up();
+        m->speciesBound(_bound)->getRSpecies().up();
+    }
 };
 
 /// Callback to retract the front of a Filament after a depolymerization

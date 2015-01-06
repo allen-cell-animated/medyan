@@ -108,7 +108,7 @@ struct GeometryParameters {
     int cylinderIntSize = 0;
     
     /// Minimum monomer length of a cylinder
-    int minCylinderIntSize = 5;
+    int minCylinderIntSize = 3;
     double minCylinderSize = 0;
     //@}
     
@@ -136,7 +136,7 @@ public:
     static MechanicsParameters MParams; ///< The mechanical parameters
     static ChemistryParameters CParams; ///< The chemistry parameters
     static GeometryParameters GParams;  ///< The geometry parameters
-    static BoundaryParameters BParams; ///< The boundary parameters
+    static BoundaryParameters BParams;  ///< The boundary parameters
     
 public:
     //@{

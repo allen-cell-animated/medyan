@@ -39,7 +39,6 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> productSpecies;
         
         //loop through reactants, products. find all species
-
         auto r = _reactants[0];
         SpeciesType type = get<1>(r);
         int speciesInt = get<0>(r);
@@ -78,9 +77,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
-        //callbacks
-        FilamentExtensionFrontCallback
-            extCallback(cc->getCylinder()->getFilament());
+        //callback
         FilamentPolymerizationFrontCallback
             polyCallback(cc->getCylinder()->getFilament());
         
@@ -89,18 +86,61 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
 
-        if(i == maxlength - 2)
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(extCallback,false));
-        else
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(polyCallback,false));
+        boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
     }
-}
+    
+    //add extension callback reaction
+    CMonomer* m = cc->getCMonomer(maxlength - 1);
+    vector<Species*> reactantSpecies;
+    vector<Species*> productSpecies;
+    
+    //loop through reactants, products. find all species
+    auto r = _reactants[0];
+    SpeciesType type = get<1>(r);
+    int speciesInt = get<0>(r);
+    
+    //FIRST REACTANT MUST BE BULK OR DIFFUSING
+    if (type == SpeciesType::BULK)
+        reactantSpecies.push_back(CompartmentGrid::instance()->
+                                  findSpeciesBulkByMolecule(speciesInt));
+    
+    else if(type == SpeciesType::DIFFUSING) {
+        Compartment* c = cc->getCompartment();
+        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+    }
+    
+    //SECOND REACTANT MUST BE PLUS END
+    r = _reactants[1];
+    speciesInt = get<0>(r);
+    
+    reactantSpecies.push_back(m->speciesPlusEnd(speciesInt));
+    
+    //FIRST PRODUCT MUST BE FILAMENT
+    auto p = _products[0];
+    speciesInt = get<0>(p);
+    
+    productSpecies.push_back(m->speciesFilament(speciesInt));
 
+    short boundProduct = get<0>(_products[1]);
+    short plusEndProduct = get<0>(_products[2]);
+    
+    //callbacks
+    FilamentExtensionFrontCallback
+        extCallback(cc->getCylinder()->getFilament(), plusEndProduct, boundProduct);
+    
+    //Add the reaction. If it needs a callback then attach
+    vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn = new Reaction<2, 1>(species, _rate);
+    
+    boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+    
+    cc->addInternalReaction(rxn);
+    rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
+}
 
 void PolyMinusEndManager::addReaction(CCylinder* cc) {
     
@@ -155,9 +195,6 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
-        
-        FilamentExtensionBackCallback
-            extCallback(cc->getCylinder()->getFilament());
         FilamentPolymerizationBackCallback
             polyCallback(cc->getCylinder()->getFilament());
         
@@ -166,27 +203,19 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
         
-        if(i == 1)
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(extCallback,false));
-        else
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(polyCallback,false));
+        boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
     }
-
-}
-
-void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
-
-    CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
-    CMonomer* m2 = cc2->getCMonomer(0);
+    
+    //add the extension callback
+    CMonomer* m = cc->getCMonomer(0);
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
     //loop through reactants, products. find all species
+    
     auto r = _reactants[0];
     SpeciesType type = get<1>(r);
     int speciesInt = get<0>(r);
@@ -197,68 +226,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                                   findSpeciesBulkByMolecule(speciesInt));
     
     else if(type == SpeciesType::DIFFUSING) {
-        Compartment* c = cc1->getCompartment();
-        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
-    }
-    
-    //SECOND REACTANT MUST BE PLUS END
-    r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-    
-    //FIRST PRODUCT MUST BE FILAMENT
-    auto p = _products[0];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m1->speciesFilament(speciesInt));
-    
-    //SECOND PRODUCT MUST BE BOUND
-    p = _products[1];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesBound(speciesInt));
-
-    //THIRD PRODUCT MUST BE PLUS END
-    p = _products[2];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
-
-    FilamentPolymerizationFrontCallback
-        polyCallback(cc1->getCylinder()->getFilament());
-    
-    //Add the reaction. If it needs a callback then attach
-    vector<Species*> species = reactantSpecies;
-    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
-    
-    boost::signals2::shared_connection_block
-        rcb(rxn->connect(polyCallback,false));
-    
-    cc1->addCrossCylinderReaction(cc2, rxn);
-    rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
-}
-
-void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
-    
-    CMonomer* m1 = cc2->getCMonomer(0);
-    CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
-    vector<Species*> reactantSpecies;
-    vector<Species*> productSpecies;
-    
-    //loop through reactants, products. find all species
-    auto r = _reactants[0];
-    SpeciesType type = get<1>(r);
-    int speciesInt = get<0>(r);
-    
-    //FIRST REACTANT MUST BE BULK OR DIFFUSING
-    if (type == SpeciesType::BULK)
-        reactantSpecies.push_back(CompartmentGrid::instance()->
-                                  findSpeciesBulkByMolecule(speciesInt));
-    
-    else if(type == SpeciesType::DIFFUSING) {
-        Compartment* c = cc2->getCompartment();
+        Compartment* c = cc->getCompartment();
         reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
     }
     
@@ -266,41 +234,33 @@ void PolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     r = _reactants[1];
     speciesInt = get<0>(r);
     
-    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+    reactantSpecies.push_back(m->speciesMinusEnd(speciesInt));
     
     //FIRST PRODUCT MUST BE FILAMENT
     auto p = _products[0];
     speciesInt = get<0>(p);
     
-    productSpecies.push_back(m1->speciesFilament(speciesInt));
+    productSpecies.push_back(m->speciesFilament(speciesInt));
     
     //SECOND PRODUCT MUST BE BOUND
-    p = _products[1];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesBound(speciesInt));
+    auto boundType = get<0>(_products[1]);
     
     //THIRD PRODUCT MUST BE MINUS END
-    p = _products[2];
-    speciesInt = get<0>(p);
+    auto minusEndType = get<0>(_products[2]);
     
-    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
-
-    FilamentPolymerizationBackCallback
-        polyCallback(cc1->getCylinder()->getFilament());
+    FilamentExtensionBackCallback
+        extCallback(cc->getCylinder()->getFilament(), minusEndType, boundType);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
+    ReactionBase* rxn = new Reaction<2, 1>(species, _rate);
     
-    boost::signals2::shared_connection_block
-        rcb(rxn->connect(polyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
     
-    cc2->addCrossCylinderReaction(cc1, rxn);
+    cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
 }
-
 
 void DepolyPlusEndManager::addReaction(CCylinder* cc) {
     
@@ -354,8 +314,6 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         
         productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
         
-        FilamentRetractionFrontCallback
-            retCallback(cc->getCylinder()->getFilament());
         FilamentDepolymerizationFrontCallback
             depolyCallback(cc->getCylinder()->getFilament());
         
@@ -364,12 +322,8 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
-        if(i == maxlength - 1)
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(retCallback,false));
-        else
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(depolyCallback,false));
+        boost::signals2::shared_connection_block
+            rcb(rxn->connect(depolyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
@@ -428,8 +382,6 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         
         productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
         
-        FilamentRetractionBackCallback
-            retCallback(cc->getCylinder()->getFilament());
         FilamentDepolymerizationBackCallback
             depolyCallback(cc->getCylinder()->getFilament());
         
@@ -438,13 +390,8 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
         
-        if(i == 0)
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(retCallback,false));
-        else
-            boost::signals2::shared_connection_block
-                rcb(rxn->connect(depolyCallback,false));
-            
+        boost::signals2::shared_connection_block
+            rcb(rxn->connect(depolyCallback,false));
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
@@ -453,7 +400,6 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
 
 void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
     vector<Species*> reactantSpecies;
@@ -498,20 +444,17 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
 
-    FilamentDepolymerizationFrontCallback
-        depolyCallback(cc1->getCylinder()->getFilament());
+    FilamentRetractionFrontCallback retCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block
-        rcb(rxn->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
-
 }
 
 void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -559,16 +502,14 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
     
-    FilamentDepolymerizationBackCallback
-        depolyCallback(cc1->getCylinder()->getFilament());
+    FilamentRetractionBackCallback retCallback(cc1->getCylinder()->getFilament());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
     
-    boost::signals2::shared_connection_block
-        rcb(rxn->connect(depolyCallback,false));
+    boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);

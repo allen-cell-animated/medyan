@@ -97,10 +97,13 @@ MotorGhost::~MotorGhost() {
 void MotorGhost::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                 _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
-                                 _c2->getSecondBead()->coordinate, _position2);
+    auto m1 =
+        midPointCoordinate(_c1->getFirstBead()->coordinate,
+                           _c1->getSecondBead()->coordinate, _position1);
+    auto m2 =
+        midPointCoordinate(_c2->getFirstBead()->coordinate,
+                           _c2->getSecondBead()->coordinate, _position2);
+    
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
     Compartment* c;

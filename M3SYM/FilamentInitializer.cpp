@@ -11,8 +11,6 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include <random>
-
 #include "FilamentInitializer.h"
 
 #include "Boundary.h"
@@ -28,26 +26,24 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
     vector<vector<vector<double>>> filamentData;
     
     //Create random distribution of filaments
-    default_random_engine generator;
-    uniform_real_distribution<double> dU(0,1);
-    uniform_real_distribution<double> dUNeg(-1,1);
-    
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
-        double firstX = dU(generator) *
+        double firstX = randomDouble(0,1) *
             SystemParameters::Geometry().compartmentSizeX *
             SystemParameters::Geometry().NX;
-        double firstY = dU(generator) *
+        
+        double firstY = randomDouble(0,1) *
             SystemParameters::Geometry().compartmentSizeY *
         SystemParameters::Geometry().NY;
-        double firstZ = dU(generator) *
+        
+        double firstZ = randomDouble(0,1) *
             SystemParameters::Geometry().compartmentSizeZ *
             SystemParameters::Geometry().NZ;
         
-        double directionX = dUNeg(generator);
-        double directionY = dUNeg(generator);
-        double directionZ = dUNeg(generator);
+        double directionX = randomDouble(-1,1);
+        double directionY = randomDouble(-1,1);
+        double directionZ = randomDouble(-1,1);
         
         //Create a random filament vector one cylinder long
         vector<double> firstPoint = {firstX, firstY, firstZ};

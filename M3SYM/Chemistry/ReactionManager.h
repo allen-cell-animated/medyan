@@ -104,7 +104,7 @@ public:
     ~PolyPlusEndManager() {}
     
     virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 /// Manager for polymerization at minus end of Filament
@@ -118,7 +118,7 @@ public:
     ~PolyMinusEndManager() {}
 
     virtual void addReaction(CCylinder* cc);
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 

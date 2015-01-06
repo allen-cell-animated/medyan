@@ -14,9 +14,8 @@
 #ifndef M3SYM_FilamentInitializer_h
 #define M3SYM_FilamentInitializer_h
 
-#include <random>
-
 #include "common.h"
+#include "utility.h"
 
 #include "SubSystem.h"
 
