@@ -34,10 +34,13 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     _birthTime = tau();
         
     //Find compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                 _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
-                                 _c2->getSecondBead()->coordinate, _position2);
+    auto m1 =
+        midPointCoordinate(_c1->getFirstBead()->coordinate,
+                           _c1->getSecondBead()->coordinate, _position1);
+    auto m2 =
+        midPointCoordinate(_c2->getFirstBead()->coordinate,
+                           _c2->getSecondBead()->coordinate, _position2);
+          
     coordinate = midPointCoordinate(m1, m2, 0.5);
 
     try {_compartment = GController::getCompartment(coordinate);}
@@ -53,11 +56,12 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
-    SpeciesLinker* sl1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
-    SpeciesLinker* sl2 = _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
+    SpeciesLinker* sl1 =
+        _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
+    SpeciesLinker* sl2 =
+        _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
         
     if(!creation) {
-        
         SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
         sl1->getRSpecies().up();
         se1->getRSpecies().down();
@@ -82,11 +86,9 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 }
 
 Linker::~Linker() {
-    
     //Remove from linker db
     LinkerDB::instance()->removeLinker(this);
 }
-
 
 void Linker::updatePosition() {
     
@@ -117,13 +119,6 @@ void Linker::updatePosition() {
     }
 }
 
-void Linker::updateReactionRates() {
-
-    //double f0 = _mLinker->stretchForce;
-    
-    
-
-
-
-}
+///NOT YET IMPLEMENTED
+void Linker::updateReactionRates() {}
 

@@ -34,10 +34,13 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _birthTime = tau();
     
     //Find compartment
-    auto m1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                 _c1->getSecondBead()->coordinate, _position1);
-    auto m2 = midPointCoordinate(_c2->getFirstBead()->coordinate,
-                                 _c2->getSecondBead()->coordinate, _position2);
+    auto m1 =
+        midPointCoordinate(_c1->getFirstBead()->coordinate,
+                           _c1->getSecondBead()->coordinate, _position1);
+    auto m2 =
+        midPointCoordinate(_c2->getFirstBead()->coordinate,
+                           _c2->getSecondBead()->coordinate, _position2);
+          
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
     try {_compartment = GController::getCompartment(coordinate);}
@@ -132,6 +135,7 @@ void MotorGhost::updatePosition() {
 void MotorGhost::updateReactionRates() {
 
     double force = _mMotorGhost->stretchForce;
+    
     //get all walking reactions
     Species* s1 = _cMotorGhost->getFirstSpecies();
     Species* s2 = _cMotorGhost->getSecondSpecies();
