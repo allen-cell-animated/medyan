@@ -53,10 +53,10 @@ struct ChemistryData {
                  vector<string>,
                         double>> bulkReactions = {};
     
-    /// Filament creation reaction
+    /// Filament nucleation reaction
     vector<tuple<vector<string>,
                  vector<string>,
-                        double>> filamentCreationReactions = {};
+                        double>> nucleationReactions = {};
     
     //@{
     /// Filament reactions
@@ -80,6 +80,10 @@ struct ChemistryData {
     vector<tuple<vector<string>,
                  vector<string>,
                         double>> severingReactions = {};
+    /// Destruction reactions
+    vector<tuple<vector<string>,
+                 vector<string>,
+                        double>> destructionReactions = {};
     //@}
     
     //@{

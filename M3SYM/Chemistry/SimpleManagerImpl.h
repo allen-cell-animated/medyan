@@ -47,7 +47,7 @@ private:
     //@}
     
     //@{
-    /// Set up all reaction managers from the setup struct
+    /// Set up all Filament ReactionManagers from the setup struct
     void genIFRxnManagers(ChemistryData& chem);
     void genCFRxnManagers(ChemistryData& chem);
     //@}
@@ -59,8 +59,9 @@ private:
     /// Generate bulk reactions
     void genBulkReactions(ChemistryData& chem);
     
-    /// Generate reactions that create new filaments
-    void genFilamentCreationReactions(ChemistryData& chem);
+    /// Generate reactions that create new filaments from
+    /// diffusing and/or bulk species
+    void genNucleationReactions(ChemistryData& chem);
     
     /// Copies species from chem struct
     void copySpecies(ChemistryData& chem);

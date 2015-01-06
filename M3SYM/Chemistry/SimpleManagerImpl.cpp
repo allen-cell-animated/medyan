@@ -1484,7 +1484,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
     }
 }
 
-void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem) {
+void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
     
     //loop through all compartments
     for(auto &c : CompartmentGrid::instance()->children()) {
@@ -1493,7 +1493,7 @@ void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem) {
         if(!C->isActivated()) continue;
         
         //go through reactions, add each
-        for(auto &r: chem.filamentCreationReactions) {
+        for(auto &r: chem.nucleationReactions) {
             
             vector<Species*> reactantSpecies;
             
@@ -1645,10 +1645,8 @@ void SimpleManagerImpl::genFilamentCreationReactions(ChemistryData& chem) {
             //if the reaction had any diffusing species, create the filament
             //in a random position within that compartment
             Compartment* creationCompartment;
-            if(diffusing)
-                creationCompartment = C;
-            else
-                creationCompartment = GController::getRandomCompartment();
+            if(diffusing) creationCompartment = C;
+            else creationCompartment = GController::getRandomCompartment();
 
             //now, add the callback
             FilamentCreationCallback
@@ -1696,8 +1694,8 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
         Compartment *C = (Compartment*)(c.get());
         C->generateAllDiffusionReactions();
     }
-    //generate filament creation reactions
-    genFilamentCreationReactions(chem);
+    //generate nucleation reactions
+    genNucleationReactions(chem);
     
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();
