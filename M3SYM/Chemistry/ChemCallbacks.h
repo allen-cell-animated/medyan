@@ -477,7 +477,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            newOffRxn =
+            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -496,7 +497,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn = new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            newOffRxn =
+            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
         }
         
         //set new reaction type
