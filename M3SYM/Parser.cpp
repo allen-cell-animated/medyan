@@ -1276,7 +1276,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a filament creation reaction. Exiting" << endl;
+                cout << "Error reading a nucleation reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1322,11 +1322,13 @@ ChemistryData ChemistryParser::readChemistryInput() {
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                    
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
                 for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
+                    
+                    if(*it != "+") products.push_back((*it));
                 }
                 
                 chem.polymerizationReactions.push_back(

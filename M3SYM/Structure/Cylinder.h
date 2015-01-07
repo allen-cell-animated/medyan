@@ -88,6 +88,12 @@ public:
     Bead* getSecondBead() {return _b2;}
     //@}
     
+    //@{
+    /// Set beads
+    void setFirstBead(Bead* b) {_b1 = b;}
+    void setSecondBead(Bead* b) {_b2 = b;}
+    //@}
+    
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
     

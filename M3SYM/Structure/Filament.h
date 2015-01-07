@@ -65,6 +65,11 @@ public:
     Filament(SubSystem* s, vector<vector<double>>& position,
              int numBeads, string projectionType = "STRAIGHT");
     
+    
+    /// This constructor is called when a filament is severed. It creates a filament
+    /// that initially has no cylinders.
+    Filament(SubSystem* s);
+    
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.
     ~Filament();
@@ -102,6 +107,11 @@ public:
     /// Same as depolymerization front, but moves the back bead forward one monomer
     /// length. Updates cylinder parameters accordingly.
     void depolymerizeBack();
+    
+    /// Sever a filament at a given cylinder position. The back part of the filament
+    /// will remain as this (original) filament, and the new filament, which is
+    /// the front part of the originally severed filament, will be returned.
+    Filament* severFilament(int cylinderPosition);
     
     /// Get vector of cylinders that this filament contains.
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}

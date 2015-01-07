@@ -163,7 +163,6 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
-
 };
 
 /// Manager for Filament aging
@@ -177,7 +176,23 @@ public:
     ~AgingManager() {}
     
     virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+};
+
+/// Manager for Filament destruction
+class DestructionManager : public InternalFilamentRxnManager {
+    
+    
+public:
+    DestructionManager(vector<tuple<int, SpeciesType>> reactants,
+                       vector<tuple<int, SpeciesType>> products,
+                       float rate)
+    : InternalFilamentRxnManager(reactants, products, rate) {}
+    ~DestructionManager() {}
+    
+    virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    
 };
 
 /// To store cross-filament reactions, including Linker and MotorGhost binding

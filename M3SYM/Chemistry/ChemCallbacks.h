@@ -34,28 +34,26 @@ using namespace mathfunc;
 /// Reaction occurs in the system.
 struct FilamentExtensionFrontCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     short _plusEnd; ///< Plus end species to mark
-    short _bound;  ///< Bound species to mark
     
     //Constructor, sets members
-    FilamentExtensionFrontCallback(Filament* filament,
-                                   short plusEnd, short bound)
-        : _filament(filament), _plusEnd(plusEnd), _bound(bound) {};
+    FilamentExtensionFrontCallback(Cylinder* cylinder, short plusEnd)
+        : _cylinder(cylinder), _plusEnd(plusEnd){};
     
     //Callback
     void operator() (ReactionBase *r){
         
         //extend the front
-        _filament->extendFront();
+        Filament* f = _cylinder->getFilament();
+        f->extendFront();
         
         //get last cylinder, mark species
-        auto newCylinder = _filament->getCylinderVector().back();
+        auto newCylinder = f->getCylinderVector().back();
         CMonomer* m = newCylinder->getCCylinder()->getCMonomer(0);
         
         m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
-        m->speciesBound(_bound)->getRSpecies().up();
     }
 };
 
@@ -63,28 +61,26 @@ struct FilamentExtensionFrontCallback {
 /// Reaction occurs in the system.
 struct FilamentExtensionBackCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     short _minusEnd; ///< Minus end species to mark
-    short _bound;  ///< Bound species to mark
     
     //Constructor, sets members
-    FilamentExtensionBackCallback(Filament* filament,
-                                  short minusEnd, short bound)
-        : _filament(filament), _minusEnd(minusEnd), _bound(bound) {};
+    FilamentExtensionBackCallback(Cylinder* cylinder, short minusEnd)
+        : _cylinder(cylinder), _minusEnd(minusEnd){};
     //Callback
     void operator() (ReactionBase *r){
         
         //extend the back
-        _filament->extendBack();
+        Filament* f = _cylinder->getFilament();
+        f->extendBack();
         
         //get first cylinder, mark species
-        auto newCylinder = _filament->getCylinderVector().front();
+        auto newCylinder = f->getCylinderVector().front();
         auto newCCylinder = newCylinder->getCCylinder();
         CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
         
         m->speciesMinusEnd(_minusEnd)->getRSpecies().up();
-        m->speciesBound(_bound)->getRSpecies().up();
     }
 };
 
@@ -92,72 +88,97 @@ struct FilamentExtensionBackCallback {
 /// Reaction occurs in the system.
 struct FilamentRetractionFrontCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentRetractionFrontCallback(Filament* filament) : _filament(filament) {};
+    FilamentRetractionFrontCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->retractFront(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->retractFront();
+    }
 };
 
 /// Callback to retract the back of a Filament after a depolymerization
 /// Reaction occurs in the system.
 struct FilamentRetractionBackCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentRetractionBackCallback(Filament* filament) : _filament(filament) {};
+    FilamentRetractionBackCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->retractBack(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->retractBack();
+    }
 };
 
 /// Callback to polymerize the front of a Filament after a polymerization
 /// Reaction occurs in the system.
 struct FilamentPolymerizationFrontCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentPolymerizationFrontCallback(Filament* filament) : _filament(filament){};
+    FilamentPolymerizationFrontCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->polymerizeFront(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->polymerizeFront();
+    }
 };
 
 /// Callback to polymerize the back of a Filament after a polymerization
 /// Reaction occurs in the system.
 struct FilamentPolymerizationBackCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentPolymerizationBackCallback(Filament* filament) : _filament(filament){};
+    FilamentPolymerizationBackCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->polymerizeBack(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->polymerizeBack();
+    }
 };
 
 /// Callback to depolymerize the front of a Filament after a depolymerization
 /// Reaction occurs in the system.
 struct FilamentDepolymerizationFrontCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentDepolymerizationFrontCallback(Filament* filament) : _filament(filament) {};
+    FilamentDepolymerizationFrontCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->depolymerizeFront(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->depolymerizeFront();
+        f->printChemComposition();
+    }
 };
 
 /// Callback to depolymerize the back of a Filament after a depolymerization
 /// Reaction occurs in the system.
 struct FilamentDepolymerizationBackCallback {
     
-    Filament* _filament;
+    Cylinder* _cylinder;
     
     //Constructor, sets members
-    FilamentDepolymerizationBackCallback(Filament* filament) : _filament(filament) {};
+    FilamentDepolymerizationBackCallback(Cylinder* cylinder)
+        : _cylinder(cylinder) {};
     //Callback
-    void operator() (ReactionBase *r){ _filament->depolymerizeBack(); }
+    void operator() (ReactionBase *r){
+        Filament* f = _cylinder->getFilament();
+        f->depolymerizeBack();
+    }
 };
 
 /// Callback to unbind a Linker from a Filament
@@ -558,8 +579,6 @@ struct FilamentCreationCallback {
         //minus end
         cc->getCMonomer(monomerPosition - 1)->
             speciesMinusEnd(_minusEnd)->getRSpecies().up();
-        cc->getCMonomer(monomerPosition - 1)->
-            speciesBound(0)->getRSpecies().up();
 
         //filament
         cc->getCMonomer(monomerPosition)->
@@ -570,12 +589,39 @@ struct FilamentCreationCallback {
         //plus end
         cc->getCMonomer(monomerPosition + 1)->
             speciesPlusEnd(_plusEnd)->getRSpecies().up();
-        cc->getCMonomer(monomerPosition + 1)->
-            speciesBound(0)->getRSpecies().up();
     }
     
 };
 
+///Struct to sever a filament based on a reaction
+struct FilamentSeveringCallback {
+    
+    Cylinder* _c1;  ///< Filament severing point 1
+    Cylinder* _c2;  ///< Filament severing point 2
+    
+    FilamentSeveringCallback(Cylinder* c1, Cylinder* c2)
+        : _c1(c1), _c2(c2) {}
+    
+    void operator() (ReactionBase* r) {
+
+        //sever the filament at given position
+        Filament* f = _c1->getFilament();
+        f->severFilament(_c1->getPositionFilament());
+    }
+};
+
+/// Struct to destroy a filament based on a reaction
+struct FilamentDestructionCallback {
+    
+    Cylinder* _c; ///< Cylinder to destroy
+    
+    FilamentDestructionCallback(Cylinder* c) : _c(c) {}
+    
+    void operator() (ReactionBase* r) {
+        Filament* f = _c->getFilament();
+        delete f;
+    }
+};
 
 
 #endif

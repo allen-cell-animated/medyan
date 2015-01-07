@@ -33,6 +33,16 @@
 
 using namespace mathfunc;
 
+Filament::Filament(SubSystem* s) {
+    
+    _subSystem = s;
+    
+    //add to filament db
+    FilamentDB::instance()->addFilament(this);
+    _ID = FilamentDB::instance()->getFilamentID();
+}
+
+
 Filament::Filament(SubSystem* s, vector<double>& position,
                    vector<double>& direction, bool creation) {
    
@@ -94,6 +104,9 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
 }
 
 Filament::~Filament() {
+    
+    //remove from filament db
+    FilamentDB::instance()->removeFilament(this);
     
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
@@ -298,6 +311,39 @@ void Filament::depolymerizeBack() {
         SystemParameters::Geometry().monomerSize);
 #endif
 }
+
+Filament* Filament::severFilament(int cylinderPosition) {
+    
+    int vectorPosition = 0;
+    
+    //loop through cylinder vector, find position
+    for(auto &c : _cylinderVector) {
+        
+        if(c->getPositionFilament() == cylinderPosition) break;
+        else vectorPosition++;
+    }
+    
+    //create a new filament
+    Filament* newFilament = new Filament(_subSystem);
+    
+    //Split the cylinder vector at position, transfer cylinders to new filament
+    for(int i = vectorPosition; i >= 0; i--) {
+        
+        Cylinder* c = _cylinderVector.front();
+        _cylinderVector.pop_front();
+        
+        c->setFilament(newFilament);
+        newFilament->_cylinderVector.push_back(c);
+    }
+    
+    ///copy bead at severing point, attach to new filament
+    Bead* b = new Bead(*(_cylinderVector.front()->getFirstBead()));
+    newFilament->_cylinderVector.back()->setSecondBead(b);
+    
+    //return the new filament
+    return newFilament;
+}
+
 
 void Filament::printChemComposition() {
     for (auto &c : _cylinderVector) {

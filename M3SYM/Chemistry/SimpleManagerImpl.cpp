@@ -39,7 +39,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 2 || products.size() != 3) {
+        if(reactants.size() != 2 || products.size() != 2) {
             cout << "Invalid polymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -175,40 +175,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         
-        //SECOND PRODUCT SPECIES MUST BE BOUND
+        //SECOND PRODUCT SPECIES MUST BE PLUS OR MINUS END
         product = products[1];
-        //read strings, and look up type
-        if(product.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _speciesBound.end()) {
-                
-                //get position of iterator
-                position = distance(_speciesBound.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                      SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Fourth species listed in a polymerization reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-            
-        }
-        
-        //THIRD PRODUCT SPECIES MUST BE PLUS OR MINUS END
-        product = products[2];
         //read strings, and look up type
         if(product.find("PLUSEND") != string::npos) {
             
@@ -255,7 +223,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         }
         else {
             cout <<
-            "Fifth species listed in a polymerization reaction must be either plusend or minusend. Exiting."
+            "Fourth species listed in a polymerization reaction must be either plusend or minusend. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
@@ -283,7 +251,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 3 || products.size() != 2) {
+        if(reactants.size() != 2 || products.size() != 2) {
             cout << "Invalid depolymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -318,40 +286,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             exit(EXIT_FAILURE);
         }
         
-        //SECOND REACTANT SPECIES MUST BE BOUND
+        //SECOND REACTANT SPECIES MUST BE PLUS OR MINUS END
         reactant = reactants[1];
-        //read strings, and look up type
-        if(reactant.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _speciesBound.end()) {
-                
-                //get position of iterator
-                position = distance(_speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Second species listed in a depolymerization reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-            
-        }
-        
-        //THIRD REACTANT SPECIES MUST BE PLUS OR MINUS END
-        reactant = reactants[2];
         //read strings, and look up type
         if(reactant.find("PLUSEND") != string::npos) {
             
@@ -401,7 +337,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         }
         else {
             cout <<
-            "Third species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
+            "Second species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
@@ -445,7 +381,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         }
         else {
             cout <<
-            "Fourth species listed in a depolymerization reaction must be either bulk or diffusing. Exiting."
+            "Third species listed in a depolymerization reaction must be either bulk or diffusing. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
@@ -497,7 +433,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         }
         else {
             cout <<
-            "Fifth species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
+            "Fourth species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
@@ -836,6 +772,129 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //add reaction
         _IFRxnManagers.emplace_back(
             new AgingManager(reactantTemplate, productTemplate, get<2>(r)));
+    }
+    
+    
+    //set up reaction templates
+    for(auto &r: chem.destructionReactions) {
+        
+        vector<tuple<int, SpeciesType>> reactantTemplate;
+        vector<tuple<int, SpeciesType>> productTemplate;
+        
+        vector<string> reactants = get<0>(r);
+        vector<string> products = get<1>(r);
+        //read strings, and look up type
+        
+        //Checks on number of reactants, products
+        if(reactants.size() != 2 || products.size() != 2) {
+            cout << "Invalid destruction reaction. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //FIRST SPECIES MUST BE PLUS END
+        auto reactant = reactants[0];
+        if(reactant.find("PLUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            
+            if(it != _speciesPlusEnd.end()) {
+                //get position of iterator
+                int position = distance(_speciesPlusEnd.begin(), it);
+                reactantTemplate.push_back(
+                    tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+            }
+            else {
+                cout <<
+                "A plus end species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            cout <<
+            "First species listed in a destruction reaction must be plus end. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //SECOND SPECIES MUST BE MINUS END
+        reactant = reactants[1];
+        if(reactant.find("MINUSEND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            
+            if(it != _speciesMinusEnd.end()) {
+                //get position of iterator
+                int position = distance(_speciesMinusEnd.begin(), it);
+                reactantTemplate.push_back(
+                    tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+            }
+            else {
+                cout <<
+                "A minus end species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            cout <<
+            "Second species listed in a destruction reaction must be minus end. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        ///ALL PRODUCTS MUST BE BULK OR DIFFUSING
+        for (auto &product : products) {
+            
+            if(product.find("BULK") != string::npos) {
+                    
+                //Look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
+                                  [name](tuple<string, int, string> element) {
+                                  return get<0>(element) == name ? true : false; });
+                
+                if(it == chem.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                productTemplate.push_back(tuple<int, SpeciesType>(
+                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+            }
+            
+            else if(product.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double> element) {
+                                  return get<0>(element) == name ? true : false; });
+                if(it == chem.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                productTemplate.push_back(tuple<int, SpeciesType>(
+                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            }
+            else {
+                cout <<
+                "Third species listed in a destruction reaction must be either bulk or diffusing. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+            
+        //add reaction
+        _IFRxnManagers.emplace_back(
+            new DestructionManager(reactantTemplate, productTemplate, get<2>(r)));
     }
 }
 
@@ -1211,7 +1270,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
         }
-        
         else {
             cout <<
             "Fifth species listed in a motor reaction must be motor. Exiting."
@@ -1229,12 +1287,28 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
 
 void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
     
-    //Copy all species from chem struct
+    //Copy all species from chem struct, check lengths
     _speciesFilament =  chem.speciesFilament;
+    if(_speciesFilament.size() < 1) {
+        cout << "Must specify at least one filament species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
     _speciesPlusEnd  =  chem.speciesPlusEnd;
+    if(_speciesPlusEnd.size() < 1) {
+        cout << "Must specify at least one plus end species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
     _speciesMinusEnd =  chem.speciesMinusEnd;
+    if(_speciesMinusEnd.size() < 1) {
+        cout << "Must specify at least one minus end species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
     
     _speciesBound  =  chem.speciesBound;
+    if(_speciesBound.size() < 1) {
+        cout << "Must specify at least one bound species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
     _speciesLinker =  chem.speciesLinker;
     _speciesMotor  =  chem.speciesMotor;
 }
@@ -1501,7 +1575,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             vector<string> products = get<1>(r);
             
             if(reactants.size() != 2 || products.size() != 3) {
-                cout << "Invalid filament creation reaction. Exiting." << endl;
+                cout << "Invalid nucleation reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             bool diffusing = false;
@@ -1585,7 +1659,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             }
             else {
                 cout <<
-                "First product species listed in a filament creation must be plus end. Exiting."
+                "First product species listed in a nucleation reaction must be plus end. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1611,7 +1685,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             }
             else {
                 cout <<
-                "Second product species listed in a filament creation must be filament. Exiting."
+                "Second product species listed in a nucleation reaction must be filament. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1637,7 +1711,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             }
             else {
                 cout <<
-                "Third product species listed in a filament creation must be minus end. Exiting."
+                "Third product species listed in a nucleation reaction must be minus end. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1782,22 +1856,18 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
-            CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 2);
+            CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
             m1->speciesPlusEnd(0)->getRSpecies().down();
             
-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 2);
+            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
             m2->speciesPlusEnd(0)->getRSpecies().setN(1);
-            m2->speciesBound(0)->getRSpecies().setN(1);
             
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->getRSpecies().up();
-            lastcc->getCMonomer(lastcc->getSize() - 1)->
-                speciesFilament(0)->getRSpecies().up();
-            lastcc->getCMonomer(lastcc->getSize() - 1)->
-                speciesBound(0)->getRSpecies().up();
+            m1->speciesBound(0)->getRSpecies().up();
 
             //fill new cylinder with default filament value
-            for(int i = 0; i < cc->getSize() - 2; i++) {
+            for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
@@ -1806,16 +1876,14 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         //this is first one
         else {
             //set back and front
-            CMonomer* m1 = cc->getCMonomer(cc->getSize() - 2);
+            CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
             m1->speciesPlusEnd(0)->getRSpecies().setN(1);
-            m1->speciesBound(0)->getRSpecies().setN(1);
             
-            CMonomer* m2 = cc->getCMonomer(1);
+            CMonomer* m2 = cc->getCMonomer(0);
             m2->speciesMinusEnd(0)->getRSpecies().setN(1);
-            m2->speciesBound(0)->getRSpecies().setN(1);
             
             //fill with default filament value
-            for(int i = 2; i < cc->getSize() - 2; i++) {
+            for(int i = 1; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
                 cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
             }
