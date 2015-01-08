@@ -171,7 +171,7 @@ void Filament::extendFront() {
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     auto npp = nextPointProjection(b2->coordinate,
-                                   SystemParameters::Geometry().monomerSize, direction1);
+               SystemParameters::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
@@ -196,7 +196,7 @@ void Filament::extendBack() {
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     auto npp = nextPointProjection(b2->coordinate,
-                                   SystemParameters::Geometry().monomerSize, direction1);
+               SystemParameters::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);

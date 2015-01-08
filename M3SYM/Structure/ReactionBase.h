@@ -72,7 +72,7 @@ class ReactionBase {
 protected:
     unordered_set<ReactionBase*>
         _dependents; ///< Pointers to ReactionBase objects that depend
-                                    ///< on this ReactionBase being executed
+                     ///< on this ReactionBase being executed
     RNode* _rnode; ///< A pointer to an RNode object which is used
                    ///< to implement a Gillespie-like algorithm (e.g. NRM)
     Composite *_parent; ///< A pointer to a Composite object to which

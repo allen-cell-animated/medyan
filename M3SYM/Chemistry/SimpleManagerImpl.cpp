@@ -39,7 +39,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 2 || products.size() != 2) {
+        if(reactants.size() != POLYREACTANTS ||
+           products.size() != POLYPRODUCTS - 1) {
             cout << "Invalid polymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -251,7 +252,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 2 || products.size() != 2) {
+        if(reactants.size() != DEPOLYREACTANTS - 1 ||
+           products.size() != DEPOLYPRODUCTS) {
             cout << "Invalid depolymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -459,7 +461,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         string species1;
         
         //Checks on number of reactants, products
-        if(reactants.size() != 2 || products.size() != 2) {
+        if(reactants.size() != MWALKINGREACTANTS ||
+           products.size() != MWALKINGPRODUCTS) {
             cout << "Invalid motor walking reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -619,7 +622,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 1 || products.size() != 1) {
+        if(reactants.size() != AGINGREACTANTS ||
+           products.size() != AGINGPRODUCTS) {
             cout << "Invalid aging reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -786,7 +790,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != 2 || products.size() != 2) {
+        if(reactants.size() != DESTRUCTIONREACTANTS ||
+           products.size() != DESTRUCTIONPRODUCTS ) {
             cout << "Invalid destruction reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -910,7 +915,8 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         vector<string> products = get<1>(r);
     
         //Checks on number of reactants, products
-        if(reactants.size() != 3 || products.size() != 2) {
+        if(reactants.size() != LMBINDINGREACTANTS ||
+           products.size() != LMBINDINGPRODUCTS) {
             cout << "Invalid linker reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -1102,7 +1108,8 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
         vector<string> products = get<1>(r);
         
         //Checks on number of reactants, products
-        if(reactants.size() != 3 || products.size() != 2) {
+        if(reactants.size() != LMBINDINGREACTANTS ||
+           products.size() != LMBINDINGPRODUCTS) {
             cout << "Invalid motor reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -1574,7 +1581,8 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             vector<string> reactants = get<0>(r);
             vector<string> products = get<1>(r);
             
-            if(reactants.size() != 2 || products.size() != 3) {
+            if(reactants.size() != NUCLEATIONREACTANTS ||
+               products.size() != NUCLEATIONPRODUCTS) {
                 cout << "Invalid nucleation reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }

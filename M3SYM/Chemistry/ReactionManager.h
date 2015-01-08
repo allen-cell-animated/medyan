@@ -292,6 +292,10 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-
+//@{
+/// Helper for tuple getter
+inline int getInt(tuple<int, SpeciesType> x) {return get<0>(x);}
+inline SpeciesType getType(tuple<int, SpeciesType> x) {return get<1>(x);}
+//@}
 
 #endif

@@ -97,6 +97,11 @@ struct FilamentRetractionFrontCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->retractFront();
+        
+#ifdef DYNAMICRATES
+        //update rates of new front
+        f->getCylinderVector().back()->updateReactionRates();
+#endif
     }
 };
 
@@ -113,6 +118,11 @@ struct FilamentRetractionBackCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->retractBack();
+        
+#ifdef DYNAMICRATES
+        //update rates of new back
+        f->getCylinderVector().front()->updateReactionRates();
+#endif
     }
 };
 
@@ -161,7 +171,6 @@ struct FilamentDepolymerizationFrontCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->depolymerizeFront();
-        f->printChemComposition();
     }
 };
 
@@ -194,7 +203,7 @@ struct LinkerUnbindingCallback {
         CCylinder* cc1 = _linker->getFirstCylinder()->getCCylinder();
         CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
-        
+
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -230,19 +239,25 @@ struct LinkerBindingCallback {
         
         //Attach the callback to the off reaction, add it
         //first, get species from this rxn
-        Reaction<3,2>* onRxn = (Reaction<3,2>*)r;
+        Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
+            (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
         RSpecies** rSpecies = onRxn->rspecies();
         vector<Species*> offSpecies;
         
         //copy into offspecies vector in opposite order
-        for(int i = 3; i < 5; i++) offSpecies.push_back(&rSpecies[i]->getSpecies());
-        for(int i = 0; i < 3; i++) offSpecies.push_back(&rSpecies[i]->getSpecies());
+        for(int i = LMBINDINGREACTANTS;
+            i < LMBINDINGREACTANTS + LMBINDINGPRODUCTS; i++)
+            offSpecies.push_back(&rSpecies[i]->getSpecies());
+        for(int i = 0; i < LMBINDINGREACTANTS; i++)
+            offSpecies.push_back(&rSpecies[i]->getSpecies());
         
-        ReactionBase* offRxn = new Reaction<2,3>(offSpecies, _offRate);
+        ReactionBase* offRxn =
+        new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(offSpecies, _offRate);
         offRxn->setReactionType(ReactionType::LINKERUNBINDING);
         
         LinkerUnbindingCallback lcallback(l, _ps);
-        boost::signals2::shared_connection_block rcb(offRxn->connect(lcallback,false));
+        boost::signals2::shared_connection_block
+            rcb(offRxn->connect(lcallback,false));
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         l->getCLinker()->setOffReaction(offRxn);
@@ -264,7 +279,7 @@ struct MotorUnbindingCallback {
         cc1->removeCrossCylinderReaction(cc2, r);
         
 #ifdef DYNAMICRATES
-        //reset the associated reactions
+        //reset the associated walking reactions
         _motor->getMMotorGhost()->stretchForce = 0.0;
         _motor->updateReactionRates();
 #endif
@@ -305,19 +320,25 @@ struct MotorBindingCallback {
         
         //Attach the callback to the off reaction, add it
         //first, get species from this rxn
-        Reaction<3,2>* onRxn = (Reaction<3,2>*)r;
+        Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
+        (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
         RSpecies** rSpecies = onRxn->rspecies();
         vector<Species*> offSpecies;
         
         //copy into offspecies vector in opposite order
-        for(int i = 3; i < 5; i++) offSpecies.push_back(&(rSpecies[i]->getSpecies()));
-        for(int i = 0; i < 3; i++) offSpecies.push_back(&(rSpecies[i]->getSpecies()));
+        for(int i = LMBINDINGREACTANTS;
+            i < LMBINDINGREACTANTS + LMBINDINGPRODUCTS; i++)
+            offSpecies.push_back(&rSpecies[i]->getSpecies());
+        for(int i = 0; i < LMBINDINGREACTANTS; i++)
+            offSpecies.push_back(&rSpecies[i]->getSpecies());
         
-        ReactionBase* offRxn = new Reaction<2,3>(offSpecies, _offRate);
+        ReactionBase* offRxn =
+        new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(offSpecies, _offRate);
         offRxn->setReactionType(ReactionType::MOTORUNBINDING);
         
         MotorUnbindingCallback mcallback(m, _ps);
-        boost::signals2::shared_connection_block rcb(offRxn->connect(mcallback,false));
+        boost::signals2::shared_connection_block
+            rcb(offRxn->connect(mcallback,false));
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         m->getCMotorGhost()->setOffReaction(offRxn);
@@ -347,12 +368,11 @@ struct MotorWalkingForwardCallback {
     void operator() (ReactionBase* r) {
         
         //Find the motor
-        SpeciesMotor* sm1 =
-            _c->getCCylinder()->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =
-            _c->getCCylinder()->getCMonomer(_newPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 =
-            _c->getCCylinder()->getCMonomer(_newPosition)->speciesBound(_boundType);
+        CCylinder* cc = _c->getCCylinder();
+        
+        SpeciesMotor* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 = cc->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
@@ -368,7 +388,8 @@ struct MotorWalkingForwardCallback {
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
-            offRxn = (Reaction<2,3>*)m->getCMotorGhost()->getOffReaction();
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+                     m->getCMotorGhost()->getOffReaction();
             
             //take the first, third, and fourth species
             Species* s1 = &(offRxn->rspecies()[1]->getSpecies());
@@ -376,8 +397,8 @@ struct MotorWalkingForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn =
-            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+                        ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
         }
         else {
             newPosition = m->getSecondPosition() + shift;
@@ -385,7 +406,8 @@ struct MotorWalkingForwardCallback {
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
-            offRxn = (Reaction<2,3>*)m->getCMotorGhost()->getOffReaction();
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+                     m->getCMotorGhost()->getOffReaction();
             
             //take the zeroth, second, and fourth species
             Species* s0 = &(offRxn->rspecies()[0]->getSpecies());
@@ -393,8 +415,8 @@ struct MotorWalkingForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn =
-            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+                        ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
         }
         //set new reaction type
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -448,12 +470,9 @@ struct MotorMovingCylinderForwardCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CCylinder* newCC = _newC->getCCylinder();
         
-        SpeciesMotor* sm1 =
-            oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =
-            newCC->getCMonomer(newIntPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 =
-            newCC->getCMonomer(newIntPosition)->speciesBound(_boundType);
+        SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 =newCC->getCMonomer(newIntPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 =newCC->getCMonomer(newIntPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         ReactionBase* newOffRxn, *offRxn;
@@ -469,7 +488,8 @@ struct MotorMovingCylinderForwardCallback {
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
-            offRxn = (Reaction<2,3>*)m->getCMotorGhost()->getOffReaction();
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+                     m->getCMotorGhost()->getOffReaction();
             
             //take the first, third, and fourth species
             Species* s1 = &(offRxn->rspecies()[1]->getSpecies());
@@ -477,8 +497,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn =
-            new Reaction<2,3>({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+                        ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
             
             //remove old reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -489,7 +509,8 @@ struct MotorMovingCylinderForwardCallback {
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
-            offRxn = (Reaction<2,3>*)m->getCMotorGhost()->getOffReaction();
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+                     m->getCMotorGhost()->getOffReaction();
             
             //take the zeroth, second, and fourth species
             Species* s0 = &(offRxn->rspecies()[0]->getSpecies());
@@ -497,8 +518,8 @@ struct MotorMovingCylinderForwardCallback {
             Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
             
             //create new reaction
-            newOffRxn =
-            new Reaction<2,3>({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+                        ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
         }
         
         //set new reaction type

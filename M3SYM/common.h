@@ -46,8 +46,49 @@ inline double tau() {return global_time;}
 
 ///Some constants
 const double kT = 4.1; //in pN * nm
+const double motorHeadGroup = 5.0; //in nm
+const double linkerHeadGroup = 5.0; //in nm
 
 ///To use STL containers, libraries, etc
 using namespace std;
+
+//@{
+/// Constant Reaction reactant and product numbers
+/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+
+/// Polymerization
+#define POLYREACTANTS         2
+#define POLYPRODUCTS          3
+
+/// Depolymerization
+#define DEPOLYREACTANTS       3
+#define DEPOLYPRODUCTS        2
+
+/// Linker and motor binding
+#define LMBINDINGREACTANTS    3
+#define LMBINDINGPRODUCTS     2
+
+/// Linker and motor unbinding
+#define LMUNBINDINGREACTANTS  2
+#define LMUNBINDINGPRODUCTS   3
+
+/// Motor walking
+#define MWALKINGREACTANTS     2
+#define MWALKINGPRODUCTS      2
+
+/// Nucleation
+#define NUCLEATIONREACTANTS   2
+#define NUCLEATIONPRODUCTS    3
+
+/// Destruction
+#define DESTRUCTIONREACTANTS  2
+#define DESTRUCTIONPRODUCTS   2
+
+/// Aging
+#define AGINGREACTANTS        1
+#define AGINGPRODUCTS         1
+
+
+//@}
 
 #endif

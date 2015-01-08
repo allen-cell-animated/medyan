@@ -40,36 +40,28 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         
         //loop through reactants, products. find all species
         auto r = _reactants[0];
-        SpeciesType type = get<1>(r);
-        int speciesInt = get<0>(r);
         
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
-        if (type == SpeciesType::BULK)
+        if (getType(r) == SpeciesType::BULK)
             reactantSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(speciesInt));
+                                      findSpeciesBulkByMolecule(getInt(r)));
 
-        else if(type == SpeciesType::DIFFUSING) {
+        else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
         }
     
         //SECOND REACTANT MUST BE PLUS END
         r = _reactants[1];
-        speciesInt = get<0>(r);
-    
-        reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
         //FIRST PRODUCT MUST BE FILAMENT
         auto p = _products[0];
-        speciesInt = get<0>(p);
-
-        productSpecies.push_back(m1->speciesFilament(speciesInt));
+        productSpecies.push_back(m1->speciesFilament(getInt(p)));
     
         //SECOND PRODUCT MUST BE PLUS END
         p = _products[1];
-        speciesInt = get<0>(p);
-    
-        productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+        productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
         productSpecies.push_back(m1->speciesBound(0));
@@ -80,7 +72,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
+        ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
 
         boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
@@ -95,35 +87,28 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     
     //loop through reactants, products. find all species
     auto r = _reactants[0];
-    SpeciesType type = get<1>(r);
-    int speciesInt = get<0>(r);
-    
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
-    if (type == SpeciesType::BULK)
+    if (getType(r) == SpeciesType::BULK)
         reactantSpecies.push_back(CompartmentGrid::instance()->
-                                  findSpeciesBulkByMolecule(speciesInt));
+                                  findSpeciesBulkByMolecule(getInt(r)));
     
-    else if(type == SpeciesType::DIFFUSING) {
+    else if(getType(r) == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
-        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
     }
     
     //SECOND REACTANT MUST BE PLUS END
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m->speciesPlusEnd(speciesInt));
+    reactantSpecies.push_back(m->speciesPlusEnd(getInt(r)));
     
     //FIRST PRODUCT MUST BE FILAMENT
     auto p = _products[0];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m->speciesFilament(speciesInt));
+    productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
     productSpecies.push_back(m->speciesBound(0));
     
-    short plusEndProduct = get<0>(_products[1]);
+    short plusEndProduct = getInt(_products[1]);
     
     //callbacks
     FilamentExtensionFrontCallback extCallback(cc->getCylinder(), plusEndProduct);
@@ -131,7 +116,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS - 1>(species, _rate);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
     
@@ -153,38 +138,28 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         vector<Species*> productSpecies;
         
         //loop through reactants, products. find all species
-        
         auto r = _reactants[0];
-        SpeciesType type = get<1>(r);
-        int speciesInt = get<0>(r);
-        
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
-        if (type == SpeciesType::BULK)
+        if (getType(r) == SpeciesType::BULK)
             reactantSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(speciesInt));
+                                      findSpeciesBulkByMolecule(getInt(r)));
         
-        else if(type == SpeciesType::DIFFUSING) {
+        else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
         }
         
         //SECOND REACTANT MUST BE MINUS END
         r = _reactants[1];
-        speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //FIRST PRODUCT MUST BE FILAMENT
         auto p = _products[0];
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m1->speciesFilament(speciesInt));
+        productSpecies.push_back(m1->speciesFilament(getInt(p)));
         
         //SECOND PRODUCT MUST BE MINUS END
         p = _products[1];
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+        productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
         productSpecies.push_back(m1->speciesBound(0));
@@ -194,7 +169,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<2, 3>(species, _rate);
+        ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
         
         boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
         
@@ -208,32 +183,25 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     vector<Species*> productSpecies;
     
     //loop through reactants, products. find all species
-    
     auto r = _reactants[0];
-    SpeciesType type = get<1>(r);
-    int speciesInt = get<0>(r);
     
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
-    if (type == SpeciesType::BULK)
+    if (getType(r) == SpeciesType::BULK)
         reactantSpecies.push_back(CompartmentGrid::instance()->
-                                  findSpeciesBulkByMolecule(speciesInt));
+                                  findSpeciesBulkByMolecule(getInt(r)));
     
-    else if(type == SpeciesType::DIFFUSING) {
+    else if(getType(r)  == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
-        reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
     }
     
     //SECOND REACTANT MUST BE MINUS END
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m->speciesMinusEnd(speciesInt));
+    reactantSpecies.push_back(m->speciesMinusEnd(getInt(r)));
     
     //FIRST PRODUCT MUST BE FILAMENT
     auto p = _products[0];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m->speciesFilament(speciesInt));
+    productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
     productSpecies.push_back(m->speciesBound(0));
@@ -245,7 +213,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS - 1>(species, _rate);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
     
@@ -270,44 +238,36 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         
         //FIRST REACTANT  MUST BE FILAMENT
         auto r = _reactants[0];
-        int speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+        reactantSpecies.push_back(m2->speciesFilament(getInt(r)));
         
         //SECOND REACTANT MUST BE PLUSEND
         r = _reactants[1];
-        speciesInt = get<0>(r);
-
-        reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
         reactantSpecies.push_back(m2->speciesBound(0));
 
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
-        SpeciesType type = get<1>(p);
-        speciesInt = get<0>(p);
-        
-        if( type == SpeciesType::BULK)
+        if( getType(p) == SpeciesType::BULK)
             productSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(speciesInt));
-        else if(type == SpeciesType::DIFFUSING) {
+                                      findSpeciesBulkByMolecule(getInt(p)));
+        else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
         }
         
         //SECOND PRODUCT SPECIES MUST BE PLUS END
         p = _products[1];
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+        productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+        ReactionBase* rxn =
+            new Reaction<DEPOLYREACTANTS,DEPOLYPRODUCTS>(species, _rate);
         
         boost::signals2::shared_connection_block
             rcb(rxn->connect(depolyCallback,false));
@@ -334,44 +294,36 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
  
         //FIRST REACTANT  MUST BE FILAMENT
         auto r = _reactants[0];
-        int speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+        reactantSpecies.push_back(m2->speciesFilament(getInt(r)));
         
         //SECOND REACTANT MUST BE MINUSEND
         r = _reactants[1];
-        speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
         reactantSpecies.push_back(m2->speciesBound(0));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
-        SpeciesType type = get<1>(p);
-        speciesInt = get<0>(p);
-        
-        if( type == SpeciesType::BULK)
+        if(getType(p) == SpeciesType::BULK)
             productSpecies.push_back(CompartmentGrid::instance()->
-                                     findSpeciesBulkByMolecule(speciesInt));
-        else if(type == SpeciesType::DIFFUSING) {
+                                     findSpeciesBulkByMolecule(getInt(p)));
+        else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
         }
         
         //SECOND PRODUCT SPECIES MUST BE MINUSEND
         p = _products[1];
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+        productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder());
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+        ReactionBase* rxn =
+            new Reaction<DEPOLYREACTANTS,DEPOLYPRODUCTS>(species, _rate);
         
         boost::signals2::shared_connection_block
             rcb(rxn->connect(depolyCallback,false));
@@ -392,44 +344,35 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //FIRST REACTANT  MUST BE FILAMENT
     auto r = _reactants[0];
-    int speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+    reactantSpecies.push_back(m2->speciesFilament(getInt(r)));
     
     //SECOND REACTANT MUST BE PLUSEND
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+    reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
     reactantSpecies.push_back(m2->speciesBound(0));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
-    SpeciesType type = get<1>(p);
-    speciesInt = get<0>(p);
-    
-    if( type == SpeciesType::BULK)
+    if(getType(p) == SpeciesType::BULK)
         productSpecies.push_back(CompartmentGrid::instance()->
-                                 findSpeciesBulkByMolecule(speciesInt));
-    else if(type == SpeciesType::DIFFUSING) {
+                                 findSpeciesBulkByMolecule(getInt(p)));
+    else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc2->getCompartment();
-        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
     }
     
     //SECOND PRODUCT SPECIES MUST BE PLUS END
     p = _products[1];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+    productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
 
     FilamentRetractionFrontCallback retCallback(cc1->getCylinder());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<DEPOLYREACTANTS,DEPOLYPRODUCTS>(species, _rate);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
     
@@ -447,44 +390,35 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //loop through reactants, products. find all species
     //FIRST REACTANT  MUST BE FILAMENT
     auto r = _reactants[0];
-    int speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m2->speciesFilament(speciesInt));
+    reactantSpecies.push_back(m2->speciesFilament(getInt(r)));
     
     //SECOND REACTANT MUST BE MINUSEND
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+    reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
     reactantSpecies.push_back(m2->speciesBound(0));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
-    SpeciesType type = get<1>(p);
-    speciesInt = get<0>(p);
-    
-    if( type == SpeciesType::BULK)
+    if(getType(p) == SpeciesType::BULK)
         productSpecies.push_back(CompartmentGrid::instance()->
-                                 findSpeciesBulkByMolecule(speciesInt));
-    else if(type == SpeciesType::DIFFUSING) {
+                                 findSpeciesBulkByMolecule(getInt(p)));
+    else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
-        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
     }
     
     //SECOND PRODUCT SPECIES MUST BE MINUSEND
     p = _products[1];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesMinusEnd(speciesInt));
+    productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
     
     FilamentRetractionBackCallback retCallback(cc1->getCylinder());
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<3, 2>(species, _rate);
+    ReactionBase* rxn = new Reaction<DEPOLYREACTANTS,DEPOLYPRODUCTS>(species, _rate);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
     
@@ -507,30 +441,24 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         
         //loop through reactants, products. find all species
         auto r = _reactants[0];
-        int speciesInt = get<0>(r);
-        int motorType = speciesInt;
+        int motorType = getInt(r);
         
         //FIRST REACTANT MUST BE MOTOR
-        reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+        reactantSpecies.push_back(m1->speciesMotor(motorType));
         
         //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
-        speciesInt = get<0>(r);
-        int boundType = speciesInt;
+        int boundType = getInt(r);
         
-        reactantSpecies.push_back(m2->speciesBound(speciesInt));
+        reactantSpecies.push_back(m2->speciesBound(boundType));
         
         //FIRST PRODUCT MUST BE MOTOR
         auto p = _products[0];
-        speciesInt = get<0>(p);
-    
-        productSpecies.push_back(m2->speciesMotor(speciesInt));
+        productSpecies.push_back(m2->speciesMotor(getInt(p)));
         
         //SECOND PRODUCT MUST BE BOUND
         p = _products[1];
-        speciesInt = get<0>(p);
-        
-        productSpecies.push_back(m1->speciesBound(speciesInt));
+        productSpecies.push_back(m1->speciesBound(getInt(p)));
         
         //callbacks
         MotorWalkingForwardCallback
@@ -540,7 +468,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+        ReactionBase* rxn =
+            new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
         
         boost::signals2::shared_connection_block
             rcb(rxn->connect(motorMoveCallback, false));
@@ -559,30 +488,24 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     //loop through reactants, products. find all species
     auto r = _reactants[0];
-    int speciesInt = get<0>(r);
-    int motorType = speciesInt;
+    int motorType = getInt(r);
     
     //FIRST REACTANT MUST BE MOTOR
-    reactantSpecies.push_back(m1->speciesMotor(speciesInt));
+    reactantSpecies.push_back(m1->speciesMotor(motorType));
     
     //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    int boundType = speciesInt;
+    int boundType = getInt(r);
     
-    reactantSpecies.push_back(m2->speciesBound(speciesInt));
+    reactantSpecies.push_back(m2->speciesBound(boundType));
     
     //FIRST PRODUCT MUST BE MOTOR
     auto p = _products[0];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m2->speciesMotor(speciesInt));
+    productSpecies.push_back(m2->speciesMotor(getInt(p)));
     
     //SECOND PRODUCT MUST BE BOUND
     p = _products[1];
-    speciesInt = get<0>(p);
-    
-    productSpecies.push_back(m1->speciesBound(speciesInt));
+    productSpecies.push_back(m1->speciesBound(getInt(p)));
     
     //callbacks
     MotorMovingCylinderForwardCallback
@@ -592,7 +515,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    ReactionBase* rxn =
+        new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
     
     boost::signals2::shared_connection_block
         rcb(rxn->connect(motorChangeCallback, false));
@@ -615,8 +539,8 @@ void AgingManager::addReaction(CCylinder* cc) {
         
         //FIRST REACTANT SHOULD BE FILAMENT, PLUS OR MINUS SPECIES
         auto r = _reactants[0];
-        SpeciesType type = get<1>(r);
-        int speciesInt = get<0>(r);
+        SpeciesType type = getType(r);
+        int speciesInt = getInt(r);
         
         if(type == SpeciesType::FILAMENT)
             reactantSpecies.push_back(m1->speciesFilament(speciesInt));
@@ -627,8 +551,8 @@ void AgingManager::addReaction(CCylinder* cc) {
         
         //FIRST PRODUCT MUST BE FILAMENT, PLUS OR MINUS SPECIES
         auto p = _products[0];
-        type = get<1>(p);
-        speciesInt = get<0>(p);
+        type = getType(p);
+        speciesInt = getInt(p);
         
         if(type == SpeciesType::FILAMENT)
             productSpecies.push_back(m1->speciesFilament(speciesInt));
@@ -640,7 +564,8 @@ void AgingManager::addReaction(CCylinder* cc) {
         //Add the reaction
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<1, 1>(species, _rate);
+        ReactionBase* rxn =
+            new Reaction<AGINGREACTANTS,AGINGPRODUCTS>(species, _rate);
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::AGING);
@@ -663,39 +588,30 @@ void DestructionManager::addReaction(CCylinder* cc) {
         
         //FIRST REACTANT MUST BE PLUS END
         auto r = _reactants[0];
-        int speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+        reactantSpecies.push_back(m2->speciesPlusEnd(getInt(r)));
         
         //SECOND REACTANT MUST BE MINUS END
         r = _reactants[1];
-        speciesInt = get<0>(r);
-        
-        reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //ALL PRODUCTS MUST BE BULK OR DIFFUSING
         auto p = _products[0];
-        SpeciesType type = get<1>(p);
-        speciesInt = get<0>(p);
-        
-        if( type == SpeciesType::BULK)
+        if(getType(p) == SpeciesType::BULK)
             productSpecies.push_back(CompartmentGrid::instance()->
-                                     findSpeciesBulkByMolecule(speciesInt));
-        else if(type == SpeciesType::DIFFUSING) {
+                                     findSpeciesBulkByMolecule(getInt(p)));
+        else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
         }
         
         p = _products[1];
-        type = get<1>(p);
-        speciesInt = get<0>(p);
         
-        if( type == SpeciesType::BULK)
+        if(getType(p) == SpeciesType::BULK)
             productSpecies.push_back(CompartmentGrid::instance()->
-                                     findSpeciesBulkByMolecule(speciesInt));
-        else if(type == SpeciesType::DIFFUSING) {
+                                     findSpeciesBulkByMolecule(getInt(p)));
+        else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
         }
         
         FilamentDestructionCallback dcallback(cc->getCylinder());
@@ -703,7 +619,8 @@ void DestructionManager::addReaction(CCylinder* cc) {
         //Add the reaction
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+        ReactionBase* rxn =
+            new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
         
         boost::signals2::shared_connection_block rcb(rxn->connect(dcallback,false));
         
@@ -721,39 +638,29 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //FIRST REACTANT MUST BE PLUS END
     auto r = _reactants[0];
-    int speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m2->speciesPlusEnd(speciesInt));
+    reactantSpecies.push_back(m2->speciesPlusEnd(getInt(r)));
     
     //SECOND REACTANT MUST BE MINUS END
     r = _reactants[1];
-    speciesInt = get<0>(r);
-    
-    reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+    reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //ALL PRODUCTS MUST BE BULK OR DIFFUSING
     auto p = _products[0];
-    SpeciesType type = get<1>(p);
-    speciesInt = get<0>(p);
-    
-    if( type == SpeciesType::BULK)
+    if(getType(p) == SpeciesType::BULK)
         productSpecies.push_back(CompartmentGrid::instance()->
-                                 findSpeciesBulkByMolecule(speciesInt));
-    else if(type == SpeciesType::DIFFUSING) {
+                                 findSpeciesBulkByMolecule(getInt(p)));
+    else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
-        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
     }
     
     p = _products[1];
-    type = get<1>(p);
-    speciesInt = get<0>(p);
-    
-    if( type == SpeciesType::BULK)
+    if(getType(p) == SpeciesType::BULK)
         productSpecies.push_back(CompartmentGrid::instance()->
-                                 findSpeciesBulkByMolecule(speciesInt));
-    else if(type == SpeciesType::DIFFUSING) {
+                                 findSpeciesBulkByMolecule(getInt(p)));
+    else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
-        productSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+        productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
     }
     
     FilamentDestructionCallback dcallback(cc1->getCylinder());
@@ -761,7 +668,8 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //Add the reaction
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<2, 2>(species, _rate);
+    ReactionBase* rxn =
+        new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
     
     boost::signals2::shared_connection_block rcb(rxn->connect(dcallback,false));
     
@@ -800,40 +708,30 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
                 //FIRST AND SECOND REACTANT SHOULD BE BOUND
                 auto r = _reactants[0];
-                int speciesInt = get<0>(r);
-                
-                reactantSpecies.push_back(m1->speciesBound(speciesInt));
+                reactantSpecies.push_back(m1->speciesBound(getInt(r)));
 
                 r = _reactants[1];
-                speciesInt = get<0>(r);
-                
-                reactantSpecies.push_back(m2->speciesBound(speciesInt));
+                reactantSpecies.push_back(m2->speciesBound(getInt(r)));
                 
                 //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
                 r = _reactants[2];
-                SpeciesType type = get<1>(r);
-                speciesInt = get<0>(r);
-
-                if(type == SpeciesType::BULK)
+                if(getType(r) == SpeciesType::BULK)
                    reactantSpecies.push_back(CompartmentGrid::instance()->
-                                             findSpeciesBulkByMolecule(speciesInt));
+                                             findSpeciesBulkByMolecule(getType(r)));
 
-                else if(type == SpeciesType::DIFFUSING) {
+                else if(getType(r) == SpeciesType::DIFFUSING) {
                     Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                    reactantSpecies.push_back(c->findSpeciesByMolecule(getType(r)));
                 }
 
                 //FIRST AND SECOND PRODUCT SHOULD BE LINKER
                 auto p = _products[0];
-                speciesInt = get<0>(p);
-                short linkerNumber = speciesInt;
+                short linkerNumber = getInt(p);
                 
-                productSpecies.push_back(m1->speciesLinker(speciesInt));
+                productSpecies.push_back(m1->speciesLinker(linkerNumber));
                 
                 p = _products[1];
-                speciesInt = get<0>(p);
-                
-                productSpecies.push_back(m2->speciesLinker(speciesInt));
+                productSpecies.push_back(m2->speciesLinker(getInt(p)));
 
                 //set up callbacks
                 LinkerBindingCallback
@@ -844,7 +742,9 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 vector<Species*> onSpecies = reactantSpecies;
                 onSpecies.insert(onSpecies.end(), productSpecies.begin(),
                                  productSpecies.end());
-                ReactionBase* onRxn = new Reaction<3, 2>(onSpecies, _onRate);
+                ReactionBase* onRxn =
+                    new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>
+                    (onSpecies, _onRate);
                 onRxn->setReactionType(ReactionType::LINKERBINDING);
                 
                 boost::signals2::shared_connection_block
@@ -886,40 +786,29 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 
                 //FIRST AND SECOND REACTANT SHOULD BE BOUND
                 auto r = _reactants[0];
-                int speciesInt = get<0>(r);
-                
-                reactantSpecies.push_back(m1->speciesBound(speciesInt));
+                reactantSpecies.push_back(m1->speciesBound(getInt(r)));
                 
                 r = _reactants[1];
-                speciesInt = get<0>(r);
-                
-                reactantSpecies.push_back(m2->speciesBound(speciesInt));
+                reactantSpecies.push_back(m2->speciesBound(getInt(r)));
                 
                 //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
                 r = _reactants[2];
-                SpeciesType type = get<1>(r);
-                speciesInt = get<0>(r);
-                
-                if(type == SpeciesType::BULK)
+                if(getType(r) == SpeciesType::BULK)
                     reactantSpecies.push_back(CompartmentGrid::instance()->
-                                              findSpeciesBulkByMolecule(speciesInt));
+                                              findSpeciesBulkByMolecule(getInt(r)));
                 
-                else if(type == SpeciesType::DIFFUSING) {
+                else if(getType(r) == SpeciesType::DIFFUSING) {
                     Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(speciesInt));
+                    reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
                 }
                 
                 //FIRST AND SECOND PRODUCT SHOULD BE MOTOR
                 auto p = _products[0];
-                speciesInt = get<0>(p);
-                short motorNumber = speciesInt;
-                
-                productSpecies.push_back(m1->speciesMotor(speciesInt));
+                short motorNumber = getInt(p);
+                productSpecies.push_back(m1->speciesMotor(motorNumber));
                 
                 p = _products[1];
-                speciesInt = get<0>(p);
-                
-                productSpecies.push_back(m2->speciesMotor(speciesInt));
+                productSpecies.push_back(m2->speciesMotor(getInt(p)));
 
                 //set up callbacks
                 MotorBindingCallback
@@ -930,7 +819,9 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 vector<Species*> onSpecies = reactantSpecies;
                 onSpecies.insert(onSpecies.end(), productSpecies.begin(),
                                  productSpecies.end());
-                ReactionBase* onRxn = new Reaction<3, 2>(onSpecies, _onRate);
+                ReactionBase* onRxn =
+                    new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>
+                    (onSpecies, _onRate);
                 onRxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 boost::signals2::shared_connection_block

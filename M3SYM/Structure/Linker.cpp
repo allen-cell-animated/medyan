@@ -15,6 +15,7 @@
 
 #include "Bead.h"
 #include "Cylinder.h"
+#include "ChemRNode.h"
 
 #include "GController.h"
 #include "SystemParameters.h"
@@ -122,6 +123,38 @@ void Linker::updatePosition() {
     }
 }
 
-///NOT YET IMPLEMENTED
-void Linker::updateReactionRates() {}
+/// @note - This function updates unbinding rates based on the
+/// following exponential form:
+///
+///                 k = k_0 * exp(f * a / kT)
+///
+/// where the characteristic distance in this case is the size of a motor
+/// head group. The function uses the motor's stretching force at the current
+/// state to change this rate.
+
+void Linker::updateReactionRates() {
+
+    double force = _mLinker->stretchForce;
+    
+    //get all walking reactions
+    Species* s1 = _cLinker->getFirstSpecies();
+    Species* s2 = _cLinker->getSecondSpecies();
+    
+    for(auto r : s1->getRSpecies().reactantReactions()) {
+        if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
+            
+            float newRate = r->getBareRate() * exp( force * linkerHeadGroup / kT);
+            r->setRate(newRate);
+            r->getRNode()->activateReaction();
+        }
+    }
+    for(auto r : s2->getRSpecies().reactantReactions()) {
+        if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
+            
+            float newRate = r->getBareRate() * exp( force * linkerHeadGroup / kT);
+            r->setRate(newRate);
+            r->getRNode()->activateReaction();
+        }
+    }
+}
 
