@@ -101,19 +101,19 @@ CHEMISTRYFILE:               testchemistryinput.txt
 CALGORITHM:                  NRM
 NUMSTEPS:                    10000000
 
-NUMSTEPSPERM:                200
-NUMSTEPSPERS:                2000
-NUMSTEPSPERN:                2000
+NUMSTEPSPERM:                2000
+NUMSTEPSPERS:                20000
+NUMSTEPSPERN:                20000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            0
-NUMMOTORSPECIES:             0
+NUMLINKERSPECIES:            1
+NUMMOTORSPECIES:             1
 
-NUMBINDINGSITES:             1
+NUMBINDINGSITES:             4
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
@@ -122,7 +122,7 @@ NUMBINDINGSITES:             1
 
 
 NUMFILAMENTS:               200
-FILAMENTLENGTH:             2
+FILAMENTLENGTH:             4
 
 
 

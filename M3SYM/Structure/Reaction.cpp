@@ -88,6 +88,9 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     newReaction->_signal = std::move(_signal);
     _signal = nullptr;
     
+    //Copy cofactors
+    newReaction->_cofactors = _cofactors;
+    
     //Copy reaction type
     newReaction->_reactionType = _reactionType;
     return newReaction;

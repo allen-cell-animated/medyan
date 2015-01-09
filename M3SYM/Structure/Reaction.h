@@ -35,6 +35,17 @@ template <unsigned short M, unsigned short N>
     private:
         array<RSpecies*, M+N> _rspecies; ///< An array of RSpecies objects
                                          ///< (reactants followed by products)
+        
+        /// An array specifying whether the rspecies is a cofactor
+        /// @note - A cofactor means that its copy number will not be
+        /// changed upon firing this reaction, but it is required for
+        /// the reaction to be active. Cofactors are only specified in
+        /// the reactants portion of the species list naturally.
+        /// Functions are provided to set species as cofactors after
+        /// the initializaton of the species.
+        /// @note - true means the species is NOT a cofactor.
+        array<bool, M> _cofactors;
+        
     public:
         /// The main constructor:
         /// @param species - are reactants and products put together into a single list
@@ -44,6 +55,9 @@ template <unsigned short M, unsigned short N>
                 float rate = 0.0, bool isProtoCompartment = false)
             : ReactionBase(rate, isProtoCompartment) {
             initializeSpecies(species);
+                
+            //fill initially with no cofactors
+            _cofactors.fill(true);
         }
         
         /// The main constructor:
@@ -55,6 +69,9 @@ template <unsigned short M, unsigned short N>
                  float rate = 0.0, bool isProtoCompartment = false)
             : ReactionBase(rate, isProtoCompartment) {
             initializeSpecies(species);
+                
+            //fill initially with no cofactors
+            _cofactors.fill(true);
         }
         
         /// no copying (including all derived classes)
@@ -81,6 +98,12 @@ template <unsigned short M, unsigned short N>
             for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }
         
+        /// Set a cofactor. Will only be done once at initialization of reaction
+        inline virtual void setAsCofactor(int i) {
+            assert(i >= 0 && i < M && "Cofactor must be a reactant");
+            _cofactors[i] = true;
+        }
+        
         /// Returns a pointer to the first element of array<RSpecies*, M+N>
         /// The type of the pointer is RSpecies**. In conjunction with getM() and
         /// getN(), this pointer can be used to iterate over RSpecies associated with
@@ -92,7 +115,12 @@ template <unsigned short M, unsigned short N>
         virtual vector<ReactionBase*> getAffectedReactions() override
         {
             unordered_set<ReactionBase*> rxns;
-            for(auto s : _rspecies){
+            
+            for(int i = 0; i < M + N; i++) {
+              
+                auto s = _rspecies[i];
+                //don't get reactant reactions of cofactors...
+                //if(!_cofactors[i]) continue;
                 
                 for(auto it = s->beginReactantReactions();
                     it != s->endReactantReactions(); it++) {
@@ -198,8 +226,10 @@ template <unsigned short M, unsigned short N>
         inline virtual void makeStepImpl() override
         {
             for(auto i=0U; i<M; ++i)
+                //if(_cofactors[i])
                 _rspecies[i]->down();
             for(auto i=M; i<(M+N); ++i)
+                //if(_cofactors[i])
                 _rspecies[i]->up();
         }
 
@@ -245,13 +275,15 @@ template <unsigned short M, unsigned short N>
             for(auto i=0U; i<M; ++i)
             {
                 if(_rspecies[i]->isSignaling())
+                    //if(_cofactors[i])
                         _rspecies[i]->emitSignal(-1);
 
             }
             for(auto i=M; i<(M+N); ++i)
             {
                 if(_rspecies[i]->isSignaling())
-                    _rspecies[i]->emitSignal(+1);
+                    //if(_cofactors[i])
+                        _rspecies[i]->emitSignal(+1);
             }
         }
 #endif
@@ -276,8 +308,10 @@ template <unsigned short M, unsigned short N>
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline void Reaction<1,1>::makeStepImpl()
     {
-        _rspecies[0]->down();
-        _rspecies[1]->up();
+        //if(_cofactors[0])
+            _rspecies[0]->down();
+        //if(_cofactors[1])
+            _rspecies[1]->up();
     }
     
 #ifdef RSPECIES_SIGNALING
@@ -285,9 +319,11 @@ template <unsigned short M, unsigned short N>
     template <>  inline void Reaction<1,1>::broadcastRSpeciesSignals()
     {
         if(_rspecies[0]->isSignaling())
+            //if(_cofactors[0])
             _rspecies[0]->emitSignal(-1);
         
         if(_rspecies[1]->isSignaling())
+            //if(_cofactors[1])
             _rspecies[1]->emitSignal(+1);
     }
 #endif
