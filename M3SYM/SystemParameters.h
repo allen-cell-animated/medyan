@@ -76,11 +76,12 @@ struct ChemistryParameters {
     //@{
     /// Number of filament related species
     short numFilamentSpecies = 0;
-    short numPlusEndSpecies = 0;
+    short numPlusEndSpecies  = 0;
     short numMinusEndSpecies = 0;
-    short numBoundSpecies = 0;
-    short numLinkerSpecies = 0;
-    short numMotorSpecies = 0;
+    short numBoundSpecies    = 0;
+    short numLinkerSpecies   = 0;
+    short numMotorSpecies    = 0;
+    short numBrancherSpecies = 0;
     
     short numBindingSites = 0;
     //@}

@@ -677,6 +677,63 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
 }
 
+void BranchingManager::addReaction(CCylinder* cc) {
+    
+    //loop through all monomers
+    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
+        
+        int site = *(it);
+        CMonomer* m = cc->getCMonomer(site);
+        vector<Species*> reactantSpecies;
+        vector<Species*> productSpecies;
+        
+        
+        //FIRST TWO REACTANTS MUST BE BULK OR DIFFUSING
+        auto r = _reactants[0];
+        if(getType(r) == SpeciesType::BULK)
+            productSpecies.push_back(CompartmentGrid::instance()->
+                                     findSpeciesBulkByMolecule(getInt(r)));
+        else if(getType(r) == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+        }
+        
+        r = _reactants[1];
+        if(getType(r) == SpeciesType::BULK)
+            productSpecies.push_back(CompartmentGrid::instance()->
+                                     findSpeciesBulkByMolecule(getInt(r)));
+        else if(getType(r) == SpeciesType::DIFFUSING) {
+            Compartment* c = cc->getCompartment();
+            productSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+        }
+        
+        //THIRD REACTANT MUST BE BOUND
+        r = _reactants[2];
+        reactantSpecies.push_back(m->speciesBound(getInt(r)));
+        
+        //FIRST PRODUCT MUST BE BRANCH
+        auto p = _products[0];
+        int branchType = getInt(p);
+        productSpecies.push_back(m->speciesBrancher(branchType));
+                                 
+        short plusEndProduct = getInt(_products[1]);
+        
+        BranchingPointCreationCallback
+        bcallback(cc->getCylinder(), branchType, plusEndProduct, site, _offRate, _ps);
+        
+        //Add the reaction
+        vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn =
+        new Reaction<BRANCHINGREACTANTS,BRANCHINGPRODUCTS - 1>(species, _rate);
+        
+        boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::BRANCHING);
+    }
+}
+
 
 void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 

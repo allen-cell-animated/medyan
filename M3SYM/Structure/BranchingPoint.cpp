@@ -42,6 +42,31 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 #ifdef CHEMISTRY
     _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(_compartment));
     _cBranchingPoint->setBranchingPoint(this);
+        
+    //Find species on cylinder that should be marked. If initialization,
+    //this should be done. But, if this is because of a reaction callback,
+    //it will have already been done.
+    int pos = int(position * SystemParameters::Geometry().cylinderIntSize);
+    
+    SpeciesBrancher* sb1 =
+    _c1->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
+    SpeciesBrancher* sb2 =
+    _c2->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
+    
+    if(!creation) {
+        SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos)->speciesBound(0);
+        sb1->getRSpecies().up();
+        se1->getRSpecies().down();
+        
+        SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos)->speciesBound(0);
+        sb2->getRSpecies().up();
+        se2->getRSpecies().down();
+    }
+    
+    //attach this branchpoint to the species
+    _cBranchingPoint->setFirstSpecies(sb1);
+    _cBranchingPoint->setSecondSpecies(sb2);
+
 #endif
     
 #ifdef MECHANICS
@@ -69,8 +94,12 @@ void BranchingPoint::updatePosition() {
     if(c != _compartment) {
         _compartment = c;
 #ifdef CHEMISTRY
+        SpeciesBound* firstSpecies = _cBranchingPoint->getFirstSpecies();
+        
         CBranchingPoint* clone = _cBranchingPoint->clone(c);
         setCBranchingPoint(clone);
+        
+        _cBranchingPoint->setFirstSpecies(firstSpecies);
 #endif
     }
 }

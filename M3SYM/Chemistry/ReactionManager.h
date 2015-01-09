@@ -209,6 +209,23 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
+/// Manager for Filament and BranchPoint creation
+class BranchingManager : public InternalFilamentRxnManager {
+    
+private:
+    float _offRate; ///< Off rate for this branchingpoint
+    
+public:
+    BranchingManager(vector<tuple<int, SpeciesType>> reactants,
+                     vector<tuple<int, SpeciesType>> products,
+                     float rate, float offRate)
+    : InternalFilamentRxnManager(reactants, products, rate), _offRate(offRate) {}
+    ~BranchingManager() {}
+    
+    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+};
+
 
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 

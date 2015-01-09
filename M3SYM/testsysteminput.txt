@@ -16,7 +16,7 @@ MONOMERSIZE:                 2.7
 CYLINDERSIZE:                27.0
 
 BOUNDARYSHAPE:               SPHERICAL
-BDIAMETER:                   800.0
+BDIAMETER:                   400.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -72,8 +72,8 @@ BRSTRETCHINGK:              1.0
 BRSTRETCHINGL:              2.0
 
 BRBENDINGTYPE:              COSINE
-BRBENDINGK:                 0.5
-BRBENDINGTHETA:             1.0
+BRBENDINGK:                 2.0
+BRBENDINGTHETA:             1.22
 
 BRDIHEDRALTYPE:
 BRDIHEDRALK:
@@ -101,19 +101,20 @@ CHEMISTRYFILE:               testchemistryinput.txt
 CALGORITHM:                  NRM
 NUMSTEPS:                    10000000
 
-NUMSTEPSPERM:                2000
-NUMSTEPSPERS:                20000
-NUMSTEPSPERN:                20000
+NUMSTEPSPERM:                100
+NUMSTEPSPERS:                100
+NUMSTEPSPERN:                100
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             1
+NUMLINKERSPECIES:            0
+NUMMOTORSPECIES:             0
+NUMBRANCHERSPECIES:          1
 
-NUMBINDINGSITES:             4
+NUMBINDINGSITES:             1
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
@@ -121,8 +122,8 @@ NUMBINDINGSITES:             4
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               200
-FILAMENTLENGTH:             4
+NUMFILAMENTS:               100
+FILAMENTLENGTH:             5
 
 
 

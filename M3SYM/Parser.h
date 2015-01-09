@@ -84,14 +84,11 @@ struct ChemistryData {
     vector<tuple<vector<string>,
                  vector<string>,
                         double>> destructionReactions = {};
-    /// Binding reactions
+    
+    /// Branching reactions
     vector<tuple<vector<string>,
                  vector<string>,
-                        double>> bindingReactions = {};
-    /// Unbinding reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> unbindingReactions = {};
+                        double, double>> branchingReactions = {};
     //@}
     
     //@{
@@ -133,6 +130,7 @@ struct ChemistryData {
     vector<string> speciesBound  = {};
     vector<string> speciesLinker = {};
     vector<string> speciesMotor  = {};
+    vector<string> speciesBrancher = {};
     //@}
     
 };

@@ -43,7 +43,7 @@ private:
     /// Vector of Filament -related species in system
     vector<string> _speciesFilament, _speciesPlusEnd,
                    _speciesMinusEnd, _speciesBound,
-                   _speciesLinker, _speciesMotor;
+                   _speciesLinker, _speciesMotor, _speciesBrancher;
     //@}
     
     //@{
@@ -72,7 +72,8 @@ public:
 
     virtual void initialize(ChemistryData& chem);
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
-                                     bool extensionFront, bool extensionBack,
+                                     bool extensionFront,
+                                     bool extensionBack,
                                      bool creation);
     virtual void updateCCylinder(CCylinder* cc);
     

@@ -92,6 +92,10 @@ using namespace std;
 #define SEVERINGREACTANTS     1
 #define SEVERINGPRODUCTS      2
 
+/// Branching
+#define BRANCHINGREACTANTS    3
+#define BRANCHINGPRODUCTS     2
+
 //@}
 
 #endif

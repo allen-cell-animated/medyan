@@ -40,8 +40,8 @@ public:
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
         : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
         
-//        setFirstSpecies(rhs._firstSpecies);
-//        setSecondSpecies(rhs._secondSpecies);
+          setFirstSpecies(rhs._firstSpecies);
+          //setOffReaction(rhs._offRxn);
     }
     
     /// Assignment is not allowed

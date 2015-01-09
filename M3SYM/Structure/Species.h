@@ -33,7 +33,7 @@ class CBound;
 
 ///Enumeration for species types
 enum SpeciesType {
-    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, PLUSEND, MINUSEND
+    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, PLUSEND, MINUSEND
 };
 
 /// Used to associate unique integers with character based names of Species.
@@ -591,7 +591,7 @@ public:
 
 /// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
-/// Contains a pointer to a CLinker object that this represents.
+/// Contains a pointer to a CMotorGhost object that this represents.
 class SpeciesMotor : public SpeciesBound {
     
 public:
@@ -633,6 +633,52 @@ public:
     
     /// Default destructor
     ~SpeciesMotor () noexcept {};
+};
+
+/// Used for species that can be bound to a Filament.
+/// These species can not move cross-compartment.
+/// Contains a pointer to a CLinker object that this represents.
+class SpeciesBrancher : public SpeciesBound {
+    
+public:
+    /// Default constructor
+    SpeciesBrancher() : SpeciesBound() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesBrancher (const string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  SpeciesBound(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesBrancher(const SpeciesBrancher &rhs)  : SpeciesBound(rhs) {}
+    
+    /// Move constructor
+    SpeciesBrancher (SpeciesBrancher &&rhs) noexcept : SpeciesBound(move(rhs)){
+    }
+    
+    /// Regular Assignment
+    SpeciesBrancher& operator=(const SpeciesBrancher& rhs)  {
+        SpeciesBound::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesBrancher& operator=(SpeciesBrancher&& rhs)
+    {
+        SpeciesBound::operator=(move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesBrancher* clone() {
+        return new SpeciesBrancher(*this);
+    }
+    
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Brancher}"
+    virtual string getFullName() const {return getName() + "{Brancher}";}
+    
+    /// Default destructor
+    ~SpeciesBrancher () noexcept {};
 };
 
 

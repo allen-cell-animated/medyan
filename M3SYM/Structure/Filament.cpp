@@ -43,8 +43,8 @@ Filament::Filament(SubSystem* s) {
 }
 
 
-Filament::Filament(SubSystem* s, vector<double>& position,
-                   vector<double>& direction, bool creation) {
+Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
+                   bool creation, bool branch) {
    
     _subSystem = s;
     
@@ -57,7 +57,8 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     
     //choose length
     double length;
-    if(creation) length = SystemParameters::Geometry().minCylinderSize;
+    if(branch) length = SystemParameters::Geometry().monomerSize;
+    else if(creation) length = SystemParameters::Geometry().minCylinderSize;
     else length = SystemParameters::Geometry().cylinderSize;
     
     auto pos2 = nextPointProjection(position, length, direction);

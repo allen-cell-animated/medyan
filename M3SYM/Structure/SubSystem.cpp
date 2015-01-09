@@ -32,13 +32,13 @@ void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
         int numSegment = d / SystemParameters::Geometry().cylinderSize;
         
         // check how many segments can fit between end-to-end of the filament
-        if (numSegment == 0) new Filament(this, it[0], tau);
+        if (numSegment == 0) new Filament(this, it[0], tau, false, false);
         else new Filament(this, it, numSegment + 1, "STRAIGHT");
     }
 }
 Filament* SubSystem::addNewFilament(vector<double>& position,
-                                    vector<double>& direction) {
-    return new Filament(this, position, direction, true);
+                                    vector<double>& direction, bool branch) {
+    return new Filament(this, position, direction, true, branch);
 }
 void SubSystem::removeFilament(Filament* f) { delete f; }
 

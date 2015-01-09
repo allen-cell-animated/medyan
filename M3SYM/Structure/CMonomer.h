@@ -36,6 +36,7 @@ class CMonomer {
     SpeciesBound**  _speciesBound;
     SpeciesLinker** _speciesLinker;
     SpeciesMotor**  _speciesMotor;
+    SpeciesBrancher** _speciesBrancher;
     //@}
     
 public:
@@ -71,6 +72,7 @@ public:
     void addSpeciesBound    (SpeciesBound* s);
     void addSpeciesLinker   (SpeciesLinker* s);
     void addSpeciesMotor    (SpeciesMotor* s);
+    void addSpeciesBrancher (SpeciesBrancher* s);
     //@}
     
     ///Print the Species
@@ -81,12 +83,14 @@ public:
     /// @note no check on this index. The index value of a species is stored in the
     /// chemical initializer when all reactions are initialized from the chemical input
     /// file.
-    SpeciesFilament* speciesFilament (int index) {return _speciesFilament[index];}
-    SpeciesPlusEnd*  speciesPlusEnd  (int index) {return _speciesPlusEnd[index];}
-    SpeciesMinusEnd* speciesMinusEnd (int index) {return _speciesMinusEnd[index];}
-    SpeciesBound*    speciesBound    (int index) {return _speciesBound[index];}
-    SpeciesLinker*   speciesLinker   (int index) {return _speciesLinker[index];}
-    SpeciesMotor*    speciesMotor    (int index) {return _speciesMotor[index];}
+    inline SpeciesFilament* speciesFilament(int index) {return _speciesFilament[index];}
+    inline SpeciesPlusEnd*  speciesPlusEnd (int index) {return _speciesPlusEnd[index];}
+    inline SpeciesMinusEnd* speciesMinusEnd(int index) {return _speciesMinusEnd[index];}
+    
+    inline SpeciesBound*    speciesBound   (int index) {return _speciesBound[index];}
+    inline SpeciesLinker*   speciesLinker  (int index) {return _speciesLinker[index];}
+    inline SpeciesMotor*    speciesMotor   (int index) {return _speciesMotor[index];}
+    inline SpeciesBrancher* speciesBrancher(int index) {return _speciesBrancher[index];}
     //@}
     
 };

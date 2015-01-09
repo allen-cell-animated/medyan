@@ -57,7 +57,7 @@ public:
     /// Coordinates of the first bead is an input, second is set up by using an input
     /// direction. Using all this, two constructors for beads and cylinders are called.
 	Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
-                                                     bool creation = false);
+             bool creation, bool branch);
     
     /// This constructor is called to create a longer filament. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point

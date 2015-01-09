@@ -20,8 +20,10 @@
 #include "SubSystem.h"
 #include "Filament.h"
 #include "Cylinder.h"
+#include "Bead.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "BranchingPoint.h"
 #include "Boundary.h"
 
 #include "GController.h"
@@ -187,6 +189,81 @@ struct FilamentDepolymerizationBackCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->depolymerizeBack();
+    }
+};
+
+/// Callback to unbind a BranchingPoint from a Filament
+struct BranchingPointUnbindingCallback {
+    
+    SubSystem* _ps;
+    BranchingPoint* _branchingPoint;
+    
+    BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
+        : _ps(ps), _branchingPoint(b) {}
+    
+    void operator() (ReactionBase *r) {
+        //remove the unbinding reaction
+        CCylinder* cc = _branchingPoint->getFirstCylinder()->getCCylinder();
+        cc->removeInternalReaction(r);
+        
+        //remove the linker
+        _ps->removeBranchingPoint(_branchingPoint);
+    }
+};
+
+/// Callback to create a BranchingPoint on a Filament
+struct BranchingPointCreationCallback {
+    
+    SubSystem* _ps;        ///< ptr to subsystem
+    Cylinder* _c1;         ///< Cylinders to attach this branchingpoint to
+    
+    short _branchType;     ///< Type of branchingpoint
+    short _position;       ///< Position to attach this branchingpoint
+    
+    short _plusEnd;        ///< Plus end marker of new cylinder
+    
+    float _offRate;        ///< Rate of the unbinding reaction
+    
+    BranchingPointCreationCallback(Cylinder* c1, short branchType, short plusEnd,
+                                   short position, float offRate, SubSystem* ps)
+        : _ps(ps), _c1(c1), _branchType(branchType), _plusEnd(plusEnd),
+          _position(position),  _offRate(offRate) {}
+    
+    void operator() (ReactionBase *r) {
+        
+        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
+        double pos = double(_position) / cylinderSize;
+        
+        //Get a position and direction of a new filament
+        auto position = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                           _c1->getSecondBead()->coordinate, pos);
+        
+        double rand1 = randomDouble(-1,1);
+        double rand2 = randomDouble(-1,1);
+        double rand3 = randomDouble(-1,1);
+        //randomize position
+        position[0] = position[0] + rand1;
+        position[1] = position[1] + rand2;
+        position[2] = position[2] + rand3;
+        
+        vector<double> direction = twoPointDirection(_c1->getFirstBead()->coordinate,
+                                                     _c1->getSecondBead()->coordinate);
+        
+        //randomize direction
+        direction[0] = direction[0] + -rand1 * 0.2 * direction[0];
+        direction[1] = direction[1] + -rand2 * 0.2 * direction[1];
+        direction[2] = direction[2] + -rand3 * 0.2 * direction[2];
+        
+        //create a new filament
+        Filament* f = _ps->addNewFilament(position, direction, true);
+        
+        //mark first cylinder
+        Cylinder* c = f->getCylinderVector()[0];
+        CMonomer* m = c->getCCylinder()->getCMonomer(0);
+        m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
+        
+        //create new branch
+        _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
     }
 };
 

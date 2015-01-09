@@ -36,6 +36,9 @@ CMonomer::CMonomer() {
     
     short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
     _speciesMotor = new SpeciesMotor*[numMotorSpecies]();
+    
+    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    _speciesBrancher = new SpeciesBrancher*[numBrancherSpecies]();
 
 };
 
@@ -47,6 +50,7 @@ CMonomer::~CMonomer() noexcept{
     delete[] _speciesBound;
     delete[] _speciesLinker;
     delete[] _speciesMotor;
+    delete[] _speciesBrancher;
 }
 
 
@@ -113,6 +117,20 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         SpeciesMotor* sNew = s->clone();
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         addSpeciesMotor(sNew);
+        
+        //update cbound
+        CBound* cBound = s->getCBound();
+        if(cBound != nullptr) {
+            if(cBound->getFirstSpecies() == s) cBound->setFirstSpecies(sNew);
+            else cBound->setSecondSpecies(sNew);
+        }
+    }
+    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    for(int i = 0; i < numBrancherSpecies; i++) {
+        SpeciesBrancher* s = rhs._speciesBrancher[i];
+        SpeciesBrancher* sNew = s->clone();
+        c->addSpeciesUnique(unique_ptr<Species>(sNew));
+        addSpeciesBrancher(sNew);
         
         //update cbound
         CBound* cBound = s->getCBound();
@@ -213,6 +231,21 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
     exit(EXIT_FAILURE);
 }
 
+void CMonomer::addSpeciesBrancher(SpeciesBrancher* s) {
+    
+    short numBrancherSpecies= SystemParameters::Chemistry().numBrancherSpecies;
+    for(int i = 0; i < numBrancherSpecies; i++) {
+        if(_speciesBrancher[i] == 0) {
+            _speciesBrancher[i] = s;
+            return;
+        }
+    }
+    //return error if we get here
+    cout << "Could not add brancher species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
+    << endl;
+    exit(EXIT_FAILURE);
+}
+
 
 void CMonomer::print()
 {
@@ -249,6 +282,12 @@ void CMonomer::print()
     short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = _speciesMotor[i];
+        if(s != nullptr && s->getN() >= 1) cout << s->getName();
+    }
+    
+    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    for(int i = 0; i < numBrancherSpecies; i++) {
+        SpeciesBrancher* s = _speciesBrancher[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     

@@ -347,6 +347,19 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
+    
+    /// Add a brancher species to this compartment
+    /// @param args - any number of SpeciesBrancher objects
+    template<typename ...Args>
+    SpeciesBrancher* addSpeciesBrancher(Args&& ...args)
+    {
+        SpeciesBrancher *sp =
+        static_cast<SpeciesBrancher*>(
+            _species.addSpecies<SpeciesBrancher>(forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0;
+        return sp;
+    }
 
     /// Add an internal reaction to this compartment
     template<unsigned short M, unsigned short N, typename ...Args>

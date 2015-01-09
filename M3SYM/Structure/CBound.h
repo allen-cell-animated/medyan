@@ -35,7 +35,6 @@ class CBound {
 protected:
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
     SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
-    
     Compartment* _compartment; ///< Compartment this CBound is in
     
     ReactionBase* _offRxn; ///< The off reaction for this bound object
@@ -50,8 +49,8 @@ public:
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
     virtual ~CBound() noexcept {
-        _firstSpecies->removeCBound();
-        _secondSpecies->removeCBound();
+        if(_firstSpecies != nullptr) _firstSpecies->removeCBound();
+        if(_secondSpecies != nullptr) _secondSpecies->removeCBound();
     }
     
     /// Set first species
