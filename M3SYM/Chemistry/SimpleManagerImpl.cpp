@@ -569,7 +569,6 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         }
         
         //SECOND PRODUCT SPECIES MUST BE BOUND
-        //read strings, and look up type
         product = products[1];
         if(product.find("BOUND") != string::npos) {
             
@@ -901,6 +900,125 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         _IFRxnManagers.emplace_back(
             new DestructionManager(reactantTemplate, productTemplate, get<2>(r)));
     }
+    
+    //set up reaction templates
+    for(auto &r: chem.severingReactions) {
+        
+        vector<tuple<int, SpeciesType>> reactantTemplate;
+        vector<tuple<int, SpeciesType>> productTemplate;
+        
+        vector<string> reactants = get<0>(r);
+        vector<string> products = get<1>(r);
+        //read strings, and look up type
+        
+        auto reactant = reactants[0];
+        if(reactant.find("BOUND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = reactant.substr(0, reactant.find(":"));
+            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesBound.begin(), it);
+                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                       SpeciesType::BOUND));
+            }
+            else {
+                cout <<
+                "A bound species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            cout <<
+            "First species listed in a severing reaction must be bound. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        // FIRST PRODUCT SPECIES MUST BE BULK OR DIFFUSING
+        auto product = products[0];
+        if(product.find("BULK") != string::npos) {
+            
+            //Look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
+                              [name](tuple<string, int, string> element) {
+                              return get<0>(element) == name ? true : false; });
+            
+            if(it == chem.speciesBulk.end()) {
+                cout <<
+                "A bulk species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            productTemplate.push_back(tuple<int, SpeciesType>(
+            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+        }
+        
+        else if(product.find("DIFFUSING") != string::npos) {
+            
+            //Look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
+                              [name](tuple<string, int, double> element) {
+                              return get<0>(element) == name ? true : false; });
+            if(it == chem.speciesDiffusing.end()) {
+                cout <<
+                "A diffusing species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            productTemplate.push_back(tuple<int, SpeciesType>(
+            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+        }
+        else {
+            cout <<
+            "Second species listed in a severing reaction must be either bulk or diffusing. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        
+        //SECOND PRODUCT SPECIES MUST BE BOUND
+        product = products[1];
+        if(product.find("BOUND") != string::npos) {
+            
+            //look up species, make sure in list
+            string name = product.substr(0, product.find(":"));
+            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            int position = 0;
+            
+            if(it != _speciesBound.end()) {
+                
+                //get position of iterator
+                position = distance(_speciesBound.begin(), it);
+                productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                      SpeciesType::BOUND));
+            }
+            else {
+                cout <<
+                "A bound species that was included in a reaction was not initialized. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            cout <<
+            "Third species listed in a severing reaction must be bound. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //add reaction
+        _IFRxnManagers.emplace_back(
+          new SeveringManager(reactantTemplate, productTemplate, get<2>(r)));
+    }
+    
 }
 
 void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
@@ -1789,7 +1907,8 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
 }
 
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
-                                            bool extensionFront, bool extensionBack,
+                                            bool extensionFront,
+                                            bool extensionBack,
                                             bool creation)
 {
     //maxlength is same length as mcylinder

@@ -88,6 +88,9 @@ using namespace std;
 #define AGINGREACTANTS        1
 #define AGINGPRODUCTS         1
 
+/// Severing
+#define SEVERINGREACTANTS     1
+#define SEVERINGPRODUCTS      2
 
 //@}
 

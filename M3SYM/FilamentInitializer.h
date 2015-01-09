@@ -48,7 +48,6 @@ public:
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
-    
     virtual vector<vector<vector<double>>>
         createFilaments(Boundary* b, int numFilaments, int lenFilaments);
 };

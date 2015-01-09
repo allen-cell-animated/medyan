@@ -500,7 +500,7 @@ struct MotorMovingCylinderForwardCallback {
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
                         ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
             
-            //remove old reaction
+            //remove old off reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
         }
         else {
@@ -520,6 +520,9 @@ struct MotorMovingCylinderForwardCallback {
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
                         ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            
+            //remove old off reaction
+            cc1->removeCrossCylinderReaction(cc2, offRxn);
         }
         
         //set new reaction type
@@ -533,8 +536,7 @@ struct MotorMovingCylinderForwardCallback {
         cc1 = m->getFirstCylinder()->getCCylinder();
         cc2 = m->getSecondCylinder()->getCCylinder();
         
-        //remove old reaction, add new
-        cc1->removeCrossCylinderReaction(cc2, offRxn);
+        //add new
         cc1->addCrossCylinderReaction(cc2, newOffRxn);
         
         //set new unbinding reaction

@@ -195,6 +195,21 @@ public:
     
 };
 
+/// Manager for severing a Filament
+class SeveringManager : public InternalFilamentRxnManager {
+    
+public:
+    SeveringManager(vector<tuple<int, SpeciesType>> reactants,
+                    vector<tuple<int, SpeciesType>> products,
+                    float rate)
+    : InternalFilamentRxnManager(reactants, products, rate) {}
+    ~SeveringManager() {}
+    
+    virtual void addReaction(CCylinder* cc) {}
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+};
+
+
 /// To store cross-filament reactions, including Linker and MotorGhost binding
 
 /*!
