@@ -96,6 +96,9 @@ using namespace std;
 #define BRANCHINGREACTANTS    3
 #define BRANCHINGPRODUCTS     2
 
+/// Branch unbinding
+#define BUNBINDINGREACTANTS   1
+#define BUNBINDINGPRODUCTS    1
 //@}
 
 #endif

@@ -93,6 +93,19 @@ public:
     inline SpeciesBrancher* speciesBrancher(int index) {return _speciesBrancher[index];}
     //@}
     
+    //@{
+    /// Get the active species of the corresponding type
+    /// @note these functions will return -1 if the corresponding type has no marked
+    /// species at this point.
+    short activeSpeciesFilament();
+    short activeSpeciesPlusEnd();
+    short activeSpeciesMinusEnd();
+    
+    short activeSpeciesBound();
+    short activeSpeciesLinker();
+    short activeSpeciesMotor();
+    short activeSpeciesBrancher();
+    //@
 };
 
 #endif

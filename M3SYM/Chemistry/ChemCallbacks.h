@@ -25,6 +25,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
+#include "ChemRNode.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -198,15 +199,40 @@ struct BranchingPointUnbindingCallback {
     SubSystem* _ps;
     BranchingPoint* _branchingPoint;
     
-    BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
-        : _ps(ps), _branchingPoint(b) {}
+    Species* _freeMonomer; ///< The free monomer species to increase if the
+                           ///< child filament branch is only one monomer long
+    
+    BranchingPointUnbindingCallback(BranchingPoint* b,
+                                    Species* freeMonomer, SubSystem* ps)
+        : _ps(ps), _branchingPoint(b), _freeMonomer(freeMonomer) {}
     
     void operator() (ReactionBase *r) {
         //remove the unbinding reaction
         CCylinder* cc = _branchingPoint->getFirstCylinder()->getCCylinder();
         cc->removeInternalReaction(r);
         
-        //remove the linker
+        //mark the correct species on the minus end of the branched
+        //filament. If this is a filament species, change it to its
+        //corresponding minus end. If a plus end, release a diffusing
+        //or bulk species, depending on the simulation.
+        
+        CCylinder* childCC = _branchingPoint->getSecondCylinder()->getCCylinder();
+        CMonomer* m = childCC->getCMonomer(0);
+        short speciesFilament = m->activeSpeciesFilament();
+        
+        //there is a filament species, mark its corresponding plus end
+        if(speciesFilament != -1) {
+            m->speciesMinusEnd(speciesFilament)->getRSpecies().up();
+        }
+        //mark the free species instead
+        else {
+            _freeMonomer->getRSpecies().up();
+            //update reaction rates
+            for(auto &r : _freeMonomer->getRSpecies().reactantReactions())
+                r->getRNode()->activateReaction();
+        }
+        
+        //remove the branching point
         _ps->removeBranchingPoint(_branchingPoint);
     }
 };
@@ -238,21 +264,17 @@ struct BranchingPointCreationCallback {
         auto position = midPointCoordinate(_c1->getFirstBead()->coordinate,
                                            _c1->getSecondBead()->coordinate, pos);
         
+        //randomize position
         double rand1 = randomDouble(-1,1);
         double rand2 = randomDouble(-1,1);
         double rand3 = randomDouble(-1,1);
-        //randomize position
         position[0] = position[0] + rand1;
         position[1] = position[1] + rand2;
         position[2] = position[2] + rand3;
         
         vector<double> direction = twoPointDirection(_c1->getFirstBead()->coordinate,
                                                      _c1->getSecondBead()->coordinate);
-        
-        //randomize direction
-        direction[0] = direction[0] + -rand1 * 0.2 * direction[0];
-        direction[1] = direction[1] + -rand2 * 0.2 * direction[1];
-        direction[2] = direction[2] + -rand3 * 0.2 * direction[2];
+        //randomize direction!!!!
         
         //create a new filament
         Filament* f = _ps->addNewFilament(position, direction, true);
@@ -263,7 +285,30 @@ struct BranchingPointCreationCallback {
         m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
         
         //create new branch
-        _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
+        BranchingPoint* b= _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
+        
+        //add the unbinding reaction and callback
+        //first, find the correct diffusing or bulk species
+        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS>* branchReact =
+            (Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS>*)r;
+        Species* freeMonomer = &(branchReact->rspecies()[1]->getSpecies());
+        
+        //create the reaction species
+        m = _c1->getCCylinder()->getCMonomer(_position);
+        vector<Species*> offSpecies =
+            {m->speciesBrancher(_branchType), m->speciesBound(0)};
+        
+        ReactionBase* offRxn =
+        new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
+        offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
+        
+        BranchingPointUnbindingCallback bcallback(b, freeMonomer, _ps);
+        boost::signals2::shared_connection_block
+            rcb(offRxn->connect(bcallback,false));
+        
+        _c1->getCCylinder()->addInternalReaction(offRxn);
+        b->getCBranchingPoint()->setOffReaction(offRxn);
+        
     }
 };
 

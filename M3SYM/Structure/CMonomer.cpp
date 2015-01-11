@@ -292,3 +292,65 @@ void CMonomer::print()
     }
     
 }
+
+short CMonomer::activeSpeciesFilament() {
+    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    for(int i = 0; i < numFilamentSpecies; i++) {
+        SpeciesFilament* s = _speciesFilament[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+short CMonomer::activeSpeciesPlusEnd() {
+    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    for(int i = 0; i < numPlusEndSpecies; i++) {
+        SpeciesPlusEnd* s = _speciesPlusEnd[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+short CMonomer::activeSpeciesMinusEnd() {
+    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    for(int i = 0; i < numMinusEndSpecies; i++) {
+        SpeciesMinusEnd* s = _speciesMinusEnd[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+
+short CMonomer::activeSpeciesBound() {
+    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    for(int i = 0; i < numBoundSpecies; i++) {
+        SpeciesBound* s = _speciesBound[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+short CMonomer::activeSpeciesLinker() {
+    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    for(int i = 0; i < numLinkerSpecies; i++) {
+        SpeciesLinker* s = _speciesLinker[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+    
+}
+short CMonomer::activeSpeciesMotor() {
+    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+    for(int i = 0; i < numMotorSpecies; i++) {
+        SpeciesMotor* s = _speciesMotor[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+short CMonomer::activeSpeciesBrancher() {
+    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    for(int i = 0; i < numBrancherSpecies; i++) {
+        SpeciesBrancher* s = _speciesBrancher[i];
+        if(s != nullptr && s->getN() >= 1) return i;
+    }
+    return -1;
+}
+
+
+

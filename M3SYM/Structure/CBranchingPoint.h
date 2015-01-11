@@ -41,7 +41,7 @@ public:
         : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
         
           setFirstSpecies(rhs._firstSpecies);
-          //setOffReaction(rhs._offRxn);
+          setOffReaction(rhs._offRxn);
     }
     
     /// Assignment is not allowed
