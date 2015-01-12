@@ -90,7 +90,7 @@ using namespace std;
 
 /// Severing
 #define SEVERINGREACTANTS     1
-#define SEVERINGPRODUCTS      2
+#define SEVERINGPRODUCTS      0
 
 /// Branching
 #define BRANCHINGREACTANTS    3

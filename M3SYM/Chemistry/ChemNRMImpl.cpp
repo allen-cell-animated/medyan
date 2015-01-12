@@ -137,7 +137,9 @@ double ChemNRMImpl::generateTau(double a){
 
 bool ChemNRMImpl::makeStep() {
 
+    //try to get a reaction
     RNodeNRM *rn = _heap.top()._rn;
+    
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
         cout <<

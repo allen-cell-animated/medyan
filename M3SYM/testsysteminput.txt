@@ -23,7 +23,7 @@ BDIAMETER:                   400.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
-GRADIENTTOLERANCE:           0.1
+GRADIENTTOLERANCE:           0.00001
 MD:
 
 ### FILAMENTS ###
@@ -68,11 +68,11 @@ MTWISTINGPHI:
 ### BRANCHING ###
 
 BRSTRETCHINGTYPE:           HARMONIC
-BRSTRETCHINGK:              1.0
-BRSTRETCHINGL:              2.0
+BRSTRETCHINGK:              2.0
+BRSTRETCHINGL:              5.0
 
 BRBENDINGTYPE:              COSINE
-BRBENDINGK:                 2.0
+BRBENDINGK:                 10.0
 BRBENDINGTHETA:             1.22
 
 BRDIHEDRALTYPE:
@@ -83,7 +83,7 @@ BRDIHEDRALK:
 VOLUMETYPE:                 
 VOLUMECUTOFF:               27.0
 
-VOLUMEK:                    2.0
+VOLUMEK:                    10.0
 
 ### BOUNDARY ###
 
@@ -102,8 +102,8 @@ CALGORITHM:                  NRM
 NUMSTEPS:                    10000000
 
 NUMSTEPSPERM:                100
-NUMSTEPSPERS:                100
-NUMSTEPSPERN:                100
+NUMSTEPSPERS:                1000
+NUMSTEPSPERN:                1000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
@@ -123,7 +123,7 @@ NUMBINDINGSITES:             1
 
 
 NUMFILAMENTS:               100
-FILAMENTLENGTH:             5
+FILAMENTLENGTH:             3
 
 
 

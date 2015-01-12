@@ -205,7 +205,7 @@ public:
     : InternalFilamentRxnManager(reactants, products, rate) {}
     ~SeveringManager() {}
     
-    virtual void addReaction(CCylinder* cc) {}
+    virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 

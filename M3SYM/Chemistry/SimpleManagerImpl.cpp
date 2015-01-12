@@ -907,122 +907,41 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
         
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
+        string reactant = get<0>(r);
         //read strings, and look up type
         
-        if(reactants.size() != SEVERINGREACTANTS ||
-           products.size() != SEVERINGPRODUCTS) {
-            cout << "Invalid severing reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
         
-        auto reactant = reactants[0];
-        if(reactant.find("BOUND") != string::npos) {
+        // SPECIES MUST BE FILAMENT
+        if(reactant.find("FILAMENT") != string::npos) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
-                
+            if(it != _speciesFilament.end()) {
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_speciesFilament.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                       SpeciesType::BOUND));
+                                                    SpeciesType::FILAMENT));
             }
             else {
                 cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
+                "A filament species that was included in a reaction was not initialized. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
         }
         else {
             cout <<
-            "First species listed in a severing reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        // FIRST PRODUCT SPECIES MUST BE BULK OR DIFFUSING
-        auto product = products[0];
-        if(product.find("BULK") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
-                              return get<0>(element) == name ? true : false; });
-            
-            if(it == chem.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            productTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(product.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            productTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "Second species listed in a severing reaction must be either bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        
-        //SECOND PRODUCT SPECIES MUST BE BOUND
-        product = products[1];
-        if(product.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _speciesBound.end()) {
-                
-                //get position of iterator
-                position = distance(_speciesBound.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                      SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Third species listed in a severing reaction must be bound. Exiting."
+            "Reactant species listed in a severing reaction must be filament. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
         
         //add reaction
         _IFRxnManagers.emplace_back(
-          new SeveringManager(reactantTemplate, productTemplate, get<2>(r)));
+          new SeveringManager(reactantTemplate, productTemplate, get<1>(r)));
     }
     
     //set up reaction templates
@@ -1623,9 +1542,18 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
         cout << "Must specify at least one plus end species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
+    if(_speciesPlusEnd.size() != _speciesFilament.size()) {
+        cout << "There must be a plus end for every filament species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
+    
     _speciesMinusEnd =  chem.speciesMinusEnd;
     if(_speciesMinusEnd.size() < 1) {
         cout << "Must specify at least one minus end species. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
+    if(_speciesMinusEnd.size() != _speciesFilament.size()) {
+        cout << "There must be a minus end for every filament species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
     

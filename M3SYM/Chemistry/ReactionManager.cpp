@@ -677,6 +677,36 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
 }
 
+void SeveringManager::addReaction(CCylinder* cc) {
+    
+    //loop through all monomers
+    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
+        
+        int site = *(it);
+        CMonomer* m = cc->getCMonomer(site);
+        vector<Species*> reactantSpecies;
+        
+        //REACTANT MUST BE FILAMENT
+        auto r = _reactants[0];
+        reactantSpecies.push_back(m->speciesFilament(getInt(r)));
+        
+        //IMPLICITLY NEEDS AN EMPTY BOUND
+        reactantSpecies.push_back(m->speciesBound(0));
+        
+        FilamentSeveringCallback scallback(cc->getCylinder());
+        
+        //Add the reaction
+        vector<Species*> species = reactantSpecies;
+        ReactionBase* rxn =
+        new Reaction<SEVERINGREACTANTS + 1,SEVERINGPRODUCTS>(species, _rate);
+        
+        boost::signals2::shared_connection_block rcb(rxn->connect(scallback,false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::SEVERING);
+    }
+}
+
 void BranchingManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers

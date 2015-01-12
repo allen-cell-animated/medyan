@@ -34,7 +34,7 @@ void Output::printBasicSnapshot(int step) {
         MotorGhostDB::instance()->size() << endl;
     
     for(auto &filament : *FilamentDB::instance()) {
-
+        
         //print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
             filament->getCylinderVector().size() + 1 << " " <<

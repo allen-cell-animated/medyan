@@ -324,11 +324,14 @@ Filament* Filament::severFilament(int cylinderPosition) {
         else vectorPosition++;
     }
     
+    //if vector position is zero, we can't sever. return null
+    if(vectorPosition == 0) return nullptr;
+    
     //create a new filament
     Filament* newFilament = new Filament(_subSystem);
     
     //Split the cylinder vector at position, transfer cylinders to new filament
-    for(int i = vectorPosition; i >= 0; i--) {
+    for(int i = vectorPosition; i > 0; i--) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
@@ -340,6 +343,10 @@ Filament* Filament::severFilament(int cylinderPosition) {
     ///copy bead at severing point, attach to new filament
     Bead* b = new Bead(*(_cylinderVector.front()->getFirstBead()));
     newFilament->_cylinderVector.back()->setSecondBead(b);
+    
+    //set plus and minus ends
+    newFilament->_cylinderVector.back()->setPlusEnd(true);
+    _cylinderVector.front()->setMinusEnd(true);
     
     //return the new filament
     return newFilament;

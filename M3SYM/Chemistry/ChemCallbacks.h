@@ -227,6 +227,10 @@ struct BranchingPointUnbindingCallback {
         //mark the free species instead
         else {
             _freeMonomer->getRSpecies().up();
+            
+            //remove the filament from the system
+            delete _branchingPoint->getSecondCylinder()->getFilament();
+            
             //update reaction rates
             for(auto &r : _freeMonomer->getRSpecies().reactantReactions())
                 r->getRNode()->activateReaction();
@@ -261,23 +265,26 @@ struct BranchingPointCreationCallback {
         double pos = double(_position) / cylinderSize;
         
         //Get a position and direction of a new filament
-        auto position = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                           _c1->getSecondBead()->coordinate, pos);
+        auto position1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                            _c1->getSecondBead()->coordinate, pos);
         
-        //randomize position
+        //randomize position and direction
         double rand1 = randomDouble(-1,1);
         double rand2 = randomDouble(-1,1);
         double rand3 = randomDouble(-1,1);
-        position[0] = position[0] + rand1;
-        position[1] = position[1] + rand2;
-        position[2] = position[2] + rand3;
+        position1[0] = position1[0] + rand1;
+        position1[1] = position1[1] + rand2;
+        position1[2] = position1[2] + rand3;
         
-        vector<double> direction = twoPointDirection(_c1->getFirstBead()->coordinate,
-                                                     _c1->getSecondBead()->coordinate);
-        //randomize direction!!!!
+        auto position2 = _c1->getSecondBead()->coordinate;
+        position2[0] = position2[0] + 1.1*rand1;
+        position2[1] = position2[1] + 1.1*rand2;
+        position2[2] = position2[2] + 1.1*rand3;
+        
+        vector<double> direction = twoPointDirection(position1,position2);
         
         //create a new filament
-        Filament* f = _ps->addNewFilament(position, direction, true);
+        Filament* f = _ps->addNewFilament(position1, direction, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector()[0];
@@ -743,17 +750,44 @@ struct FilamentCreationCallback {
 ///Struct to sever a filament based on a reaction
 struct FilamentSeveringCallback {
     
-    Cylinder* _c1;  ///< Filament severing point 1
-    Cylinder* _c2;  ///< Filament severing point 2
+    Cylinder* _c1;  ///< Filament severing point
     
-    FilamentSeveringCallback(Cylinder* c1, Cylinder* c2)
-        : _c1(c1), _c2(c2) {}
+    FilamentSeveringCallback(Cylinder* c1) : _c1(c1) {}
     
     void operator() (ReactionBase* r) {
-
+        
+        //reactants should be re-marked
+        Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>* severRxn =
+            (Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>*)r;
+        
+        for(int i = 0; i < SEVERINGREACTANTS + 1; i++) severRxn->rspecies()[i]->up();
+        
         //sever the filament at given position
         Filament* f = _c1->getFilament();
-        f->severFilament(_c1->getPositionFilament());
+        Filament* newFilament = f->severFilament(_c1->getPositionFilament());
+        
+        //if we didn't split, return
+        if(newFilament == nullptr) return;
+        
+        //mark the plus and minus ends of the new and old filament
+        CCylinder* cc1 = newFilament->getCylinderVector().back()->getCCylinder();
+        CCylinder* cc2 = f->getCylinderVector().front()->getCCylinder();
+        
+        CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
+        CMonomer* m2 = cc2->getCMonomer(0);
+        
+        short filamentInt1 = m1->activeSpeciesFilament();
+        short filamentInt2 = m2->activeSpeciesFilament();
+        
+        //plus end
+        m1->speciesFilament(filamentInt1)->getRSpecies().down();
+        m1->speciesPlusEnd(filamentInt1)->getRSpecies().up();
+        m1->speciesBound(0)->getRSpecies().down();
+        
+        //minus end
+        m2->speciesFilament(filamentInt2)->getRSpecies().down();
+        m2->speciesMinusEnd(filamentInt2)->getRSpecies().up();
+        m2->speciesBound(0)->getRSpecies().down();
     }
 };
 

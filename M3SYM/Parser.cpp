@@ -1485,33 +1485,6 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
         }
         
-        else if(line.find("SEVERINGREACTION") != string::npos) {
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.severingReactions.push_back(
-                tuple<vector<string>, vector<string>, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a severing reaction. Exiting" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
         else if(line.find("DESTRUCTIONREACTION") != string::npos) {
             
             vector<string> reactants;
@@ -1547,7 +1520,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
                 for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
@@ -1565,6 +1538,24 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
             else {
                 cout << "Error reading a branching reaction. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        else if(line.find("SEVERINGREACTION") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "AT");
+            if(arrowIt != lineVector.end()) {
+                
+                auto it = arrowIt + 1;
+                
+                chem.severingReactions.push_back(tuple<string, double>
+                ((*it), atof(lineVector[lineVector.size() - 1].c_str())));
+            }
+            else {
+                cout << "Error reading a severing reaction. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
         }
