@@ -329,7 +329,7 @@ Filament* Filament::severFilament(int cylinderPosition) {
     
     //if the cylinder is only one monomer long, we can't sever
 #ifdef CHEMISTRY
-    CCylinder* cc = _cylinderVector[vectorPosition]->getCCylinder();
+    CCylinder* cc = _cylinderVector[vectorPosition - 1]->getCCylinder();
     if(cc->getCMonomer(cc->getSize() - 1)->activeSpeciesMinusEnd() != -1)
         return nullptr;
 #endif
