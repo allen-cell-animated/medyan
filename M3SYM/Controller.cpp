@@ -55,6 +55,21 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Parse input, get parameters
     SystemParser p(inputFile);
     
+    //set up output
+    OutputTypes oTypes = p.readOutputTypes();
+    
+    //snapshot type output
+    if(oTypes.basicSnapshot)
+        _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.out"));
+    if(oTypes.birthTimes)
+        _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.out"));
+    if(oTypes.forces)
+        _outputs.push_back(new Forces(_outputDirectory + "forces.out"));
+    if(oTypes.stresses)
+        _outputs.push_back(new Stresses(_outputDirectory + "stresses.out"));
+    
+    //color output
+    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -217,9 +232,8 @@ void Controller::run() {
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
     
-    ///Set up filament output file
-    Output o(_outputDirectory + "filamentoutput.txt");
-    o.printBasicSnapshot(0);
+    ///Print initial configuration
+    for(auto o: _outputs) o->print(0);
     
     cout << "Performing an initial minimization..." << endl;
     
@@ -247,13 +261,16 @@ void Controller::run() {
         _mController->run();
         updatePositions();
 
-        if(i % _numStepsPerSnapshot == 0)
-            o.printBasicSnapshot(i + _numStepsPerMech);
+        if(i % _numStepsPerSnapshot == 0) {
+            for(auto o: _outputs) o->print(i + _numStepsPerMech);
+        }
+        
 #elif defined(CHEMISTRY)
-        if(i % _numStepsPerSnapshot == 0)
-            o.printBasicSnapshot(i + _numStepsPerMech);
+        if(i % _numStepsPerSnapshot == 0) {
+            for(auto o: _outputs) o->print(i + _numStepsPerMech);
+        }
 #elif defined(MECHANICS)
-        o.printBasicSnapshot(1);
+        for(auto o: _outputs) o->print(1);
 #endif
         // update neighbor lists
         if(i % _numStepsPerNeighbor == 0 && i != 0)

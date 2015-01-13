@@ -26,8 +26,7 @@
  */
 
 class Output {
-
-private:
+protected:
     ofstream _outputFile; ///< The output file being used
     
 public:
@@ -43,17 +42,48 @@ public:
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
     
-    /// Print basic information about all Filament, Linker, MotorGhost in system (DEPRECATED).
-    void printBasicSnapshot(int step);
+    /// To be implemented in sub classes
+    virtual void print(int step) = 0;
+};
+
+/// Print basic information about all Filament, Linker, MotorGhost
+class BasicSnapshot : public Output {
+
+public:
+    BasicSnapshot(string outputFileName) : Output(outputFileName) {}
+    ~BasicSnapshot() {}
     
-    /// New snapshot output
-    void printSnapshot(int step);
-    /// Print birth times of beads for each Filament
-    void printBirthTimes(int step);
-    /// Print forces on beads for each Filament
-    void printForces(int step);
-    /// Print stresses on beads for each Filament
-    void printStresses(int step);
+    virtual void print(int step);
+};
+
+/// Print birth times of beads for each Filament
+class BirthTimes : public Output {
+    
+public:
+    BirthTimes(string outputFileName) : Output(outputFileName) {}
+    ~BirthTimes() {}
+    
+    virtual void print(int step);
+};
+
+/// Print forces on beads for each Filament
+class Forces : public Output {
+    
+public:
+    Forces(string outputFileName) : Output(outputFileName) {}
+    ~Forces() {}
+    
+    virtual void print(int step);
+};
+
+/// Print stresses on beads for each Filament
+class Stresses : public Output {
+    
+public:
+    Stresses(string outputFileName) : Output(outputFileName) {}
+    ~Stresses() {}
+    
+    virtual void print(int step);
 };
 
 

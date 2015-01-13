@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+#include "Output.h"
 #include "MController.h"
 #include "GController.h"
 #include "CController.h"
@@ -43,6 +44,8 @@ private:
     
     string _inputDirectory; ///< Input directory being used
     string _outputDirectory; ///< Output directory being used
+    
+    vector<Output*> _outputs; ///< Vector of specified outputs
     
     int _numSteps; ///< Number of chemical steps we are running
     int _numStepsPerMech; ///< Number of chemical steps before mechanical equilibration

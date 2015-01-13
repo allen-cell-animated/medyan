@@ -23,7 +23,7 @@
 
 using namespace mathfunc;
 
-void Output::printBasicSnapshot(int step) {
+void BasicSnapshot::print(int step) {
     
     _outputFile.precision(10);
     
@@ -105,44 +105,7 @@ void Output::printBasicSnapshot(int step) {
     _outputFile <<endl;
 }
 
-
-void Output::printSnapshot(int step) {
-    
-    _outputFile.precision(10);
-    
-    //print first line (step number, time, number of filaments
-    _outputFile << step << " " << tau() << " " <<
-        FilamentDB::instance()->size() << endl;
-    
-    for(auto &filament : *FilamentDB::instance()) {
-        
-        //print first line(Filament ID, length, index of first bead, index of last bead
-        _outputFile << filament->getID() << " " <<
-            filament->getCylinderVector().size() + 1
-            << " " <<
-            filament->getCylinderVector().front()->getFirstBead()->getPositionFilament()
-            << " " <<
-            filament->getCylinderVector().back()->getSecondBead()->getPositionFilament()
-            << endl;
-        
-        //print coordinates
-        for (auto cylinder : filament->getCylinderVector()){
-            
-            auto x = cylinder->getFirstBead()->coordinate;
-            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
-            
-        }
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-        
-        _outputFile << endl;
-    }
-    _outputFile <<endl;
-    
-}
-
-
-void Output::printBirthTimes(int step) {
+void BirthTimes::print(int step) {
     
     _outputFile.precision(10);
     
@@ -175,7 +138,7 @@ void Output::printBirthTimes(int step) {
     _outputFile <<endl;
 }
 
-void Output::printForces(int step) {
+void Forces::print(int step) {
     
     _outputFile.precision(10);
     
@@ -208,5 +171,5 @@ void Output::printForces(int step) {
     _outputFile <<endl;
 }
 
-void Output::printStresses(int step) {}
+void Stresses::print(int step) {}
 

@@ -54,13 +54,15 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     _c2->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
     
     if(!creation) {
-        SpeciesBound* se1 = _c1->getCCylinder()->getCMonomer(pos)->speciesBound(0);
-        sb1->getRSpecies().up();
-        se1->getRSpecies().down();
+        SpeciesBound* se1 =
+            _c1->getCCylinder()->getCMonomer(pos)->speciesBound(0);
+        sb1->up();
+        se1->down();
         
-        SpeciesBound* se2 = _c2->getCCylinder()->getCMonomer(pos)->speciesBound(0);
-        sb2->getRSpecies().up();
-        se2->getRSpecies().down();
+        SpeciesBound* se2 =
+            _c2->getCCylinder()->getCMonomer(pos)->speciesBound(0);
+        sb2->up();
+        se2->down();
     }
     
     //attach this branchpoint to the species

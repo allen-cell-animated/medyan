@@ -15,6 +15,44 @@
 
 #include "SystemParameters.h"
 
+OutputTypes SystemParser::readOutputTypes() {
+    
+    OutputTypes oTypes;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        if (line.find("OUTPUTTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at output types. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector[1] == "SNAPSHOT") {
+                oTypes.basicSnapshot = true;
+            }
+            else if (lineVector[1] == "BIRTHTIMES") {
+                oTypes.birthTimes = true;
+            }
+            else if (lineVector[1] == "FORCES") {
+                oTypes.forces = true;
+            }
+            else if (lineVector[1] == "STRESSES") {
+                oTypes.stresses = true;
+            }
+        }
+    }
+    return oTypes;
+}
+
 void SystemParser::readChemistryParameters() {
     
     ChemistryParameters CParams;
@@ -1387,7 +1425,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                    atof(lineVector[lineVector.size() - 1].c_str())));
+                                      atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {

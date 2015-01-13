@@ -350,6 +350,12 @@ public:
     virtual string getFullName() const {return getName() + "{None}";}
     
     virtual size_t countSpecies() const {return 1;}
+    
+    //@{
+    /// Change copy number
+    virtual inline void up() {_rspecies->up();}
+    virtual inline void down() {_rspecies->down();}
+    //@}
 };
 
 /// Used for species without spatial information (i.e. well-mixed in the container)

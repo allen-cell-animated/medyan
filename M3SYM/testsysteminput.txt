@@ -125,5 +125,13 @@ NUMBINDINGSITES:             1
 NUMFILAMENTS:               0
 FILAMENTLENGTH:             5
 
+#################################################
+##################### OUTPUT ####################
+
+OUTPUTTYPE:                 SNAPSHOT
+OUTPUTTYPE:                 BIRTHTIMES
+OUTPUTTYPE:                 FORCES
+OUTPUTTYPE:                 STRESSES
+
 
 

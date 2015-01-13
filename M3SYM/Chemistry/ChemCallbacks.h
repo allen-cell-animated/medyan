@@ -56,7 +56,7 @@ struct FilamentExtensionFrontCallback {
         auto newCylinder = f->getCylinderVector().back();
         CMonomer* m = newCylinder->getCCylinder()->getCMonomer(0);
         
-        m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
+        m->speciesPlusEnd(_plusEnd)->up();
     }
 };
 
@@ -83,7 +83,7 @@ struct FilamentExtensionBackCallback {
         auto newCCylinder = newCylinder->getCCylinder();
         CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
         
-        m->speciesMinusEnd(_minusEnd)->getRSpecies().up();
+        m->speciesMinusEnd(_minusEnd)->up();
     }
 };
 
@@ -221,11 +221,11 @@ struct BranchingPointUnbindingCallback {
         
         //there is a filament species, mark its corresponding minus end
         if(speciesFilament != -1) {
-            m->speciesMinusEnd(speciesFilament)->getRSpecies().up();
+            m->speciesMinusEnd(speciesFilament)->up();
         }
         //mark the free species instead
         else {
-            _freeMonomer->getRSpecies().up();
+            _freeMonomer->up();
             
             //remove the filament from the system
             delete _branchingPoint->getSecondCylinder()->getFilament();
@@ -288,7 +288,7 @@ struct BranchingPointCreationCallback {
         //mark first cylinder
         Cylinder* c = f->getCylinderVector()[0];
         CMonomer* m = c->getCCylinder()->getCMonomer(0);
-        m->speciesPlusEnd(_plusEnd)->getRSpecies().up();
+        m->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
         BranchingPoint* b= _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
@@ -738,17 +738,17 @@ struct FilamentCreationCallback {
         
         //minus end
         cc->getCMonomer(monomerPosition - 1)->
-            speciesMinusEnd(_minusEnd)->getRSpecies().up();
+            speciesMinusEnd(_minusEnd)->up();
 
         //filament
         cc->getCMonomer(monomerPosition)->
-            speciesFilament(_filament)->getRSpecies().up();
+            speciesFilament(_filament)->up();
         cc->getCMonomer(monomerPosition)->
-            speciesBound(0)->getRSpecies().up();
+            speciesBound(0)->up();
         
         //plus end
         cc->getCMonomer(monomerPosition + 1)->
-            speciesPlusEnd(_plusEnd)->getRSpecies().up();
+            speciesPlusEnd(_plusEnd)->up();
     }
     
 };
@@ -786,14 +786,14 @@ struct FilamentSeveringCallback {
         short filamentInt2 = m2->activeSpeciesFilament();
         
         //plus end
-        m1->speciesFilament(filamentInt1)->getRSpecies().down();
-        m1->speciesPlusEnd(filamentInt1)->getRSpecies().up();
-        m1->speciesBound(0)->getRSpecies().down();
+        m1->speciesFilament(filamentInt1)->down();
+        m1->speciesPlusEnd(filamentInt1)->up();
+        m1->speciesBound(0)->down();
         
         //minus end
-        m2->speciesFilament(filamentInt2)->getRSpecies().down();
-        m2->speciesMinusEnd(filamentInt2)->getRSpecies().up();
-        m2->speciesBound(0)->getRSpecies().down();
+        m2->speciesFilament(filamentInt2)->down();
+        m2->speciesMinusEnd(filamentInt2)->up();
+        m2->speciesBound(0)->down();
     }
 };
 

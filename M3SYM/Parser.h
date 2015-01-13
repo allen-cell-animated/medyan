@@ -22,6 +22,18 @@
 
 #include "common.h"
 
+/// Struct to hold output types;
+struct OutputTypes {
+    
+    //@{
+    /// Possible output type
+    bool basicSnapshot = false;
+    bool birthTimes = false;
+    bool forces = false;
+    bool stresses = false;
+    //@}
+};
+
 /// Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
     string ConjugateGradient = "";
@@ -234,6 +246,9 @@ class SystemParser : public Parser{
 public:
     SystemParser(string inputFileName) : Parser(inputFileName) {}
     ~SystemParser() {}
+    
+    /// Output parser
+    OutputTypes readOutputTypes();
     
     //@{
     /// Parameter parser. Reads input directly into system parameters

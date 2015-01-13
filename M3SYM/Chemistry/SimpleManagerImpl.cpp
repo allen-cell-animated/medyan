@@ -2119,14 +2119,14 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
-            m1->speciesPlusEnd(0)->getRSpecies().down();
+            m1->speciesPlusEnd(0)->down();
             
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
             m2->speciesPlusEnd(0)->getRSpecies().setN(1);
             
             //fill last cylinder with default filament value
-            m1->speciesFilament(0)->getRSpecies().up();
-            m1->speciesBound(0)->getRSpecies().up();
+            m1->speciesFilament(0)->up();
+            m1->speciesBound(0)->up();
 
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
