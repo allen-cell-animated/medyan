@@ -23,8 +23,12 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
     
     //copy all internal reactions
-    for(auto &r: rhs._internalReactions)
-        addInternalReaction(r->clone(c->getSpeciesContainer()));
+    for(auto &r: rhs._internalReactions) {
+        ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+        if(r->getCBound() != nullptr)
+            r->getCBound()->setOffReaction(rxnClone);
+        addInternalReaction(rxnClone);
+    }
     
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();

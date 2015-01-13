@@ -327,6 +327,13 @@ Filament* Filament::severFilament(int cylinderPosition) {
     //if vector position is zero, we can't sever. return null
     if(vectorPosition == 0) return nullptr;
     
+    //if the cylinder is only one monomer long, we can't sever
+#ifdef CHEMISTRY
+    CCylinder* cc = _cylinderVector[vectorPosition]->getCCylinder();
+    if(cc->getCMonomer(cc->getSize() - 1)->activeSpeciesMinusEnd() != -1)
+        return nullptr;
+#endif
+    
     //create a new filament
     Filament* newFilament = new Filament(_subSystem);
     

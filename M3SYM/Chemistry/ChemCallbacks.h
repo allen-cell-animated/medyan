@@ -214,13 +214,12 @@ struct BranchingPointUnbindingCallback {
         //mark the correct species on the minus end of the branched
         //filament. If this is a filament species, change it to its
         //corresponding minus end. If a plus end, release a diffusing
-        //or bulk species, depending on the simulation.
-        
+        //or bulk species, depending on the initial reaction.
         CCylinder* childCC = _branchingPoint->getSecondCylinder()->getCCylinder();
         CMonomer* m = childCC->getCMonomer(0);
         short speciesFilament = m->activeSpeciesFilament();
         
-        //there is a filament species, mark its corresponding plus end
+        //there is a filament species, mark its corresponding minus end
         if(speciesFilament != -1) {
             m->speciesMinusEnd(speciesFilament)->getRSpecies().up();
         }
@@ -296,14 +295,15 @@ struct BranchingPointCreationCallback {
         
         //add the unbinding reaction and callback
         //first, find the correct diffusing or bulk species
-        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS>* branchReact =
-            (Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS>*)r;
+        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* branchReact =
+            dynamic_cast<Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*>(r);
         Species* freeMonomer = &(branchReact->rspecies()[1]->getSpecies());
+        Species* freeBrancher = &(branchReact->rspecies()[0]->getSpecies());
         
         //create the reaction species
         m = _c1->getCCylinder()->getCMonomer(_position);
         vector<Species*> offSpecies =
-            {m->speciesBrancher(_branchType), m->speciesBound(0)};
+            {m->speciesBrancher(_branchType), m->speciesBound(0), freeBrancher};
         
         ReactionBase* offRxn =
         new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
@@ -333,6 +333,12 @@ struct LinkerUnbindingCallback {
         CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
 
+#ifdef DYNAMICRATES
+        //reset the associated reactions
+        _linker->getMLinker()->stretchForce = 0.0;
+        _linker->updateReactionRates();
+#endif
+        
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -408,7 +414,7 @@ struct MotorUnbindingCallback {
         cc1->removeCrossCylinderReaction(cc2, r);
         
 #ifdef DYNAMICRATES
-        //reset the associated walking reactions
+        //reset the associated reactions
         _motor->getMMotorGhost()->stretchForce = 0.0;
         _motor->updateReactionRates();
 #endif

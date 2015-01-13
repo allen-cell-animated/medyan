@@ -721,20 +721,20 @@ void BranchingManager::addReaction(CCylinder* cc) {
         //FIRST TWO REACTANTS MUST BE BULK OR DIFFUSING
         auto r = _reactants[0];
         if(getType(r) == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::instance()->
+            reactantSpecies.push_back(CompartmentGrid::instance()->
                                      findSpeciesBulkByMolecule(getInt(r)));
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
         }
         
         r = _reactants[1];
         if(getType(r) == SpeciesType::BULK)
-            productSpecies.push_back(CompartmentGrid::instance()->
+            reactantSpecies.push_back(CompartmentGrid::instance()->
                                      findSpeciesBulkByMolecule(getInt(r)));
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
-            productSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
         }
         
         //THIRD REACTANT MUST BE BOUND
