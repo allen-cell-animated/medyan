@@ -27,9 +27,17 @@ struct OutputTypes {
     
     //@{
     /// Possible output type
+    
+    /// A basic snapshot
     bool basicSnapshot = false;
+    
+    /// Birth times
     bool birthTimes = false;
+    
+    /// Forces
     bool forces = false;
+    
+    /// Stresses
     bool stresses = false;
     //@}
 };
@@ -47,8 +55,15 @@ struct MechanicsAlgorithm {
 struct ChemistryAlgorithm {
     
     string algorithm = "";
-    int numSteps = 0;
-    int numStepsPerMech = 0;
+    
+    //@{
+    /// User can specify either the total number of chemical steps to perform,
+    /// or the total run time of the simulation.
+    int numTotalSteps = 0;
+    double runTime = 0.0;
+    //@}
+    
+    int numChemSteps = 0; ///< Specifying number of chemical steps at a time
     int numStepsPerSnapshot = 0;
     int numStepsPerNeighbor = 0;
 };

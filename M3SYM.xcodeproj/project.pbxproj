@@ -1246,6 +1246,7 @@
 				OTHER_LDFLAGS = (
 					"-lgsl",
 					"-lboost_system",
+					"-lboost_filesystem",
 				);
 				PRODUCT_NAME = M3SYM;
 			};
@@ -1283,6 +1284,7 @@
 				OTHER_LDFLAGS = (
 					"-lgsl",
 					"-lboost_system",
+					"-lboost_filesystem",
 				);
 				PRODUCT_NAME = M3SYM;
 			};

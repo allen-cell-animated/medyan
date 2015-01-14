@@ -4,8 +4,18 @@ from mayavi import mlab
 mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
 mlab.show()
 
-filename='/Users/jameskomianos/Code/M3SYM/M3SYM/filamentoutput.txt'
-traj_file=open(filename)
+traj_filename='/Users/jameskomianos/Code/M3SYM/M3SYM/Output/snapshot.out'
+color_filename = '/Users/jameskomianos/Code/M3SYM/M3SYM/Output/birthtimes.out'
+#color_filename = ''
+
+#Open the traj file
+traj_file=open(traj_filename)
+
+#Do we have color?
+color=False
+if(color_filename != ''):
+	color_file = open(color_filename)
+	color = True
 
 class FilamentSnapshot:
 	def __init__(self):
@@ -14,6 +24,7 @@ class FilamentSnapshot:
 		self.delta_left=None	
 		self.delta_right=None	
 		self.coords=None
+		self.colors={}
 		self.connections=None
 
 class LinkerSnapshot:
@@ -21,6 +32,7 @@ class LinkerSnapshot:
 		self.id=None
 		self.type=None
 		self.coords=None
+		self.colors={}
 		self.connections=None
 
 class MotorSnapshot:
@@ -28,7 +40,15 @@ class MotorSnapshot:
 		self.id=None
 		self.type=None;
 		self.coords=None
+		self.colors={}
 		self.connections=None
+
+class BrancherSnapshot:
+	def __init__(self):
+		self.id=None
+		self.type=None;
+		self.coords=None
+		self.colors={}
 
 class Frame:
 	def __init__(self):
@@ -37,9 +57,11 @@ class Frame:
 		self.n_filaments=None
 		self.n_linkers=None
 		self.n_motors=None
+		self.n_branchers=None
 		self.filaments={}
 		self.linkers={}
 		self.motors={}
+		self.branchers={}
 
 FrameList=[]
 first_frame_line=True
@@ -47,33 +69,48 @@ first_line=True
 reading_filament=False
 reading_linker=False
 reading_motor=False
+reading_brancher=False
 n_beads_filament=0
 n_beads_linker=0
 n_beads_motor=0
+n_beads_brancher=0;
+
+line_number = 0;
+
+#read color file
+if(color):
+	color_lines = [line.strip() for line in color_file]
 
 for line in traj_file:
 	line = line.strip()
-	#print "["+line+"]"
+
+	if(color):
+		color_line = color_lines[line_number]
+
 	if(first_frame_line):
 		F=Frame()
-		F.step, F.time, F.n_filaments, F.n_linkers, F.n_motors = map(double,line.split())
+		F.step, F.time, F.n_filaments, F.n_linkers, F.n_motors, F.n_branchers = map(double,line.split())
 		F.n_filaments = int(F.n_filaments)
 		F.n_linkers = int(F.n_linkers)
 		F.n_motors = int(F.n_motors)
+		F.n_branchers = int(F.n_branchers)
 		first_frame_line=False
+		line_number+=1
 		continue
 
 	if(len(line)==0):
-		#print "Detected an empty line"
 		first_frame_line=True
 		first_filament_line=True
 		FrameList.append(F)
 		assert F.n_filaments == len(F.filaments)
 		assert F.n_linkers == len(F.linkers)
 		assert F.n_motors == len(F.motors)
+		assert F.n_branchers == len(F.branchers)
 		n_beads_filament=0
 		n_beads_linker=0
 		n_beads_motor=0
+		n_beads_brancher=0;
+		line_number+=1
 		continue
 			
 	if(first_line):
@@ -87,6 +124,7 @@ for line in traj_file:
 				arange(n_beads_filament + 1, n_beads_filament + FS.length - .5)]).T
 			n_beads_filament+=FS.length
 			reading_filament=True
+			line_number+=1
 			continue
 		if(line[0] == "L"):
 			LS = LinkerSnapshot()
@@ -97,6 +135,7 @@ for line in traj_file:
 				arange(n_beads_linker + 1, n_beads_linker + 1.5)]).T
 			n_beads_linker+=2
 			reading_linker=True
+			line_number+=1
 			continue
 		if(line[0] == "M"):
 			MS = MotorSnapshot()
@@ -107,10 +146,23 @@ for line in traj_file:
 				arange(n_beads_motor + 1, n_beads_motor + 1.5)]).T
 			n_beads_motor+=2
 			reading_motor=True
+			line_number+=1
+			continue
+
+		if(line[0] == "B"):
+			BS = BrancherSnapshot()
+			BS.id, BS.type = map(int, line_split[1:])
+			first_line = False
+			F.branchers[BS.id] = BS
+			n_beads_brancher+=1
+			reading_brancher=True
+			line_number+=1
 			continue
 
 	if(reading_filament):
 		FS.coords=array(line.split(),'f')
+		if(color):
+			FS.colors=array(color_line.split(), 'f')
 		N=len(FS.coords)
 		FS.coords=FS.coords.reshape(N/3,3).T
 		first_line=True
@@ -118,6 +170,8 @@ for line in traj_file:
 
 	if(reading_linker):
 		LS.coords=array(line.split(),'f')
+		if(color):
+			LS.colors=array(color_line.split(), 'f')
 		N=len(LS.coords)
 		LS.coords=LS.coords.reshape(N/3,3).T
 		first_line=True
@@ -125,10 +179,23 @@ for line in traj_file:
 
 	if(reading_motor):
 		MS.coords=array(line.split(),'f')
+		if(color):
+			MS.colors=array(color_line.split(), 'f')
 		N=len(MS.coords)
 		MS.coords=MS.coords.reshape(N/3,3).T
 		first_line=True
 		reading_motor=False
+
+	if(reading_brancher):
+		BS.coords=array(line.split(),'f')
+		if(color):
+			BS.colors=array(color_line.split(), 'f')
+		N=len(BS.coords)
+		BS.coords=BS.coords.reshape(N/3,3).T
+		first_line=True
+		reading_brancher=False
+
+	line_number+=1
 
 @mlab.show
 def show_frame(frame_number=-1):
@@ -139,6 +206,7 @@ def show_frame(frame_number=-1):
 	#DISPLAYING FILAMENTS
 	if(len(local_frame.filaments) != 0):
 		x=[]
+		c=[]
 		connections=[]
 
 		for i in 0, 1, 2:
@@ -147,14 +215,23 @@ def show_frame(frame_number=-1):
 				q.append(local_frame.filaments[fid].coords[i])
 			x.append(hstack(q))
 
+		
+		for fid in sorted(local_frame.filaments.keys()):
+			for color in local_frame.filaments[fid].colors:
+				c.append(color)
+
 		for fid in sorted(local_frame.filaments.keys()):
 				connections.append(local_frame.filaments[fid].connections)
 
 		connections = vstack(connections)
 
 		# Create the points
-		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
-		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24)
+		if(len(c) != 0):
+			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2], c)
+		else:
+			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
+
+		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, scale_mode='none', color=(1,1,1))
 
 		# Connect them
 		src.mlab_source.dataset.lines = connections
@@ -162,7 +239,13 @@ def show_frame(frame_number=-1):
 		# Finally, display the set of lines
 		tube=mlab.pipeline.tube(src, tube_radius=0.25)
 		tube.filter.number_of_sides=12
-		mlab.pipeline.surface(tube, color=(0.8, 0.3, 0.3))
+
+		if(len(c) != 0):
+			surface = mlab.pipeline.surface(tube, colormap='Spectral')
+			mlab.colorbar(object=surface, orientation='vertical', title='Birth Time', label_fmt='%.3f')
+
+		else:
+			surface = mlab.pipeline.surface(tube, color=(1,0,0))
 
 	#DISPLAYING LINKERS
 	if(len(local_frame.linkers) != 0):
@@ -219,6 +302,25 @@ def show_frame(frame_number=-1):
 		tube=mlab.pipeline.tube(src, tube_radius=0.25)
 		tube.filter.number_of_sides=12
 		mlab.pipeline.surface(tube, color=(0.2, 0.4, 0.8))
+
+	#DISPLAYING BRANCHERS
+	if(len(local_frame.branchers) != 0):
+		x=[]
+		connections=[]
+
+		for i in 0, 1, 2:
+			q=[]
+			for bid in sorted(local_frame.branchers.keys()):
+				q.append(local_frame.branchers[bid].coords[i])
+			x.append(hstack(q))
+
+		# Create the points
+		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
+		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, scale_factor=3.0, color=(1,1,1))
+
+	#display time
+	time = 'Time = ' + str(round(local_frame.time,2)) + "s"
+	mlab.text(0.6, 0.9, time)
 
 
 @mlab.animate(delay=10, ui=True)

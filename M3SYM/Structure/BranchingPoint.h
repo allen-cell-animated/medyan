@@ -89,6 +89,9 @@ public:
     int getBranchID() {return _branchID;}
     //@}
     
+    /// Get the birth time
+    float getBirthTime() {return _birthTime;}
+    
     /// Update the position
     /// @note - changes compartment if needed
     virtual void updatePosition();

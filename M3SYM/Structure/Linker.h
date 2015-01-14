@@ -90,6 +90,9 @@ public:
     int getLinkerID() {return _linkerID;}
     //@}
     
+    /// Get the birth time
+    float getBirthTime() {return _birthTime;}
+    
     /// Update the position
     /// @note - changes compartment if needed
     virtual void updatePosition();

@@ -102,6 +102,9 @@ public:
     int getMotorID() {return _motorID;}
     //@}
     
+    /// Get the birth time
+    float getBirthTime() {return _birthTime;}
+    
     /// Update the position
     /// @note - changes compartment if needed
     virtual void updatePosition();

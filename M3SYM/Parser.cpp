@@ -30,7 +30,7 @@ OutputTypes SystemParser::readOutputTypes() {
         if (line.find("OUTPUTTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
+            if(lineVector.size() > 3) {
                 cout <<
                 "There was an error parsing input file at output types. Exiting"
                 << endl;
@@ -229,20 +229,21 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.algorithm = lineVector[1];
             }
         }
-        if (line.find("NUMSTEPS:") != string::npos) {
+        if (line.find("NUMTOTALSTEPS:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
+            if(lineVector.size() > 2) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting"
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numSteps = atoi(lineVector[1].c_str());
+                CAlgorithm.numTotalSteps = atoi(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMSTEPSPERM:") != string::npos) {
+        
+        if (line.find("RUNTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -252,7 +253,21 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numStepsPerMech = atoi(lineVector[1].c_str());
+                CAlgorithm.runTime = atof(lineVector[1].c_str());
+            }
+        }
+        
+        if (line.find("NUMCHEMSTEPS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.numChemSteps = atoi(lineVector[1].c_str());
             }
         }
         if (line.find("NUMSTEPSPERS:") != string::npos) {

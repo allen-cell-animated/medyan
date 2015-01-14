@@ -276,9 +276,9 @@ struct BranchingPointCreationCallback {
         position1[2] = position1[2] + rand3;
         
         auto position2 = _c1->getSecondBead()->coordinate;
-        position2[0] = position2[0] + 1.1*rand1;
-        position2[1] = position2[1] + 1.1*rand2;
-        position2[2] = position2[2] + 1.1*rand3;
+        position2[0] = position2[0] + 2*rand1;
+        position2[1] = position2[1] + 2*rand2;
+        position2[2] = position2[2] + 2*rand3;
         
         vector<double> direction = twoPointDirection(position1,position2);
         

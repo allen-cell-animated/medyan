@@ -55,7 +55,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //Parse input, get parameters
     SystemParser p(inputFile);
     
-    //set up output
+    //read output types
     OutputTypes oTypes = p.readOutputTypes();
     
     //snapshot type output
@@ -68,7 +68,6 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     if(oTypes.stresses)
         _outputs.push_back(new Stresses(_outputDirectory + "stresses.out"));
     
-    //color output
     
 #ifdef MECHANICS
     //read algorithm and types
@@ -131,8 +130,10 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     auto CSetup = p.readChemistrySetup();
     
     //num steps for sim
-    _numSteps = CAlgorithm.numSteps;
-    _numStepsPerMech = CAlgorithm.numStepsPerMech;
+    _numTotalSteps = CAlgorithm.numTotalSteps;
+    _runTime = CAlgorithm.runTime;
+    
+    _numChemSteps= CAlgorithm.numChemSteps;
     
     _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
     _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
@@ -250,38 +251,80 @@ void Controller::run() {
 #endif
     cout << "Starting simulation..." << endl;
     
+    //if runtime was specified, use this
+    if(_runTime != 0) {
+    
 #ifdef CHEMISTRY
-    for(int i = 0; i < _numSteps; i+=_numStepsPerMech) {
-        cout << "Current simulation time = "<< tau() << endl;
-        //run ccontroller
-        if(!_cController->run(_numStepsPerMech)) break;
+        int i = 0;
+        while(tau() <= _runTime) {
+            cout << "Current simulation time = "<< tau() << endl;
+            //run ccontroller
+            if(!_cController->run(_numChemSteps)) break;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
-        //run mcontroller, update system
-        _mController->run();
-        updatePositions();
-
-        if(i % _numStepsPerSnapshot == 0) {
-            for(auto o: _outputs) o->print(i + _numStepsPerMech);
-        }
-        
+            //run mcontroller, update system
+            _mController->run();
+            updatePositions();
+            
+            if(i % _numStepsPerSnapshot == 0) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+            }
+            
 #elif defined(CHEMISTRY)
-        if(i % _numStepsPerSnapshot == 0) {
-            for(auto o: _outputs) o->print(i + _numStepsPerMech);
-        }
+            if(i % _numStepsPerSnapshot == 0) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+            }
 #elif defined(MECHANICS)
-        for(auto o: _outputs) o->print(1);
+            for(auto o: _outputs) o->print(1);
 #endif
-        // update neighbor lists
-        if(i % _numStepsPerNeighbor == 0 && i != 0)
-            updateNeighborLists(true);
+            // update neighbor lists
+            if(i % _numStepsPerNeighbor == 0 && i != 0)
+                updateNeighborLists(true);
 #ifdef DYNAMICRATES
-        updateReactionRates();
+            updateReactionRates();
 #endif
-        
+            
 #ifdef CHEMISTRY
-    }
+            i += _numChemSteps;
+        }
 #endif
+    }
+    
+    else {
+#ifdef CHEMISTRY
+        for(int i = 0; i < _numTotalSteps; i+=_numChemSteps) {
+            cout << "Current simulation time = "<< tau() << endl;
+            //run ccontroller
+            if(!_cController->run(_numChemSteps)) break;
+#endif
+#if defined(MECHANICS) && defined(CHEMISTRY)
+            //run mcontroller, update system
+            _mController->run();
+            updatePositions();
+            
+            if(i % _numStepsPerSnapshot == 0) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+            }
+            
+#elif defined(CHEMISTRY)
+            if(i % _numStepsPerSnapshot == 0) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+            }
+#elif defined(MECHANICS)
+            for(auto o: _outputs) o->print(1);
+#endif
+            // update neighbor lists
+            if(i % _numStepsPerNeighbor == 0 && i != 0)
+                updateNeighborLists(true);
+#ifdef DYNAMICRATES
+            updateReactionRates();
+#endif
+            
+#ifdef CHEMISTRY
+        }
+#endif
+    }
+
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     

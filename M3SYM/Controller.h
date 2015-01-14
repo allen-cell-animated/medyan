@@ -47,8 +47,10 @@ private:
     
     vector<Output*> _outputs; ///< Vector of specified outputs
     
-    int _numSteps; ///< Number of chemical steps we are running
-    int _numStepsPerMech; ///< Number of chemical steps before mechanical equilibration
+    int _numTotalSteps; ///< Number of chemical steps we are running, or specify the time
+    double _runTime; ///< Total desired runtime for simulation
+    
+    int _numChemSteps; ///< Number of consecutive chemical steps
     int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
     int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
 

@@ -80,7 +80,7 @@ BRDIHEDRALK:
 
 ### EXCLUDED VOLUME ###
 
-VOLUMETYPE:                 
+VOLUMETYPE:
 VOLUMECUTOFF:               27.0
 
 VOLUMEK:                    100.0
@@ -99,11 +99,12 @@ BSCREENLENGTH:              0.1
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMSTEPS:                    100000000
+NUMTOTALSTEPS:
+RUNTIME:                     1
 
-NUMSTEPSPERM:                1000
-NUMSTEPSPERS:                10000
-NUMSTEPSPERN:                10000
+NUMCHEMSTEPS:                10
+NUMSTEPSPERS:                100
+NUMSTEPSPERN:                100
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
@@ -111,7 +112,7 @@ NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
 NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             0
+NUMMOTORSPECIES:             1
 NUMBRANCHERSPECIES:          1
 
 NUMBINDINGSITES:             1
@@ -122,7 +123,7 @@ NUMBINDINGSITES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               0
+NUMFILAMENTS:               1
 FILAMENTLENGTH:             5
 
 #################################################
@@ -131,7 +132,7 @@ FILAMENTLENGTH:             5
 OUTPUTTYPE:                 SNAPSHOT
 OUTPUTTYPE:                 BIRTHTIMES
 OUTPUTTYPE:                 FORCES
-OUTPUTTYPE:                 STRESSES
+OUTPUTTYPE:                 STRESSES  
 
 
 
