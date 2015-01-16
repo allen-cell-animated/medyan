@@ -165,6 +165,22 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
+/// Manager for MotorGhost walking
+class MotorWalkBManager : public InternalFilamentRxnManager {
+    
+public:
+    ///default constructor and destructor
+    MotorWalkBManager(vector<tuple<int, SpeciesType>> reactants,
+                      vector<tuple<int, SpeciesType>> products,
+                      float rate)
+    : InternalFilamentRxnManager(reactants, products, rate) {}
+    ~MotorWalkBManager() {}
+    
+    virtual void addReaction(CCylinder* cc);
+    virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+};
+
+
 /// Manager for Filament aging
 class AgingManager : public InternalFilamentRxnManager {
     

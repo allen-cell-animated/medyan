@@ -272,7 +272,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
         if (line.find("SNAPSHOTTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
+            if(lineVector.size() > 2) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting"
                 << endl;

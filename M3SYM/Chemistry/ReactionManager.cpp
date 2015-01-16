@@ -525,6 +525,105 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
+void MotorWalkBManager::addReaction(CCylinder* cc) {
+    
+    //loop through all monomers
+    for(auto it = _bindingSites.end() - 1; it != _bindingSites.begin(); it--) {
+        
+        int site1 = *(it);
+        int site2 = *(it-1);
+        
+        CMonomer* m1 = cc->getCMonomer(site1);
+        CMonomer* m2 = cc->getCMonomer(site2);
+        vector<Species*> reactantSpecies;
+        vector<Species*> productSpecies;
+        
+        //loop through reactants, products. find all species
+        auto r = _reactants[0];
+        int motorType = getInt(r);
+        
+        //FIRST REACTANT MUST BE MOTOR
+        reactantSpecies.push_back(m1->speciesMotor(motorType));
+        
+        //SECOND REACTANT MUST BE BOUND
+        r = _reactants[1];
+        int boundType = getInt(r);
+        
+        reactantSpecies.push_back(m2->speciesBound(boundType));
+        
+        //FIRST PRODUCT MUST BE MOTOR
+        auto p = _products[0];
+        productSpecies.push_back(m2->speciesMotor(getInt(p)));
+        
+        //SECOND PRODUCT MUST BE BOUND
+        p = _products[1];
+        productSpecies.push_back(m1->speciesBound(getInt(p)));
+        
+        //callbacks
+        MotorWalkingBackwardCallback
+        motorMoveCallback(cc->getCylinder(), site1, site2,
+                          motorType, boundType, _ps);
+        
+        //Add the reaction. If it needs a callback then attach
+        vector<Species*> species = reactantSpecies;
+        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+        ReactionBase* rxn =
+        new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
+        
+        boost::signals2::shared_connection_block
+        rcb(rxn->connect(motorMoveCallback, false));
+        
+        cc->addInternalReaction(rxn);
+        rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+    }
+}
+
+void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+    
+    CMonomer* m1 = cc2->getCMonomer(_bindingSites.front());
+    CMonomer* m2 = cc1->getCMonomer(_bindingSites.back());
+    vector<Species*> reactantSpecies;
+    vector<Species*> productSpecies;
+    
+    //loop through reactants, products. find all species
+    auto r = _reactants[0];
+    int motorType = getInt(r);
+    
+    //FIRST REACTANT MUST BE MOTOR
+    reactantSpecies.push_back(m1->speciesMotor(motorType));
+    
+    //SECOND REACTANT MUST BE BOUND
+    r = _reactants[1];
+    int boundType = getInt(r);
+    
+    reactantSpecies.push_back(m2->speciesBound(boundType));
+    
+    //FIRST PRODUCT MUST BE MOTOR
+    auto p = _products[0];
+    productSpecies.push_back(m2->speciesMotor(getInt(p)));
+    
+    //SECOND PRODUCT MUST BE BOUND
+    p = _products[1];
+    productSpecies.push_back(m1->speciesBound(getInt(p)));
+    
+    //callbacks
+    MotorMovingCylinderBackwardCallback
+    motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
+                        _bindingSites.front(), motorType, boundType, _ps);
+    
+    //Add the reaction. If it needs a callback then attach
+    vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn =
+    new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
+    
+    boost::signals2::shared_connection_block
+    rcb(rxn->connect(motorChangeCallback, false));
+    
+    cc1->addCrossCylinderReaction(cc2, rxn);
+    rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+}
+
 void AgingManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament

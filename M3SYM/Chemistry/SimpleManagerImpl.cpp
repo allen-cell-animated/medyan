@@ -478,7 +478,12 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             if(it != _speciesMotor.end()) {
                 species1 = name;
-                type = ReactionType::MOTORWALKINGFORWARD;
+                
+                //check if forward or backward walking
+                if(reactant.find("N+1") != string::npos)
+                    type = ReactionType::MOTORWALKINGBACKWARD;
+                else
+                    type = ReactionType::MOTORWALKINGFORWARD;
                 
                 //get position of iterator
                 position = distance(_speciesMotor.begin(), it);
@@ -547,6 +552,15 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             
+            if((product.find("N+1") != string::npos && type != ReactionType::MOTORWALKINGFORWARD)) {
+                
+                cout <<
+                "Motor walking reaction must have a direction (Check N and N+1 distinctions). Exiting."
+                <<endl;
+                exit(EXIT_FAILURE);
+                
+            }
+            
             if(it != _speciesMotor.end()) {
                 
                 //get position of iterator
@@ -603,10 +617,8 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             _IFRxnManagers.emplace_back(
                 new MotorWalkFManager(reactantTemplate, productTemplate, get<2>(r)));
         else {
-            cout <<
-            "Backward walking motor reactions not yet implemented. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
+            _IFRxnManagers.emplace_back(
+                new MotorWalkBManager(reactantTemplate, productTemplate, get<2>(r)));
         }
     }
     

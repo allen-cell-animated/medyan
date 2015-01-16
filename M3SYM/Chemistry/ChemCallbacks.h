@@ -682,6 +682,206 @@ struct MotorMovingCylinderForwardCallback {
     }
 };
 
+/// Callback to walk a MotorGhost on a Filament
+struct MotorWalkingBackwardCallback {
+    
+    Cylinder* _c;        ///< Cylinder this callback is attached to
+    
+    short _oldPosition;  ///< Old position of motor head
+    short _newPosition;  ///< New position of motor head
+    
+    short _motorType;    ///< Type of motor
+    short _boundType;    ///< Type of bound this motor took place of
+    
+    SubSystem* _ps;      ///< Ptr to subsystem
+    
+    MotorWalkingBackwardCallback(Cylinder* c,
+                                short oldPosition, short newPosition,
+                                short motorType, short boundType,
+                                SubSystem* ps)
+    :_c(c), _motorType(motorType), _boundType(boundType),
+    _oldPosition(oldPosition), _newPosition(newPosition), _ps(ps) {}
+    
+    void operator() (ReactionBase* r) {
+        
+        //Find the motor
+        CCylinder* cc = _c->getCCylinder();
+        
+        SpeciesMotor* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 = cc->getCMonomer(_newPosition)->speciesBound(_boundType);
+        
+        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+        
+        //shift the position of one side of the motor forward
+        double shift =  1.0 / SystemParameters::Chemistry().numBindingSites;
+        double newPosition;
+        ReactionBase* newOffRxn, *offRxn;
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
+            
+            newPosition = m->getFirstPosition() - shift;
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(sm2);
+            
+            //change off reaction to include new species
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+            m->getCMotorGhost()->getOffReaction();
+            
+            //take the first, third, and fourth species
+            Species* s1 = &(offRxn->rspecies()[1]->getSpecies());
+            Species* s3 = &(offRxn->rspecies()[3]->getSpecies());
+            Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
+            
+            //create new reaction
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+            ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+        }
+        else {
+            newPosition = m->getSecondPosition() - shift;
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(sm2);
+            
+            //change off reaction to include new species
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+            m->getCMotorGhost()->getOffReaction();
+            
+            //take the zeroth, second, and fourth species
+            Species* s0 = &(offRxn->rspecies()[0]->getSpecies());
+            Species* s2 = &(offRxn->rspecies()[2]->getSpecies());
+            Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
+            
+            //create new reaction
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+            ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+        }
+        //set new reaction type
+        newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
+        
+        //attach signal
+        MotorUnbindingCallback mcallback(m, _ps);
+        boost::signals2::shared_connection_block
+        rcb(newOffRxn->connect(mcallback,false));
+        
+        CCylinder* cc1 = m->getFirstCylinder()->getCCylinder();
+        CCylinder* cc2 = m->getSecondCylinder()->getCCylinder();
+        
+        //remove old reaction, add new one
+        cc1->removeCrossCylinderReaction(cc2, offRxn);
+        cc1->addCrossCylinderReaction(cc2, newOffRxn);
+        
+        //set new unbinding reaction
+        m->getCMotorGhost()->setOffReaction(newOffRxn);
+    }
+};
+
+/// Callback to walk a MotorGhost on a Filament to a new Cylinder
+struct MotorMovingCylinderBackwardCallback {
+    
+    Cylinder* _oldC;        ///< Old cylinder the motor is attached to
+    Cylinder* _newC;        ///< New cylinder motor will be attached to
+    
+    short _oldPosition;     ///< Old position of motor head
+    
+    short _motorType;       ///< Type of motor
+    short _boundType;       ///< Type of bound this motor is taking place of
+    
+    SubSystem* _ps;         ///< Ptr to subsystem
+    
+    MotorMovingCylinderBackwardCallback(Cylinder* oldC, Cylinder* newC,
+                                        short oldPosition,
+                                        short motorType,
+                                        short boundType,
+                                        SubSystem* ps)
+    :_oldC(oldC), _newC(newC), _motorType(motorType),
+    _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
+    
+    void operator() (ReactionBase* r) {
+        
+        //Find the motor
+        double newPosition =
+        1.0 - 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
+        int newIntPosition =
+        newPosition * SystemParameters::Geometry().cylinderIntSize;
+        
+        CCylinder* oldCC = _oldC->getCCylinder();
+        CCylinder* newCC = _newC->getCCylinder();
+        
+        SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesMotor* sm2 =newCC->getCMonomer(newIntPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 =newCC->getCMonomer(newIntPosition)->speciesBound(_boundType);
+        
+        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+        ReactionBase* newOffRxn, *offRxn;
+        CCylinder* cc1, *cc2;
+        //initial set of cylinders
+        cc1 = m->getFirstCylinder()->getCCylinder();
+        cc2 = m->getSecondCylinder()->getCCylinder();
+        
+        if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
+            
+            m->setFirstCylinder(_newC);
+            m->setFirstPosition(newPosition);
+            m->getCMotorGhost()->setFirstSpecies(sm2);
+            
+            //change off reaction to include new species
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+            m->getCMotorGhost()->getOffReaction();
+            
+            //take the first, third, and fourth species
+            Species* s1 = &(offRxn->rspecies()[1]->getSpecies());
+            Species* s3 = &(offRxn->rspecies()[3]->getSpecies());
+            Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
+            
+            //create new reaction
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+            ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            
+            //remove old off reaction
+            cc1->removeCrossCylinderReaction(cc2, offRxn);
+        }
+        else {
+            m->setSecondCylinder(_newC);
+            m->setSecondPosition(newPosition);
+            m->getCMotorGhost()->setSecondSpecies(sm2);
+            
+            //change off reaction to include new species
+            offRxn = (Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>*)
+            m->getCMotorGhost()->getOffReaction();
+            
+            //take the zeroth, second, and fourth species
+            Species* s0 = &(offRxn->rspecies()[0]->getSpecies());
+            Species* s2 = &(offRxn->rspecies()[2]->getSpecies());
+            Species* s4 = &(offRxn->rspecies()[4]->getSpecies());
+            
+            //create new reaction
+            newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
+            ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            
+            //remove old off reaction
+            cc1->removeCrossCylinderReaction(cc2, offRxn);
+        }
+        
+        //set new reaction type
+        newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
+        
+        //attach signal
+        MotorUnbindingCallback mcallback(m, _ps);
+        boost::signals2::shared_connection_block
+        rcb(newOffRxn->connect(mcallback,false));
+        
+        cc1 = m->getFirstCylinder()->getCCylinder();
+        cc2 = m->getSecondCylinder()->getCCylinder();
+        
+        //add new
+        cc1->addCrossCylinderReaction(cc2, newOffRxn);
+        
+        //set new unbinding reaction
+        m->getCMotorGhost()->setOffReaction(newOffRxn);
+        
+    }
+};
+
 /// Struct to create a new filament based on a given reaction
 struct FilamentCreationCallback {
     
