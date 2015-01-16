@@ -256,6 +256,32 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.runTime = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("NUMSTEPSPERS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.numStepsPerSnapshot = atoi(lineVector[1].c_str());
+            }
+        }
+        if (line.find("SNAPSHOTTIME:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
+            }
+        }
         
         if (line.find("NUMCHEMSTEPS:") != string::npos) {
             
@@ -268,19 +294,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.numChemSteps = atoi(lineVector[1].c_str());
-            }
-        }
-        if (line.find("NUMSTEPSPERS:") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.numStepsPerSnapshot = atoi(lineVector[1].c_str());
             }
         }
         if (line.find("NUMSTEPSPERN:") != string::npos) {

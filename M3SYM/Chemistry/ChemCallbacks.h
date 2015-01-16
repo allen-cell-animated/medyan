@@ -199,12 +199,8 @@ struct BranchingPointUnbindingCallback {
     SubSystem* _ps;
     BranchingPoint* _branchingPoint;
     
-    Species* _freeMonomer; ///< The free monomer species to increase if the
-                           ///< child filament branch is only one monomer long
-    
-    BranchingPointUnbindingCallback(BranchingPoint* b,
-                                    Species* freeMonomer, SubSystem* ps)
-        : _ps(ps), _branchingPoint(b), _freeMonomer(freeMonomer) {}
+    BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
+        : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
         //remove the unbinding reaction
@@ -225,13 +221,20 @@ struct BranchingPointUnbindingCallback {
         }
         //mark the free species instead
         else {
-            _freeMonomer->up();
+            //find the free species
+            short speciesPlusEndNum = m->activeSpeciesPlusEnd();
+            Species* speciesFilament = m->speciesFilament(speciesPlusEndNum);
+            
+            string speciesName = SpeciesNamesDB::Instance()->
+                                 removeUniqueName(speciesFilament->getName());
+            Species* freeMonomer =
+                _branchingPoint->getCompartment()->findSpeciesByName(speciesName);
             
             //remove the filament from the system
             delete _branchingPoint->getSecondCylinder()->getFilament();
             
             //update reaction rates
-            for(auto &r : _freeMonomer->getRSpecies().reactantReactions())
+            for(auto &r : freeMonomer->getRSpecies().reactantReactions())
                 r->getRNode()->activateReaction();
         }
         
@@ -297,7 +300,6 @@ struct BranchingPointCreationCallback {
         //first, find the correct diffusing or bulk species
         Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* branchReact =
             dynamic_cast<Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*>(r);
-        Species* freeMonomer = &(branchReact->rspecies()[1]->getSpecies());
         Species* freeBrancher = &(branchReact->rspecies()[0]->getSpecies());
         
         //create the reaction species
@@ -309,7 +311,7 @@ struct BranchingPointCreationCallback {
         new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
         offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
         
-        BranchingPointUnbindingCallback bcallback(b, freeMonomer, _ps);
+        BranchingPointUnbindingCallback bcallback(b, _ps);
         boost::signals2::shared_connection_block
             rcb(offRxn->connect(bcallback,false));
         

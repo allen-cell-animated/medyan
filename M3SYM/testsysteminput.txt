@@ -16,7 +16,7 @@ MONOMERSIZE:                 2.7
 CYLINDERSIZE:                27.0
 
 BOUNDARYSHAPE:               SPHERICAL
-BDIAMETER:                   200.0
+BDIAMETER:                   500.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -100,11 +100,13 @@ CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMTOTALSTEPS:
-RUNTIME:                     1
+RUNTIME:                     60
 
-NUMCHEMSTEPS:                10
-NUMSTEPSPERS:                100
-NUMSTEPSPERN:                100
+NUMSTEPSPERS:
+SNAPSHOTTIME:                0.02
+
+NUMCHEMSTEPS:                100
+NUMSTEPSPERN:                10000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
@@ -123,8 +125,8 @@ NUMBINDINGSITES:             1
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               1
-FILAMENTLENGTH:             5
+NUMFILAMENTS:               0
+FILAMENTLENGTH:             3
 
 #################################################
 ##################### OUTPUT ####################

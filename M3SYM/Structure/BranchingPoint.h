@@ -89,6 +89,9 @@ public:
     int getBranchID() {return _branchID;}
     //@}
     
+    /// Get compartment
+    Compartment* getCompartment() {return _compartment;}
+    
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     

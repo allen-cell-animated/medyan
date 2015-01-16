@@ -53,11 +53,19 @@ public:
     /// Get parent 
     Linker* getLinker() {return _pLinker;}
     
+    //@{
+    /// Length management
+    void setLength(double l){_currentLength = l;}
+    double getLength() {return _currentLength;}
+    //@}
+    
 private:
     double _eqLength;  ///< Equilibrium length, set at construction
     double _kStretch;  ///< Stretching constant
     
     Linker* _pLinker; ///< Pointer to parent linker
+    
+    double _currentLength; ///< Current length of the linker
     
 };
 

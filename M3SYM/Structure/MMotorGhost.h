@@ -58,12 +58,19 @@ public:
     /// Get parent
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
     
+    //@{
+    /// Length management
+    void setLength(double l){_currentLength = l;}
+    double getLength() {return _currentLength;}
+    //@}
+    
 private:
     double _eqLength;  ///< Equilibrium length, set at construction
     double _kStretch;  ///< Stretching parameter
     
     MotorGhost* _pMotorGhost; ///< Pointer to parent
     
+    double _currentLength; ///< Current length of motor
 };
 
 

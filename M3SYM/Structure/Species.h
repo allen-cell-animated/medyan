@@ -94,14 +94,31 @@ public:
             return mit->second;
     }
 
-    /// Generate a unique name based on a seed name (just adds integer value to end
-    /// of string)
+    /// Generate a unique name based on a seed name
+    /// (just adds integer value to end of string with a -)
+    /// @note - used only for filament species.
     string genUniqueName(string name) {
         string uniqueName = name + to_string(_num);
         if(_map_string_int.find(uniqueName) != _map_string_int.end())
             return uniqueName;
         else
-            return name + to_string(++_num);
+            return name + "-" + to_string(++_num);
+    }
+    
+    /// Remove the unique integer value identifier with this filament species name
+    /// @return The name without the integer ending.
+    string removeUniqueName(string name) {
+        
+        //loop through string, get to integer
+        for(auto i = 0; i < name.length(); i++) {
+            
+            if(name.substr(i,1).compare("-") == 0) {
+                //return the string, cutting before this value
+                return name.substr(0, i);
+            }
+        }
+        //if there was no integer, return the name
+        return name;
     }
 
     /// Clear the contents of the database

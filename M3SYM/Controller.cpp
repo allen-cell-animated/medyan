@@ -60,13 +60,13 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     
     //snapshot type output
     if(oTypes.basicSnapshot)
-        _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.out"));
+        _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
     if(oTypes.birthTimes)
-        _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.out"));
+        _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
     if(oTypes.forces)
-        _outputs.push_back(new Forces(_outputDirectory + "forces.out"));
+        _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
     if(oTypes.stresses)
-        _outputs.push_back(new Stresses(_outputDirectory + "stresses.out"));
+        _outputs.push_back(new Stresses(_outputDirectory + "stresses.traj"));
     
     
 #ifdef MECHANICS
@@ -133,9 +133,14 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     _numTotalSteps = CAlgorithm.numTotalSteps;
     _runTime = CAlgorithm.runTime;
     
-    _numChemSteps= CAlgorithm.numChemSteps;
-    
+    //if no snapshot step size set, set this to maxint so we use time
     _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
+    if(_numStepsPerSnapshot == 0)
+        _numStepsPerSnapshot = numeric_limits<int>::max();
+    
+    _snapshotTime = CAlgorithm.snapshotTime;
+    
+    _numChemSteps= CAlgorithm.numChemSteps;
     _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
     
     ChemistryData chem;
@@ -230,6 +235,9 @@ void Controller::updateNeighborLists(bool updateReactions) {
 
 void Controller::run() {
     
+    double tauLastSnapshot = 0;
+    double oldTau = 0;
+    
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
     
@@ -260,19 +268,25 @@ void Controller::run() {
             cout << "Current simulation time = "<< tau() << endl;
             //run ccontroller
             if(!_cController->run(_numChemSteps)) break;
+            
+            //add the last step
+            tauLastSnapshot += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             _mController->run();
             updatePositions();
             
-            if(i % _numStepsPerSnapshot == 0) {
+            if(i % _numStepsPerSnapshot == 0 ||
+               tauLastSnapshot >= _snapshotTime) {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
+                tauLastSnapshot = 0.0;
             }
-            
 #elif defined(CHEMISTRY)
-            if(i % _numStepsPerSnapshot == 0) {
+            if(i % _numStepsPerSnapshot == 0
+               tauLastSnapshot >= _snapshotTime) {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
+                tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(1);
@@ -286,6 +300,7 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             i += _numChemSteps;
+            oldTau = tau();
         }
 #endif
     }
@@ -296,19 +311,25 @@ void Controller::run() {
             cout << "Current simulation time = "<< tau() << endl;
             //run ccontroller
             if(!_cController->run(_numChemSteps)) break;
+            
+            //add the last step
+            tauLastSnapshot += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             _mController->run();
             updatePositions();
             
-            if(i % _numStepsPerSnapshot == 0) {
+            if(i % _numStepsPerSnapshot == 0 ||
+               tauLastSnapshot >= _snapshotTime) {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
+                tauLastSnapshot = 0.0;
             }
-            
 #elif defined(CHEMISTRY)
-            if(i % _numStepsPerSnapshot == 0) {
+            if(i % _numStepsPerSnapshot == 0 ||
+               tauLastSnapshot >= _snapshotTime) {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
+                tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(1);
@@ -321,6 +342,7 @@ void Controller::run() {
 #endif
             
 #ifdef CHEMISTRY
+            oldTau = tau();
         }
 #endif
     }

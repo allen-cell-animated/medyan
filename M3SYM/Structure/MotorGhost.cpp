@@ -108,6 +108,8 @@ void MotorGhost::updatePosition() {
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
+    _mMotorGhost->setLength(twoPointDistance(m1, m2));
+    
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}

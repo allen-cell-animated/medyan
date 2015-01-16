@@ -30,7 +30,8 @@ void BasicSnapshot::print(int step) {
     
     _outputFile.precision(10);
     
-    //print first line (step number, time, number of filaments, linkers, motors, branchers)
+    // print first line (step number, time, number of filaments,
+    // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
         FilamentDB::instance()->size() << " " <<
         LinkerDB::instance()->size() << " " <<
@@ -123,7 +124,8 @@ void BirthTimes::print(int step) {
     
     _outputFile.precision(10);
     
-    //print first line (step number, time, number of filaments, linkers, motors, branchers)
+    // print first line (step number, time, number of filaments,
+    // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
         FilamentDB::instance()->size() << " " <<
         LinkerDB::instance()->size() << " " <<
@@ -145,7 +147,8 @@ void BirthTimes::print(int step) {
             
         }
         //last bead
-        _outputFile<< filament->getCylinderVector().back()->getSecondBead()->getBirthTime();
+        _outputFile<< filament->getCylinderVector().back()
+                      ->getSecondBead()->getBirthTime();
         _outputFile << endl;
     }
     for(auto &linker : *LinkerDB::instance()) {
@@ -155,7 +158,8 @@ void BirthTimes::print(int step) {
         linker->getLinkerType() << endl;
         
         //print birth times
-        _outputFile << linker->getBirthTime() << endl;
+        _outputFile << linker->getBirthTime() << " " <<
+                       linker->getBirthTime() << endl;
     }
     
     for(auto &motor : *MotorGhostDB::instance()) {
@@ -165,7 +169,8 @@ void BirthTimes::print(int step) {
         motor->getMotorType() << endl;
         
         //print birth times
-        _outputFile << motor->getBirthTime() << endl;
+        _outputFile << motor->getBirthTime() << " " <<
+                       motor->getBirthTime() << endl;
     }
     
     for(auto &branch : *BranchingPointDB::instance()) {
@@ -185,7 +190,8 @@ void Forces::print(int step) {
     
     _outputFile.precision(10);
     
-    //print first line (step number, time, number of filaments, linkers, motors, branchers)
+    // print first line (step number, time, number of filaments,
+    // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
         FilamentDB::instance()->size() << " " <<
         LinkerDB::instance()->size() << " " <<
@@ -223,7 +229,8 @@ void Forces::print(int step) {
         linker->getLinkerType() << endl;
         
         //print stretch force
-        _outputFile << 0.0 << endl;
+        _outputFile << linker->getMLinker()->stretchForce << " " <<
+                       linker->getMLinker()->stretchForce << endl;
     }
     
     for(auto &motor : *MotorGhostDB::instance()) {
@@ -233,7 +240,92 @@ void Forces::print(int step) {
         motor->getMotorType() << endl;
         
         //print stretch force
+        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+                       motor->getMMotorGhost()->stretchForce << endl;
+    }
+    
+    for(auto &branch : *BranchingPointDB::instance()) {
+        
+        //print first line
+        _outputFile << "B " << branch->getBranchID() << " " <<
+                        branch->getBranchType() << endl;
+        
+        //Nothing for branchers
         _outputFile << 0.0 << endl;
+    }
+    
+    _outputFile <<endl;
+}
+
+
+void Stresses::print(int step) {
+
+    _outputFile.precision(10);
+    
+    // print first line (step number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << step << " " << tau() << " " <<
+    FilamentDB::instance()->size() << " " <<
+    LinkerDB::instance()->size() << " " <<
+    MotorGhostDB::instance()->size() << " " <<
+    BranchingPointDB::instance()->size() << endl;
+    
+    for(auto &filament : *FilamentDB::instance()) {
+        
+        //print first line(Filament ID, length, left_delta, right_delta
+        _outputFile << "F " << filament->getID() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        
+        //print
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            double k = cylinder->getMCylinder()->getStretchingConst();
+            double deltaL = cylinder->getMCylinder()->getLength() -
+                            cylinder->getMCylinder()->getEqLength();
+            
+            _outputFile<< abs(k * deltaL) << " ";
+            
+        }
+        //print last
+        Cylinder* cylinder = filament->getCylinderVector().back();
+        double k = cylinder->getMCylinder()->getStretchingConst();
+        double deltaL = cylinder->getMCylinder()->getLength() -
+                        cylinder->getMCylinder()->getEqLength();
+        _outputFile<< abs(k * deltaL);
+        
+        _outputFile << endl;
+    }
+    
+    for(auto &linker : *LinkerDB::instance()) {
+        
+        //print first line
+        _outputFile << "L " << linker->getLinkerID()<< " " <<
+        linker->getLinkerType() << endl;
+        
+        //print
+        double k = linker->getMLinker()->getStretchingConstant();
+        double deltaL = linker->getMLinker()->getLength() -
+                        linker->getMLinker()->getEqLength();
+        
+        
+        _outputFile << abs(k * deltaL) << " " <<
+                       abs(k * deltaL) << endl;
+    }
+    
+    for(auto &motor : *MotorGhostDB::instance()) {
+        
+        //print first line
+        _outputFile << "M " << motor->getMotorID() << " " <<
+        motor->getMotorType() << endl;
+        
+        //print
+        double k = motor->getMMotorGhost()->getStretchingConstant();
+        double deltaL = motor->getMMotorGhost()->getLength() -
+                        motor->getMMotorGhost()->getEqLength();
+        
+        _outputFile << abs(k * deltaL) << " " <<
+                       abs(k * deltaL) << endl;
     }
     
     for(auto &branch : *BranchingPointDB::instance()) {
@@ -242,13 +334,10 @@ void Forces::print(int step) {
         _outputFile << "B " << branch->getBranchID() << " " <<
         branch->getBranchType() << endl;
         
-        //print bending force
+        //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
     
     _outputFile <<endl;
 }
-
-
-void Stresses::print(int step) {}
 

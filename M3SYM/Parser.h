@@ -61,10 +61,12 @@ struct ChemistryAlgorithm {
     /// or the total run time of the simulation.
     int numTotalSteps = 0;
     double runTime = 0.0;
+    
+    int numStepsPerSnapshot = 0;
+    double snapshotTime = 0;
     //@}
     
     int numChemSteps = 0; ///< Specifying number of chemical steps at a time
-    int numStepsPerSnapshot = 0;
     int numStepsPerNeighbor = 0;
 };
 

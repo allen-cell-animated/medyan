@@ -88,6 +88,9 @@ void Cylinder::updatePosition() {
     //check if were still in same compartment, set new position
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
     
+    //update length
+    _mCylinder->setLength(twoPointDistance(_b1->coordinate, _b2->coordinate));
+    
     Compartment* c;
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}

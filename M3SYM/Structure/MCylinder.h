@@ -44,6 +44,8 @@ private:
     double _kExVol;   ///< Local excluded volume constant, which describes
                       ///< excluded volume interactions between cylinders
     
+    double _currentLength; ///< The current length of the cylinder
+    
 public:
     /// Constructor sets equlilibrium length, and also adjusts other
     /// parameters according to this length
@@ -78,6 +80,9 @@ public:
     
     void setExVolConst(double k) {_kExVol = k;}
     double getExVolConst() {return _kExVol;}
+    
+    void setLength(double l){_currentLength = l;}
+    double getLength() {return _currentLength;}
     //@}
     
 };

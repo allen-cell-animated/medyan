@@ -47,7 +47,8 @@ public:
     virtual void print(int step) = 0;
 };
 
-/// Print basic information about all Filament, Linker, MotorGhost
+/// Print basic information about all Filament, Linker,
+/// MotorGhost, and BranchingPoint
 class BasicSnapshot : public Output {
 
 public:
@@ -57,7 +58,8 @@ public:
     virtual void print(int step);
 };
 
-/// Print birth times of beads for each Filament
+/// Print birth times of beads for each Filament, Linker,
+/// MotorGhost, and BranchingPoint
 class BirthTimes : public Output {
     
 public:
@@ -77,7 +79,12 @@ public:
     virtual void print(int step);
 };
 
-/// Print stresses on beads for each Filament
+/// Print "stresses" for each Filament, Linker, and MotorGhost
+/// @note This class prints the following:
+///                 k * (l - l_0)
+/// where k is the stretching force constant, l is the current
+/// length, and l_0 is the equilibrium length.
+/// NOT YET IMPLEMENTED
 class Stresses : public Output {
     
 public:
