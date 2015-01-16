@@ -1,9 +1,6 @@
 from numpy import *
 from mayavi import mlab
 
-mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
-mlab.show()
-
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
 traj_filename='/Users/jameskomianos/Code/M3SYM/M3SYM/Output/snapshot.traj'
@@ -265,6 +262,10 @@ def show_frame(frame_number=-1):
 		else:
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
+		#display time
+		time = 'Time = ' + str(round(local_frame.time,3)) + "s"
+		mlab.text(0.6, 0.9, time)
+
 	#DISPLAYING LINKERS
 	if(len(local_frame.linkers) != 0):
 		x=[]
@@ -367,9 +368,6 @@ def show_frame(frame_number=-1):
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
 									scale_factor=2.0, color=DBEADCOLOR)
 
-	#display time
-	time = 'Time = ' + str(round(local_frame.time,3)) + "s"
-	mlab.text(0.6, 0.9, time)
 
 @mlab.animate(delay=10, ui=True)
 def anim():

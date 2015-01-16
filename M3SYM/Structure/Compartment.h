@@ -487,7 +487,11 @@ public:
     {
         assert(target->numberOfSpecies()==0);
         for(auto &s : _species.species()){
-            target->addSpeciesUnique(unique_ptr<Species>(s->clone()));
+            Species* sClone = s->clone();
+            //if not activated yet, set zero copy number
+            if(!target->_activated)
+                sClone->setN(0);
+            target->addSpeciesUnique(unique_ptr<Species>(sClone));
         }
     }
     
@@ -504,7 +508,7 @@ public:
     /// Clone both the species and compartments into this compartment
     void cloneSpeciesReactions(Compartment* C)
     {
-        this->cloneSpecies(C);
+        if(_activated) this->cloneSpecies(C);
         this->cloneReactions(C);
         C->_diffusion_rates = this->_diffusion_rates;
         

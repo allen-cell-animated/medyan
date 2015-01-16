@@ -1705,6 +1705,7 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
         
         //add to compartment
         protoCompartment.addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+        rxn->setReactionType(ReactionType::REGULAR);
     }
 }
 
@@ -1809,6 +1810,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
         //add to grid
         CompartmentGrid::instance()->
             addBulkReactionUnique(unique_ptr<ReactionBase>(rxn));
+        rxn->setReactionType(ReactionType::REGULAR);
     }
 }
 
@@ -2006,7 +2008,7 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     for(auto &sb : chem.speciesBulk)
         CompartmentGrid::instance()->
             addSpeciesBulk(get<0>(sb), get<1>(sb),
-                           (get<2>(sb) == "CONST") ? true : false);
+                          (get<2>(sb) == "CONST") ? true : false);
     
     //add reactions to protocompartment
     genGeneralReactions(chem, cProto);

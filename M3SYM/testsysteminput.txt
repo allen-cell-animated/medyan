@@ -15,8 +15,8 @@ MONOMERSIZE:                 2.7
 
 CYLINDERSIZE:                27.0
 
-BOUNDARYSHAPE:               SPHERICAL
-BDIAMETER:                   500.0
+BOUNDARYSHAPE:               CUBIC
+BDIAMETER:                   200.0
 
 ##################################################
 ################### MECHANICS ####################

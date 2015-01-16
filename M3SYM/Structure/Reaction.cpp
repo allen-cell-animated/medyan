@@ -79,6 +79,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
         //check if that species exists in the compartment
         auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
            [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
+        
         //if we didn't find it, use the old species
         if(vit==spcv.species().cend()) species.push_back(&rs->getSpecies());
         else species.push_back(vit->get());

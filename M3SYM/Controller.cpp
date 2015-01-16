@@ -265,7 +265,6 @@ void Controller::run() {
 #ifdef CHEMISTRY
         int i = 0;
         while(tau() <= _runTime) {
-            cout << "Current simulation time = "<< tau() << endl;
             //run ccontroller
             if(!_cController->run(_numChemSteps)) break;
             
@@ -279,12 +278,14 @@ void Controller::run() {
             
             if(i % _numStepsPerSnapshot == 0 ||
                tauLastSnapshot >= _snapshotTime) {
+                cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 tauLastSnapshot = 0.0;
             }
 #elif defined(CHEMISTRY)
             if(i % _numStepsPerSnapshot == 0
                tauLastSnapshot >= _snapshotTime) {
+                cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 tauLastSnapshot = 0.0;
             }
@@ -308,7 +309,6 @@ void Controller::run() {
     else {
 #ifdef CHEMISTRY
         for(int i = 0; i < _numTotalSteps; i+=_numChemSteps) {
-            cout << "Current simulation time = "<< tau() << endl;
             //run ccontroller
             if(!_cController->run(_numChemSteps)) break;
             
@@ -322,12 +322,14 @@ void Controller::run() {
             
             if(i % _numStepsPerSnapshot == 0 ||
                tauLastSnapshot >= _snapshotTime) {
+                cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 tauLastSnapshot = 0.0;
             }
 #elif defined(CHEMISTRY)
             if(i % _numStepsPerSnapshot == 0 ||
                tauLastSnapshot >= _snapshotTime) {
+                cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 tauLastSnapshot = 0.0;
             }
