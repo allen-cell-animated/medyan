@@ -69,13 +69,13 @@ MTWISTINGPHI:
 
 BRSTRETCHINGTYPE:           HARMONIC
 BRSTRETCHINGK:              1.0
-BRSTRETCHINGL:              1.0
+BRSTRETCHINGL:              5.0
 
 BRBENDINGTYPE:              COSINE
 BRBENDINGK:                 10.0
-BRBENDINGTHETA:             2
+BRBENDINGTHETA:             1.22
 
-BRDIHEDRALTYPE:             COSINE
+BRDIHEDRALTYPE:
 BRDIHEDRALK:                1.0
 
 BRPOSITIONTYPE:             
