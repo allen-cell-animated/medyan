@@ -510,7 +510,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //callbacks
     MotorMovingCylinderForwardCallback
         motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                            _bindingSites.back(), motorType, boundType, _ps);
+        _bindingSites.back(), _bindingSites.front(), motorType, boundType, _ps);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -608,8 +608,8 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //callbacks
     MotorMovingCylinderBackwardCallback
-    motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
-                        _bindingSites.front(), motorType, boundType, _ps);
+        motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
+        _bindingSites.front(), _bindingSites.back(), motorType, boundType, _ps);
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
