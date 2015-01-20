@@ -99,8 +99,8 @@ BSCREENLENGTH:              0.1
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMTOTALSTEPS:
-RUNTIME:                     10
+NUMTOTALSTEPS:               20
+RUNTIME:
 
 NUMSTEPSPERS:                1
 SNAPSHOTTIME:                
@@ -117,7 +117,7 @@ NUMLINKERSPECIES:            1
 NUMMOTORSPECIES:             1
 NUMBRANCHERSPECIES:          1
 
-NUMBINDINGSITES:             5
+NUMBINDINGSITES:             4
 
 ##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########

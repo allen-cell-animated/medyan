@@ -582,6 +582,7 @@ struct MotorMovingCylinderForwardCallback {
     Cylinder* _newC;        ///< New cylinder motor will be attached to
     
     short _oldPosition;     ///< Old position of motor head
+    short _newPosition;     ///< New position of motor head
     
     short _motorType;       ///< Type of motor
     short _boundType;       ///< Type of bound this motor is taking place of
@@ -590,26 +591,22 @@ struct MotorMovingCylinderForwardCallback {
     
     MotorMovingCylinderForwardCallback(Cylinder* oldC, Cylinder* newC,
                                        short oldPosition,
+                                       short newPosition,
                                        short motorType,
                                        short boundType,
                                        SubSystem* ps)
-        :_oldC(oldC), _newC(newC), _motorType(motorType),
-         _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
+        :_oldC(oldC), _newC(newC), _motorType(motorType), _boundType(boundType),
+         _oldPosition(oldPosition), _newPosition(newPosition), _ps(ps){}
     
     void operator() (ReactionBase* r) {
         
         //Find the motor
-        double newPosition =
-            1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
-        int newIntPosition =
-            newPosition * SystemParameters::Geometry().cylinderIntSize + 1;
-
         CCylinder* oldCC = _oldC->getCCylinder();
         CCylinder* newCC = _newC->getCCylinder();
         
         SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =newCC->getCMonomer(newIntPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 =newCC->getCMonomer(newIntPosition)->speciesBound(_boundType);
+        SpeciesMotor* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 =newCC->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         ReactionBase* newOffRxn, *offRxn;
@@ -621,7 +618,8 @@ struct MotorMovingCylinderForwardCallback {
         if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
             
             m->setFirstCylinder(_newC);
-            m->setFirstPosition(newPosition);
+            m->setFirstPosition((double)_newPosition
+               / SystemParameters::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
@@ -642,7 +640,8 @@ struct MotorMovingCylinderForwardCallback {
         }
         else {
             m->setSecondCylinder(_newC);
-            m->setSecondPosition(newPosition);
+            m->setSecondPosition((double)_newPosition
+               / SystemParameters::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
@@ -782,6 +781,7 @@ struct MotorMovingCylinderBackwardCallback {
     Cylinder* _newC;        ///< New cylinder motor will be attached to
     
     short _oldPosition;     ///< Old position of motor head
+    short _newPosition;     ///< New position of motor head
     
     short _motorType;       ///< Type of motor
     short _boundType;       ///< Type of bound this motor is taking place of
@@ -790,30 +790,27 @@ struct MotorMovingCylinderBackwardCallback {
     
     MotorMovingCylinderBackwardCallback(Cylinder* oldC, Cylinder* newC,
                                         short oldPosition,
+                                        short newPosition,
                                         short motorType,
                                         short boundType,
                                         SubSystem* ps)
-    :_oldC(oldC), _newC(newC), _motorType(motorType),
-    _boundType(boundType), _oldPosition(oldPosition), _ps(ps){}
+    :_oldC(oldC), _newC(newC), _motorType(motorType), _boundType(boundType),
+     _oldPosition(oldPosition), _newPosition(newPosition), _ps(ps){}
     
     void operator() (ReactionBase* r) {
         
-        //Find the motor
-        double newPosition =
-        1.0 - 1.0 / (2 * SystemParameters::Chemistry().numBindingSites);
-        int newIntPosition =
-        newPosition * SystemParameters::Geometry().cylinderIntSize;
-        
+        //Find motor head
         CCylinder* oldCC = _oldC->getCCylinder();
         CCylinder* newCC = _newC->getCCylinder();
         
         SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =newCC->getCMonomer(newIntPosition)->speciesMotor(_motorType);
-        SpeciesBound* sb2 =newCC->getCMonomer(newIntPosition)->speciesBound(_boundType);
+        SpeciesMotor* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sb2 =newCC->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         ReactionBase* newOffRxn, *offRxn;
         CCylinder* cc1, *cc2;
+        
         //initial set of cylinders
         cc1 = m->getFirstCylinder()->getCCylinder();
         cc2 = m->getSecondCylinder()->getCCylinder();
@@ -821,7 +818,8 @@ struct MotorMovingCylinderBackwardCallback {
         if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
             
             m->setFirstCylinder(_newC);
-            m->setFirstPosition(newPosition);
+            m->setFirstPosition((double)_newPosition
+               / SystemParameters::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
@@ -842,7 +840,8 @@ struct MotorMovingCylinderBackwardCallback {
         }
         else {
             m->setSecondCylinder(_newC);
-            m->setSecondPosition(newPosition);
+            m->setSecondPosition((double)_newPosition
+               / SystemParameters::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
