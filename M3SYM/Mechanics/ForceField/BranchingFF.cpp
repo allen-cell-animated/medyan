@@ -19,7 +19,7 @@
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
 
-BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral)
+BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral, string& position)
 {
     if (stretching == "HARMONIC")
         _branchingInteractionVector.emplace_back(
@@ -30,6 +30,11 @@ BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral)
 //  if (dihedral == "COSINE")
 //      _branchingInteractionVector.emplace_back(new
 //          BranchingDihedral<BranchingDihedralCosine>());
+    
+//  if (position == "COSINE")
+//      _branchingInteractionVector.emplace_back(new
+//          BranchingPosition<BranchingPositionCosine>());
+
 }
 
 

@@ -58,8 +58,8 @@ int main(int argc, const char * argv[])
     SubSystem s;
     Controller c(&s);
 
-    c.initialize("/Users/jameskomianos/Code/M3SYM/M3SYM/",
-                 "/Users/jameskomianos/Code/M3SYM/M3SYM/");
+    c.initialize("/Users/Kostya/Codes/M3SYM/m3sym/M3SYM/",
+                 "/Users/Kostya/Codes/M3SYM/m3sym/M3SYM/");
     c.run();
 
 }
