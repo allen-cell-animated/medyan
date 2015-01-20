@@ -251,8 +251,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F716AE301A448235001BDBFE /* FilamentInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentInitializer.cpp; sourceTree = "<group>"; };
-		F716AE311A448235001BDBFE /* FilamentInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInitializer.h; sourceTree = "<group>"; };
+		8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPosition.cpp; sourceTree = "<group>"; };
+		8BD7CA971A6DDD1A00ADEF0A /* BranchingPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPosition.h; sourceTree = "<group>"; };
+		8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPositionCosine.cpp; sourceTree = "<group>"; };
+		8BD7CA9A1A6DDF7D00ADEF0A /* BranchingPositionCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPositionCosine.h; sourceTree = "<group>"; };
 		F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBendingCosine.cpp; sourceTree = "<group>"; };
 		F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingBendingCosine.h; sourceTree = "<group>"; };
 		F71944071A3262F3006F1E08 /* BranchingBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBending.cpp; sourceTree = "<group>"; };
