@@ -1,15 +1,21 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingDihedralCosine.cpp
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/4/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BranchingDihedralCosine.h"
 
-#include "MathFunctions.h"
 #include "Bead.h"
+
+#include "MathFunctions.h"
 
 using namespace mathfunc;
 
@@ -143,7 +149,6 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     b4->force[2] += -kDihed*DY*(b4->coordinate[2] - b3->coordinate[2]);
     
-
 }
 
 void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,

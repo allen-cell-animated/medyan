@@ -13,7 +13,6 @@
 
 #include "BranchingDihedral.h"
 
-
 #include "BranchingDihedralCosine.h"
 
 #include "BranchingPoint.h"
@@ -70,9 +69,9 @@ void BranchingDihedral<BDihedralInteractionType>::computeForcesAux(BranchingPoin
 }
 
 ///Template specializations
-//template double
-//BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);
-//template void
-//BranchingDihedral<BranchingDihedralCosine>::computeForces(BranchingPoint* b);
-//template void
-//BranchingDihedral<BranchingDihedralCosine>::computeForcesAux(BranchingPoint* b);
+template double
+BranchingDihedral<BranchingDihedralCosine>::computeEnergy(BranchingPoint* b, double d);
+template void
+BranchingDihedral<BranchingDihedralCosine>::computeForces(BranchingPoint* b);
+template void
+BranchingDihedral<BranchingDihedralCosine>::computeForcesAux(BranchingPoint* b);

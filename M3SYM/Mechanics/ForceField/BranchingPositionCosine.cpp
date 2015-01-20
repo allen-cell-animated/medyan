@@ -19,13 +19,11 @@
 
 #include "MathFunctions.h"
 
-
-
 ////!!!!!!!!!!NOT READY THIS IS JUST A TEMPLATE!!!!!!! BUT SHOULD COMPILE
 using namespace mathfunc;
 
 double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                      double kBend, double eqTheta){
+                                       double kBend, double eqTheta){
     
     double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
                                    b1->coordinate, b2->coordinate));
@@ -39,14 +37,14 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double theta = acos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
     
-    double u = kBend * ( 1 - cos(dtheta) );
+    double U = kBend * ( 1 - cos(dtheta) );
     
     return 0;
     
 }
 
 double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                      double kBend, double eqTheta, double d){
+                                       double kBend, double eqTheta, double d){
     
     double L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force,
@@ -65,14 +63,14 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double theta = acos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
-    double u = kBend * ( 1 - cos(dtheta) );
+    double U = kBend * ( 1 - cos(dtheta) );
     
     return 0;
     
 }
 
 void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                    double kBend, double eqTheta ){
+                                     double kBend, double eqTheta ){
     
     //l1 = b2-b3; l2 = b4-b3;
     
@@ -108,7 +106,7 @@ void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 }
 
 void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                       double kBend, double eqTheta ){
+                                        double kBend, double eqTheta ){
     
     //l1 = b2-b3; l2 = b4-b3;
     

@@ -1,14 +1,17 @@
+
+//------------------------------------------------------------------
+//  **M3SYM** - Simulation Package for the Mechanochemical
+//              Dynamics of Active Networks, 3rd Generation
 //
-//  BranchingFF.cpp
-//  M3SYM
+//  Copyright (2014) Papoian Lab, University of Maryland
 //
-//  Created by Konstantin Popov on 12/2/14.
-//  Copyright (c) 2014 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the Papoian lab page for installation and documentation:
+//  http://papoian.chem.umd.edu/
+//------------------------------------------------------------------
 
 #include "BranchingFF.h"
-
-#include "BranchingPointDB.h"
 
 #include "BranchingStretching.h"
 #include "BranchingStretchingHarmonic.h"
@@ -19,19 +22,24 @@
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
 
-BranchingFF::BranchingFF (string& stretching, string& bending, string& dihedral, string& position)
+#include "BranchingPoint.h"
+
+BranchingFF::BranchingFF(string& stretching, string& bending,
+                         string& dihedral, string& position)
 {
-    if (stretching == "HARMONIC")
+    if(stretching == "HARMONIC")
         _branchingInteractionVector.emplace_back(
-            new BranchingStretching<BranchingStretchingHarmonic>());
-    if (bending == "COSINE")
-        _branchingInteractionVector.emplace_back(
-            new BranchingBending<BranchingBendingCosine>());
-//  if (dihedral == "COSINE")
-//      _branchingInteractionVector.emplace_back(new
-//          BranchingDihedral<BranchingDihedralCosine>());
+        new BranchingStretching<BranchingStretchingHarmonic>());
     
-//  if (position == "COSINE")
+    if(bending == "COSINE")
+        _branchingInteractionVector.emplace_back(
+        new BranchingBending<BranchingBendingCosine>());
+    
+    if(dihedral == "COSINE")
+      _branchingInteractionVector.emplace_back(
+      new BranchingDihedral<BranchingDihedralCosine>());
+    
+//    if(position == "COSINE")
 //      _branchingInteractionVector.emplace_back(new
 //          BranchingPosition<BranchingPositionCosine>());
 

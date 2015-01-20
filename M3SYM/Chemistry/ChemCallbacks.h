@@ -271,9 +271,9 @@ struct BranchingPointCreationCallback {
                                             _c1->getSecondBead()->coordinate, pos);
         
         //randomize position and direction
-        double rand1 = randomDouble(-1,1);
-        double rand2 = randomDouble(-1,1);
-        double rand3 = randomDouble(-1,1);
+        double rand1 = randomDouble(-4,4);
+        double rand2 = randomDouble(-4,4);
+        double rand3 = randomDouble(-4,4);
         position1[0] = position1[0] + rand1;
         position1[1] = position1[1] + rand2;
         position1[2] = position1[2] + rand3;

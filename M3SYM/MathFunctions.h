@@ -113,8 +113,10 @@ namespace mathfunc {
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
-    inline vector<double> vectorProduct(const vector<double>& v1, const vector<double>& v2,
-                                              const vector<double>& v3, const vector<double>& v4) {
+    inline vector<double> vectorProduct(const vector<double>& v1,
+                                        const vector<double>& v2,
+                                        const vector<double>& v3,
+                                        const vector<double>& v4) {
         vector<double> v;
         
         double vx = (v2[1]-v1[1])*(v4[2]-v3[2]) - (v2[2]-v1[2])*(v4[1]-v3[1]);
@@ -126,13 +128,12 @@ namespace mathfunc {
         v.push_back(vz);
         
         return v;
-    
-    
     };
     
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
-    inline vector<double> crossProduct(const vector<double>& v1, const vector<double>& v2) {
+    inline vector<double> crossProduct(const vector<double>& v1,
+                                       const vector<double>& v2) {
         
         vector<double> v;
         
@@ -145,30 +146,31 @@ namespace mathfunc {
         v.push_back(vz);
         
         return v;
-        
-        
     };
     
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3), but with v -> v+d*p. Returns a 3d vector.
     inline vector<double> vectorProductStretched (const vector<double>& v1,
-                                              const vector<double>& p1,
-                                              const vector<double>& v2,
-                                              const vector<double>& p2,
-                                              const vector<double>& v3,
-                                              const vector<double>& p3,
-                                              const vector<double>& v4,
-                                              const vector<double>& p4, double d){
+                                                  const vector<double>& p1,
+                                                  const vector<double>& v2,
+                                                  const vector<double>& p2,
+                                                  const vector<double>& v3,
+                                                  const vector<double>& p3,
+                                                  const vector<double>& v4,
+                                                  const vector<double>& p4, double d){
         vector<double> v;
         
-        double vx = ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
-                    - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
+        double vx =
+        ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
+         - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
         
-        double vy = ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
+        double vy =
+        ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
         - ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]));
         
-        double vz = ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
+        double vz =
+        ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
         - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
         
         v.push_back(vx);
@@ -182,10 +184,10 @@ namespace mathfunc {
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<double> crossProductStretched(const vector<double>& v1,
-                                                 const vector<double>& p1,
-                                                 const vector<double>& v2,
-                                                 const vector<double>& p2,
-                                                 double d) {
+                                                const vector<double>& p1,
+                                                const vector<double>& v2,
+                                                const vector<double>& p2,
+                                                double d) {
         
         vector<double> v;
         

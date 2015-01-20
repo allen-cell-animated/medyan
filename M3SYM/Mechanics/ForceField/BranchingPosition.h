@@ -10,8 +10,9 @@
 //  See the Papoian lab page for installation and documentation:
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
-#ifndef __M3SYM__BranchingPosition__
-#define __M3SYM__BranchingPosition__
+
+#ifndef M3SYM__BranchingPosition_h
+#define M3SYM__BranchingPosition_h
 
 #include "common.h"
 

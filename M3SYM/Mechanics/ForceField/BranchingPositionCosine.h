@@ -11,9 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef __M3SYM__BranchingPositionCosine__
-#define __M3SYM__BranchingPositionCosine__
-
+#ifndef M3SYM_BranchingPositionCosine_h
+#define M3SYM_BranchingPositionCosine_h
 
 #include "common.h"
 
@@ -21,7 +20,7 @@
 class Bead;
 
 /// A cosine potential used by the BranchingPosition template.
-class BranchingDihedralCosine {
+class BranchingPositionCosine {
     
 public:
     double energy(Bead*, Bead*, Bead*, Bead*, double, double);

@@ -69,6 +69,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     _FFManager._forceFields.push_back(
         new BranchingFF(forceFields.BrStretchingType,
                         forceFields.BrBendingType,
+                        forceFields.BrDihedralType,
                         forceFields.BrDihedralType));
     
     cout << "Branching force field initialized:"<<endl;

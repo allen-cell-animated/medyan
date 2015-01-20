@@ -34,7 +34,8 @@ private:
     
 public:
     /// Constructor, intializes all interaction at the branching point
-    BranchingFF(string& stretching, string& bending, string& dihedral, string& position);
+    BranchingFF(string& stretching, string& bending,
+                string& dihedral, string& position);
     
     virtual string getName() {return "Branching";}
     
