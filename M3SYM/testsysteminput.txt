@@ -68,14 +68,14 @@ MTWISTINGPHI:
 ### BRANCHING ###
 
 BRSTRETCHINGTYPE:           HARMONIC
-BRSTRETCHINGK:              3.0
-BRSTRETCHINGL:              5.0
+BRSTRETCHINGK:              1.0
+BRSTRETCHINGL:              1.0
 
 BRBENDINGTYPE:              COSINE
-BRBENDINGK:                 3.0
-BRBENDINGTHETA:             1.22
+BRBENDINGK:                 10.0
+BRBENDINGTHETA:             2
 
-BRDIHEDRALTYPE:
+BRDIHEDRALTYPE:             COSINE
 BRDIHEDRALK:                1.0
 
 BRPOSITIONTYPE:             
@@ -86,7 +86,7 @@ BRPOSITIONK:
 VOLUMETYPE:                 REPULSION
 VOLUMECUTOFF:               27.0
 
-VOLUMEK:                    10.0
+VOLUMEK:                    100.0
 
 ### BOUNDARY ###
 

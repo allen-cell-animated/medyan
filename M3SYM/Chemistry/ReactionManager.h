@@ -77,8 +77,6 @@ public:
         
         //add all other binding sites
         while(bindingCount < SystemParameters::Geometry().cylinderIntSize) {
-            
-            cout << "BINDING SITE = " << bindingCount << endl;
             _bindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
