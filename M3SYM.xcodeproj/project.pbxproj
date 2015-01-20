@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8BD7CA981A6DDD1A00ADEF0A /* BranchingPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */; };
+		8BD7CA9B1A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */; };
 		B58E178B1A2E5DF9005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B58E178D1A2E5E1F005BBC44 /* (null) in Headers */ = {isa = PBXBuildFile; };
 		B58E17901A2E6EF0005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -667,6 +669,10 @@
 				F719440D1A3262F3006F1E08 /* BranchingFF.cpp */,
 				F719440E1A3262F3006F1E08 /* BranchingFF.h */,
 				F719440F1A3262F3006F1E08 /* BranchingInteractions.h */,
+				8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */,
+				8BD7CA971A6DDD1A00ADEF0A /* BranchingPosition.h */,
+				8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */,
+				8BD7CA9A1A6DDF7D00ADEF0A /* BranchingPositionCosine.h */,
 				F71944101A3262F3006F1E08 /* BranchingStretching.cpp */,
 				F71944111A3262F3006F1E08 /* BranchingStretching.h */,
 				F71944121A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp */,
@@ -1085,9 +1091,11 @@
 				B58E17A21A30F462005BBC44 /* (null) in Sources */,
 				B58E17931A2E75FD005BBC44 /* (null) in Sources */,
 				B58E17991A2FBBB3005BBC44 /* (null) in Sources */,
+				8BD7CA9B1A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp in Sources */,
 				B58E17961A2FAF38005BBC44 /* (null) in Sources */,
 				B58E178B1A2E5DF9005BBC44 /* (null) in Sources */,
 				B58E17901A2E6EF0005BBC44 /* (null) in Sources */,
+				8BD7CA981A6DDD1A00ADEF0A /* BranchingPosition.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* M3Sym.cpp in Sources */,
 				B58E179F1A30EF9D005BBC44 /* (null) in Sources */,
 			);
