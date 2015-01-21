@@ -40,7 +40,9 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     _gController = new GController();
 }
 
-void Controller::initialize(string inputDirectory, string outputDirectory) {
+void Controller::initialize(string inputFile,
+                            string inputDirectory,
+                            string outputDirectory) {
     
     cout << "******************** M3SYM **********************" << endl;
     
@@ -49,8 +51,6 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     //init input directory
     _inputDirectory = inputDirectory;
     _outputDirectory = outputDirectory;
-    
-    string inputFile = inputDirectory + "testsysteminput.txt";
     
     //Parse input, get parameters
     SystemParser p(inputFile);
@@ -155,6 +155,11 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     }
     _cController->initialize(CAlgorithm.algorithm, "", chem);
     cout << "Done." << endl;
+#endif
+    
+#ifdef DYNAMICRATES
+    //read dynamic rate parameters
+    p.readDynamicRateParameters();
 #endif
 
     //Read filament setup, parse filament input file if needed

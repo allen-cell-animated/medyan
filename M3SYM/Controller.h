@@ -72,7 +72,9 @@ public:
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory
-    void initialize(string inputDirectory, string outputDirectory);
+    void initialize(string inputFile,
+                    string inputDirectory,
+                    string outputDirectory);
     ///Run the simulation
     void run();
     
