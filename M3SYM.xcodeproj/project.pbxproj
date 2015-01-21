@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8BD7CA981A6DDD1A00ADEF0A /* BranchingPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */; };
-		8BD7CA9B1A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */; };
 		B58E178B1A2E5DF9005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B58E178D1A2E5E1F005BBC44 /* (null) in Headers */ = {isa = PBXBuildFile; };
 		B58E17901A2E6EF0005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -20,23 +18,6 @@
 		B58E17A21A30F462005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		F716AE321A448235001BDBFE /* (null) in Sources */ = {isa = PBXBuildFile; };
 		F716AE331A448235001BDBFE /* (null) in Headers */ = {isa = PBXBuildFile; };
-		F71944161A3262F3006F1E08 /* BranchingBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */; };
-		F71944171A3262F3006F1E08 /* BranchingBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */; };
-		F71944181A3262F3006F1E08 /* BranchingBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944071A3262F3006F1E08 /* BranchingBending.cpp */; };
-		F71944191A3262F3006F1E08 /* BranchingBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944081A3262F3006F1E08 /* BranchingBending.h */; };
-		F719441A1A3262F3006F1E08 /* BranchingDihedral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944091A3262F3006F1E08 /* BranchingDihedral.cpp */; };
-		F719441B1A3262F3006F1E08 /* BranchingDihedral.h in Headers */ = {isa = PBXBuildFile; fileRef = F719440A1A3262F3006F1E08 /* BranchingDihedral.h */; };
-		F719441C1A3262F3006F1E08 /* BranchingDihedralCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F719440B1A3262F3006F1E08 /* BranchingDihedralCosine.cpp */; };
-		F719441D1A3262F3006F1E08 /* BranchingDihedralCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F719440C1A3262F3006F1E08 /* BranchingDihedralCosine.h */; };
-		F719441E1A3262F3006F1E08 /* BranchingFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F719440D1A3262F3006F1E08 /* BranchingFF.cpp */; };
-		F719441F1A3262F3006F1E08 /* BranchingFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F719440E1A3262F3006F1E08 /* BranchingFF.h */; };
-		F71944201A3262F3006F1E08 /* BranchingInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F719440F1A3262F3006F1E08 /* BranchingInteractions.h */; };
-		F71944211A3262F3006F1E08 /* BranchingStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944101A3262F3006F1E08 /* BranchingStretching.cpp */; };
-		F71944221A3262F3006F1E08 /* BranchingStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944111A3262F3006F1E08 /* BranchingStretching.h */; };
-		F71944231A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944121A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp */; };
-		F71944241A3262F3006F1E08 /* BranchingStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944131A3262F3006F1E08 /* BranchingStretchingHarmonic.h */; };
-		F71944251A3262F3006F1E08 /* FilamentBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71944141A3262F3006F1E08 /* FilamentBendingCosine.cpp */; };
-		F71944261A3262F3006F1E08 /* FilamentBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F71944151A3262F3006F1E08 /* FilamentBendingCosine.h */; };
 		F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */; };
 		F7199B2B1A30B8F700CD5DCC /* BranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B291A30B8F700CD5DCC /* BranchingPoint.h */; };
 		F7199B2E1A30C24D00CD5DCC /* BranchingPointDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B2C1A30C24D00CD5DCC /* BranchingPointDB.cpp */; };
@@ -96,52 +77,73 @@
 		F735B7B91A2D173F00AE21D1 /* CGPolakRibiereMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7B11A2D173F00AE21D1 /* CGPolakRibiereMethod.h */; };
 		F735B7BA1A2D173F00AE21D1 /* ConjugateGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7B21A2D173F00AE21D1 /* ConjugateGradient.h */; };
 		F735B7BB1A2D173F00AE21D1 /* Minimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7B31A2D173F00AE21D1 /* Minimizer.h */; };
-		F735B7ED1A2D175800AE21D1 /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7BC1A2D175800AE21D1 /* BoundaryFF.cpp */; };
-		F735B7EE1A2D175800AE21D1 /* BoundaryFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7BD1A2D175800AE21D1 /* BoundaryFF.h */; };
-		F735B7EF1A2D175800AE21D1 /* BoundaryInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7BE1A2D175800AE21D1 /* BoundaryInteractions.h */; };
-		F735B7F01A2D175800AE21D1 /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7BF1A2D175800AE21D1 /* BoundaryRepulsion.cpp */; };
-		F735B7F11A2D175800AE21D1 /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C01A2D175800AE21D1 /* BoundaryRepulsion.h */; };
-		F735B7F21A2D175800AE21D1 /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7C11A2D175800AE21D1 /* BoundaryRepulsionExp.cpp */; };
-		F735B7F31A2D175800AE21D1 /* BoundaryRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C21A2D175800AE21D1 /* BoundaryRepulsionExp.h */; };
-		F735B7F41A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7C31A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp */; };
-		F735B7F51A2D175800AE21D1 /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C41A2D175800AE21D1 /* BoundaryRepulsionLJ.h */; };
-		F735B7F61A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7C51A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp */; };
-		F735B7F71A2D175800AE21D1 /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C61A2D175800AE21D1 /* CylinderExclVolRepulsion.h */; };
-		F735B7F81A2D175800AE21D1 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7C71A2D175800AE21D1 /* CylinderExclVolume.cpp */; };
-		F735B7F91A2D175800AE21D1 /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C81A2D175800AE21D1 /* CylinderExclVolume.h */; };
-		F735B7FA1A2D175800AE21D1 /* CylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7C91A2D175800AE21D1 /* CylinderVolumeInteractions.h */; };
-		F735B7FC1A2D175800AE21D1 /* FilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7CB1A2D175800AE21D1 /* FilamentBending.cpp */; };
-		F735B7FD1A2D175800AE21D1 /* FilamentBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7CC1A2D175800AE21D1 /* FilamentBending.h */; };
-		F735B7FE1A2D175800AE21D1 /* FilamentBendingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7CD1A2D175800AE21D1 /* FilamentBendingHarmonic.cpp */; };
-		F735B7FF1A2D175800AE21D1 /* FilamentBendingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7CE1A2D175800AE21D1 /* FilamentBendingHarmonic.h */; };
-		F735B8001A2D175800AE21D1 /* FilamentFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7CF1A2D175800AE21D1 /* FilamentFF.cpp */; };
-		F735B8011A2D175800AE21D1 /* FilamentFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D01A2D175800AE21D1 /* FilamentFF.h */; };
-		F735B8021A2D175800AE21D1 /* FilamentInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D11A2D175800AE21D1 /* FilamentInteractions.h */; };
-		F735B8031A2D175800AE21D1 /* FilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7D21A2D175800AE21D1 /* FilamentStretching.cpp */; };
-		F735B8041A2D175800AE21D1 /* FilamentStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D31A2D175800AE21D1 /* FilamentStretching.h */; };
-		F735B8051A2D175800AE21D1 /* FilamentStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7D41A2D175800AE21D1 /* FilamentStretchingHarmonic.cpp */; };
-		F735B8061A2D175800AE21D1 /* FilamentStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D51A2D175800AE21D1 /* FilamentStretchingHarmonic.h */; };
 		F735B8071A2D175800AE21D1 /* ForceField.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D61A2D175800AE21D1 /* ForceField.h */; };
 		F735B8081A2D175800AE21D1 /* ForceFieldManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */; };
 		F735B8091A2D175800AE21D1 /* ForceFieldManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */; };
-		F735B80A1A2D175800AE21D1 /* LinkerFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7D91A2D175800AE21D1 /* LinkerFF.cpp */; };
-		F735B80B1A2D175800AE21D1 /* LinkerFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7DA1A2D175800AE21D1 /* LinkerFF.h */; };
-		F735B80C1A2D175800AE21D1 /* LinkerInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7DB1A2D175800AE21D1 /* LinkerInteractions.h */; };
-		F735B80D1A2D175800AE21D1 /* LinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7DC1A2D175800AE21D1 /* LinkerStretching.cpp */; };
-		F735B80E1A2D175800AE21D1 /* LinkerStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7DD1A2D175800AE21D1 /* LinkerStretching.h */; };
-		F735B80F1A2D175800AE21D1 /* LinkerStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7DE1A2D175800AE21D1 /* LinkerStretchingHarmonic.cpp */; };
-		F735B8101A2D175800AE21D1 /* LinkerStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7DF1A2D175800AE21D1 /* LinkerStretchingHarmonic.h */; };
-		F735B8111A2D175800AE21D1 /* MotorGhostFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7E01A2D175800AE21D1 /* MotorGhostFF.cpp */; };
-		F735B8121A2D175800AE21D1 /* MotorGhostFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7E11A2D175800AE21D1 /* MotorGhostFF.h */; };
-		F735B8131A2D175800AE21D1 /* MotorGhostInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7E21A2D175800AE21D1 /* MotorGhostInteractions.h */; };
-		F735B8141A2D175800AE21D1 /* MotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7E31A2D175800AE21D1 /* MotorGhostStretching.cpp */; };
-		F735B8151A2D175800AE21D1 /* MotorGhostStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7E41A2D175800AE21D1 /* MotorGhostStretching.h */; };
-		F735B8161A2D175800AE21D1 /* MotorGhostStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7E51A2D175800AE21D1 /* MotorGhostStretchingHarmonic.cpp */; };
-		F735B8171A2D175800AE21D1 /* MotorGhostStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7E61A2D175800AE21D1 /* MotorGhostStretchingHarmonic.h */; };
-		F735B81A1A2D175800AE21D1 /* VolumeCylindricalFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7E91A2D175800AE21D1 /* VolumeCylindricalFF.cpp */; };
-		F735B81B1A2D175800AE21D1 /* VolumeCylindricalFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7EA1A2D175800AE21D1 /* VolumeCylindricalFF.h */; };
 		F75259E21A6EBDD4007A4E9F /* FilamentInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */; };
 		F75259E41A6EBDFE007A4E9F /* FilamentInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */; };
+		F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259F91A7023A4007A4E9F /* BoundaryFF.cpp */; };
+		F7525A031A7023A4007A4E9F /* BoundaryFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259FA1A7023A4007A4E9F /* BoundaryFF.h */; };
+		F7525A041A7023A4007A4E9F /* BoundaryInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259FB1A7023A4007A4E9F /* BoundaryInteractions.h */; };
+		F7525A051A7023A4007A4E9F /* BoundaryRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259FC1A7023A4007A4E9F /* BoundaryRepulsion.cpp */; };
+		F7525A061A7023A4007A4E9F /* BoundaryRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259FD1A7023A4007A4E9F /* BoundaryRepulsion.h */; };
+		F7525A071A7023A4007A4E9F /* BoundaryRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259FE1A7023A4007A4E9F /* BoundaryRepulsionExp.cpp */; };
+		F7525A081A7023A4007A4E9F /* BoundaryRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259FF1A7023A4007A4E9F /* BoundaryRepulsionExp.h */; };
+		F7525A091A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A001A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp */; };
+		F7525A0A1A7023A4007A4E9F /* BoundaryRepulsionLJ.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A011A7023A4007A4E9F /* BoundaryRepulsionLJ.h */; };
+		F7525A381A7023EF007A4E9F /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A311A7023EF007A4E9F /* CylinderExclVolRepulsion.cpp */; };
+		F7525A391A7023EF007A4E9F /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A321A7023EF007A4E9F /* CylinderExclVolRepulsion.h */; };
+		F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A331A7023EF007A4E9F /* CylinderExclVolume.cpp */; };
+		F7525A3B1A7023EF007A4E9F /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A341A7023EF007A4E9F /* CylinderExclVolume.h */; };
+		F7525A3C1A7023EF007A4E9F /* CylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A351A7023EF007A4E9F /* CylinderVolumeInteractions.h */; };
+		F7525A3D1A7023EF007A4E9F /* VolumeCylindricalFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A361A7023EF007A4E9F /* VolumeCylindricalFF.cpp */; };
+		F7525A3E1A7023EF007A4E9F /* VolumeCylindricalFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A371A7023EF007A4E9F /* VolumeCylindricalFF.h */; };
+		F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A3F1A70241E007A4E9F /* BranchingBending.cpp */; };
+		F7525A531A70241E007A4E9F /* BranchingBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A401A70241E007A4E9F /* BranchingBending.h */; };
+		F7525A541A70241E007A4E9F /* BranchingBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A411A70241E007A4E9F /* BranchingBendingCosine.cpp */; };
+		F7525A551A70241E007A4E9F /* BranchingBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A421A70241E007A4E9F /* BranchingBendingCosine.h */; };
+		F7525A561A70241E007A4E9F /* BranchingDihedral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A431A70241E007A4E9F /* BranchingDihedral.cpp */; };
+		F7525A571A70241E007A4E9F /* BranchingDihedral.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A441A70241E007A4E9F /* BranchingDihedral.h */; };
+		F7525A581A70241E007A4E9F /* BranchingDihedralCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A451A70241E007A4E9F /* BranchingDihedralCosine.cpp */; };
+		F7525A591A70241E007A4E9F /* BranchingDihedralCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A461A70241E007A4E9F /* BranchingDihedralCosine.h */; };
+		F7525A5A1A70241E007A4E9F /* BranchingFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A471A70241E007A4E9F /* BranchingFF.cpp */; };
+		F7525A5B1A70241E007A4E9F /* BranchingFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A481A70241E007A4E9F /* BranchingFF.h */; };
+		F7525A5C1A70241E007A4E9F /* BranchingInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A491A70241E007A4E9F /* BranchingInteractions.h */; };
+		F7525A5D1A70241E007A4E9F /* BranchingPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A4A1A70241E007A4E9F /* BranchingPosition.cpp */; };
+		F7525A5E1A70241E007A4E9F /* BranchingPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A4B1A70241E007A4E9F /* BranchingPosition.h */; };
+		F7525A5F1A70241E007A4E9F /* BranchingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A4C1A70241E007A4E9F /* BranchingPositionCosine.cpp */; };
+		F7525A601A70241E007A4E9F /* BranchingPositionCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A4D1A70241E007A4E9F /* BranchingPositionCosine.h */; };
+		F7525A611A70241E007A4E9F /* BranchingStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A4E1A70241E007A4E9F /* BranchingStretching.cpp */; };
+		F7525A621A70241E007A4E9F /* BranchingStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A4F1A70241E007A4E9F /* BranchingStretching.h */; };
+		F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A501A70241E007A4E9F /* BranchingStretchingHarmonic.cpp */; };
+		F7525A641A70241E007A4E9F /* BranchingStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A511A70241E007A4E9F /* BranchingStretchingHarmonic.h */; };
+		F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A651A702431007A4E9F /* FilamentBending.cpp */; };
+		F7525A731A702431007A4E9F /* FilamentBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A661A702431007A4E9F /* FilamentBending.h */; };
+		F7525A741A702431007A4E9F /* FilamentBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A671A702431007A4E9F /* FilamentBendingCosine.cpp */; };
+		F7525A751A702431007A4E9F /* FilamentBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A681A702431007A4E9F /* FilamentBendingCosine.h */; };
+		F7525A761A702431007A4E9F /* FilamentBendingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A691A702431007A4E9F /* FilamentBendingHarmonic.cpp */; };
+		F7525A771A702431007A4E9F /* FilamentBendingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A6A1A702431007A4E9F /* FilamentBendingHarmonic.h */; };
+		F7525A781A702431007A4E9F /* FilamentFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A6B1A702431007A4E9F /* FilamentFF.cpp */; };
+		F7525A791A702431007A4E9F /* FilamentFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A6C1A702431007A4E9F /* FilamentFF.h */; };
+		F7525A7A1A702431007A4E9F /* FilamentInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A6D1A702431007A4E9F /* FilamentInteractions.h */; };
+		F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A6E1A702431007A4E9F /* FilamentStretching.cpp */; };
+		F7525A7C1A702431007A4E9F /* FilamentStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A6F1A702431007A4E9F /* FilamentStretching.h */; };
+		F7525A7D1A702431007A4E9F /* FilamentStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A701A702431007A4E9F /* FilamentStretchingHarmonic.cpp */; };
+		F7525A7E1A702431007A4E9F /* FilamentStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A711A702431007A4E9F /* FilamentStretchingHarmonic.h */; };
+		F7525A861A70244D007A4E9F /* MotorGhostFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A7F1A70244D007A4E9F /* MotorGhostFF.cpp */; };
+		F7525A871A70244D007A4E9F /* MotorGhostFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A801A70244D007A4E9F /* MotorGhostFF.h */; };
+		F7525A881A70244D007A4E9F /* MotorGhostInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A811A70244D007A4E9F /* MotorGhostInteractions.h */; };
+		F7525A891A70244D007A4E9F /* MotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A821A70244D007A4E9F /* MotorGhostStretching.cpp */; };
+		F7525A8A1A70244D007A4E9F /* MotorGhostStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A831A70244D007A4E9F /* MotorGhostStretching.h */; };
+		F7525A8B1A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A841A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp */; };
+		F7525A8C1A70244D007A4E9F /* MotorGhostStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A851A70244D007A4E9F /* MotorGhostStretchingHarmonic.h */; };
+		F7525A941A702461007A4E9F /* LinkerFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A8D1A702461007A4E9F /* LinkerFF.cpp */; };
+		F7525A951A702461007A4E9F /* LinkerFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A8E1A702461007A4E9F /* LinkerFF.h */; };
+		F7525A961A702461007A4E9F /* LinkerInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A8F1A702461007A4E9F /* LinkerInteractions.h */; };
+		F7525A971A702461007A4E9F /* LinkerStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A901A702461007A4E9F /* LinkerStretching.cpp */; };
+		F7525A981A702461007A4E9F /* LinkerStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A911A702461007A4E9F /* LinkerStretching.h */; };
+		F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */; };
+		F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */; };
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
@@ -253,27 +255,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPosition.cpp; sourceTree = "<group>"; };
-		8BD7CA971A6DDD1A00ADEF0A /* BranchingPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPosition.h; sourceTree = "<group>"; };
-		8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPositionCosine.cpp; sourceTree = "<group>"; };
-		8BD7CA9A1A6DDF7D00ADEF0A /* BranchingPositionCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPositionCosine.h; sourceTree = "<group>"; };
-		F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBendingCosine.cpp; sourceTree = "<group>"; };
-		F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingBendingCosine.h; sourceTree = "<group>"; };
-		F71944071A3262F3006F1E08 /* BranchingBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingBending.cpp; sourceTree = "<group>"; };
-		F71944081A3262F3006F1E08 /* BranchingBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingBending.h; sourceTree = "<group>"; };
-		F71944091A3262F3006F1E08 /* BranchingDihedral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingDihedral.cpp; sourceTree = "<group>"; };
-		F719440A1A3262F3006F1E08 /* BranchingDihedral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingDihedral.h; sourceTree = "<group>"; };
-		F719440B1A3262F3006F1E08 /* BranchingDihedralCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingDihedralCosine.cpp; sourceTree = "<group>"; };
-		F719440C1A3262F3006F1E08 /* BranchingDihedralCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingDihedralCosine.h; sourceTree = "<group>"; };
-		F719440D1A3262F3006F1E08 /* BranchingFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingFF.cpp; sourceTree = "<group>"; };
-		F719440E1A3262F3006F1E08 /* BranchingFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingFF.h; sourceTree = "<group>"; };
-		F719440F1A3262F3006F1E08 /* BranchingInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingInteractions.h; sourceTree = "<group>"; };
-		F71944101A3262F3006F1E08 /* BranchingStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingStretching.cpp; sourceTree = "<group>"; };
-		F71944111A3262F3006F1E08 /* BranchingStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingStretching.h; sourceTree = "<group>"; };
-		F71944121A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingStretchingHarmonic.cpp; sourceTree = "<group>"; };
-		F71944131A3262F3006F1E08 /* BranchingStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingStretchingHarmonic.h; sourceTree = "<group>"; };
-		F71944141A3262F3006F1E08 /* FilamentBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingCosine.cpp; sourceTree = "<group>"; };
-		F71944151A3262F3006F1E08 /* FilamentBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBendingCosine.h; sourceTree = "<group>"; };
 		F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPoint.cpp; sourceTree = "<group>"; };
 		F7199B291A30B8F700CD5DCC /* BranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPoint.h; sourceTree = "<group>"; };
 		F7199B2C1A30C24D00CD5DCC /* BranchingPointDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPointDB.cpp; sourceTree = "<group>"; };
@@ -333,52 +314,73 @@
 		F735B7B11A2D173F00AE21D1 /* CGPolakRibiereMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGPolakRibiereMethod.h; sourceTree = "<group>"; };
 		F735B7B21A2D173F00AE21D1 /* ConjugateGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConjugateGradient.h; sourceTree = "<group>"; };
 		F735B7B31A2D173F00AE21D1 /* Minimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Minimizer.h; sourceTree = "<group>"; };
-		F735B7BC1A2D175800AE21D1 /* BoundaryFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryFF.cpp; sourceTree = "<group>"; };
-		F735B7BD1A2D175800AE21D1 /* BoundaryFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryFF.h; sourceTree = "<group>"; };
-		F735B7BE1A2D175800AE21D1 /* BoundaryInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryInteractions.h; sourceTree = "<group>"; };
-		F735B7BF1A2D175800AE21D1 /* BoundaryRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsion.cpp; sourceTree = "<group>"; };
-		F735B7C01A2D175800AE21D1 /* BoundaryRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsion.h; sourceTree = "<group>"; };
-		F735B7C11A2D175800AE21D1 /* BoundaryRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsionExp.cpp; sourceTree = "<group>"; };
-		F735B7C21A2D175800AE21D1 /* BoundaryRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsionExp.h; sourceTree = "<group>"; };
-		F735B7C31A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryRepulsionLJ.cpp; sourceTree = "<group>"; };
-		F735B7C41A2D175800AE21D1 /* BoundaryRepulsionLJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryRepulsionLJ.h; sourceTree = "<group>"; };
-		F735B7C51A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolRepulsion.cpp; sourceTree = "<group>"; };
-		F735B7C61A2D175800AE21D1 /* CylinderExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsion.h; sourceTree = "<group>"; };
-		F735B7C71A2D175800AE21D1 /* CylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolume.cpp; sourceTree = "<group>"; };
-		F735B7C81A2D175800AE21D1 /* CylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolume.h; sourceTree = "<group>"; };
-		F735B7C91A2D175800AE21D1 /* CylinderVolumeInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderVolumeInteractions.h; sourceTree = "<group>"; };
-		F735B7CB1A2D175800AE21D1 /* FilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBending.cpp; sourceTree = "<group>"; };
-		F735B7CC1A2D175800AE21D1 /* FilamentBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBending.h; sourceTree = "<group>"; };
-		F735B7CD1A2D175800AE21D1 /* FilamentBendingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingHarmonic.cpp; sourceTree = "<group>"; };
-		F735B7CE1A2D175800AE21D1 /* FilamentBendingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBendingHarmonic.h; sourceTree = "<group>"; };
-		F735B7CF1A2D175800AE21D1 /* FilamentFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentFF.cpp; sourceTree = "<group>"; };
-		F735B7D01A2D175800AE21D1 /* FilamentFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentFF.h; sourceTree = "<group>"; };
-		F735B7D11A2D175800AE21D1 /* FilamentInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInteractions.h; sourceTree = "<group>"; };
-		F735B7D21A2D175800AE21D1 /* FilamentStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentStretching.cpp; sourceTree = "<group>"; };
-		F735B7D31A2D175800AE21D1 /* FilamentStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentStretching.h; sourceTree = "<group>"; };
-		F735B7D41A2D175800AE21D1 /* FilamentStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentStretchingHarmonic.cpp; sourceTree = "<group>"; };
-		F735B7D51A2D175800AE21D1 /* FilamentStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentStretchingHarmonic.h; sourceTree = "<group>"; };
 		F735B7D61A2D175800AE21D1 /* ForceField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceField.h; sourceTree = "<group>"; };
 		F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceFieldManager.cpp; sourceTree = "<group>"; };
 		F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceFieldManager.h; sourceTree = "<group>"; };
-		F735B7D91A2D175800AE21D1 /* LinkerFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkerFF.cpp; sourceTree = "<group>"; };
-		F735B7DA1A2D175800AE21D1 /* LinkerFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkerFF.h; sourceTree = "<group>"; };
-		F735B7DB1A2D175800AE21D1 /* LinkerInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkerInteractions.h; sourceTree = "<group>"; };
-		F735B7DC1A2D175800AE21D1 /* LinkerStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkerStretching.cpp; sourceTree = "<group>"; };
-		F735B7DD1A2D175800AE21D1 /* LinkerStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkerStretching.h; sourceTree = "<group>"; };
-		F735B7DE1A2D175800AE21D1 /* LinkerStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkerStretchingHarmonic.cpp; sourceTree = "<group>"; };
-		F735B7DF1A2D175800AE21D1 /* LinkerStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkerStretchingHarmonic.h; sourceTree = "<group>"; };
-		F735B7E01A2D175800AE21D1 /* MotorGhostFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostFF.cpp; sourceTree = "<group>"; };
-		F735B7E11A2D175800AE21D1 /* MotorGhostFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostFF.h; sourceTree = "<group>"; };
-		F735B7E21A2D175800AE21D1 /* MotorGhostInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostInteractions.h; sourceTree = "<group>"; };
-		F735B7E31A2D175800AE21D1 /* MotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostStretching.cpp; sourceTree = "<group>"; };
-		F735B7E41A2D175800AE21D1 /* MotorGhostStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostStretching.h; sourceTree = "<group>"; };
-		F735B7E51A2D175800AE21D1 /* MotorGhostStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostStretchingHarmonic.cpp; sourceTree = "<group>"; };
-		F735B7E61A2D175800AE21D1 /* MotorGhostStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostStretchingHarmonic.h; sourceTree = "<group>"; };
-		F735B7E91A2D175800AE21D1 /* VolumeCylindricalFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeCylindricalFF.cpp; sourceTree = "<group>"; };
-		F735B7EA1A2D175800AE21D1 /* VolumeCylindricalFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeCylindricalFF.h; sourceTree = "<group>"; };
 		F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInitializer.h; sourceTree = "<group>"; };
 		F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentInitializer.cpp; sourceTree = "<group>"; };
+		F75259F91A7023A4007A4E9F /* BoundaryFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryFF.cpp; path = Boundary/BoundaryFF.cpp; sourceTree = "<group>"; };
+		F75259FA1A7023A4007A4E9F /* BoundaryFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryFF.h; path = Boundary/BoundaryFF.h; sourceTree = "<group>"; };
+		F75259FB1A7023A4007A4E9F /* BoundaryInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryInteractions.h; path = Boundary/BoundaryInteractions.h; sourceTree = "<group>"; };
+		F75259FC1A7023A4007A4E9F /* BoundaryRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryRepulsion.cpp; path = Boundary/BoundaryRepulsion.cpp; sourceTree = "<group>"; };
+		F75259FD1A7023A4007A4E9F /* BoundaryRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryRepulsion.h; path = Boundary/BoundaryRepulsion.h; sourceTree = "<group>"; };
+		F75259FE1A7023A4007A4E9F /* BoundaryRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryRepulsionExp.cpp; path = Boundary/BoundaryRepulsionExp.cpp; sourceTree = "<group>"; };
+		F75259FF1A7023A4007A4E9F /* BoundaryRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryRepulsionExp.h; path = Boundary/BoundaryRepulsionExp.h; sourceTree = "<group>"; };
+		F7525A001A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryRepulsionLJ.cpp; path = Boundary/BoundaryRepulsionLJ.cpp; sourceTree = "<group>"; };
+		F7525A011A7023A4007A4E9F /* BoundaryRepulsionLJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryRepulsionLJ.h; path = Boundary/BoundaryRepulsionLJ.h; sourceTree = "<group>"; };
+		F7525A311A7023EF007A4E9F /* CylinderExclVolRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CylinderExclVolRepulsion.cpp; path = Volume/CylinderExclVolRepulsion.cpp; sourceTree = "<group>"; };
+		F7525A321A7023EF007A4E9F /* CylinderExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CylinderExclVolRepulsion.h; path = Volume/CylinderExclVolRepulsion.h; sourceTree = "<group>"; };
+		F7525A331A7023EF007A4E9F /* CylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CylinderExclVolume.cpp; path = Volume/CylinderExclVolume.cpp; sourceTree = "<group>"; };
+		F7525A341A7023EF007A4E9F /* CylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CylinderExclVolume.h; path = Volume/CylinderExclVolume.h; sourceTree = "<group>"; };
+		F7525A351A7023EF007A4E9F /* CylinderVolumeInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CylinderVolumeInteractions.h; path = Volume/CylinderVolumeInteractions.h; sourceTree = "<group>"; };
+		F7525A361A7023EF007A4E9F /* VolumeCylindricalFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeCylindricalFF.cpp; path = Volume/VolumeCylindricalFF.cpp; sourceTree = "<group>"; };
+		F7525A371A7023EF007A4E9F /* VolumeCylindricalFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeCylindricalFF.h; path = Volume/VolumeCylindricalFF.h; sourceTree = "<group>"; };
+		F7525A3F1A70241E007A4E9F /* BranchingBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingBending.cpp; path = Branching/BranchingBending.cpp; sourceTree = "<group>"; };
+		F7525A401A70241E007A4E9F /* BranchingBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingBending.h; path = Branching/BranchingBending.h; sourceTree = "<group>"; };
+		F7525A411A70241E007A4E9F /* BranchingBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingBendingCosine.cpp; path = Branching/BranchingBendingCosine.cpp; sourceTree = "<group>"; };
+		F7525A421A70241E007A4E9F /* BranchingBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingBendingCosine.h; path = Branching/BranchingBendingCosine.h; sourceTree = "<group>"; };
+		F7525A431A70241E007A4E9F /* BranchingDihedral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingDihedral.cpp; path = Branching/BranchingDihedral.cpp; sourceTree = "<group>"; };
+		F7525A441A70241E007A4E9F /* BranchingDihedral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingDihedral.h; path = Branching/BranchingDihedral.h; sourceTree = "<group>"; };
+		F7525A451A70241E007A4E9F /* BranchingDihedralCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingDihedralCosine.cpp; path = Branching/BranchingDihedralCosine.cpp; sourceTree = "<group>"; };
+		F7525A461A70241E007A4E9F /* BranchingDihedralCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingDihedralCosine.h; path = Branching/BranchingDihedralCosine.h; sourceTree = "<group>"; };
+		F7525A471A70241E007A4E9F /* BranchingFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingFF.cpp; path = Branching/BranchingFF.cpp; sourceTree = "<group>"; };
+		F7525A481A70241E007A4E9F /* BranchingFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingFF.h; path = Branching/BranchingFF.h; sourceTree = "<group>"; };
+		F7525A491A70241E007A4E9F /* BranchingInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingInteractions.h; path = Branching/BranchingInteractions.h; sourceTree = "<group>"; };
+		F7525A4A1A70241E007A4E9F /* BranchingPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingPosition.cpp; path = Branching/BranchingPosition.cpp; sourceTree = "<group>"; };
+		F7525A4B1A70241E007A4E9F /* BranchingPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingPosition.h; path = Branching/BranchingPosition.h; sourceTree = "<group>"; };
+		F7525A4C1A70241E007A4E9F /* BranchingPositionCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingPositionCosine.cpp; path = Branching/BranchingPositionCosine.cpp; sourceTree = "<group>"; };
+		F7525A4D1A70241E007A4E9F /* BranchingPositionCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingPositionCosine.h; path = Branching/BranchingPositionCosine.h; sourceTree = "<group>"; };
+		F7525A4E1A70241E007A4E9F /* BranchingStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingStretching.cpp; path = Branching/BranchingStretching.cpp; sourceTree = "<group>"; };
+		F7525A4F1A70241E007A4E9F /* BranchingStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingStretching.h; path = Branching/BranchingStretching.h; sourceTree = "<group>"; };
+		F7525A501A70241E007A4E9F /* BranchingStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingStretchingHarmonic.cpp; path = Branching/BranchingStretchingHarmonic.cpp; sourceTree = "<group>"; };
+		F7525A511A70241E007A4E9F /* BranchingStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchingStretchingHarmonic.h; path = Branching/BranchingStretchingHarmonic.h; sourceTree = "<group>"; };
+		F7525A651A702431007A4E9F /* FilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentBending.cpp; path = Filament/FilamentBending.cpp; sourceTree = "<group>"; };
+		F7525A661A702431007A4E9F /* FilamentBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentBending.h; path = Filament/FilamentBending.h; sourceTree = "<group>"; };
+		F7525A671A702431007A4E9F /* FilamentBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentBendingCosine.cpp; path = Filament/FilamentBendingCosine.cpp; sourceTree = "<group>"; };
+		F7525A681A702431007A4E9F /* FilamentBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentBendingCosine.h; path = Filament/FilamentBendingCosine.h; sourceTree = "<group>"; };
+		F7525A691A702431007A4E9F /* FilamentBendingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentBendingHarmonic.cpp; path = Filament/FilamentBendingHarmonic.cpp; sourceTree = "<group>"; };
+		F7525A6A1A702431007A4E9F /* FilamentBendingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentBendingHarmonic.h; path = Filament/FilamentBendingHarmonic.h; sourceTree = "<group>"; };
+		F7525A6B1A702431007A4E9F /* FilamentFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentFF.cpp; path = Filament/FilamentFF.cpp; sourceTree = "<group>"; };
+		F7525A6C1A702431007A4E9F /* FilamentFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentFF.h; path = Filament/FilamentFF.h; sourceTree = "<group>"; };
+		F7525A6D1A702431007A4E9F /* FilamentInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentInteractions.h; path = Filament/FilamentInteractions.h; sourceTree = "<group>"; };
+		F7525A6E1A702431007A4E9F /* FilamentStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentStretching.cpp; path = Filament/FilamentStretching.cpp; sourceTree = "<group>"; };
+		F7525A6F1A702431007A4E9F /* FilamentStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentStretching.h; path = Filament/FilamentStretching.h; sourceTree = "<group>"; };
+		F7525A701A702431007A4E9F /* FilamentStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilamentStretchingHarmonic.cpp; path = Filament/FilamentStretchingHarmonic.cpp; sourceTree = "<group>"; };
+		F7525A711A702431007A4E9F /* FilamentStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilamentStretchingHarmonic.h; path = Filament/FilamentStretchingHarmonic.h; sourceTree = "<group>"; };
+		F7525A7F1A70244D007A4E9F /* MotorGhostFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotorGhostFF.cpp; path = MotorGhost/MotorGhostFF.cpp; sourceTree = "<group>"; };
+		F7525A801A70244D007A4E9F /* MotorGhostFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorGhostFF.h; path = MotorGhost/MotorGhostFF.h; sourceTree = "<group>"; };
+		F7525A811A70244D007A4E9F /* MotorGhostInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorGhostInteractions.h; path = MotorGhost/MotorGhostInteractions.h; sourceTree = "<group>"; };
+		F7525A821A70244D007A4E9F /* MotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotorGhostStretching.cpp; path = MotorGhost/MotorGhostStretching.cpp; sourceTree = "<group>"; };
+		F7525A831A70244D007A4E9F /* MotorGhostStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorGhostStretching.h; path = MotorGhost/MotorGhostStretching.h; sourceTree = "<group>"; };
+		F7525A841A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotorGhostStretchingHarmonic.cpp; path = MotorGhost/MotorGhostStretchingHarmonic.cpp; sourceTree = "<group>"; };
+		F7525A851A70244D007A4E9F /* MotorGhostStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorGhostStretchingHarmonic.h; path = MotorGhost/MotorGhostStretchingHarmonic.h; sourceTree = "<group>"; };
+		F7525A8D1A702461007A4E9F /* LinkerFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerFF.cpp; path = Linker/LinkerFF.cpp; sourceTree = "<group>"; };
+		F7525A8E1A702461007A4E9F /* LinkerFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerFF.h; path = Linker/LinkerFF.h; sourceTree = "<group>"; };
+		F7525A8F1A702461007A4E9F /* LinkerInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerInteractions.h; path = Linker/LinkerInteractions.h; sourceTree = "<group>"; };
+		F7525A901A702461007A4E9F /* LinkerStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerStretching.cpp; path = Linker/LinkerStretching.cpp; sourceTree = "<group>"; };
+		F7525A911A702461007A4E9F /* LinkerStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerStretching.h; path = Linker/LinkerStretching.h; sourceTree = "<group>"; };
+		F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerStretchingHarmonic.cpp; path = Linker/LinkerStretchingHarmonic.cpp; sourceTree = "<group>"; };
+		F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerStretchingHarmonic.h; path = Linker/LinkerStretchingHarmonic.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
@@ -613,6 +615,110 @@
 			path = M3SYM/TESTS;
 			sourceTree = SOURCE_ROOT;
 		};
+		F75259E51A7021B0007A4E9F /* Linker */ = {
+			isa = PBXGroup;
+			children = (
+				F7525A8D1A702461007A4E9F /* LinkerFF.cpp */,
+				F7525A8E1A702461007A4E9F /* LinkerFF.h */,
+				F7525A8F1A702461007A4E9F /* LinkerInteractions.h */,
+				F7525A901A702461007A4E9F /* LinkerStretching.cpp */,
+				F7525A911A702461007A4E9F /* LinkerStretching.h */,
+				F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */,
+				F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */,
+			);
+			name = Linker;
+			sourceTree = "<group>";
+		};
+		F75259E61A7021B8007A4E9F /* MotorGhost */ = {
+			isa = PBXGroup;
+			children = (
+				F7525A7F1A70244D007A4E9F /* MotorGhostFF.cpp */,
+				F7525A801A70244D007A4E9F /* MotorGhostFF.h */,
+				F7525A811A70244D007A4E9F /* MotorGhostInteractions.h */,
+				F7525A821A70244D007A4E9F /* MotorGhostStretching.cpp */,
+				F7525A831A70244D007A4E9F /* MotorGhostStretching.h */,
+				F7525A841A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp */,
+				F7525A851A70244D007A4E9F /* MotorGhostStretchingHarmonic.h */,
+			);
+			name = MotorGhost;
+			sourceTree = "<group>";
+		};
+		F75259E71A7021BE007A4E9F /* Filament */ = {
+			isa = PBXGroup;
+			children = (
+				F7525A6B1A702431007A4E9F /* FilamentFF.cpp */,
+				F7525A6C1A702431007A4E9F /* FilamentFF.h */,
+				F7525A651A702431007A4E9F /* FilamentBending.cpp */,
+				F7525A661A702431007A4E9F /* FilamentBending.h */,
+				F7525A671A702431007A4E9F /* FilamentBendingCosine.cpp */,
+				F7525A681A702431007A4E9F /* FilamentBendingCosine.h */,
+				F7525A691A702431007A4E9F /* FilamentBendingHarmonic.cpp */,
+				F7525A6A1A702431007A4E9F /* FilamentBendingHarmonic.h */,
+				F7525A6D1A702431007A4E9F /* FilamentInteractions.h */,
+				F7525A6E1A702431007A4E9F /* FilamentStretching.cpp */,
+				F7525A6F1A702431007A4E9F /* FilamentStretching.h */,
+				F7525A701A702431007A4E9F /* FilamentStretchingHarmonic.cpp */,
+				F7525A711A702431007A4E9F /* FilamentStretchingHarmonic.h */,
+			);
+			name = Filament;
+			sourceTree = "<group>";
+		};
+		F75259E81A7021C5007A4E9F /* Branching */ = {
+			isa = PBXGroup;
+			children = (
+				F7525A471A70241E007A4E9F /* BranchingFF.cpp */,
+				F7525A481A70241E007A4E9F /* BranchingFF.h */,
+				F7525A3F1A70241E007A4E9F /* BranchingBending.cpp */,
+				F7525A401A70241E007A4E9F /* BranchingBending.h */,
+				F7525A411A70241E007A4E9F /* BranchingBendingCosine.cpp */,
+				F7525A421A70241E007A4E9F /* BranchingBendingCosine.h */,
+				F7525A431A70241E007A4E9F /* BranchingDihedral.cpp */,
+				F7525A441A70241E007A4E9F /* BranchingDihedral.h */,
+				F7525A451A70241E007A4E9F /* BranchingDihedralCosine.cpp */,
+				F7525A461A70241E007A4E9F /* BranchingDihedralCosine.h */,
+				F7525A491A70241E007A4E9F /* BranchingInteractions.h */,
+				F7525A4A1A70241E007A4E9F /* BranchingPosition.cpp */,
+				F7525A4B1A70241E007A4E9F /* BranchingPosition.h */,
+				F7525A4C1A70241E007A4E9F /* BranchingPositionCosine.cpp */,
+				F7525A4D1A70241E007A4E9F /* BranchingPositionCosine.h */,
+				F7525A4E1A70241E007A4E9F /* BranchingStretching.cpp */,
+				F7525A4F1A70241E007A4E9F /* BranchingStretching.h */,
+				F7525A501A70241E007A4E9F /* BranchingStretchingHarmonic.cpp */,
+				F7525A511A70241E007A4E9F /* BranchingStretchingHarmonic.h */,
+			);
+			name = Branching;
+			sourceTree = "<group>";
+		};
+		F75259E91A7021D5007A4E9F /* Boundary */ = {
+			isa = PBXGroup;
+			children = (
+				F75259F91A7023A4007A4E9F /* BoundaryFF.cpp */,
+				F75259FA1A7023A4007A4E9F /* BoundaryFF.h */,
+				F75259FB1A7023A4007A4E9F /* BoundaryInteractions.h */,
+				F75259FC1A7023A4007A4E9F /* BoundaryRepulsion.cpp */,
+				F75259FD1A7023A4007A4E9F /* BoundaryRepulsion.h */,
+				F75259FE1A7023A4007A4E9F /* BoundaryRepulsionExp.cpp */,
+				F75259FF1A7023A4007A4E9F /* BoundaryRepulsionExp.h */,
+				F7525A001A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp */,
+				F7525A011A7023A4007A4E9F /* BoundaryRepulsionLJ.h */,
+			);
+			name = Boundary;
+			sourceTree = "<group>";
+		};
+		F75259EA1A7021E3007A4E9F /* Volume */ = {
+			isa = PBXGroup;
+			children = (
+				F7525A361A7023EF007A4E9F /* VolumeCylindricalFF.cpp */,
+				F7525A371A7023EF007A4E9F /* VolumeCylindricalFF.h */,
+				F7525A311A7023EF007A4E9F /* CylinderExclVolRepulsion.cpp */,
+				F7525A321A7023EF007A4E9F /* CylinderExclVolRepulsion.h */,
+				F7525A331A7023EF007A4E9F /* CylinderExclVolume.cpp */,
+				F7525A341A7023EF007A4E9F /* CylinderExclVolume.h */,
+				F7525A351A7023EF007A4E9F /* CylinderVolumeInteractions.h */,
+			);
+			name = Volume;
+			sourceTree = "<group>";
+		};
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
@@ -664,68 +770,12 @@
 				F735B7D61A2D175800AE21D1 /* ForceField.h */,
 				F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */,
 				F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */,
-				F71944051A3262F3006F1E08 /* BranchingBendingCosine.cpp */,
-				F71944061A3262F3006F1E08 /* BranchingBendingCosine.h */,
-				F71944071A3262F3006F1E08 /* BranchingBending.cpp */,
-				F71944081A3262F3006F1E08 /* BranchingBending.h */,
-				F71944091A3262F3006F1E08 /* BranchingDihedral.cpp */,
-				F719440A1A3262F3006F1E08 /* BranchingDihedral.h */,
-				F719440B1A3262F3006F1E08 /* BranchingDihedralCosine.cpp */,
-				F719440C1A3262F3006F1E08 /* BranchingDihedralCosine.h */,
-				F719440D1A3262F3006F1E08 /* BranchingFF.cpp */,
-				F719440E1A3262F3006F1E08 /* BranchingFF.h */,
-				F719440F1A3262F3006F1E08 /* BranchingInteractions.h */,
-				8BD7CA961A6DDD1A00ADEF0A /* BranchingPosition.cpp */,
-				8BD7CA971A6DDD1A00ADEF0A /* BranchingPosition.h */,
-				8BD7CA991A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp */,
-				8BD7CA9A1A6DDF7D00ADEF0A /* BranchingPositionCosine.h */,
-				F71944101A3262F3006F1E08 /* BranchingStretching.cpp */,
-				F71944111A3262F3006F1E08 /* BranchingStretching.h */,
-				F71944121A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp */,
-				F71944131A3262F3006F1E08 /* BranchingStretchingHarmonic.h */,
-				F735B7BC1A2D175800AE21D1 /* BoundaryFF.cpp */,
-				F735B7BD1A2D175800AE21D1 /* BoundaryFF.h */,
-				F735B7BE1A2D175800AE21D1 /* BoundaryInteractions.h */,
-				F735B7BF1A2D175800AE21D1 /* BoundaryRepulsion.cpp */,
-				F735B7C01A2D175800AE21D1 /* BoundaryRepulsion.h */,
-				F735B7C11A2D175800AE21D1 /* BoundaryRepulsionExp.cpp */,
-				F735B7C21A2D175800AE21D1 /* BoundaryRepulsionExp.h */,
-				F735B7C31A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp */,
-				F735B7C41A2D175800AE21D1 /* BoundaryRepulsionLJ.h */,
-				F735B7E91A2D175800AE21D1 /* VolumeCylindricalFF.cpp */,
-				F735B7EA1A2D175800AE21D1 /* VolumeCylindricalFF.h */,
-				F735B7C51A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp */,
-				F735B7C61A2D175800AE21D1 /* CylinderExclVolRepulsion.h */,
-				F735B7C71A2D175800AE21D1 /* CylinderExclVolume.cpp */,
-				F735B7C81A2D175800AE21D1 /* CylinderExclVolume.h */,
-				F735B7C91A2D175800AE21D1 /* CylinderVolumeInteractions.h */,
-				F735B7CB1A2D175800AE21D1 /* FilamentBending.cpp */,
-				F735B7CC1A2D175800AE21D1 /* FilamentBending.h */,
-				F71944141A3262F3006F1E08 /* FilamentBendingCosine.cpp */,
-				F71944151A3262F3006F1E08 /* FilamentBendingCosine.h */,
-				F735B7CD1A2D175800AE21D1 /* FilamentBendingHarmonic.cpp */,
-				F735B7CE1A2D175800AE21D1 /* FilamentBendingHarmonic.h */,
-				F735B7CF1A2D175800AE21D1 /* FilamentFF.cpp */,
-				F735B7D01A2D175800AE21D1 /* FilamentFF.h */,
-				F735B7D11A2D175800AE21D1 /* FilamentInteractions.h */,
-				F735B7D21A2D175800AE21D1 /* FilamentStretching.cpp */,
-				F735B7D31A2D175800AE21D1 /* FilamentStretching.h */,
-				F735B7D41A2D175800AE21D1 /* FilamentStretchingHarmonic.cpp */,
-				F735B7D51A2D175800AE21D1 /* FilamentStretchingHarmonic.h */,
-				F735B7D91A2D175800AE21D1 /* LinkerFF.cpp */,
-				F735B7DA1A2D175800AE21D1 /* LinkerFF.h */,
-				F735B7DB1A2D175800AE21D1 /* LinkerInteractions.h */,
-				F735B7DC1A2D175800AE21D1 /* LinkerStretching.cpp */,
-				F735B7DD1A2D175800AE21D1 /* LinkerStretching.h */,
-				F735B7DE1A2D175800AE21D1 /* LinkerStretchingHarmonic.cpp */,
-				F735B7DF1A2D175800AE21D1 /* LinkerStretchingHarmonic.h */,
-				F735B7E01A2D175800AE21D1 /* MotorGhostFF.cpp */,
-				F735B7E11A2D175800AE21D1 /* MotorGhostFF.h */,
-				F735B7E21A2D175800AE21D1 /* MotorGhostInteractions.h */,
-				F735B7E31A2D175800AE21D1 /* MotorGhostStretching.cpp */,
-				F735B7E41A2D175800AE21D1 /* MotorGhostStretching.h */,
-				F735B7E51A2D175800AE21D1 /* MotorGhostStretchingHarmonic.cpp */,
-				F735B7E61A2D175800AE21D1 /* MotorGhostStretchingHarmonic.h */,
+				F75259EA1A7021E3007A4E9F /* Volume */,
+				F75259E91A7021D5007A4E9F /* Boundary */,
+				F75259E81A7021C5007A4E9F /* Branching */,
+				F75259E71A7021BE007A4E9F /* Filament */,
+				F75259E61A7021B8007A4E9F /* MotorGhost */,
+				F75259E51A7021B0007A4E9F /* Linker */,
 			);
 			name = ForceField;
 			path = M3SYM/Mechanics/ForceField;
@@ -803,39 +853,40 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F735B7F71A2D175800AE21D1 /* CylinderExclVolRepulsion.h in Headers */,
 				F735B7721A2D16F200AE21D1 /* Component.h in Headers */,
+				F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */,
 				F7C9CFEA1A2D165D0087434A /* Bead.h in Headers */,
+				F7525A621A70241E007A4E9F /* BranchingStretching.h in Headers */,
 				F735B77D1A2D16F200AE21D1 /* MController.h in Headers */,
 				F7C9CFF51A2D165D0087434A /* BoundarySurface.h in Headers */,
 				F7C9CFFA1A2D165D0087434A /* CCylinder.h in Headers */,
 				F7C9CFF41A2D165D0087434A /* BoundaryImpl.h in Headers */,
 				F735B7B51A2D173F00AE21D1 /* CGFletcherRievesMethod.h in Headers */,
 				F7C9D0181A2D165D0087434A /* MotorGhost.h in Headers */,
-				F735B8151A2D175800AE21D1 /* MotorGhostStretching.h in Headers */,
 				F7C9D01B1A2D165D0087434A /* Movable.h in Headers */,
-				F735B8011A2D175800AE21D1 /* FilamentFF.h in Headers */,
+				F7525A641A70241E007A4E9F /* BranchingStretchingHarmonic.h in Headers */,
+				F7525A061A7023A4007A4E9F /* BoundaryRepulsion.h in Headers */,
 				F735B7781A2D16F200AE21D1 /* GController.h in Headers */,
 				F735B76E1A2D16F200AE21D1 /* CController.h in Headers */,
 				F7C9D0201A2D165D0087434A /* NeighborListContainer.h in Headers */,
 				F7C9CFEC1A2D165D0087434A /* BeadDB.h in Headers */,
 				F735B79D1A2D172800AE21D1 /* ChemManager.h in Headers */,
-				F735B8171A2D175800AE21D1 /* MotorGhostStretchingHarmonic.h in Headers */,
+				F7525A3B1A7023EF007A4E9F /* CylinderExclVolume.h in Headers */,
 				F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */,
-				F71944171A3262F3006F1E08 /* BranchingBendingCosine.h in Headers */,
-				F735B8131A2D175800AE21D1 /* MotorGhostInteractions.h in Headers */,
+				F7525A571A70241E007A4E9F /* BranchingDihedral.h in Headers */,
 				F7C9D0271A2D165D0087434A /* ReactionBase.h in Headers */,
 				F735B7BB1A2D173F00AE21D1 /* Minimizer.h in Headers */,
 				F75259E21A6EBDD4007A4E9F /* FilamentInitializer.h in Headers */,
 				F735B7A01A2D172800AE21D1 /* ChemNRMImpl.h in Headers */,
 				F735B7A31A2D172800AE21D1 /* ChemSim.h in Headers */,
-				F719441D1A3262F3006F1E08 /* BranchingDihedralCosine.h in Headers */,
+				F7525A7C1A702431007A4E9F /* FilamentStretching.h in Headers */,
 				F7C9D00E1A2D165D0087434A /* Linker.h in Headers */,
-				F735B8101A2D175800AE21D1 /* LinkerStretchingHarmonic.h in Headers */,
-				F719441B1A3262F3006F1E08 /* BranchingDihedral.h in Headers */,
+				F7525A5C1A70241E007A4E9F /* BranchingInteractions.h in Headers */,
+				F7525A791A702431007A4E9F /* FilamentFF.h in Headers */,
+				F7525A731A702431007A4E9F /* FilamentBending.h in Headers */,
+				F7525A871A70244D007A4E9F /* MotorGhostFF.h in Headers */,
 				F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */,
 				F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */,
-				F71944191A3262F3006F1E08 /* BranchingBending.h in Headers */,
 				F735B7A81A2D172800AE21D1 /* ReactionManager.h in Headers */,
 				F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */,
 				F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */,
@@ -843,76 +894,77 @@
 				F7C9D02C1A2D165D0087434A /* Species.h in Headers */,
 				F7C9D0231A2D165D0087434A /* Reactable.h in Headers */,
 				F7C9D02D1A2D165D0087434A /* SpeciesContainer.h in Headers */,
-				F735B7F51A2D175800AE21D1 /* BoundaryRepulsionLJ.h in Headers */,
-				F735B8021A2D175800AE21D1 /* FilamentInteractions.h in Headers */,
-				F71944221A3262F3006F1E08 /* BranchingStretching.h in Headers */,
-				F735B7FD1A2D175800AE21D1 /* FilamentBending.h in Headers */,
-				F71944241A3262F3006F1E08 /* BranchingStretchingHarmonic.h in Headers */,
-				F735B8121A2D175800AE21D1 /* MotorGhostFF.h in Headers */,
+				F7525A0A1A7023A4007A4E9F /* BoundaryRepulsionLJ.h in Headers */,
 				F735B7741A2D16F200AE21D1 /* Composite.h in Headers */,
+				F7525A7E1A702431007A4E9F /* FilamentStretchingHarmonic.h in Headers */,
 				F735B7B91A2D173F00AE21D1 /* CGPolakRibiereMethod.h in Headers */,
 				F7C9D00A1A2D165D0087434A /* Filament.h in Headers */,
 				F7C9D0161A2D165D0087434A /* MMotorGhost.h in Headers */,
+				F7525A081A7023A4007A4E9F /* BoundaryRepulsionExp.h in Headers */,
+				F7525A041A7023A4007A4E9F /* BoundaryInteractions.h in Headers */,
 				F7C9CFF01A2D165D0087434A /* BoundaryElementDB.h in Headers */,
+				F7525A7A1A702431007A4E9F /* FilamentInteractions.h in Headers */,
 				F7C9D0101A2D165D0087434A /* LinkerDB.h in Headers */,
 				F735B7B71A2D173F00AE21D1 /* CGMethod.h in Headers */,
 				F716AE331A448235001BDBFE /* (null) in Headers */,
 				F7C9CFF81A2D165D0087434A /* CBound.h in Headers */,
 				F735B8071A2D175800AE21D1 /* ForceField.h in Headers */,
+				F7525A5E1A70241E007A4E9F /* BranchingPosition.h in Headers */,
 				F735B7861A2D16F200AE21D1 /* Visitor.h in Headers */,
-				F735B7FA1A2D175800AE21D1 /* CylinderVolumeInteractions.h in Headers */,
 				F7C9D01C1A2D165D0087434A /* Neighbor.h in Headers */,
-				F735B7F31A2D175800AE21D1 /* BoundaryRepulsionExp.h in Headers */,
 				F735B7A11A2D172800AE21D1 /* ChemRNode.h in Headers */,
 				F7C9D02A1A2D165D0087434A /* RSpecies.h in Headers */,
 				F7C9D0061A2D165D0087434A /* Cylinder.h in Headers */,
-				F735B8041A2D175800AE21D1 /* FilamentStretching.h in Headers */,
 				F735B8091A2D175800AE21D1 /* ForceFieldManager.h in Headers */,
 				B58E178D1A2E5E1F005BBC44 /* (null) in Headers */,
+				F7525A771A702431007A4E9F /* FilamentBendingHarmonic.h in Headers */,
 				F7C9CFFE1A2D165D0087434A /* CMonomer.h in Headers */,
+				F7525A981A702461007A4E9F /* LinkerStretching.h in Headers */,
 				F735B7991A2D172800AE21D1 /* ChemCallbacks.h in Headers */,
 				F7C9D0281A2D165D0087434A /* ReactionContainer.h in Headers */,
 				F7199B2B1A30B8F700CD5DCC /* BranchingPoint.h in Headers */,
+				F7525A5B1A70241E007A4E9F /* BranchingFF.h in Headers */,
 				F7C9D0141A2D165D0087434A /* MLinker.h in Headers */,
-				F735B81B1A2D175800AE21D1 /* VolumeCylindricalFF.h in Headers */,
+				F7525A961A702461007A4E9F /* LinkerInteractions.h in Headers */,
 				F735B79B1A2D172800AE21D1 /* ChemGillespieImpl.h in Headers */,
 				F735B7811A2D16F200AE21D1 /* Parser.h in Headers */,
 				F735B7851A2D16F200AE21D1 /* utility.h in Headers */,
+				F7525A391A7023EF007A4E9F /* CylinderExclVolRepulsion.h in Headers */,
+				F7525A881A70244D007A4E9F /* MotorGhostInteractions.h in Headers */,
 				F7C9D0001A2D165D0087434A /* CMotorGhost.h in Headers */,
-				F71944201A3262F3006F1E08 /* BranchingInteractions.h in Headers */,
 				F7C9D0021A2D165D0087434A /* Compartment.h in Headers */,
 				F7C9D0251A2D165D0087434A /* Reaction.h in Headers */,
-				F735B7EF1A2D175800AE21D1 /* BoundaryInteractions.h in Headers */,
-				F735B80C1A2D175800AE21D1 /* LinkerInteractions.h in Headers */,
+				F7525A601A70241E007A4E9F /* BranchingPositionCosine.h in Headers */,
 				F7C9D01A1A2D165D0087434A /* MotorGhostDB.h in Headers */,
 				F735B7A41A2D172800AE21D1 /* ChemSimImpl.h in Headers */,
-				F735B80B1A2D175800AE21D1 /* LinkerFF.h in Headers */,
 				F7C9CFFC1A2D165D0087434A /* CLinker.h in Headers */,
 				F7C9CFF71A2D165D0087434A /* BoundarySurfaceImpl.h in Headers */,
 				F7C9CFF21A2D165D0087434A /* BoundaryElementImpl.h in Headers */,
-				F735B7FF1A2D175800AE21D1 /* FilamentBendingHarmonic.h in Headers */,
+				F7525A751A702431007A4E9F /* FilamentBendingCosine.h in Headers */,
 				F735B77F1A2D16F200AE21D1 /* Output.h in Headers */,
 				F735B77B1A2D16F200AE21D1 /* MathFunctions.h in Headers */,
+				F7525A531A70241E007A4E9F /* BranchingBending.h in Headers */,
 				F7C9CFED1A2D165D0087434A /* Boundary.h in Headers */,
-				F735B80E1A2D175800AE21D1 /* LinkerStretching.h in Headers */,
+				F7525A3C1A7023EF007A4E9F /* CylinderVolumeInteractions.h in Headers */,
 				F7C9D00C1A2D165D0087434A /* FilamentDB.h in Headers */,
 				F735B79E1A2D172800AE21D1 /* ChemManagerImpl.h in Headers */,
 				F735B7BA1A2D173F00AE21D1 /* ConjugateGradient.h in Headers */,
+				F7525A591A70241E007A4E9F /* BranchingDihedralCosine.h in Headers */,
 				F735B7841A2D16F200AE21D1 /* SystemParameters.h in Headers */,
-				F735B8061A2D175800AE21D1 /* FilamentStretchingHarmonic.h in Headers */,
 				F7199B3B1A30CCE500CD5DCC /* CBranchingPoint.h in Headers */,
-				F735B7EE1A2D175800AE21D1 /* BoundaryFF.h in Headers */,
 				F7C9D0121A2D165D0087434A /* MCylinder.h in Headers */,
-				F71944261A3262F3006F1E08 /* FilamentBendingCosine.h in Headers */,
 				F735B7701A2D16F200AE21D1 /* common.h in Headers */,
-				F735B7F11A2D175800AE21D1 /* BoundaryRepulsion.h in Headers */,
+				F7525A8C1A70244D007A4E9F /* MotorGhostStretchingHarmonic.h in Headers */,
 				F7C9D0081A2D165D0087434A /* CylinderDB.h in Headers */,
 				F7C9D0041A2D165D0087434A /* CompartmentContainer.h in Headers */,
+				F7525A551A70241E007A4E9F /* BranchingBendingCosine.h in Headers */,
 				F7199B2F1A30C24D00CD5DCC /* BranchingPointDB.h in Headers */,
-				F735B7F91A2D175800AE21D1 /* CylinderExclVolume.h in Headers */,
-				F719441F1A3262F3006F1E08 /* BranchingFF.h in Headers */,
+				F7525A3E1A7023EF007A4E9F /* VolumeCylindricalFF.h in Headers */,
 				F7C9CFEE1A2D165D0087434A /* BoundaryElement.h in Headers */,
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,
+				F7525A951A702461007A4E9F /* LinkerFF.h in Headers */,
+				F7525A031A7023A4007A4E9F /* BoundaryFF.h in Headers */,
+				F7525A8A1A70244D007A4E9F /* MotorGhostStretching.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1003,91 +1055,93 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F735B80F1A2D175800AE21D1 /* LinkerStretchingHarmonic.cpp in Sources */,
-				F735B8031A2D175800AE21D1 /* FilamentStretching.cpp in Sources */,
 				F7C9D02B1A2D165D0087434A /* Species.cpp in Sources */,
-				F735B7F81A2D175800AE21D1 /* CylinderExclVolume.cpp in Sources */,
-				F735B80D1A2D175800AE21D1 /* LinkerStretching.cpp in Sources */,
 				F735B7B81A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp in Sources */,
 				F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7C9CFFD1A2D165D0087434A /* CMonomer.cpp in Sources */,
-				F735B8141A2D175800AE21D1 /* MotorGhostStretching.cpp in Sources */,
 				F7C9D0291A2D165D0087434A /* RSpecies.cpp in Sources */,
 				F7C9D0071A2D165D0087434A /* CylinderDB.cpp in Sources */,
+				F7525A051A7023A4007A4E9F /* BoundaryRepulsion.cpp in Sources */,
 				F735B77E1A2D16F200AE21D1 /* Output.cpp in Sources */,
 				F7C9CFEF1A2D165D0087434A /* BoundaryElementDB.cpp in Sources */,
 				F7C9D01D1A2D165D0087434A /* NeighborList.cpp in Sources */,
 				F735B79C1A2D172800AE21D1 /* ChemManager.cpp in Sources */,
-				F71944161A3262F3006F1E08 /* BranchingBendingCosine.cpp in Sources */,
+				F7525A541A70241E007A4E9F /* BranchingBendingCosine.cpp in Sources */,
 				F7C9D0051A2D165D0087434A /* Cylinder.cpp in Sources */,
-				F735B8111A2D175800AE21D1 /* MotorGhostFF.cpp in Sources */,
 				F7C9CFEB1A2D165D0087434A /* BeadDB.cpp in Sources */,
-				F735B7F21A2D175800AE21D1 /* BoundaryRepulsionExp.cpp in Sources */,
-				F735B7FC1A2D175800AE21D1 /* FilamentBending.cpp in Sources */,
+				F7525A611A70241E007A4E9F /* BranchingStretching.cpp in Sources */,
+				F7525A5A1A70241E007A4E9F /* BranchingFF.cpp in Sources */,
 				F7C9CFF31A2D165D0087434A /* BoundaryImpl.cpp in Sources */,
 				F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,
-				F719441C1A3262F3006F1E08 /* BranchingDihedralCosine.cpp in Sources */,
 				F735B79A1A2D172800AE21D1 /* ChemGillespieImpl.cpp in Sources */,
+				F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */,
 				F735B8081A2D175800AE21D1 /* ForceFieldManager.cpp in Sources */,
 				F7C9CFF91A2D165D0087434A /* CCylinder.cpp in Sources */,
 				F7C9D0191A2D165D0087434A /* MotorGhostDB.cpp in Sources */,
-				F735B80A1A2D175800AE21D1 /* LinkerFF.cpp in Sources */,
+				F7525A3D1A7023EF007A4E9F /* VolumeCylindricalFF.cpp in Sources */,
 				F7C9D0261A2D165D0087434A /* ReactionBase.cpp in Sources */,
 				F735B79F1A2D172800AE21D1 /* ChemNRMImpl.cpp in Sources */,
 				F735B7A71A2D172800AE21D1 /* ReactionManager.cpp in Sources */,
+				F7525A381A7023EF007A4E9F /* CylinderExclVolRepulsion.cpp in Sources */,
+				F7525A781A702431007A4E9F /* FilamentFF.cpp in Sources */,
 				F7C9CFFB1A2D165D0087434A /* CLinker.cpp in Sources */,
 				F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */,
 				F735B7831A2D16F200AE21D1 /* SystemParameters.cpp in Sources */,
+				F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */,
+				F7525A5F1A70241E007A4E9F /* BranchingPositionCosine.cpp in Sources */,
+				F7525A8B1A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp in Sources */,
+				F7525A891A70244D007A4E9F /* MotorGhostStretching.cpp in Sources */,
 				F735B77C1A2D16F200AE21D1 /* MController.cpp in Sources */,
-				F735B7F61A2D175800AE21D1 /* CylinderExclVolRepulsion.cpp in Sources */,
-				F735B7FE1A2D175800AE21D1 /* FilamentBendingHarmonic.cpp in Sources */,
+				F7525A561A70241E007A4E9F /* BranchingDihedral.cpp in Sources */,
 				F7C9CFF11A2D165D0087434A /* BoundaryElementImpl.cpp in Sources */,
-				F719441E1A3262F3006F1E08 /* BranchingFF.cpp in Sources */,
 				F7C9CFFF1A2D165D0087434A /* CMotorGhost.cpp in Sources */,
 				F735B76F1A2D16F200AE21D1 /* common.cpp in Sources */,
 				F735B7771A2D16F200AE21D1 /* GController.cpp in Sources */,
-				F735B8161A2D175800AE21D1 /* MotorGhostStretchingHarmonic.cpp in Sources */,
 				F735B7751A2D16F200AE21D1 /* Controller.cpp in Sources */,
 				F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */,
 				F7C9CFE91A2D165D0087434A /* Bead.cpp in Sources */,
+				F7525A581A70241E007A4E9F /* BranchingDihedralCosine.cpp in Sources */,
 				F7C9D0111A2D165D0087434A /* MCylinder.cpp in Sources */,
+				F7525A861A70244D007A4E9F /* MotorGhostFF.cpp in Sources */,
 				F7199B361A30C84600CD5DCC /* MBranchingPoint.cpp in Sources */,
 				F7C9D0151A2D165D0087434A /* MMotorGhost.cpp in Sources */,
 				F7C9D0211A2D165D0087434A /* NeighborListDB.cpp in Sources */,
 				F7C9D0171A2D165D0087434A /* MotorGhost.cpp in Sources */,
-				F719441A1A3262F3006F1E08 /* BranchingDihedral.cpp in Sources */,
 				F75259E41A6EBDFE007A4E9F /* FilamentInitializer.cpp in Sources */,
 				F7C9D00D1A2D165D0087434A /* Linker.cpp in Sources */,
 				F7C9D0241A2D165D0087434A /* Reaction.cpp in Sources */,
 				F716AE321A448235001BDBFE /* (null) in Sources */,
-				F735B7F01A2D175800AE21D1 /* BoundaryRepulsion.cpp in Sources */,
+				F7525A971A702461007A4E9F /* LinkerStretching.cpp in Sources */,
+				F7525A5D1A70241E007A4E9F /* BranchingPosition.cpp in Sources */,
+				F7525A741A702431007A4E9F /* FilamentBendingCosine.cpp in Sources */,
 				F7199B3A1A30CCE500CD5DCC /* CBranchingPoint.cpp in Sources */,
 				F7C9CFF61A2D165D0087434A /* BoundarySurfaceImpl.cpp in Sources */,
 				F7C9D00F1A2D165D0087434A /* LinkerDB.cpp in Sources */,
-				F71944251A3262F3006F1E08 /* FilamentBendingCosine.cpp in Sources */,
+				F7525A761A702431007A4E9F /* FilamentBendingHarmonic.cpp in Sources */,
 				F735B7731A2D16F200AE21D1 /* Composite.cpp in Sources */,
+				F7525A071A7023A4007A4E9F /* BoundaryRepulsionExp.cpp in Sources */,
+				F7525A7D1A702431007A4E9F /* FilamentStretchingHarmonic.cpp in Sources */,
 				F735B7B61A2D173F00AE21D1 /* CGMethod.cpp in Sources */,
-				F735B8001A2D175800AE21D1 /* FilamentFF.cpp in Sources */,
 				F7C9D00B1A2D165D0087434A /* FilamentDB.cpp in Sources */,
-				F71944211A3262F3006F1E08 /* BranchingStretching.cpp in Sources */,
+				F7525A941A702461007A4E9F /* LinkerFF.cpp in Sources */,
 				F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */,
 				F735B7801A2D16F200AE21D1 /* Parser.cpp in Sources */,
-				F735B7ED1A2D175800AE21D1 /* BoundaryFF.cpp in Sources */,
-				F71944181A3262F3006F1E08 /* BranchingBending.cpp in Sources */,
+				F7525A091A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp in Sources */,
+				F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */,
 				F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */,
 				F7C9D0031A2D165D0087434A /* CompartmentContainer.cpp in Sources */,
 				F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */,
-				F735B8051A2D175800AE21D1 /* FilamentStretchingHarmonic.cpp in Sources */,
+				F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */,
 				F735B7A21A2D172800AE21D1 /* ChemSim.cpp in Sources */,
-				F735B7F41A2D175800AE21D1 /* BoundaryRepulsionLJ.cpp in Sources */,
+				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
 				F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */,
-				F71944231A3262F3006F1E08 /* BranchingStretchingHarmonic.cpp in Sources */,
+				F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */,
 				F7199B2E1A30C24D00CD5DCC /* BranchingPointDB.cpp in Sources */,
+				F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */,
 				F7C9D0011A2D165D0087434A /* Compartment.cpp in Sources */,
 				F7C9D0131A2D165D0087434A /* MLinker.cpp in Sources */,
 				F735B77A1A2D16F200AE21D1 /* MathFunctions.cpp in Sources */,
-				F735B81A1A2D175800AE21D1 /* VolumeCylindricalFF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,11 +1153,9 @@
 				B58E17A21A30F462005BBC44 /* (null) in Sources */,
 				B58E17931A2E75FD005BBC44 /* (null) in Sources */,
 				B58E17991A2FBBB3005BBC44 /* (null) in Sources */,
-				8BD7CA9B1A6DDF7D00ADEF0A /* BranchingPositionCosine.cpp in Sources */,
 				B58E17961A2FAF38005BBC44 /* (null) in Sources */,
 				B58E178B1A2E5DF9005BBC44 /* (null) in Sources */,
 				B58E17901A2E6EF0005BBC44 /* (null) in Sources */,
-				8BD7CA981A6DDD1A00ADEF0A /* BranchingPosition.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* M3Sym.cpp in Sources */,
 				B58E179F1A30EF9D005BBC44 /* (null) in Sources */,
 			);
