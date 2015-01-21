@@ -54,9 +54,6 @@ private:
     float _birthTime; ///< Birth time
     
     Compartment* _compartment; ///< Where this motorghost is
-    
-    double _stepSize = SystemParameters::Geometry().cylinderSize /
-                       SystemParameters::Chemistry().numBindingSites;
 
 public:
     vector<double> coordinate;

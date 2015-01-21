@@ -22,7 +22,8 @@ MLinker::MLinker(int linkerType, double position1, double position2,
                  const vector<double>& coord11, const vector<double>& coord12,
                  const vector<double>& coord21, const vector<double>& coord22) {
     
-    if(SystemParameters::Mechanics().LStretchingK.size() != 0)
+    if(SystemParameters::Mechanics().LStretchingK.size() != 0 &&
+       SystemParameters::Mechanics().LStretchingK.size() > linkerType)
         _kStretch = SystemParameters::Mechanics().LStretchingK[linkerType];
     
     auto m1 = midPointCoordinate(coord11, coord12, position1);

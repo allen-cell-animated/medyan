@@ -123,6 +123,16 @@ NUMBRANCHERSPECIES:          1
 NUMBINDINGSITES:             2
 
 ##################################################
+############## DYNAMIC RATE CHANGING #############
+
+FDPLENGTH:                   2.7
+
+MDULENGTH:                   5.0
+MDWLENGTH:                   10.0
+
+LDULENGTH:                   5.0
+
+##################################################
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
 FILAMENTFILE:               testfilamentinput.txt

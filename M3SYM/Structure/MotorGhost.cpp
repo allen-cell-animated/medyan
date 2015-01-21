@@ -133,9 +133,8 @@ void MotorGhost::updatePosition() {
 /// @note - This function updates walking rates based on the
 /// following exponential form:
 ///
-///                 k = k_0 * exp(- f * a / kT)
+///                 k = k_0 * exp(-f * a / kT)
 ///
-/// where the characteristic distance in this case is half the size of a step.
 /// The function uses the motor's stretching force at the current state
 /// to change this rate.
 
@@ -144,13 +143,17 @@ void MotorGhost::updatePosition() {
 ///
 ///                 k = k_0 * exp(f * a / kT)
 ///
-/// where the characteristic distance in this case is the size of a motor
-/// head group. The function uses the motor's stretching force at the current
+/// The function uses the motor's stretching force at the current
 /// state to change this rate.
 
 void MotorGhost::updateReactionRates() {
 
+    //current force
     double force = _mMotorGhost->stretchForce;
+    
+    //characteristic lengths
+    double aUnbinding = SystemParameters::DynamicRates().MDULength[_motorType];
+    double aWalking = SystemParameters::DynamicRates().MDWLength[_motorType];
     
     //get all walking reactions
     Species* s1 = _cMotorGhost->getFirstSpecies();
@@ -160,13 +163,13 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = r->getBareRate() * exp( - force * 0.5 * _stepSize / kT);
+            float newRate = r->getBareRate() * exp( - force * aWalking / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }
         if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
             
-            float newRate = r->getBareRate() * exp( force * motorHeadGroup / kT);
+            float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }
@@ -175,14 +178,14 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = r->getBareRate() * exp( - force * 0.5 * _stepSize / kT);
+            float newRate = r->getBareRate() * exp( - force * aWalking / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }
         
         if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
             
-            float newRate = r->getBareRate() * exp( force * motorHeadGroup / kT);
+            float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }

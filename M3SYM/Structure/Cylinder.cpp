@@ -115,7 +115,6 @@ void Cylinder::updatePosition() {
 ///
 ///                 k = k_0 * exp(-f * a / kT)
 ///
-/// where the characteristic distance in this case is the size of a monomer.
 /// The function uses the bead load force to calculate this changed rate.
 /// If there is no force on the beads the reaction rates are set to the bare.
 
@@ -123,8 +122,12 @@ void Cylinder::updateReactionRates() {
     
     double force;
     
+    //characteristic length
+    float a = SystemParameters::DynamicRates().FDPLength;
+    
     //load force from front (affects plus end polymerization)
     if(_plusEnd) {
+        
         //get force of front bead
         force = _b2->loadForce;
         
@@ -133,7 +136,6 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
             
-                float a = SystemParameters::Geometry().monomerSize;
                 float newRate = r->getBareRate() * exp( - force * a / kT);
                 r->setRate(newRate);
                 r->getRNode()->activateReaction();
@@ -152,7 +154,6 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
-                float a = SystemParameters::Geometry().monomerSize;
                 float newRate = r->getBareRate() * exp( - force * a / kT);
                 r->setRate(newRate);
                 r->getRNode()->activateReaction();

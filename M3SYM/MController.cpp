@@ -70,7 +70,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
         new BranchingFF(forceFields.BrStretchingType,
                         forceFields.BrBendingType,
                         forceFields.BrDihedralType,
-                        forceFields.BrDihedralType));
+                        forceFields.BrPositionType));
     
     cout << "Branching force field initialized:"<<endl;
     if(forceFields.BrStretchingType != "")
@@ -79,7 +79,8 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
         cout << "Bending: " << forceFields.BrBendingType<< endl;
     if(forceFields.BrDihedralType != "")
         cout << "Dihedral: " << forceFields.BrDihedralType <<endl;
-    
+    if(forceFields.BrPositionType != "")
+        cout << "Position: " << forceFields.BrPositionType <<endl;
     
     _FFManager._forceFields.push_back(
         new VolumeCylindricalFF(forceFields.VolumeFFType));

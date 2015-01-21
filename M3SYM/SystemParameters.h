@@ -55,6 +55,7 @@ struct MechanicsParameters {
     vector<double> BrBendingK = {};
     vector<double> BrBendingTheta = {};
     vector<double> BrDihedralK = {};
+    vector<double> BrPositionK = {};
     //@}
     
     //@{
@@ -125,6 +126,19 @@ struct BoundaryParameters {
     double diameter = 0;
 };
 
+/// Struct to hold dynamic rate changing parameters
+struct DynamicRateParameters {
+    
+    /// Option for dynamic polymerization rate of filaments
+    double FDPLength = 0.0;
+    /// Option for dynamic unbinding rate of linkers
+    vector<double> LDULength = {};
+    /// Option for dynamic unbinding rate of motors
+    vector<double> MDULength = {};
+    /// Option for dynamic walking rate of motors
+    vector<double> MDWLength = {};
+    
+};
 
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
@@ -134,10 +148,11 @@ friend class SystemParser;
 #ifdef TESTING ///Public access if testing only
 public:
 #endif
-    static MechanicsParameters MParams; ///< The mechanical parameters
-    static ChemistryParameters CParams; ///< The chemistry parameters
-    static GeometryParameters GParams;  ///< The geometry parameters
-    static BoundaryParameters BParams;  ///< The boundary parameters
+    static MechanicsParameters MParams;    ///< The mechanical parameters
+    static ChemistryParameters CParams;    ///< The chemistry parameters
+    static GeometryParameters GParams;     ///< The geometry parameters
+    static BoundaryParameters BParams;     ///< The boundary parameters
+    static DynamicRateParameters DRParams; ///< The dynamic rate parameters
     
 public:
     //@{
@@ -146,6 +161,7 @@ public:
     static const ChemistryParameters& Chemistry() {return CParams;}
     static const GeometryParameters& Geometry() {return GParams;}
     static const BoundaryParameters& Boundaries() {return BParams;}
+    static const DynamicRateParameters& DynamicRates() {return DRParams;}
     //@}
 };
 

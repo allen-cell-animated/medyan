@@ -199,6 +199,7 @@ struct MechanicsFFType {
     string BrStretchingType = "";
     string BrBendingType = "";
     string BrDihedralType = "";
+    string BrPositionType = "";
     //@}
     
     /// VolumeFF type
@@ -273,6 +274,7 @@ public:
     void readChemistryParameters();
     void readGeometryParameters();
     void readBoundaryParameters();
+    void readDynamicRateParameters();
     //@}
     
     //@{
@@ -292,7 +294,6 @@ public:
     
     /// Chemistry information
     ChemistrySetup readChemistrySetup();
-
 };
 
 /// Used to parse initial Filament information, initialized by the Controller.

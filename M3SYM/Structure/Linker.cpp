@@ -132,13 +132,16 @@ void Linker::updatePosition() {
 ///
 ///                 k = k_0 * exp(f * a / kT)
 ///
-/// where the characteristic distance in this case is the size of a motor
-/// head group. The function uses the motor's stretching force at the current
+/// The function uses the motor's stretching force at the current
 /// state to change this rate.
 
 void Linker::updateReactionRates() {
 
+    //current force on linker
     double force = _mLinker->stretchForce;
+    
+    //characteristic length
+    double a = SystemParameters::DynamicRates().LDULength[_linkerType];
     
     //get all walking reactions
     Species* s1 = _cLinker->getFirstSpecies();
@@ -147,7 +150,7 @@ void Linker::updateReactionRates() {
     for(auto r : s1->getRSpecies().reactantReactions()) {
         if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
             
-            float newRate = r->getBareRate() * exp( force * linkerHeadGroup / kT);
+            float newRate = r->getBareRate() * exp( force * a / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }
@@ -155,7 +158,7 @@ void Linker::updateReactionRates() {
     for(auto r : s2->getRSpecies().reactantReactions()) {
         if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
             
-            float newRate = r->getBareRate() * exp( force * linkerHeadGroup / kT);
+            float newRate = r->getBareRate() * exp( force * a / kT);
             r->setRate(newRate);
             r->getRNode()->activateReaction();
         }

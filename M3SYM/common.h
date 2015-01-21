@@ -46,8 +46,6 @@ inline double tau() {return global_time;}
 
 ///Some constants
 const double kT = 4.1; //in pN * nm
-const double motorHeadGroup = 5.0; //in nm
-const double linkerHeadGroup = 5.0; //in nm
 
 ///To use STL containers, libraries, etc
 using namespace std;

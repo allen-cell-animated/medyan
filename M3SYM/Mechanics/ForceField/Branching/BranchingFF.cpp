@@ -22,6 +22,9 @@
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
 
+#include "BranchingPosition.h"
+#include "BranchingPositionCosine.h"
+
 #include "BranchingPoint.h"
 
 BranchingFF::BranchingFF(string& stretching, string& bending,

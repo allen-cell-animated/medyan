@@ -156,7 +156,7 @@ void Controller::initialize(string inputDirectory, string outputDirectory) {
     _cController->initialize(CAlgorithm.algorithm, "", chem);
     cout << "Done." << endl;
 #endif
-    
+
     //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
     vector<vector<vector<double>>> filamentData;

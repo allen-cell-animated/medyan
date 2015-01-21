@@ -13,6 +13,8 @@
 
 #include "BranchingPosition.h"
 
+#include "BranchingPositionCosine.h"
+
 #include "BranchingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -24,7 +26,7 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(BranchingPoint
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
@@ -44,7 +46,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* 
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
@@ -60,7 +62,7 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
@@ -69,7 +71,7 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
 }
 
 
-/////Template specializations
+///Template specializations
 //template double
 //BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
 //template void

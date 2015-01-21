@@ -41,6 +41,8 @@ public:
     double getEqTheta(){return _eqTheta;}
     
     double getDihedralConstant(){return _kDihedr;}
+    
+    double getPositionConstant(){return _kPosition;}
     //@}
     
     /// Set parent
@@ -58,6 +60,8 @@ private:
     double _kBend; //< Bending constant
     
     double _kDihedr; ///< Twisting constant
+    
+    double _kPosition; ///< Position constant
     
     BranchingPoint* _pBranchingPoint; ///< Pointer to parent branch point
     

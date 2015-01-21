@@ -509,6 +509,19 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrDihedralType = lineVector[1];
             }
         }
+        else if (line.find("BRPOSITIONTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at Branch dihedral type. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BrPositionType = lineVector[1];
+            }
+        }
         else if (line.find("BOUNDARYTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -779,6 +792,16 @@ void SystemParser::readMechanicsParameters() {
                     MParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
             }
         }
+        //Branch position
+        else if (line.find("BRPOSITIONK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
         
         //Volume parameter
         else if (line.find("VOLUMEK") != string::npos) {
@@ -937,6 +960,83 @@ void SystemParser::readBoundaryParameters() {
     }
     //Set system parameters
     SystemParameters::BParams = BParams;
+}
+
+void SystemParser::readDynamicRateParameters() {
+    
+    DynamicRateParameters DRParams;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+
+        if (line.find("FDPLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                DRParams.FDPLength = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+
+        else if (line.find("MDULENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                DRParams.MDULength.push_back(atof((lineVector[1].c_str())));
+            }
+            else {}
+        }
+        
+        else if (line.find("MDWLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                DRParams.MDWLength.push_back(atof((lineVector[1].c_str())));
+            }
+            else {}
+        }
+        
+        else if (line.find("LDULENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                DRParams.LDULength.push_back(atof((lineVector[1].c_str())));
+            }
+            else {}
+        }
+    }
+    
+    //set system parameters
+    SystemParameters::DRParams = DRParams;
 }
 
 BoundaryType SystemParser::readBoundaryType() {
@@ -1629,6 +1729,3 @@ ChemistryData ChemistryParser::readChemistryInput() {
     }
     return chem;
 }
-
-
-
