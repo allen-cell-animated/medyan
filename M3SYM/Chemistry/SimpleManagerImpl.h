@@ -52,6 +52,13 @@ private:
     void genCFRxnManagers(ChemistryData& chem);
     //@}
     
+    /// Generate all species, bulk and diffusing
+    void genSpecies(ChemistryData& chem,
+                    Compartment& protoCompartment);
+    
+    /// Initialize the copy numbers of all species
+    void initDiffusingCopyNumbers(ChemistryData& chem);
+    
     /// Generate the general, non-filament reactions
     void genGeneralReactions(ChemistryData& chem,
                              Compartment& protoCompartment);

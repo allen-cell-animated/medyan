@@ -488,9 +488,6 @@ public:
         assert(target->numberOfSpecies()==0);
         for(auto &s : _species.species()){
             Species* sClone = s->clone();
-            //if not activated yet, set zero copy number
-            if(!target->_activated)
-                sClone->setN(0);
             target->addSpeciesUnique(unique_ptr<Species>(sClone));
         }
     }

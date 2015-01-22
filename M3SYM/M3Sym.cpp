@@ -45,22 +45,59 @@
  Untar the **M3SYM** source code into some directory, enter 
  into the "M3SYM" and execute "make" from the command line.
  
+ \subsection step3 Step 3: Running M3SYM
+ 
+ See documentation on input files for more information. M3SYM
+ executable must be run with the following command line arguments:
+ 
+ -s : System input file to be used. Must be an absolute path
+ -i : Input directory to be used, where all files specified in the
+      system input file must be located.
+ -o : Output directory to be used (must be created beforehand),
+      where all output files will be placed
+ 
+ Run -h for help.
+ 
  */
+
+#include <getopt.h>
 
 #include "common.h"
 
 #include "Controller.h"
 #include "SubSystem.h"
 
-int main(int argc, const char * argv[])
-{
+void printUsage() {
+    cout << "Usage: M3SYM -s systemFile -i inputDirectory -o outputDirectory" << endl;
+}
 
+int main(int argc, char **argv)
+{
+    //create subsystem and controller to run it
     SubSystem* s;
     Controller c(s);
 
-    c.initialize("/Users/jameskomianos/Code/M3SYM/M3SYM/testsysteminput.txt",
-                 "/Users/jameskomianos/Code/M3SYM/M3SYM/",
-                 "/Users/jameskomianos/Code/M3SYM/M3SYM/Output/");
+    string inputFile, inputDirectory, outputDirectory;
+    int option;
+    
+    //parse command line args
+    while ((option = getopt(argc, argv, "s:i:o:h")) != -1) {
+        switch (option) {
+            case 's' : inputFile = optarg;
+                break;
+            case 'i' : inputDirectory = optarg;
+                break;
+            case 'o' : outputDirectory = optarg;
+                break;
+            case 'h' : printUsage();
+                exit(EXIT_FAILURE);
+            default: printUsage();
+                exit(EXIT_FAILURE);
+        }
+    }
+    
+    //initialize and run system
+    c.initialize(inputFile, inputDirectory, outputDirectory);
     c.run();
 
 }

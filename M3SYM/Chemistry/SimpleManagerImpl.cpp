@@ -1580,6 +1580,46 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
 }
 
 
+void SimpleManagerImpl::genSpecies(ChemistryData& chem,
+                                   Compartment& protoCompartment) {
+    
+    // add diffusing species (zero copy number for now)
+    for(auto &sd : chem.speciesDiffusing)
+        protoCompartment.addSpeciesUnique(unique_ptr<Species>(
+        new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
+    
+    // add bulk species (with copy number)
+    for(auto &sb : chem.speciesBulk)
+        CompartmentGrid::instance()->
+        addSpeciesBulk(get<0>(sb), get<1>(sb),
+        (get<2>(sb) == "CONST") ? true : false);
+}
+
+void SimpleManagerImpl::initDiffusingCopyNumbers(ChemistryData& chem) {
+    
+    //look at copy number for each species
+    for(auto &s : chem.speciesDiffusing) {
+        
+        auto name = get<0>(s);
+        auto copyNumber = get<1>(s);
+        
+        //add randomly in compartment
+        while (copyNumber > 0) {
+            
+            //find a random compartment within the boundary
+            Compartment* randomCompartment;
+            while(true) {
+                randomCompartment = GController::getRandomCompartment();
+                if(randomCompartment->isActivated()) break;
+            }
+            //find the species, increase copy number
+            Species* species = randomCompartment->findSpeciesByName(name);
+            species->up();
+            copyNumber--;
+        }
+    }
+}
+
 void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
                                             Compartment& protoCompartment) {
     
@@ -2013,14 +2053,8 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     //Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::instance()->getProtoCompartment();
     
-    for(auto &sd : chem.speciesDiffusing)
-        cProto.addSpeciesUnique(unique_ptr<Species>(
-           new SpeciesDiffusing(get<0>(sd), get<1>(sd))), get<2>(sd));
-    
-    for(auto &sb : chem.speciesBulk)
-        CompartmentGrid::instance()->
-            addSpeciesBulk(get<0>(sb), get<1>(sb),
-                          (get<2>(sb) == "CONST") ? true : false);
+    //generate all species
+    genSpecies(chem, cProto);
     
     //add reactions to protocompartment
     genGeneralReactions(chem, cProto);
@@ -2040,6 +2074,9 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     //generate nucleation reactions
     genNucleationReactions(chem);
     
+    //intialize copy numbers of diffusing
+    initDiffusingCopyNumbers(chem);
+    
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();
     
@@ -2052,8 +2089,7 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                                             bool extensionFront,
                                             bool extensionBack,
-                                            bool creation)
-{
+                                            bool creation) {
     //maxlength is same length as mcylinder
     int maxlength = cc->getSize();
     Compartment* c = cc->getCompartment();

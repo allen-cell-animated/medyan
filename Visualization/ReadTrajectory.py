@@ -4,7 +4,7 @@ from mayavi import mlab
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
 traj_filename='/Users/jameskomianos/Code/M3SYM/M3SYM/Output/snapshot.traj'
-#color_filename = '/Users/jameskomianos/Code/M3SYM/M3SYM/Output/birthtimes.traj'
+#color_filename = '/Users/jameskomianos/Code/M3SYM/M3SYM/Output/stresses.traj'
 color_filename = ''
 
 #Open the traj file
@@ -200,11 +200,11 @@ def show_frame(frame_number=-1):
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 0.016
+	MAXVAL = 1.00
 	MINVAL = 0.00
-	#SCALETITLE = 'Stresses (pN/m)'
-	SCALETITLE = 'Birth Times (s)'
-	COLORMAP = 'Spectral'
+	SCALETITLE = 'Stresses (pN/m)'
+	#SCALETITLE = 'Birth Times (s)'
+	COLORMAP = 'OrRd'
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
