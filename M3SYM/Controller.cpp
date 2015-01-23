@@ -44,10 +44,6 @@ void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory) {
     
-    cout << "******************** M3SYM **********************" << endl;
-    
-    cout.precision(10);
-    
     //init input directory
     _inputDirectory = inputDirectory;
     _outputDirectory = outputDirectory;

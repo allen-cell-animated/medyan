@@ -7,16 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B58E178B1A2E5DF9005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B58E178D1A2E5E1F005BBC44 /* (null) in Headers */ = {isa = PBXBuildFile; };
-		B58E17901A2E6EF0005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E17931A2E75FD005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E17961A2FAF38005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E17991A2FBBB3005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E179C1A2FCCD7005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E179F1A30EF9D005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B58E17A21A30F462005BBC44 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F716AE321A448235001BDBFE /* (null) in Sources */ = {isa = PBXBuildFile; };
 		F716AE331A448235001BDBFE /* (null) in Headers */ = {isa = PBXBuildFile; };
 		F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */; };
 		F7199B2B1A30B8F700CD5DCC /* BranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B291A30B8F700CD5DCC /* BranchingPoint.h */; };
@@ -1111,7 +1102,6 @@
 				F75259E41A6EBDFE007A4E9F /* FilamentInitializer.cpp in Sources */,
 				F7C9D00D1A2D165D0087434A /* Linker.cpp in Sources */,
 				F7C9D0241A2D165D0087434A /* Reaction.cpp in Sources */,
-				F716AE321A448235001BDBFE /* (null) in Sources */,
 				F7525A971A702461007A4E9F /* LinkerStretching.cpp in Sources */,
 				F7525A5D1A70241E007A4E9F /* BranchingPosition.cpp in Sources */,
 				F7525A741A702431007A4E9F /* FilamentBendingCosine.cpp in Sources */,
@@ -1149,15 +1139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B58E179C1A2FCCD7005BBC44 /* (null) in Sources */,
-				B58E17A21A30F462005BBC44 /* (null) in Sources */,
-				B58E17931A2E75FD005BBC44 /* (null) in Sources */,
-				B58E17991A2FBBB3005BBC44 /* (null) in Sources */,
-				B58E17961A2FAF38005BBC44 /* (null) in Sources */,
-				B58E178B1A2E5DF9005BBC44 /* (null) in Sources */,
-				B58E17901A2E6EF0005BBC44 /* (null) in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* M3Sym.cpp in Sources */,
-				B58E179F1A30EF9D005BBC44 /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

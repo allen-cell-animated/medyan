@@ -68,11 +68,18 @@
 #include "SubSystem.h"
 
 void printUsage() {
-    cout << "Usage: M3SYM -s systemFile -i inputDirectory -o outputDirectory" << endl;
+    cout
+    << "Usage: M3SYM -s systemFile -i inputDirectory -o outputDirectory"
+    << endl;
 }
 
 int main(int argc, char **argv)
 {
+    
+    cout << "******************** M3SYM **********************" << endl;
+    
+    cout.precision(8);
+    
     //create subsystem and controller to run it
     SubSystem* s;
     Controller c(s);
@@ -94,6 +101,22 @@ int main(int argc, char **argv)
             default: printUsage();
                 exit(EXIT_FAILURE);
         }
+    }
+    //check for arguments
+    if(inputFile == "") {
+        cout << "Must specify a system input file. Exiting." << endl;
+        printUsage();
+        exit(EXIT_FAILURE);
+    }
+    if(inputDirectory == "") {
+        cout << "Must specify an input directory. Exiting." << endl;
+        printUsage();
+        exit(EXIT_FAILURE);
+    }
+    if(outputDirectory == "") {
+        cout << "Must specify an output directory. Exiting." << endl;
+        printUsage();
+        exit(EXIT_FAILURE);
     }
     
     //initialize and run system

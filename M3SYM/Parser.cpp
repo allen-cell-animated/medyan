@@ -332,9 +332,14 @@ ChemistrySetup SystemParser::readChemistrySetup() {
                 cout << "Error reading chemistry input file. Exiting" << endl;
                 exit(EXIT_FAILURE);
             }
+            
             else if (lineVector.size() == 2)
                 CSetup.inputFile = lineVector[1];
-            else {}
+            
+            else if(lineVector.size() < 2) {
+                cout << "Must specify a chemistry input file. Exiting" << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 

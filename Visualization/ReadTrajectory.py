@@ -4,8 +4,8 @@ from mayavi import mlab
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
 traj_filename='/Users/jameskomianos/Code/M3SYM/M3SYM/Output/snapshot.traj'
-#color_filename = '/Users/jameskomianos/Code/M3SYM/M3SYM/Output/stresses.traj'
-color_filename = ''
+color_filename = '/Users/jameskomianos/Code/M3SYM/M3SYM/Output/stresses.traj'
+#color_filename = ''
 
 #Open the traj file
 traj_file=open(traj_filename)
@@ -200,7 +200,7 @@ def show_frame(frame_number=-1):
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 1.00
+	MAXVAL = 2.00
 	MINVAL = 0.00
 	SCALETITLE = 'Stresses (pN/m)'
 	#SCALETITLE = 'Birth Times (s)'
@@ -267,7 +267,8 @@ def show_frame(frame_number=-1):
 		mlab.text(0.6, 0.9, time)
 
 	#DISPLAYING LINKERS
-	if(len(local_frame.linkers) != 0):
+	if(False):
+	#if(len(local_frame.linkers) != 0):
 		x=[]
 		c=[]
 		connections=[]
@@ -310,7 +311,8 @@ def show_frame(frame_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DLINKERCOLOR)
 
 	#DISPLAYING MOTORS
-	if(len(local_frame.motors) != 0):
+	if(False):
+	#if(len(local_frame.motors) != 0):
 		x=[]
 		c=[]
 		connections=[]
