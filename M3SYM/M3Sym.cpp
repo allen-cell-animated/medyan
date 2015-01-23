@@ -52,9 +52,9 @@
  
  -s : System input file to be used. Must be an absolute path
  -i : Input directory to be used, where all files specified in the
-      system input file must be located.
+      system input file must be located. Must be an absolute path.
  -o : Output directory to be used (must be created beforehand),
-      where all output files will be placed
+      where all output files will be placed. Must be an absolute path.
  
  Run -h for help.
  
