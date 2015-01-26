@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM__BranchingPosition_h
-#define M3SYM__BranchingPosition_h
+#ifndef M3SYM_BranchingPosition_h
+#define M3SYM_BranchingPosition_h
 
 #include "common.h"
 
