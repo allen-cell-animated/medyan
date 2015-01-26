@@ -67,19 +67,19 @@ MTWISTINGPHI:
 
 ### BRANCHING ###
 
-BRSTRETCHINGTYPE:           HARMONIC
-BRSTRETCHINGK:              1.0
-BRSTRETCHINGL:              10.0
+BRSTRETCHINGTYPE:
+BRSTRETCHINGK:
+BRSTRETCHINGL:
 
-BRBENDINGTYPE:              COSINE
-BRBENDINGK:                 0.2
-BRBENDINGTHETA:             1.22
+BRBENDINGTYPE:
+BRBENDINGK:
+BRBENDINGTHETA:
 
 BRDIHEDRALTYPE:             
-BRDIHEDRALK:                100.0
+BRDIHEDRALK:
 
 BRPOSITIONTYPE:
-BRPOSITIONK:                20.0
+BRPOSITIONK:
 
 ### EXCLUDED VOLUME ###
 
@@ -102,23 +102,23 @@ BSCREENLENGTH:              0.27
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMTOTALSTEPS:               10
-RUNTIME:
+NUMTOTALSTEPS:
+RUNTIME:                     7200.0
 
-NUMSTEPSPERS:                1
-SNAPSHOTTIME:
+NUMSTEPSPERS:
+SNAPSHOTTIME:                5.0
 
-NUMCHEMSTEPS:                1
-NUMSTEPSPERN:                1
+NUMCHEMSTEPS:                1000
+NUMSTEPSPERN:                100000
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            0
-NUMMOTORSPECIES:             0
-NUMBRANCHERSPECIES:          1
+NUMLINKERSPECIES:            1
+NUMMOTORSPECIES:             1
+NUMBRANCHERSPECIES:          0
 
 NUMBINDINGSITES:             2
 
@@ -138,8 +138,8 @@ LDULENGTH:                   0.4
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               1
-FILAMENTLENGTH:             5
+NUMFILAMENTS:               250
+FILAMENTLENGTH:             15
 
 #################################################
 ##################### OUTPUT ####################
