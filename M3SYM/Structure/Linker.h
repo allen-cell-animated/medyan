@@ -59,7 +59,7 @@ public:
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
            double position1 = 0.5, double position2 = 0.5, bool creation = false);
-    ~Linker();
+    virtual ~Linker() noexcept;
     
     //@{
     ///Get attached cylinder

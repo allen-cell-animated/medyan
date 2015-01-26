@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     cout.precision(8);
     
     //create subsystem and controller to run it
-    SubSystem* s;
+    SubSystem* s = nullptr;
     Controller c(s);
 
     string inputFile, inputDirectory, outputDirectory;

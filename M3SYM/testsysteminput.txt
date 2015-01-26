@@ -103,10 +103,10 @@ CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMTOTALSTEPS:
-RUNTIME:                     300.0
+RUNTIME:                     1200.0
 
 NUMSTEPSPERS:
-SNAPSHOTTIME:                1.0
+SNAPSHOTTIME:                5.0
 
 NUMCHEMSTEPS:                1000
 NUMSTEPSPERN:                100000
@@ -138,7 +138,7 @@ LDULENGTH:                   0.4
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               200
+NUMFILAMENTS:               250
 FILAMENTLENGTH:             10
 
 #################################################

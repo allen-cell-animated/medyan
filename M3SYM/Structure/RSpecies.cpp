@@ -20,7 +20,7 @@
     #include <boost/pool/pool_alloc.hpp>
 #endif
 
-RSpecies::~RSpecies(){
+RSpecies::~RSpecies() noexcept{
 
     assert((_as_reactants.empty() and _as_products.empty())
     && "Major bug: RSpecies should not contain Reactions when being destroyed.");

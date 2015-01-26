@@ -36,13 +36,14 @@ protected:
     short _nDim; ///< Dimensionality
     
 public:
-    Boundary(int nDim, BoundaryShape shape) : _nDim(nDim), _shape(shape) {};
+    Boundary(int nDim, BoundaryShape shape) : _shape(shape), _nDim(nDim) {};
     ~Boundary() {};
 
     /// Get shape
     BoundaryShape getShape() {return _shape;}
     /// Get boundarysurfaces
-    const vector<unique_ptr<BoundarySurface>>& getBoundarySurfaces() {return _boundarySurfaces;}
+    const vector<unique_ptr<BoundarySurface>>& getBoundarySurfaces()
+        {return _boundarySurfaces;}
     
     /// Check if coordinates are within boundary
     virtual bool within(const vector<double>& coordinates) = 0;

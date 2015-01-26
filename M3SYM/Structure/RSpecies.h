@@ -230,12 +230,17 @@ public:
     /// RSpecies are destructed before this RSpecies is destructed. Most of the time,
     /// this will occur naturally. If not, an assertion will ungracefully terminate the
     /// program.
-    ~RSpecies();
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
+    virtual ~RSpecies() noexcept;
     
 #ifdef RSPECIES_SIGNALING
     /// Broadcasts signal indicating that the copy number of this RSpecies has changed
     /// This method should usually called by the code which runs the chemical dynamics
     /// (i.e. Gillespie-like algorithm)
+    
     inline void emitSignal(int delta) {
         if(isSignaling())
             (*_signal)(this, delta);

@@ -1,25 +1,15 @@
 #LINUX MAKEFILE FOR M3SYM
-#Configured for DEEPTHOUGHT2, UMD
+SOURCES := $(shell find . -name '*.cpp')
+HEADERS := $(shell find . -name '*.h')
+OBJECTS := $(SOURCES:.cpp=.o)
 
-#LIST ALL SOURCE DIRECTORIES HERE
-VPATH = Structure:Chemistry:Mechanics/Minimizer:Mechanics/ForceField: \
-Mechanics/ForceField/Volume:Mechanics/ForceField/Boundary:            \
-Mechanics/ForceField/Branching:Mechanics/ForceField/Filament:	      \
-Mechanics/ForceField/Linker:Mechanics/ForceField/MotorGhost
-
-SOURCES = $(wildcard *.cpp)
-HEADERS = $(wildcard *.h)
-OBJECTS = $(SOURCES:.cpp=.o)
-
-CXX = /usr/bin/c++ -std=c++0x
+CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -O3 -ffast-math -mtune=corei7-avx -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl 
+LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 
-#Make sure to add all folders for includes here
-CPPFLAGS = -Wall -I/usr/local/include    \
--I/usr/include/boost                     \
+CPPFLAGS = -Wpedantic -Wall -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IChemistry             \
 -IMechanics/Minimizer                    \
 -IMechanics/ForceField                   \
@@ -38,10 +28,10 @@ M3SYM: $(OBJECTS)
 	$(CXX) $(LDFLAGS) -o M3SYM $(OBJECTS) $(LDLIBS) $(FAST)
 
 %.o: %.cpp 
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $<
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	\rm -f *.o
+	\find . -name '*.o' -delete
 	\rm -f M3SYM
 
 Makefile.dep: $(SOURCES) $(HEADERS)
@@ -50,4 +40,4 @@ Makefile.dep: $(SOURCES) $(HEADERS)
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 
-#include Makefile.dep
+include Makefile.dep

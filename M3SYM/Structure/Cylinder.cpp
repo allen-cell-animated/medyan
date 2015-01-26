@@ -25,7 +25,7 @@ using namespace mathfunc;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
-    : _pFilament(f), _b1(b1), _b2(b2), _positionFilament(positionFilament) {
+    : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
     
     //Add to cylinder DB
     CylinderDB::instance()->addCylinder(this);
@@ -71,7 +71,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
    NeighborListDB::instance()->addDynamicNeighbor(this);
 }
 
-Cylinder::~Cylinder() {
+Cylinder::~Cylinder() noexcept {
     
     //Remove from cylinder DB
     CylinderDB::instance()->removeCylinder(this);

@@ -38,7 +38,7 @@ public:
     
     /// Copy constructor, standard
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
-        : _pBranchingPoint(rhs._pBranchingPoint), CBound(c) {
+        : CBound(c), _pBranchingPoint(rhs._pBranchingPoint) {
         
           setFirstSpecies(rhs._firstSpecies);
           setOffReaction(rhs._offRxn);

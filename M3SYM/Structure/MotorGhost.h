@@ -61,7 +61,7 @@ public:
     
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                double position1 = 0.5, double position2 = 0.5, bool creation = false);
-    ~MotorGhost();
+    virtual ~MotorGhost() noexcept;
     
     //@{
     /// Get cylinder

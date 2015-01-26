@@ -25,8 +25,8 @@ using namespace mathfunc;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2, bool creation)
-    : _c1(c1), _c2(c2), _linkerType(linkerType),
-      _position1(position1), _position2(position2) {
+    : _c1(c1), _c2(c2),
+      _position1(position1), _position2(position2), _linkerType(linkerType) {
                     
     //Add to linker db
     LinkerDB::instance()->addLinker(this);
@@ -88,7 +88,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
 }
 
-Linker::~Linker() {
+Linker::~Linker() noexcept {
     //Remove from linker db
     LinkerDB::instance()->removeLinker(this);
 }

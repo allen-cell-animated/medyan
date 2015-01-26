@@ -37,7 +37,7 @@ public:
     ~CLinker() {}
     
     /// Copy constructor, standard
-    CLinker(const CLinker& rhs, Compartment* c) : _pLinker(rhs._pLinker), CBound(c) {
+    CLinker(const CLinker& rhs, Compartment* c) : CBound(c), _pLinker(rhs._pLinker) {
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);

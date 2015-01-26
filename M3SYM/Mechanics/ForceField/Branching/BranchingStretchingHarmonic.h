@@ -32,7 +32,7 @@ public:
     void forces(Bead*, Bead*, Bead*,
                 double position, double kStretch, double eqLength);
     void forcesAux(Bead*, Bead*, Bead*,
-                   double position, double kStretch, double eqLength);;
+                   double position, double kStretch, double eqLength);
     
 };
 

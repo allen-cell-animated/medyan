@@ -33,7 +33,7 @@ class Cylinder;
  * the Movable class, the BranchingPoint can update its position according to mechanical 
  * equilibration.
  */
-class BranchingPoint : public Movable{
+class BranchingPoint : public Movable {
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
@@ -59,7 +59,7 @@ public:
     BranchingPoint(Cylinder* c1, Cylinder* c2,
                    short branchType, double position = 0.5,
                    bool creation = false);
-    ~BranchingPoint();
+    virtual ~BranchingPoint() noexcept;
     
     //@{
     ///Get attached cylinder

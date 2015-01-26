@@ -39,7 +39,7 @@ public:
     
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
-        : _pMotorGhost(rhs._pMotorGhost), CBound(c) {
+        : CBound(c), _pMotorGhost(rhs._pMotorGhost) {
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);

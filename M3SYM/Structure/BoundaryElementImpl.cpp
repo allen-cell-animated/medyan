@@ -56,7 +56,7 @@ double PlaneBoundaryElement::getScreeningLength(){ return _r0; }
 
 SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radius,
                                              double repulsConst, double sceenLength)
-    : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength), _radius(radius) {}
+    : BoundaryElement(coords), _radius(radius), _k_rep(repulsConst), _r0(sceenLength) {}
 
 double SphereBoundaryElement::distance(const vector<double>& point) {
     
@@ -84,8 +84,8 @@ CylindricalZBoundaryElement::CylindricalZBoundaryElement(vector<double> coords,
                                                          double radius, double height,
                                                          double repulsConst,
                                                          double sceenLength)
-    : BoundaryElement(coords), _k_rep(repulsConst),
-     _r0(sceenLength), _radius(radius), _height(height) {}
+    : BoundaryElement(coords), _radius(radius), _height(height),
+      _k_rep(repulsConst), _r0(sceenLength) {}
 
 double CylindricalZBoundaryElement::distance(const vector<double>& point) {
     
@@ -124,8 +124,8 @@ HalfSphereZBoundaryElement::HalfSphereZBoundaryElement(vector<double> coords,
                                                        bool up,
                                                        double repulsConst,
                                                        double sceenLength)
-    : BoundaryElement(coords), _k_rep(repulsConst),
-     _r0(sceenLength), _radius(radius), _up(up) {}
+    : BoundaryElement(coords),
+     _radius(radius), _up(up), _k_rep(repulsConst), _r0(sceenLength) {}
 
 double HalfSphereZBoundaryElement::distance(const vector<double>& point) {
     

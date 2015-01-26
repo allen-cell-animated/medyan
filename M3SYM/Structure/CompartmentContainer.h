@@ -54,12 +54,10 @@ private:
     SpeciesPtrContainerVector _bulkSpecies; ///< Bulk species in this grid
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
-    int _numCompartments; ///< Number of compartments in the grid
-    
     static CompartmentGrid* _instance; ///singleton instance
     
     /// Private constructor
-    CompartmentGrid(int numCompartments) : _numCompartments(numCompartments) {
+    CompartmentGrid(int numCompartments) {
         
         //add children
         for(size_t i=0; i<numCompartments; ++i)

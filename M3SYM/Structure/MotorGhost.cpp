@@ -25,8 +25,8 @@ using namespace mathfunc;
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                        double position1, double position2, bool creation)
-    : _c1(c1), _c2(c2), _motorType(motorType),
-      _position1(position1), _position2(position2) {
+    : _c1(c1), _c2(c2),
+      _position1(position1), _position2(position2), _motorType(motorType) {
     
     //add to motor ghost db
     MotorGhostDB::instance()->addMotorGhost(this);
@@ -90,7 +90,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
 }
 
-MotorGhost::~MotorGhost() {
+MotorGhost::~MotorGhost() noexcept {
     
     //remove from motor ghost db
     MotorGhostDB::instance()->removeMotorGhost(this);

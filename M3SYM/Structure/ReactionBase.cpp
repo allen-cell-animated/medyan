@@ -16,7 +16,7 @@
 #include "Composite.h"
 
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment)
-    : _rnode(nullptr), _rate(rate), _parent(nullptr),
+    : _rnode(nullptr), _parent(nullptr), _rate(rate), 
       _rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
 #ifdef REACTION_SIGNALING
     _signal=nullptr;

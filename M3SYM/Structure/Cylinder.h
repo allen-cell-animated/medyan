@@ -66,7 +66,7 @@ public:
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
              bool extensionFront = false, bool extensionBack = false,
              bool creation = false);
-    ~Cylinder();
+    virtual ~Cylinder() noexcept;
     
     /// Get mech cylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}

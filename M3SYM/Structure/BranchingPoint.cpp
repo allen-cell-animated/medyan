@@ -25,7 +25,7 @@ using namespace mathfunc;
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position,
                                bool creation)
-    : _c1(c1), _c2(c2), _branchType(branchType), _position(position){
+    : _c1(c1), _c2(c2), _position(position), _branchType(branchType) {
                              
     //Add to branch point db
     BranchingPointDB::instance()->addBranchingPoint(this);
@@ -77,7 +77,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 #endif
 }
 
-BranchingPoint::~BranchingPoint() {
+BranchingPoint::~BranchingPoint() noexcept {
     //Remove from branch point db
     BranchingPointDB::instance()->removeBranchingPoint(this);
 }

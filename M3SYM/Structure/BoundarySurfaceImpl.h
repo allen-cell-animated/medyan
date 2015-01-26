@@ -42,7 +42,6 @@ class Sphere: public BoundarySurface {
     
 private:
     vector<double> _coords; ///< Center of sphere
-    double _radius; ///< Radius of sphere
     
 public:
     ///Constructor, creates boundary elements
@@ -57,8 +56,6 @@ class CylinderZ: public BoundarySurface {
     
 private:
     vector<double> _coords; ///< Center of cylinder
-    double _radius; ///< Radius of cylinder
-    double _height; ///< Height of cylinder
     
 public:
     ///Constructor, creates boundary elements
@@ -73,8 +70,6 @@ class HalfSphereZ: public BoundarySurface {
     
 private:
     vector<double> _coords; ///< Center of half-sphere
-    double _radius; ///< Radius of half-sphere
-    bool _up; ///< Facing up or down
     
 public:
     ///Constructor, creates boundary elements
