@@ -26,14 +26,17 @@ using namespace mathfunc;
 double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
                                        double kPosition, double position){
     
-    double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                       midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
-    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                       midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    double X = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    double D = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     double XD = X*D;
     
-    double xd = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    double xd = scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     double theta = acos(xd / XD);
     
@@ -54,14 +57,17 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     
     vector<double> zero (3,0); //Aux zero vector;
     
-    double X = sqrt(scalarProductStretched(midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force,
-                                  midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force, d));
-    double D = sqrt(scalarProductStretched(midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b2->force,
-                                           midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b3->force, d));
+    double X = sqrt(scalarProductStretched(
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force,
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force, d));
+    double D = sqrt(scalarProductStretched(
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b2->force,
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b3->force, d));
     double XD = X*D;
     
-    double xd = scalarProductStretched(midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force,
-                                       midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b3->force, d);
+    double xd = scalarProductStretched(
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate,b2->force,
+        midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b3->force, d);
     
     double theta = acos(xd / XD);
     
@@ -80,16 +86,16 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
 void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3,
                                      double kPosition, double position ){
     
-    double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
-    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    double X = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    double D = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     
-    double xd = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    
-    
+    double xd = scalarProduct(
+        midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
+        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     //invL = 1/L;
     double invX = 1/X;
@@ -131,16 +137,16 @@ void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3,
 void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
                                      double kPosition, double position ){
     
-    double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                                  midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux));
-    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux,
-                                  midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux));
+    double X = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux));
+    double D = sqrt(scalarProduct(
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux,
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux));
     
-    double xd = scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                              midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
-    
-    
-    
+    double xd = scalarProduct(
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
+        midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
     
     //invL = 1/L;
     double invX = 1/X;

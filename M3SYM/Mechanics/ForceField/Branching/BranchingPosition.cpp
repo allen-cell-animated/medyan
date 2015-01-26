@@ -27,7 +27,6 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(BranchingPoint
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
     double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
     if (d == 0.0)
@@ -46,7 +45,6 @@ void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* 
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
     double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
     _FFType.forces(b1, b2, b3, position, kPosition);
@@ -62,7 +60,6 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
     double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
     double position = b->getPosition();
     
     _FFType.forcesAux(b1, b2, b3, position, kPosition);
@@ -71,9 +68,9 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
 
 
 ///Template specializations
-//template double
-//BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
-//template void
-//BranchingPosition<BranchingPositionCosine>::computeForces(BranchingPoint* b);
-//template void
-//BranchingPosition<BranchingPositionCosine>::computeForcesAux(BranchingPoint* b);
+template double
+BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
+template void
+BranchingPosition<BranchingPositionCosine>::computeForces(BranchingPoint* b);
+template void
+BranchingPosition<BranchingPositionCosine>::computeForcesAux(BranchingPoint* b);

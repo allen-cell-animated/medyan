@@ -42,9 +42,9 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
       _branchingInteractionVector.emplace_back(
       new BranchingDihedral<BranchingDihedralCosine>());
     
-//    if(position == "COSINE")
-//      _branchingInteractionVector.emplace_back(new
-//          BranchingPosition<BranchingPositionCosine>());
+    if(position == "COSINE")
+      _branchingInteractionVector.emplace_back(new
+          BranchingPosition<BranchingPositionCosine>());
 
 }
 

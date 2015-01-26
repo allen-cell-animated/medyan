@@ -23,7 +23,7 @@ BDIAMETER:                   950.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
-GRADIENTTOLERANCE:           0.1
+GRADIENTTOLERANCE:           0.0000001
 MD:
 
 ### FILAMENTS ###
@@ -67,19 +67,19 @@ MTWISTINGPHI:
 
 ### BRANCHING ###
 
-BRSTRETCHINGTYPE:
-BRSTRETCHINGK:
-BRSTRETCHINGL:
+BRSTRETCHINGTYPE:           HARMONIC
+BRSTRETCHINGK:              1.0
+BRSTRETCHINGL:              10.0
 
-BRBENDINGTYPE:
-BRBENDINGK:
-BRBENDINGTHETA:
+BRBENDINGTYPE:              COSINE
+BRBENDINGK:                 0.2
+BRBENDINGTHETA:             1.22
 
-BRDIHEDRALTYPE:
-BRDIHEDRALK:
+BRDIHEDRALTYPE:             
+BRDIHEDRALK:                100.0
 
-BRPOSITIONTYPE:             
-BRPOSITIONK:
+BRPOSITIONTYPE:
+BRPOSITIONK:                20.0
 
 ### EXCLUDED VOLUME ###
 
@@ -102,23 +102,23 @@ BSCREENLENGTH:              0.27
 CHEMISTRYFILE:               testchemistryinput.txt
 
 CALGORITHM:                  NRM
-NUMTOTALSTEPS:
-RUNTIME:                     1200.0
+NUMTOTALSTEPS:               10
+RUNTIME:
 
-NUMSTEPSPERS:
-SNAPSHOTTIME:                5.0
+NUMSTEPSPERS:                1
+SNAPSHOTTIME:
 
-NUMCHEMSTEPS:                1000
-NUMSTEPSPERN:                100000
+NUMCHEMSTEPS:                1
+NUMSTEPSPERN:                1
 
 NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
 NUMBOUNDSPECIES:             1
-NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             1
-NUMBRANCHERSPECIES:          0
+NUMLINKERSPECIES:            0
+NUMMOTORSPECIES:             0
+NUMBRANCHERSPECIES:          1
 
 NUMBINDINGSITES:             2
 
@@ -138,8 +138,8 @@ LDULENGTH:                   0.4
 #FILAMENTFILE:               testfilamentinput.txt
 
 
-NUMFILAMENTS:               250
-FILAMENTLENGTH:             10
+NUMFILAMENTS:               1
+FILAMENTLENGTH:             5
 
 #################################################
 ##################### OUTPUT ####################
