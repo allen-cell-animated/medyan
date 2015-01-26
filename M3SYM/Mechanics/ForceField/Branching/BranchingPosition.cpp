@@ -24,16 +24,14 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(BranchingPoint
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double position = b->getPosition();
     
-//    if (d == 0.0)
-//        return _FFType.energy(b1, b2, b3, position, kPosition);
-//    else
-//        return _FFType.energy(b1, b2, b3, position, kPosition, d);
+    if (d == 0.0)
+        return _FFType.energy(b1, b2, b3, position, kPosition);
+    else
+        return _FFType.energy(b1, b2, b3, position, kPosition, d);
     
-    return 0.0;
     
 }
 
@@ -44,11 +42,10 @@ void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* 
     Bead* b2 = b->getFirstCylinder()->getSecondBead();
     Bead* b3 = b->getSecondCylinder()->getFirstBead();
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double position = b->getPosition();
     
-//    _FFType.forces(b1, b2, b3, position, kPosition);
+    _FFType.forces(b1, b2, b3, position, kPosition);
     
 }
 
@@ -56,15 +53,10 @@ void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* 
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoint* b) {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-    
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
+    double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double position = b->getPosition();
     
-//    _FFType.forcesAux(b1, b2, b3, position, kPosition);
+    _FFType.forcesAux(b1, b2, b3, position, kPosition);
     
 }
 
