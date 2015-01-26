@@ -61,10 +61,10 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
 }
 
 
-/////Template specializations
-//template double
-//BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
-//template void
-//BranchingPosition<BranchingPositionCosine>::computeForces(BranchingPoint* b);
-//template void
-//BranchingPosition<BranchingPositionCosine>::computeForcesAux(BranchingPoint* b);
+///Template specializations
+template double
+BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
+template void
+BranchingPosition<BranchingPositionCosine>::computeForces(BranchingPoint* b);
+template void
+BranchingPosition<BranchingPositionCosine>::computeForcesAux(BranchingPoint* b);
