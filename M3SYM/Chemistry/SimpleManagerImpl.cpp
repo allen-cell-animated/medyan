@@ -1554,7 +1554,7 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
         cout << "Must specify at least one plus end species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
-    if(_speciesPlusEnd.size() != _speciesFilament.size()) {
+    if(_speciesPlusEnd.size() < _speciesFilament.size()) {
         cout << "There must be a plus end for every filament species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
@@ -1564,7 +1564,7 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
         cout << "Must specify at least one minus end species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
-    if(_speciesMinusEnd.size() != _speciesFilament.size()) {
+    if(_speciesMinusEnd.size() < _speciesFilament.size()) {
         cout << "There must be a minus end for every filament species. Exiting" << endl;
         exit(EXIT_FAILURE);
     }
