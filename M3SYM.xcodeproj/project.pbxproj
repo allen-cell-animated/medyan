@@ -391,9 +391,6 @@
 		F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7C9CF8F1A2D16290087434A /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
 		F7C9CF901A2D16290087434A /* test_visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_visitor.cpp; sourceTree = "<group>"; };
-		F7C9CF9F1A2D163A0087434A /* testchemistryinput.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = testchemistryinput.txt; path = M3SYM/testchemistryinput.txt; sourceTree = SOURCE_ROOT; };
-		F7C9CFA01A2D163A0087434A /* testfilamentinput.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = testfilamentinput.txt; path = M3SYM/testfilamentinput.txt; sourceTree = SOURCE_ROOT; };
-		F7C9CFA11A2D163A0087434A /* testsysteminput.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = testsysteminput.txt; path = M3SYM/testsysteminput.txt; sourceTree = SOURCE_ROOT; };
 		F7C9CFA21A2D165D0087434A /* Bead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bead.cpp; sourceTree = "<group>"; };
 		F7C9CFA31A2D165D0087434A /* Bead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bead.h; sourceTree = "<group>"; };
 		F7C9CFA41A2D165D0087434A /* BeadDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BeadDB.cpp; sourceTree = "<group>"; };
@@ -598,9 +595,6 @@
 				F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */,
 				F7C9CF8F1A2D16290087434A /* test_species.cpp */,
 				F7C9CF901A2D16290087434A /* test_visitor.cpp */,
-				F7C9CF9F1A2D163A0087434A /* testchemistryinput.txt */,
-				F7C9CFA01A2D163A0087434A /* testfilamentinput.txt */,
-				F7C9CFA11A2D163A0087434A /* testsysteminput.txt */,
 			);
 			name = TESTS;
 			path = M3SYM/TESTS;
