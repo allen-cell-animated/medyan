@@ -334,12 +334,6 @@ struct LinkerUnbindingCallback {
         CCylinder* cc1 = _linker->getFirstCylinder()->getCCylinder();
         CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
-
-#ifdef DYNAMICRATES
-        //reset the associated reactions
-        _linker->getMLinker()->stretchForce = 0.0;
-        _linker->updateReactionRates();
-#endif
         
         //remove the linker
         _ps->removeLinker(_linker);
@@ -414,12 +408,7 @@ struct MotorUnbindingCallback {
         CCylinder* cc1 = _motor->getFirstCylinder()->getCCylinder();
         CCylinder* cc2 = _motor->getSecondCylinder()->getCCylinder();
         cc1->removeCrossCylinderReaction(cc2, r);
-        
-#ifdef DYNAMICRATES
-        //reset the associated reactions
-        _motor->getMMotorGhost()->stretchForce = 0.0;
-        _motor->updateReactionRates();
-#endif
+
         //remove the motor
         _ps->removeMotorGhost(_motor);
     }
@@ -479,6 +468,12 @@ struct MotorBindingCallback {
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         m->getCMotorGhost()->setOffReaction(offRxn);
+        
+#ifdef DYNAMICRATES
+        //reset the associated walking reactions
+        m->updateReactionRates();
+#endif
+        
     }
 };
 
@@ -572,6 +567,11 @@ struct MotorWalkingForwardCallback {
     
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
+        
+#ifdef DYNAMICRATES
+        //reset the associated walking reactions
+        m->updateReactionRates();
+#endif
     }
 };
 
@@ -679,6 +679,11 @@ struct MotorMovingCylinderForwardCallback {
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
         
+#ifdef DYNAMICRATES
+        //reset the associated reactions
+        m->updateReactionRates();
+#endif
+        
     }
 };
 
@@ -772,6 +777,11 @@ struct MotorWalkingBackwardCallback {
         
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
+        
+#ifdef DYNAMICRATES
+        //reset the associated reactions
+        m->updateReactionRates();
+#endif
     }
 };
 
@@ -879,6 +889,11 @@ struct MotorMovingCylinderBackwardCallback {
         
         //set new unbinding reaction
         m->getCMotorGhost()->setOffReaction(newOffRxn);
+        
+#ifdef DYNAMICRATES
+        //reset the associated reactions
+        m->updateReactionRates();
+#endif
         
     }
 };
