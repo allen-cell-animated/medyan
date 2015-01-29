@@ -57,6 +57,12 @@ struct FilamentExtensionFrontCallback {
         CMonomer* m = newCylinder->getCCylinder()->getCMonomer(0);
         
         m->speciesPlusEnd(_plusEnd)->up();
+        
+#ifdef DYNAMICRATES
+        //update reaction rates
+        newCylinder->updateReactionRates();
+#endif
+        
     }
 };
 
@@ -84,6 +90,11 @@ struct FilamentExtensionBackCallback {
         CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
         
         m->speciesMinusEnd(_minusEnd)->up();
+        
+#ifdef DYNAMICRATES
+        //update reaction rates
+        newCylinder->updateReactionRates();
+#endif
     }
 };
 
@@ -569,7 +580,7 @@ struct MotorWalkingForwardCallback {
         m->getCMotorGhost()->setOffReaction(newOffRxn);
         
 #ifdef DYNAMICRATES
-        //reset the associated walking reactions
+        //reset the associated reactions
         m->updateReactionRates();
 #endif
     }

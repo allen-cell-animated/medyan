@@ -177,6 +177,11 @@ void Filament::extendFront() {
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
     
+#ifdef MECHANICS
+    //transfer the same load force to new bead (approximation until next minimization)
+    bNew->loadForce = b2->loadForce;
+#endif
+    
     Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
@@ -202,6 +207,11 @@ void Filament::extendBack() {
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
 
+#ifdef MECHANICS
+    //transfer the same load force to new bead (approximation until next minimization)
+    bNew->loadForce = b2->loadForce;
+#endif
+    
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1, false, true);
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
