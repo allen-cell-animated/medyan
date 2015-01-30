@@ -9,7 +9,7 @@ FAST = -O3 -ffast-math -mtune=corei7-avx -flto -funroll-loops -DNDEBUG -mtune=na
 
 LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 
-CPPFLAGS = -Wpedantic -Wall -I/usr/local/include -I/usr/include/boost \
+CPPFLAGS = -Wall -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IChemistry             \
 -IMechanics/Minimizer                    \
 -IMechanics/ForceField                   \
@@ -20,7 +20,7 @@ CPPFLAGS = -Wpedantic -Wall -I/usr/local/include -I/usr/include/boost \
 -IMechanics/ForceField/Linker            \
 -IMechanics/ForceField/MotorGhost        \
 
-LFLAGS = -Wall $(FAST)
+LFLAGS = $(FAST)
 
 all: M3SYM
 
@@ -34,10 +34,10 @@ clean:
 	\find . -name '*.o' -delete
 	\rm -f M3SYM
 
-Makefile.dep: $(SOURCES) $(HEADERS)
-	@echo "Updating the dependancy file: Makefile.dep"
-	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) \
-	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
-	[ -s $@ ] || rm -f $@'
+#Makefile.dep: $(SOURCES) $(HEADERS)
+#	@echo "Updating the dependancy file: Makefile.dep"
+#	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) \
+#	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
+#	[ -s $@ ] || rm -f $@'
 
-include Makefile.dep
+#include Makefile.dep

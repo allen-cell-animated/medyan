@@ -23,7 +23,7 @@
 #include "NeighborListDB.h"
 #include "Neighbor.h"
 
-#include "Gcontroller.h"
+#include "GController.h"
 
 //FORWARD DECLARATIONS
 class Bead;
