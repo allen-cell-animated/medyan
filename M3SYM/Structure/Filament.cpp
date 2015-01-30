@@ -43,8 +43,9 @@ Filament::Filament(SubSystem* s) {
 }
 
 
-Filament::Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
-                   bool creation, bool branch) {
+Filament::Filament(SubSystem* s, vector<double>& position,
+                                 vector<double>& direction,
+                                 bool creation, bool branch) {
    
     _subSystem = s;
     
@@ -162,7 +163,7 @@ void Filament::extendBack(vector<double>& coordinates) {
 }
 
 //extend front at runtime
-void Filament::extendFront() {
+void Filament::extendFront(short plusEnd) {
     Cylinder* cBack = _cylinderVector.back();
     int lastPositionFilament = cBack->getPositionFilament();
     
@@ -187,11 +188,22 @@ void Filament::extendFront() {
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
     
+#ifdef CHEMISTRY
+    //get last cylinder, mark species
+    CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
+    m->speciesPlusEnd(plusEnd)->up();
+#endif
+    
+#ifdef DYNAMICRATES
+    //update reaction rates
+    _cylinderVector.back()->updateReactionRates();
+#endif
+    
     _deltaPlusEnd++;
 }
 
 //extend back at runtime
-void Filament::extendBack() {
+void Filament::extendBack(short minusEnd) {
 
     Cylinder* cFront = _cylinderVector.front();
     int lastPositionFilament = cFront->getPositionFilament();
@@ -217,6 +229,19 @@ void Filament::extendBack() {
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
     
+#ifdef CHEMISTRY
+    //get first cylinder, mark species
+    auto newCCylinder = getCylinderVector().front()->getCCylinder();
+    CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
+    
+    m->speciesMinusEnd(minusEnd)->up();
+#endif
+    
+#ifdef DYNAMICRATES
+    //update reaction rates
+    _cylinderVector.front()->updateReactionRates();
+#endif
+    
     _deltaMinusEnd++;
 }
 
@@ -231,6 +256,11 @@ void Filament::retractFront() {
     
     _cylinderVector.back()->setPlusEnd(true);
 
+#ifdef DYNAMICRATES
+    //update rates of new front
+    _cylinderVector.back()->updateReactionRates();
+#endif
+    
     _deltaPlusEnd--;
 }
 
@@ -243,6 +273,11 @@ void Filament::retractBack() {
     delete retractionCylinder;
     
     _cylinderVector.front()->setMinusEnd(true);
+    
+#ifdef DYNAMICRATES
+    //update rates of new back
+    _cylinderVector.front()->updateReactionRates();
+#endif
     
     _deltaMinusEnd--;
 }

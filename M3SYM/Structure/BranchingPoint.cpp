@@ -15,6 +15,8 @@
 
 #include "Bead.h"
 #include "Cylinder.h"
+#include "Filament.h"
+#include "ChemRNode.h"
 
 #include "GController.h"
 #include "SystemParameters.h"
@@ -68,7 +70,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //attach this branchpoint to the species
     _cBranchingPoint->setFirstSpecies(sb1);
     _cBranchingPoint->setSecondSpecies(sb2);
-
+        
 #endif
     
 #ifdef MECHANICS
@@ -78,10 +80,47 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 }
 
 BranchingPoint::~BranchingPoint() noexcept {
+    
     //Remove from branch point db
     BranchingPointDB::instance()->removeBranchingPoint(this);
+    
+#ifdef CHEMISTRY
+    //remove the unbinding reaction
+    CCylinder* cc = _c1->getCCylinder();
+    cc->removeInternalReaction(_cBranchingPoint->getOffReaction());
+    
+    //mark the correct species on the minus end of the branched
+    //filament. If this is a filament species, change it to its
+    //corresponding minus end. If a plus end, release a diffusing
+    //or bulk species, depending on the initial reaction.
+    CCylinder* childCC = _c2->getCCylinder();
+    CMonomer* m = childCC->getCMonomer(0);
+    short speciesFilament = m->activeSpeciesFilament();
+    
+    //there is a filament species, mark its corresponding minus end
+    if(speciesFilament != -1) {
+        m->speciesMinusEnd(speciesFilament)->up();
+    }
+    //mark the free species instead
+    else {
+        //find the free species
+        short speciesPlusEndNum = m->activeSpeciesPlusEnd();
+        Species* speciesFilament = m->speciesFilament(speciesPlusEndNum);
+        
+        string speciesName = SpeciesNamesDB::Instance()->
+        removeUniqueName(speciesFilament->getName());
+        Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
+        
+        //remove the filament from the system
+        delete _c2->getFilament();
+        
+        //update reaction rates
+        for(auto &r : freeMonomer->getRSpecies().reactantReactions())
+            r->getRNode()->activateReaction();
+    }
+#endif
+    
 }
-
 
 void BranchingPoint::updatePosition() {
     

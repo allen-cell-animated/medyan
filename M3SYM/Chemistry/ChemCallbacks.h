@@ -47,22 +47,9 @@ struct FilamentExtensionFrontCallback {
     
     //Callback
     void operator() (ReactionBase *r){
-        
         //extend the front
         Filament* f = _cylinder->getFilament();
-        f->extendFront();
-        
-        //get last cylinder, mark species
-        auto newCylinder = f->getCylinderVector().back();
-        CMonomer* m = newCylinder->getCCylinder()->getCMonomer(0);
-        
-        m->speciesPlusEnd(_plusEnd)->up();
-        
-#ifdef DYNAMICRATES
-        //update reaction rates
-        newCylinder->updateReactionRates();
-#endif
-        
+        f->extendFront(_plusEnd);
     }
 };
 
@@ -79,22 +66,9 @@ struct FilamentExtensionBackCallback {
         : _cylinder(cylinder), _minusEnd(minusEnd){};
     //Callback
     void operator() (ReactionBase *r){
-        
         //extend the back
         Filament* f = _cylinder->getFilament();
-        f->extendBack();
-        
-        //get first cylinder, mark species
-        auto newCylinder = f->getCylinderVector().front();
-        auto newCCylinder = newCylinder->getCCylinder();
-        CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
-        
-        m->speciesMinusEnd(_minusEnd)->up();
-        
-#ifdef DYNAMICRATES
-        //update reaction rates
-        newCylinder->updateReactionRates();
-#endif
+        f->extendBack(_minusEnd);
     }
 };
 
@@ -111,11 +85,6 @@ struct FilamentRetractionFrontCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->retractFront();
-        
-#ifdef DYNAMICRATES
-        //update rates of new front
-        f->getCylinderVector().back()->updateReactionRates();
-#endif
     }
 };
 
@@ -132,11 +101,6 @@ struct FilamentRetractionBackCallback {
     void operator() (ReactionBase *r){
         Filament* f = _cylinder->getFilament();
         f->retractBack();
-        
-#ifdef DYNAMICRATES
-        //update rates of new back
-        f->getCylinderVector().front()->updateReactionRates();
-#endif
     }
 };
 
@@ -214,40 +178,6 @@ struct BranchingPointUnbindingCallback {
         : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
-        //remove the unbinding reaction
-        CCylinder* cc = _branchingPoint->getFirstCylinder()->getCCylinder();
-        cc->removeInternalReaction(r);
-        
-        //mark the correct species on the minus end of the branched
-        //filament. If this is a filament species, change it to its
-        //corresponding minus end. If a plus end, release a diffusing
-        //or bulk species, depending on the initial reaction.
-        CCylinder* childCC = _branchingPoint->getSecondCylinder()->getCCylinder();
-        CMonomer* m = childCC->getCMonomer(0);
-        short speciesFilament = m->activeSpeciesFilament();
-        
-        //there is a filament species, mark its corresponding minus end
-        if(speciesFilament != -1) {
-            m->speciesMinusEnd(speciesFilament)->up();
-        }
-        //mark the free species instead
-        else {
-            //find the free species
-            short speciesPlusEndNum = m->activeSpeciesPlusEnd();
-            Species* speciesFilament = m->speciesFilament(speciesPlusEndNum);
-            
-            string speciesName = SpeciesNamesDB::Instance()->
-                                 removeUniqueName(speciesFilament->getName());
-            Species* freeMonomer =
-                _branchingPoint->getCompartment()->findSpeciesByName(speciesName);
-            
-            //remove the filament from the system
-            delete _branchingPoint->getSecondCylinder()->getFilament();
-            
-            //update reaction rates
-            for(auto &r : freeMonomer->getRSpecies().reactantReactions())
-                r->getRNode()->activateReaction();
-        }
         
         //remove the branching point
         _ps->removeBranchingPoint(_branchingPoint);
@@ -318,17 +248,10 @@ struct BranchingPointCreationCallback {
         vector<Species*> offSpecies =
             {m->speciesBrancher(_branchType), m->speciesBound(0), freeBrancher};
         
+        //create reaction, add to cylinder
         ReactionBase* offRxn =
-        new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
-        offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
-        
-        BranchingPointUnbindingCallback bcallback(b, _ps);
-        boost::signals2::shared_connection_block
-            rcb(offRxn->connect(bcallback,false));
-        
+        b->getCBranchingPoint()->createOffReaction(offSpecies, _offRate, _ps);
         _c1->getCCylinder()->addInternalReaction(offRxn);
-        b->getCBranchingPoint()->setOffReaction(offRxn);
-        
     }
 };
 

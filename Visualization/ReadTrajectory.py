@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename='/Users/jameskomianos/Desktop/Alison/Run1/snapshot.traj'
+traj_filename='/Users/jameskomianos/Desktop/Alison/Run3/snapshot.traj'
 #color_filename = '/Users/jameskomianos/Desktop/Alison/Run3/stresses.traj'
 color_filename = ''
 

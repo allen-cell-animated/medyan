@@ -77,15 +77,17 @@ public:
     /// Addition of a new cylinder. Next position is based on previous beads directions
     /// in the filament. This function creates a new bead. So, this function mostly
     /// called during further extension, not initiation.
-    void extendFront();
+    /// @param plusEnd - the plus end species to be marked
+    void extendFront(short plusEnd);
     /// Same as extension front, but adds a new first cylinder with first bead = new
     /// bead and a second bead is equal to the first bead in the cylinder, which used
     /// to be first.
-    void extendBack();
+    /// @param minusEnd - the minus end species to be marked
+    void extendBack(short minusEnd);
     
     ///Extend, used for initialization
-    void extendFront(vector<double>& coordinates );
-    void extendBack(vector<double>& coordinates );
+    void extendFront(vector<double>& coordinates);
+    void extendBack(vector<double>& coordinates);
     
     /// Retraction of front of a cylinder. Removes one cylinder and one bead from the
     /// front of filament.

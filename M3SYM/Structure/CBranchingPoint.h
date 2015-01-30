@@ -21,6 +21,7 @@
 
 //FORWARD DECLARATIONS
 class BranchingPoint;
+class SubSystem;
 
 /// A class to represent the chemical component of a BranchingPoint.
 /*!
@@ -57,6 +58,10 @@ public:
         {_pBranchingPoint = BranchingPoint;}
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
+    
+    virtual ReactionBase* createOffReaction(vector<Species*> species,
+                                            float rate,
+                                            SubSystem* s);
 };
 
 #endif
