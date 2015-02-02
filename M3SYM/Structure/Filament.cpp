@@ -46,7 +46,6 @@ Filament::Filament(SubSystem* s) {
 Filament::Filament(SubSystem* s, vector<double>& position,
                                  vector<double>& direction,
                                  bool creation, bool branch) {
-   
     _subSystem = s;
     
     //add to filament db
@@ -58,8 +57,12 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     
     //choose length
     double length;
+    
+    //branching
     if(branch) length = SystemParameters::Geometry().monomerSize;
+    //creation
     else if(creation) length = SystemParameters::Geometry().minCylinderSize;
+    //initialization
     else length = SystemParameters::Geometry().cylinderSize;
     
     auto pos2 = nextPointProjection(position, length, direction);
@@ -85,10 +88,14 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
     vector<vector<double> > tmpBeadsCoord;
     
     //create a projection of beads
+    
+    //straight projection
     if(projectionType == "STRAIGHT")
         tmpBeadsCoord = straightFilamentProjection(position, numBeads);
+    //zigzag projection
     else if(projectionType == "ZIGZAG")
         tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
+    //arc projection
     else if(projectionType == "ARC")
         tmpBeadsCoord = arcFilamentProjection(position, numBeads);
    
@@ -164,6 +171,7 @@ void Filament::extendBack(vector<double>& coordinates) {
 
 //extend front at runtime
 void Filament::extendFront(short plusEnd) {
+    
     Cylinder* cBack = _cylinderVector.back();
     int lastPositionFilament = cBack->getPositionFilament();
     
@@ -204,7 +212,7 @@ void Filament::extendFront(short plusEnd) {
 
 //extend back at runtime
 void Filament::extendBack(short minusEnd) {
-
+    
     Cylinder* cFront = _cylinderVector.front();
     int lastPositionFilament = cFront->getPositionFilament();
     

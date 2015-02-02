@@ -81,12 +81,6 @@ public:
     
     //@{
     /// Off reaction management
-    
-    /// Virtual function to create an off reaction
-    virtual ReactionBase* createOffReaction(vector<Species*> species,
-                                            float rate,
-                                            SubSystem* s) = 0;
-    
     void setOffReaction(ReactionBase* offRxn) {
         _offRxn = offRxn;
         _offRxn->setCBound(this);

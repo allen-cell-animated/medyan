@@ -25,7 +25,6 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
-#include "ChemRNode.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -210,27 +209,13 @@ struct BranchingPointCreationCallback {
         //Get a position and direction of a new filament
         auto position1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
                                             _c1->getSecondBead()->coordinate, pos);
-        
-        //randomize position and direction
-        double rand1 = randomDouble(-1,1);
-        double rand2 = randomDouble(-1,1);
-        double rand3 = randomDouble(-1,1);
-        position1[0] = position1[0] + rand1;
-        position1[1] = position1[1] + rand2;
-        position1[2] = position1[2] + rand3;
-        
-        auto position2 = _c1->getSecondBead()->coordinate;
-        position2[0] = position2[0] + 2*rand1;
-        position2[1] = position2[1] + 2*rand2;
-        position2[2] = position2[2] + 2*rand3;
-        
-        vector<double> direction = twoPointDirection(position1,position2);
+        vector<double> direction = {0,0,0};
         
         //create a new filament
         Filament* f = _ps->addNewFilament(position1, direction, true);
         
         //mark first cylinder
-        Cylinder* c = f->getCylinderVector()[0];
+        Cylinder* c = f->getCylinderVector().front();
         CMonomer* m = c->getCCylinder()->getCMonomer(0);
         m->speciesPlusEnd(_plusEnd)->up();
         
@@ -239,18 +224,27 @@ struct BranchingPointCreationCallback {
         
         //add the unbinding reaction and callback
         //first, find the correct diffusing or bulk species
-        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* branchReact =
-            dynamic_cast<Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*>(r);
-        Species* freeBrancher = &(branchReact->rspecies()[0]->getSpecies());
+        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* br =
+        dynamic_cast<Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*>(r);
+        Species* sfb = &(br->rspecies()[0]->getSpecies());
         
         //create the reaction species
         m = _c1->getCCylinder()->getCMonomer(_position);
-        vector<Species*> offSpecies =
-            {m->speciesBrancher(_branchType), m->speciesBound(0), freeBrancher};
+        SpeciesBrancher* sbr = m->speciesBrancher(_branchType);
+        SpeciesBound* sbo =m->speciesBound(0);
+        vector<Species*> offSpecies = {sbr, sbo, sfb};
         
         //create reaction, add to cylinder
         ReactionBase* offRxn =
-        b->getCBranchingPoint()->createOffReaction(offSpecies, _offRate, _ps);
+        new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
+        
+        offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
+        
+        BranchingPointUnbindingCallback bcallback(b, _ps);
+        boost::signals2::shared_connection_block
+            rcb(offRxn->connect(bcallback,false));
+        
+        b->getCBranchingPoint()->setOffReaction(offRxn);
         _c1->getCCylinder()->addInternalReaction(offRxn);
     }
 };
@@ -264,11 +258,6 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
-        //remove the unbinding reaction
-        CCylinder* cc1 = _linker->getFirstCylinder()->getCCylinder();
-        CCylinder* cc2 = _linker->getSecondCylinder()->getCCylinder();
-        cc1->removeCrossCylinderReaction(cc2, r);
-        
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -338,11 +327,6 @@ struct MotorUnbindingCallback {
     MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) : _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
-        //remove the unbinding reaction
-        CCylinder* cc1 = _motor->getFirstCylinder()->getCCylinder();
-        CCylinder* cc2 = _motor->getSecondCylinder()->getCCylinder();
-        cc1->removeCrossCylinderReaction(cc2, r);
-
         //remove the motor
         _ps->removeMotorGhost(_motor);
     }
@@ -425,8 +409,10 @@ struct MotorWalkingForwardCallback {
     SubSystem* _ps;      ///< Ptr to subsystem
     
     MotorWalkingForwardCallback(Cylinder* c,
-                                short oldPosition, short newPosition,
-                                short motorType, short boundType,
+                                short oldPosition,
+                                short newPosition,
+                                short motorType,
+                                short boundType,
                                 SubSystem* ps)
         :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
@@ -635,8 +621,10 @@ struct MotorWalkingBackwardCallback {
     SubSystem* _ps;      ///< Ptr to subsystem
     
     MotorWalkingBackwardCallback(Cylinder* c,
-                                short oldPosition, short newPosition,
-                                short motorType, short boundType,
+                                short oldPosition,
+                                short newPosition,
+                                short motorType,
+                                short boundType,
                                 SubSystem* ps)
     :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
      _motorType(motorType), _boundType(boundType), _ps(ps) {}
@@ -888,19 +876,20 @@ struct FilamentCreationCallback {
         CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
         int monomerPosition = SystemParameters::Geometry().cylinderIntSize / 2 + 1;
         
+        
+        CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
+        CMonomer* m2 = cc->getCMonomer(monomerPosition);
+        CMonomer* m3 = cc->getCMonomer(monomerPosition + 1);
+        
         //minus end
-        cc->getCMonomer(monomerPosition - 1)->
-            speciesMinusEnd(_minusEnd)->up();
+        m1->speciesMinusEnd(_minusEnd)->up();
 
         //filament
-        cc->getCMonomer(monomerPosition)->
-            speciesFilament(_filament)->up();
-        cc->getCMonomer(monomerPosition)->
-            speciesBound(0)->up();
+        m2->speciesFilament(_filament)->up();
+        m2->speciesBound(0)->up();
         
         //plus end
-        cc->getCMonomer(monomerPosition + 1)->
-            speciesPlusEnd(_plusEnd)->up();
+        m3->speciesPlusEnd(_plusEnd)->up();
     }
     
 };
@@ -961,6 +950,5 @@ struct FilamentDestructionCallback {
         delete f;
     }
 };
-
 
 #endif

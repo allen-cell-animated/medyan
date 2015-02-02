@@ -77,12 +77,12 @@ public:
     /// Addition of a new cylinder. Next position is based on previous beads directions
     /// in the filament. This function creates a new bead. So, this function mostly
     /// called during further extension, not initiation.
-    /// @param plusEnd - the plus end species to be marked
+    /// @param plusEnd - the plus end species to be marked. Only if doing chemistry.
     void extendFront(short plusEnd);
     /// Same as extension front, but adds a new first cylinder with first bead = new
     /// bead and a second bead is equal to the first bead in the cylinder, which used
     /// to be first.
-    /// @param minusEnd - the minus end species to be marked
+    /// @param minusEnd - the minus end species to be marked. Only if doing chemistry.
     void extendBack(short minusEnd);
     
     ///Extend, used for initialization

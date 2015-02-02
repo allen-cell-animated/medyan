@@ -236,8 +236,10 @@ void Controller::updateNeighborLists(bool updateReactions) {
 
 void Controller::run() {
     
+#ifdef CHEMISTRY
     double tauLastSnapshot = 0;
     double oldTau = 0;
+#endif
     
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
@@ -293,14 +295,16 @@ void Controller::run() {
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(1);
 #endif
-            // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
-                updateNeighborLists(true);
+
 #ifdef DYNAMICRATES
             updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
+            // update neighbor lists
+            if(i % _numStepsPerNeighbor == 0 && i != 0)
+                updateNeighborLists(true);
+            
             i += _numChemSteps;
             oldTau = tau();
         }
@@ -337,14 +341,16 @@ void Controller::run() {
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(1);
 #endif
-            // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
-                updateNeighborLists(true);
+
 #ifdef DYNAMICRATES
             updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
+            // update neighbor lists
+            if(i % _numStepsPerNeighbor == 0 && i != 0)
+                updateNeighborLists(true);
+            
             oldTau = tau();
         }
 #endif

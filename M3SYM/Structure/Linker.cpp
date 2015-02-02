@@ -91,6 +91,13 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 Linker::~Linker() noexcept {
     //Remove from linker db
     LinkerDB::instance()->removeLinker(this);
+    
+#ifdef CHEMISTRY
+    //remove the unbinding reaction
+    CCylinder* cc1 = _c1->getCCylinder();
+    CCylinder* cc2 = _c2->getCCylinder();
+    cc1->removeCrossCylinderReaction(cc2, _cLinker->getOffReaction());
+#endif
 }
 
 void Linker::updatePosition() {
@@ -152,7 +159,7 @@ void Linker::updateReactionRates() {
             
             float newRate = r->getBareRate() * exp( force * a / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
     }
     for(auto r : s2->getRSpecies().reactantReactions()) {
@@ -160,7 +167,7 @@ void Linker::updateReactionRates() {
             
             float newRate = r->getBareRate() * exp( force * a / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
     }
 }

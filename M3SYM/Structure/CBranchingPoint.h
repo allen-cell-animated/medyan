@@ -58,10 +58,6 @@ public:
         {_pBranchingPoint = BranchingPoint;}
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
-    
-    virtual ReactionBase* createOffReaction(vector<Species*> species,
-                                            float rate,
-                                            SubSystem* s);
 };
 
 #endif

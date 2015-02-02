@@ -138,7 +138,7 @@ void Cylinder::updateReactionRates() {
             
                 float newRate = r->getBareRate() * exp( - force * a / kT);
                 r->setRate(newRate);
-                r->getRNode()->activateReaction();
+                r->activateReaction();
             }
         }
     }
@@ -156,7 +156,7 @@ void Cylinder::updateReactionRates() {
                 
                 float newRate = r->getBareRate() * exp( - force * a / kT);
                 r->setRate(newRate);
-                r->getRNode()->activateReaction();
+                r->activateReaction();
             }
         }
     }

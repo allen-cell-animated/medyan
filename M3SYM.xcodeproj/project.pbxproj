@@ -135,7 +135,6 @@
 		F7525A981A702461007A4E9F /* LinkerStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A911A702461007A4E9F /* LinkerStretching.h */; };
 		F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */; };
 		F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */; };
-		F761C3DC1A7A8B7300787B68 /* ChemCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F761C3DB1A7A8B7300787B68 /* ChemCallbacks.cpp */; };
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
@@ -373,7 +372,6 @@
 		F7525A911A702461007A4E9F /* LinkerStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerStretching.h; path = Linker/LinkerStretching.h; sourceTree = "<group>"; };
 		F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerStretchingHarmonic.cpp; path = Linker/LinkerStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerStretchingHarmonic.h; path = Linker/LinkerStretchingHarmonic.h; sourceTree = "<group>"; };
-		F761C3DB1A7A8B7300787B68 /* ChemCallbacks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemCallbacks.cpp; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
@@ -728,7 +726,6 @@
 		F763ED091548FFC70069DA61 /* Chemistry */ = {
 			isa = PBXGroup;
 			children = (
-				F761C3DB1A7A8B7300787B68 /* ChemCallbacks.cpp */,
 				F735B7871A2D172800AE21D1 /* ChemCallbacks.h */,
 				F735B7881A2D172800AE21D1 /* ChemGillespieImpl.cpp */,
 				F735B7891A2D172800AE21D1 /* ChemGillespieImpl.h */,
@@ -1115,7 +1112,6 @@
 				F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */,
 				F735B7801A2D16F200AE21D1 /* Parser.cpp in Sources */,
 				F7525A091A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp in Sources */,
-				F761C3DC1A7A8B7300787B68 /* ChemCallbacks.cpp in Sources */,
 				F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */,
 				F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */,
 				F7C9D0031A2D165D0087434A /* CompartmentContainer.cpp in Sources */,

@@ -18,25 +18,6 @@
 
 #include "utility.h"
 
-///Defining chemical and mechanical capablilites turned on/off
-#define MECHANICS
-#define CHEMISTRY
-
-///Defining dynamic reaction rates (chemistry and mechanics both on)
-#define DYNAMICRATES
-
-///If compiling for testing
-#define TESTING
-
-///Other chemistry macros
-#define TRACK_DEPENDENTS
-#define TRACK_ZERO_COPY_N
-#define TRACK_UPPER_COPY_N
-#define REACTION_SIGNALING
-#define RSPECIES_SIGNALING
-//#define BOOST_MEM_POOL
-//#define BOOL_POOL_NSIZE 65536
-
 ///Species constants
 typedef unsigned short species_copy_t;
 const species_copy_t max_ulim = 10000;

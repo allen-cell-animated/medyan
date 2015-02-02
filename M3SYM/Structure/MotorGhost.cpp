@@ -94,6 +94,13 @@ MotorGhost::~MotorGhost() noexcept {
     
     //remove from motor ghost db
     MotorGhostDB::instance()->removeMotorGhost(this);
+    
+#ifdef CHEMISTRY
+    //remove the unbinding reaction
+    CCylinder* cc1 = _c1->getCCylinder();
+    CCylinder* cc2 = _c2->getCCylinder();
+    cc1->removeCrossCylinderReaction(cc2, _cMotorGhost->getOffReaction());
+#endif
 }
 
 void MotorGhost::updatePosition() {
@@ -165,13 +172,13 @@ void MotorGhost::updateReactionRates() {
             
             float newRate = r->getBareRate() * exp( - force * aWalking / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
         if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
             
             float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
     }
     for(auto r : s2->getRSpecies().reactantReactions()) {
@@ -180,14 +187,14 @@ void MotorGhost::updateReactionRates() {
             
             float newRate = r->getBareRate() * exp( - force * aWalking / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
         
         if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
             
             float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
             r->setRate(newRate);
-            r->getRNode()->activateReaction();
+            r->activateReaction();
         }
     }
 }

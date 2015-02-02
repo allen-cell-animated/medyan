@@ -17,6 +17,7 @@
 #include "Cylinder.h"
 #include "Filament.h"
 #include "ChemRNode.h"
+#include "CompartmentContainer.h"
 
 #include "GController.h"
 #include "SystemParameters.h"
@@ -70,7 +71,6 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //attach this branchpoint to the species
     _cBranchingPoint->setFirstSpecies(sb1);
     _cBranchingPoint->setSecondSpecies(sb2);
-        
 #endif
     
 #ifdef MECHANICS
@@ -93,8 +93,7 @@ BranchingPoint::~BranchingPoint() noexcept {
     //filament. If this is a filament species, change it to its
     //corresponding minus end. If a plus end, release a diffusing
     //or bulk species, depending on the initial reaction.
-    CCylinder* childCC = _c2->getCCylinder();
-    CMonomer* m = childCC->getCMonomer(0);
+    CMonomer* m = _c2->getCCylinder()->getCMonomer(0);
     short speciesFilament = m->activeSpeciesFilament();
     
     //there is a filament species, mark its corresponding minus end
@@ -104,19 +103,23 @@ BranchingPoint::~BranchingPoint() noexcept {
     //mark the free species instead
     else {
         //find the free species
-        short speciesPlusEndNum = m->activeSpeciesPlusEnd();
-        Species* speciesFilament = m->speciesFilament(speciesPlusEndNum);
+        Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
         string speciesName = SpeciesNamesDB::Instance()->
         removeUniqueName(speciesFilament->getName());
+        
+        //find the free monomer, either bulk or diffusing
         Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
+        if(freeMonomer == nullptr)
+            freeMonomer = CompartmentGrid::instance()->
+                          findSpeciesBulkByName(speciesName);
         
         //remove the filament from the system
         delete _c2->getFilament();
         
         //update reaction rates
         for(auto &r : freeMonomer->getRSpecies().reactantReactions())
-            r->getRNode()->activateReaction();
+            r->activateReaction();
     }
 #endif
     

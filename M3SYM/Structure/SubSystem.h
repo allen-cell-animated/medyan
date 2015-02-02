@@ -62,7 +62,8 @@ public:
     /// @param v - coordinates of the first and last bead in the filament.
     void addNewFilaments(vector<vector<vector<double>>>& v);
     /// Add a new Filament at runtime
-    Filament* addNewFilament(vector<double>& position, vector<double>& direction,
+    Filament* addNewFilament(vector<double>& position,
+                             vector<double>& direction,
                              bool branch = false);
     /// Remove a Filament from the system
     void removeFilament(Filament* f);
