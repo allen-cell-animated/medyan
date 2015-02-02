@@ -45,6 +45,9 @@
  Untar the **M3SYM** source code into some directory, enter 
  into the "M3SYM" and execute "make" from the command line.
  
+ See documentation on system parameters for more information
+ on setting command line compilation macros, compiler compatibility, etc.
+ 
  \subsection step3 Step 3: Running M3SYM
  
  See documentation on input files for more information. M3SYM
@@ -73,8 +76,7 @@ void printUsage() {
     << endl;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     
     cout << "******************** M3SYM **********************" << endl;
     

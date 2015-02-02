@@ -165,7 +165,7 @@ template <unsigned short M, unsigned short N>
         /// Implementation of computePropensity()
         inline virtual float computePropensityImpl() const override
         {
-            if(_passivated) return 0.0;
+            if(isPassivated()) return 0.0;
 #ifdef TRACK_UPPER_COPY_N
             if(this->Reaction<M,N>::getProductOfProductsImpl()==0){
                 return float(0.0);

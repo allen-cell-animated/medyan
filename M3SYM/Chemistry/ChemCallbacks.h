@@ -32,6 +32,8 @@
 
 using namespace mathfunc;
 
+#ifdef REACTION_SIGNALING
+
 /// Callback to extend the front of a Filament after a polymerization
 /// Reaction occurs in the system.
 struct FilamentExtensionFrontCallback {
@@ -950,5 +952,7 @@ struct FilamentDestructionCallback {
         delete f;
     }
 };
+
+#endif
 
 #endif

@@ -1211,6 +1211,18 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MECHANICS=1",
+					"CHEMISTRY=1",
+					"DYNAMICRATES=1",
+					"BOOST_MEM_POOL=1",
+					"BOOL_POOL_NSIZE=65536",
+					"TRACK_DEPENDENTS=1",
+					"TRACK_UPPER_COPY_N=1",
+					"TRACK_ZERO_COPY_N=1",
+					"REACTION_SIGNALING=1",
+					"RSPECIES_SIGNALING=1",
+				);
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1218,10 +1230,7 @@
 					"./**",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = (
-					"-std=c++11",
-					"-lgsl",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lboost_system",
 					"-lgsl",
@@ -1237,6 +1246,18 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MECHANICS=1",
+					"CHEMISTRY=1",
+					"DYNAMICRATES=1",
+					"BOOST_MEM_POOL=1",
+					"BOOL_POOL_NSIZE=65536",
+					"TRACK_DEPENDENTS=1",
+					"TRACK_UPPER_COPY_N=1",
+					"TRACK_ZERO_COPY_N=1",
+					"REACTION_SIGNALING=1",
+					"RSPECIES_SIGNALING=1",
+				);
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1244,10 +1265,7 @@
 					"./**",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = (
-					"-std=c++11",
-					"-lgsl",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lboost_system",
 					"-lgsl",
@@ -1287,7 +1305,6 @@
 				OTHER_LDFLAGS = (
 					"-lgsl",
 					"-lboost_system",
-					"-lboost_filesystem",
 				);
 				PRODUCT_NAME = M3SYM;
 			};
@@ -1326,7 +1343,6 @@
 				OTHER_LDFLAGS = (
 					"-lgsl",
 					"-lboost_system",
-					"-lboost_filesystem",
 				);
 				PRODUCT_NAME = M3SYM;
 			};
@@ -1338,6 +1354,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
@@ -1349,10 +1366,7 @@
 					/usr/local/lib,
 					/Users/jameskomianos/Code/googletest,
 				);
-				OTHER_CFLAGS = (
-					"-std=c++11",
-					"-lgsl",
-				);
+				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (
 					"-lboost_system",
 					"-lgtest",
@@ -1371,6 +1385,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
@@ -1382,10 +1397,7 @@
 					/usr/local/lib,
 					/Users/jameskomianos/Code/googletest,
 				);
-				OTHER_CFLAGS = (
-					"-std=c++11",
-					"-lgsl",
-				);
+				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (
 					"-lboost_system",
 					"-lgtest",
