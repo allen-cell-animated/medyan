@@ -25,11 +25,25 @@ void CController::initialize(string& chemAlgorithm, string chemManager,
     
     // Set instance of chemsim algorithm
     ChemSimImpl* csi;
-    if(chemAlgorithm == "NRM")
+    if(chemAlgorithm == "NRM") {
+        
+#if !defined(TRACK_DEPENDENTS)
+        cout << "The NRM algorithm relies on tracking dependents. Please set this"
+            << " compilation macro and try again. Exiting" << endl;
+        exit(EXIT_FAILURE);
+#endif
         csi = new ChemNRMImpl;
+    }
     
-    else if(chemAlgorithm == "GILLESPIE")
+    else if(chemAlgorithm == "GILLESPIE") {
+        
+#if !defined(TRACK_DEPENDENTS)
+        cout << "The Gillespie algorithm relies on tracking dependents. Please set this"
+            << " compilation macro and try again. Exiting" << endl;
+        exit(EXIT_FAILURE);
+#endif
         csi = new ChemGillespieImpl;
+    }
     
     else if(chemAlgorithm == "SIMPLEGILLESPIE")
         csi = new ChemSimpleGillespieImpl;

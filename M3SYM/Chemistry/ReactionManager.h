@@ -68,6 +68,12 @@ public:
         : _reactants(reactants), _products(products), _rate(rate) {
     
         
+#if !defined(REACTION_SIGNALING)
+        cout << "Any filament-related reaction relies on reaction signaling. Please"
+            << " set this compilation macro and try again. Exiting" << endl;
+        exit(EXIT_FAILURE);
+#endif
+            
         //Figure out the binding sites
         int deltaBinding = SystemParameters::Geometry().cylinderIntSize
         / SystemParameters::Chemistry().numBindingSites;
@@ -285,7 +291,12 @@ public:
                 max(rMin - SystemParameters::Geometry().cylinderSize, 0.0), true),
         _reactants(reactants), _products(products),
         _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
-                              
+            
+#if !defined(REACTION_SIGNALING)
+            cout << "Any filament-related reaction relies on reaction signaling. Please"
+            << " set this compilation macro and try again. Exiting" << endl;
+            exit(EXIT_FAILURE);
+#endif
         //Figure out the binding sites
         int deltaBinding = SystemParameters::Geometry().cylinderIntSize
                            / SystemParameters::Chemistry().numBindingSites;

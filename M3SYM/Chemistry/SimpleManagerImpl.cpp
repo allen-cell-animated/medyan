@@ -1855,7 +1855,8 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
             rxn = new Reaction<3,2>(species, get<2>(r));
         else {
-            cout << "Bulk reaction specified does not match any existing templates. Exiting." <<endl;
+            cout << "Bulk reaction specified does not match any existing templates. Exiting."
+            <<endl;
             exit(EXIT_FAILURE);
         }
         
@@ -1867,6 +1868,15 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
 }
 
 void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
+    
+#if !defined(REACTION_SIGNALING)
+    if(chem.nucleationReactions.size() != 0) {
+        
+        cout << "Nucleation reactions rely on reaction signaling. Please set this "
+             << "compilation macro. Exiting" << endl;
+        exit(EXIT_FAILURE);
+    }
+#endif
     
     //loop through all compartments
     for(auto &c : CompartmentGrid::instance()->children()) {
@@ -2032,11 +2042,13 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
             else creationCompartment = GController::getRandomCompartment();
 
             //now, add the callback
+#ifdef REACTION_SIGNALING
             FilamentCreationCallback
             fcallback(plusEnd, filament, minusEnd, _subSystem, creationCompartment);
 
             boost::signals2::shared_connection_block
             rcb(rxn->connect(fcallback,false));
+#endif
         }
     }
 }
