@@ -34,11 +34,11 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     cout << "Filament force field initialized: " <<endl;
     if(forceFields.FStretchingType != "")
-        cout << "Stretching: " << forceFields.FStretchingType << endl;
+        cout << "Stretching   : " << forceFields.FStretchingType << endl;
     if(forceFields.FBendingType != "")
-        cout << "Bending: " << forceFields.FBendingType<< endl;
+        cout << "Bending      : " << forceFields.FBendingType<< endl;
     if(forceFields.FTwistingType != "")
-        cout << "Twisting: " << forceFields.FTwistingType <<endl;
+        cout << "Twisting     : " << forceFields.FTwistingType <<endl;
     
     _FFManager._forceFields.push_back(
         new LinkerFF(forceFields.LStretchingType,
@@ -47,11 +47,11 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     cout << "Linker force field initialized:"<<endl;
     if(forceFields.LStretchingType != "")
-        cout << "Stretching: " << forceFields.LStretchingType<< endl;
+        cout << "Stretching   : " << forceFields.LStretchingType<< endl;
     if(forceFields.LBendingType != "")
-        cout << "Bending: " << forceFields.LBendingType << endl;
+        cout << "Bending      : " << forceFields.LBendingType << endl;
     if(forceFields.LTwistingType != "")
-        cout << "Twisting: " << forceFields.LTwistingType <<endl;
+        cout << "Twisting     : " << forceFields.LTwistingType <<endl;
     
     _FFManager._forceFields.push_back(
         new MotorGhostFF(forceFields.MStretchingType,
@@ -60,11 +60,11 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     cout << "Motor force field initialized:"<<endl;
     if(forceFields.MStretchingType != "")
-        cout << "Stretching: " << forceFields.MStretchingType<< endl;
+        cout << "Stretching   : " << forceFields.MStretchingType<< endl;
     if(forceFields.MBendingType != "")
-        cout << "Bending: " << forceFields.MBendingType<< endl;
+        cout << "Bending      : " << forceFields.MBendingType<< endl;
     if(forceFields.MTwistingType != "")
-        cout << "Twisting: " << forceFields.MTwistingType <<endl;
+        cout << "Twisting     : " << forceFields.MTwistingType <<endl;
     
     _FFManager._forceFields.push_back(
         new BranchingFF(forceFields.BrStretchingType,
@@ -74,27 +74,27 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     cout << "Branching force field initialized:"<<endl;
     if(forceFields.BrStretchingType != "")
-        cout << "Stretching: " << forceFields.BrStretchingType<< endl;
+        cout << "Stretching   : " << forceFields.BrStretchingType<< endl;
     if(forceFields.BrBendingType != "")
-        cout << "Bending: " << forceFields.BrBendingType<< endl;
+        cout << "Bending      : " << forceFields.BrBendingType<< endl;
     if(forceFields.BrDihedralType != "")
-        cout << "Dihedral: " << forceFields.BrDihedralType <<endl;
+        cout << "Dihedral     : " << forceFields.BrDihedralType <<endl;
     if(forceFields.BrPositionType != "")
-        cout << "Position: " << forceFields.BrPositionType <<endl;
+        cout << "Position     : " << forceFields.BrPositionType <<endl;
     
     _FFManager._forceFields.push_back(
         new VolumeCylindricalFF(forceFields.VolumeFFType));
     
     cout << "Volume force field initialized: " <<endl;
     if(forceFields.VolumeFFType != "")
-        cout << "Volume: " << forceFields.VolumeFFType << endl;
+        cout << "Volume       : " << forceFields.VolumeFFType << endl;
     
     _FFManager._forceFields.push_back(
         new BoundaryFF(forceFields.BoundaryFFType, "", ""));
     
     cout << "Boundary force field initialized: " <<endl;
     if(forceFields.BoundaryFFType != "")
-        cout << "Boundary: " << forceFields.BoundaryFFType << endl;
+        cout << "Boundary     : " << forceFields.BoundaryFFType << endl;
     
 }
 

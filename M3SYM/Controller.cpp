@@ -82,18 +82,21 @@ void Controller::initialize(string inputFile,
     
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
+    cout << "---" << endl;
     cout << "Initializing geometry...";
     _gController->initializeGrid();
     cout << "Done." << endl;
     
 #ifdef MECHANICS
     //Initialize Mechanical controller
+    cout << "---" << endl;
     cout << "Initializing mechanics...";
     _mController->initialize(MTypes, MAlgorithm);
     cout << "Done." <<endl;
     
 #endif
     //Initialize boundary
+    cout << "---" << endl;
     cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
         _subSystem->addBoundary(new BoundaryCubic());
@@ -120,6 +123,7 @@ void Controller::initialize(string inputFile,
     p.readChemistryParameters();
     
     //Initialize chemical controller
+    cout << "---" << endl;
     cout << "Initializing chemistry...";
     //read algorithm
     auto CAlgorithm = p.readChemistryAlgorithm();
@@ -161,6 +165,7 @@ void Controller::initialize(string inputFile,
     //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
     vector<vector<vector<double>>> filamentData;
+    cout << "---" << endl;
     cout << "Initializing filaments...";
     
     if(FSetup.inputFile != "") {
@@ -247,6 +252,7 @@ void Controller::run() {
     ///Print initial configuration
     for(auto o: _outputs) o->print(0);
     
+    cout << "---" << endl;
     cout << "Performing an initial minimization..." << endl;
     
     //perform first minimization
