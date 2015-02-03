@@ -32,7 +32,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                        forceFields.FBendingType,
                        forceFields.FTwistingType));
     
-    cout << "Filament force field initialized: " <<endl;
+    cout << "Filament FF initialized: " <<endl;
     if(forceFields.FStretchingType != "")
         cout << "Stretching   : " << forceFields.FStretchingType << endl;
     if(forceFields.FBendingType != "")
@@ -45,7 +45,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                      forceFields.LBendingType,
                      forceFields.LTwistingType));
     
-    cout << "Linker force field initialized:"<<endl;
+    cout << "Linker FF initialized:"<<endl;
     if(forceFields.LStretchingType != "")
         cout << "Stretching   : " << forceFields.LStretchingType<< endl;
     if(forceFields.LBendingType != "")
@@ -58,7 +58,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                          forceFields.MBendingType,
                          forceFields.MTwistingType));
     
-    cout << "Motor force field initialized:"<<endl;
+    cout << "Motor FF initialized:"<<endl;
     if(forceFields.MStretchingType != "")
         cout << "Stretching   : " << forceFields.MStretchingType<< endl;
     if(forceFields.MBendingType != "")
@@ -72,7 +72,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                         forceFields.BrDihedralType,
                         forceFields.BrPositionType));
     
-    cout << "Branching force field initialized:"<<endl;
+    cout << "Branching FF initialized:"<<endl;
     if(forceFields.BrStretchingType != "")
         cout << "Stretching   : " << forceFields.BrStretchingType<< endl;
     if(forceFields.BrBendingType != "")
@@ -85,14 +85,14 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     _FFManager._forceFields.push_back(
         new VolumeCylindricalFF(forceFields.VolumeFFType));
     
-    cout << "Volume force field initialized: " <<endl;
+    cout << "Volume FF initialized: " <<endl;
     if(forceFields.VolumeFFType != "")
         cout << "Volume       : " << forceFields.VolumeFFType << endl;
     
     _FFManager._forceFields.push_back(
         new BoundaryFF(forceFields.BoundaryFFType, "", ""));
     
-    cout << "Boundary force field initialized: " <<endl;
+    cout << "Boundary FF initialized: " <<endl;
     if(forceFields.BoundaryFFType != "")
         cout << "Boundary     : " << forceFields.BoundaryFFType << endl;
     
