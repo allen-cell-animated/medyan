@@ -10,7 +10,8 @@ FAST = -O3 -ffast-math -mtune=corei7-avx -flto -funroll-loops -DNDEBUG -mtune=na
 
 LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 
-CPPFLAGS = -Wpedantic -Wall -I/usr/local/include -I/usr/include/boost \
+CPPFLAGS = -Wall -Wno-sign-compare \
+-I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IChemistry             \
 -IMechanics/Minimizer                    \
 -IMechanics/ForceField                   \

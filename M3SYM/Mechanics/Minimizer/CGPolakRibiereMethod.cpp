@@ -18,7 +18,7 @@
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
     
-    int SpaceSize = 3 * BeadDB::instance()->size();
+    int SpaceSize = 3 * (int) BeadDB::instance()->size();
     if (SpaceSize == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);

@@ -89,7 +89,9 @@ protected:
     void printForces();
     
 public:
-
+    
+    virtual ~CGMethod() {};
+    
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL) = 0;
 };

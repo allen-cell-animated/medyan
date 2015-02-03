@@ -82,6 +82,7 @@ int main(int argc, char **argv) {
     cout << "         of Active Networks, Third Generation.         " << endl;
     cout << "         PAPOIAN LAB 2014, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
+    cout << endl;
     
     cout.precision(8);
     

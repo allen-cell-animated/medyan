@@ -225,9 +225,9 @@ template <unsigned short M, unsigned short N>
             }
             os << " ---> ";
             i=0;
-            for (auto sit = send; sit!=_rspecies.cend(); ++sit)
+            for (auto sit2 = send; sit2!=_rspecies.cend(); ++sit2)
             {
-                os << (*sit)->getFullName() << "{" << (*sit)->getN() << "}";
+                os << (*sit2)->getFullName() << "{" << (*sit2)->getN() << "}";
                 if(i<(N-1))
                     os << " + ";
                 ++i;

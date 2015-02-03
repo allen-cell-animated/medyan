@@ -87,7 +87,7 @@ public:
         auto mit = _map_string_int.find(name);
         if(mit == _map_string_int.end()){
             _vec_int_string.push_back(name);
-            _map_string_int[name]=_vec_int_string.size()-1;
+            _map_string_int[name]= _vec_int_string.size()-1;
             return _vec_int_string.size()-1;
         }
         else

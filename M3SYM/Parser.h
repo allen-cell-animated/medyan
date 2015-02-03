@@ -18,6 +18,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iterator>
 #include <ios>
 
 #include "common.h"
