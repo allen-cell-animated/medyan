@@ -519,8 +519,8 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
                 vector<double>&z,int nbeads,
                 vector<vector<double>> &coordinate)
 {
-    int t,i,n;
-    double dt,length,cyl_length,sum,dummy3;
+    int t,i;
+    double dt,length,cyl_length,sum;
     vector<int> id;
     vector<double> dx,dy,dz,dx2,dy2,dz2,length2,dxdy2,dummyy(3);
     using namespace boost::numeric::ublas;
@@ -573,7 +573,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     
     length = boost::accumulate(length2, 0.0);//arc length.
     //making equal divisions.
-    n=0;i=0;sum=0.0;dummy3=0.0;id.push_back(0.0);
+    i=0;sum=0.0;id.push_back(0.0);
     cyl_length=length/(nbeads-1);
     while(i<=4000)
     {

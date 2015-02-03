@@ -110,7 +110,7 @@ public:
     string removeUniqueName(string name) {
         
         //loop through string, get to integer
-        for(auto i = 0; i < name.length(); i++) {
+        for(unsigned long i = 0; i < name.length(); i++) {
             
             if(name.substr(i,1).compare("-") == 0) {
                 //return the string, cutting before this value

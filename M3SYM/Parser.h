@@ -19,6 +19,7 @@
 #include <string>
 #include <sstream>
 #include <iterator>
+#include <algorithm>
 #include <ios>
 
 #include "common.h"
