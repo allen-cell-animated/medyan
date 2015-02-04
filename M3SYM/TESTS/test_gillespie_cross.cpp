@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_LONG_TEST
+//#define DO_THIS_LONG_TEST
 
 #ifdef DO_THIS_LONG_TEST 
 

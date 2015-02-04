@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_GILLESPIE_TEST
+//#define DO_THIS_GILLESPIE_TEST
 
 #ifdef DO_THIS_GILLESPIE_TEST
 
