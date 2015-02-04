@@ -29,7 +29,7 @@ void CController::initialize(string& chemAlgorithm, string chemManager,
         
 #if !defined(TRACK_DEPENDENTS)
         cout << "The NRM algorithm relies on tracking dependents. Please set this"
-            << " compilation macro and try again. Exiting" << endl;
+            << " compilation macro and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
         csi = new ChemNRMImpl;
@@ -39,7 +39,7 @@ void CController::initialize(string& chemAlgorithm, string chemManager,
         
 #if !defined(TRACK_DEPENDENTS)
         cout << "The Gillespie algorithm relies on tracking dependents. Please set this"
-            << " compilation macro and try again. Exiting" << endl;
+            << " compilation macro and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
         csi = new ChemGillespieImpl;
@@ -59,11 +59,7 @@ void CController::initialize(string& chemAlgorithm, string chemManager,
     cii = new SimpleManagerImpl(_subSystem);
 
     ChemManager::setInstance(cii);
-    
-    // initialize grid ...
     ChemManager::initialize(chem);
-    
-    // initialize chemsim
     ChemSim::initialize();
 }
 

@@ -25,6 +25,52 @@
 
 using namespace mathfunc;
 
+void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
+    
+    for(auto &f : _speciesFilament) {
+        SpeciesFilament* sf =
+        c->addSpeciesFilament(
+        SpeciesNamesDB::Instance()->genUniqueName(f));
+        m->addSpeciesFilament(sf);
+    }
+    for (auto &p : _speciesPlusEnd) {
+        SpeciesPlusEnd* sp =
+        c->addSpeciesPlusEnd(
+        SpeciesNamesDB::Instance()->genUniqueName(p));
+        m->addSpeciesPlusEnd(sp);
+    }
+    for (auto &mi : _speciesMinusEnd) {
+        SpeciesMinusEnd* smi =
+        c->addSpeciesMinusEnd(
+        SpeciesNamesDB::Instance()->genUniqueName(mi));
+        m->addSpeciesMinusEnd(smi);
+    }
+    for (auto &b : _speciesBound) {
+        SpeciesBound* sb =
+        c->addSpeciesBound(
+        SpeciesNamesDB::Instance()->genUniqueName(b));
+        m->addSpeciesBound(sb);
+    }
+    for (auto &l : _speciesLinker) {
+        SpeciesLinker* sl =
+        c->addSpeciesLinker(
+        SpeciesNamesDB::Instance()->genUniqueName(l));
+        m->addSpeciesLinker(sl);
+    }
+    for (auto &mo : _speciesMotor) {
+        SpeciesMotor* sm =
+        c->addSpeciesMotor(
+        SpeciesNamesDB::Instance()->genUniqueName(mo));
+        m->addSpeciesMotor(sm);
+    }
+    for (auto &br : _speciesBrancher) {
+        SpeciesBrancher* sb =
+        c->addSpeciesBrancher(
+        SpeciesNamesDB::Instance()->genUniqueName(br));
+        m->addSpeciesBrancher(sb);
+    }
+}
+
 void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     
     //set up reaction templates
@@ -1543,37 +1589,12 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
 
 void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
     
-    //Copy all species from chem struct, check lengths
+    //Copy all species from chem struct
     _speciesFilament =  chem.speciesFilament;
-    if(_speciesFilament.size() < 1) {
-        cout << "Must specify at least one filament species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
     _speciesPlusEnd  =  chem.speciesPlusEnd;
-    if(_speciesPlusEnd.size() < 1) {
-        cout << "Must specify at least one plus end species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
-    if(_speciesPlusEnd.size() < _speciesFilament.size()) {
-        cout << "There must be a plus end for every filament species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
-    
     _speciesMinusEnd =  chem.speciesMinusEnd;
-    if(_speciesMinusEnd.size() < 1) {
-        cout << "Must specify at least one minus end species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
-    if(_speciesMinusEnd.size() < _speciesFilament.size()) {
-        cout << "There must be a minus end for every filament species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
     
     _speciesBound  =  chem.speciesBound;
-    if(_speciesBound.size() < 1) {
-        cout << "Must specify at least one bound species. Exiting" << endl;
-        exit(EXIT_FAILURE);
-    }
     _speciesLinker =  chem.speciesLinker;
     _speciesMotor  =  chem.speciesMotor;
     _speciesBrancher = chem.speciesBrancher;
@@ -1873,7 +1894,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
     if(chem.nucleationReactions.size() != 0) {
         
         cout << "Nucleation reactions rely on reaction signaling. Please set this "
-             << "compilation macro. Exiting" << endl;
+             << "compilation macro. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 #endif
@@ -2065,12 +2086,9 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
     //Setup all species diffusing and bulk
     Compartment& cProto = CompartmentGrid::instance()->getProtoCompartment();
     
-    //generate all species
     genSpecies(chem, cProto);
-    
-    //add reactions to protocompartment
+    //will print reactions as well
     genGeneralReactions(chem, cProto);
-    //generate any bulk reactions
     genBulkReactions(chem);
     
     //initialize all compartments equivalent to cproto
@@ -2083,20 +2101,17 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
         Compartment *C = (Compartment*)(c.get());
         C->generateAllDiffusionReactions();
     }
-    //generate nucleation reactions
-    genNucleationReactions(chem);
-    
-    //intialize copy numbers of diffusing
     initDiffusingCopyNumbers(chem);
+    genNucleationReactions(chem);
     
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();
     
-    //create internal filament reaction managers
+    //create reaction managers
     genIFRxnManagers(chem);
-    //create cross filament reaction managers
     genCFRxnManagers(chem);
 }
+
 
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                                             bool extensionFront,
@@ -2108,51 +2123,8 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     
     //add monomers to cylinder
     for(int i = 0; i < maxlength; i++) {
-        
         CMonomer* m = new CMonomer();
-        for(auto &f : _speciesFilament) {
-            SpeciesFilament* sf =
-            c->addSpeciesFilament(
-               SpeciesNamesDB::Instance()->genUniqueName(f));
-            m->addSpeciesFilament(sf);
-        }
-        for (auto &p : _speciesPlusEnd) {
-            SpeciesPlusEnd* sp =
-            c->addSpeciesPlusEnd(
-               SpeciesNamesDB::Instance()->genUniqueName(p));
-            m->addSpeciesPlusEnd(sp);
-        }
-        for (auto &mi : _speciesMinusEnd) {
-            SpeciesMinusEnd* smi =
-            c->addSpeciesMinusEnd(
-               SpeciesNamesDB::Instance()->genUniqueName(mi));
-            m->addSpeciesMinusEnd(smi);
-        }
-        for (auto &b : _speciesBound) {
-            SpeciesBound* sb =
-            c->addSpeciesBound(
-               SpeciesNamesDB::Instance()->genUniqueName(b));
-            m->addSpeciesBound(sb);
-        }
-        for (auto &l : _speciesLinker) {
-            SpeciesLinker* sl =
-            c->addSpeciesLinker(
-               SpeciesNamesDB::Instance()->genUniqueName(l));
-            m->addSpeciesLinker(sl);
-        }
-        for (auto &mo : _speciesMotor) {
-            SpeciesMotor* sm =
-            c->addSpeciesMotor(
-               SpeciesNamesDB::Instance()->genUniqueName(mo));
-            m->addSpeciesMotor(sm);
-        }
-        for (auto &br : _speciesBrancher) {
-            SpeciesBrancher* sb =
-            c->addSpeciesBrancher(
-               SpeciesNamesDB::Instance()->genUniqueName(br));
-            m->addSpeciesBrancher(sb);
-        }
-        
+        initCMonomer(m, c);
         cc->addCMonomer(m);
     }
     //get last ccylinder

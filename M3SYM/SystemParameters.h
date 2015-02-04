@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "common.h"
+#include "Parser.h"
 
 /// Struct to hold mechanical parameters for the system
 struct MechanicsParameters {
@@ -119,9 +120,9 @@ struct GeometryParameters {
 /// Struct to hold Boundary parameters for the system
 struct BoundaryParameters {
     
-    double boundaryCutoff = 0;
-    double boundaryK = 0;
-    double screenLength = 0;
+    double BoundaryCutoff = 0;
+    double BoundaryK = 0;
+    double BScreenLength = 0;
     
     double diameter = 0;
 };
@@ -163,6 +164,14 @@ public:
     static const BoundaryParameters& Boundaries() {return BParams;}
     static const DynamicRateParameters& DynamicRates() {return DRParams;}
     //@}
+    
+    //@{
+    //Check for consistency of parameters. Done at runtime by the Controller.
+    static bool checkChemParameters(ChemistryData& chem);
+    static bool checkMechParameters(MechanicsFFType& mech);
+    static bool checkGeoParameters();
+    //@}
+    
 };
 
 #endif

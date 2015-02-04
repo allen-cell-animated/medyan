@@ -31,7 +31,7 @@ private:
 public:
     /// Constructor, intializes the neighbor list needed
     BoundaryInteractions()
-        : BBENLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
+        : BBENLContainer(SystemParameters::Boundaries().BoundaryCutoff) {}
     
     /// Compute energy of this interaction
     virtual double computeEnergy(BoundaryElement*, Bead*, double d) = 0;

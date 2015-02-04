@@ -23,8 +23,12 @@
 
 //FORWARD DECLARATIONS
 class SubSystem;
+class CMonomer;
+class Compartment;
+
 class InternalFilamentRxnManager;
 class CrossFilamentRxnManager;
+
 struct ChemistryData;
 
 /// A concrete implementation of the ChemManagerImpl class.
@@ -46,6 +50,18 @@ private:
                    _speciesLinker, _speciesMotor, _speciesBrancher;
     //@}
     
+    /// Intialize a CMonomer based on system chemistry
+    void initCMonomer(CMonomer* m, Compartment* c);
+    
+    /// Generate the general, non-filament reactions
+    void genGeneralReactions(ChemistryData& chem,
+                             Compartment& protoCompartment);
+    /// Generate bulk reactions
+    void genBulkReactions(ChemistryData& chem);
+    /// Generate reactions that create new filaments from
+    /// diffusing and/or bulk species
+    void genNucleationReactions(ChemistryData& chem);
+    
     //@{
     /// Set up all Filament ReactionManagers from the setup struct
     void genIFRxnManagers(ChemistryData& chem);
@@ -55,20 +71,8 @@ private:
     /// Generate all species, bulk and diffusing
     void genSpecies(ChemistryData& chem,
                     Compartment& protoCompartment);
-    
     /// Initialize the copy numbers of all species
     void initDiffusingCopyNumbers(ChemistryData& chem);
-    
-    /// Generate the general, non-filament reactions
-    void genGeneralReactions(ChemistryData& chem,
-                             Compartment& protoCompartment);
-    
-    /// Generate bulk reactions
-    void genBulkReactions(ChemistryData& chem);
-    
-    /// Generate reactions that create new filaments from
-    /// diffusing and/or bulk species
-    void genNucleationReactions(ChemistryData& chem);
     
     /// Copies species from chem struct
     void copySpecies(ChemistryData& chem);

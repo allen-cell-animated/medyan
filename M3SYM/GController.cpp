@@ -152,7 +152,7 @@ void GController::initializeGrid() {
         _compartmentSize[2] != 0)){
     }
     else {
-        cout << "Grid parameters are invalid. Exiting" << endl;
+        cout << "Grid parameters are invalid. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
     

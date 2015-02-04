@@ -19,25 +19,32 @@
 
 CMonomer::CMonomer() {
     
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies =
+        SystemParameters::Chemistry().numFilamentSpecies;
     _speciesFilament = new SpeciesFilament*[numFilamentSpecies]();
     
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies =
+        SystemParameters::Chemistry().numPlusEndSpecies;
     _speciesPlusEnd = new SpeciesPlusEnd*[numPlusEndSpecies]();
     
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies =
+        SystemParameters::Chemistry().numMinusEndSpecies;
     _speciesMinusEnd = new SpeciesMinusEnd*[numMinusEndSpecies]();
     
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    short numBoundSpecies =
+        SystemParameters::Chemistry().numBoundSpecies;
     _speciesBound = new SpeciesBound*[numBoundSpecies]();
     
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies =
+        SystemParameters::Chemistry().numLinkerSpecies;
     _speciesLinker = new SpeciesLinker*[numLinkerSpecies]();
     
-    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+    short numMotorSpecies =
+        SystemParameters::Chemistry().numMotorSpecies;
     _speciesMotor = new SpeciesMotor*[numMotorSpecies]();
     
-    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies =
+        SystemParameters::Chemistry().numBrancherSpecies;
     _speciesBrancher = new SpeciesBrancher*[numBrancherSpecies]();
 
 };
@@ -150,10 +157,6 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add filament species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
@@ -165,10 +168,6 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add plus end species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
@@ -180,10 +179,6 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add minus end species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesBound(SpeciesBound* s) {
@@ -195,10 +190,6 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add bound species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
@@ -210,10 +201,6 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add linker species to a monomer.  Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
@@ -225,10 +212,6 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add motor species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 void CMonomer::addSpeciesBrancher(SpeciesBrancher* s) {
@@ -240,10 +223,6 @@ void CMonomer::addSpeciesBrancher(SpeciesBrancher* s) {
             return;
         }
     }
-    //return error if we get here
-    cout << "Could not add brancher species to a monomer. Check that the numer of species in the system input file matches the chemistry input. Exiting"
-    << endl;
-    exit(EXIT_FAILURE);
 }
 
 

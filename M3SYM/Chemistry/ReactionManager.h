@@ -70,7 +70,7 @@ public:
         
 #if !defined(REACTION_SIGNALING)
         cout << "Any filament-related reaction relies on reaction signaling. Please"
-            << " set this compilation macro and try again. Exiting" << endl;
+            << " set this compilation macro and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
             
@@ -144,7 +144,7 @@ public:
             
 #if !defined(REACTION_SIGNALING)
             cout << "Any filament-related reaction relies on reaction signaling. Please"
-            << " set this compilation macro and try again. Exiting" << endl;
+            << " set this compilation macro and try again. Exiting." << endl;
             exit(EXIT_FAILURE);
 #endif
         //Figure out the binding sites

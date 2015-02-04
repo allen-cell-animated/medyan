@@ -32,13 +32,10 @@ struct OutputTypes {
     
     /// A basic snapshot
     bool basicSnapshot = false;
-    
     /// Birth times
     bool birthTimes = false;
-    
     /// Forces
     bool forces = false;
-    
     /// Stresses
     bool stresses = false;
     //@}
@@ -69,7 +66,8 @@ struct ChemistryAlgorithm {
     //@}
     
     int numChemSteps = 0; ///< Specifying number of chemical steps at a time
-    int numStepsPerNeighbor = 0;
+    int numStepsPerNeighbor = 0; ///< Number of chemical steps per a neighbor
+                                 ///< list update. Will affect efficiency.
 };
 
 /// Struct to hold Species and Reaction information
@@ -252,7 +250,7 @@ public:
         _inputFile.open(inputFileName);
         if(!_inputFile.is_open()) {
             cout << "There was an error parsing file " << inputFileName <<
-                ". Exiting" << endl;
+                ". Exiting." << endl;
             exit(EXIT_FAILURE);
         }
         cout << "Loading file " << inputFileName << endl;

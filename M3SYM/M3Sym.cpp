@@ -36,6 +36,7 @@
  \subsection step1 Step 1: Prerequisites
  
  The following software packages need to be installed first:
+ See Installation guide (docs/InstallGuide.pdf) for more details.
  
  - Boost 1.49
  - GSL ...
@@ -45,12 +46,12 @@
  Untar the **M3SYM** source code into some directory, enter 
  into the "M3SYM" and execute "make" from the command line.
  
- See documentation on system parameters for more information
+ See Installation guide (docs/InstallGuide.pdf) for more information
  on setting command line compilation macros, compiler compatibility, etc.
  
  \subsection step3 Step 3: Running M3SYM
  
- See documentation on input files for more information. M3SYM
+ See the Usage guid (docs/UsageGuide.pdf) for more information. M3SYM
  executable must be run with the following command line arguments:
  
  -s : System input file to be used. Must be an absolute path
@@ -82,7 +83,6 @@ int main(int argc, char **argv) {
     cout << "         of Active Networks, Third Generation.         " << endl;
     cout << "         PAPOIAN LAB 2014, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
-    cout << endl;
     
     cout.precision(8);
     

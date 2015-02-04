@@ -56,6 +56,7 @@ void Controller::initialize(string inputFile,
     OutputTypes oTypes = p.readOutputTypes();
     
     //snapshot type output
+    cout << endl;
     if(oTypes.basicSnapshot)
         _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
     if(oTypes.birthTimes)
@@ -74,12 +75,10 @@ void Controller::initialize(string inputFile,
     //read const parameters
     p.readMechanicsParameters();
 #endif
-    //Always read boundary type
-    auto BTypes = p.readBoundaryType();
-    p.readBoundaryParameters();
-    
-    //Always read geometry
+    //Always read geometry, check consistency
     p.readGeometryParameters();
+    if(!SystemParameters::checkGeoParameters())
+        exit(EXIT_FAILURE);
     
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
@@ -96,6 +95,10 @@ void Controller::initialize(string inputFile,
     cout << "Done." <<endl;
     
 #endif
+    //Always read boundary type
+    auto BTypes = p.readBoundaryType();
+    p.readBoundaryParameters();
+    
     //Initialize boundary
     cout << "---" << endl;
     cout << "Initializing boundary...";
@@ -111,7 +114,7 @@ void Controller::initialize(string inputFile,
             new BoundaryCapsule(SystemParameters::Boundaries().diameter));
     }
     else{
-        cout << endl << "Given boundary not yet implemented. Exiting" <<endl;
+        cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
     cout << "Done." <<endl;
@@ -151,7 +154,7 @@ void Controller::initialize(string inputFile,
         chem = cp.readChemistryInput();
     }
     else {
-        cout << "Need to specify a chemical input file. Exiting" << endl;
+        cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
     _cController->initialize(CAlgorithm.algorithm, "", chem);
@@ -163,6 +166,19 @@ void Controller::initialize(string inputFile,
     p.readDynamicRateParameters();
 #endif
 
+    //Check consistency of all chemistry and mechanics parameters
+    cout << "---" << endl;
+    cout << "Checking parameter consistency..." << endl;
+#ifdef CHEMISTRY
+    if(!SystemParameters::checkChemParameters(chem))
+        exit(EXIT_FAILURE);
+#endif
+#ifdef MECHANICS
+    if(!SystemParameters::checkMechParameters(MTypes))
+        exit(EXIT_FAILURE);
+#endif
+    cout << "Done." << endl;
+    
     //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
     vector<vector<vector<double>>> filamentData;
@@ -182,7 +198,8 @@ void Controller::initialize(string inputFile,
     }
     //add filaments
     _subSystem->addNewFilaments(filamentData);
-    cout << "Done. " << filamentData.size() << " filaments created." << endl;
+    cout << "Done. " << filamentData.size()
+         << " filaments created." << endl;
     
     //First update of system
     updatePositions();

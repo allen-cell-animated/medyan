@@ -35,7 +35,7 @@ public:
         _outputFile.open(outputFileName);
         if(!_outputFile.is_open()) {
             cout << "There was an error opening file " << outputFileName
-            << " for output. Exiting" << endl;
+            << " for output. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
         cout << "Opening file " << outputFileName << endl;

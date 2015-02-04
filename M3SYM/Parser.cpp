@@ -32,7 +32,7 @@ OutputTypes SystemParser::readOutputTypes() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 3) {
                 cout <<
-                "There was an error parsing input file at output types. Exiting"
+                "There was an error parsing input file at output types. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -70,7 +70,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -84,7 +84,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -98,7 +98,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -112,7 +112,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -125,7 +125,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -138,7 +138,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -151,7 +151,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -164,7 +164,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -177,7 +177,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -190,7 +190,7 @@ void SystemParser::readChemistryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -221,7 +221,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -234,7 +234,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -248,7 +248,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -261,7 +261,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -274,7 +274,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -288,7 +288,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -301,7 +301,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting"
+                "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -329,7 +329,7 @@ ChemistrySetup SystemParser::readChemistrySetup() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "Error reading chemistry input file. Exiting" << endl;
+                cout << "Error reading chemistry input file. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             
@@ -337,7 +337,7 @@ ChemistrySetup SystemParser::readChemistrySetup() {
                 CSetup.inputFile = lineVector[1];
             
             else if(lineVector.size() < 2) {
-                cout << "Must specify a chemistry input file. Exiting" << endl;
+                cout << "Must specify a chemistry input file. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -363,7 +363,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament stretching type. Exiting"
+                "There was an error parsing input file at Filament stretching type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -376,7 +376,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament bending type. Exiting"
+                "There was an error parsing input file at Filament bending type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -389,7 +389,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament twisting type. Exiting"
+                "There was an error parsing input file at Filament twisting type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -402,7 +402,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker stretching type. Exiting"
+                "There was an error parsing input file at Linker stretching type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -415,7 +415,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker bending type. Exiting"
+                "There was an error parsing input file at Linker bending type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -428,7 +428,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker twisting type. Exiting"
+                "There was an error parsing input file at Linker twisting type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -441,7 +441,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor stretching type. Exiting"
+                "There was an error parsing input file at Motor stretching type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -454,7 +454,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor bending type. Exiting"
+                "There was an error parsing input file at Motor bending type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -467,7 +467,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor twisting type. Exiting"
+                "There was an error parsing input file at Motor twisting type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -480,7 +480,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch stretching type. Exiting"
+                "There was an error parsing input file at Branch stretching type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -493,7 +493,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch bending type. Exiting"
+                "There was an error parsing input file at Branch bending type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -506,7 +506,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch dihedral type. Exiting"
+                "There was an error parsing input file at Branch dihedral type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -519,7 +519,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch dihedral type. Exiting"
+                "There was an error parsing input file at Branch dihedral type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -532,7 +532,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Boundary type. Exiting"
+                "There was an error parsing input file at Boundary type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -545,7 +545,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Volume type. Exiting"
+                "There was an error parsing input file at Volume type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -577,7 +577,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -592,7 +592,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -605,7 +605,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -620,7 +620,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -633,7 +633,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -814,7 +814,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -828,7 +828,7 @@ void SystemParser::readMechanicsParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting"
+                "There was an error parsing input file at Mechanics parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -859,7 +859,7 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "A conjugate gradient method must be specified. Exiting" << endl;
+                "A conjugate gradient method must be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -870,7 +870,7 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "A Mechanics algorithm must be specified. Exiting" << endl;
+                cout << "A Mechanics algorithm must be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -905,16 +905,16 @@ void SystemParser::readBoundaryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Boundary parameters. Exiting"
+                "There was an error parsing input file at Boundary parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryCutoff = atof((lineVector[1].c_str()));
+                BParams.BoundaryCutoff = atof((lineVector[1].c_str()));
             }
             //Default value to be half compartment size
             else {
-                BParams.boundaryCutoff =
+                BParams.BoundaryCutoff =
                     SystemParameters::Geometry().compartmentSizeX / 2;
             }
         }
@@ -923,12 +923,12 @@ void SystemParser::readBoundaryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Boundary parameters. Exiting"
+                "There was an error parsing input file at Boundary parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.boundaryK = atof((lineVector[1].c_str()));
+                BParams.BoundaryK = atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -937,12 +937,12 @@ void SystemParser::readBoundaryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Boundary parameters. Exiting"
+                "There was an error parsing input file at Boundary parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BParams.screenLength = atof((lineVector[1].c_str()));
+                BParams.BScreenLength = atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -951,7 +951,7 @@ void SystemParser::readBoundaryParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Boundary parameters. Exiting"
+                "There was an error parsing input file at Boundary parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -984,7 +984,7 @@ void SystemParser::readDynamicRateParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                "There was an error parsing input file at dynamic rate parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -999,7 +999,7 @@ void SystemParser::readDynamicRateParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                "There was an error parsing input file at dynamic rate parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1014,7 +1014,7 @@ void SystemParser::readDynamicRateParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                "There was an error parsing input file at dynamic rate parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1029,7 +1029,7 @@ void SystemParser::readDynamicRateParameters() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting"
+                "There was an error parsing input file at dynamic rate parameters. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1060,7 +1060,7 @@ BoundaryType SystemParser::readBoundaryType() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                cout << "A boundary shape needs to be specified. Exiting" << endl;
+                cout << "A boundary shape needs to be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -1097,7 +1097,7 @@ void SystemParser::readGeometryParameters() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at grid dimensions. Exiting" << endl;
+                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2)
@@ -1112,7 +1112,7 @@ void SystemParser::readGeometryParameters() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at compartment size. Exiting" << endl;
+                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1124,7 +1124,7 @@ void SystemParser::readGeometryParameters() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                cout << "A monomer size needs to be specified. Exiting" << endl;
+                cout << "A monomer size needs to be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1136,7 +1136,7 @@ void SystemParser::readGeometryParameters() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
-                cout << "A cylinder size needs to be specified. Exiting" << endl;
+                cout << "A cylinder size needs to be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1148,7 +1148,7 @@ void SystemParser::readGeometryParameters() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Number of dimensions needs to be specified. Exiting" << endl;
+                cout << "Number of dimensions needs to be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
@@ -1166,7 +1166,7 @@ void SystemParser::readGeometryParameters() {
 #ifdef CHEMISTRY
     if(cylinderSize / monomerSize < SystemParameters::Geometry().minCylinderIntSize) {
         cout <<
-        "With chemistry, cylinder size specified is too short. Exiting"
+        "With chemistry, cylinder size specified is too short. Exiting."
         << endl;
         exit(EXIT_FAILURE);
     }
@@ -1210,7 +1210,7 @@ FilamentSetup SystemParser::readFilamentSetup() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "Error reading filament input file. Exiting" << endl;
+                cout << "Error reading filament input file. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1221,7 +1221,7 @@ FilamentSetup SystemParser::readFilamentSetup() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "Error reading number of filaments. Exiting" << endl;
+                cout << "Error reading number of filaments. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1232,7 +1232,7 @@ FilamentSetup SystemParser::readFilamentSetup() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
-                cout << "Error reading filament length. Exiting" << endl;
+                cout << "Error reading filament length. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1288,7 +1288,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
         
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  4) {
-                cout << "Error reading a bulk species. Exiting" << endl;
+                cout << "Error reading a bulk species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 4) {
@@ -1301,7 +1301,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  4) {
-                cout << "Error reading a diffusing species. Exiting" << endl;
+                cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 4) {
@@ -1315,7 +1315,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament species. Exiting" << endl;
+                cout << "Error reading a filament species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1326,7 +1326,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament bound species. Exiting" << endl;
+                cout << "Error reading a filament bound species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1338,7 +1338,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament linker species. Exiting" << endl;
+                cout << "Error reading a filament linker species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1349,7 +1349,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament motor species. Exiting" << endl;
+                cout << "Error reading a filament motor species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1360,7 +1360,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament brancher species. Exiting" << endl;
+                cout << "Error reading a filament brancher species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1371,7 +1371,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament plus end species. Exiting" << endl;
+                cout << "Error reading a filament plus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) 
@@ -1382,7 +1382,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() !=  2) {
-                cout << "Error reading a filament minus end species. Exiting" << endl;
+                cout << "Error reading a filament minus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
@@ -1413,7 +1413,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a general reaction. Exiting" << endl;
+                cout << "Error reading a general reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1442,7 +1442,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a bulk reaction. Exiting" << endl;
+                cout << "Error reading a bulk reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1470,7 +1470,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a nucleation reaction. Exiting" << endl;
+                cout << "Error reading a nucleation reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1500,7 +1500,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a depolymerization reaction. Exiting" << endl;
+                cout << "Error reading a depolymerization reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1531,7 +1531,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a polymerization reaction. Exiting" << endl;
+                cout << "Error reading a polymerization reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1562,7 +1562,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a linker reaction. Exiting" << endl;
+                cout << "Error reading a linker reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1593,7 +1593,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a motor reaction. Exiting" << endl;
+                cout << "Error reading a motor reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1622,7 +1622,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading a motor walking reaction. Exiting" << endl;
+                cout << "Error reading a motor walking reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1651,7 +1651,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
             }
             else {
-                cout << "Error reading an aging reaction. Exiting" << endl;
+                cout << "Error reading an aging reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1679,7 +1679,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a destruction reaction. Exiting" << endl;
+                cout << "Error reading a destruction reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1708,7 +1708,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                  atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a branching reaction. Exiting" << endl;
+                cout << "Error reading a branching reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -1726,7 +1726,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 ((*it), atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a severing reaction. Exiting" << endl;
+                cout << "Error reading a severing reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }

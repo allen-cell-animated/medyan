@@ -55,7 +55,7 @@ class SubSystem
 #endif
 public:
 #ifdef DYNAMICRATES 
-    SubSystem() : CBENLContainer(SystemParameters::Boundaries().boundaryCutoff) {}
+    SubSystem() : CBENLContainer(SystemParameters::Boundaries().BoundaryCutoff) {}
 #endif
         
     /// Add new [Filaments](@ref Filament).

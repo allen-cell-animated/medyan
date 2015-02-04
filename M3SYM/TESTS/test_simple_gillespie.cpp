@@ -128,7 +128,10 @@ TEST(ChemSimpleGillespieTest, SimpleTransient) {
     
     // The results below are for N=10 (coming from both analytical
     // formula and numerical integration)
-    vector<double> n_hist_analyt {0.0003773 ,  0.00452585,  0.02443017,  0.0781464 ,  0.1640442 , 0.23613261,  0.23604161,  0.1617947,  0.07277957,  0.01940041, 0.00232715};
+    vector<double> n_hist_analyt {0.0003773 ,  0.00452585,  0.02443017,
+                                  0.0781464 ,  0.1640442 , 0.23613261,
+                                  0.23604161,  0.1617947,  0.07277957,
+                                  0.01940041, 0.00232715};
     double relative_error=0.15; //i.e. allow a 15% relative error
     for(int n=0; n<(Nstart+1); ++n){
         double p_est=double(n_hist[n])/N_SAMPLE_POINTS;
@@ -284,7 +287,10 @@ TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
     p_nrm.push_back(pa3);
     
     // The results below are for ...
-    vector<double> p_numeric {0.001687323512088279, 0.12264078507458409, 0.55515007879166167, 0.3205218126216664, 0.32672439967797662, 0.30766594955383336, 0.17110327024528463};
+    vector<double> p_numeric {0.001687323512088279, 0.12264078507458409,
+                              0.55515007879166167, 0.3205218126216664,
+                              0.32672439967797662, 0.30766594955383336,
+                              0.17110327024528463};
     double relative_error=0.05; //i.e. allow a 5% relative error
     
     for(int n=0; n<(Nstart+4); ++n){

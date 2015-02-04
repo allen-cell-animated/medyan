@@ -142,16 +142,13 @@
 		F7C9CF921A2D16290087434A /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF841A2D16290087434A /* test_ccylinders.cpp */; };
 		F7C9CF931A2D16290087434A /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF851A2D16290087434A /* test_compartments.cpp */; };
 		F7C9CF941A2D16290087434A /* test_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF861A2D16290087434A /* test_composite.cpp */; };
-		F7C9CF951A2D16290087434A /* test_filaments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF871A2D16290087434A /* test_filaments.cpp */; };
 		F7C9CF961A2D16290087434A /* test_geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF881A2D16290087434A /* test_geometry.cpp */; };
 		F7C9CF971A2D16290087434A /* test_gillespie_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF891A2D16290087434A /* test_gillespie_cross.cpp */; };
 		F7C9CF981A2D16290087434A /* test_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8A1A2D16290087434A /* test_gillespie.cpp */; };
 		F7C9CF991A2D16290087434A /* test_nrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8B1A2D16290087434A /* test_nrm.cpp */; };
-		F7C9CF9A1A2D16290087434A /* test_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8C1A2D16290087434A /* test_parser.cpp */; };
 		F7C9CF9B1A2D16290087434A /* test_reactions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8D1A2D16290087434A /* test_reactions.cpp */; };
 		F7C9CF9C1A2D16290087434A /* test_simple_gillespie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */; };
 		F7C9CF9D1A2D16290087434A /* test_species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF8F1A2D16290087434A /* test_species.cpp */; };
-		F7C9CF9E1A2D16290087434A /* test_visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF901A2D16290087434A /* test_visitor.cpp */; };
 		F7C9CFE91A2D165D0087434A /* Bead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFA21A2D165D0087434A /* Bead.cpp */; };
 		F7C9CFEA1A2D165D0087434A /* Bead.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFA31A2D165D0087434A /* Bead.h */; };
 		F7C9CFEB1A2D165D0087434A /* BeadDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFA41A2D165D0087434A /* BeadDB.cpp */; };
@@ -383,16 +380,13 @@
 		F7C9CF841A2D16290087434A /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ccylinders.cpp; sourceTree = "<group>"; };
 		F7C9CF851A2D16290087434A /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
 		F7C9CF861A2D16290087434A /* test_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_composite.cpp; sourceTree = "<group>"; };
-		F7C9CF871A2D16290087434A /* test_filaments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_filaments.cpp; sourceTree = "<group>"; };
 		F7C9CF881A2D16290087434A /* test_geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_geometry.cpp; sourceTree = "<group>"; };
 		F7C9CF891A2D16290087434A /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
 		F7C9CF8A1A2D16290087434A /* test_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie.cpp; sourceTree = "<group>"; };
 		F7C9CF8B1A2D16290087434A /* test_nrm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
-		F7C9CF8C1A2D16290087434A /* test_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_parser.cpp; sourceTree = "<group>"; };
 		F7C9CF8D1A2D16290087434A /* test_reactions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
 		F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
 		F7C9CF8F1A2D16290087434A /* test_species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
-		F7C9CF901A2D16290087434A /* test_visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_visitor.cpp; sourceTree = "<group>"; };
 		F7C9CFA21A2D165D0087434A /* Bead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bead.cpp; sourceTree = "<group>"; };
 		F7C9CFA31A2D165D0087434A /* Bead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bead.h; sourceTree = "<group>"; };
 		F7C9CFA41A2D165D0087434A /* BeadDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BeadDB.cpp; sourceTree = "<group>"; };
@@ -584,19 +578,16 @@
 			isa = PBXGroup;
 			children = (
 				F7C9CF831A2D16290087434A /* test_boundaries.cpp */,
-				F7C9CF841A2D16290087434A /* test_ccylinders.cpp */,
-				F7C9CF851A2D16290087434A /* test_compartments.cpp */,
-				F7C9CF861A2D16290087434A /* test_composite.cpp */,
-				F7C9CF871A2D16290087434A /* test_filaments.cpp */,
 				F7C9CF881A2D16290087434A /* test_geometry.cpp */,
-				F7C9CF891A2D16290087434A /* test_gillespie_cross.cpp */,
+				F7C9CF851A2D16290087434A /* test_compartments.cpp */,
+				F7C9CF841A2D16290087434A /* test_ccylinders.cpp */,
+				F7C9CF861A2D16290087434A /* test_composite.cpp */,
+				F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */,
 				F7C9CF8A1A2D16290087434A /* test_gillespie.cpp */,
 				F7C9CF8B1A2D16290087434A /* test_nrm.cpp */,
-				F7C9CF8C1A2D16290087434A /* test_parser.cpp */,
+				F7C9CF891A2D16290087434A /* test_gillespie_cross.cpp */,
 				F7C9CF8D1A2D16290087434A /* test_reactions.cpp */,
-				F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */,
 				F7C9CF8F1A2D16290087434A /* test_species.cpp */,
-				F7C9CF901A2D16290087434A /* test_visitor.cpp */,
 			);
 			name = TESTS;
 			path = M3SYM/TESTS;
@@ -1151,11 +1142,8 @@
 				F7C9CF981A2D16290087434A /* test_gillespie.cpp in Sources */,
 				F7C9CF931A2D16290087434A /* test_compartments.cpp in Sources */,
 				F7C9CF941A2D16290087434A /* test_composite.cpp in Sources */,
-				F7C9CF9E1A2D16290087434A /* test_visitor.cpp in Sources */,
-				F7C9CF9A1A2D16290087434A /* test_parser.cpp in Sources */,
 				F7C9CF9D1A2D16290087434A /* test_species.cpp in Sources */,
 				F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */,
-				F7C9CF951A2D16290087434A /* test_filaments.cpp in Sources */,
 				F7C9CF971A2D16290087434A /* test_gillespie_cross.cpp in Sources */,
 				F7C9CF921A2D16290087434A /* test_ccylinders.cpp in Sources */,
 				F7C9CF961A2D16290087434A /* test_geometry.cpp in Sources */,
