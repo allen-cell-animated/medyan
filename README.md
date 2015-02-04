@@ -5,7 +5,7 @@ Welcome to Papoian Lab’s M3SYM, the software implementation of the
 
 For more general information about the code, visit the Papoian lab webpage:
 
-		    http://papoian.chem.umd.edu/ 
+	http://papoian.chem.umd.edu/ 
 
 *Info about license here*
 
@@ -27,14 +27,14 @@ The M3SYM distribution has the following files and directories:
 	M3SYM					All source files
 	docs					Documentation files
 	examples				A few packaged examples
-	vis					Visualization scripts
+	visual					Visualization scripts
 	analysis				Analysis scripts
 	papers					Relevant papers 
 
 See the following documentation for details:
 
 	*Documentation file*			*Description*
-	docs/InstallGuide.pdf			Tips on compilation, etc
-	docs/UsageGuide.pdf			Tips on input, output, etc
-	docs/ExampleGuide.pdf			Packaged example description
+	docs/InstallGuide.pdf		Tips on compilation, etc
+	docs/UsageGuide.pdf		Tips on input, output, etc
+	docs/ExampleGuide.pdf		Packaged example description
 
