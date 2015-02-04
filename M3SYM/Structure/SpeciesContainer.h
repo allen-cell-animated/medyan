@@ -51,7 +51,8 @@ public:
     /// @note The first match is returned.
     virtual Species* findSimilarSpecies (const Species &s) const = 0;
     
-    /// Return true, if all contained Species are different from each other as determined by Species.getMolecule() method.
+    /// Return true, if all contained Species are different from each other as
+    /// determined by Species.getMolecule() method.
     virtual bool areAllSpeciesUnique () const = 0;
     
     /// Return the number of Species in the container
@@ -168,7 +169,8 @@ public:
         return _species[index].get();
     }
     
-    /// Return a pointer to Species which satisfies the equality operator with s. Otherwise, return a nullptr.
+    /// Return a pointer to Species which satisfies the equality operator with s.
+    /// Otherwise, return a nullptr.
     /// @note The first match is returned.
     virtual Species* findSimilarSpecies (const Species &s) const  override {
         auto it = find_if(_species.begin(),_species.end(),
@@ -243,7 +245,8 @@ public:
     /// @note The first match is returned.
     virtual Species& findSpeciesByMolecule (int molecule) = 0;
 
-    /// Return true, if all contained Species are different from each other as determined by Species.getMolecule() method.
+    /// Return true, if all contained Species are different from each other as
+    /// determined by Species.getMolecule() method.
     virtual bool areAllSpeciesUnique () const = 0;
     
     /// Return the number of Species in the container
@@ -254,7 +257,8 @@ public:
 };
 
 
-/// A concrete class implementing the SpeciesContainerIFace, using vector<SpeciesSpecific> as the container implementation.
+/// A concrete class implementing the SpeciesContainerIFace, using vector<SpeciesSpecific>
+/// as the container implementation.
 
 /*! Because in the class the Species are held by value, and not as pointers, the 
  *  container must be homogeneous, i.e. consist of Species of the same derived type. 
