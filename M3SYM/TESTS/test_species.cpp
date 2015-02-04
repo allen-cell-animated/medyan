@@ -11,10 +11,10 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-// Note: This test omits many functions of Species that interact with Reaction objects.
-//        Separate tests weill cover those methods.
+// Note: This test omits many functions of Species that interact
+// with Reaction objects. Separate tests weill cover those methods.
 
-//#define DO_THIS_SPECIES_TEST
+#define DO_THIS_SPECIES_TEST
 
 #ifdef DO_THIS_SPECIES_TEST
 
@@ -27,7 +27,7 @@
 
 TEST(SpeciesNamesDBTest, All) {
     
-    ///basic test
+    //basic test
     SpeciesNamesDB::Instance()->clear();
     int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");
     EXPECT_EQ(0,y);
@@ -42,7 +42,7 @@ TEST(SpeciesNamesDBTest, All) {
     EXPECT_EQ("G-Actin",x);
     EXPECT_NO_THROW(SpeciesNamesDB::Instance()->intToString(1));
     
-    ///testing unique name generator
+    //testing unique name generator
     string a1 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
     string a2 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
     string a3 = SpeciesNamesDB::Instance()->generateUniqueName("Actin");
@@ -119,11 +119,12 @@ TEST(SpeciesTest, Vector) {
         vsb.push_back({"Motor",900});
     }
     
-    /// To make sure that move should be enabled:
+    // To make sure that move should be enabled:
     EXPECT_TRUE(is_nothrow_move_constructible<SpeciesBulk>::value);
     EXPECT_TRUE(is_copy_constructible<SpeciesBulk>::value);
     
-    /// Now checking if Species have been moved and not copied by the vector<Species> reallocators
+    // Now checking if Species have been moved and not
+    // copied by the vector<Species> reallocators
     RSpecies &rs_after = vsb[2].getRSpecies();
     EXPECT_EQ(&rs_before,&rs_after);
     // This makes sure that the move constructors were involved during the internal

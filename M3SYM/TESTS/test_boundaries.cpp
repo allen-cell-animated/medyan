@@ -11,8 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-
-//#define DO_THIS_BOUNDARY_TEST
+#define DO_THIS_BOUNDARY_TEST
 
 #ifdef DO_THIS_BOUNDARY_TEST
 

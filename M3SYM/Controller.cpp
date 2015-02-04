@@ -66,15 +66,6 @@ void Controller::initialize(string inputFile,
     if(oTypes.stresses)
         _outputs.push_back(new Stresses(_outputDirectory + "stresses.traj"));
     
-    
-#ifdef MECHANICS
-    //read algorithm and types
-    auto MTypes = p.readMechanicsFFType();
-    auto MAlgorithm = p.readMechanicsAlgorithm();
-    
-    //read const parameters
-    p.readMechanicsParameters();
-#endif
     //Always read geometry, check consistency
     p.readGeometryParameters();
     if(!SystemParameters::checkGeoParameters())
@@ -88,6 +79,13 @@ void Controller::initialize(string inputFile,
     cout << "Done." << endl;
     
 #ifdef MECHANICS
+    //read algorithm and types
+    auto MTypes = p.readMechanicsFFType();
+    auto MAlgorithm = p.readMechanicsAlgorithm();
+    
+    //read const parameters
+    p.readMechanicsParameters();
+    
     //Initialize Mechanical controller
     cout << "---" << endl;
     cout << "Initializing mechanics...";

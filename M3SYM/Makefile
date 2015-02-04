@@ -1,6 +1,7 @@
 #LINUX MAKEFILE FOR M3SYM
 SOURCES := $(shell find . -name '*.cpp')
-HEADERS := $(shell find . -name '*.h')
+HEADERS := $(shell find . -name ‘*.h’)
+
 OBJECTS := $(SOURCES:.cpp=.o)
 
 #compiler choice and flags
@@ -70,7 +71,7 @@ clean:
 	\rm -f M3SYM
 
 Makefile.dep: $(SOURCES) $(HEADERS)
-	@echo "Updating the dependancy file: Makefile.dep"
+	@echo "Updating the dependency file: Makefile.dep"
 	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) \
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
