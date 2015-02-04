@@ -10,7 +10,8 @@ For more general information about the code, visit the Papoian lab webpage:
 *Info about license here*
 
 The main authors of the code are the following:
-
+	
+	*Name*		     *Affiliation*	*Email*
 	Garegin Papoian      UMD		gpapoian@umd.edu	
 	James Komianos       UMD		jkomiano@umd.edu
 	Konstantin Popov     UNC	 	
@@ -21,17 +22,19 @@ installation, and usage correspondence should be directed to James Komianos.
 
 The M3SYM distribution has the following files and directories:
 
+	*File or directory*			*Description*
 	README.md				Current file
 	M3SYM					All source files
-	documentation				Documentation files
+	docs					Documentation files
 	examples				A few packaged examples
-	visualization				Visualization scripts
+	vis					Visualization scripts
 	analysis				Analysis scripts
 	papers					Relevant papers 
 
 See the following documentation for details:
 
-	documentation/InstallGuide.pdf		Tips on compilation, etc
-	documentation/UsageGuide.pdf		Tips on input, output, etc
-	documentation/Examples.pdf		Packaged example description
+	*Documentation file*			*Description*
+	docs/InstallGuide.pdf			Tips on compilation, etc
+	docs/UsageGuide.pdf			Tips on input, output, etc
+	docs/ExampleGuide.pdf			Packaged example description
 
