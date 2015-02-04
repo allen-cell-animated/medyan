@@ -19,7 +19,7 @@
 #include "common.h"
 
 #include "ChemManagerImpl.h"
-#include "ReactionManager.h"
+#include "ReactionManagerImpl.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
