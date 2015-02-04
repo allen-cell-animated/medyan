@@ -374,7 +374,6 @@
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7A5200B1A8260EE003C49E0 /* ReactionManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionManagerImpl.cpp; sourceTree = "<group>"; };
 		F7A5200C1A8260EE003C49E0 /* ReactionManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionManagerImpl.h; sourceTree = "<group>"; };
-		F7BC9F59158E551400D75EA8 /* ToDo */ = {isa = PBXFileReference; lastKnownFileType = text; name = ToDo; path = ../ToDo; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9CF831A2D16290087434A /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
 		F7C9CF841A2D16290087434A /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ccylinders.cpp; sourceTree = "<group>"; };
@@ -806,7 +805,6 @@
 				F735B7661A2D16F200AE21D1 /* Parser.cpp */,
 				F735B7671A2D16F200AE21D1 /* Parser.h */,
 				F735B75F1A2D16F200AE21D1 /* M3Sym.cpp */,
-				F7BC9F59158E551400D75EA8 /* ToDo */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F763ED091548FFC70069DA61 /* Chemistry */,
 				B52F64BE19BA230000A2B9FD /* Structure */,

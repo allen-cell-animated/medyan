@@ -7,7 +7,7 @@
 //
 //                 ALL RIGHTS RESERVED
 //
-//  See the Papoian lab page for installation and documentation:
+//  See the Papoian lab page for more information:
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 #include <cmath>
