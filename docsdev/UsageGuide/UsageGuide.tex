@@ -1,0 +1,332 @@
+
+
+
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\title{Usage Guide for M3SYM v1.0}
+\author{Papoian Lab, University of Maryland}
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+%\section{}
+%\subsection{}
+
+\tableofcontents
+
+\newpage
+\section {Introduction}
+
+ Cell motility plays a key role in human biology and disease, contributing ubiquitously
+ to such important processes as embryonic development, wound repair and cancer 
+ metastasis. Papoian laboratory is interested in gaining deeper understanding of the
+ physical chemistry behind these complex, far-from-equilibrium mechano-chemical 
+ processes. His approach and model, named \textit{Mechano-chemical Dynamics of Active Networks,
+ 3rd Generation} (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
+ of cellular biochemical processes with polymer physics of cytoskeletal filament network 
+ growth, while explicitly coupling chemistry and mechanics. For a more detailed description of MEDYAN3, 
+ please see (*paper here*)
+ 
+ Papoian laboratory has developed M3SYM, a software package based on the MEDYAN3
+ model, to simulate growth dynamics of actin based filamentous networks \textit{in vitro} and 
+ \textit{in vivo}. Recent papers where M3SYM or its predecessor, StochTools, were used 
+ can be found on the publication section of the Papoian group's main web page. 
+ The M3SYM package can also be extended to simulate the dynamics of any active matter network.
+
+\section {Overview of Features}
+
+M3SYM is a package that can simultaneously simulate complex chemical and mechanical dynamics
+of an active matter network. For more information on the MEDYAN3 model, which M3SYM implements,
+please see (*paper*)
+
+\subsection{Chemical capabilities}
+ The chemical capabilities of M3SYM include:
+
+\begin{itemize}
+
+\item Stochastic reaction-diffusion on a three dimensional grid using stochastic simulation algorithms, including the \textit{Gillespie} and \textit{Next Reaction Method}.
+\item Complex chemical representation of filaments, allowing for heterogeneous chemical monomers in a single filament segment.
+\item A wide range of polymer reactions, including:
+\begin{itemize}
+\item Polymerization of either end of filament
+\item Depolymerization of either end of filament
+\item Severing of filament at chosen sections
+\item Branching of filament
+\item Cross-linker binding and unbinding to filament
+\end{itemize}
+
+\break
+In the case of cytoskeletal networks, the following reactions can also be simulated:
+\begin{itemize}
+\item Actin filament aging by ATP hydrolysis
+\item Myosin IIA binding, unbinding, and walking
+\end{itemize}
+
+\end{itemize}
+
+\subsection{Mechanical capabilities}
+M3SYM allows for a wide range of mechanical interactions, including:
+
+\begin{itemize}
+\item Force fields for filament interactions, including
+\begin{itemize}
+\item Filament stretching and bending
+\item Branching point stretching and bending
+\item Excluded volume interactions
+\end{itemize}
+\item Stretching force fields for cross-linkers and motors 
+\item Boundary interaction force fields
+\end{itemize}
+
+\noindent These force fields can be minimized by a choice of conjugate gradient algorithm.
+
+\subsection{Mechano-chemical coupling} 
+
+M3SYM couples chemistry and mechanics by altering reaction rates based on mechanical stresses in a given 
+network. This allows for a full treatment of the complex mechano-chemical responses in active matter networks.
+See (*paper*) for a more detailed description.
+
+\section{Running M3SYM}
+
+To run the M3SYM executable, put the following command into the terminal shell: \newline \newline \centerline{\texttt{./M3SYM -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>}} \newline \newline The \texttt{SystemFile} will be described in the later sections. \newline\newline  The \texttt{InputDirectory} specifies where all input files are contained. This must be an absolute directory path. The \texttt{OutputDirectory} specifies where the produced output will be placed. This also must be an absolute directory path. See the later sections for details on input and output files.
+\section {Input}
+
+\subsection{System file}
+
+The system file is a simple text file that defines all parameters of the simulation. The M3SYM executable must take
+ in a system file as a command line argument. \newline\newline Each parameter must be defined in the following syntax: \newline \newline \centerline{\texttt{[PARAMETER]:  [PARAMETERVALUE]}} \newline\newline where the parameter name is followed by a semicolon, and the value of the parameter is placed after the semicolon. Outlined below are the parameters that can be included. 
+
+\subsubsection{Geometry}
+
+The following geometry parameters can be set:
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{3cm}|L{6.8cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  NDIM & 1, 2, 3 & Number of dimensions in system \\
+  \hline
+  NX & int & Number of compartments in X \\
+  \hline
+  NY & int & Number of compartments in Y \\
+  \hline
+  NZ & int & Number of compartments in Z \\
+  \hline
+  COMPARTMENTSIZEX & double & Size of compartment in X \\
+  \hline
+  COMPARTMENTSIZEY & double & Size of compartment in Y \\
+  \hline
+  COMPARTMENTSIZEZ & double & Size of compartment in Z \\
+  \hline
+  MONOMERSIZE & double & Size of monomer for filament growth \\
+  \hline
+  CYLINDERSIZE & double & Size of cylinder in filament\\
+  \hline
+  BOUNDARYSHAPE & SPHERICAL, CUBIC, CAPSULE & Boundary shape \\
+  \hline
+  BDIAMETER & double & Diameter for applicable shapes, including SPHERICAL and CAPSULE \\
+  \hline
+
+\end{tabular}
+\end{table}
+
+\break
+\subsubsection{Mechanics}
+
+The following mechanics parameters can be set. It should be noted that the number of parameters for each force field must match the number of chemical species of that type. Force field constant units are dependent on the potential used. For more information on force fields used, see (*paper*)
+\newline\newline
+\noindent If a force field type is left blank, that force field will not be included in the simulation.
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{4cm}|L{7cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  CONJUGATEGRADIENT & POLAKRIBIERE, FLETCHERRIEVES & Type of conjugate gradient minimization \\
+  \hline
+  GRADIENTTOLERANCE & double & Gradient tolerance in conjugate gradient \\
+  \hline
+  FSTRETCHINGTYPE & HARMONIC & Filament stretching force field \\
+  \hline
+   FSTRETCHINGK & double & Filament stretching force constant \\
+  \hline
+    FBENDINGTYPE & HARMONIC, COSINE & Filament bending force field \\
+  \hline
+   FBENDINGK & double & Filament bending force constant \\
+  \hline
+   FBENDINGTHETA & double & Filament bending angle \\
+  \hline
+   LSTRETCHINGTYPE & HARMONIC & Cross-linker stretching force field \\
+  \hline
+   LSTRETCHINGK & double & Cross-linker stretching force constant \\
+  \hline
+    MSTRETCHINGTYPE & HARMONIC & Motor stretching force field \\
+  \hline
+   MSTRETCHINGK & double & Motor stretching force constant \\
+  \hline
+   BRSTRETCHINGTYPE & HARMONIC & Branching point stretching force field \\
+  \hline
+   BRSTRETCHINGK & double & Branching point stretching force constant \\
+  \hline
+    BRBENDINGTYPE & COSINE & Branching point bending force field \\
+  \hline
+   BRBENDINGK & double & Branching point bending force constant \\
+   \hline
+   BRBENDINGTHETA & double & Branching point bending angle \\
+  \hline
+   BRDIHEDRALTYPE & COSINE & Branching point dihedral force field \\
+  \hline
+   BRDIHEDRALK & double & Branching point stretching force constant \\
+  \hline
+   BRPOSITIONTYPE & HARMONIC & Branching point position force field \\
+  \hline
+   BRPOSITIONK & double & Branching point position force constant \\
+  \hline
+   VOLUMETYPE & REPULSION & Volume force type \\
+  \hline
+   VOLUMECUTOFF & double & Volume interaction cutoff distance\\
+  \hline
+  VOLUMEK & double & Volume force constant \\
+  \hline
+  BOUNDARYTYPE & REPULSIONEXP, REPULSIONLJ & Boundary force type \\
+  \hline
+   BOUNDARYCUTOFF & double & Boundary interaction cutoff distance\\
+  \hline
+  BINTERACTIONK & double & Boundary force constant \\
+  \hline
+  BSCREENLENGTH & double & Boundary screening length constant\\
+  \hline
+ 
+ \end{tabular}
+\end{table}
+
+\break
+\subsubsection{Chemistry}
+
+The following chemistry parameters can be set. It should be noted that the number of chemical species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field (if defined).
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{4cm}|L{6.8cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  CHEMISTRYFILE & string & Input chemistry file. Should be in the \texttt{InputDirectory} \\
+  \hline
+  CALGORITHM & SIMPLEGILLESPIE, GILLESPIE, NRM & Chemistry algorithm used \\
+  \hline
+  NUMTOTALSTEPS & int & Number of total chemical steps to perform. If RUNTIME is set, this will not be used \\
+  \hline
+  RUNTIME & double & Total runtime of simulation (seconds) \\
+  \hline
+  NUMSTEPSPERS & int & Number of total steps per snapshot. If SNAPSHOTTIME is set, this will not be used \\
+  \hline
+  SNAPSHOTTIME & double & Time of each snapshot (seconds) \\
+  \hline
+  NUMCHEMSTEPS & int & Number of chemical steps per mechanical equilibration \\
+  \hline
+  NUMSTEPSPERN & int & Number of chemical steps per neighbor list update. This includes updating
+   chemical reactions as well as force fields which rely on neighbor lists. \\
+  \hline
+  NUMDIFFUSINGSPECIES & int & Number of diffusing species in system \\
+  \hline
+  NUMBULKSPECIES & int & Number of bulk species in system \\
+  \hline
+  NUMFILAMENTSPECIES & int & Number of filament species in system \\
+  \hline
+  NUMPLUSENDSPECIES & int & Number of plus end species in system \\
+  \hline
+  NUMMINUSENDSPECIES & int & Number of minus end species in system \\
+  \hline
+  NUMBOUNDSPECIES & int & Number of bound species in system \\
+  \hline
+    NUMLINKERSPECIES & int & Number of linker species in system \\
+  \hline
+    NUMMOTORSPECIES & int & Number of motor species in system \\
+  \hline
+    NUMBRANCHERSPECIES & int & Number of brancher species in system \\
+  \hline
+    NUMBINDINGSITES & int & Number of binding sites per cylinder. This will set binding sites for cross-linkers,
+    motors, and other binding molecules. \\
+  \hline
+ 
+\end{tabular}
+\end{table}
+
+\subsubsection{Dynamic rates}
+
+The following dynamic rate parameters can be set. These parameters are characteristic lengths of the rate changing equations outlined in (*paper*). These can be tuned to mimic the stall and unbinding forces of cross-linkers and motors.
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{4cm}|L{6cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  FDPLENGTH & double & Characteristic length for filament polymerization rate change \\
+  \hline
+  MDULENGTH & double & Characteristic length for motor unbinding rate change \\
+  \hline
+  MDWLENGTH & double & Characteristic length for motor walking rate change \\
+  \hline
+ LDULENGTH & double & Characteristic length for cross-linker unbinding rate change \\
+  \hline
+ 
+\end{tabular}
+\end{table}
+
+\subsubsection{Output formats}
+
+The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new OUTPUTTYPE parameter for each value desired. Output files will be explained in more detail in a later section.
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{3cm}|L{6cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  OUTPUTTYPE & SNAPSHOT, FORCES, STRESSES, BIRTH TIMES & Output type\\
+  \hline
+ 
+\end{tabular}
+\end{table}
+
+
+\subsection{Chemistry input file}
+\subsubsection{Species}
+\subsubsection{Reactions}
+
+\subsection{Filament input file}
+
+
+
+\section {Output}
+\subsection{Types of output files}
+\subsection{Visualization of output}
+
+\section{For Developers}
+\subsection{Style guide}
+\subsection{Unit testing}
+
+
+\section{Contact}
+
+
+\end{document}  
