@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-//#define DO_THIS_COMPOSITE_TEST
+#define DO_THIS_COMPOSITE_TEST
 
 #ifdef DO_THIS_COMPOSITE_TEST
 
@@ -86,4 +86,6 @@ TEST(CompositeTest, ChildrenMethods) {
     EXPECT_EQ(2U, Y->numberOfChildren());
     EXPECT_EQ(2U, Y->countDescendents());
 }
+
 #endif // DO_THIS_COMPOSITE_TEST
+

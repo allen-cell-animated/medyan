@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-//#define DO_THIS_COMPARTMENT_TEST
+#define DO_THIS_COMPARTMENT_TEST
 
 #ifdef DO_THIS_COMPARTMENT_TEST
 
@@ -147,9 +147,4 @@ TEST(CompartmentContainerTest, Main) {
 }
 
 #endif // DO_THIS_COMPARTMENT_TEST
-
-
-
-
-
 

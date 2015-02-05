@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-//#define DO_THIS_CCYLINDERS_TEST
+#define DO_THIS_CCYLINDERS_TEST
 
 #ifdef DO_THIS_CCYLINDERS_TEST
 
@@ -194,5 +194,5 @@ TEST(CCylinder, AdvancedCloning) {
 
 }
 
-
 #endif //DO_THIS_CCYLINDERS_TEST
+

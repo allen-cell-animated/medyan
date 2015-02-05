@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-//#define DO_THIS_GEOMETRY_TEST
+#define DO_THIS_GEOMETRY_TEST
 
 #ifdef DO_THIS_GEOMETRY_TEST
 
@@ -82,6 +82,5 @@ TEST(GeometryTest, NonCubicGrid) {
               GController::getCompartment(vector<double>{5.0,30.0,190.0}));
     
 }
-
 
 #endif //DO_THIS_GEOMETRY_TEST

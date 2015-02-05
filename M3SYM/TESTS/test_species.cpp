@@ -14,7 +14,7 @@
 // Note: This test omits many functions of Species that interact
 // with Reaction objects. Separate tests weill cover those methods.
 
-//#define DO_THIS_SPECIES_TEST
+#define DO_THIS_SPECIES_TEST
 
 #ifdef DO_THIS_SPECIES_TEST
 
@@ -259,6 +259,5 @@ TEST(SpeciesContainerVectorTest, Main) {
     EXPECT_EQ(1U, cont.size());
     
 }
-
 
 #endif // DO_THIS_SPECIES_TEST
