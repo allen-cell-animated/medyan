@@ -50,8 +50,8 @@ TEST(RSpeciesTest, Main) {
     bool is_sig = RA.isSignaling();
     EXPECT_EQ(0, is_sig);
 #endif
-    EXPECT_EQ(0U, RA.ReactantReactions().size());
-    EXPECT_EQ(0U, RA.ProductReactions().size());
+    EXPECT_EQ(0U, RA.reactantReactions().size());
+    EXPECT_EQ(0U, RA.productReactions().size());
 
     SpeciesBulk B("B",  10);
     RSpecies& RB(B.getRSpecies());
@@ -290,7 +290,9 @@ TEST(ReactionTest, ReactionCloning) {
     Species* BDiff2 = C2->addSpeciesDiffusing("BDiff", 10);
     
     ReactionBase* r1 = C1->addInternal<Reaction,1,1>({ADiff1,BDiff1}, 100.0);
+#ifdef REACTION_SIGNALING
     auto c = r1->connect([](ReactionBase *r){r->setRate(9.0);});
+#endif
     
     ///Clone, check if valid
     ReactionBase* r2 = r1->clone(C2->getSpeciesContainer());
@@ -302,8 +304,10 @@ TEST(ReactionTest, ReactionCloning) {
     EXPECT_TRUE(r2->containsSpecies(BDiff2));
     
     ///Check signal cloning
+#ifdef REACTION_SIGNALING
     r2->emitSignal();
     EXPECT_EQ(9.0, r2->getRate());
+#endif
     
     ///Clone a reaction where not all species are in compartment
     Compartment* C3 = new Compartment;

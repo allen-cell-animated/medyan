@@ -50,18 +50,18 @@ vector<double> A1_A8_Network (int method)
     SpeciesBulk A7("A7",  1);
     SpeciesBulk A8("A8",  0);
     
-    Reaction r1f = { {&A1,&A2, &A3,&A4}, 2, 2, 19.1}; // A1 + A2 -> A3 + A4
-    Reaction r1b = { {&A3,&A4, &A1,&A2}, 2, 2, 23.3}; // A3 + A4 -> A1 + A2
-    Reaction r2f = { {&A2, &A5}, 1, 1, 1.2};          // A2 -> A5
-    Reaction r2b = { {&A5, &A2}, 1, 1, 3.2};          // A5 -> A2
-    Reaction r3 = { {&A3, &A6, &A7}, 1, 2, 3.9};      // A3 -> A6 + A7
-    Reaction r4 = { {&A6, &A1}, 1, 1, 10.9};          // A6 -> A1
-    Reaction r5 = { {&A2, &A3}, 1, 1, 2.3};           // A2 -> A3
-    Reaction r6 = { {&A5, &A6, &A7, &A8}, 2, 2, 3.9}; // A5 + A6 -> A7 + A8
-    Reaction r7 = { {&A7, &A8, &A1}, 2, 1, 0.9};      // A7 + A8 -> A1
-    Reaction r8 = { {&A2, &A7, &A8}, 1, 2, 8.9};      // A2 -> A7 + A8
-    Reaction r9 = { {&A1, &A2}, 1, 1, 12.4};          // A1 -> A2
-    Reaction r10 = { {&A4, &A1}, 1, 1, 16.4};         // A4 -> A1
+    Reaction<2,2> r1f = { {&A1,&A2, &A3,&A4}, 19.1}; // A1 + A2 -> A3 + A4
+    Reaction<2,2> r1b = { {&A3,&A4, &A1,&A2}, 23.3}; // A3 + A4 -> A1 + A2
+    Reaction<1,1> r2f = { {&A2, &A5}, 1.2};          // A2 -> A5
+    Reaction<1,1> r2b = { {&A5, &A2}, 3.2};          // A5 -> A2
+    Reaction<1,2> r3 = { {&A3, &A6, &A7}, 3.9};      // A3 -> A6 + A7
+    Reaction<1,1> r4 = { {&A6, &A1}, 10.9};          // A6 -> A1
+    Reaction<1,1> r5 = { {&A2, &A3}, 2.3};           // A2 -> A3
+    Reaction<2,2> r6 = { {&A5, &A6, &A7, &A8}, 3.9}; // A5 + A6 -> A7 + A8
+    Reaction<2,1> r7 = { {&A7, &A8, &A1},  0.9};     // A7 + A8 -> A1
+    Reaction<1,2> r8 = { {&A2, &A7, &A8}, 8.9};      // A2 -> A7 + A8
+    Reaction<1,1> r9 = { {&A1, &A2}, 12.4};          // A1 -> A2
+    Reaction<1,1> r10 = { {&A4, &A1}, 16.4};         // A4 -> A1
     
     ChemSimImpl *chem_sim_impl = nullptr;
     
@@ -78,23 +78,23 @@ vector<double> A1_A8_Network (int method)
         default:
             assert(0 && "The method variable can only be 0, 1, or 2.");
     }
-    ChemSim::setInstance(ChemSimInitKey(), chem_sim_impl);
+    ChemSim::setInstance(chem_sim_impl);
     
 
-    ChemSim::addReaction(ChemSimReactionKey(), &r3);
-    ChemSim::addReaction(ChemSimReactionKey(), &r4);
-    ChemSim::addReaction(ChemSimReactionKey(), &r5);
-    ChemSim::addReaction(ChemSimReactionKey(), &r6);
-    ChemSim::addReaction(ChemSimReactionKey(), &r7);
-    ChemSim::addReaction(ChemSimReactionKey(), &r8);
-    ChemSim::addReaction(ChemSimReactionKey(), &r9);
-    ChemSim::addReaction(ChemSimReactionKey(), &r10);
-    ChemSim::addReaction(ChemSimReactionKey(), &r1f);
-    ChemSim::addReaction(ChemSimReactionKey(), &r1b);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2f);
-    ChemSim::addReaction(ChemSimReactionKey(), &r2b);
+    ChemSim::addReaction(&r3);
+    ChemSim::addReaction(&r4);
+    ChemSim::addReaction(&r5);
+    ChemSim::addReaction(&r6);
+    ChemSim::addReaction(&r7);
+    ChemSim::addReaction(&r8);
+    ChemSim::addReaction(&r9);
+    ChemSim::addReaction(&r10);
+    ChemSim::addReaction(&r1f);
+    ChemSim::addReaction(&r1b);
+    ChemSim::addReaction(&r2f);
+    ChemSim::addReaction(&r2b);
 
-    ChemSim::initialize(ChemSimInitKey());
+    ChemSim::initialize();
     
     vector<long long int> x_hist(NA1MAX+1);
     
@@ -109,11 +109,11 @@ vector<double> A1_A8_Network (int method)
         A8.setN(0);
         
         long long int x_pentult=0;
-        chem.initialize();
+        ChemSim::initialize();
         long long int events=0;
         do {
             x_pentult=A1.getN();
-            bool success = ChemSim::run(ChemSimRunKey(), 1);
+            bool success = ChemSim::run(1);
             if(!success){
                 cout << "chem.run(1) has failed, i= " << i << endl;
                 ChemSim::printReactions();

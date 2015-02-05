@@ -20,6 +20,7 @@
 #include "common.h"
 
 #include "BoundaryImpl.h"
+#include "BoundaryElementImpl.h"
 #include "SystemParameters.h"
 
 TEST(PlaneBoundaryElementTest, Distances) {

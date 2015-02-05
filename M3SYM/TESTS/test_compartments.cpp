@@ -19,8 +19,10 @@
 
 #include "common.h"
 
-#include "GController.h"
 #include "CompartmentContainer.h"
+
+#include "GController.h"
+#include "SystemParameters.h"
 
 //Testing neighbor capabilities
 TEST(CompartmentTest, Neighbors) {

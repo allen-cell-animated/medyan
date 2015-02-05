@@ -65,9 +65,9 @@ TEST(CCylinder, Basic) {
     
         CMonomer* m = new CMonomer;
         sf1 =
-        c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        c->addSpeciesFilament(SpeciesNamesDB::Instance()->genUniqueName("A"));
         sf2 =
-        c->addSpeciesFilament(SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        c->addSpeciesFilament(SpeciesNamesDB::Instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -119,9 +119,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c1->addSpeciesFilament(
-                               SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        SpeciesNamesDB::Instance()->genUniqueName("A"));
         SpeciesFilament* sf2 = c1->addSpeciesFilament(
-                               SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        SpeciesNamesDB::Instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -133,9 +133,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c2->addSpeciesFilament(
-                               SpeciesNamesDB::Instance()->generateUniqueName("A"));
+        SpeciesNamesDB::Instance()->genUniqueName("A"));
         SpeciesFilament* sf2 = c2->addSpeciesFilament(
-                               SpeciesNamesDB::Instance()->generateUniqueName("B"));
+        SpeciesNamesDB::Instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -190,7 +190,7 @@ TEST(CCylinder, AdvancedCloning) {
     ///reactions involving cc1 should be removed from cc3
     EXPECT_EQ(0, cc3->getCrossCylinderReactions()[cc1].size());
     EXPECT_EQ(cc3->getReactingCylinders().end(),
-              find(cc3->getReactingCylinders().begin(), cc3->getReactingCylinders().end(), cc1));
+    find(cc3->getReactingCylinders().begin(), cc3->getReactingCylinders().end(), cc1));
 
 }
 

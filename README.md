@@ -10,7 +10,7 @@ For more general information about the code, visit the Papoian lab webpage:
 
 The main authors of the code are the following:
 	
-	*Name*		     *Email*
+	*Name*		     		*Email*
 	Garegin Papoian      gpapoian@umd.edu	
 	James Komianos       jkomiano@umd.edu
 	Konstantin Popov     -
@@ -21,7 +21,7 @@ installation, and usage correspondence should be directed to James Komianos.
 
 The M3SYM distribution has the following files and directories:
 
-	*File/Dir*				*Description*
+	*File/Dir*				   *Description*
 	README.md				Current file
 	M3SYM					All source files
 	docs					Documentation files
@@ -32,8 +32,8 @@ The M3SYM distribution has the following files and directories:
 
 See the following documentation for details:
 
-	*Documentation file*		*Description*
+	*Documentation file*			*Description*
 	docs/InstallGuide.pdf		Tips on compilation, etc
-	docs/UsageGuide.pdf		Tips on input, output, etc
+	docs/UsageGuide.pdf			Tips on input, output, etc
 	docs/ExampleGuide.pdf		Packaged example description
 
