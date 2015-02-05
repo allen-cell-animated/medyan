@@ -12,8 +12,8 @@ Goals for December 2014
     -Cylindrical + half sphere boundary                                         X
     -Excluded volume working                                                    X
     -Debug linker and motors                                                    X
-    -Add branching reaction
-    -Add severing reaction
+    -Add branching reaction							X
+    -Add severing reaction							X
     -Add changing reaction rates (poly, linker & motor)                         X
     -Add aging reactions                                                        X
     -Fix signal copying                                                         X
@@ -27,12 +27,14 @@ Goals for December 2014
 2) Testing:
     -Cylinder reaction management                                               X
     -Geometry findCompartments                                                  X
-    -Filament (initialization, poly, depoly) (general, chem, mech)
-    -Linker/Motor (general, chem, mech)
-    -Neighbors lists
-    -All FF's
+    -Neighbor lists
+    -All FF's	
 
+——
+Goals for Feb 2015
+——
 
+1) PAPER!!!
 
 
 
