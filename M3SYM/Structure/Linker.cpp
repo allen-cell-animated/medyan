@@ -64,12 +64,12 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
         
     if(!creation) {
         SpeciesBound* se1 =
-            _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
+        _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
         sl1->up();
         se1->down();
         
         SpeciesBound* se2 =
-            _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
+        _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
         sl2->up();
         se2->down();
     }
