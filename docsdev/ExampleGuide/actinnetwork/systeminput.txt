@@ -1,0 +1,114 @@
+##################################################
+##################### GEOMETRY ###################
+
+NDIM:                        3
+
+NX:                          10
+NY:                          10
+NZ:                          10
+
+COMPARTMENTSIZEX:            100.0
+COMPARTMENTSIZEY:            100.0
+COMPARTMENTSIZEZ:            100.0
+
+MONOMERSIZE:                 2.7
+
+CYLINDERSIZE:                27.0
+
+BOUNDARYSHAPE:               SPHERICAL
+BDIAMETER:                   980.0
+
+##################################################
+################### MECHANICS ####################
+
+### ALGORITHM ###
+CONJUGATEGRADIENT:           POLAKRIBIERE
+GRADIENTTOLERANCE:           0.001
+MD:
+
+### FILAMENTS ###
+
+FSTRETCHINGTYPE:             HARMONIC
+FSTRETCHINGK:                43.0
+
+FBENDINGTYPE:                HARMONIC
+FBENDINGK:                   100.0
+FBENDINGTHETA:               0.0
+
+### LINKERS ###
+
+LSTRETCHINGTYPE:             HARMONIC
+LSTRETCHINGK:                8.0
+
+### MOTORS ###
+
+MSTRETCHINGTYPE:             HARMONIC
+MSTRETCHINGK:                1.5
+
+### EXCLUDED VOLUME ###
+
+VOLUMETYPE:                 REPULSION
+VOLUMECUTOFF:               27.0
+
+VOLUMEK:                    100.0
+
+### BOUNDARY ###
+
+BOUNDARYTYPE:               REPULSIONEXP
+BCUTOFF:                    10.0
+
+BINTERACTIONK:              4.1
+BSCREENLENGTH:              0.27
+
+##################################################
+################### CHEMISTRY ####################
+
+CHEMISTRYFILE:               chemistryinput.txt
+
+CALGORITHM:                  NRM
+NUMTOTALSTEPS:
+RUNTIME:                     20.0
+
+NUMSTEPSPERS:
+SNAPSHOTTIME:                1.0
+
+NUMCHEMSTEPS:                1000
+NUMSTEPSPERN:                100000
+
+NUMFILAMENTSPECIES:          1
+NUMPLUSENDSPECIES:           1
+NUMMINUSENDSPECIES:          1
+
+NUMBOUNDSPECIES:             1
+NUMLINKERSPECIES:            1
+NUMMOTORSPECIES:             1
+NUMBRANCHERSPECIES:          0
+
+NUMBINDINGSITES:             2
+
+##################################################
+############## DYNAMIC RATE CHANGING #############
+
+FDPLENGTH:                   2.7
+
+MDULENGTH:                   2.0
+MDWLENGTH:                   3.8
+
+LDULENGTH:                   0.4
+
+##################################################
+########### FILAMENTS, LINKERS, MOTORS ###########
+
+NUMFILAMENTS:               100
+FILAMENTLENGTH:             5
+
+#################################################
+##################### OUTPUT ####################
+
+OUTPUTTYPE:                 SNAPSHOT
+OUTPUTTYPE:                 BIRTHTIMES
+OUTPUTTYPE:                 FORCES
+OUTPUTTYPE:                 STRESSES  
+
+
+

@@ -24,7 +24,7 @@
 
 \section{Unpacking M3SYM}
  
- To unpack the M3SYM tar file, run the following command in your terminal shell: \newline \newline \centerline{\texttt{tar -xvf M3SYM.tar -C <InstallDirectory>}} \newline \newline Once this is complete, all source code and other files will be in the chosen directory.
+ To unpack the M3SYM tar file, run the following command in your terminal shell: \newline \newline \indent\texttt{> tar -xvf M3SYM.tar -C <InstallDirectory>} \newline \newline Once this is complete, all source code and other files will be in the chosen directory.
  
  
 \section{Setting up the Makefile}
@@ -33,7 +33,7 @@ The Makefile for compilation of M3SYM will be in \texttt{InstallDirectory/M3SYM}
 
 \subsection {Compilers and libraries needed}
 
-M3SYM can be compiled with the following C++ compilers:
+M3SYM is a C++ program that can be compiled with the following C++11 compilers:
 
 \begin{itemize}
 \item GCC 4.7 and above (Full C++11 support)
@@ -73,19 +73,19 @@ The command line macros can be edited in the Makefile to turn on or off certain 
   \hline
   DYNAMICRATES & Enable dynamic rate changing \\
   \hline
-  BOOSTMEMPOOL & Enable boost memory pool optimizations \\
+  BOOST\_MEM\_POOL & Enable boost memory pool optimizations \\
   \hline
-   BOOLPOOLNSIZE & Set boost memory pool size \\
+   BOOL\_POOL\_NSIZE & Set boost memory pool size \\
   \hline
-   TRACKDEPENDENTS & Track reaction dependents in system \\
+   TRACK\_DEPENDENTS & Track reaction dependents in system \\
   \hline
-    TRACKZEROCOPYN & For activation of reactions \\
+    TRACK\_ZERO\_COPY\_N & For activation of reactions \\
   \hline
-     TRACKUPPERCOPYN & For activation of reactions \\
+     TRACK\_UPPER\_COPY\_N & For activation of reactions \\
   \hline
-     REACTIONSIGNALING & Enable reaction callback signaling \\
+     REACTION\_SIGNALING & Enable reaction callback signaling \\
   \hline
-     RSPECIESSIGNALING & Enable species callback signaling\\
+     RSPECIES\_SIGNALING & Enable species callback signaling\\
   \hline
 \end{tabular}
 \end{table}
@@ -101,7 +101,7 @@ The code can be compiled into an executable file \texttt{M3SYM} by running \text
 
 \section {Running the M3SYM executable}
 
-To run the executable, put the following command into the terminal shell: \newline \newline \centerline{\texttt{./M3SYM -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>}} \newline \newline More details on the system input file and directories can be found in the Usage guide.
+To run the executable, put the following command into the terminal shell: \newline \newline\indent \texttt{> ./M3SYM -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>} \newline \newline More details on the system input file and directories can be found in the Usage guide.
 
 
 \end{document}  
