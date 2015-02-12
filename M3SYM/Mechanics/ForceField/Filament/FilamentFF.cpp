@@ -23,15 +23,27 @@
 #include "FilamentBendingCosine.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
+    
     if (stretching == "HARMONIC")
         _filamentInteractionVector.emplace_back(
             new FilamentStretching<FilamentStretchingHarmonic>());
+    else if(stretching == "") {}
+    else {
+        cout << "Filament stretching FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    
     if (bending == "HARMONIC")
         _filamentInteractionVector.emplace_back(
             new FilamentBending<FilamentBendingHarmonic>());
     else if(bending == "COSINE")
         _filamentInteractionVector.emplace_back(
             new FilamentBending<FilamentBendingCosine>());
+    else if(bending == "") {}
+    else {
+        cout << "Filament bending FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 

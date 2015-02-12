@@ -11,6 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
+#include <cmath>
+
 #include "MotorGhost.h"
 
 #include "Bead.h"
@@ -22,6 +24,9 @@
 #include "MathFunctions.h"
 
 using namespace mathfunc;
+
+vector<RateChanger*> MotorGhost::_unbindingChangers;
+vector<RateChanger*> MotorGhost::_walkingChangers;
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                        double position1, double position2, bool creation)
@@ -65,13 +70,11 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     if(!creation) {
         SpeciesBound* se1 =
         _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-        sm1->up();
-        se1->down();
+        sm1->up(); se1->down();
         
         SpeciesBound* se2 =
         _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-        sm2->up();
-        se2->down();
+        sm2->up(); se2->down();
     }
     
     //attach this motor to the species
@@ -137,32 +140,47 @@ void MotorGhost::updatePosition() {
     }
 }
 
-/// @note - This function updates walking rates based on the
-/// following exponential form:
-///
-///                 k = k_0 * exp(-f * a / kT)
-///
-/// The function uses the motor's stretching force at the current state
-/// to change this rate.
+/// @note - This function updates forward walking rates using the
+/// stetching force in the opposite direction of the forward walk.
+/// Does not consider negative forces in this direction.
 
-/// @note - This function updates unbinding rates based on the
-/// following exponential form:
-///
-///                 k = k_0 * exp(f * a / kT)
-///
-/// The function uses the motor's stretching force at the current
-/// state to change this rate.
-
+/// Updates unbinding rates based on the stretch force. Does not
+/// consider compression forces, only stretching.
 void MotorGhost::updateReactionRates() {
 
     //current force
-    double force = _mMotorGhost->stretchForce;
+    double force = max(0.0, _mMotorGhost->stretchForce);
     
-    //characteristic lengths
-    double aUnbinding = SystemParameters::DynamicRates().MDULength[_motorType];
-    double aWalking = SystemParameters::DynamicRates().MDWLength[_motorType];
+    //get component of force in direction of forward walk for C1
+    vector<double> motorC1Direction = twoPointDirection(
+                    midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                       _c1->getSecondBead()->coordinate,
+                                       _position1),
+                    midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                       _c2->getSecondBead()->coordinate,
+                                       _position2));
+    //Also for C2
+    vector<double> motorC2Direction = twoPointDirection(
+                    midPointCoordinate(_c2->getFirstBead()->coordinate,
+                                       _c2->getSecondBead()->coordinate,
+                                       _position2),
+                    midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                       _c1->getSecondBead()->coordinate,
+                                       _position2));
+    vector<double> c1Direction =
+        twoPointDirection(_c1->getSecondBead()->coordinate,
+                          _c1->getFirstBead()->coordinate);
+    vector<double> c2Direction =
+        twoPointDirection(_c2->getSecondBead()->coordinate,
+                          _c2->getFirstBead()->coordinate);
     
-    //get all walking reactions
+    double forceDotDirectionC1 =
+        max(0.0, force * dotProduct(motorC1Direction, c1Direction));
+    double forceDotDirectionC2 =
+        max(0.0, force * dotProduct(motorC2Direction, c2Direction));
+    
+    
+    //WALKING REACTIONS
     Species* s1 = _cMotorGhost->getFirstSpecies();
     Species* s2 = _cMotorGhost->getSecondSpecies();
     
@@ -170,13 +188,8 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = r->getBareRate() * exp( - force * aWalking / kT);
-            r->setRate(newRate);
-            r->activateReaction();
-        }
-        if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
-            
-            float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
+            float newRate = _walkingChangers[_motorType]->
+                             changeRate(r->getBareRate(), forceDotDirectionC1);
             r->setRate(newRate);
             r->activateReaction();
         }
@@ -185,16 +198,22 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = r->getBareRate() * exp( - force * aWalking / kT);
-            r->setRate(newRate);
-            r->activateReaction();
-        }
-        
-        if(r->getReactionType() == ReactionType::MOTORUNBINDING) {
-            
-            float newRate = r->getBareRate() * exp( force * aUnbinding / kT);
+            float newRate = _walkingChangers[_motorType]->
+                            changeRate(r->getBareRate(), forceDotDirectionC2);
             r->setRate(newRate);
             r->activateReaction();
         }
     }
+    
+    ///UNBINDING REACTION
+    //get the unbinding reaction
+    ReactionBase* offRxn = _cMotorGhost->getOffReaction();
+    
+    //change the rate
+    float newRate =
+        _unbindingChangers[_motorType]->changeRate(offRxn->getBareRate(), force);
+    offRxn->setRate(newRate);
+    offRxn->activateReaction();
+    
+    
 }

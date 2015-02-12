@@ -15,6 +15,7 @@
 #define M3SYM_SystemParameters_h
 
 #include <vector>
+#include <list>
 
 #include "common.h"
 #include "Parser.h"
@@ -131,13 +132,18 @@ struct BoundaryParameters {
 struct DynamicRateParameters {
     
     /// Option for dynamic polymerization rate of filaments
-    double FDPLength = 0.0;
+    double dFilPolymerizationCharLength = 0.0;
+    
     /// Option for dynamic unbinding rate of linkers
-    vector<double> LDULength = {};
+    vector<double> dLinkerUnbindingCharLength = {};
+    vector<double> dLinkerUnbindingAmplitude = {};
+    
     /// Option for dynamic unbinding rate of motors
-    vector<double> MDULength = {};
+    vector<double> dMotorUnbindingCharLength = {};
+    vector<double> dMotorUnbindingAmplitude = {};
+    
     /// Option for dynamic walking rate of motors
-    vector<double> MDWLength = {};
+    vector<double> dMotorWalkingCharLength = {};
     
 };
 
@@ -169,6 +175,7 @@ public:
     //Check for consistency of parameters. Done at runtime by the Controller.
     static bool checkChemParameters(ChemistryData& chem);
     static bool checkMechParameters(MechanicsFFType& mech);
+    static bool checkDyRateParameters(DynamicRateTypes& dy);
     static bool checkGeoParameters();
     //@}
     

@@ -35,7 +35,7 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance));
     
     else {
-        cout << "Conjugate gradient method not yet implemented. Exiting." << endl;
+        cout << "Conjugate gradient method not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -68,7 +68,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
         new VolumeCylindricalFF(forceFields.VolumeFFType));
     
     _FFManager._forceFields.push_back(
-        new BoundaryFF(forceFields.BoundaryFFType, "", ""));
+        new BoundaryFF(forceFields.BoundaryFFType));
 
 }
 

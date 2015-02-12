@@ -23,6 +23,11 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
     if (stretching == "HARMONIC")
         _linkerInteractionVector.emplace_back(
             new LinkerStretching<LinkerStretchingHarmonic>());
+    else if(stretching == "") {}
+    else {
+        cout << "Linker stretching FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 double LinkerFF::computeEnergy(double d) {

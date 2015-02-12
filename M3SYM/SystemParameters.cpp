@@ -251,7 +251,6 @@ bool SystemParameters::checkMechParameters(MechanicsFFType& mech) {
     return true;
 }
 
-
 bool SystemParameters::checkGeoParameters() {
     
     //Check that grid and compartmentSize match nDim
@@ -267,4 +266,105 @@ bool SystemParameters::checkGeoParameters() {
     }
     return true;
 }
+
+bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
+    
+    //check types match number of species
+    if(dy.dLUnbindingType.size() != CParams.numLinkerSpecies) {
+        cout << "Number of linker dynamic rate unbinding forms must" <<
+                " match the number of species. Exiting." << endl;
+        return false;
+    }
+    
+    if(dy.dMUnbindingType.size() != CParams.numMotorSpecies) {
+        cout << "Number of motor dynamic rate unbinding forms must" <<
+                " match the number of species. Exiting." << endl;
+        return false;
+    }
+    if(dy.dMWalkingType.size() != CParams.numMotorSpecies) {
+        cout << "Number of motor dynamic rate walking forms must" <<
+                " match the number of species. Exiting." << endl;
+        return false;
+    }
+    
+    //now check parameters
+    if(dy.dFPolymerizationType != "" && DRParams.dFilPolymerizationCharLength == 0) {
+        cout << "Must set a dynamic rate polymerization length. Exiting." << endl;
+        return false;
+    }
+    
+    auto numCharLengths = 0;
+    auto numAmps = 0;
+    
+    for(auto &changer : dy.dLUnbindingType) {
+        
+        if(changer == "CATCHSLIP") {
+            numCharLengths += 2;
+            numAmps += 2;
+        }
+        else if(changer == "SLIP") {
+            numCharLengths += 1;
+        }
+        
+    }
+    if(numCharLengths != SystemParameters::DynamicRates().
+                         dLinkerUnbindingCharLength.size()) {
+        cout << "Number of characteristic lengths specified for chosen "
+             << "linker unbinding dynamic rate forms is not accurate. Exiting."
+             << endl;
+        return false;
+    }
+    
+    if(numAmps != SystemParameters::DynamicRates().
+                  dLinkerUnbindingAmplitude.size()) {
+        
+        
+        cout << "Number of amplitudes specified for chosen "
+             << "linker unbinding dynamic rate forms is not accurate. Exiting."
+        << endl;
+        return false;
+    }
+    
+    numCharLengths = 0;
+    numAmps = 0;
+    
+    for(auto &changer : dy.dMUnbindingType) {
+        
+        if(changer == "CATCHSLIP") {
+            numCharLengths += 2;
+            numAmps += 2;
+        }
+        else if(changer == "SLIP") {
+            numCharLengths += 1;
+        }
+        
+    }
+    if(numCharLengths != SystemParameters::DynamicRates().
+                         dMotorUnbindingCharLength.size()) {
+        cout << "Number of characteristic lengths specified for chosen "
+             << "motor unbinding dynamic rate forms is not accurate. Exiting."
+             << endl;
+        return false;
+    }
+    
+    if(numAmps != SystemParameters::DynamicRates().
+                  dMotorUnbindingAmplitude.size()) {
+        
+        cout << "Number of amplitudes specified for chosen "
+             << "motor unbinding dynamic rate forms is not accurate. Exiting."
+             << endl;
+        return false;
+    }
+    
+    if(dy.dMWalkingType.size() != SystemParameters::DynamicRates().
+                                  dMotorWalkingCharLength.size()) {
+        cout << "Number of characteristic lengths specified for chosen "
+             << "motor walking dynamic rate forms is not accurate. Exiting."
+             << endl;
+        return false;
+    }
+    
+    return true;
+}
+
 

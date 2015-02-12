@@ -39,11 +39,20 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     _mController = new MController(_subSystem);
     _cController = new CController(_subSystem);
     _gController = new GController();
+    _drController = new DRController();
 }
 
 void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory) {
+    
+    //general check of macros
+#if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
+    cout << "If dynamic rates is turned on, chemistry and mechanics must be "
+         << "defined. Please set these compilation macros and try again. Exiting."
+         << endl;
+    exit(EXIT_FAILURE);
+#endif
     
     //init input directory
     _inputDirectory = inputDirectory;
@@ -145,36 +154,51 @@ void Controller::initialize(string inputFile,
     _numChemSteps= CAlgorithm.numChemSteps;
     _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
     
-    ChemistryData chem;
+    ChemistryData ChemData;
     
     if(CSetup.inputFile != "") {
         ChemistryParser cp(_inputDirectory + CSetup.inputFile);
-        chem = cp.readChemistryInput();
+        ChemData = cp.readChemistryInput();
     }
     else {
         cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, "", chem);
+    _cController->initialize(CAlgorithm.algorithm, "", ChemData);
     cout << "Done." << endl;
 #endif
     
 #ifdef DYNAMICRATES
+    cout << "---" << endl;
+    cout << "Initializing dynamic rates...";
     //read dynamic rate parameters
     p.readDynamicRateParameters();
+    
+    //read dynamic rate types
+    DynamicRateTypes DRTypes = p.readDynamicRateTypes();
+    
+    //init controller
+    _drController->initialize(DRTypes);
+    cout << "Done." << endl;
+    
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
-    cout << "Checking parameter consistency..." << endl;
+    cout << "Checking cross-parameter consistency..." << endl;
 #ifdef CHEMISTRY
-    if(!SystemParameters::checkChemParameters(chem))
+    if(!SystemParameters::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
 #endif
 #ifdef MECHANICS
     if(!SystemParameters::checkMechParameters(MTypes))
         exit(EXIT_FAILURE);
 #endif
+#ifdef DYNAMICRATES
+    if(!SystemParameters::checkDyRateParameters(DRTypes))
+        exit(EXIT_FAILURE);
+#endif
+    
     cout << "Done." << endl;
     
     //Read filament setup, parse filament input file if needed

@@ -24,6 +24,7 @@
 #include "MCylinder.h"
 #include "CCylinder.h"
 #include "Neighbor.h"
+#include "RateChanger.h"
 
 #include "Movable.h"
 #include "Reactable.h"
@@ -31,6 +32,7 @@
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
+class DRController;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -41,6 +43,8 @@ class Compartment;
  */
 
 class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
+    
+friend class DRController;
     
 private:
     Bead* _b1;  ///< Pointer to the first bead.
@@ -58,6 +62,9 @@ private:
     int _ID; ///< Unique ID of cylinder, managed by CylinderDB
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
+    
+    ///For dynamic polymerization rate
+    static RateChanger* _polyChanger;
     
 public:
     vector<double> coordinate;

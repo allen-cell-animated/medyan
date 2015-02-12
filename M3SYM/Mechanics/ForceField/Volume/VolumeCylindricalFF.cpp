@@ -22,6 +22,11 @@ VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
     if (type == "REPULSION")
         _cylinderVolInteractionVector.emplace_back(
             new CylinderExclVolume <CylinderExclVolRepulsion>());
+    else if(type == "") {}
+    else {
+        cout << "Volume FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 double VolumeCylindricalFF::computeEnergy(double d) {

@@ -33,18 +33,38 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
     if(stretching == "HARMONIC")
         _branchingInteractionVector.emplace_back(
         new BranchingStretching<BranchingStretchingHarmonic>());
+    else if(stretching == "") {}
+    else {
+        cout << "Branching stretching FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
     
     if(bending == "COSINE")
         _branchingInteractionVector.emplace_back(
         new BranchingBending<BranchingBendingCosine>());
+    else if(bending == "") {}
+    else {
+        cout << "Branching bending FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
     
     if(dihedral == "COSINE")
       _branchingInteractionVector.emplace_back(
       new BranchingDihedral<BranchingDihedralCosine>());
+    else if(dihedral == "") {}
+    else {
+        cout << "Branching dihedral FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
     
     if(position == "COSINE")
       _branchingInteractionVector.emplace_back(new
           BranchingPosition<BranchingPositionCosine>());
+    else if(position == "") {}
+    else {
+        cout << "Branching position FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 
 }
 

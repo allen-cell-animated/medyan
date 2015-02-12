@@ -23,9 +23,11 @@
 #include "MLinker.h"
 #include "Movable.h"
 #include "Reactable.h"
+#include "RateChanger.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
+class DRController;
 
 /// A container to store a MLinker and CLinker.
 /*!
@@ -36,6 +38,8 @@ class Cylinder;
  */
 class Linker : public Composite, public Movable, public Reactable {
 
+friend class DRController;
+    
 private:
     unique_ptr<MLinker> _mLinker; ///< Pointer to mech linker
     unique_ptr<CLinker> _cLinker; ///< Pointer to chem linker
@@ -52,6 +56,9 @@ private:
     float _birthTime; ///Birth time
     
     Compartment* _compartment; ///< Where this linker is
+    
+    ///For dynamic rate unbinding
+    static vector<RateChanger*> _unbindingChangers;
     
 public:
     vector<double> coordinate;

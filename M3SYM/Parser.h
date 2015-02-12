@@ -210,6 +210,23 @@ struct MechanicsFFType {
     
 };
 
+///Struct to hold dynamic rate changer types
+struct DynamicRateTypes {
+    
+    ///Polymerization rate changing
+    string dFPolymerizationType = "";
+    
+    ///Linker rate changing
+    vector<string> dLUnbindingType = {};
+    
+    //@{
+    ///Motor rate changing
+    vector<string> dMUnbindingType = {};
+    vector<string> dMWalkingType = {};
+    //@}
+};
+
+
 /// Struct to hold chem setup information
 struct ChemistrySetup {
     
@@ -286,6 +303,7 @@ public:
     //@{
     /// Type parser
     MechanicsFFType readMechanicsFFType();
+    DynamicRateTypes readDynamicRateTypes();
     BoundaryType readBoundaryType();
     //@}
     

@@ -11,6 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
+#include <cmath>
+
 #include "Linker.h"
 
 #include "Bead.h"
@@ -22,6 +24,8 @@
 #include "MathFunctions.h"
 
 using namespace mathfunc;
+
+vector<RateChanger*> Linker::_unbindingChangers;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2, bool creation)
@@ -65,13 +69,11 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     if(!creation) {
         SpeciesBound* se1 =
         _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-        sl1->up();
-        se1->down();
+        sl1->up(); se1->down();
         
         SpeciesBound* se2 =
         _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-        sl2->up();
-        se2->down();
+        sl2->up(); se2->down();
     }
         
     //attach this linker to the species
@@ -134,41 +136,22 @@ void Linker::updatePosition() {
     }
 }
 
-/// @note - This function updates unbinding rates based on the
-/// following exponential form:
-///
-///                 k = k_0 * exp(f * a / kT)
-///
-/// The function uses the motor's stretching force at the current
-/// state to change this rate.
+/// @note - The function uses the motor's stretching force at
+/// the current state to change this rate. Does not consider
+/// compression forces, only stretching.
 
 void Linker::updateReactionRates() {
 
     //current force on linker
-    double force = _mLinker->stretchForce;
+    double force = max(0.0, _mLinker->stretchForce);
     
-    //characteristic length
-    double a = SystemParameters::DynamicRates().LDULength[_linkerType];
-    
-    //get all walking reactions
-    Species* s1 = _cLinker->getFirstSpecies();
-    Species* s2 = _cLinker->getSecondSpecies();
-    
-    for(auto r : s1->getRSpecies().reactantReactions()) {
-        if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
-            
-            float newRate = r->getBareRate() * exp( force * a / kT);
-            r->setRate(newRate);
-            r->activateReaction();
-        }
-    }
-    for(auto r : s2->getRSpecies().reactantReactions()) {
-        if(r->getReactionType() == ReactionType::LINKERUNBINDING) {
-            
-            float newRate = r->getBareRate() * exp( force * a / kT);
-            r->setRate(newRate);
-            r->activateReaction();
-        }
-    }
+    //get the unbinding reaction
+    ReactionBase* offRxn = _cLinker->getOffReaction();
+
+    //change the rate
+    float newRate =
+        _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
+    offRxn->setRate(newRate);
+    offRxn->activateReaction();
 }
 

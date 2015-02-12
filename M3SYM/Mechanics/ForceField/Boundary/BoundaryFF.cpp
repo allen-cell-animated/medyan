@@ -20,14 +20,19 @@
 #include "BoundaryElement.h"
 #include "Bead.h"
 
-BoundaryFF::BoundaryFF (string interaction1, string interaction2, string interaction3) {
+BoundaryFF::BoundaryFF (string type) {
     
-    if (interaction1 == "REPULSIONLJ")
+    if (type == "REPULSIONLJ")
         _BoundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionLJ>());
-    if (interaction1 == "REPULSIONEXP")
+    else if (type == "REPULSIONEXP")
         _BoundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionExp>());
+    else if(type == "") {}
+    else {
+        cout << "Boundary FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 double BoundaryFF::computeEnergy(double d) {

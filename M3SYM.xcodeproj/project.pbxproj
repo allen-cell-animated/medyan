@@ -137,6 +137,10 @@
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7A5200D1A8260EE003C49E0 /* ReactionManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200B1A8260EE003C49E0 /* ReactionManagerImpl.cpp */; };
 		F7A5200E1A8260EE003C49E0 /* ReactionManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A5200C1A8260EE003C49E0 /* ReactionManagerImpl.h */; };
+		F7A520111A8BB820003C49E0 /* RateChanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200F1A8BB820003C49E0 /* RateChanger.cpp */; };
+		F7A520121A8BB820003C49E0 /* RateChanger.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520101A8BB820003C49E0 /* RateChanger.h */; };
+		F7A520151A8BBF24003C49E0 /* DRController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A520131A8BBF24003C49E0 /* DRController.cpp */; };
+		F7A520161A8BBF24003C49E0 /* DRController.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520141A8BBF24003C49E0 /* DRController.h */; };
 		F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
 		F7C9CF921A2D16290087434A /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF841A2D16290087434A /* test_ccylinders.cpp */; };
@@ -374,6 +378,10 @@
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7A5200B1A8260EE003C49E0 /* ReactionManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionManagerImpl.cpp; sourceTree = "<group>"; };
 		F7A5200C1A8260EE003C49E0 /* ReactionManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionManagerImpl.h; sourceTree = "<group>"; };
+		F7A5200F1A8BB820003C49E0 /* RateChanger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RateChanger.cpp; sourceTree = "<group>"; };
+		F7A520101A8BB820003C49E0 /* RateChanger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChanger.h; sourceTree = "<group>"; };
+		F7A520131A8BBF24003C49E0 /* DRController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DRController.cpp; sourceTree = "<group>"; };
+		F7A520141A8BBF24003C49E0 /* DRController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRController.h; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9CF831A2D16290087434A /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
 		F7C9CF841A2D16290087434A /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ccylinders.cpp; sourceTree = "<group>"; };
@@ -790,6 +798,10 @@
 				F735B7611A2D16F200AE21D1 /* MathFunctions.h */,
 				F735B7691A2D16F200AE21D1 /* SystemParameters.cpp */,
 				F735B76A1A2D16F200AE21D1 /* SystemParameters.h */,
+				F735B7641A2D16F200AE21D1 /* Output.cpp */,
+				F735B7651A2D16F200AE21D1 /* Output.h */,
+				F735B7661A2D16F200AE21D1 /* Parser.cpp */,
+				F735B7671A2D16F200AE21D1 /* Parser.h */,
 				F735B75B1A2D16F200AE21D1 /* Controller.cpp */,
 				F735B75C1A2D16F200AE21D1 /* Controller.h */,
 				F735B7531A2D16F200AE21D1 /* CController.cpp */,
@@ -798,12 +810,12 @@
 				F735B75E1A2D16F200AE21D1 /* GController.h */,
 				F735B7621A2D16F200AE21D1 /* MController.cpp */,
 				F735B7631A2D16F200AE21D1 /* MController.h */,
+				F7A520131A8BBF24003C49E0 /* DRController.cpp */,
+				F7A520141A8BBF24003C49E0 /* DRController.h */,
+				F7A5200F1A8BB820003C49E0 /* RateChanger.cpp */,
+				F7A520101A8BB820003C49E0 /* RateChanger.h */,
 				F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */,
 				F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */,
-				F735B7641A2D16F200AE21D1 /* Output.cpp */,
-				F735B7651A2D16F200AE21D1 /* Output.h */,
-				F735B7661A2D16F200AE21D1 /* Parser.cpp */,
-				F735B7671A2D16F200AE21D1 /* Parser.h */,
 				F735B75F1A2D16F200AE21D1 /* M3Sym.cpp */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F763ED091548FFC70069DA61 /* Chemistry */,
@@ -851,6 +863,7 @@
 				F735B79D1A2D172800AE21D1 /* ChemManager.h in Headers */,
 				F7525A3B1A7023EF007A4E9F /* CylinderExclVolume.h in Headers */,
 				F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */,
+				F7A520121A8BB820003C49E0 /* RateChanger.h in Headers */,
 				F7525A571A70241E007A4E9F /* BranchingDihedral.h in Headers */,
 				F7C9D0271A2D165D0087434A /* ReactionBase.h in Headers */,
 				F735B7BB1A2D173F00AE21D1 /* Minimizer.h in Headers */,
@@ -871,6 +884,7 @@
 				F7199B371A30C84600CD5DCC /* MBranchingPoint.h in Headers */,
 				F7C9D02C1A2D165D0087434A /* Species.h in Headers */,
 				F7C9D0231A2D165D0087434A /* Reactable.h in Headers */,
+				F7A520161A8BBF24003C49E0 /* DRController.h in Headers */,
 				F7C9D02D1A2D165D0087434A /* SpeciesContainer.h in Headers */,
 				F7525A0A1A7023A4007A4E9F /* BoundaryRepulsionLJ.h in Headers */,
 				F735B7741A2D16F200AE21D1 /* Composite.h in Headers */,
@@ -1034,6 +1048,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7C9D02B1A2D165D0087434A /* Species.cpp in Sources */,
+				F7A520111A8BB820003C49E0 /* RateChanger.cpp in Sources */,
 				F735B7B81A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp in Sources */,
 				F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7C9CFFD1A2D165D0087434A /* CMonomer.cpp in Sources */,
@@ -1099,6 +1114,7 @@
 				F7525A071A7023A4007A4E9F /* BoundaryRepulsionExp.cpp in Sources */,
 				F7525A7D1A702431007A4E9F /* FilamentStretchingHarmonic.cpp in Sources */,
 				F735B7B61A2D173F00AE21D1 /* CGMethod.cpp in Sources */,
+				F7A520151A8BBF24003C49E0 /* DRController.cpp in Sources */,
 				F7C9D00B1A2D165D0087434A /* FilamentDB.cpp in Sources */,
 				F7525A941A702461007A4E9F /* LinkerFF.cpp in Sources */,
 				F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */,

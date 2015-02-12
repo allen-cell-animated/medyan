@@ -20,6 +20,7 @@
 #include "MController.h"
 #include "GController.h"
 #include "CController.h"
+#include "DRController.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -38,9 +39,10 @@ class Controller {
 private:
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
-    MController* _mController; ///< Chemical controller used
-    CController* _cController; ///< Mechanical controller used
-    GController* _gController; ///< Geometry controller used
+    MController* _mController;   ///< Chemical controller used
+    CController* _cController;   ///< Mechanical controller used
+    GController* _gController;   ///< Geometry controller used
+    DRController* _drController; ///< Dynamic rate controller used
     
     string _inputDirectory; ///< Input directory being used
     string _outputDirectory; ///< Output directory being used

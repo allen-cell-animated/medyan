@@ -23,6 +23,8 @@
 
 using namespace mathfunc;
 
+RateChanger* Cylinder::_polyChanger;
+
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
     : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
@@ -110,20 +112,12 @@ void Cylinder::updatePosition() {
 
 }
 
-/// @note - This function updates polymerization rates based on the
-/// Elastic Brownian Ratchet Model:
-///
-///                 k = k_0 * exp(-f * a / kT)
-///
-/// The function uses the bead load force to calculate this changed rate.
+/// @note -  The function uses the bead load force to calculate this changed rate.
 /// If there is no force on the beads the reaction rates are set to the bare.
 
 void Cylinder::updateReactionRates() {
     
     double force;
-    
-    //characteristic length
-    float a = SystemParameters::DynamicRates().FDPLength;
     
     //load force from front (affects plus end polymerization)
     if(_plusEnd) {
@@ -136,7 +130,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
             
-                float newRate = r->getBareRate() * exp( - force * a / kT);
+                float newRate = _polyChanger->changeRate(r->getBareRate(), force);
                 r->setRate(newRate);
                 r->activateReaction();
             }
@@ -154,7 +148,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
-                float newRate = r->getBareRate() * exp( - force * a / kT);
+                float newRate =  _polyChanger->changeRate(r->getBareRate(), force);
                 r->setRate(newRate);
                 r->activateReaction();
             }

@@ -23,6 +23,11 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
     if (stretching == "HARMONIC")
         _motorGhostInteractionVector.emplace_back(
             new MotorGhostStretching<MotorGhostStretchingHarmonic>());
+    else if(stretching == "") {}
+    else {
+        cout << "Motor stretching FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 double MotorGhostFF::computeEnergy(double d) {

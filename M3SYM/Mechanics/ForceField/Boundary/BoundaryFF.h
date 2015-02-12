@@ -33,7 +33,7 @@ private:
     
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)
-    BoundaryFF(string interaction1, string interaction2, string interaction3);
+    BoundaryFF(string type);
     
     virtual string getName() {return "Boundary";}
     

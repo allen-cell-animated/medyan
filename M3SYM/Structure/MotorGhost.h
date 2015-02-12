@@ -23,11 +23,13 @@
 #include "MMotorGhost.h"
 #include "Movable.h"
 #include "Reactable.h"
+#include "RateChanger.h"
 
 #include "SystemParameters.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
+class DRController;
 
 /// A container to store a MMotorGhost and CMotorGhost.
 /*!
@@ -38,6 +40,8 @@ class Cylinder;
  */
 class MotorGhost : public Composite, public Movable, public Reactable {
    
+friend class DRController;
+
 private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
     unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to chem motor ghost
@@ -54,6 +58,11 @@ private:
     float _birthTime; ///< Birth time
     
     Compartment* _compartment; ///< Where this motorghost is
+    
+    ///For dynamic rate unbinding
+    static vector<RateChanger*> _unbindingChangers;
+    ///For dynamic rate walking
+    static vector<RateChanger*> _walkingChangers;
 
 public:
     vector<double> coordinate;

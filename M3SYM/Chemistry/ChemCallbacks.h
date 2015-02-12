@@ -878,7 +878,6 @@ struct FilamentCreationCallback {
         CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
         int monomerPosition = SystemParameters::Geometry().cylinderIntSize / 2 + 1;
         
-        
         CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
         CMonomer* m2 = cc->getCMonomer(monomerPosition);
         CMonomer* m3 = cc->getCMonomer(monomerPosition + 1);

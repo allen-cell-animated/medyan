@@ -221,7 +221,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -234,7 +234,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -248,7 +248,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -261,7 +261,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -274,7 +274,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -288,7 +288,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -301,7 +301,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -979,7 +979,7 @@ void SystemParser::readDynamicRateParameters() {
         
         if(line.find("#") != string::npos) { continue; }
 
-        if (line.find("FDPLENGTH") != string::npos) {
+        if (line.find("DFPOLYMERIZATIONLEN") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -989,52 +989,62 @@ void SystemParser::readDynamicRateParameters() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                DRParams.FDPLength = atof((lineVector[1].c_str()));
+                DRParams.dFilPolymerizationCharLength = atof((lineVector[1].c_str()));
             }
             else {}
         }
 
-        else if (line.find("MDULENGTH") != string::npos) {
+        else if (line.find("DMUNBINDINGLEN") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                DRParams.MDULength.push_back(atof((lineVector[1].c_str())));
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dMotorUnbindingCharLength.push_back(atof((lineVector[i].c_str())));
             }
             else {}
         }
         
-        else if (line.find("MDWLENGTH") != string::npos) {
+        else if (line.find("DMUNBINDINGAMP") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                DRParams.MDWLength.push_back(atof((lineVector[1].c_str())));
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dMotorUnbindingAmplitude.push_back(atof((lineVector[i].c_str())));
             }
             else {}
         }
         
-        else if (line.find("LDULENGTH") != string::npos) {
+        else if (line.find("DMWALKINGLEN") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dMotorWalkingCharLength.push_back(atof((lineVector[i].c_str())));
             }
-            else if (lineVector.size() == 2) {
-                DRParams.LDULength.push_back(atof((lineVector[1].c_str())));
+            else {}
+        }
+        
+        else if (line.find("DLUNBINDINGLEN") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dLinkerUnbindingCharLength.push_back(atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
+        
+        else if (line.find("DLUNBINDINGAMP") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dLinkerUnbindingAmplitude.push_back(atof((lineVector[i].c_str())));
             }
             else {}
         }
@@ -1043,6 +1053,68 @@ void SystemParser::readDynamicRateParameters() {
     //set system parameters
     SystemParameters::DRParams = DRParams;
 }
+
+DynamicRateTypes SystemParser::readDynamicRateTypes() {
+    
+    DynamicRateTypes DRTypes;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        if (line.find("DFPOLYMERIZATIONTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at dynamic polymerization type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                DRTypes.dFPolymerizationType = lineVector[1];
+            }
+        }
+        
+        else if (line.find("DMUNBINDINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRTypes.dMUnbindingType.push_back(lineVector[i]);
+            }
+        }
+        
+        else if (line.find("DMWALKINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRTypes.dMWalkingType.push_back(lineVector[i]);
+            }
+        }
+        
+        else if (line.find("DLUNBINDINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRTypes.dLUnbindingType.push_back(lineVector[i]);
+            }
+        }
+    }
+    return DRTypes;
+}
+
+
+
 
 BoundaryType SystemParser::readBoundaryType() {
         
