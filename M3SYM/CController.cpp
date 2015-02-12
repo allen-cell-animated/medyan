@@ -49,7 +49,7 @@ void CController::initialize(string& chemAlgorithm, string chemManager,
         csi = new ChemSimpleGillespieImpl;
     
     else {
-        cout<< "Chem algorithm not found. Exiting." <<endl;
+        cout<< "Chem algorithm not recognized. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
     ChemSim::setInstance(csi);

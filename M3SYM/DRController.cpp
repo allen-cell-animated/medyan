@@ -28,6 +28,11 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         double a = SystemParameters::DynamicRates().dFilPolymerizationCharLength;
         Cylinder::_polyChanger = new BrownianRatchet(a);
     }
+    else if(drTypes.dFPolymerizationType == "") {}
+    else {
+        cout << "Filament polymerization rate changing form not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
     
     //linker unbinding changer
     int charLengthIndex = 0;
@@ -76,7 +81,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
             charLengthIndex += 1;
         }
         else {
-            cout << "Linker unbinding rate changer not recognized. Exiting." << endl;
+            cout << "Linker unbinding rate changing form not recognized. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
     }
@@ -128,7 +133,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         }
         else {
             
-            cout << "Motor unbinding rate changer not recognized. Exiting." << endl;
+            cout << "Motor unbinding rate changing form not recognized. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
     }
@@ -154,7 +159,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
             charLengthIndex += 1;
         }
         else {
-            cout << "Motor walking rate changer not recognized. Exiting." << endl;
+            cout << "Motor walking rate changing form not recognized. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
     }
