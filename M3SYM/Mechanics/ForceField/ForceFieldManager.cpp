@@ -18,14 +18,15 @@ double ForceFieldManager::computeEnergy(double d) {
     double energy = 0;
     for(auto &f : _forceFields) {
         auto tempEnergy = f->computeEnergy(d);
+        //if energy is infinity, exit ungracefully.
+        if(tempEnergy == numeric_limits<double>::infinity()) {
+            
+            cout << "Energy became infinite. Try adjusting equilibration step size."
+                 << endl;
+            cout << "The culprit was... " << f->getName() << endl;
+            exit(EXIT_FAILURE);
+        }
         energy += tempEnergy;
-    }
-    
-    //if energy is infinity, exit ungracefully.
-    if(energy == numeric_limits<double>::infinity()) {
-        cout <<
-        "Energy became infinite. Try adjusting equilibration step size." << endl;
-        exit(EXIT_FAILURE);
     }
     return energy;
 }

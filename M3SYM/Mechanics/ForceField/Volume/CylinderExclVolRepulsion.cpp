@@ -41,9 +41,9 @@ using namespace mathfunc;
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                         double kRepuls) {
     if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
-
+        
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
-        double invDSquare =  1/ (d * d);
+        double invDSquare =  1 / (d * d);
         return kRepuls * invDSquare * invDSquare;
     }
     
@@ -75,6 +75,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
     if (JJ==0 || JJ != JJ){
+        
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
                                      b3->coordinate, b4->coordinate, 1, 0.01);
         
