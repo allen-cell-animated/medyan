@@ -23,7 +23,7 @@ BDIAMETER:                   980.0
 
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
-GRADIENTTOLERANCE:           0.001
+GRADIENTTOLERANCE:           0.00001
 MD:
 
 ### FILAMENTS ###
@@ -66,7 +66,7 @@ BRPOSITIONK:		     100.0
 VOLUMETYPE:                 REPULSION
 VOLUMECUTOFF:               27.0
 
-VOLUMEK:                    100.0
+VOLUMEK:                    100000.0
 
 ### BOUNDARY ###
 
@@ -85,11 +85,11 @@ CALGORITHM:                  NRM
 NUMTOTALSTEPS:
 RUNTIME:                     20.0
 
-NUMSTEPSPERS:		     1
-SNAPSHOTTIME:                
+NUMSTEPSPERS:		     
+SNAPSHOTTIME:                0.2
 
-NUMCHEMSTEPS:                10
-NUMSTEPSPERN:                1000
+NUMCHEMSTEPS:                1000
+NUMSTEPSPERN:                100000
 
 NUMDIFFUSINGSPECIES:	     3
 
