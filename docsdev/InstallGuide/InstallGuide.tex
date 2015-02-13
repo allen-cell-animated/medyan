@@ -9,6 +9,10 @@
 \usepackage{listings}			         % For showing code			
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 \title{Installation Guide for M3SYM v1.0}
 \author{Papoian Lab, University of Maryland}
@@ -63,7 +67,7 @@ The command line macros can be edited in the Makefile to turn on or off certain 
 
 \begin{table} [!ht]
 \centering
-\begin{tabular}{|l|l|}  
+\begin{tabular}{|L{5cm}|L{7.5cm}|}  
 \hline
  \textbf{Macro} & \textbf{Description} \\
  \hline
@@ -71,7 +75,8 @@ The command line macros can be edited in the Makefile to turn on or off certain 
   \hline
   MECHANICS & Enable system mechanics \\ 
   \hline
-  DYNAMICRATES & Enable dynamic rate changing \\
+  DYNAMICRATES & Enable dynamic rate changing. This macro can only be specified if both CHEMISTRY and
+  MECHANICS are enabled. \\
   \hline
   BOOST\_MEM\_POOL & Enable boost memory pool optimizations \\
   \hline
