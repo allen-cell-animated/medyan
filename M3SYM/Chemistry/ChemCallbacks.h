@@ -217,8 +217,17 @@ struct BranchingPointCreationCallback {
         vector<double> n = twoPointDirection(c1b1, c1b2);
         
         //get branch projection
+#ifdef MECHANICS
+        //use mechanical parameters
         double l = SystemParameters::Mechanics().BrStretchingL[_branchType];
         double t = SystemParameters::Mechanics().BrBendingTheta[_branchType];
+#else
+        cout << "Branching reaction cannot occur unless mechanics is enabled. Using"
+             << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+             << endl;
+        double l = 10.0;
+        double t = 70.7;
+#endif
         double s = SystemParameters::Geometry().monomerSize;
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
@@ -244,10 +253,8 @@ struct BranchingPointCreationCallback {
         
         //create the reaction species
         m = _c1->getCCylinder()->getCMonomer(_position);
-        SpeciesBrancher* sbr = m->speciesBrancher(_branchType);
-        SpeciesBound* sbo =m->speciesBound(0);
-        vector<Species*> offSpecies = {sbr, sbo, sfb};
-        
+        vector<Species*> offSpecies = {m->speciesBrancher(_branchType),
+                                       m->speciesBound(0), sfb};
         //create reaction, add to cylinder
         ReactionBase* offRxn =
         new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
