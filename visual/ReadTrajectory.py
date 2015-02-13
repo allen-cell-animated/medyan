@@ -3,8 +3,8 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename='/Users/jameskomianos/Desktop/Alison/Run7/snapshot.traj'
-#color_filename = '/Users/jameskomianos/Desktop/Alison/Run1/stresses.traj'
+traj_filename='/Users/jameskomianos/Desktop/Alison/Run3/snapshot.traj'
+#color_filename = '/Users/jameskomianos/Desktop/Alison/Run3/stresses.traj'
 color_filename = ''
 
 #Open the traj file
@@ -200,9 +200,9 @@ def show_frame(frame_number=-1):
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 2.00
+	MAXVAL = 5.00
 	MINVAL = 0.00
-	SCALETITLE = 'Stresses (pN/m)'
+	SCALETITLE = 'Stresses (pN/nm)'
 	#SCALETITLE = 'Birth Times (s)'
 	COLORMAP = 'OrRd'
 	#COLORMAP = 'Spectral'

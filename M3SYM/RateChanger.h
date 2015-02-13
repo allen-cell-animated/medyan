@@ -120,6 +120,4 @@ public:
     virtual float changeRate(float bareRate, double force);
 };
 
-
-
 #endif

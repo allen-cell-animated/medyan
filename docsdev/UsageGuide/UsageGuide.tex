@@ -9,6 +9,7 @@
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
+\usepackage{longtable}
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -34,8 +35,8 @@
  Cell motility plays a key role in human biology and disease, contributing ubiquitously
  to such important processes as embryonic development, wound repair and cancer 
  metastasis. Papoian laboratory is interested in gaining deeper understanding of the
- physical chemistry behind these complex, far-from-equilibrium mechano-chemical 
- processes. His approach and model, named the \textit{Mechano-chemical Dynamics of Active Networks,
+ physical chemistry behind these complex, far-from-equilibrium mechanochemical 
+ processes. His approach and model, named the \textit{Mechanochemical Dynamics of Active Networks,
  3rd Generation} (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
  growth, while explicitly coupling chemistry and mechanics. For a more detailed description of MEDYAN3, 
@@ -94,10 +95,10 @@ M3SYM allows for a wide range of mechanical interactions, including:
 
 \noindent These force fields can be minimized by a choice of conjugate gradient algorithm.
 
-\subsection{Mechano-chemical coupling} 
+\subsection{Mechanochemical coupling} 
 
 M3SYM couples chemistry and mechanics by altering reaction rates based on mechanical stresses in a given 
-network. This allows for a full treatment of the complex mechano-chemical responses in active matter networks.
+network. This allows for a full treatment of the complex mechanochemical responses in active matter networks.
 See (*paper*) for a more detailed description.
 
 \section{Running M3SYM}
@@ -116,7 +117,7 @@ The following geometrical parameters can be set. All geometry parameters must be
 
 \begin{table} [!ht]
 \centering
-\begin{tabular}{|L{5cm}|C{3cm}|L{6.8cm}|}  
+\begin{tabular}{|L{5cm}|C{3cm}|L{5.2cm}|}  
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
@@ -149,11 +150,9 @@ The following geometrical parameters can be set. All geometry parameters must be
 \break
 \subsubsection{Mechanics}
 
-The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of chemical species of that type. Force field constant units are dependent on the potential used. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
+The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. Force field constant units are dependent on the potential used. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{4.65cm}|C{4cm}|L{7cm}|}  
+\begin{longtable}{|L{4.65cm}|C{4cm}|L{4cm}|}  
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
@@ -212,23 +211,19 @@ The following mechanical parameters can be set. It should be noted that the numb
   BSCREENLENGTH & double & Boundary screening length constant\\
   \hline
  
- \end{tabular}
-\end{table}
+\end{longtable}
 
-\newpage
 \subsubsection{Chemistry}
 
-The following chemical parameters can be set. The number of chemical species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field. All chemical parameters must be set unless otherwise noted in the description. For more information on chemical algorithms, see (*paper*)
+The following chemical parameters can be set. The number of species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field. All chemical parameters must be set unless otherwise noted in the description. For more information on chemical algorithms, see (*paper*)
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{4.9cm}|C{3.8cm}|L{6.6cm}|}  
+\begin{longtable}{|L{4.9cm}|C{2.5cm}|L{4.75cm}|}  
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
   CHEMISTRYFILE & string & Input chemistry file. Should be in the \texttt{InputDirectory} \\
   \hline
-  CALGORITHM & SIMPLEGILLESPIE, GILLESPIE, NRM & Chemistry algorithm used \\
+  CALGORITHM & GILLESPIE, NRM & Chemistry algorithm used \\
   \hline
   NUMTOTALSTEPS & int & Number of total chemical steps to perform. If RUNTIME is set, this will not be used \\
   \hline
@@ -243,53 +238,66 @@ The following chemical parameters can be set. The number of chemical species of 
   NUMSTEPSPERN & int & Number of chemical steps per neighbor list update. This includes updating
    chemical reactions as well as force fields which rely on neighbor lists. \\
   \hline
-  NUMDIFFUSINGSPECIES & int & Number of diffusing species in system \\
+  NUMDIFFUSINGSPECIES & int & Diffusing species in system \\
   \hline
-  NUMBULKSPECIES & int & Number of bulk species in system \\
+  NUMBULKSPECIES & int & Bulk species in system \\
   \hline
-  NUMFILAMENTSPECIES & int & Number of filament species in system \\
+  NUMFILAMENTSPECIES & int & Filament species in system \\
   \hline
-  NUMPLUSENDSPECIES & int & Number of plus end species in system \\
+  NUMPLUSENDSPECIES & int & Plus end species in system \\
   \hline
-  NUMMINUSENDSPECIES & int & Number of minus end species in system \\
+  NUMMINUSENDSPECIES & int & Minus end species in system \\
   \hline
-  NUMBOUNDSPECIES & int & Number of bound species in system \\
+  NUMBOUNDSPECIES & int & Bound species in system \\
   \hline
-    NUMLINKERSPECIES & int & Number of linker species in system \\
+    NUMLINKERSPECIES & int & Cross-linker species in system \\
   \hline
-    NUMMOTORSPECIES & int & Number of Myosin II motor species in system \\
+    NUMMOTORSPECIES & int & Myosin II motor species in system \\
   \hline
-    NUMBRANCHERSPECIES & int & Number of brancher species in system \\
+    NUMBRANCHERSPECIES & int & Brancher species in system \\
   \hline
     NUMBINDINGSITES & int & Number of binding sites per cylinder. This will set binding sites for cross-linkers,
     motors, and other binding molecules. \\
   \hline
  
-\end{tabular}
-\end{table}
+\end{longtable}
 
-\newpage
 \subsubsection{Dynamic rates}
 
-The following dynamic rate parameters can be set. These parameters are characteristic lengths of the rate changing equations outlined in (*paper*). These can be tuned to mimic the stall and unbinding forces of cross-linkers and motors.
+The following dynamic rate forms and parameters can be set. These parameters are characteristic lengths and amplitudes of the rate changing equations outlined in (*paper*). These can be tuned to mimic the stall and unbinding mechanochemical coupling of cross-linkers and myosin II motors. Note that if dynamic rates are enabled, the number of dynamic rate forms for each type of reaction must match the number of species of that type specified in the \texttt{SystemFile}, i.e. the number of forms for cross-linker unbinding must match the number of cross-linker species, etc.
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{4cm}|C{4cm}|L{6cm}|}  
+The number of parameters specified for each type of dynamic rate form must match the number of parameters required for those forms. See below for details, and see (*paper*) for more information on the explicit forms. Parameters must be listed in order of the form that they correspond to, also corresponding to the species that they represent.
+
+\begin{longtable}{|L{5.5cm}|C{3.2cm}|L{6cm}|}  
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
-  FDPLENGTH & double & Characteristic length for filament polymerization rate change \\
+ DFPOLYMERIZATIONTYPE & BROWRATCHET & Filament polymerization dynamic rate form \\
+ \hline
+  DFPOLYMERIZATIONLEN & double & Characteristic length for filament polymerization dynamic rate form \\
   \hline
-  MDULENGTH & double & Characteristic length for Myosin II unbinding rate change \\
+  DLUNBINDINGTYPE & CATCHSLIP, SLIP & Cross-linker unbinding dynamic rate form. If CATCHSLIP, two
+  parameters for DLUNBINDINGLEN and DLUNBINDINGAMP are needed to define the functional form. If SLIP, one 
+  DLUNBIDINGLEN is needed to define the functional form. \\
   \hline
-  MDWLENGTH & double & Characteristic length for Myosin II walking rate change \\
+  DLUNBINDINGLEN & double & Characteristic length of cross-linker unbinding dynamic rate form \\
   \hline
- LDULENGTH & double & Characteristic length for cross-linker unbinding rate change \\
+   DLUNBINDINGAMP & double & Amplitude of cross-linker unbinding dynamic rate form \\
+  \hline
+    DMUNBINDINGTYPE & CATCHSLIP, SLIP & Myosin II unbinding dynamic rate form. If CATCHSLIP, two
+  parameters for DMUNBINDINGLEN and DMNBINDINGAMP are needed to define the functional form. If SLIP, one 
+  DMUNBIDINGLEN is needed to define the functional form. \\
+  \hline
+  DMUNBINDINGLEN & double & Characteristic length of myosin II unbinding dynamic rate form \\
+  \hline
+   DMUNBINDINGAMP & double & Amplitude of myosin II unbinding dynamic rate form \\
+  \hline
+  DMWALKINGTYPE & EXPSTALL & Myosin II walking dynamic rate form \\ 
+  \hline
+  DMWALKINGLEN & double & Characteristic length of myosin II walking dynamic rate form \\
   \hline
  
-\end{tabular}
-\end{table}
+\end{longtable}
 
 \subsubsection{Starting filament configuration}
 
@@ -313,7 +321,6 @@ of filaments in the system. It is noted that at least one filament, plus end, an
 \end{tabular}
 \end{table}
 
-\newpage
 \subsubsection{Output formats}
 
 The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.
@@ -331,7 +338,7 @@ The output of M3SYM will be directed to the \texttt{OutputFile} specified. The f
 \end{table}
 
 \subsection{Chemistry input file}
-The chemistry input file, whose name is specified in the \texttt{SystemFile}, contains the chemical configuration of the system, including species and reactions. It is noted that the order in which cross-linker, motor, and branches species are defined in the chemistry input file should match the relevant mechanical parameters, which are defined in the \texttt{SystemFile}. The number of species of each type should also match the \texttt{SystemFile}'s species type parameters, or a startup error will result.
+The chemistry input file, whose name is specified in the \texttt{SystemFile}, contains the chemical configuration of the system, including species and reactions. It is noted that the order in which cross-linker, motor, and branches species are defined in the chemistry input file should match the relevant mechanical parameters, which are defined in the \texttt{SystemFile}. The number of species of each type should also match the \texttt{SystemFile}'s species type numbers, or a startup error will result.
 
 \subsubsection{Species}
 Different types of species can be defined as follows:
@@ -363,7 +370,6 @@ Reaction definitions must follow these common rules:
 \item All species declarations in a reaction must be separated by white space, with \texttt{+} markers between reactants and products. A \texttt{->} must be placed between reactants and products, separated by whitespace. If this syntax is not followed, a startup error will result.
 \end{itemize}
 
-\newpage
 \noindent Different types of reactions can be defined as follows:
 \begin{itemize}
 
@@ -415,7 +421,7 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} a
 
 This binding reaction produces motor species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the motor, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any motor potentials that have been created between the filaments.
 
-\newpage
+
 \item A \textbf{myosin II motor walking reaction} can be defined in the following form:\newline\newline
 \texttt{MOTORWALKINGREACTION:}\newline
 \texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 ->}\newline
@@ -465,7 +471,6 @@ This reaction will sever the filament at the closest cylinder connection to a gi
 
 \end{itemize}
 
-\newpage
 \subsection{Filament input file}
 
 The filament input file, whose name is specified in the \texttt{SystemFile}, contains coordinates of filaments to initialize in the system at startup. The format of an initial filament declaration is as follows:\newline
@@ -494,7 +499,6 @@ The snapshot file gives the basic trajectory information of the system. It inclu
 \texttt{...}\newline
 \texttt{B brancherid branchertype }\newline
 \texttt{coordx coordy coordz}\newline
-\texttt{...}\newline
 
 \subsubsection{forces.traj, stresses.traj, and birthtimes.traj}
 
@@ -564,5 +568,30 @@ The visualization script must be edited by the user on lines 6-8 to include the 
 \noindent To show the entire simulation frame by frame, execute the following:\newline
 
 \texttt{> anim()}
+
+\section{Developer guide}
+
+\subsection{Pull requests}
+
+Pull requests for the M3SYM repository should be directed to James Komianos (jkomianos@gmail.com). From there, detailed instructions on cloning the repository, and general guidelines on adding features will be given.
+
+\subsection{Coding style}
+
+M3SYM follows standard style guides and object-oriented design principles. For details on general C++ coding style, see the Google C++ style guide at http://google-styleguide.googlecode.com/svn/trunk/cppguide.html. In general, the following best practices should be followed:
+
+\begin{itemize}
+
+\item Use camelCase for all declarations, with classes beginning with a capital letter
+\item Use proper tabs for all declarations, loops, control flow, etc.
+\item Keep code under 80 characters per line
+
+\end{itemize}
+
+\noindent For documentation, please use Doxygen-style commenting. See the Doxygen user guide at 
+http://www.stack.nl/~dimitri/doxygen/ for more information.
+
+\subsection{Other information}
+
+Please direct all code inquiries to James Komianos (jkomianos@gmail.com).
 
 \end{document}  

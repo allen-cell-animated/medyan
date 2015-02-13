@@ -20,8 +20,8 @@ float BrownianRatchet::changeRate(float bareRate, double force) {
 
 float CatchSlipBond::changeRate(float bareRate, double force) {
 
-    return bareRate * (_a1 * exp(-force * _x1 / kT) +
-                       _a2 * exp(-force * _x2 / kT));
+    return bareRate * (_a1 * exp(- force * _x1 / kT) +
+                       _a2 * exp( force * _x2 / kT));
 }
 
 float SlipBond::changeRate(float bareRate, double force) {

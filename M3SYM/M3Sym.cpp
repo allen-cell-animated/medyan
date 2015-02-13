@@ -18,8 +18,8 @@
  Cell motility plays a key role in human biology and disease, contributing ubiquitously
  to such important processes as embryonic development, wound repair and cancer 
  metastasis. Papoian laboratory is interested in gaining deeper understanding of the
- physical chemistry behind these complex, far-from-equilibrium mechano-chemical 
- processes. His approach and model, named Mechano-chemical Dynamics of Active Networks,
+ physical chemistry behind these complex, far-from-equilibrium mechanochemical 
+ processes. His approach and model, named Mechanochemical Dynamics of Active Networks,
  3rd Generation (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
  growth, while explicitly coupling chemistry and mechanics.
