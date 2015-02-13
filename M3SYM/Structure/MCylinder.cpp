@@ -37,6 +37,5 @@ void MCylinder::setEqLength(double l) {
     
     // recalculate other constants
     _kStretch = SystemParameters::Mechanics().FStretchingK * fracCylinderSize;
-    _kBend = SystemParameters::Mechanics().FBendingK * fracCylinderSize;
-    _kTwist = SystemParameters::Mechanics().FTwistingK * fracCylinderSize;
+    _kBend = SystemParameters::Mechanics().FBendingK / fracCylinderSize;
 }

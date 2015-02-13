@@ -34,17 +34,18 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                     
     //Add to linker db
     LinkerDB::instance()->addLinker(this);
+          
     _linkerID = LinkerDB::instance()->getLinkerID();
-                                            
     _birthTime = tau();
         
+    auto c1b1 = _c1->getFirstBead()->coordinate;
+    auto c1b2 = _c1->getSecondBead()->coordinate;
+    auto c2b1 = _c2->getFirstBead()->coordinate;
+    auto c2b2 = _c2->getSecondBead()->coordinate;
+          
     //Find compartment
-    auto m1 =
-        midPointCoordinate(_c1->getFirstBead()->coordinate,
-                           _c1->getSecondBead()->coordinate, _position1);
-    auto m2 =
-        midPointCoordinate(_c2->getFirstBead()->coordinate,
-                           _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
+    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
           
     coordinate = midPointCoordinate(m1, m2, 0.5);
 
@@ -84,8 +85,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #ifdef MECHANICS
     _mLinker = unique_ptr<MLinker>(
         new MLinker(linkerType, position1, position2,
-            _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-            _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+                    c1b1, c1b2,c2b1, c2b2));
     _mLinker->setLinker(this);
 #endif
 }
@@ -105,12 +105,13 @@ Linker::~Linker() noexcept {
 void Linker::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 =
-        midPointCoordinate(_c1->getFirstBead()->coordinate,
-                           _c1->getSecondBead()->coordinate, _position1);
-    auto m2 =
-        midPointCoordinate(_c2->getFirstBead()->coordinate,
-                           _c2->getSecondBead()->coordinate, _position2);
+    auto c1b1 = _c1->getFirstBead()->coordinate;
+    auto c1b2 = _c1->getSecondBead()->coordinate;
+    auto c2b1 = _c2->getFirstBead()->coordinate;
+    auto c2b2 = _c2->getSecondBead()->coordinate;
+
+    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
+    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
     

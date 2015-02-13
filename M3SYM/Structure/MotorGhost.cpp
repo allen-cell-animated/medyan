@@ -35,16 +35,18 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
     //add to motor ghost db
     MotorGhostDB::instance()->addMotorGhost(this);
+          
     _motorID = MotorGhostDB::instance()->getMotorID();
     _birthTime = tau();
     
+    auto c1b1 = _c1->getFirstBead()->coordinate;
+    auto c1b2 = _c1->getSecondBead()->coordinate;
+    auto c2b1 = _c2->getFirstBead()->coordinate;
+    auto c2b2 = _c2->getSecondBead()->coordinate;
+          
     //Find compartment
-    auto m1 =
-        midPointCoordinate(_c1->getFirstBead()->coordinate,
-                           _c1->getSecondBead()->coordinate, _position1);
-    auto m2 =
-        midPointCoordinate(_c2->getFirstBead()->coordinate,
-                           _c2->getSecondBead()->coordinate, _position2);
+    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
+    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
           
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
@@ -62,10 +64,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
     
-    SpeciesMotor* sm1 = _c1->getCCylinder()->
-                        getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesMotor* sm2 = _c2->getCCylinder()->
-                        getCMonomer(pos2)->speciesMotor(_motorType);
+    SpeciesMotor* sm1 =
+        _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
+    SpeciesMotor* sm2 =
+        _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
     
     if(!creation) {
         SpeciesBound* se1 =
@@ -86,8 +88,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #ifdef MECHANICS
     _mMotorGhost = unique_ptr<MMotorGhost>(
         new MMotorGhost(motorType, position1, position2,
-            _c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate,
-            _c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate));
+                        c1b1, c1b2,c2b1, c2b2));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -109,12 +110,14 @@ MotorGhost::~MotorGhost() noexcept {
 void MotorGhost::updatePosition() {
     
     //check if were still in same compartment
-    auto m1 =
-        midPointCoordinate(_c1->getFirstBead()->coordinate,
-                           _c1->getSecondBead()->coordinate, _position1);
-    auto m2 =
-        midPointCoordinate(_c2->getFirstBead()->coordinate,
-                           _c2->getSecondBead()->coordinate, _position2);
+    
+    auto c1b1 = _c1->getFirstBead()->coordinate;
+    auto c1b2 = _c1->getSecondBead()->coordinate;
+    auto c2b1 = _c2->getFirstBead()->coordinate;
+    auto c2b2 = _c2->getSecondBead()->coordinate;
+    
+    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
+    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
@@ -151,34 +154,27 @@ void MotorGhost::updateReactionRates() {
     //current force
     double force = max(0.0, _mMotorGhost->stretchForce);
     
-    //get component of force in direction of forward walk for C1
-    vector<double> motorC1Direction = twoPointDirection(
-                    midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                       _c1->getSecondBead()->coordinate,
-                                       _position1),
-                    midPointCoordinate(_c2->getFirstBead()->coordinate,
-                                       _c2->getSecondBead()->coordinate,
-                                       _position2));
-    //Also for C2
-    vector<double> motorC2Direction = twoPointDirection(
-                    midPointCoordinate(_c2->getFirstBead()->coordinate,
-                                       _c2->getSecondBead()->coordinate,
-                                       _position2),
-                    midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                       _c1->getSecondBead()->coordinate,
-                                       _position2));
-    vector<double> c1Direction =
-        twoPointDirection(_c1->getSecondBead()->coordinate,
-                          _c1->getFirstBead()->coordinate);
-    vector<double> c2Direction =
-        twoPointDirection(_c2->getSecondBead()->coordinate,
-                          _c2->getFirstBead()->coordinate);
+    auto c1b1 = _c1->getFirstBead()->coordinate;
+    auto c1b2 = _c1->getSecondBead()->coordinate;
+    auto c2b1 = _c2->getFirstBead()->coordinate;
+    auto c2b2 = _c2->getSecondBead()->coordinate;
+    
+    //get component of force in direction of forward walk for C1, C2
+    vector<double> motorC1Direction =
+    twoPointDirection(midPointCoordinate(c1b1, c1b2, _position1),
+                      midPointCoordinate(c2b1, c2b2, _position2));
+    
+    vector<double> motorC2Direction =
+    twoPointDirection(midPointCoordinate(c2b1, c2b2, _position2),
+                      midPointCoordinate(c1b1, c1b2, _position1));
+    
+    vector<double> c1Direction = twoPointDirection(c1b2,c1b1);
+    vector<double> c2Direction = twoPointDirection(c2b2, c2b1);
     
     double forceDotDirectionC1 =
         max(0.0, force * dotProduct(motorC1Direction, c1Direction));
     double forceDotDirectionC2 =
         max(0.0, force * dotProduct(motorC2Direction, c2Direction));
-    
     
     //WALKING REACTIONS
     Species* s1 = _cMotorGhost->getFirstSpecies();

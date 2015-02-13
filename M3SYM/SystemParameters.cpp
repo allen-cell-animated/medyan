@@ -199,6 +199,12 @@ bool SystemParameters::checkMechParameters(MechanicsFFType& mech) {
              << " brancher species in system. Exiting." << endl;
         return false;
     }
+    if(mech.BrStretchingType != "" &&
+       MParams.BrStretchingL.size() != CParams.numBrancherSpecies) {
+        cout << "Must set a brancher stretching length for every"
+             << " brancher species in system. Exiting." << endl;
+        return false;
+    }
     if(mech.BrBendingType != "" &&
        MParams.BrBendingK.size() != CParams.numBrancherSpecies) {
         cout << "Must set a brancher bending constant for every"
@@ -270,6 +276,12 @@ bool SystemParameters::checkGeoParameters() {
 bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
     
     //check types match number of species
+    if(dy.dFPolymerizationType == "") {
+        cout << "Must specify a filament polymerization dynamic rate form."
+             << " Exiting." << endl;
+        return false;
+    }
+    
     if(dy.dLUnbindingType.size() != CParams.numLinkerSpecies) {
         cout << "Number of linker dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;

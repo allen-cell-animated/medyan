@@ -982,7 +982,7 @@ void SystemParser::readDynamicRateParameters() {
         if (line.find("DFPOLYMERIZATIONLEN") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
+            if(lineVector.size() > 2) {
                 cout <<
                 "There was an error parsing input file at dynamic rate parameters. Exiting."
                 << endl;

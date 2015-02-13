@@ -209,12 +209,24 @@ struct BranchingPointCreationCallback {
         double pos = double(_position) / cylinderSize;
         
         //Get a position and direction of a new filament
-        auto position1 = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                            _c1->getSecondBead()->coordinate, pos);
-        vector<double> direction = {0,0,0};
+        auto c1b1 = _c1->getFirstBead()->coordinate;
+        auto c1b2 = _c1->getSecondBead()->coordinate;
+        
+        //get original direction of cylinder
+        auto p= midPointCoordinate(c1b1, c1b2, pos);
+        vector<double> n = twoPointDirection(c1b1, c1b2);
+        
+        //get branch projection
+        double l = SystemParameters::Mechanics().BrStretchingL[_branchType];
+        double t = SystemParameters::Mechanics().BrBendingTheta[_branchType];
+        double s = SystemParameters::Geometry().monomerSize;
+        
+        auto branchPosDir = branchProjection(n, p, l, s, t);
+        auto bp = get<1>(branchPosDir);
+        auto bd = get<0>(branchPosDir);
         
         //create a new filament
-        Filament* f = _ps->addNewFilament(position1, direction, true);
+        Filament* f = _ps->addNewFilament(bp, bd, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();

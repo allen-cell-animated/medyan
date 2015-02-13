@@ -23,6 +23,16 @@
 /// mathfunc includes functions to calculate distances, products, and midpoints
 namespace mathfunc {
     
+    /// Normalize a vector
+    inline void normalize(vector<double>& v) {
+        
+        double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        v[0] /= norm;
+        v[1] /= norm;
+        v[2] /= norm;
+    }
+    
+    
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
         return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
@@ -97,10 +107,10 @@ namespace mathfunc {
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
     inline double dotProductStretched(const vector<double>& v1,
-                                         const vector<double>& p1,
-                                         const vector<double>& v2,
-                                         const vector<double>& p2,
-                                         double d){
+                                      const vector<double>& p1,
+                                      const vector<double>& v2,
+                                      const vector<double>& p2,
+                                      double d){
         
         double xx = (v1[0] + d*p1[0]) * (v2[0] + d*p2[0]);
         double yy = (v1[1] + d*p1[1]) * (v2[1] + d*p2[1]);
@@ -265,6 +275,19 @@ namespace mathfunc {
                                        const vector<double>& p2,
                                        const vector<double>& p3,
                                        const vector<double>& p4, int i, double d);
+    
+    
+    /// Function to create a initial branching point and direction, given an
+    /// initial normal vector and point.
+    /// @param l - the distance of the branch from the original point
+    /// @param m - the size of the branch projection
+    /// @param theta - the angle of branching
+    /// @return a vector describing the initial branching direction and point
+    tuple<vector<double>, vector<double>> branchProjection(const vector<double>& n,
+                                                           const vector<double>& p,
+                                                           double l, double m, double theta);
+    
+    
     }
 
 #endif
