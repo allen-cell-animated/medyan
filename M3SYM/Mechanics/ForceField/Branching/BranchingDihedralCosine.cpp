@@ -23,19 +23,23 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                        double kDihed, double position){
     
     
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    vector<double> n1 = vectorProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
-    double norm_x = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                   midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
-    double norm_d = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    double norm_x = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    
+    double norm_d = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     
     double norm_y = sqrt(scalarProduct(b3->coordinate, b4->coordinate,
-                                      b3->coordinate, b4->coordinate));
+                                       b3->coordinate, b4->coordinate));
     
     double N1 = 1/norm_x/norm_d;
     double N2 = 1/norm_y/norm_d;
@@ -53,20 +57,23 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     vector<double> zero (3,0); //Aux zero vector;
     
-    vector<double> n1 = vectorProductStretched(midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force,
-                                      midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate, b3->force, d);
+    vector<double> n1 = vectorProductStretched(
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),zero ,b2->coordinate, b2->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate, b3->force, d);
     
     vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate,b4->force,
-                                      midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate,b3->force, d);
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate,b3->force, d);
     
-    double norm_x = sqrt(scalarProductStretched(midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force,
-                                       midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force,  d));
+    double norm_x = sqrt(scalarProductStretched(
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force, d));
     
-    double norm_d = sqrt(scalarProductStretched(midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force,
-                                                midPointCoordinateStretched(b1->coordinate,b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force,d));
+    double norm_d = sqrt(scalarProductStretched(
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force, d));
     
     double norm_y = sqrt(scalarProductStretched(b3->coordinate,b3->force, b4->coordinate,b4->force,
-                                       b3->coordinate,b3->force, b4->coordinate,b4->force, d));
+                                                b3->coordinate,b3->force, b4->coordinate,b4->force, d));
     
     double N1 = 1/norm_x/norm_d;
     double N2 = 1/norm_y/norm_d;
@@ -99,8 +106,8 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double n = dotProduct(n1, n2);
     
     
-    double norm_x = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                       midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    double norm_x = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
+                                       midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
     double norm_d = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
                                        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     
@@ -144,9 +151,7 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 //
     
     b4->force[0] += -kDihed*DY*(b4->coordinate[0] - b3->coordinate[0]);
-    
     b4->force[1] += -kDihed*DY*(b4->coordinate[1] - b3->coordinate[1]);
-    
     b4->force[2] += -kDihed*DY*(b4->coordinate[2] - b3->coordinate[2]);
     
 }
@@ -218,10 +223,7 @@ void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     //
     
     b4->forceAux[0] += -kDihed*DY*(b4->coordinateAux[0] - b3->coordinateAux[0]);
-    
     b4->forceAux[1] += -kDihed*DY*(b4->coordinateAux[1] - b3->coordinateAux[1]);
-    
     b4->forceAux[2] += -kDihed*DY*(b4->coordinateAux[2] - b3->coordinateAux[2]);
-    
     
 }

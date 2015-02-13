@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include <cmath>
+#include <math.h>
 
 #include "BranchingPositionCosine.h"
 
@@ -19,7 +20,6 @@
 
 #include "MathFunctions.h"
 
-#define PI 3.14159265
 
 using namespace mathfunc;
 
@@ -39,15 +39,10 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
         midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     double theta = acos(xd / XD);
-    
-    double eqTheta = 0.5*PI;
-    
-    
+    double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
-    
     double U = kPosition * ( 1 - cos(dtheta) );
-    
     return U;
     
 }
@@ -70,15 +65,10 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
         midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b3->coordinate,b3->force, d);
     
     double theta = acos(xd / XD);
-    
-    double eqTheta = 0.5*PI;
-    
-    
+    double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
-    
     double U = kPosition * ( 1 - cos(dtheta) );
-    
     return U;
     
 }
@@ -105,7 +95,7 @@ void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3,
     double C = invD*invD;
     
     double theta = acos(xd * A);
-    double eqTheta = 0.5*PI;
+    double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
 
     
@@ -156,7 +146,7 @@ void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     double C = invD*invD;
     
     double theta = acos(xd * A);
-    double eqTheta = 0.5*PI;
+    double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
     
@@ -167,7 +157,6 @@ void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     b1->forceAux[1] +=  k * (1-position)* (- (1-position)*(b2->coordinateAux[1] - b1->coordinateAux[1]) - (b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) + xd *(B*(1-position)*(b2->coordinateAux[1] - b1->coordinateAux[1]) + C*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1])) );
     
     b1->forceAux[2] +=  k * (1-position)* (- (1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2]) - (b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) + xd *(B*(1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2]) + C*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2])) );
-    
     
     
     b2->forceAux[0] +=  k * (- position*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0]) + (1-position)*(b3->coordinateAux[0]- (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) + xd *( (1-position)*B*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0]) - position*C*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0])) );
