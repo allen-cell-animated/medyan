@@ -16,7 +16,7 @@ MONOMERSIZE:                 2.7
 CYLINDERSIZE:                27.0
 
 BOUNDARYSHAPE:               SPHERICAL
-BDIAMETER:                   980.0
+BDIAMETER:                   500.0
 
 ##################################################
 ################### MECHANICS ####################
@@ -49,7 +49,7 @@ MSTRETCHINGK:
 
 BRSTRETCHINGTYPE:	     HARMONIC
 BRSTRETCHINGK:		     1000.0
-BRSTRETCHINGL:		     10.0
+BRSTRETCHINGL:		     6.0
 
 BRBENDINGTYPE:		     COSINE
 BRBENDINGK:		     1000.0
@@ -66,15 +66,15 @@ BRPOSITIONK:		     100.0
 VOLUMETYPE:                 REPULSION
 VOLUMECUTOFF:               27.0
 
-VOLUMEK:                    100000.0
+VOLUMEK:                    100.0
 
 ### BOUNDARY ###
 
 BOUNDARYTYPE:               REPULSIONEXP
 BCUTOFF:                    10.0
 
-BINTERACTIONK:              4.1
-BSCREENLENGTH:              0.27
+BINTERACTIONK:              410.0
+BSCREENLENGTH:              2.7
 
 ##################################################
 ################### CHEMISTRY ####################
@@ -83,13 +83,13 @@ CHEMISTRYFILE:               chemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMTOTALSTEPS:
-RUNTIME:                     20.0
+RUNTIME:                     10.0
 
 NUMSTEPSPERS:		     
-SNAPSHOTTIME:                0.2
+SNAPSHOTTIME:                0.1
 
-NUMCHEMSTEPS:                1000
-NUMSTEPSPERN:                100000
+NUMCHEMSTEPS:                100
+NUMSTEPSPERN:                1000
 
 NUMDIFFUSINGSPECIES:	     3
 
@@ -108,14 +108,7 @@ NUMBINDINGSITES:             3
 ############## DYNAMIC RATE CHANGING #############
 
 DFPOLYMERIZATIONTYPE: 	     BROWRATCHET
-DFPOLYMERIZATIONLEN:	     3.0
-
-DMUNBINDINGTYPE:	     
-DMUNBINDINGLEN:		     
-DMUNBINDINGAMP:		     	
-
-DMWALKINGTYPE:		     
-DMWALKINGLEN:		     
+DFPOLYMERIZATIONLEN:	     3.0		     
 
 DLUNBINDINGTYPE:	     SLIP     
 DLUNBINDINGLEN:		     0.24
@@ -125,7 +118,7 @@ DLUNBINDINGAMP:
 ########### FILAMENTS, LINKERS, MOTORS ###########
 
 NUMFILAMENTS:               50
-FILAMENTLENGTH:             5
+FILAMENTLENGTH:             1
 
 #################################################
 ##################### OUTPUT ####################

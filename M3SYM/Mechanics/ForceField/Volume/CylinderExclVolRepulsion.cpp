@@ -69,15 +69,14 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
     double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
     
-    
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0 || JJ != JJ){
-        
+    if (abs(JJ) < 1e-10 || JJ != JJ) {
+
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 1, 0.01);
+                                     b3->coordinate, b4->coordinate, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
         b = scalarProduct(b3->coordinate, b4->coordinate,
@@ -99,6 +98,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
+        
+        if(abs(JJ) < 1e-10) return 0.0;
     }
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
@@ -106,7 +107,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
-    return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
+    return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 }
 
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
@@ -159,10 +160,10 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0 || JJ != JJ){
+    if (abs(JJ) < 1e-10 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 1, 0.01);
+                                     b3->coordinate, b4->coordinate, 4, 1.0);
         
         a = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    v, b1->force, b2->coordinate, b2->force, lambda);
@@ -193,6 +194,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
+        
+        if(abs(JJ) < 1e-10) return 0.0;
     }
     
     
@@ -259,10 +262,10 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0 || JJ != JJ){
+    if (abs(JJ) < 1e-10 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 1, 0.01);
+                                     b3->coordinate, b4->coordinate, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
         b = scalarProduct(b3->coordinate, b4->coordinate,
@@ -284,6 +287,8 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
+        
+        if(abs(JJ) < 1e-10) return;
     }
     
     
@@ -417,10 +422,10 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (JJ==0 || JJ != JJ){
+    if (abs(JJ) < 1e-10 || JJ != JJ){
         
         auto v = movePointOutOfPlane(b1->coordinateAux, b2->coordinateAux,
-                                     b3->coordinateAux, b4->coordinateAux, 1, 0.01);
+                                     b3->coordinateAux, b4->coordinateAux, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinateAux, v, b2->coordinateAux);
         b = scalarProduct(b3->coordinateAux, b4->coordinateAux,
@@ -442,6 +447,8 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
+        
+        if(abs(JJ) < 1e-10) return;
     }
     
     

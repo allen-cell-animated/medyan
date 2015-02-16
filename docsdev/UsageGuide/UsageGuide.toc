@@ -13,7 +13,7 @@
 \contentsline {subsubsection}{\numberline {4.1.5}Starting filament configuration}{10}
 \contentsline {subsubsection}{\numberline {4.1.6}Output formats}{10}
 \contentsline {subsection}{\numberline {4.2}Chemistry input file}{10}
-\contentsline {subsubsection}{\numberline {4.2.1}Species}{10}
+\contentsline {subsubsection}{\numberline {4.2.1}Species}{11}
 \contentsline {subsubsection}{\numberline {4.2.2}Reactions}{12}
 \contentsline {subsection}{\numberline {4.3}Filament input file}{16}
 \contentsline {section}{\numberline {5}Output}{16}
@@ -21,7 +21,7 @@
 \contentsline {subsubsection}{\numberline {5.1.1}snapshot.traj}{16}
 \contentsline {subsubsection}{\numberline {5.1.2}forces.traj, stresses.traj, and birthtimes.traj}{17}
 \contentsline {subsection}{\numberline {5.2}Visualization of output}{17}
-\contentsline {subsubsection}{\numberline {5.2.1}Installation of MayaVi}{17}
+\contentsline {subsubsection}{\numberline {5.2.1}Installation of MayaVi}{18}
 \contentsline {subsubsection}{\numberline {5.2.2}Running the visualization script, ReadTrajectory.py}{18}
 \contentsline {section}{\numberline {6}Developer guide}{19}
 \contentsline {subsection}{\numberline {6.1}Pull requests}{19}

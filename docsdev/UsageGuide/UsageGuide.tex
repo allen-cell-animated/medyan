@@ -109,7 +109,9 @@ To run the M3SYM executable, execute the following command in the terminal shell
 \subsection{System file}
 
 The system file is a simple text file that defines all parameters of the simulation. The M3SYM executable must take
- in a system file as a command line argument. \newline\newline Each parameter must be defined in the following syntax: \newline \newline \centerline{\texttt{<PARAMETER>:  <PARAMETERVALUE>}} \newline\newline where the parameter name is followed by a semicolon, and the value of the parameter is placed after the semicolon. Outlined below are the parameters that can be included. 
+ in a system file as a command line argument. \newline\newline Each parameter must be defined in the following syntax: \newline \newline \centerline{\texttt{<PARAMETER>:  <PARAMETERVALUE>}} \newline\newline where the parameter name is followed by a semicolon, and the value of the parameter is placed after the semicolon. Outlined below are the parameters that can be included. \\
+ 
+ \noindent Unless otherwise noted, all distance parameters are in units of nanometers. 
 
 \subsubsection{Geometry}
 
@@ -150,7 +152,7 @@ The following geometrical parameters can be set. All geometry parameters must be
 \break
 \subsubsection{Mechanics}
 
-The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. Force field constant units are dependent on the potential used. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
+The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. Force field constant units are dependent on the potential used, but in general will be in pN scaling. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
 
 \begin{longtable}{|L{4.65cm}|C{4cm}|L{4cm}|}  
 \hline
@@ -168,7 +170,7 @@ The following mechanical parameters can be set. It should be noted that the numb
   \hline
    FBENDINGK & double & Filament bending force constant \\
   \hline
-   FBENDINGTHETA & double & Filament bending angle \\
+   FBENDINGTHETA & double & Filament bending angle (radians) \\
   \hline
    LSTRETCHINGTYPE & HARMONIC & Cross-linker stretching force field \\
   \hline
@@ -186,7 +188,7 @@ The following mechanical parameters can be set. It should be noted that the numb
   \hline
    BRBENDINGK & double & Branching point bending force constant \\
    \hline
-   BRBENDINGTHETA & double & Branching point bending angle \\
+   BRBENDINGTHETA & double & Branching point bending angle (radians) \\
   \hline
    BRDIHEDRALTYPE & COSINE & Branching point dihedral force field \\
   \hline
