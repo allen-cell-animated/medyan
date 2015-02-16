@@ -11,6 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
+#ifdef TESTING
 #define DO_THIS_LONG_TEST
 
 #ifdef DO_THIS_LONG_TEST 
@@ -152,7 +153,8 @@ TEST(GillespieCrossTest, A1_A8_Network) {
 }
 
 
-#endif
+#endif //DO_THIS_LONG_TEST
+#endif //TESTING
 
 //SimpleGillespie (132 s)    NRM (220 s)       Caching Gillespie (122 s)
 //

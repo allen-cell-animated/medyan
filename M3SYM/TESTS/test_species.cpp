@@ -11,11 +11,12 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
+#ifdef TESTING
+
 // Note: This test omits many functions of Species that interact
 // with Reaction objects. Separate tests weill cover those methods.
 
 #define DO_THIS_SPECIES_TEST
-
 #ifdef DO_THIS_SPECIES_TEST
 
 #include "gtest/gtest.h"
@@ -260,4 +261,5 @@ TEST(SpeciesContainerVectorTest, Main) {
     
 }
 
-#endif // DO_THIS_SPECIES_TEST
+#endif //DO_THIS_SPECIES_TEST
+#endif //TESTING

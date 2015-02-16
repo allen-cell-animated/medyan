@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_REACTION_TEST
+#ifdef TESTING
 
+#define DO_THIS_REACTION_TEST
 #ifdef DO_THIS_REACTION_TEST
 
 #include "gtest/gtest.h"
@@ -326,5 +327,6 @@ TEST(ReactionTest, ReactionCloning) {
 }
 
 
-#endif // DO_THIS_REACTION_TEST
+#endif //DO_THIS_REACTION_TEST
+#endif //TESTING
 

@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_GEOMETRY_TEST
+#ifdef TESTING
 
+#define DO_THIS_GEOMETRY_TEST
 #ifdef DO_THIS_GEOMETRY_TEST
 
 #include "gtest/gtest.h"
@@ -84,3 +85,4 @@ TEST(GeometryTest, NonCubicGrid) {
 }
 
 #endif //DO_THIS_GEOMETRY_TEST
+#endif //TESTING

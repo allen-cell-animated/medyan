@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_CCYLINDERS_TEST
+#ifdef TESTING
 
+#define DO_THIS_CCYLINDERS_TEST
 #ifdef DO_THIS_CCYLINDERS_TEST
 
 #include "gtest/gtest.h"
@@ -195,4 +196,5 @@ TEST(CCylinder, AdvancedCloning) {
 }
 
 #endif //DO_THIS_CCYLINDERS_TEST
+#endif //TESTING
 

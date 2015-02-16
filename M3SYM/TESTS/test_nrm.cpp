@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_NRM_TEST
+#ifdef TESTING
 
+#define DO_THIS_NRM_TEST
 #ifdef DO_THIS_NRM_TEST
 
 #include <boost/accumulators/accumulators.hpp>
@@ -294,4 +295,5 @@ TEST(ChemNRMTest, ComplexCyclicTransient) {
 
 #endif // TRACK_DEPENDENTS
 
-#endif // DO_THIS_NRM_TEST
+#endif //DO_THIS_NRM_TEST
+#endif //TESTING

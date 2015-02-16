@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_GILLESPIE_TEST
+#ifdef TESTING
 
+#define DO_THIS_GILLESPIE_TEST
 #ifdef DO_THIS_GILLESPIE_TEST
 
 #include <iostream>
@@ -302,4 +303,5 @@ TEST(ChemGillespieTest, ComplexCyclicTransient) {
 
 #endif // TRACK_DEPENDENTS
 
-#endif // DO_THIS_GILLESPIE_TEST
+#endif //DO_THIS_GILLESPIE_TEST
+#endif //TESTING

@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_SIMPLEG_TEST
+#ifdef TESTING
 
+#define DO_THIS_SIMPLEG_TEST
 #ifdef DO_THIS_SIMPLEG_TEST
 
 #include <iostream>
@@ -299,4 +300,5 @@ TEST(ChemSimpleGillespieTest, ComplexCyclicTransient) {
 }
 #endif
 
-#endif // DO_THIS_SIMPLEG_TEST
+#endif //DO_THIS_SIMPLEG_TEST
+#endif //TESTING

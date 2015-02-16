@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_BOUNDARY_TEST
+#ifdef TESTING
 
+#define DO_THIS_BOUNDARY_TEST
 #ifdef DO_THIS_BOUNDARY_TEST
 
 #include "gtest/gtest.h"
@@ -140,3 +141,4 @@ TEST(HalfSphereZBoundaryElementTest, Distances){
 
 
 #endif //DO_THIS_BOUNDARY_TEST
+#endif //TESTING

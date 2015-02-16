@@ -11,8 +11,9 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#define DO_THIS_COMPARTMENT_TEST
+#ifdef TESTING
 
+#define DO_THIS_COMPARTMENT_TEST
 #ifdef DO_THIS_COMPARTMENT_TEST
 
 #include "gtest/gtest.h"
@@ -149,4 +150,5 @@ TEST(CompartmentContainerTest, Main) {
 }
 
 #endif // DO_THIS_COMPARTMENT_TEST
+#endif //TESTING
 
