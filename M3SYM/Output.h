@@ -84,7 +84,6 @@ public:
 ///                 k * (l - l_0)
 /// where k is the stretching force constant, l is the current
 /// length, and l_0 is the equilibrium length.
-/// NOT YET IMPLEMENTED
 class Stresses : public Output {
     
 public:

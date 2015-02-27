@@ -15,7 +15,7 @@
 
 #include "BoundaryElementImpl.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -25,8 +25,8 @@ Plane::Plane(vector<double> coords, vector<double> normal ) :
     
     //Create a plane boundary element
     _boundaryElements.emplace_back(new PlaneBoundaryElement(coords, normal,
-                                   SystemParameters::Boundaries().BoundaryK,
-                                   SystemParameters::Boundaries().BScreenLength));
+                                   SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength));
 }
 
 Sphere::Sphere(vector<double> coords, double radius)
@@ -34,8 +34,8 @@ Sphere::Sphere(vector<double> coords, double radius)
     
     //Create a sphere boundary element
     _boundaryElements.emplace_back(new SphereBoundaryElement(coords, radius,
-                                   SystemParameters::Boundaries().BoundaryK,
-                                   SystemParameters::Boundaries().BScreenLength));
+                                   SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength));
     
 }
 
@@ -44,8 +44,8 @@ CylinderZ::CylinderZ(vector<double> coords, double radius, double height)
     
     //Create a cylindricalZ boundary element
     _boundaryElements.emplace_back(new CylindricalZBoundaryElement(coords, radius, height,
-                                   SystemParameters::Boundaries().BoundaryK,
-                                   SystemParameters::Boundaries().BScreenLength));
+                                   SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength));
 }
 
 HalfSphereZ::HalfSphereZ(vector<double> coords, double radius, bool up)
@@ -53,7 +53,7 @@ HalfSphereZ::HalfSphereZ(vector<double> coords, double radius, bool up)
     
     //Create a half sphere Z boundary element
     _boundaryElements.emplace_back(new HalfSphereZBoundaryElement(coords, radius, up,
-                                   SystemParameters::Boundaries().BoundaryK,
-                                   SystemParameters::Boundaries().BScreenLength));
+                                   SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength));
     
 }

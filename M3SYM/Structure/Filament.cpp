@@ -28,7 +28,7 @@
 #include "Bead.h"
 #include "Cylinder.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -59,11 +59,11 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     double length;
     
     //branching
-    if(branch) length = SystemParameters::Geometry().monomerSize;
+    if(branch) length = SysParams::Geometry().monomerSize;
     //creation
-    else if(creation) length = SystemParameters::Geometry().minCylinderSize;
+    else if(creation) length = SysParams::Geometry().minCylinderSize;
     //initialization
-    else length = SystemParameters::Geometry().cylinderSize;
+    else length = SysParams::Geometry().cylinderSize;
     
     auto pos2 = nextPointProjection(position, length, direction);
     Bead* b2 = new Bead(pos2, 1);
@@ -138,7 +138,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+        b2->coordinate, SysParams::Geometry().cylinderSize, direction);
     
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() + 1);
     
@@ -160,7 +160,7 @@ void Filament::extendBack(vector<double>& coordinates) {
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().cylinderSize, direction);
+        b2->coordinate, SysParams::Geometry().cylinderSize, direction);
     Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() - 1);
     
     Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1);
@@ -181,7 +181,7 @@ void Filament::extendFront(short plusEnd) {
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     auto npp = nextPointProjection(b2->coordinate,
-               SystemParameters::Geometry().monomerSize, direction1);
+               SysParams::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
@@ -222,7 +222,7 @@ void Filament::extendBack(short minusEnd) {
     //move last bead of last cylinder forward
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     auto npp = nextPointProjection(b2->coordinate,
-               SystemParameters::Geometry().monomerSize, direction1);
+               SysParams::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
@@ -299,13 +299,13 @@ void Filament::polymerizeFront() {
     
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+        b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
     //increase eq length, update
 #ifdef MECHANICS
     cBack->getMCylinder()->setEqLength(
         cBack->getMCylinder()->getEqLength() +
-        SystemParameters::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize);
 #endif
 }
 
@@ -318,13 +318,13 @@ void Filament::polymerizeBack() {
 
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     b2->coordinate = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+        b2->coordinate, SysParams::Geometry().monomerSize, direction);
 
     //increase eq length, update
 #ifdef MECHANICS
     cFront->getMCylinder()->setEqLength(
         cFront->getMCylinder()->getEqLength() +
-        SystemParameters::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize);
 #endif
 }
 
@@ -337,13 +337,13 @@ void Filament::depolymerizeFront() {
 
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+        b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
     //decrease eq length, update
 #ifdef MECHANICS
     cBack->getMCylinder()->setEqLength(
         cBack->getMCylinder()->getEqLength() -
-        SystemParameters::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize);
 #endif
 }
 
@@ -356,13 +356,13 @@ void Filament::depolymerizeBack() {
     
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     b2->coordinate = nextPointProjection(
-        b2->coordinate, SystemParameters::Geometry().monomerSize, direction);
+        b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
     //decrease eq length, update
 #ifdef MECHANICS
     cFront->getMCylinder()->setEqLength(
         cFront->getMCylinder()->getEqLength() -
-        SystemParameters::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize);
 #endif
 }
 
@@ -432,9 +432,9 @@ vector<vector<double>> Filament::straightFilamentProjection(
     
     for (int i = 0; i<numBeads; i++) {
         
-        tmpVec[0] = v[0][0] + SystemParameters::Geometry().cylinderSize * i * tau[0];
-        tmpVec[1] = v[0][1] + SystemParameters::Geometry().cylinderSize * i * tau[1];
-        tmpVec[2] = v[0][2] + SystemParameters::Geometry().cylinderSize * i * tau[2];
+        tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize * i * tau[0];
+        tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize * i * tau[1];
+        tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize * i * tau[2];
         
         coordinate.push_back(tmpVec);
     }
@@ -459,19 +459,19 @@ vector<vector<double>> Filament::zigZagFilamentProjection(
         
         if(i%2 == 0) {
             tmpVec[0] = v[0][0] +
-                SystemParameters::Geometry().cylinderSize * i * tau[0];
+                SysParams::Geometry().cylinderSize * i * tau[0];
             tmpVec[1] = v[0][1] +
-                SystemParameters::Geometry().cylinderSize * i * tau[1];
+                SysParams::Geometry().cylinderSize * i * tau[1];
             tmpVec[2] = v[0][2] +
-                SystemParameters::Geometry().cylinderSize * i * tau[2];
+                SysParams::Geometry().cylinderSize * i * tau[2];
         }
         else {
             tmpVec[0] = v[0][0] +
-                SystemParameters::Geometry().cylinderSize * i * perptau[0];
+                SysParams::Geometry().cylinderSize * i * perptau[0];
             tmpVec[1] = v[0][1] +
-                SystemParameters::Geometry().cylinderSize * i * perptau[1];
+                SysParams::Geometry().cylinderSize * i * perptau[1];
             tmpVec[2] = v[0][2] +
-                SystemParameters::Geometry().cylinderSize * i * perptau[2];
+                SysParams::Geometry().cylinderSize * i * perptau[2];
         }
         
         coordinate.push_back(tmpVec);

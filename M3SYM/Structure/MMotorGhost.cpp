@@ -13,16 +13,16 @@
 
 #include "MMotorGhost.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-MMotorGhost::MMotorGhost(int motorType, double position1, double position2,
-                 const vector<double>& coord11, const vector<double>& coord12,
-                 const vector<double>& coord21, const vector<double>& coord22) {
+MMotorGhost::MMotorGhost(int motorType, int numHeads, double position1, double position2,
+                        const vector<double>& coord11, const vector<double>& coord12,
+                        const vector<double>& coord21, const vector<double>& coord22) {
     
-    _kStretch = SystemParameters::Mechanics().MStretchingK[motorType];
+    _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numHeads;
     
     auto m1 = midPointCoordinate(coord11, coord12, position1);
     auto m2 = midPointCoordinate(coord21, coord22, position2);

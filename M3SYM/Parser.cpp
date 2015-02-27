@@ -13,7 +13,7 @@
 
 #include "Parser.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 OutputTypes SystemParser::readOutputTypes() {
     
@@ -53,9 +53,9 @@ OutputTypes SystemParser::readOutputTypes() {
     return oTypes;
 }
 
-void SystemParser::readChemistryParameters() {
+void SystemParser::readChemParams() {
     
-    ChemistryParameters CParams;
+    ChemParams CParams;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -198,9 +198,37 @@ void SystemParser::readChemistryParameters() {
                 CParams.numBindingSites = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("NUMMOTORHEADSMIN") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.motorNumHeadsMin.push_back(atoi(lineVector[i].c_str()));
+            }
+        }
+        if (line.find("NUMMOTORHEADSMAX") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.motorNumHeadsMax.push_back(atoi(lineVector[i].c_str()));
+            }
+        }
+        if (line.find("MOTORSTEPSIZE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
+            }
+        }
+        
     }
     //set system parameters
-    SystemParameters::CParams = CParams;
+    SysParams::CParams = CParams;
 }
 
 ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
@@ -559,9 +587,9 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     return MTypes;
 }
 
-void SystemParser::readMechanicsParameters() {
+void SystemParser::readMechParams() {
     
-    MechanicsParameters MParams;
+    MechParams MParams;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -839,7 +867,7 @@ void SystemParser::readMechanicsParameters() {
         else {}
     }
     //Set system parameters
-    SystemParameters::MParams = MParams;
+    SysParams::MParams = MParams;
 }
 
 MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
@@ -888,9 +916,9 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     return MAlgorithm;
 }
 
-void SystemParser::readBoundaryParameters() {
+void SystemParser::readBoundParams() {
     
-    BoundaryParameters BParams;
+    BoundParams BParams;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -915,7 +943,7 @@ void SystemParser::readBoundaryParameters() {
             //Default value to be half compartment size
             else {
                 BParams.BoundaryCutoff =
-                    SystemParameters::Geometry().compartmentSizeX / 2;
+                    SysParams::Geometry().compartmentSizeX / 2;
             }
         }
         else if (line.find("BINTERACTIONK") != string::npos) {
@@ -964,12 +992,12 @@ void SystemParser::readBoundaryParameters() {
         else {}
     }
     //Set system parameters
-    SystemParameters::BParams = BParams;
+    SysParams::BParams = BParams;
 }
 
-void SystemParser::readDynamicRateParameters() {
+void SystemParser::readDyRateParams() {
     
-    DynamicRateParameters DRParams;
+    DyRateParams DRParams;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -994,35 +1022,24 @@ void SystemParser::readDynamicRateParameters() {
             else {}
         }
 
-        else if (line.find("DMUNBINDINGLEN") != string::npos) {
+        else if (line.find("DMUNBINDINGFORCE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorUnbindingCharLength.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dMotorUnbindingCharForce.push_back(atof((lineVector[i].c_str())));
             }
             else {}
         }
         
-        else if (line.find("DMUNBINDINGAMP") != string::npos) {
+        else if (line.find("DMWALKINGFORCE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorUnbindingAmplitude.push_back(atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-        
-        else if (line.find("DMWALKINGLEN") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorWalkingCharLength.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dMotorWalkingCharForce.push_back(atof((lineVector[i].c_str())));
             }
             else {}
         }
@@ -1051,7 +1068,7 @@ void SystemParser::readDynamicRateParameters() {
     }
     
     //set system parameters
-    SystemParameters::DRParams = DRParams;
+    SysParams::DRParams = DRParams;
 }
 
 DynamicRateTypes SystemParser::readDynamicRateTypes() {
@@ -1143,12 +1160,12 @@ BoundaryType SystemParser::readBoundaryType() {
     return BType;
 }
 
-void SystemParser::readGeometryParameters() {
+void SystemParser::readGeoParams() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    GeometryParameters GParams;
+    GeoParams GParams;
     
     vector<double> gridTemp;
     vector<double> compartmentTemp;
@@ -1236,7 +1253,7 @@ void SystemParser::readGeometryParameters() {
     GParams.monomerSize = monomerSize;
     
 #ifdef CHEMISTRY
-    if(cylinderSize / monomerSize < SystemParameters::Geometry().minCylinderIntSize) {
+    if(cylinderSize / monomerSize < SysParams::Geometry().minCylinderIntSize) {
         cout <<
         "With chemistry, cylinder size specified is too short. Exiting."
         << endl;
@@ -1246,7 +1263,7 @@ void SystemParser::readGeometryParameters() {
     GParams.cylinderIntSize = int(cylinderSize / monomerSize);
     
     GParams.minCylinderSize =
-        SystemParameters::Geometry().minCylinderIntSize * GParams.monomerSize;
+        SysParams::Geometry().minCylinderIntSize * GParams.monomerSize;
     
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
     if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
@@ -1263,7 +1280,7 @@ void SystemParser::readGeometryParameters() {
     if(GParams.compartmentSizeZ > GParams.largestCompartmentSide)
         GParams.largestCompartmentSide = GParams.compartmentSizeZ;
     
-    SystemParameters::GParams = GParams;
+    SysParams::GParams = GParams;
 }
 
 FilamentSetup SystemParser::readFilamentSetup() {

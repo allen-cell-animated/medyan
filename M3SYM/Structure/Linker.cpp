@@ -20,12 +20,12 @@
 #include "ChemRNode.h"
 
 #include "GController.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-vector<RateChanger*> Linker::_unbindingChangers;
+vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2, bool creation)
@@ -59,8 +59,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     //Find species on cylinder that should be marked. If initialization,
     //this should be done. But, if this is because of a reaction callback,
     //it will have already been done.
-    int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
     
     SpeciesLinker* sl1 =
         _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);

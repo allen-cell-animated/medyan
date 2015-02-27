@@ -22,7 +22,7 @@
 #include "NeighborListContainer.h"
 #include "Species.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
@@ -75,14 +75,14 @@ public:
 #endif
             
         //Figure out the binding sites
-        int deltaBinding = SystemParameters::Geometry().cylinderIntSize
-        / SystemParameters::Chemistry().numBindingSites;
+        int deltaBinding = SysParams::Geometry().cylinderIntSize
+                           / SysParams::Chemistry().numBindingSites;
         
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
         
         //add all other binding sites
-        while(bindingCount < SystemParameters::Geometry().cylinderIntSize) {
+        while(bindingCount < SysParams::Geometry().cylinderIntSize) {
             _bindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
@@ -137,8 +137,8 @@ public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
                             float onRate, float offRate, float rMax, float rMin)
-        : CCNLContainer(rMax + SystemParameters::Geometry().cylinderSize,
-                max(rMin - SystemParameters::Geometry().cylinderSize, 0.0), true),
+        : CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
+                max(rMin - SysParams::Geometry().cylinderSize, 0.0), true),
         _reactants(reactants), _products(products),
         _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
             
@@ -148,14 +148,14 @@ public:
             exit(EXIT_FAILURE);
 #endif
         //Figure out the binding sites
-        int deltaBinding = SystemParameters::Geometry().cylinderIntSize
-                           / SystemParameters::Chemistry().numBindingSites;
+        int deltaBinding = SysParams::Geometry().cylinderIntSize
+                           / SysParams::Chemistry().numBindingSites;
                                   
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
         
         //add all other binding sites
-        while(bindingCount < SystemParameters::Geometry().cylinderIntSize) {
+        while(bindingCount < SysParams::Geometry().cylinderIntSize) {
             
             _bindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;

@@ -17,7 +17,7 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 

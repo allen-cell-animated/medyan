@@ -64,7 +64,7 @@ private:
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     ///For dynamic polymerization rate
-    static RateChanger* _polyChanger;
+    static FilamentRateChanger* _polyChanger;
     
 public:
     vector<double> coordinate;

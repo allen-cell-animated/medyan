@@ -41,7 +41,7 @@ void CCNeighborList::updateNeighbors(Neighbor* n) {
     vector<Compartment*> compartments;
     
     GController::findCompartments(cylinder->coordinate, cylinder->getCompartment(),
-            SystemParameters::Geometry().largestCompartmentSide * 2, compartments);
+            SysParams::Geometry().largestCompartmentSide * 2, compartments);
     
     for(auto &c : compartments) {
         for(auto &nearbyCylinder : c->getCylinders()) {

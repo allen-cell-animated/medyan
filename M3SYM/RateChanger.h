@@ -16,144 +16,59 @@
 
 #include "common.h"
 
-/// Used to change reaction rates based on forces in the network
+/// Used to change Filament reaction rates based on forces in the network
 /*!
- *  The RateChanger class is an abstract class which allows
- *  for rate changing based on a given force. Different implementations
- *  of this class will have different rate changing models, and will
- *  all implement the changeRate() function.
+ *  The FilamentRateChanger class is an abstract class which allows
+ *  for Filament rate changing based on a given force. Different
+ *  implementations of this class will have different rate changing models, 
+ *  and will all implement the changeRate() function.
  */
 
-class RateChanger {
+class FilamentRateChanger {
     
 public:
     /// Change the reaction rate based on a bare rate and given force.
     virtual float changeRate(float bareRate, double force) = 0;
 };
 
-/// A brownian ratchet implementation of the RateChanger.
-/// Used for filament polymerization when under load force.
-
-/// @note - This function updates polymerization rates based on the
-/// Elastic Brownian Ratchet Model (by Peskin et al, Biophys J 1993):
-///
-///                 k = k_0 * exp(-f * x / kT)
-
-class BrownianRatchet : public RateChanger {
+/// Used to change Linker reaction rates based on forces in the network
+/*!
+ *  The LinkerRateChanger class is an abstract class which allows
+ *  for Linker rate changing based on a given force. Different 
+ *  implementations of this class will have different rate changing models, 
+ *  and will all implement the changeRate() function.
+ */
+class LinkerRateChanger {
     
-private:
-    double _x; ///< The characteristic length for this function
-public:
-    BrownianRatchet(double charLength) : _x(charLength) {}
-    
-    virtual float changeRate(float bareRate, double force);
-};
-
-///A catch-slip bond implementation of the RateChanger.
-///Used for cross-linker unbinding when under stress.
-
-/// @note - This function updates unbinding rates based on the
-/// following exponential form (Guo et al 2006):
-///
-///  k = k_0 * (a_c * exp(-f * x_c / kT)  + a_s * exp(-f * x_s / kT))
-///
-///  where x and a are the characteristic lengths and amplitudes
-///  of the catch and slip portions of the function, respectively.
-
-class LinkerCatchSlip : public RateChanger {
-    
-private:
-    double _a1; ///< catch bond amplitude
-    double _a2; ///< slip bond amplitude
-    double _x1; ///< catch bond characteristic length
-    double _x2; ///< slip bond characteristic length
+protected:
+    short _linkerType; ///< This linker type
     
 public:
-    LinkerCatchSlip(double amplitude1, double amplitude2,
-                    double charLength1, double charLength2) :
-        _a1(amplitude1),  _a2(amplitude2),
-        _x1(charLength1), _x2(charLength2) {}
+    LinkerRateChanger(short linkerType) : _linkerType(linkerType) {}
     
-    virtual float changeRate(float bareRate, double force);
+    /// Change the reaction rate based on a bare rate and given force.
+    virtual float changeRate(float bareRate, double force) = 0;
 };
 
-///A slip bond implementation of the RateChanger.
-///Used for cross-linker unbinding when under stress.
-
-/// @note - This function updates unbinding rates based on the
-/// following exponential form (Bell form, Bell et al, 1978):
-///
-///                 k = k_0 * exp(f * a / kT)
-///
-/// So as to exponetially increase the unbinding with more force.
-
-class LinkerSlip : public RateChanger {
+/// Used to change MotorGhost reaction rates based on forces in the network
+/*!
+ *  The MotorRateChanger class is an abstract class which allows
+ *  for MotorGhost rate changing based on a given force. Different 
+ *  implementations of this class will have different rate changing models, 
+ *  and will all implement the changeRate() function.
+ */
+class MotorRateChanger {
     
-private:
-    double _x; ///< The characteristic length for this function
+protected:
+    short _motorType; ///< This motor type
     
 public:
-    LinkerSlip(double charLength) : _x(charLength) {}
+    MotorRateChanger(short motorType) : _motorType(motorType) {}
     
-    virtual float changeRate(float bareRate, double force);
+    /// Change the reaction rate based on a bare rate,
+    /// number of heads, and given force.
+    virtual float changeRate(float bareRate, int numHeads, double force) = 0;
 };
 
-///A PCM catch bond implementation of the RateChanger
-///Used for motor unbinding when under stress
-
-/// @note - This function updates unbinding rates based on the
-/// following exponential form (Erdmann et al, JACS 2013):
-///
-///      k_eff = N_b * k_unbinding * exp(-F / (N_b * F_0))
-///
-/// where F_0 is the characteristic force defining this catch,
-/// and N_b is the number of bound motor heads determined by
-///
-///             N_b = 0.33*N_t + (F * alpha)
-///
-/// where alpha has been empirically determined to be 0.028
-class MotorPCMCatch : public RateChanger {
-    
-private:
-    
-    double _F0;  ///< characteristic force
-    int _Nt; ///< number of motor heads
-    
-public:
-    MotorPCMCatch(double charForce, int numHeads)
-        : _F0(charForce), _Nt(numHeads) {}
-    
-    virtual float changeRate(float bareRate, double force);
-};
-
-
-///A Hill form stall force implementation of the RateChanger.
-///Used for motor walking when under stress.
-
-/// @note - This function updates walking rates based on the
-/// following form (based on Erdmann et al, JACS 2013):
-///
-///   k_eff = (k_w / N_b) * (F_0 - F) / (F_0 + (F / beta))
-///
-/// where F_0 is the characteristic force defining this catch,
-/// beta has been empirically determined to be 0.21, and
-/// N_b is the number of bound motor heads determined by
-///
-///             N_b = 0.33*N_t + (F * alpha)
-///
-/// where alpha has been empirically determined to be 0.028
-
-class MotorHillStall : public RateChanger  {
-    
-private:
-    double _F0;  ///< characteristic force
-    int _Nt; ///< number of motor heads
-    
-public:
-    MotorHillStall(double charForce, int numHeads)
-        : _F0(charForce), _Nt(numHeads) {}
-    
-    virtual float changeRate(float bareRate, double force);
-};
 
 #endif

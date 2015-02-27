@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_SystemParameters_h
-#define M3SYM_SystemParameters_h
+#ifndef M3SYM_SysParams_h
+#define M3SYM_SysParams_h
 
 #include <vector>
 #include <list>
@@ -21,7 +21,7 @@
 #include "Parser.h"
 
 /// Struct to hold mechanical parameters for the system
-struct MechanicsParameters {
+struct MechParams {
     
     //@{
     /// Filament parameter
@@ -68,7 +68,7 @@ struct MechanicsParameters {
 };
 
 /// Struct to hold chemistry parameters for the system
-struct ChemistryParameters {
+struct ChemParams {
     
     //@{
     /// Number of general species
@@ -88,10 +88,19 @@ struct ChemistryParameters {
     
     short numBindingSites = 0;
     //@}
+    
+    
+    //@{
+    ///Extra motor parameters
+    vector<short> motorNumHeadsMin = {};
+    vector<short> motorNumHeadsMax = {};
+    
+    vector<double> motorStepSize = {};
+    //@}
 };
 
 /// Struct to hold geometry parameters for the system
-struct GeometryParameters {
+struct GeoParams {
     
     //@{
     /// Geometry parameter
@@ -119,7 +128,7 @@ struct GeometryParameters {
 };
 
 /// Struct to hold Boundary parameters for the system
-struct BoundaryParameters {
+struct BoundParams {
     
     double BoundaryCutoff = 0;
     double BoundaryK = 0;
@@ -129,7 +138,7 @@ struct BoundaryParameters {
 };
 
 /// Struct to hold dynamic rate changing parameters
-struct DynamicRateParameters {
+struct DyRateParams {
     
     /// Option for dynamic polymerization rate of filaments
     double dFilPolymerizationCharLength = 0.0;
@@ -139,36 +148,35 @@ struct DynamicRateParameters {
     vector<double> dLinkerUnbindingAmplitude = {};
     
     /// Option for dynamic unbinding rate of motors
-    vector<double> dMotorUnbindingCharLength = {};
-    vector<double> dMotorUnbindingAmplitude = {};
+    vector<double> dMotorUnbindingCharForce = {};
     
     /// Option for dynamic walking rate of motors
-    vector<double> dMotorWalkingCharLength = {};
+    vector<double> dMotorWalkingCharForce = {};
     
 };
 
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
-class SystemParameters {
+class SysParams {
 friend class SystemParser;
     
 #ifdef TESTING ///Public access if testing only
 public:
 #endif
-    static MechanicsParameters MParams;    ///< The mechanical parameters
-    static ChemistryParameters CParams;    ///< The chemistry parameters
-    static GeometryParameters GParams;     ///< The geometry parameters
-    static BoundaryParameters BParams;     ///< The boundary parameters
-    static DynamicRateParameters DRParams; ///< The dynamic rate parameters
+    static MechParams MParams;    ///< The mechanical parameters
+    static ChemParams CParams;    ///< The chemistry parameters
+    static GeoParams GParams;     ///< The geometry parameters
+    static BoundParams BParams;   ///< The boundary parameters
+    static DyRateParams DRParams; ///< The dynamic rate parameters
     
 public:
     //@{
     ///Const getter
-    static const MechanicsParameters& Mechanics() {return MParams;}
-    static const ChemistryParameters& Chemistry() {return CParams;}
-    static const GeometryParameters& Geometry() {return GParams;}
-    static const BoundaryParameters& Boundaries() {return BParams;}
-    static const DynamicRateParameters& DynamicRates() {return DRParams;}
+    static const MechParams& Mechanics() {return MParams;}
+    static const ChemParams& Chemistry() {return CParams;}
+    static const GeoParams& Geometry() {return GParams;}
+    static const BoundParams& Boundaries() {return BParams;}
+    static const DyRateParams& DynamicRates() {return DRParams;}
     //@}
     
     //@{

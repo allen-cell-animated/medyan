@@ -11,15 +11,15 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
-MechanicsParameters SystemParameters::MParams;
-ChemistryParameters SystemParameters::CParams;
-GeometryParameters SystemParameters::GParams;
-BoundaryParameters SystemParameters::BParams;
-DynamicRateParameters SystemParameters::DRParams;
+MechParams   SysParams::MParams;
+ChemParams   SysParams::CParams;
+GeoParams    SysParams::GParams;
+BoundParams  SysParams::BParams;
+DyRateParams SysParams::DRParams;
 
-bool SystemParameters::checkChemParameters(ChemistryData& chem) {
+bool SysParams::checkChemParameters(ChemistryData& chem) {
     
     //Check all species for consistency
     if(chem.speciesBulk.size() != CParams.numBulkSpecies) {
@@ -103,13 +103,38 @@ bool SystemParameters::checkChemParameters(ChemistryData& chem) {
     if(CParams.numMinusEndSpecies < CParams.numFilamentSpecies) {
         cout << "There must be a minus end for every filament species. Exiting."
              << endl;
-        exit(EXIT_FAILURE);
+        return false;
+    }
+    
+    
+    //additional motor params
+    if(chem.speciesMotor.size() != CParams.motorNumHeadsMin.size()) {
+        
+        cout << "Number of minimum motor heads in chemistry input does not "
+             << "match the number of motor species. Check these parameters. Exiting."
+        <<endl;
+        
+        return false;
+    }
+    if(chem.speciesMotor.size() != CParams.motorNumHeadsMax.size()) {
+        
+        cout << "Number of maximum motor heads in chemistry input does not "
+             << "match the number of motor species. Check these parameters. Exiting."
+             <<endl;
+        return false;
+    }
+    if(chem.speciesMotor.size() != CParams.motorStepSize.size()) {
+        
+        cout << "Number of motor step sizes in chemistry input does not "
+             << "match the number of motor species. Check these parameters. Exiting."
+             <<endl;
+        return false;
     }
     
     return true;
 }
 
-bool SystemParameters::checkMechParameters(MechanicsFFType& mech) {
+bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     
     //check ff and associated parameters for consistency
     
@@ -257,7 +282,7 @@ bool SystemParameters::checkMechParameters(MechanicsFFType& mech) {
     return true;
 }
 
-bool SystemParameters::checkGeoParameters() {
+bool SysParams::checkGeoParameters() {
     
     //Check that grid and compartmentSize match nDim
     if((GParams.nDim == 3 &&
@@ -273,7 +298,7 @@ bool SystemParameters::checkGeoParameters() {
     return true;
 }
 
-bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
+bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
     
     //check types match number of species
     if(dy.dFPolymerizationType == "") {
@@ -310,16 +335,16 @@ bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
     
     for(auto &changer : dy.dLUnbindingType) {
         
-        if(changer == "CATCHSLIP") {
+        if(changer == "BASICCATCHSLIP") {
             numCharLengths += 2;
             numAmps += 2;
         }
-        else if(changer == "SLIP") {
+        else if(changer == "BASICSLIP") {
             numCharLengths += 1;
         }
         
     }
-    if(numCharLengths != SystemParameters::DynamicRates().
+    if(numCharLengths != SysParams::DynamicRates().
                          dLinkerUnbindingCharLength.size()) {
         cout << "Number of characteristic lengths specified for chosen "
              << "linker unbinding dynamic rate forms is not accurate. Exiting."
@@ -327,7 +352,7 @@ bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
         return false;
     }
     
-    if(numAmps != SystemParameters::DynamicRates().
+    if(numAmps != SysParams::DynamicRates().
                   dLinkerUnbindingAmplitude.size()) {
         
         
@@ -337,40 +362,17 @@ bool SystemParameters::checkDyRateParameters(DynamicRateTypes& dy) {
         return false;
     }
     
-    numCharLengths = 0;
-    numAmps = 0;
-    
-    for(auto &changer : dy.dMUnbindingType) {
-        
-        if(changer == "CATCHSLIP") {
-            numCharLengths += 2;
-            numAmps += 2;
-        }
-        else if(changer == "SLIP") {
-            numCharLengths += 1;
-        }
-        
-    }
-    if(numCharLengths != SystemParameters::DynamicRates().
-                         dMotorUnbindingCharLength.size()) {
-        cout << "Number of characteristic lengths specified for chosen "
+    if(dy.dMUnbindingType.size() != SysParams::DynamicRates().
+                                    dMotorUnbindingCharForce.size()) {
+        cout << "Number of characteristic forces specified for chosen "
              << "motor unbinding dynamic rate forms is not accurate. Exiting."
              << endl;
         return false;
     }
     
-    if(numAmps != SystemParameters::DynamicRates().
-                  dMotorUnbindingAmplitude.size()) {
-        
-        cout << "Number of amplitudes specified for chosen "
-             << "motor unbinding dynamic rate forms is not accurate. Exiting."
-             << endl;
-        return false;
-    }
-    
-    if(dy.dMWalkingType.size() != SystemParameters::DynamicRates().
-                                  dMotorWalkingCharLength.size()) {
-        cout << "Number of characteristic lengths specified for chosen "
+    if(dy.dMWalkingType.size() != SysParams::DynamicRates().
+                                  dMotorWalkingCharForce.size()) {
+        cout << "Number of characteristic forces specified for chosen "
              << "motor walking dynamic rate forms is not accurate. Exiting."
              << endl;
         return false;

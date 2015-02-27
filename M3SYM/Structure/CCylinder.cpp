@@ -178,7 +178,7 @@ void CCylinder::removeAllReactingCylinders() {
 CCylinder::~CCylinder() {
     //Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
-    removeAllCrossCylinderReactions();
+    removeAllCrossCylinderReactions(); 
     
     //remove all reactions involving this ccylinder
     removeAllReactingCylinders();
@@ -187,37 +187,37 @@ CCylinder::~CCylinder() {
     for(auto &m: _monomers) {
         
         short numFilamentSpecies =
-            SystemParameters::Chemistry().numFilamentSpecies;
+            SysParams::Chemistry().numFilamentSpecies;
         for(int i = 0; i < numFilamentSpecies; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         short numPlusEndSpecies =
-            SystemParameters::Chemistry().numPlusEndSpecies;
+            SysParams::Chemistry().numPlusEndSpecies;
         for(int i = 0; i < numPlusEndSpecies; i++) {
             SpeciesPlusEnd* s = m->speciesPlusEnd(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         short numMinusEndSpecies =
-            SystemParameters::Chemistry().numMinusEndSpecies;
+            SysParams::Chemistry().numMinusEndSpecies;
         for(int i = 0; i < numMinusEndSpecies; i++) {
             SpeciesMinusEnd* s = m->speciesMinusEnd(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         short numBoundSpecies =
-            SystemParameters::Chemistry().numBoundSpecies;
+            SysParams::Chemistry().numBoundSpecies;
         for(int i = 0; i < numBoundSpecies; i++) {
             SpeciesBound* s = m->speciesBound(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         short numLinkerSpecies =
-            SystemParameters::Chemistry().numLinkerSpecies;
+            SysParams::Chemistry().numLinkerSpecies;
         for(int i = 0; i < numLinkerSpecies; i++) {
             SpeciesLinker* s = m->speciesLinker(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         short numMotorSpecies =
-            SystemParameters::Chemistry().numMotorSpecies;
+            SysParams::Chemistry().numMotorSpecies;
         for(int i = 0; i < numMotorSpecies; i++) {
             SpeciesMotor* s = m->speciesMotor(i);
             if(s != nullptr) _compartment->removeSpecies(s);

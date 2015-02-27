@@ -23,8 +23,7 @@
 #include "CompartmentContainer.h"
 
 #include "GController.h"
-#include "SystemParameters.h"
-
+#include "SysParams.h"
 //Testing neighbor capabilities
 TEST(CompartmentTest, Neighbors) {
 
@@ -89,18 +88,27 @@ TEST(CompartmentTest, SpeciesAndReactions){
 TEST(CompartmentContainerTest, Main) {
     
     
-    SystemParameters::GParams.compartmentSizeX = 100.0;
-    SystemParameters::GParams.compartmentSizeY = 100.0;
-    SystemParameters::GParams.compartmentSizeZ = 100.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 100.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 100.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 100.0;
     
-    SystemParameters::GParams.NX = 50;
-    SystemParameters::GParams.NY = 50;
-    SystemParameters::GParams.NZ = 50;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 50;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 50;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 50;
     
-    SystemParameters::GParams.monomerSize = 2.7;
-    SystemParameters::GParams.cylinderSize = 27.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.monomerSize = 2.7;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 27.0;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     int _numSpecies; ///for testing
 

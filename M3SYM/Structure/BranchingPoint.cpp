@@ -20,7 +20,7 @@
 #include "CompartmentContainer.h"
 
 #include "GController.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -49,7 +49,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //Find species on cylinder that should be marked. If initialization,
     //this should be done. But, if this is because of a reaction callback,
     //it will have already been done.
-    int pos = int(position * SystemParameters::Geometry().cylinderIntSize);
+    int pos = int(position * SysParams::Geometry().cylinderIntSize);
     
     SpeciesBrancher* sb1 =
     _c1->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);

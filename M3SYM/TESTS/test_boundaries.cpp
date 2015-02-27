@@ -22,19 +22,25 @@
 
 #include "BoundaryImpl.h"
 #include "BoundaryElementImpl.h"
-#include "SystemParameters.h"
-
+#include "SysParams.h"
 TEST(PlaneBoundaryElementTest, Distances) {
     
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 10.0;
-    SystemParameters::GParams.compartmentSizeZ = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
     
-    SystemParameters::GParams.NX = 5;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -51,15 +57,22 @@ TEST(PlaneBoundaryElementTest, Distances) {
 
 TEST(SphereBoundaryElementTest, Distances) {
     
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 10.0;
-    SystemParameters::GParams.compartmentSizeZ = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
     
-    SystemParameters::GParams.NX = 5;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -78,15 +91,22 @@ TEST(SphereBoundaryElementTest, Distances) {
 
 TEST(CylindricalZBoundaryElementTest, Distances){
     
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 10.0;
-    SystemParameters::GParams.compartmentSizeZ = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
     
-    SystemParameters::GParams.NX = 5;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -110,15 +130,22 @@ TEST(CylindricalZBoundaryElementTest, Distances){
 
 TEST(HalfSphereZBoundaryElementTest, Distances){
     
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 10.0;
-    SystemParameters::GParams.compartmentSizeZ = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
     
-    SystemParameters::GParams.NX = 5;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();

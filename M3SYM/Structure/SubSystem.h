@@ -20,7 +20,7 @@
 #include "common.h"
 #include "NeighborListContainer.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Boundary;
@@ -55,7 +55,7 @@ class SubSystem
 #endif
 public:
 #ifdef DYNAMICRATES 
-    SubSystem() : CBENLContainer(SystemParameters::Boundaries().BoundaryCutoff) {}
+    SubSystem() : CBENLContainer(SysParams::Boundaries().BoundaryCutoff) {}
 #endif
         
     /// Add new [Filaments](@ref Filament).

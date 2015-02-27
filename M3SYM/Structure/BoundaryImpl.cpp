@@ -16,27 +16,27 @@
 #include "BoundarySurfaceImpl.h"
 #include "BoundaryElement.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     
     //Get full system size (want planes to be slightly inside compartment grid)
     double zeroX = 0.2 *
-        SystemParameters::Geometry().compartmentSizeX *
-        SystemParameters::Geometry().NX;
+        SysParams::Geometry().compartmentSizeX *
+        SysParams::Geometry().NX;
     double zeroY = 0.2 *
-        SystemParameters::Geometry().compartmentSizeY *
-        SystemParameters::Geometry().NY;
+        SysParams::Geometry().compartmentSizeY *
+        SysParams::Geometry().NY;
     double zeroZ = 0.2 *
-        SystemParameters::Geometry().compartmentSizeZ *
-        SystemParameters::Geometry().NZ;
+        SysParams::Geometry().compartmentSizeZ *
+        SysParams::Geometry().NZ;
     
-    double sysX = SystemParameters::Geometry().compartmentSizeX *
-                  SystemParameters::Geometry().NX - zeroX;
-    double sysY = SystemParameters::Geometry().compartmentSizeY *
-                  SystemParameters::Geometry().NY - zeroY;
-    double sysZ = SystemParameters::Geometry().compartmentSizeZ *
-                  SystemParameters::Geometry().NZ - zeroZ;
+    double sysX = SysParams::Geometry().compartmentSizeX *
+                  SysParams::Geometry().NX - zeroX;
+    double sysY = SysParams::Geometry().compartmentSizeY *
+                  SysParams::Geometry().NY - zeroY;
+    double sysZ = SysParams::Geometry().compartmentSizeZ *
+                  SysParams::Geometry().NZ - zeroZ;
     
     //Create boundary surfaces, add to vector
     //X normal planes
@@ -66,12 +66,12 @@ bool BoundaryCubic::within(const vector<double>& coordinates) {
 BoundarySpherical::BoundarySpherical(double diameter)
     : Boundary(3, BoundaryShape::Sphere) {
     
-    double sysX = SystemParameters::Geometry().compartmentSizeX *
-                  SystemParameters::Geometry().NX;
-    double sysY = SystemParameters::Geometry().compartmentSizeY *
-                  SystemParameters::Geometry().NY;
-    double sysZ = SystemParameters::Geometry().compartmentSizeZ *
-                  SystemParameters::Geometry().NZ;
+    double sysX = SysParams::Geometry().compartmentSizeX *
+                  SysParams::Geometry().NX;
+    double sysY = SysParams::Geometry().compartmentSizeY *
+                  SysParams::Geometry().NY;
+    double sysZ = SysParams::Geometry().compartmentSizeZ *
+                  SysParams::Geometry().NZ;
     
     _boundarySurfaces.emplace_back(
         new Sphere({sysX / 2, sysY / 2, sysZ / 2}, diameter / 2));
@@ -89,12 +89,12 @@ bool BoundarySpherical::within(const vector<double>& coordinates) {
 BoundaryCapsule::BoundaryCapsule(double diameter)
     : Boundary(3, BoundaryShape::Capsule) {
     
-    double sysX = SystemParameters::Geometry().compartmentSizeX *
-                  SystemParameters::Geometry().NX;
-    double sysY = SystemParameters::Geometry().compartmentSizeY *
-                  SystemParameters::Geometry().NY;
-    double sysZ = SystemParameters::Geometry().compartmentSizeZ *
-                  SystemParameters::Geometry().NZ;
+    double sysX = SysParams::Geometry().compartmentSizeX *
+                  SysParams::Geometry().NX;
+    double sysY = SysParams::Geometry().compartmentSizeY *
+                  SysParams::Geometry().NY;
+    double sysZ = SysParams::Geometry().compartmentSizeZ *
+                  SysParams::Geometry().NZ;
 
     double height = sysZ - diameter;
     

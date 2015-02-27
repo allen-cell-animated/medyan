@@ -14,7 +14,7 @@
 #include "MCylinder.h"
 
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -24,18 +24,18 @@ MCylinder::MCylinder(double eqLength){
     setEqLength(eqLength);
     
     //set excluded volume const
-    _kExVol = SystemParameters::Mechanics().VolumeK;
+    _kExVol = SysParams::Mechanics().VolumeK;
     
     //set angle
-    _eqTheta = SystemParameters::Mechanics().FBendingTheta;
-    _eqPhi = SystemParameters::Mechanics().FTwistingPhi;
+    _eqTheta = SysParams::Mechanics().FBendingTheta;
+    _eqPhi = SysParams::Mechanics().FTwistingPhi;
 }
 
 void MCylinder::setEqLength(double l) {
     _eqLength = l;
-    double fracCylinderSize = SystemParameters::Geometry().cylinderSize / l;
+    double fracCylinderSize = SysParams::Geometry().cylinderSize / l;
     
     // recalculate other constants
-    _kStretch = SystemParameters::Mechanics().FStretchingK * fracCylinderSize;
-    _kBend = SystemParameters::Mechanics().FBendingK / fracCylinderSize;
+    _kStretch = SysParams::Mechanics().FStretchingK * fracCylinderSize;
+    _kBend = SysParams::Mechanics().FBendingK / fracCylinderSize;
 }

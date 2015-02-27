@@ -20,13 +20,13 @@
 #include "ChemRNode.h"
 
 #include "GController.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-vector<RateChanger*> MotorGhost::_unbindingChangers;
-vector<RateChanger*> MotorGhost::_walkingChangers;
+vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
+vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                        double position1, double position2, bool creation)
@@ -38,7 +38,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
           
     _motorID = MotorGhostDB::instance()->getMotorID();
     _birthTime = tau();
-    
+          
     auto c1b1 = _c1->getFirstBead()->coordinate;
     auto c1b2 = _c1->getSecondBead()->coordinate;
     auto c2b1 = _c2->getFirstBead()->coordinate;
@@ -56,13 +56,19 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
     _cMotorGhost->setMotorGhost(this);
+          
+          
+    //set number of heads by picking random int between maxheads and minheads
+    _numHeads = (int) randomDouble(
+        SysParams::Chemistry().motorNumHeadsMin[_motorType],
+        SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
     //Find species on cylinder that should be marked. If initialization,
     //this should be done. But, if this is because of a reaction callback,
     //it will have already been done.
     
-    int pos1 = int(position1 * SystemParameters::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SystemParameters::Geometry().cylinderIntSize);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
     
     SpeciesMotor* sm1 =
         _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
@@ -87,7 +93,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
 #ifdef MECHANICS
     _mMotorGhost = unique_ptr<MMotorGhost>(
-        new MMotorGhost(motorType, position1, position2,
+        new MMotorGhost(motorType, _numHeads,
+                        position1, position2,
                         c1b1, c1b2,c2b1, c2b2));
     _mMotorGhost->setMotorGhost(this);
 #endif
@@ -184,8 +191,10 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = _walkingChangers[_motorType]->
-                             changeRate(r->getBareRate(), forceDotDirectionC1);
+            float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(r->getBareRate(), _numHeads, forceDotDirectionC1);
+            
             r->setRate(newRate);
             r->activateReaction();
         }
@@ -194,8 +203,10 @@ void MotorGhost::updateReactionRates() {
         
         if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
             
-            float newRate = _walkingChangers[_motorType]->
-                            changeRate(r->getBareRate(), forceDotDirectionC2);
+            float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(r->getBareRate(), _numHeads, forceDotDirectionC2);
+            
             r->setRate(newRate);
             r->activateReaction();
         }
@@ -207,7 +218,9 @@ void MotorGhost::updateReactionRates() {
     
     //change the rate
     float newRate =
-        _unbindingChangers[_motorType]->changeRate(offRxn->getBareRate(), force);
+        _unbindingChangers[_motorType]->
+        changeRate(offRxn->getBareRate(), _numHeads, force);
+    
     offRxn->setRate(newRate);
     offRxn->activateReaction();
     

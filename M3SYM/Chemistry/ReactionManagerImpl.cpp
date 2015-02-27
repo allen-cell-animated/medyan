@@ -19,7 +19,7 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -467,7 +467,6 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         p = _products[1];
         productSpecies.push_back(m1->speciesBound(getInt(p)));
         
-        
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
@@ -891,12 +890,12 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
             auto coord1 =
             midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
                                cc1->getCylinder()->getSecondBead()->coordinate,
-                               (double)i / SystemParameters::Geometry().cylinderIntSize);
+                               (double)i / SysParams::Geometry().cylinderIntSize);
             
             auto coord2 =
             midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
                                cc2->getCylinder()->getSecondBead()->coordinate,
-                               (double)j / SystemParameters::Geometry().cylinderIntSize);
+                               (double)j / SysParams::Geometry().cylinderIntSize);
             
             double dist = twoPointDistance(coord1, coord2);
             
@@ -968,12 +967,12 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
             auto coord1 =
             midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
                                cc1->getCylinder()->getSecondBead()->coordinate,
-                               (double)i / SystemParameters::Geometry().cylinderIntSize);
+                               (double)i / SysParams::Geometry().cylinderIntSize);
             
             auto coord2 =
             midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
                                cc2->getCylinder()->getSecondBead()->coordinate,
-                               (double)j / SystemParameters::Geometry().cylinderIntSize);
+                               (double)j / SysParams::Geometry().cylinderIntSize);
             
             double dist = twoPointDistance(coord1, coord2);
             
@@ -1012,6 +1011,11 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 p = _products[1];
                 productSpecies.push_back(m2->speciesMotor(getInt(p)));
                 
+                //calculate on rate based on avg number of heads
+                float numHeads = (SysParams::Chemistry().motorNumHeadsMin[motorNumber] +
+                                  SysParams::Chemistry().motorNumHeadsMax[motorNumber]) / 2;
+                
+                float onRate = _onRate * numHeads;
                 
                 //Add the reaction. If it needs a callback then attach
                 vector<Species*> onSpecies = reactantSpecies;
@@ -1019,7 +1023,7 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                                  productSpecies.end());
                 ReactionBase* onRxn =
                 new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>
-                (onSpecies, _onRate);
+                (onSpecies, onRate);
                 
                 //set up callbacks
 #ifdef REACTION_SIGNALING

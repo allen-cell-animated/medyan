@@ -28,7 +28,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
     
@@ -76,8 +76,8 @@ void Controller::initialize(string inputFile,
         _outputs.push_back(new Stresses(_outputDirectory + "stresses.traj"));
     
     //Always read geometry, check consistency
-    p.readGeometryParameters();
-    if(!SystemParameters::checkGeoParameters())
+    p.readGeoParams();
+    if(!SysParams::checkGeoParameters())
         exit(EXIT_FAILURE);
     
     //CALLING ALL CONTROLLERS TO INITIALIZE
@@ -93,7 +93,7 @@ void Controller::initialize(string inputFile,
     auto MAlgorithm = p.readMechanicsAlgorithm();
     
     //read const parameters
-    p.readMechanicsParameters();
+    p.readMechParams();
     
     //Initialize Mechanical controller
     cout << "---" << endl;
@@ -104,7 +104,7 @@ void Controller::initialize(string inputFile,
 #endif
     //Always read boundary type
     auto BTypes = p.readBoundaryType();
-    p.readBoundaryParameters();
+    p.readBoundParams();
     
     //Initialize boundary
     cout << "---" << endl;
@@ -114,11 +114,11 @@ void Controller::initialize(string inputFile,
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
         _subSystem->addBoundary(
-            new BoundarySpherical(SystemParameters::Boundaries().diameter));
+            new BoundarySpherical(SysParams::Boundaries().diameter));
     }
     else if(BTypes.boundaryShape == "CAPSULE") {
         _subSystem->addBoundary(
-            new BoundaryCapsule(SystemParameters::Boundaries().diameter));
+            new BoundaryCapsule(SysParams::Boundaries().diameter));
     }
     else{
         cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
@@ -131,7 +131,7 @@ void Controller::initialize(string inputFile,
     _gController->activateCompartments(_subSystem->getBoundary());
     
     //read parameters
-    p.readChemistryParameters();
+    p.readChemParams();
     
     //Initialize chemical controller
     cout << "---" << endl;
@@ -172,7 +172,7 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     cout << "Initializing dynamic rates...";
     //read dynamic rate parameters
-    p.readDynamicRateParameters();
+    p.readDyRateParams();
     
     //read dynamic rate types
     DynamicRateTypes DRTypes = p.readDynamicRateTypes();
@@ -187,15 +187,15 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     cout << "Checking cross-parameter consistency..." << endl;
 #ifdef CHEMISTRY
-    if(!SystemParameters::checkChemParameters(ChemData))
+    if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
 #endif
 #ifdef MECHANICS
-    if(!SystemParameters::checkMechParameters(MTypes))
+    if(!SysParams::checkMechParameters(MTypes))
         exit(EXIT_FAILURE);
 #endif
 #ifdef DYNAMICRATES
-    if(!SystemParameters::checkDyRateParameters(DRTypes))
+    if(!SysParams::checkDyRateParameters(DRTypes))
         exit(EXIT_FAILURE);
 #endif
     

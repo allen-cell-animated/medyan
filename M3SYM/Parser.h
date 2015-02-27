@@ -287,11 +287,11 @@ public:
     
     //@{
     /// Parameter parser. Reads input directly into system parameters
-    void readMechanicsParameters();
-    void readChemistryParameters();
-    void readGeometryParameters();
-    void readBoundaryParameters();
-    void readDynamicRateParameters();
+    void readMechParams();
+    void readChemParams();
+    void readGeoParams();
+    void readBoundParams();
+    void readDyRateParams();
     //@}
     
     //@{

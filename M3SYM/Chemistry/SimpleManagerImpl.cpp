@@ -20,7 +20,7 @@
 
 #include "Bead.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;

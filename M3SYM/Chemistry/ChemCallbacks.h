@@ -28,7 +28,7 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -205,7 +205,7 @@ struct BranchingPointCreationCallback {
     
     void operator() (ReactionBase *r) {
         
-        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize;
         double pos = double(_position) / cylinderSize;
         
         //Get a position and direction of a new filament
@@ -219,8 +219,8 @@ struct BranchingPointCreationCallback {
         //get branch projection
 #ifdef MECHANICS
         //use mechanical parameters
-        double l = SystemParameters::Mechanics().BrStretchingL[_branchType];
-        double t = SystemParameters::Mechanics().BrBendingTheta[_branchType];
+        double l = SysParams::Mechanics().BrStretchingL[_branchType];
+        double t = SysParams::Mechanics().BrBendingTheta[_branchType];
 #else
         cout << "Branching reaction cannot occur unless mechanics is enabled. Using"
              << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
@@ -228,7 +228,7 @@ struct BranchingPointCreationCallback {
         double l = 10.0;
         double t = 70.7;
 #endif
-        double s = SystemParameters::Geometry().monomerSize;
+        double s = SysParams::Geometry().monomerSize;
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
         auto bp = get<1>(branchPosDir);
@@ -305,7 +305,7 @@ struct LinkerBindingCallback {
     void operator() (ReactionBase *r) {
         
         // Create a linker
-        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
@@ -376,7 +376,7 @@ struct MotorBindingCallback {
     void operator() (ReactionBase *r) {
 
         // Create a motor
-        int cylinderSize = SystemParameters::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize;
         
         double pos1 = double(_position1) / cylinderSize;
         double pos2 = double(_position2) / cylinderSize;
@@ -450,7 +450,7 @@ struct MotorWalkingForwardCallback {
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
-        double shift =  1.0 / SystemParameters::Chemistry().numBindingSites;
+        double shift =  1.0 / SysParams::Chemistry().numBindingSites;
         double newPosition;
         ReactionBase* newOffRxn, *offRxn;
         
@@ -561,7 +561,7 @@ struct MotorMovingCylinderForwardCallback {
             
             m->setFirstCylinder(_newC);
             m->setFirstPosition((double)_newPosition
-               / SystemParameters::Geometry().cylinderIntSize);
+               / SysParams::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
@@ -583,7 +583,7 @@ struct MotorMovingCylinderForwardCallback {
         else {
             m->setSecondCylinder(_newC);
             m->setSecondPosition((double)_newPosition
-               / SystemParameters::Geometry().cylinderIntSize);
+               / SysParams::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
@@ -662,7 +662,7 @@ struct MotorWalkingBackwardCallback {
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
         //shift the position of one side of the motor forward
-        double shift =  1.0 / SystemParameters::Chemistry().numBindingSites;
+        double shift =  1.0 / SysParams::Chemistry().numBindingSites;
         double newPosition;
         ReactionBase* newOffRxn, *offRxn;
         
@@ -774,7 +774,7 @@ struct MotorMovingCylinderBackwardCallback {
             
             m->setFirstCylinder(_newC);
             m->setFirstPosition((double)_newPosition
-               / SystemParameters::Geometry().cylinderIntSize);
+               / SysParams::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setFirstSpecies(sm2);
             
             //change off reaction to include new species
@@ -796,7 +796,7 @@ struct MotorMovingCylinderBackwardCallback {
         else {
             m->setSecondCylinder(_newC);
             m->setSecondPosition((double)_newPosition
-               / SystemParameters::Geometry().cylinderIntSize);
+               / SysParams::Geometry().cylinderIntSize);
             m->getCMotorGhost()->setSecondSpecies(sm2);
             
             //change off reaction to include new species
@@ -883,7 +883,7 @@ struct FilamentCreationCallback {
                          randomDouble(-1,1)};
             
             auto npp = nextPointProjection(position,
-                SystemParameters::Geometry().cylinderSize, direction);
+                SysParams::Geometry().cylinderSize, direction);
             
             //check if within boundary
             if(_ps->getBoundary()->within(position) &&
@@ -895,7 +895,7 @@ struct FilamentCreationCallback {
         Filament* f = _ps->addNewFilament(position, direction);
         
         CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
-        int monomerPosition = SystemParameters::Geometry().cylinderIntSize / 2 + 1;
+        int monomerPosition = SysParams::Geometry().cylinderIntSize / 2 + 1;
         
         CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
         CMonomer* m2 = cc->getCMonomer(monomerPosition);

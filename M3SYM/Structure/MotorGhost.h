@@ -23,10 +23,9 @@
 #include "MMotorGhost.h"
 #include "Movable.h"
 #include "Reactable.h"
-#include "RateChanger.h"
+#include "RateChangerImpl.h"
 
-#include "SystemParameters.h"
-
+#include "SysParams.h"
 //FORWARD DECLARATIONS
 class Cylinder;
 class DRController;
@@ -59,10 +58,12 @@ private:
     
     Compartment* _compartment; ///< Where this motorghost is
     
+    int _numHeads = 1; ///< Number of heads that this motor contains
+    
     ///For dynamic rate unbinding
-    static vector<RateChanger*> _unbindingChangers;
+    static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
-    static vector<RateChanger*> _walkingChangers;
+    static vector<MotorRateChanger*> _walkingChangers;
 
 public:
     vector<double> coordinate;

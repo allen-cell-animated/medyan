@@ -18,7 +18,7 @@
 #include "CompartmentContainer.h"
 
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -134,15 +134,15 @@ void GController::generateConnections()
 void GController::initializeGrid() {
     
     //Initial parameters of system
-    _nDim = SystemParameters::Geometry().nDim;
+    _nDim = SysParams::Geometry().nDim;
     
-    _grid = {SystemParameters::Geometry().NX,
-             SystemParameters::Geometry().NY,
-             SystemParameters::Geometry().NZ};
+    _grid = {SysParams::Geometry().NX,
+             SysParams::Geometry().NY,
+             SysParams::Geometry().NZ};
     
-    _compartmentSize = {SystemParameters::Geometry().compartmentSizeX,
-                        SystemParameters::Geometry().compartmentSizeY,
-                        SystemParameters::Geometry().compartmentSizeZ};
+    _compartmentSize = {SysParams::Geometry().compartmentSizeX,
+                        SysParams::Geometry().compartmentSizeY,
+                        SysParams::Geometry().compartmentSizeZ};
     
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&

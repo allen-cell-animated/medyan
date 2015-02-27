@@ -25,7 +25,8 @@
 
 TEST(CMonomer, Main) {
     
-    SystemParameters::CParams.numFilamentSpecies = 2;
+    SysParams
+//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
     
     CMonomer* m1 = new CMonomer;
     Compartment* c1 = new Compartment;
@@ -52,7 +53,8 @@ TEST(CMonomer, Main) {
 
 TEST(CCylinder, Basic) {
     
-    SystemParameters::CParams.numFilamentSpecies = 2;
+    SysParams
+//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(new ChemSimpleGillespieImpl);
     ChemSim::initialize();
@@ -101,7 +103,8 @@ TEST(CCylinder, Basic) {
 
 TEST(CCylinder, AdvancedCloning) {
     
-    SystemParameters::CParams.numFilamentSpecies = 2;
+    SysParams
+//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(new ChemSimpleGillespieImpl);
     ChemSim::initialize();

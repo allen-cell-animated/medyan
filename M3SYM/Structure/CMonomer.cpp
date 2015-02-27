@@ -15,36 +15,36 @@
 
 #include "CBound.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 CMonomer::CMonomer() {
     
     short numFilamentSpecies =
-        SystemParameters::Chemistry().numFilamentSpecies;
+        SysParams::Chemistry().numFilamentSpecies;
     _speciesFilament = new SpeciesFilament*[numFilamentSpecies]();
     
     short numPlusEndSpecies =
-        SystemParameters::Chemistry().numPlusEndSpecies;
+        SysParams::Chemistry().numPlusEndSpecies;
     _speciesPlusEnd = new SpeciesPlusEnd*[numPlusEndSpecies]();
     
     short numMinusEndSpecies =
-        SystemParameters::Chemistry().numMinusEndSpecies;
+        SysParams::Chemistry().numMinusEndSpecies;
     _speciesMinusEnd = new SpeciesMinusEnd*[numMinusEndSpecies]();
     
     short numBoundSpecies =
-        SystemParameters::Chemistry().numBoundSpecies;
+        SysParams::Chemistry().numBoundSpecies;
     _speciesBound = new SpeciesBound*[numBoundSpecies]();
     
     short numLinkerSpecies =
-        SystemParameters::Chemistry().numLinkerSpecies;
+        SysParams::Chemistry().numLinkerSpecies;
     _speciesLinker = new SpeciesLinker*[numLinkerSpecies]();
     
     short numMotorSpecies =
-        SystemParameters::Chemistry().numMotorSpecies;
+        SysParams::Chemistry().numMotorSpecies;
     _speciesMotor = new SpeciesMotor*[numMotorSpecies]();
     
     short numBrancherSpecies =
-        SystemParameters::Chemistry().numBrancherSpecies;
+        SysParams::Chemistry().numBrancherSpecies;
     _speciesBrancher = new SpeciesBrancher*[numBrancherSpecies]();
 
 };
@@ -63,7 +63,7 @@ CMonomer::~CMonomer() noexcept{
 
 CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
 
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = rhs._speciesFilament[i];
         SpeciesFilament* sNew = s->clone();
@@ -71,7 +71,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         addSpeciesFilament(sNew);
     }
     
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = rhs._speciesPlusEnd[i];
         SpeciesPlusEnd* sNew = s->clone();
@@ -79,7 +79,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         addSpeciesPlusEnd(sNew);
     }
     
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = rhs._speciesMinusEnd[i];
         SpeciesMinusEnd* sNew = s->clone();
@@ -88,7 +88,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
     }
     
     //For bound species, transfer the CBound (if any)
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    short numBoundSpecies = SysParams::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = rhs._speciesBound[i];
         SpeciesBound* sNew = s->clone();
@@ -103,7 +103,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         }
     }
     
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = rhs._speciesLinker[i];
         SpeciesLinker* sNew = s->clone();
@@ -118,7 +118,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         }
     }
     
-    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+    short numMotorSpecies = SysParams::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = rhs._speciesMotor[i];
         SpeciesMotor* sNew = s->clone();
@@ -132,7 +132,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
             else cBound->setSecondSpecies(sNew);
         }
     }
-    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies;
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBrancher* s = rhs._speciesBrancher[i];
         SpeciesBrancher* sNew = s->clone();
@@ -150,7 +150,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
 
 void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
     
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         if(_speciesFilament[i] == 0) {
             _speciesFilament[i] = s;
@@ -161,7 +161,7 @@ void CMonomer::addSpeciesFilament(SpeciesFilament* s) {
 
 void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
     
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         if(_speciesPlusEnd[i] == 0) {
             _speciesPlusEnd[i] = s;
@@ -172,7 +172,7 @@ void CMonomer::addSpeciesPlusEnd(SpeciesPlusEnd* s) {
 
 void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
     
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         if(_speciesMinusEnd[i] == 0) {
             _speciesMinusEnd[i] = s;
@@ -183,7 +183,7 @@ void CMonomer::addSpeciesMinusEnd(SpeciesMinusEnd* s) {
 
 void CMonomer::addSpeciesBound(SpeciesBound* s) {
     
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    short numBoundSpecies = SysParams::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         if(_speciesBound[i] == 0) {
             _speciesBound[i] = s;
@@ -194,7 +194,7 @@ void CMonomer::addSpeciesBound(SpeciesBound* s) {
 
 void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
     
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         if(_speciesLinker[i] == 0) {
             _speciesLinker[i] = s;
@@ -205,7 +205,7 @@ void CMonomer::addSpeciesLinker(SpeciesLinker* s) {
 
 void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
     
-    short numMotorSpecies= SystemParameters::Chemistry().numMotorSpecies;
+    short numMotorSpecies= SysParams::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         if(_speciesMotor[i] == 0) {
             _speciesMotor[i] = s;
@@ -216,7 +216,7 @@ void CMonomer::addSpeciesMotor(SpeciesMotor* s) {
 
 void CMonomer::addSpeciesBrancher(SpeciesBrancher* s) {
     
-    short numBrancherSpecies= SystemParameters::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies= SysParams::Chemistry().numBrancherSpecies;
     for(int i = 0; i < numBrancherSpecies; i++) {
         if(_speciesBrancher[i] == 0) {
             _speciesBrancher[i] = s;
@@ -228,43 +228,43 @@ void CMonomer::addSpeciesBrancher(SpeciesBrancher* s) {
 
 void CMonomer::print()
 {
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = _speciesPlusEnd[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = _speciesMinusEnd[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    short numBoundSpecies = SysParams::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = _speciesLinker[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+    short numMotorSpecies = SysParams::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = _speciesMotor[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
     }
     
-    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies;
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBrancher* s = _speciesBrancher[i];
         if(s != nullptr && s->getN() >= 1) cout << s->getName();
@@ -273,7 +273,7 @@ void CMonomer::print()
 }
 
 short CMonomer::activeSpeciesFilament() {
-    short numFilamentSpecies = SystemParameters::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -281,7 +281,7 @@ short CMonomer::activeSpeciesFilament() {
     return -1;
 }
 short CMonomer::activeSpeciesPlusEnd() {
-    short numPlusEndSpecies = SystemParameters::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesPlusEnd* s = _speciesPlusEnd[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -289,7 +289,7 @@ short CMonomer::activeSpeciesPlusEnd() {
     return -1;
 }
 short CMonomer::activeSpeciesMinusEnd() {
-    short numMinusEndSpecies = SystemParameters::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesMinusEnd* s = _speciesMinusEnd[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -298,7 +298,7 @@ short CMonomer::activeSpeciesMinusEnd() {
 }
 
 short CMonomer::activeSpeciesBound() {
-    short numBoundSpecies = SystemParameters::Chemistry().numBoundSpecies;
+    short numBoundSpecies = SysParams::Chemistry().numBoundSpecies;
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -306,7 +306,7 @@ short CMonomer::activeSpeciesBound() {
     return -1;
 }
 short CMonomer::activeSpeciesLinker() {
-    short numLinkerSpecies = SystemParameters::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesLinker* s = _speciesLinker[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -315,7 +315,7 @@ short CMonomer::activeSpeciesLinker() {
     
 }
 short CMonomer::activeSpeciesMotor() {
-    short numMotorSpecies = SystemParameters::Chemistry().numMotorSpecies;
+    short numMotorSpecies = SysParams::Chemistry().numMotorSpecies;
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesMotor* s = _speciesMotor[i];
         if(s != nullptr && s->getN() >= 1) return i;
@@ -323,7 +323,7 @@ short CMonomer::activeSpeciesMotor() {
     return -1;
 }
 short CMonomer::activeSpeciesBrancher() {
-    short numBrancherSpecies = SystemParameters::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies;
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBrancher* s = _speciesBrancher[i];
         if(s != nullptr && s->getN() >= 1) return i;

@@ -16,7 +16,7 @@
 #include "Boundary.h"
 
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -30,16 +30,16 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
     while (filamentCounter < numFilaments) {
         
         double firstX = randomDouble(0,1) *
-            SystemParameters::Geometry().compartmentSizeX *
-            SystemParameters::Geometry().NX;
+            SysParams::Geometry().compartmentSizeX *
+            SysParams::Geometry().NX;
         
         double firstY = randomDouble(0,1) *
-            SystemParameters::Geometry().compartmentSizeY *
-        SystemParameters::Geometry().NY;
+            SysParams::Geometry().compartmentSizeY *
+        SysParams::Geometry().NY;
         
         double firstZ = randomDouble(0,1) *
-            SystemParameters::Geometry().compartmentSizeZ *
-            SystemParameters::Geometry().NZ;
+            SysParams::Geometry().compartmentSizeZ *
+            SysParams::Geometry().NZ;
         
         double directionX = randomDouble(-1,1);
         double directionY = randomDouble(-1,1);
@@ -58,7 +58,7 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
         
         vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *
-            SystemParameters::Geometry().cylinderSize - 0.01, direction);
+            SysParams::Geometry().cylinderSize - 0.01, direction);
         
         if(b->within(firstPoint) && b->within(secondPoint)) {
             filamentData.push_back({firstPoint, secondPoint});

@@ -17,7 +17,7 @@
 #include "common.h"
 
 #include "NeighborListContainer.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -30,7 +30,7 @@ private:
 public:
     ///Constructor, initializes a cylinder neighbor list
     CylinderVolumeInteractions()
-        : CCNLContainer(SystemParameters::Mechanics().VolumeCutoff) {}
+        : CCNLContainer(SysParams::Mechanics().VolumeCutoff) {}
     
     /// Compute the energy of this interaction
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;

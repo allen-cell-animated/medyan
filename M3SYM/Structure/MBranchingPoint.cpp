@@ -13,18 +13,18 @@
 
 #include "MBranchingPoint.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 MBranchingPoint::MBranchingPoint(int branchType) {
     
     //set parameters
-    _kStretch = SystemParameters::Mechanics().BrStretchingK[branchType];
-    _eqLength = SystemParameters::Mechanics().BrStretchingL[branchType];
+    _kStretch = SysParams::Mechanics().BrStretchingK[branchType];
+    _eqLength = SysParams::Mechanics().BrStretchingL[branchType];
 
-    _kBend = SystemParameters::Mechanics().BrBendingK[branchType];
-    _eqTheta = SystemParameters::Mechanics().BrBendingTheta[branchType];
+    _kBend = SysParams::Mechanics().BrBendingK[branchType];
+    _eqTheta = SysParams::Mechanics().BrBendingTheta[branchType];
     
-    _kDihedr = SystemParameters::Mechanics().BrDihedralK[branchType];
+    _kDihedr = SysParams::Mechanics().BrDihedralK[branchType];
  
-    _kPosition = SystemParameters::Mechanics().BrPositionK[branchType];
+    _kPosition = SysParams::Mechanics().BrPositionK[branchType];
 }

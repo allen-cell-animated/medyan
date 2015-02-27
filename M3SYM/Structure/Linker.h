@@ -23,7 +23,7 @@
 #include "MLinker.h"
 #include "Movable.h"
 #include "Reactable.h"
-#include "RateChanger.h"
+#include "RateChangerImpl.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -58,7 +58,7 @@ private:
     Compartment* _compartment; ///< Where this linker is
     
     ///For dynamic rate unbinding
-    static vector<RateChanger*> _unbindingChangers;
+    static vector<LinkerRateChanger*> _unbindingChangers;
     
 public:
     vector<double> coordinate;

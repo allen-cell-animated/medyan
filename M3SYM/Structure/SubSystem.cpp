@@ -20,7 +20,7 @@
 #include "BoundaryElement.h"
 
 #include "MathFunctions.h"
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 //FILAMENTS
 void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
@@ -29,7 +29,7 @@ void SubSystem::addNewFilaments(vector<vector<vector<double> >>& v){
         double d = mathfunc::twoPointDistance(it[0], it[1]);
         vector<double> tau = mathfunc::twoPointDirection(it[0], it[1]);
         
-        int numSegment = d / SystemParameters::Geometry().cylinderSize;
+        int numSegment = d / SysParams::Geometry().cylinderSize;
         
         // check how many segments can fit between end-to-end of the filament
         if (numSegment == 0) new Filament(this, it[0], tau, false, false);

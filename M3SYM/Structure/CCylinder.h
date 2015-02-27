@@ -19,7 +19,7 @@
 #include "CMonomer.h"
 #include "Compartment.h"
 
-#include "SystemParameters.h"
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -54,8 +54,8 @@ private:
     Compartment* _compartment; ///< Compartment this ccylinder is in
     Cylinder* _pCylinder; ///< Parent cylinder
     
-    short _size = SystemParameters::Geometry().cylinderSize /
-                  SystemParameters::Geometry().monomerSize; ///< Maximum length
+    short _size = SysParams::Geometry().cylinderSize /
+                  SysParams::Geometry().monomerSize; ///< Maximum length
     
 public:
     /// Default constructor, sets compartment

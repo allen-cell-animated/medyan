@@ -17,8 +17,7 @@
 #include "common.h"
 
 #include "NeighborListContainer.h"
-#include "SystemParameters.h"
-
+#include "SysParams.h"
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
@@ -31,7 +30,7 @@ private:
 public:
     /// Constructor, intializes the neighbor list needed
     BoundaryInteractions()
-        : BBENLContainer(SystemParameters::Boundaries().BoundaryCutoff) {}
+    : BBENLContainer(SysParams::Boundaries().BoundaryCutoff) {}
     
     /// Compute energy of this interaction
     virtual double computeEnergy(BoundaryElement*, Bead*, double d) = 0;

@@ -21,23 +21,31 @@
 #include "common.h"
 
 #include "GController.h"
-#include "SystemParameters.h"
-
+#include "SysParams.h"
 ///testing basic initialization and getters
 TEST(GeometryTest, Basic) {
 
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 10.0;
-    SystemParameters::GParams.compartmentSizeZ = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
     
-    SystemParameters::GParams.NX = 5;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
     
-    SystemParameters::GParams.monomerSize = 2.7;
-    SystemParameters::GParams.cylinderSize = 27.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.monomerSize = 2.7;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 27.0;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -55,18 +63,27 @@ TEST(GeometryTest, Basic) {
 
 TEST(GeometryTest, NonCubicGrid) {
     
-    SystemParameters::GParams.compartmentSizeX = 10.0;
-    SystemParameters::GParams.compartmentSizeY = 20.0;
-    SystemParameters::GParams.compartmentSizeZ = 100.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 20.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 100.0;
     
-    SystemParameters::GParams.NX = 15;
-    SystemParameters::GParams.NY = 5;
-    SystemParameters::GParams.NZ = 10;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NX = 15;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NY = 5;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.NZ = 10;
     
-    SystemParameters::GParams.monomerSize = 1;
-    SystemParameters::GParams.cylinderSize = 5.0;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.monomerSize = 1;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 5.0;
     
-    SystemParameters::GParams.nDim = 3;
+    SysParams
+//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
