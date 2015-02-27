@@ -51,14 +51,11 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
                 return;
             
             //get two params for each
-            double a1 = SysParams::DynamicRates().
-                        dLinkerUnbindingAmplitude[ampIndex];
-            double a2 = SysParams::DynamicRates().
-                        dLinkerUnbindingAmplitude[ampIndex + 1];
-            double x1 = SysParams::DynamicRates().
-                        dLinkerUnbindingCharLength[charLengthIndex];
-            double x2 = SysParams::DynamicRates().
-                        dLinkerUnbindingCharLength[charLengthIndex + 1];
+            double a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
+            double a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
+            
+            double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
+            double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
             
             //add the rate changer
             Linker::_unbindingChangers.push_back(
