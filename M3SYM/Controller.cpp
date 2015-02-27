@@ -36,10 +36,10 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     _subSystem = new SubSystem();
     
     //init controllers
-    _mController = new MController(_subSystem);
-    _cController = new CController(_subSystem);
-    _gController = new GController();
-    _drController = new DRController();
+    _mController   = new MController(_subSystem);
+    _cController   = new CController(_subSystem);
+    _gController   = new GController();
+    _drController  = new DRController();
 }
 
 void Controller::initialize(string inputFile,
