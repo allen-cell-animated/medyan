@@ -217,7 +217,7 @@ The following mechanical parameters can be set. It should be noted that the numb
 
 \subsubsection{Chemistry}
 
-The following chemical parameters can be set. The number of species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field. All chemical parameters must be set unless otherwise noted in the description. For more information on chemical algorithms, see (*paper*)
+The following chemical parameters can be set. The number of species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field. All chemical parameters must be set unless otherwise noted in the description. For the motor parameters, the number of parameters must match the number of motor species in the system. For more information on chemical algorithms, see (*paper*)
 
 \begin{longtable}{|L{4.9cm}|C{2.5cm}|L{4.75cm}|}  
 \hline
@@ -261,6 +261,12 @@ The following chemical parameters can be set. The number of species of each type
     NUMBINDINGSITES & int & Number of binding sites per cylinder. This will set binding sites for cross-linkers,
     motors, and other binding molecules. \\
   \hline
+    NUMMOTORHEADSMIN & int & Minimum number of motor heads per motor species defined. \\
+    \hline
+    NUMMOTORHEADSMAX & int & Maximum number of motor heads per motor species defined. \\
+    \hline
+    MOTORSTEPSIZE & double & Single motor head step size. \\
+    \hline
  
 \end{longtable}
 
@@ -278,25 +284,23 @@ The number of parameters specified for each type of dynamic rate form must match
  \hline
   DFPOLYMERIZATIONLEN & double & Characteristic length for filament polymerization dynamic rate form \\
   \hline
-  DLUNBINDINGTYPE & CATCHSLIP, SLIP & Cross-linker unbinding dynamic rate form. If CATCHSLIP, two
-  parameters for DLUNBINDINGLEN and DLUNBINDINGAMP are needed to define the functional form. If SLIP, one 
+  DLUNBINDINGTYPE & BASICCATCHSLIP, BASICSLIP & Cross-linker unbinding dynamic rate form. 
+  If BASICCATCHSLIP, two
+  parameters for DLUNBINDINGLEN and DLUNBINDINGAMP are needed to define the functional form. 
+  If BASICSLIP, one 
   DLUNBIDINGLEN is needed to define the functional form. \\
   \hline
   DLUNBINDINGLEN & double & Characteristic length of cross-linker unbinding dynamic rate form \\
   \hline
    DLUNBINDINGAMP & double & Amplitude of cross-linker unbinding dynamic rate form \\
   \hline
-    DMUNBINDINGTYPE & CATCHSLIP, SLIP & Myosin II unbinding dynamic rate form. If CATCHSLIP, two
-  parameters for DMUNBINDINGLEN and DMNBINDINGAMP are needed to define the functional form. If SLIP, one 
-  DMUNBIDINGLEN is needed to define the functional form. \\
+    DMUNBINDINGTYPE & LOWDUTYPCMCATCH & Myosin II unbinding dynamic rate form. \\
   \hline
-  DMUNBINDINGLEN & double & Characteristic length of myosin II unbinding dynamic rate form \\
+  DMUNBINDINGFORCE & double & Characteristic force of myosin II unbinding dynamic rate form \\
   \hline
-   DMUNBINDINGAMP & double & Amplitude of myosin II unbinding dynamic rate form \\
+  DMWALKINGTYPE & LOWDUTYHILLSTALL & Myosin II walking dynamic rate form \\ 
   \hline
-  DMWALKINGTYPE & EXPSTALL & Myosin II walking dynamic rate form \\ 
-  \hline
-  DMWALKINGLEN & double & Characteristic length of myosin II walking dynamic rate form \\
+  DMWALKINGLEN & double & Characteristic force of myosin II walking dynamic rate form \\
   \hline
  
 \end{longtable}

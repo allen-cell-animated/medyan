@@ -44,10 +44,8 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         if(changer == "BASICCATCHSLIP") {
             
             //if user did not specify enough parameters, return
-            if(ampIndex + 1 >= SysParams::DynamicRates().
-                               dLinkerUnbindingAmplitude.size() ||
-               charLengthIndex + 1 >= SysParams::DynamicRates().
-                                      dLinkerUnbindingCharLength.size() )
+            if(ampIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingAmplitude.size() ||
+               charLengthIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size())
                 return;
             
             //get two params for each
@@ -68,8 +66,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         else if(changer == "BASICSLIP") {
             
             //if user did not specify enough parameters, return
-            if(charLengthIndex >= SysParams::DynamicRates().
-                                  dLinkerUnbindingCharLength.size() )
+            if(charLengthIndex >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size() )
                 return;
             
             //get the param
@@ -96,13 +93,11 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         if(changer == "LOWDUTYPCMCATCH") {
             
             //if user did not specify enough parameters, return
-            if(forceIndex >= SysParams::DynamicRates().
-                              dMotorUnbindingCharForce.size())
+            if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
                 return;
             
             //get two params for each
-            double f = SysParams::DynamicRates().
-                       dMotorUnbindingCharForce[forceIndex];
+            double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
             
             //add the rate changer
             MotorGhost::_unbindingChangers.push_back(new LowDutyPCMCatch(motorIndex, f));
@@ -123,13 +118,11 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
         if(changer == "LOWDUTYHILLSTALL") {
             
             //if user did not specify enough parameters, return
-            if(forceIndex >= SysParams::DynamicRates().
-                                dMotorWalkingCharForce.size())
+            if(forceIndex >= SysParams::DynamicRates().dMotorWalkingCharForce.size())
                 return;
             
             //get the param
-            double f = SysParams::DynamicRates().
-                       dMotorWalkingCharForce[forceIndex];
+            double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
             
             //add the rate changer
             MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, f));
