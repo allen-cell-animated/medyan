@@ -1022,8 +1022,7 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 onSpecies.insert(onSpecies.end(), productSpecies.begin(),
                                  productSpecies.end());
                 ReactionBase* onRxn =
-                new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>
-                (onSpecies, onRate);
+                new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>(onSpecies, onRate);
                 
                 //set up callbacks
 #ifdef REACTION_SIGNALING
