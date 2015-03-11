@@ -305,6 +305,7 @@ void Controller::run() {
     
     updatePositions();
     updateNeighborLists(true);
+    
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
@@ -319,7 +320,10 @@ void Controller::run() {
         int i = 0;
         while(tau() <= _runTime) {
             //run ccontroller
-            if(!_cController->run(_numChemSteps)) break;
+            if(!_cController->run(_numChemSteps)) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+                break;
+            }
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;
@@ -365,7 +369,10 @@ void Controller::run() {
 #ifdef CHEMISTRY
         for(int i = 0; i < _numTotalSteps; i+=_numChemSteps) {
             //run ccontroller
-            if(!_cController->run(_numChemSteps)) break;
+            if(!_cController->run(_numChemSteps)) {
+                for(auto o: _outputs) o->print(i + _numChemSteps);
+                break;
+            }
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;

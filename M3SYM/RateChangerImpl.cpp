@@ -38,7 +38,7 @@ float LowDutyPCMCatch::changeRate(float bareRate, int numHeads, double force) {
 
     //determine N_b
     float N_b = min(double(numHeads), 0.1 * numHeads + (force * 0.04));
-    
+
     //calculate new rate
     return (bareRate / N_b) * exp(-force / (N_b * _F0));
 }

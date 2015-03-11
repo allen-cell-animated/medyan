@@ -154,7 +154,7 @@ public:
     /// Returns the rate associated with this ReactionBase.
     float getRate() const {return _rate;}
     
-    /// Returns the bare rate associated with this ReacitonBase
+    /// Returns the bare rate associated with this ReactionBase
     float getBareRate() const {return _rate_bare;}
     
     /// Returns a pointer to the RNode associated with this ReactionBase.

@@ -165,6 +165,12 @@ bool ChemNRMImpl::makeStep() {
         rn_other->reComputePropensity();
         double tau_new;
         double tau_old = rn_other->getTau();
+        
+        if(tau_old < 0) {
+            
+            cout << "We have a big problem" << endl;
+        }
+        
         double a_new = rn_other->getPropensity();
 #ifdef TRACK_ZERO_COPY_N
         tau_new = (a_old/a_new)*(tau_old-_t)+_t;

@@ -85,7 +85,9 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
         else species.push_back(vit->get());
     }
     //Create new reaction, copy ownership of signal
-    Reaction* newReaction = new Reaction<M,N>(species,_rate);
+    Reaction* newReaction = new Reaction<M,N>(species, _rate_bare);
+    newReaction->setRate(_rate);
+    
 #ifdef REACTION_SIGNALING
     newReaction->_signal = std::move(_signal);
     _signal = nullptr;

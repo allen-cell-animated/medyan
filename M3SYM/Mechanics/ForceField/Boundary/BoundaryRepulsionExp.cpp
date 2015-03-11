@@ -15,17 +15,22 @@
 
 #include "Bead.h"
 
+#include "SysParams.h"
+
 double BoundaryRepulsionExp::computeEnergy(Bead* b, double r,
                                            double kRep, double screenLength) {
+    //ceiling to avoid blowups
     double R = -r/screenLength;
-    return kRep * exp(R);
+    return min(kRep * exp(R), SysParams::Boundaries().BCeiling * kRep);
 }
 
 void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm,
                                          double kRep, double screenLength) {
     
+    //ceiling to avoid blowups
     double R = -r/screenLength;
-    double f0 = kRep * exp(R)/screenLength;
+    double f0 = min(kRep * exp(R)/screenLength,
+                    kRep * SysParams::Boundaries().BCeiling  / screenLength);
 
     //update the load force of the bead
     b->loadForce = f0;
@@ -39,8 +44,10 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
 void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,
                                             double kRep, double screenLength) {
     
+    //ceiling to avoid blowups
     double R = -r/screenLength;
-    double f0 = kRep * exp(R)/screenLength;
+    double f0 = min(kRep * exp(R)/screenLength,
+                    kRep * SysParams::Boundaries().BCeiling  / screenLength);
     
     //update the load force of the bead
     b->loadForce = f0;

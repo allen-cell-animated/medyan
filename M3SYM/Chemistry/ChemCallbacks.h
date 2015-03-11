@@ -471,7 +471,7 @@ struct MotorWalkingForwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                        ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+                        ({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
         }
         else {
             newPosition = m->getSecondPosition() + shift;
@@ -489,7 +489,7 @@ struct MotorWalkingForwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                        ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+                        ({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
         }
         //set new reaction type
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -575,7 +575,7 @@ struct MotorMovingCylinderForwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                        ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+                        ({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
             
             //remove old off reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -597,7 +597,7 @@ struct MotorMovingCylinderForwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                        ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+                        ({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
             
             //remove old off reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -683,7 +683,7 @@ struct MotorWalkingBackwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-            ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            ({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
         }
         else {
             newPosition = m->getSecondPosition() - shift;
@@ -701,7 +701,7 @@ struct MotorWalkingBackwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-            ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            ({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
         }
         //set new reaction type
         newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -788,7 +788,7 @@ struct MotorMovingCylinderBackwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-            ({sm2, s1, sb2, s3, s4}, offRxn->getRate());
+            ({sm2, s1, sb2, s3, s4}, offRxn->getBareRate());
             
             //remove old off reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);
@@ -810,7 +810,7 @@ struct MotorMovingCylinderBackwardCallback {
             
             //create new reaction
             newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-            ({s0, sm2, s2, sb2, s4}, offRxn->getRate());
+            ({s0, sm2, s2, sb2, s4}, offRxn->getBareRate());
             
             //remove old off reaction
             cc1->removeCrossCylinderReaction(cc2, offRxn);

@@ -176,7 +176,7 @@ void MotorGhost::updateReactionRates() {
                       midPointCoordinate(c1b1, c1b2, _position1));
     
     vector<double> c1Direction = twoPointDirection(c1b2,c1b1);
-    vector<double> c2Direction = twoPointDirection(c2b2, c2b1);
+    vector<double> c2Direction = twoPointDirection(c2b2,c2b1);
     
     double forceDotDirectionC1 =
         max(0.0, force * dotProduct(motorC1Direction, c1Direction));
