@@ -37,7 +37,7 @@ protected:
     /// Lambda parameter for use in linear search methods
     const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned,
                                     ///< used in all methods
-    const double LAMBDAMAX = 1.0;   ///< Max lambda that can be returned,
+    const double LAMBDAMAX = 0.1;   ///< Max lambda that can be returned,
                                     ///<used in all methods
     const double MAXDIST = 0.1;     ///< Max distance parameter,
                                     ///< used only in backtracking line search

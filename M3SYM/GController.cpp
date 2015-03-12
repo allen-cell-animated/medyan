@@ -30,15 +30,33 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
     {
         //Flatten the indices to 1D
         if(i == 0) {
-            if(x >= _grid[0]) { throw OutOfBoundsException();}
+            if(x >= _grid[0]) {
+                cout << endl;
+                cout << "Element coordinate = " << indices[0] << ", "
+                                                << indices[1] << ", "
+                                                << indices[2] << endl;
+                throw OutOfBoundsException();
+            }
             index += x;
         }
         else if(i == 1) {
-            if(x >= _grid[1]) { throw OutOfBoundsException();}
+            if(x >= _grid[1]) {
+                cout << endl;
+                cout << "Element coordinate = " << indices[0] << ", "
+                                                << indices[1] << ", "
+                                                << indices[2] << endl;
+                throw OutOfBoundsException();
+            }
             index += x * _grid[0];
         }
         else {
-            if(x >= _grid[2]) { throw OutOfBoundsException();}
+            if(x >= _grid[2]) {
+                cout << endl;
+                cout << "Element coordinate = " << indices[0] << ", "
+                                                << indices[1] << ", "
+                                                << indices[2] << endl;
+                throw OutOfBoundsException();
+            }
             index += x * _grid[0] * _grid[1];
         }
         
@@ -58,18 +76,30 @@ Compartment* GController::getCompartment(const vector<double> &coords)
         //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
             if(x < 0 || x >= (_compartmentSize[0] * _grid[0])) {
+                cout << endl;
+                cout << "Element coordinate = " << coords[0] << ", "
+                                                << coords[1] << ", "
+                                                << coords[2] << endl;
                 throw OutOfBoundsException();
             }
             index += int(x / _compartmentSize[0]);
         }
         else if(i == 1) {
             if(x < 0 || x >= (_compartmentSize[1] * _grid[1])) {
+                cout << endl;
+                cout << "Element coordinate = " << coords[0] << ", "
+                                                << coords[1] << ", "
+                                                << coords[2] << endl;
                 throw OutOfBoundsException();
             }
             index += int(x / _compartmentSize[1]) * _grid[0];
         }
         else {
             if(x < 0 || x >= (_compartmentSize[2] * _grid[2])) {
+                cout << endl;
+                cout << "Element coordinate = " << coords[0] << ", "
+                                                << coords[1] << ", "
+                                                << coords[2] << endl;
                 throw OutOfBoundsException();
             }
             index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
@@ -178,8 +208,9 @@ void GController::activateCompartments(Boundary* boundary) {
     }
 }
 
-void GController::findCompartments(const vector<double>& coords, Compartment* ccheck,
-                                   double dist, vector<Compartment*>& compartments) {
+void GController::findCompartments(const vector<double>& coords,
+                                   Compartment* ccheck, double dist,
+                                   vector<Compartment*>& compartments) {
     
     //base case : if c and ccheck are not within range, return
     if(twoPointDistance(coords, ccheck->coordinates()) > dist ) return;
@@ -206,9 +237,10 @@ Compartment* GController::getRandomCompartment() {
     while(true) {
         
         //create a random coordinate
-        vector<double> coord = {_grid[0] * _compartmentSize[0] * randomDouble(0,1),
-                                _grid[1] * _compartmentSize[1] * randomDouble(0,1),
-                                _grid[2] * _compartmentSize[2] * randomDouble(0,1)};
+        vector<double> coord =
+        {_grid[0] * _compartmentSize[0] * randomDouble(0,1),
+         _grid[1] * _compartmentSize[1] * randomDouble(0,1),
+         _grid[2] * _compartmentSize[2] * randomDouble(0,1)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;
@@ -222,11 +254,11 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     vector<double> coords;
     
     coords.push_back(coordsCompartment[0] +
-                     _compartmentSize[0] * randomDouble(-1,1) / 2);
+        _compartmentSize[0] * randomDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[1] +
-                     _compartmentSize[1] * randomDouble(-1,1) / 2);
+        _compartmentSize[1] * randomDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[2] +
-                     _compartmentSize[2] * randomDouble(-1,1) / 2);
+        _compartmentSize[2] * randomDouble(-1,1) / 2);
     return coords;
 }
 

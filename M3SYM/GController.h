@@ -68,8 +68,9 @@ public:
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be
     /// populated by the function
-    static void findCompartments(const vector<double>& coords, Compartment* ccheck,
-                                 double dist, vector<Compartment*>& compartments);
+    static void findCompartments(const vector<double>& coords,
+                                 Compartment* ccheck, double dist,
+                                 vector<Compartment*>& compartments);
     
     /// Choose a random compartment from the grid (that is activated)
     static Compartment* getRandomCompartment();
