@@ -61,7 +61,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 void CCylinder::addInternalReaction(ReactionBase* r) {
     
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
+    _compartment->addInternalReactionUnique(
+                  unique_ptr<ReactionBase>(r));
     ChemSim::addReaction(r);
     
     //add to local reaction list
@@ -69,24 +70,6 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     
     //activate reaction
     r->activateReaction();
-}
-
-void CCylinder::addCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
-    
-    //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
-    ChemSim::addReaction(r);
-    
-    //add to this reaction map
-    _crossCylinderReactions[other].insert(r);
-    other->addReactingCylinder(this);
-    
-    //activate reaction
-    r->activateReaction();
-}
-
-void CCylinder::addReactingCylinder(CCylinder* other) {
-    _reactingCylinders.insert(other);
 }
 
 
@@ -101,9 +84,29 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         //remove from compartment and chemsim
         ChemSim::removeReaction(r);
         _compartment->removeInternalReaction(r);
-            
+        
         _internalReactions.erase(r);
     }
+}
+
+void CCylinder::addCrossCylinderReaction(CCylinder* other,
+                                         ReactionBase* r) {
+    
+    //add to compartment and chemsim
+    _compartment->addInternalReactionUnique(
+                  unique_ptr<ReactionBase>(r));
+    ChemSim::addReaction(r);
+    
+    //add to this reaction map
+    _crossCylinderReactions[other].insert(r);
+    other->addReactingCylinder(this);
+    
+    //activate reaction
+    r->activateReaction();
+}
+
+void CCylinder::addReactingCylinder(CCylinder* other) {
+    _reactingCylinders.insert(other);
 }
 
 void CCylinder:: removeAllInternalReactions() {
@@ -112,7 +115,8 @@ void CCylinder:: removeAllInternalReactions() {
     for (auto &r : tempReactions) removeInternalReaction(r);
 }
 
-void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
+void CCylinder::removeCrossCylinderReaction(CCylinder* other,
+                                            ReactionBase* r) {
     
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) {
@@ -133,7 +137,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
             
             _crossCylinderReactions.erase(other);
             
-            //also remove from reacting list of other ccylinder
+            //also remove from reacting of other ccylinder
             auto it2 =other->_reactingCylinders.find(this);
             
             if(it2 != other->_reactingCylinders.end())
@@ -142,15 +146,17 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other, ReactionBase* r) {
     }
 }
 
-void CCylinder::removeCrossCylinderReactions(CCylinder* other, bool bindingOnly) {
+void CCylinder::removeCrossCylinderReactions(CCylinder* other,
+                                             bool bindingOnly) {
     
     auto tempReactions = _crossCylinderReactions[other];
     for(auto &r : tempReactions) {
         
         if(bindingOnly) {
-            if (!(r->getReactionType() == ReactionType::LINKERUNBINDING
-                || r->getReactionType() == ReactionType::MOTORUNBINDING))
-
+            if (!(r->getReactionType() == ReactionType::
+                                          LINKERUNBINDING
+                ||r->getReactionType() == ReactionType::
+                                          MOTORUNBINDING))
                 removeCrossCylinderReaction(other, r);
         }
         else removeCrossCylinderReaction(other, r);
@@ -220,6 +226,12 @@ CCylinder::~CCylinder() {
             SysParams::Chemistry().numMotorSpecies;
         for(int i = 0; i < numMotorSpecies; i++) {
             SpeciesMotor* s = m->speciesMotor(i);
+            if(s != nullptr) _compartment->removeSpecies(s);
+        }
+        short numBrancherSpecies =
+            SysParams::Chemistry().numBrancherSpecies;
+        for(int i = 0; i < numBrancherSpecies; i++) {
+            SpeciesBrancher* s = m->speciesBrancher(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
     }

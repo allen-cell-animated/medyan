@@ -124,13 +124,13 @@ void ChemNRMImpl::initialize() {
     }
 }
 
-
 ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
 }
 
 double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
+    
     _exp_distr.param(pm);
     return _exp_distr(_eng);
 }
@@ -142,8 +142,7 @@ bool ChemNRMImpl::makeStep() {
     
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
-        cout <<
-        "The heap has been exhausted - no more reactions to fire, returning..." << endl;
+        cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
     _t=tau_top;
@@ -165,11 +164,6 @@ bool ChemNRMImpl::makeStep() {
         rn_other->reComputePropensity();
         double tau_new;
         double tau_old = rn_other->getTau();
-        
-        if(tau_old < 0) {
-            
-            cout << "We have a big problem" << endl;
-        }
         
         double a_new = rn_other->getPropensity();
 #ifdef TRACK_ZERO_COPY_N

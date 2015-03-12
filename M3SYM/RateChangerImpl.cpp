@@ -35,7 +35,7 @@ float BasicSlip::changeRate(float bareRate, double force) {
 }
 
 float LowDutyPCMCatch::changeRate(float bareRate, int numHeads, double force) {
-
+    
     //determine N_b
     float N_b = min(double(numHeads), 0.1 * numHeads + (force * 0.04));
 
@@ -45,14 +45,8 @@ float LowDutyPCMCatch::changeRate(float bareRate, int numHeads, double force) {
 
 float LowDutyHillStall::changeRate(float bareRate, int numHeads, double force) {
     
-    //calculate rate based on step fraction
-    double d_step = SysParams::Chemistry().motorStepSize[_motorType];
-    double d_total = (double)SysParams::Geometry().cylinderSize /
-                             SysParams::Chemistry().numBindingSites;
-    float stepFrac = d_step / d_total;
-    
     //determine k_0
-    float k_0 = 9.0 * bareRate * stepFrac;
+    float k_0 = 9.0 * bareRate * _stepFrac;
     
     //calculate new rate
     return  max(0.0, k_0 * (_F0 - force / numHeads)

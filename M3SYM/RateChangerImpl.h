@@ -18,6 +18,8 @@
 
 #include "RateChanger.h"
 
+#include "SysParams.h"
+
 /// A brownian ratchet implementation of the FilamentRateChanger.
 /// Used for filament polymerization when under load force.
 
@@ -149,10 +151,20 @@ class LowDutyHillStall : public MotorRateChanger  {
     
 private:
     double _F0;  ///< characteristic force
+    float _stepFrac = 1.0; ///< step size of a single head relative to sim
     
 public:
     LowDutyHillStall(short motorType, double charForce) :
-    MotorRateChanger(motorType), _F0(charForce) {}
+    MotorRateChanger(motorType), _F0(charForce) {
+    
+        //calculate rate based on step fraction
+        double d_step = SysParams::Chemistry().motorStepSize[_motorType];
+        
+        double d_total = (double)SysParams::Geometry().cylinderSize /
+                                 SysParams::Chemistry().numBindingSites;
+        
+        _stepFrac = d_step / d_total;
+    }
     
     virtual float changeRate(float bareRate, int numHeads, double force);
 };
