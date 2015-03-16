@@ -70,10 +70,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
     
-    SpeciesMotor* sm1 =
-        _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesMotor* sm2 =
-        _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
+    SpeciesBound* sm1 =
+    _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
+    SpeciesBound* sm2 =
+    _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
     
     if(!creation) {
         SpeciesBound* se1 =

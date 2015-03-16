@@ -443,8 +443,8 @@ struct MotorWalkingForwardCallback {
         //Find the motor
         CCylinder* cc = _c->getCCylinder();
         
-        SpeciesMotor* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
         SpeciesBound* sb2 = cc->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -546,8 +546,8 @@ struct MotorMovingCylinderForwardCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CCylinder* newCC = _newC->getCCylinder();
         
-        SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
         SpeciesBound* sb2 =newCC->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -655,8 +655,8 @@ struct MotorWalkingBackwardCallback {
         //Find the motor
         CCylinder* cc = _c->getCCylinder();
         
-        SpeciesMotor* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm1 = cc->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm2 = cc->getCMonomer(_newPosition)->speciesMotor(_motorType);
         SpeciesBound* sb2 = cc->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -758,8 +758,8 @@ struct MotorMovingCylinderBackwardCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CCylinder* newCC = _newC->getCCylinder();
         
-        SpeciesMotor* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
-        SpeciesMotor* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm1 =oldCC->getCMonomer(_oldPosition)->speciesMotor(_motorType);
+        SpeciesBound* sm2 =newCC->getCMonomer(_newPosition)->speciesMotor(_motorType);
         SpeciesBound* sb2 =newCC->getCMonomer(_newPosition)->speciesBound(_boundType);
         
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();

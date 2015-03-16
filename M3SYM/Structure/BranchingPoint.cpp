@@ -51,9 +51,9 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //it will have already been done.
     int pos = int(position * SysParams::Geometry().cylinderIntSize);
     
-    SpeciesBrancher* sb1 =
+    SpeciesBound* sb1 =
     _c1->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
-    SpeciesBrancher* sb2 =
+    SpeciesBound* sb2 =
     _c2->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
     
     if(!creation) {
@@ -105,7 +105,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         //find the free species
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
-        string speciesName = SpeciesNamesDB::Instance()->
+        string speciesName = SpeciesNamesDB::instance()->
         removeUniqueName(speciesFilament->getName());
         
         //find the free monomer, either bulk or diffusing

@@ -18,7 +18,7 @@
 
 SpeciesNamesDB* SpeciesNamesDB::_instance = 0;
 
-SpeciesNamesDB* SpeciesNamesDB::Instance() {
+SpeciesNamesDB* SpeciesNamesDB::instance() {
     if(_instance==0)
         _instance = new SpeciesNamesDB;
     return _instance;

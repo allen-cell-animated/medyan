@@ -437,7 +437,7 @@ public:
     /// @param - species_name, a string
     float getDiffusionRate(string species_name)
     {
-        int molecule = SpeciesNamesDB::Instance()->stringToInt(species_name);
+        int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
         return _diffusion_rates[molecule];
     }
     
@@ -459,7 +459,7 @@ public:
     /// @param - species_name, a string
     void setDiffusionRate(string species_name, float diff_rate)
     {
-        int molecule = SpeciesNamesDB::Instance()->stringToInt(species_name);
+        int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
         _diffusion_rates[molecule]=diff_rate;
     }
 

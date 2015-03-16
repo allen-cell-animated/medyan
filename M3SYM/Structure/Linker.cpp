@@ -62,10 +62,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
     
-    SpeciesLinker* sl1 =
-        _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
-    SpeciesLinker* sl2 =
-        _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
+    SpeciesBound* sl1 =
+    _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
+    SpeciesBound* sl2 =
+    _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
         
     if(!creation) {
         SpeciesBound* se1 =

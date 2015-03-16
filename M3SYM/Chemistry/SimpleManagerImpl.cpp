@@ -27,47 +27,63 @@ using namespace mathfunc;
 
 void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     
+    
+    // FILAMENT SPECIES
+    
+    int fIndex = 0;
     for(auto &f : _speciesFilament) {
         SpeciesFilament* sf =
         c->addSpeciesFilament(
-        SpeciesNamesDB::Instance()->genUniqueName(f));
-        m->addSpeciesFilament(sf);
+        SpeciesNamesDB::instance()->genUniqueName(f));
+        m->_speciesFilament[fIndex] = sf;
+        fIndex++;
     }
     for (auto &p : _speciesPlusEnd) {
         SpeciesPlusEnd* sp =
         c->addSpeciesPlusEnd(
-        SpeciesNamesDB::Instance()->genUniqueName(p));
-        m->addSpeciesPlusEnd(sp);
+        SpeciesNamesDB::instance()->genUniqueName(p));
+        m->_speciesFilament[fIndex] = sp;
+        fIndex++;
+                            
     }
     for (auto &mi : _speciesMinusEnd) {
         SpeciesMinusEnd* smi =
         c->addSpeciesMinusEnd(
-        SpeciesNamesDB::Instance()->genUniqueName(mi));
-        m->addSpeciesMinusEnd(smi);
+        SpeciesNamesDB::instance()->genUniqueName(mi));
+        m->_speciesFilament[fIndex] = smi;
+        fIndex++;
     }
+                            
+    // BOUND SPECIES
+    
+    int bIndex = 0;
     for (auto &b : _speciesBound) {
         SpeciesBound* sb =
         c->addSpeciesBound(
-        SpeciesNamesDB::Instance()->genUniqueName(b));
-        m->addSpeciesBound(sb);
+        SpeciesNamesDB::instance()->genUniqueName(b));
+        m->_speciesBound[bIndex] = sb;
+        bIndex++;
     }
     for (auto &l : _speciesLinker) {
         SpeciesLinker* sl =
         c->addSpeciesLinker(
-        SpeciesNamesDB::Instance()->genUniqueName(l));
-        m->addSpeciesLinker(sl);
+        SpeciesNamesDB::instance()->genUniqueName(l));
+        m->_speciesBound[bIndex] = sl;
+        bIndex++;
     }
     for (auto &mo : _speciesMotor) {
         SpeciesMotor* sm =
         c->addSpeciesMotor(
-        SpeciesNamesDB::Instance()->genUniqueName(mo));
-        m->addSpeciesMotor(sm);
+        SpeciesNamesDB::instance()->genUniqueName(mo));
+        m->_speciesBound[bIndex] = sm;
+        bIndex++;
     }
     for (auto &br : _speciesBrancher) {
-        SpeciesBrancher* sb =
+        SpeciesBrancher* sbr =
         c->addSpeciesBrancher(
-        SpeciesNamesDB::Instance()->genUniqueName(br));
-        m->addSpeciesBrancher(sb);
+        SpeciesNamesDB::instance()->genUniqueName(br));
+        m->_speciesBound[bIndex] = sbr;
+        bIndex++;
     }
 }
 
@@ -108,7 +124,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back( tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(reactant.find("DIFFUSING") != string::npos) {
@@ -125,7 +141,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout <<
@@ -408,7 +424,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(product.find("DIFFUSING") != string::npos) {
@@ -425,7 +441,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout <<
@@ -927,7 +943,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
             }
             
             else if(product.find("DIFFUSING") != string::npos) {
@@ -944,7 +960,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
@@ -1035,7 +1051,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back( tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1052,7 +1068,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout <<
@@ -1077,7 +1093,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back( tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1094,7 +1110,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout <<
@@ -1291,7 +1307,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1308,7 +1324,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
@@ -1484,7 +1500,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
         }
         
         else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1501,7 +1517,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
             reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::Instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
         }
         else {
             cout <<
@@ -1584,20 +1600,6 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             new MotorRxnManager(reactantTemplate, productTemplate,
                                 get<2>(r), get<3>(r), rMax, rMin));
     }
-}
-
-
-void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
-    
-    //Copy all species from chem struct
-    _speciesFilament =  chem.speciesFilament;
-    _speciesPlusEnd  =  chem.speciesPlusEnd;
-    _speciesMinusEnd =  chem.speciesMinusEnd;
-    
-    _speciesBound  =  chem.speciesBound;
-    _speciesLinker =  chem.speciesLinker;
-    _speciesMotor  =  chem.speciesMotor;
-    _speciesBrancher = chem.speciesBrancher;
 }
 
 
@@ -2074,6 +2076,57 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
     }
 }
 
+
+void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
+    
+    //Copy all species from chem struct
+    _speciesFilament =  chem.speciesFilament;
+    _speciesPlusEnd  =  chem.speciesPlusEnd;
+    _speciesMinusEnd =  chem.speciesMinusEnd;
+    
+    _speciesBound  =   chem.speciesBound;
+    _speciesLinker =   chem.speciesLinker;
+    _speciesMotor  =   chem.speciesMotor;
+    _speciesBrancher = chem.speciesBrancher;
+    
+    //set up static CMonomer things
+    CMonomer::_numFSpecies = _speciesFilament.size() +
+                             _speciesPlusEnd.size()  +
+                             _speciesMinusEnd.size();
+    
+    CMonomer::_numBSpecies = _speciesBound.size()   +
+                             _speciesLinker.size()  +
+                             _speciesMotor.size()   +
+                             _speciesBrancher.size();
+    
+    //set up species offsets
+    short o1 = _speciesFilament.size();
+    
+    short o2 = _speciesFilament.size() +
+               _speciesPlusEnd.size();
+    
+    short o3 = _speciesBound.size();
+    
+    short o4 = _speciesBound.size() +
+               _speciesLinker.size();
+    
+    short o5 = _speciesBound.size()  +
+               _speciesLinker.size() +
+               _speciesMotor.size();
+    
+    //create offset vector for filament
+    CMonomer::_speciesFilamentIndex.push_back(0);
+    CMonomer::_speciesFilamentIndex.push_back(o1);
+    CMonomer::_speciesFilamentIndex.push_back(o2);
+    
+    //create offset vector for bound
+    CMonomer::_speciesBoundIndex.push_back(0);
+    CMonomer::_speciesBoundIndex.push_back(o3);
+    CMonomer::_speciesBoundIndex.push_back(o4);
+    CMonomer::_speciesBoundIndex.push_back(o5);
+}
+
+
 void SimpleManagerImpl::initialize(ChemistryData& chem) {
     
     //set static system ptr
@@ -2209,5 +2262,7 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
             r->addReaction(cc, ((Cylinder*)(n))->getCCylinder());
     }
 }
+
+
 
 

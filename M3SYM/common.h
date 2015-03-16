@@ -32,6 +32,20 @@ const double kT = 4.1; //in pN * nm
 using namespace std;
 
 //@{
+/// Constant Species identifiers
+/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+
+#define SPECIESFILAMENT   0
+#define SPECIESPLUSEND    1
+#define SPECIESMINUSEND   2
+
+#define SPECIESBOUND      0
+#define SPECIESLINKER     1
+#define SPECIESMOTOR      2
+#define SPECIESBRANCHER   3
+//@}
+
+//@{
 /// Constant Reaction reactant and product numbers
 /// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
 

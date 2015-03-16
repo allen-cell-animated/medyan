@@ -68,7 +68,7 @@ private:
 public:
     /// returns the unique instance of the singleton, which can be used to access
     // the names DB
-    static SpeciesNamesDB* Instance();
+    static SpeciesNamesDB* instance();
     
     /// Given an integer "i", returns the string associated with that integer.
     /// Throws an out of range exception.
@@ -171,7 +171,7 @@ public:
     /// (although it is not marked as private)
     Species()  : _parent(nullptr), _constant(false) {
         
-        _molecule=SpeciesNamesDB::Instance()->stringToInt("");
+        _molecule=SpeciesNamesDB::instance()->stringToInt("");
         _rspecies = new RSpecies(*this);
     }
     
@@ -188,7 +188,7 @@ public:
              bool constant=false, species_copy_t ulim=max_ulim)
         : _parent(nullptr), _constant(constant) {
         
-        _molecule=SpeciesNamesDB::Instance()->stringToInt(name);
+        _molecule=SpeciesNamesDB::instance()->stringToInt(name);
         
         if(_constant)
             _rspecies = new RSpeciesConst(*this, n, ulim);
@@ -304,7 +304,7 @@ public:
 #endif
     
     /// Return this Species' name
-    string getName() const {return SpeciesNamesDB::Instance()->intToString(_molecule);}
+    string getName() const {return SpeciesNamesDB::instance()->intToString(_molecule);}
     
     /// Return the molecule index associated with this Species' (as int)
     int getMolecule() const {return _molecule;}
@@ -551,7 +551,7 @@ public:
         return new SpeciesBound(*this);
     }
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    /// Return the full name of this Species in a string format (e.g. "Cofilin{Bound}"
     virtual string getFullName() const {return getName() + "{Bound}";}
     
     /// Default destructor
@@ -604,7 +604,7 @@ public:
         return new SpeciesLinker(*this);
     }
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Linker}"
+    /// Return the full name of this Species in a string format (e.g. "Actinin{Linker}"
     virtual string getFullName() const {return getName() + "{Linker}";}
     
     /// Default destructor
@@ -651,7 +651,7 @@ public:
         return new SpeciesMotor(*this);
     }
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Motor}"
+    /// Return the full name of this Species in a string format (e.g. "Myosin{Motor}"
     virtual string getFullName() const {return getName() + "{Motor}";}
     
     /// Default destructor
@@ -708,22 +708,22 @@ public:
 /// Used for a plus end species on a Filament.
 /// This allows for various polymerization/depolymerization rates on filaments
 /// These species can not move cross-compartment.
-class SpeciesPlusEnd : public Species {
+class SpeciesPlusEnd : public SpeciesFilament {
 public:
     /// Default constructor
-    SpeciesPlusEnd()  : Species() {}
+    SpeciesPlusEnd()  : SpeciesFilament() {}
     
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesPlusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  Species(name, false, n, ulim) {};
+    :  SpeciesFilament(name, n, ulim) {};
     
     /// Copy constructor
-    SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : Species(rhs) {}
+    SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : SpeciesFilament(rhs) {}
     
     /// Move constructor
-    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : Species(move(rhs)) {
+    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : SpeciesFilament(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -743,7 +743,7 @@ public:
         return new SpeciesPlusEnd(*this);
     }
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    /// Return the full name of this Species in a string format (e.g. "Actin{PlusEnd}"
     virtual string getFullName() const {return getName() + "{PlusEnd}";}
     
     /// Default destructor
@@ -753,22 +753,22 @@ public:
 /// Used for a minus end species on a Filament.
 /// This allows for various polymerization/depolymerization rates on filaments
 /// These species can not move cross-compartment.
-class SpeciesMinusEnd : public Species {
+class SpeciesMinusEnd : public SpeciesFilament {
 public:
     /// Default constructor
-    SpeciesMinusEnd()  : Species() {}
+    SpeciesMinusEnd()  : SpeciesFilament() {}
     
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesMinusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  Species(name, false, n, ulim) {};
+    :  SpeciesFilament(name, n, ulim) {};
     
     /// Copy constructor
-    SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : Species(rhs) {}
+    SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : SpeciesFilament(rhs) {}
     
     /// Move constructor
-    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : Species(move(rhs)) {
+    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : SpeciesFilament(move(rhs)) {
     }
     
     /// Regular Assignment
@@ -788,7 +788,7 @@ public:
         return new SpeciesMinusEnd(*this);
     }
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bound}"
+    /// Return the full name of this Species in a string format (e.g. "Actin{MinusEnd}"
     virtual string getFullName() const {return getName() + "{MinusEnd}";}
     
     /// Default destructor

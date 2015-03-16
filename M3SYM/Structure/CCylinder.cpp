@@ -192,46 +192,12 @@ CCylinder::~CCylinder() {
     //Remove all species
     for(auto &m: _monomers) {
         
-        short numFilamentSpecies =
-            SysParams::Chemistry().numFilamentSpecies;
-        for(int i = 0; i < numFilamentSpecies; i++) {
+        for(int i = 0; i < CMonomer::_numFSpecies; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        short numPlusEndSpecies =
-            SysParams::Chemistry().numPlusEndSpecies;
-        for(int i = 0; i < numPlusEndSpecies; i++) {
-            SpeciesPlusEnd* s = m->speciesPlusEnd(i);
-            if(s != nullptr) _compartment->removeSpecies(s);
-        }
-        short numMinusEndSpecies =
-            SysParams::Chemistry().numMinusEndSpecies;
-        for(int i = 0; i < numMinusEndSpecies; i++) {
-            SpeciesMinusEnd* s = m->speciesMinusEnd(i);
-            if(s != nullptr) _compartment->removeSpecies(s);
-        }
-        short numBoundSpecies =
-            SysParams::Chemistry().numBoundSpecies;
-        for(int i = 0; i < numBoundSpecies; i++) {
+        for(int i = 0; i < CMonomer::_numBSpecies; i++) {
             SpeciesBound* s = m->speciesBound(i);
-            if(s != nullptr) _compartment->removeSpecies(s);
-        }
-        short numLinkerSpecies =
-            SysParams::Chemistry().numLinkerSpecies;
-        for(int i = 0; i < numLinkerSpecies; i++) {
-            SpeciesLinker* s = m->speciesLinker(i);
-            if(s != nullptr) _compartment->removeSpecies(s);
-        }
-        short numMotorSpecies =
-            SysParams::Chemistry().numMotorSpecies;
-        for(int i = 0; i < numMotorSpecies; i++) {
-            SpeciesMotor* s = m->speciesMotor(i);
-            if(s != nullptr) _compartment->removeSpecies(s);
-        }
-        short numBrancherSpecies =
-            SysParams::Chemistry().numBrancherSpecies;
-        for(int i = 0; i < numBrancherSpecies; i++) {
-            SpeciesBrancher* s = m->speciesBrancher(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
     }

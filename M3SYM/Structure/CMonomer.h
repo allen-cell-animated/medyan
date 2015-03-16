@@ -27,17 +27,28 @@
  */
 class CMonomer {
     
+friend class SimpleManagerImpl;
+friend class CCylinder;
+
+private:
     //@{
     /// Species array
     SpeciesFilament** _speciesFilament;
-    SpeciesPlusEnd**  _speciesPlusEnd;
-    SpeciesMinusEnd** _speciesMinusEnd;
-    
-    SpeciesBound**  _speciesBound;
-    SpeciesLinker** _speciesLinker;
-    SpeciesMotor**  _speciesMotor;
-    SpeciesBrancher** _speciesBrancher;
+    SpeciesBound** _speciesBound;
     //@}
+    
+    //@{
+    /// Species index vectors
+    /// These vectors are used to access the correct species in the species vectors
+    /// Each index in the species index vector corresponds to an offset for that
+    /// species in the species array.
+    static vector<short> _speciesFilamentIndex;
+    static vector<short> _speciesBoundIndex;
+    //@}
+    
+    ///Number of species for each type
+    static short _numFSpecies;
+    static short _numBSpecies;
     
 public:
     /// Constructor does nothing but memset arrays
@@ -63,18 +74,6 @@ public:
         return new CMonomer(*this, c);
     }
     
-    ///@{
-    /// Add Species
-    /// @note should only be called at initialization
-    void addSpeciesFilament (SpeciesFilament* s);
-    void addSpeciesPlusEnd  (SpeciesPlusEnd* s);
-    void addSpeciesMinusEnd (SpeciesMinusEnd* s);
-    void addSpeciesBound    (SpeciesBound* s);
-    void addSpeciesLinker   (SpeciesLinker* s);
-    void addSpeciesMotor    (SpeciesMotor* s);
-    void addSpeciesBrancher (SpeciesBrancher* s);
-    //@}
-    
     ///Print the Species
     void print();
 
@@ -83,14 +82,14 @@ public:
     /// @note no check on this index. The index value of a species is stored in the
     /// chemical initializer when all reactions are initialized from the chemical input
     /// file.
-    inline SpeciesFilament* speciesFilament(int index) {return _speciesFilament[index];}
-    inline SpeciesPlusEnd*  speciesPlusEnd (int index) {return _speciesPlusEnd[index];}
-    inline SpeciesMinusEnd* speciesMinusEnd(int index) {return _speciesMinusEnd[index];}
+    SpeciesFilament* speciesFilament(int index);
+    SpeciesFilament* speciesPlusEnd (int index);
+    SpeciesFilament* speciesMinusEnd(int index);
     
-    inline SpeciesBound*    speciesBound   (int index) {return _speciesBound[index];}
-    inline SpeciesLinker*   speciesLinker  (int index) {return _speciesLinker[index];}
-    inline SpeciesMotor*    speciesMotor   (int index) {return _speciesMotor[index];}
-    inline SpeciesBrancher* speciesBrancher(int index) {return _speciesBrancher[index];}
+    SpeciesBound* speciesBound(int index);
+    SpeciesBound* speciesLinker(int index);
+    SpeciesBound* speciesMotor(int index);
+    SpeciesBound* speciesBrancher(int index);
     //@}
     
     //@{
