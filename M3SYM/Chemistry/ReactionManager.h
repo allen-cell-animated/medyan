@@ -138,7 +138,8 @@ public:
                             vector<tuple<int, SpeciesType>> products,
                             float onRate, float offRate, float rMax, float rMin)
         : CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                max(rMin - SysParams::Geometry().cylinderSize, 0.0), true),
+                        max(rMin - SysParams::Geometry().cylinderSize, 0.0), true),
+    
         _reactants(reactants), _products(products),
         _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
             
