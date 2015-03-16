@@ -38,13 +38,22 @@
 using namespace mathfunc;
 
 
-double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
+                                        Bead* b3, Bead* b4,
                                         double kRepuls) {
-    if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
+    
+    if(ifParallel(b1->coordinate, b2->coordinate,
+                  b3->coordinate, b4->coordinate)) {
         
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
         double invDSquare =  1 / (d * d);
-        return kRepuls * invDSquare * invDSquare;
+        double energy = kRepuls * invDSquare * invDSquare;
+        
+        //check for inf or nan
+        if(energy == numeric_limits<double>::infinity() || invDSquare != invDSquare)
+            return 0.0;
+        
+        return energy;
     }
     
     double a = scalarProduct(b1->coordinate, b2->coordinate,
@@ -79,8 +88,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      b3->coordinate, b4->coordinate, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate,
-                          b3->coordinate, b4->coordinate);
+        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
         c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
         d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
         e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
@@ -107,18 +115,29 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
-    return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+    double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+    
+    if(energy == numeric_limits<double>::infinity()) return 0.0;
+    else return energy;
 }
 
-double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
+                                        Bead* b3, Bead* b4,
                                         double kRepuls, double lambda) {
     
-    if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
+    if(ifParallel(b1->coordinate, b2->coordinate,
+                  b3->coordinate, b4->coordinate)) {
         
         double d = twoPointDistanceStretched(b1->coordinate, b1->force,
                                              b3->coordinate, b3->force, lambda);
         double invDSquare =  1/ (d * d);
-        return kRepuls * invDSquare * invDSquare;
+        double energy =  kRepuls * invDSquare * invDSquare;
+        
+        //check for inf or nan
+        if(energy == numeric_limits<double>::infinity() || invDSquare != invDSquare)
+            return 0.0;
+        
+        return energy;
     }
     
     double a = scalarProductStretched(b1->coordinate, b1->force,
@@ -167,19 +186,15 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         
         a = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    v, b1->force, b2->coordinate, b2->force, lambda);
-        b = scalarProductStretched(b3->coordinate, b3->force,
-                                   b4->coordinate, b4->force,
-                                   b3->coordinate, b3->force,
-                                   b4->coordinate, b4->force, lambda);
+        b = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
+                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
         c = scalarProductStretched(b3->coordinate, b3->force, v, b1->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
         d = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
-                                   b3->coordinate, b3->force,
-                                   b4->coordinate, b4->force, lambda);
+                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
         e = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
-        f = scalarProductStretched(b3->coordinate, b3->force,
-                                   b4->coordinate, b4->force,
+        f = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
                                    b3->coordinate, b3->force, v, b1->force, lambda);
         
         AA = sqrt(a*c - e*e);
@@ -204,17 +219,26 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
-    return 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
+    double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+    
+    if(energy == numeric_limits<double>::infinity()) return 0.0;
+    else return energy;
 
 }
 
-void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
+                                      Bead* b3, Bead* b4,
                                       double kRepuls) {
+    
     if(ifParallel(b1->coordinate, b2->coordinate, b3->coordinate, b4->coordinate)) {
         
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
         double invDSquare =  1/ (d * d);
         double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
+        
+        //check for inf or nan
+        if(f0 == numeric_limits<double>::infinity() || invDSquare != invDSquare)
+            return;
         
         b1->force[0] += - f0 * (b3->coordinate[0] - b1->coordinate[0]);
         b1->force[1] += - f0 * (b3->coordinate[1] - b1->coordinate[1]);
@@ -268,8 +292,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      b3->coordinate, b4->coordinate, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate,
-                          b3->coordinate, b4->coordinate);
+        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
         c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
         d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
         e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
@@ -291,7 +314,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
         if(abs(JJ) < 1e-10) return;
     }
     
-    
     double invJJ = 1/JJ;
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
@@ -300,6 +322,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
+    if(U == numeric_limits<double>::infinity()) return;
     
     
     double A1 = AA*AA/(AA*AA + e*e);
@@ -367,14 +390,20 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 
 }
 
-void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
+                                         Bead* b3, Bead* b4,
                                          double kRepuls) {
+    
     if(ifParallel(b1->coordinateAux, b2->coordinateAux,
                   b3->coordinateAux, b4->coordinateAux)) {
         
         double d = twoPointDistance(b1->coordinateAux, b3->coordinateAux);
         double invDSquare =  1/ (d * d);
         double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
+        
+        //check for inf or nan
+        if(f0 == numeric_limits<double>::infinity() || invDSquare != invDSquare)
+            return;
         
         b1->forceAux[0] += - f0 * (b3->coordinateAux[0] - b1->coordinateAux[0]);
         b1->forceAux[1] += - f0 * (b3->coordinateAux[1] - b1->coordinateAux[1]);
@@ -428,8 +457,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      b3->coordinateAux, b4->coordinateAux, 4, 1.0);
         
         a = scalarProduct(v, b2->coordinateAux, v, b2->coordinateAux);
-        b = scalarProduct(b3->coordinateAux, b4->coordinateAux,
-                          b3->coordinateAux, b4->coordinateAux);
+        b = scalarProduct(b3->coordinateAux, b4->coordinateAux, b3->coordinateAux, b4->coordinateAux);
         c = scalarProduct(b3->coordinateAux, v, b3->coordinateAux, v);
         d = scalarProduct(v, b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
         e = scalarProduct(v, b2->coordinateAux, b3->coordinateAux, v);
@@ -460,7 +488,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    
+    if(U == numeric_limits<double>::infinity()) return;
     
     double A1 = AA*AA/(AA*AA + e*e);
     double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
