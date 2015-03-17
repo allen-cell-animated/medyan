@@ -58,19 +58,26 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     vector<double> zero (3,0); //Aux zero vector;
     
     vector<double> n1 = vectorProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),zero ,b2->coordinate, b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate, b3->force, d);
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
+                                zero ,b2->coordinate, b2->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
+                                zero, b3->coordinate, b3->force, d);
     
     vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate,b4->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero, b3->coordinate,b3->force, d);
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),
+                                zero, b3->coordinate,b3->force, d);
     
     double norm_x = sqrt(scalarProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b2->coordinate, b2->force, d));
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),
+                                zero ,b2->coordinate, b2->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),
+                                zero ,b2->coordinate, b2->force, d));
     
     double norm_d = sqrt(scalarProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),zero ,b3->coordinate, b3->force, d));
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),
+                                zero ,b3->coordinate, b3->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d),
+                                zero ,b3->coordinate, b3->force, d));
     
     double norm_y = sqrt(scalarProductStretched(b3->coordinate,b3->force, b4->coordinate,b4->force,
                                                 b3->coordinate,b3->force, b4->coordinate,b4->force, d));
@@ -87,29 +94,34 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                             double kDihed, double position){
 
-    double a = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                             b3->coordinate, b4->coordinate);
+    double a = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),
+                             b2->coordinate, b3->coordinate, b4->coordinate);
     
-    double b = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                             midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    double b = scalarProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
 
     double c = scalarProduct(b3->coordinate, b4->coordinate,
-                             midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    vector<double> n1 = vectorProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
     double n = dotProduct(n1, n2);
     
     
-    double norm_x = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                       midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
-    double norm_d = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                       midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    double norm_x = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
+    
+    double norm_d = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
+    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     
     double norm_y = sqrt(scalarProduct(b3->coordinate, b4->coordinate,
                                        b3->coordinate, b4->coordinate));
@@ -159,29 +171,35 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      double kDihed, double position){
     
-    double a = scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                             b3->coordinateAux, b4->coordinateAux);
+    double a = scalarProduct(
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),
+    b2->coordinateAux, b3->coordinateAux, b4->coordinateAux);
     
-    double b = scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                             midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
+    double b = scalarProduct(
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
     
     double c = scalarProduct(b3->coordinateAux, b4->coordinateAux,
-                             midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
     
     
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                                      midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
+    vector<double> n1 = vectorProduct(
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b2->coordinateAux,
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
     
     vector<double> n2 = vectorProduct(b3->coordinateAux, b4->coordinateAux,
-                                      midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux);
     
     double n = dotProduct(n1, n2);
     
     
-    double norm_x = sqrt(scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
-                                       midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux));
-    double norm_d = sqrt(scalarProduct(midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux,
-                                       midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux));
+    double norm_x = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux,
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position),b2->coordinateAux));
+    
+    double norm_d = sqrt(scalarProduct(
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux,
+    midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position), b3->coordinateAux));
     
     double norm_y = sqrt(scalarProduct(b3->coordinateAux, b4->coordinateAux,
                                        b3->coordinateAux, b4->coordinateAux));

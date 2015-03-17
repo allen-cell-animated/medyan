@@ -62,7 +62,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = (int) randomDouble(
         SysParams::Chemistry().motorNumHeadsMin[_motorType],
         SysParams::Chemistry().motorNumHeadsMax[_motorType]);
-    
+        
     //Find species on cylinder that should be marked. If initialization,
     //this should be done. But, if this is because of a reaction callback,
     //it will have already been done.

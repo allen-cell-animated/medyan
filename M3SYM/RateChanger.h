@@ -70,5 +70,4 @@ public:
     virtual float changeRate(float bareRate, int numHeads, double force) = 0;
 };
 
-
 #endif

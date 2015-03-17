@@ -198,8 +198,13 @@ struct BranchingPointCreationCallback {
     
     float _offRate;        ///< Rate of the unbinding reaction
     
-    BranchingPointCreationCallback(Cylinder* c1, short branchType, short plusEnd,
-                                   short position, float offRate, SubSystem* ps)
+    BranchingPointCreationCallback(Cylinder* c1,
+                                   short branchType,
+                                   short plusEnd,
+                                   short position,
+                                   float offRate,
+                                   SubSystem* ps)
+    
         : _ps(ps), _c1(c1), _branchType(branchType), _position(position),
           _plusEnd(plusEnd), _offRate(offRate) {}
     
@@ -247,8 +252,8 @@ struct BranchingPointCreationCallback {
         
         //add the unbinding reaction and callback
         //first, find the correct diffusing or bulk species
-        Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* br =
-        dynamic_cast<Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*>(r);
+        Reaction< BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* br =
+        (Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*)(r);
         Species* sfb = &(br->rspecies()[0]->getSpecies());
         
         //create the reaction species
@@ -297,8 +302,11 @@ struct LinkerBindingCallback {
 
     LinkerBindingCallback(Cylinder* c1, Cylinder* c2,
                           short linkerType,
-                          short position1, short position2,
-                          float offRate, SubSystem* ps)
+                          short position1,
+                          short position2,
+                          float offRate,
+                          SubSystem* ps)
+    
         : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),
           _position1(position1), _position2(position2), _offRate(offRate) {}
     
@@ -314,8 +322,9 @@ struct LinkerBindingCallback {
         
         //Attach the callback to the off reaction, add it
         //first, get species from this rxn
-        Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
-            (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
+        Reaction< LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
+        (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
+        
         RSpecies** rSpecies = onRxn->rspecies();
         vector<Species*> offSpecies;
         
@@ -336,6 +345,11 @@ struct LinkerBindingCallback {
         
         _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
         l->getCLinker()->setOffReaction(offRxn);
+        
+#ifdef DYNAMICRATES
+        //reset the associated reactions
+        l->updateReactionRates();
+#endif
     }
 };
 
@@ -367,10 +381,12 @@ struct MotorBindingCallback {
     
     MotorBindingCallback(Cylinder* c1, Cylinder* c2,
                          short motorType,
-                         short position1, short position2,
-                         float offRate, SubSystem* ps)
-        : _ps(ps), _c1(c1), _c2(c2),
-          _motorType(motorType),
+                         short position1,
+                         short position2,
+                         float offRate,
+                         SubSystem* ps)
+    
+        : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),
           _position1(position1), _position2(position2), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
@@ -385,8 +401,9 @@ struct MotorBindingCallback {
         
         //Attach the callback to the off reaction, add it
         //first, get species from this rxn
-        Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
+        Reaction< LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
         (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
+        
         RSpecies** rSpecies = onRxn->rspecies();
         vector<Species*> offSpecies;
         
@@ -435,6 +452,7 @@ struct MotorWalkingForwardCallback {
                                 short motorType,
                                 short boundType,
                                 SubSystem* ps)
+    
         :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
@@ -536,8 +554,8 @@ struct MotorMovingCylinderForwardCallback {
                                        short motorType,
                                        short boundType,
                                        SubSystem* ps)
-        :_oldC(oldC), _newC(newC),
-         _oldPosition(oldPosition), _newPosition(newPosition),
+    
+        :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
@@ -647,6 +665,7 @@ struct MotorWalkingBackwardCallback {
                                 short motorType,
                                 short boundType,
                                 SubSystem* ps)
+    
     :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
      _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
@@ -748,8 +767,8 @@ struct MotorMovingCylinderBackwardCallback {
                                         short motorType,
                                         short boundType,
                                         SubSystem* ps)
-    :_oldC(oldC), _newC(newC),
-     _oldPosition(oldPosition), _newPosition(newPosition),
+    
+    :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
      _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
@@ -857,7 +876,9 @@ struct FilamentCreationCallback {
     FilamentCreationCallback(short plusEnd,
                              short minusEnd,
                              short filament,
-                             SubSystem* ps, Compartment* c = nullptr)
+                             SubSystem* ps,
+                             Compartment* c = nullptr)
+    
         : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
           _compartment(c), _ps(ps) {}
     
@@ -924,8 +945,8 @@ struct FilamentSeveringCallback {
     void operator() (ReactionBase* r) {
         
         //reactants should be re-marked
-        Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>* severRxn =
-            (Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>*)r;
+        Reaction< SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>* severRxn =
+        (Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>*)r;
         
         for(int i = 0; i < SEVERINGREACTANTS + 1; i++) severRxn->rspecies()[i]->up();
         

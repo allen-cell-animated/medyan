@@ -28,8 +28,7 @@ void BoundaryRepulsionLJ::computeForces(Bead* b, double r, vector<double>& norm,
                                         double kRep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
-    double f0 = min(kRep * inv_r4 * inv_r4 * inv_r4 * 1/r,
-                    kRep * SysParams::Boundaries().BCeiling/ r);
+    double f0 = min(kRep * inv_r4 * inv_r4 * inv_r4 * 1/r, kRep * SysParams::Boundaries().BCeiling/ r);
     
     //update the load force of the bead
     b->loadForce = f0;
@@ -43,8 +42,7 @@ void BoundaryRepulsionLJ::computeForcesAux(Bead* b, double r, vector<double>& no
                                            double kRep, double screenLength) {
     
     double inv_r4 = 1/r * 1/r * 1/r * 1/r;
-    double f0 = min(kRep * inv_r4 * inv_r4 * inv_r4 * 1/r,
-                    kRep * SysParams::Boundaries().BCeiling / r);
+    double f0 = min(kRep * inv_r4 * inv_r4 * inv_r4 * 1/r, kRep * SysParams::Boundaries().BCeiling / r);
     
     //update the load force of the bead
     b->loadForce = f0;
