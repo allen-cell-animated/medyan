@@ -26,7 +26,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of bulk species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -34,14 +34,14 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of diffusing species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
     if(chem.speciesFilament.size() != CParams.numFilamentSpecies) {
         
         cout << "Number of filament species in chemistry input does not "
-        << "match the system file. Check these parameters. Exiting."
+             << "match the system file. Check these parameters. Exiting."
         <<endl;
         
         return false;
@@ -50,7 +50,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of plus end species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -58,7 +58,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of minus end species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -66,7 +66,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of bound species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -74,7 +74,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of linker species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -82,7 +82,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of motor species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
@@ -90,19 +90,19 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of brancher species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         
         return false;
     }
     //plus and minus end consistency
     if(CParams.numPlusEndSpecies < CParams.numFilamentSpecies) {
         cout << "There must be a plus end for every filament species. Exiting."
-             << endl;
+        << endl;
         return false;
     }
     if(CParams.numMinusEndSpecies < CParams.numFilamentSpecies) {
         cout << "There must be a minus end for every filament species. Exiting."
-             << endl;
+        << endl;
         return false;
     }
     
@@ -120,14 +120,14 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         cout << "Number of maximum motor heads in chemistry input does not "
              << "match the number of motor species. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         return false;
     }
     if(chem.speciesMotor.size() != CParams.motorStepSize.size()) {
         
         cout << "Number of motor step sizes in chemistry input does not "
              << "match the number of motor species. Check these parameters. Exiting."
-             <<endl;
+        <<endl;
         return false;
     }
     
@@ -348,7 +348,7 @@ bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
                          dLinkerUnbindingCharLength.size()) {
         cout << "Number of characteristic lengths specified for chosen "
              << "linker unbinding dynamic rate forms is not accurate. Exiting."
-             << endl;
+        << endl;
         return false;
     }
     
@@ -366,7 +366,7 @@ bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
                                     dMotorUnbindingCharForce.size()) {
         cout << "Number of characteristic forces specified for chosen "
              << "motor unbinding dynamic rate forms is not accurate. Exiting."
-             << endl;
+        << endl;
         return false;
     }
     
@@ -374,7 +374,7 @@ bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
                                   dMotorWalkingCharForce.size()) {
         cout << "Number of characteristic forces specified for chosen "
              << "motor walking dynamic rate forms is not accurate. Exiting."
-             << endl;
+        << endl;
         return false;
     }
     

@@ -48,10 +48,11 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
                charLengthIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size())
                 return;
             
-            //get two params for each
+            //get two params for each, amp
             double a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
             double a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
             
+            //now char length
             double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
             double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
             
@@ -70,8 +71,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
                 return;
             
             //get the param
-            double x1 = SysParams::DynamicRates().
-                        dLinkerUnbindingCharLength[charLengthIndex];
+            double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
             
             //add the rate changer
             Linker::_unbindingChangers.push_back(new BasicSlip(linkerIndex, x1));
@@ -96,7 +96,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
             if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
                 return;
             
-            //get two params for each
+            //get param
             double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
             
             //add the rate changer
