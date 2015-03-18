@@ -35,6 +35,7 @@ private:
 public:
     /// Default constructor and destructor
     CBranchingPoint(Compartment* c) :CBound(c) {}
+    
     ~CBranchingPoint() {}
     
     /// Copy constructor, standard

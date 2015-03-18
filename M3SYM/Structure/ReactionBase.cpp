@@ -32,7 +32,6 @@ Composite* ReactionBase::getRoot() {
     return nullptr;
 }
 
-
 void ReactionBase::registerNewDependent(ReactionBase *r){ _dependents.insert(r);}
 
 void ReactionBase::unregisterDependent(ReactionBase *r){ _dependents.erase(r);}

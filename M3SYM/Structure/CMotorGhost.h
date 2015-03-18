@@ -35,6 +35,7 @@ private:
 public:
     /// Default constructor and destructor
     CMotorGhost(Compartment* c) :CBound(c) {}
+    
     ~CMotorGhost() {}
     
     /// Copy constructor, standard

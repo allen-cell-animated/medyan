@@ -34,6 +34,7 @@ private:
 
 public:
     CLinker(Compartment* c) :CBound(c) {}
+    
     ~CLinker() {}
     
     /// Copy constructor, standard

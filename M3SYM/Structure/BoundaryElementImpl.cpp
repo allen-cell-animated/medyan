@@ -149,6 +149,7 @@ double HalfSphereZBoundaryElement::stretchedDistance(const vector<double>& point
     vector<double> stretchedPoint{point[0] + d * force[0],
                                   point[1] + d * force[1],
                                   point[2] + d * force[2]};
+    
     return _radius - twoPointDistance(_coords, stretchedPoint);
     
 }

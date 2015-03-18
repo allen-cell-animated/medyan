@@ -21,15 +21,12 @@
 BoundaryCubic::BoundaryCubic() : Boundary(3, BoundaryShape::Cube){
     
     //Get full system size (want planes to be slightly inside compartment grid)
-    double zeroX = 0.2 *
-        SysParams::Geometry().compartmentSizeX *
-        SysParams::Geometry().NX;
-    double zeroY = 0.2 *
-        SysParams::Geometry().compartmentSizeY *
-        SysParams::Geometry().NY;
-    double zeroZ = 0.2 *
-        SysParams::Geometry().compartmentSizeZ *
-        SysParams::Geometry().NZ;
+    double zeroX = 0.2 * SysParams::Geometry().compartmentSizeX *
+                         SysParams::Geometry().NX;
+    double zeroY = 0.2 * SysParams::Geometry().compartmentSizeY *
+                         SysParams::Geometry().NY;
+    double zeroZ = 0.2 * SysParams::Geometry().compartmentSizeZ *
+                         SysParams::Geometry().NZ;
     
     double sysX = SysParams::Geometry().compartmentSizeX *
                   SysParams::Geometry().NX - zeroX;
@@ -64,6 +61,7 @@ bool BoundaryCubic::within(const vector<double>& coordinates) {
 
 
 BoundarySpherical::BoundarySpherical(double diameter)
+
     : Boundary(3, BoundaryShape::Sphere) {
     
     double sysX = SysParams::Geometry().compartmentSizeX *
@@ -87,6 +85,7 @@ bool BoundarySpherical::within(const vector<double>& coordinates) {
 }
 
 BoundaryCapsule::BoundaryCapsule(double diameter)
+
     : Boundary(3, BoundaryShape::Capsule) {
     
     double sysX = SysParams::Geometry().compartmentSizeX *
@@ -99,11 +98,11 @@ BoundaryCapsule::BoundaryCapsule(double diameter)
     double height = sysZ - diameter;
     
     _boundarySurfaces.emplace_back(
-    new CylinderZ({sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+        new CylinderZ({sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
     _boundarySurfaces.emplace_back(
-    new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
+        new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
     _boundarySurfaces.emplace_back(
-    new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
+        new HalfSphereZ({sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
 }
 
 bool BoundaryCapsule::within(const vector<double>& coordinates) {
