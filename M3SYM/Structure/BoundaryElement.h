@@ -38,11 +38,16 @@ class Bead;
 class BoundaryElement : public Neighbor {
     
 protected:
-    vector<double> _coords; ///< coordinates 
+    vector<double> _coords; ///< coordinates
+    
+    double _kRep; ///< Repulsion constant
+    double _r0; ///< Screening length
+    
     
 public:
     /// Default constructor
-    BoundaryElement(vector<double> coords) : _coords(coords) {
+    BoundaryElement(vector<double> coords, double kRepuls, double screenLength)
+        : _coords(coords), _kRep(kRepuls), _r0(screenLength) {
         
         //add to boundary element db
         BoundaryElementDB::instance()->addBoundaryElement(this);
@@ -83,8 +88,8 @@ public:
     
     //@{
     /// Getter for parameters
-    virtual double getRepulsionConst() = 0;
-    virtual double getScreeningLength() = 0;
+    virtual double getRepulsionConst() {return _kRep;}
+    virtual double getScreeningLength() {return _r0;}
     //@}
  
 };

@@ -168,7 +168,7 @@ void Controller::initialize(string inputFile,
         cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, "", ChemData);
+    _cController->initialize(CAlgorithm.algorithm, ChemData);
     cout << "Done." << endl;
 #endif
     

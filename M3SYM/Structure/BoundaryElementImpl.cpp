@@ -17,9 +17,11 @@
 
 using namespace mathfunc;
 
+//PLANE
+
 PlaneBoundaryElement::PlaneBoundaryElement(vector<double> coords, vector<double> normal,
-                                           double repulsConst, double sceenLength)
-    : BoundaryElement(coords), _k_rep(repulsConst), _r0(sceenLength) {
+                                           double repulsConst, double screenLength)
+    : BoundaryElement(coords, repulsConst, screenLength) {
     
     ///set parameters
     _a = normal[0];
@@ -50,13 +52,7 @@ const vector<double> PlaneBoundaryElement::normal(const vector<double>& point) {
     return vector<double>{_a, _b, _c};
 }
 
-double PlaneBoundaryElement::getRepulsionConst(){ return _k_rep; }
-double PlaneBoundaryElement::getScreeningLength(){ return _r0; }
-
-
-SphereBoundaryElement::SphereBoundaryElement(vector<double> coords, double radius,
-                                             double repulsConst, double sceenLength)
-    : BoundaryElement(coords), _radius(radius), _k_rep(repulsConst), _r0(sceenLength) {}
+//SPHERE
 
 double SphereBoundaryElement::distance(const vector<double>& point) {
     
@@ -77,15 +73,7 @@ const vector<double> SphereBoundaryElement::normal(const vector<double>& point) 
     return twoPointDirection(point, _coords);
 }
 
-double SphereBoundaryElement::getRepulsionConst(){ return _k_rep; }
-double SphereBoundaryElement::getScreeningLength(){ return _r0; }
-
-CylindricalZBoundaryElement::CylindricalZBoundaryElement(vector<double> coords,
-                                                         double radius, double height,
-                                                         double repulsConst,
-                                                         double sceenLength)
-    : BoundaryElement(coords), _radius(radius), _height(height),
-      _k_rep(repulsConst), _r0(sceenLength) {}
+//CYLINDERZ
 
 double CylindricalZBoundaryElement::distance(const vector<double>& point) {
     
@@ -116,16 +104,7 @@ const vector<double> CylindricalZBoundaryElement::normal(const vector<double>& p
     return twoPointDirection({point[0],point[1], 0}, {_coords[0],_coords[1], 0});
 }
 
-double CylindricalZBoundaryElement::getRepulsionConst(){ return _k_rep; }
-double CylindricalZBoundaryElement::getScreeningLength(){ return _r0; }
-
-HalfSphereZBoundaryElement::HalfSphereZBoundaryElement(vector<double> coords,
-                                                       double radius,
-                                                       bool up,
-                                                       double repulsConst,
-                                                       double sceenLength)
-    : BoundaryElement(coords),
-     _radius(radius), _up(up), _k_rep(repulsConst), _r0(sceenLength) {}
+//HALFSPHEREZ
 
 double HalfSphereZBoundaryElement::distance(const vector<double>& point) {
     
@@ -158,10 +137,4 @@ const vector<double> HalfSphereZBoundaryElement::normal(const vector<double>& po
     
     return twoPointDirection(point, _coords);
 }
-
-double HalfSphereZBoundaryElement::getRepulsionConst(){ return _k_rep; }
-double HalfSphereZBoundaryElement::getScreeningLength(){ return _r0; }
-
-
-
 

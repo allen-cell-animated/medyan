@@ -40,9 +40,6 @@ public:
                                      const vector<double>& force, double d);
     
     virtual const vector<double> normal(const vector<double>& point);
-    
-    virtual double getRepulsionConst();
-    virtual double getScreeningLength();
 };
 
 /// A spherical implementation of a BoundaryElement.
@@ -50,13 +47,12 @@ class SphereBoundaryElement : public BoundaryElement {
     
 private:
     double _radius; ///< Radius of sphere
-    double _k_rep;
-    double _r0;
     
 public:
     /// Constructor, sets parameters of equation
     SphereBoundaryElement(vector<double> coords, double radius,
-                          double repulsConst, double screenLength);
+                          double repulsConst, double screenLength)
+        : BoundaryElement(coords, repulsConst, screenLength), _radius(radius) {}
     
     virtual double distance(const vector<double>& point);
     
@@ -64,9 +60,6 @@ public:
                                      const vector<double>& force, double d);
     
     virtual const vector<double> normal(const vector<double>& point);
-    
-    virtual double getRepulsionConst();
-    virtual double getScreeningLength();
 };
 
 /// A cylinder implementation of a BoundaryElement.
@@ -75,13 +68,14 @@ class CylindricalZBoundaryElement : public BoundaryElement {
 private:
     double _radius; ///< Radius of cylinder
     double _height; ///< Height of cylinder
-    double _k_rep;
-    double _r0;
     
 public:
     ///Constructor, sets parameters of equation
     CylindricalZBoundaryElement(vector<double> coords, double radius,
-                                double height, double repulsConst, double screenLength);
+                                double height, double repulsConst, double screenLength)
+    
+        : BoundaryElement(coords, repulsConst, screenLength),
+          _radius(radius), _height(height) {}
     
     virtual double distance(const vector<double>& point);
     
@@ -89,9 +83,6 @@ public:
                                      const vector<double>& force, double d);
     
     virtual const vector<double> normal(const vector<double>& point);
-    
-    virtual double getRepulsionConst();
-    virtual double getScreeningLength();
 };
 
 /// A half-sphere implementation of a BoundaryElement.
@@ -100,13 +91,14 @@ class HalfSphereZBoundaryElement : public BoundaryElement {
 private:
     double _radius; ///< Radius of half sphere
     bool _up; ///< Whether the half sphere faces up or down
-    double _k_rep;
-    double _r0;
     
 public:
     /// Constructor, sets parameters of equation
     HalfSphereZBoundaryElement(vector<double> coords, double radius,
-                               bool up, double repulsConst, double screenLength);
+                               bool up, double repulsConst, double screenLength)
+    
+        : BoundaryElement(coords, repulsConst, screenLength),
+          _radius(radius), _up(up){}
 
     virtual double distance(const vector<double>& point);
     
@@ -114,9 +106,6 @@ public:
                                      const vector<double>& force, double d);
     
     virtual const vector<double> normal(const vector<double>& point);
-    
-    virtual double getRepulsionConst();
-    virtual double getScreeningLength();
 };
 
 #endif
