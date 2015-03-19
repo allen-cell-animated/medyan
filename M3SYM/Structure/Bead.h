@@ -53,9 +53,9 @@ public:
     Bead (vector<double> v, int positionFilament);
     
     ///Default constructor
-    Bead(int positionFilament) :
-        coordinate (3, 0), coordinateAux(3, 0),
-        force(3, 0), forceAux(3, 0), _positionFilament(positionFilament) {}
+    Bead(int positionFilament)
+        : coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0),
+          _positionFilament(positionFilament) {}
     
     ~Bead();
     

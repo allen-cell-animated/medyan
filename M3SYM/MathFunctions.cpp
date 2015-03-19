@@ -119,7 +119,8 @@ namespace mathfunc {
     vector<double> movePointOutOfPlane(const vector<double>& p1,
                                        const vector<double>& p2,
                                        const vector<double>& p3,
-                                       const vector<double>& p4, int i, double d) {
+                                       const vector<double>& p4,
+                                       int i, double d) {
         vector<double> v;
         vector<double> v1;
         

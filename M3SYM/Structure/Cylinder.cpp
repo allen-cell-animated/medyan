@@ -27,6 +27,7 @@ FilamentRateChanger* Cylinder::_polyChanger;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
+
     : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
     
     //Add to cylinder DB
@@ -55,9 +56,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 #endif
 
 #ifdef MECHANICS
-    double eqLength;
-    
     //set eqLength according to cylinder size
+    double eqLength;
+        
     if(extensionFront || extensionBack)
         eqLength = SysParams::Geometry().monomerSize;
     else if(creation)
@@ -131,6 +132,7 @@ void Cylinder::updateReactionRates() {
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
             
                 float newRate = _polyChanger->changeRate(r->getBareRate(), force);
+                
                 r->setRate(newRate);
                 r->activateReaction();
             }
@@ -149,6 +151,7 @@ void Cylinder::updateReactionRates() {
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
                 float newRate =  _polyChanger->changeRate(r->getBareRate(), force);
+
                 r->setRate(newRate);
                 r->activateReaction();
             }

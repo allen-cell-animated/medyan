@@ -96,8 +96,7 @@ public:
     
     /// Add reactions to all compartments in the grid
     /// @param - chem, a ChemSim object that controls the reaction algorithm
-    virtual void addChemSimReactions()
-    {
+    virtual void addChemSimReactions() {
         for(auto &c : children())
         {
             Compartment*C = static_cast<Compartment*>(c.get());
@@ -110,8 +109,7 @@ public:
     }
     
     /// Print properties of this grid
-    virtual void printSelf()
-    {
+    virtual void printSelf() {
         cout << getFullName() << endl;
         cout << "Number of Compartment objects: " << numberOfChildren() << endl;
         for(auto &c : children())
@@ -148,16 +146,14 @@ public:
     /// Add an bulk reaction to this compartment grid
     /// @param species, rate - specifying the species and rate that should be assigned
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
-    ReactionBase* addBulk(initializer_list<Species*> species, float rate)
-    {
+    ReactionBase* addBulk(initializer_list<Species*> species, float rate) {
         ReactionBase *r = _bulkReactions.add<RXN,M,N>(species,rate);
         r->setParent(this);
         return r;
     }
     
     /// Add a unique bulk reaction pointer to this compartment
-    ReactionBase* addBulkReactionUnique (unique_ptr<ReactionBase> &&reaction)
-    {
+    ReactionBase* addBulkReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _bulkReactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;

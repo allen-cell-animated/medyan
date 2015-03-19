@@ -1017,7 +1017,8 @@ void SystemParser::readDyRateParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                DRParams.dFilPolymerizationCharLength = atof((lineVector[1].c_str()));
+                DRParams.dFilPolymerizationCharLength =
+                          atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -1028,7 +1029,8 @@ void SystemParser::readDyRateParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorUnbindingCharForce.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dMotorUnbindingCharForce.push_back(
+                                  atof((lineVector[i].c_str())));
             }
             else {}
         }
@@ -1039,7 +1041,8 @@ void SystemParser::readDyRateParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorWalkingCharForce.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dMotorWalkingCharForce.push_back(
+                                atof((lineVector[i].c_str())));
             }
             else {}
         }
@@ -1050,7 +1053,8 @@ void SystemParser::readDyRateParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dLinkerUnbindingCharLength.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dLinkerUnbindingCharLength.push_back(
+                                    atof((lineVector[i].c_str())));
             }
             else {}
         }
@@ -1061,7 +1065,8 @@ void SystemParser::readDyRateParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dLinkerUnbindingAmplitude.push_back(atof((lineVector[i].c_str())));
+                    DRParams.dLinkerUnbindingAmplitude.push_back(
+                                   atof((lineVector[i].c_str())));
             }
             else {}
         }

@@ -194,7 +194,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             }
             else {
                 cout <<
-                "A minus species that was included in a reaction was not initialized. Exiting."
+                "A minus end species that was included in a reaction was not initialized. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -490,7 +490,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             }
             else {
                 cout <<
-                "A minus species that was included in a reaction was not initialized. Exiting."
+                "A minus end species that was included in a reaction was not initialized. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -2090,29 +2090,22 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
     _speciesBrancher = chem.speciesBrancher;
     
     //set up static CMonomer things
-    CMonomer::_numFSpecies = _speciesFilament.size() +
-                             _speciesPlusEnd.size()  +
-                             _speciesMinusEnd.size();
+    CMonomer::_numFSpecies = chem.speciesFilament.size() +
+                             chem.speciesPlusEnd.size()  +
+                             chem.speciesMinusEnd.size();
     
-    CMonomer::_numBSpecies = _speciesBound.size()   +
-                             _speciesLinker.size()  +
-                             _speciesMotor.size()   +
-                             _speciesBrancher.size();
+    CMonomer::_numBSpecies = chem.speciesBound.size()   +
+                             chem.speciesLinker.size()  +
+                             chem.speciesMotor.size()   +
+                             chem.speciesBrancher.size();
     
     //set up species offsets
     short o1 = _speciesFilament.size();
-    
-    short o2 = _speciesFilament.size() +
-               _speciesPlusEnd.size();
+    short o2 = o1 + _speciesPlusEnd.size();
     
     short o3 = _speciesBound.size();
-    
-    short o4 = _speciesBound.size() +
-               _speciesLinker.size();
-    
-    short o5 = _speciesBound.size()  +
-               _speciesLinker.size() +
-               _speciesMotor.size();
+    short o4 = o3 + _speciesLinker.size();
+    short o5 = o4 + _speciesMotor.size();
     
     //create offset vector for filament
     CMonomer::_speciesFilamentIndex.push_back(0);
@@ -2180,6 +2173,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         initCMonomer(m, c);
         cc->addCMonomer(m);
     }
+    
     //get last ccylinder
     CCylinder* lastcc = nullptr;
  
@@ -2209,7 +2203,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             m1->speciesPlusEnd(0)->down();
             
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->getRSpecies().setN(1);
+            m2->speciesPlusEnd(0)->setN(1);
             
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
@@ -2217,8 +2211,8 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
 
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
-                cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
+                cc->getCMonomer(i)->speciesFilament(0)->setN(1);
+                cc->getCMonomer(i)->speciesBound(0)->setN(1);
             }
             for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
         }
@@ -2226,15 +2220,15 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         else {
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
-            m1->speciesPlusEnd(0)->getRSpecies().setN(1);
+            m1->speciesPlusEnd(0)->setN(1);
             
             CMonomer* m2 = cc->getCMonomer(0);
-            m2->speciesMinusEnd(0)->getRSpecies().setN(1);
+            m2->speciesMinusEnd(0)->setN(1);
             
             //fill with default filament value
             for(int i = 1; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->getRSpecies().setN(1);
-                cc->getCMonomer(i)->speciesBound(0)->getRSpecies().setN(1);
+                cc->getCMonomer(i)->speciesFilament(0)->setN(1);
+                cc->getCMonomer(i)->speciesBound(0)->setN(1);
             }
         }
     }    
@@ -2251,6 +2245,7 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
         
         auto ccOther = it->first;
         if(ccOther->getCylinder()->getFilament() != cc->getCylinder()->getFilament())
+            
             cc->removeCrossCylinderReactions(ccOther, true);
     }
     

@@ -95,7 +95,7 @@ public:
 
 /// @note - Assuming a duty ratio p = 0.1
 /// @note - This function updates unbinding rates based on the
-/// following exponential form (Erdmann et al, JACS 2013):
+/// following exponential form (Erdmann et al 2013):
 ///
 ///      k_eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
 ///
@@ -127,7 +127,7 @@ public:
 
 /// @note - Assuming a duty ratio p = 0.1
 /// @note - This function updates walking rates based on the
-/// following form (based on Hill et al, Erdmann et al 2013):
+/// following form (based on Hill et al 1937):
 ///
 ///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * beta)))
 ///

@@ -29,6 +29,7 @@ vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2, bool creation)
+
     : _c1(c1), _c2(c2),
       _position1(position1), _position2(position2), _linkerType(linkerType) {
                     

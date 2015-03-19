@@ -666,8 +666,8 @@ struct MotorWalkingBackwardCallback {
                                 short boundType,
                                 SubSystem* ps)
     
-    :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
-     _motorType(motorType), _boundType(boundType), _ps(ps) {}
+        :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
+         _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
         
@@ -768,8 +768,8 @@ struct MotorMovingCylinderBackwardCallback {
                                         short boundType,
                                         SubSystem* ps)
     
-    :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
-     _motorType(motorType), _boundType(boundType), _ps(ps) {}
+        :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
+        _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
         

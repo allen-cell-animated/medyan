@@ -97,7 +97,8 @@ public:
     /// Returns true if this node contains non-zero number of Species
     virtual bool isSpeciesContainer() const {return false;}
     
-    /// Returns true if this node contains non-zero number of reactions (i.e. ReactionBase pointers)
+    /// Returns true if this node contains non-zero number of reactions
+    /// (i.e. ReactionBase pointers)
     virtual bool isReactionsContainer() const {return false;}
     
     /// Returns the number of Species being immediately managed by this node (i.e. not

@@ -13,12 +13,6 @@
 
 #include "SysParams.h"
 
-MechParams   SysParams::MParams;
-ChemParams   SysParams::CParams;
-GeoParams    SysParams::GParams;
-BoundParams  SysParams::BParams;
-DyRateParams SysParams::DRParams;
-
 bool SysParams::checkChemParameters(ChemistryData& chem) {
     
     //Check all species for consistency
@@ -380,5 +374,11 @@ bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
     
     return true;
 }
+
+MechParams   SysParams::MParams;
+ChemParams   SysParams::CParams;
+GeoParams    SysParams::GParams;
+BoundParams  SysParams::BParams;
+DyRateParams SysParams::DRParams;
 
 

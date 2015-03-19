@@ -166,13 +166,13 @@ void GController::initializeGrid() {
     //Initial parameters of system
     _nDim = SysParams::Geometry().nDim;
     
-    _grid = {SysParams::Geometry().NX,
-             SysParams::Geometry().NY,
-             SysParams::Geometry().NZ};
-    
     _compartmentSize = {SysParams::Geometry().compartmentSizeX,
                         SysParams::Geometry().compartmentSizeY,
                         SysParams::Geometry().compartmentSizeZ};
+    
+    _grid = {SysParams::Geometry().NX,
+             SysParams::Geometry().NY,
+             SysParams::Geometry().NZ};
     
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
@@ -254,11 +254,12 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     vector<double> coords;
     
     coords.push_back(coordsCompartment[0] +
-        _compartmentSize[0] * randomDouble(-1,1) / 2);
+    _compartmentSize[0] * randomDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[1] +
-        _compartmentSize[1] * randomDouble(-1,1) / 2);
+    _compartmentSize[1] * randomDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[2] +
-        _compartmentSize[2] * randomDouble(-1,1) / 2);
+    _compartmentSize[2] * randomDouble(-1,1) / 2);
+    
     return coords;
 }
 

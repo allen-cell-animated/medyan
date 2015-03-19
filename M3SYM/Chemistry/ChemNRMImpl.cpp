@@ -93,6 +93,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     double tau;
     reComputePropensity();//calculated new _a
+
 #ifdef TRACK_ZERO_COPY_N
     tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -192,7 +193,6 @@ bool ChemNRMImpl::makeStep() {
 #endif
     
     syncGlobalTime();
-
     return true;
 }
 

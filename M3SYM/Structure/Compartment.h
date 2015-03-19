@@ -179,62 +179,69 @@ public:
     /// Returns the number of species in this compartment
     size_t numberOfSpecies() const {return _species.species().size();}
     /// Returns the number of internal reactions in this compartment
-    size_t numberOfInternalReactions() const
-        {return _internal_reactions.reactions().size();}
+    size_t numberOfInternalReactions() const {
+        return _internal_reactions.reactions().size();
+    }
     /// Returns the total number of reactions in this compartment, diffusing and
     /// internal
-    size_t numberOfReactions() const
-        {return _internal_reactions.reactions().size()+
-                _diffusion_reactions.reactions().size();}
+    size_t numberOfReactions() const {
+        return _internal_reactions.reactions().size() +
+               _diffusion_reactions.reactions().size();
+    }
     
     //@{
     /// Species finder functions
-    Species* findSpeciesByName(const string &name)
-        {return _species.findSpeciesByName(name);};
-    Species* findSpeciesByIndex (size_t index)
-        {return _species.findSpeciesByIndex(index);};
-    Species* findSpeciesByMolecule (int molecule)
-        {return _species.findSpeciesByMolecule(molecule);};
-    Species* findSimilarSpecies (const Species &s)
-        {return _species.findSimilarSpecies(s);}
+    Species* findSpeciesByName(const string &name) {
+        return _species.findSpeciesByName(name);
+    }
+    Species* findSpeciesByIndex (size_t index) {
+        return _species.findSpeciesByIndex(index);
+    }
+    Species* findSpeciesByMolecule (int molecule) {
+        return _species.findSpeciesByMolecule(molecule);
+    }
+    Species* findSimilarSpecies (const Species &s) {
+        return _species.findSimilarSpecies(s);
+    }
     //@}
     
     ///Remove species from this compartment
     size_t removeSpecies(Species* species) {return _species.removeSpecies(species);}
     
     /// Finds a similar internal reaction, see ReactionBase function
-    ReactionBase* findSimilarInternalReaction (const ReactionBase &r)
-    {
+    ReactionBase* findSimilarInternalReaction (const ReactionBase &r) {
         return _internal_reactions.findSimilarReaction(r);
     }
     
     /// Finds a similar diffusion reaction, see ReactionBase function
-    ReactionBase* findSimilarDiffusionReaction (const ReactionBase &r)
-    {
+    ReactionBase* findSimilarDiffusionReaction (const ReactionBase &r) {
         return _diffusion_reactions.findSimilarReaction(r);
     }
     
     /// Remove all diffusion reactions that have a given species
     /// @param s - species whose reactions should be removed
-    virtual void removeDiffusionReactions (Species* s)
-        {_diffusion_reactions.removeReactions(s);}
+    virtual void removeDiffusionReactions (Species* s) {
+        _diffusion_reactions.removeReactions(s);
+    }
     
     /// Remove all internal reactions that have a given species
     /// @param s - species whose reactions should be removed
-    virtual void removeInternalReactions (Species* s)
-        {_internal_reactions.removeReactions(s);}
+    virtual void removeInternalReactions (Species* s) {
+        _internal_reactions.removeReactions(s);
+    }
     
     /// Remove a diffusion reaction
-    virtual void removeDiffusionReaction(ReactionBase *r)
-        {_diffusion_reactions.removeReaction(r);}
+    virtual void removeDiffusionReaction(ReactionBase *r) {
+        _diffusion_reactions.removeReaction(r);
+    }
     
     /// Remove an internal reaction
-    virtual void removeInternalReaction(ReactionBase *r)
-        {_internal_reactions.removeReaction(r);}
+    virtual void removeInternalReaction(ReactionBase *r) {
+        _internal_reactions.removeReaction(r);
+    }
     
     /// Add a unique species pointer to this compartment
-    Species* addSpeciesUnique (unique_ptr<Species> &&species, float diff_rate = -1.0)
-    {
+    Species* addSpeciesUnique (unique_ptr<Species> &&species, float diff_rate = -1.0) {
         Species *sp = _species.addSpeciesUnique(move(species));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=diff_rate;
@@ -242,16 +249,14 @@ public:
     }
     
     /// Add a unique internal reaction pointer to this compartment
-    ReactionBase* addInternalReactionUnique (unique_ptr<ReactionBase> &&reaction)
-    {
+    ReactionBase* addInternalReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _internal_reactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;
     }
     
     /// Add a unique diffusing reaction pointer to this compartment
-    ReactionBase* addDiffusionReactionUnique (unique_ptr<ReactionBase> &&reaction)
-    {
+    ReactionBase* addDiffusionReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _diffusion_reactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;
@@ -260,8 +265,7 @@ public:
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>
-    SpeciesDiffusing* addSpeciesDiffusing(Args&& ...args)
-    {
+    SpeciesDiffusing* addSpeciesDiffusing(Args&& ...args) {
         SpeciesDiffusing *sp =
             static_cast<SpeciesDiffusing*>(
             _species.addSpecies<SpeciesDiffusing>(forward<Args>(args)...));
@@ -273,8 +277,7 @@ public:
     /// Add a filament species to this compartment
     /// @param args - any number of SpeciesFilament objects
     template<typename ...Args>
-    SpeciesFilament* addSpeciesFilament(Args&& ...args)
-    {
+    SpeciesFilament* addSpeciesFilament(Args&& ...args) {
         SpeciesFilament *sp =
             static_cast<SpeciesFilament*>(
             _species.addSpecies<SpeciesFilament>(forward<Args>(args)...));
@@ -286,8 +289,7 @@ public:
     /// Add a plus end species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
-    SpeciesPlusEnd* addSpeciesPlusEnd(Args&& ...args)
-    {
+    SpeciesPlusEnd* addSpeciesPlusEnd(Args&& ...args) {
         SpeciesPlusEnd *sp =
         static_cast<SpeciesPlusEnd*>(
         _species.addSpecies<SpeciesPlusEnd>(forward<Args>(args)...));
@@ -299,8 +301,7 @@ public:
     /// Add a minus end species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
-    SpeciesMinusEnd* addSpeciesMinusEnd(Args&& ...args)
-    {
+    SpeciesMinusEnd* addSpeciesMinusEnd(Args&& ...args) {
         SpeciesMinusEnd *sp =
         static_cast<SpeciesMinusEnd*>(
         _species.addSpecies<SpeciesMinusEnd>(forward<Args>(args)...));
@@ -312,8 +313,7 @@ public:
     /// Add a bound species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
-    SpeciesBound* addSpeciesBound(Args&& ...args)
-    {
+    SpeciesBound* addSpeciesBound(Args&& ...args) {
         SpeciesBound *sp =
         static_cast<SpeciesBound*>(
         _species.addSpecies<SpeciesBound>(forward<Args>(args)...));
@@ -325,8 +325,7 @@ public:
     /// Add a linker species to this compartment
     /// @param args - any number of SpeciesLinker objects
     template<typename ...Args>
-    SpeciesLinker* addSpeciesLinker(Args&& ...args)
-    {
+    SpeciesLinker* addSpeciesLinker(Args&& ...args) {
         SpeciesLinker *sp =
         static_cast<SpeciesLinker*>(
             _species.addSpecies<SpeciesLinker>(forward<Args>(args)...));
@@ -338,8 +337,7 @@ public:
     /// Add a motor species to this compartment
     /// @param args - any number of SpeciesMotor objects
     template<typename ...Args>
-    SpeciesMotor* addSpeciesMotor(Args&& ...args)
-    {
+    SpeciesMotor* addSpeciesMotor(Args&& ...args) {
         SpeciesMotor *sp =
         static_cast<SpeciesMotor*>(
             _species.addSpecies<SpeciesMotor>(forward<Args>(args)...));
@@ -351,8 +349,7 @@ public:
     /// Add a brancher species to this compartment
     /// @param args - any number of SpeciesBrancher objects
     template<typename ...Args>
-    SpeciesBrancher* addSpeciesBrancher(Args&& ...args)
-    {
+    SpeciesBrancher* addSpeciesBrancher(Args&& ...args) {
         SpeciesBrancher *sp =
         static_cast<SpeciesBrancher*>(
             _species.addSpecies<SpeciesBrancher>(forward<Args>(args)...));
@@ -363,8 +360,7 @@ public:
 
     /// Add an internal reaction to this compartment
     template<unsigned short M, unsigned short N, typename ...Args>
-    ReactionBase* addInternalReaction (Args&& ...args)
-    {
+    ReactionBase* addInternalReaction (Args&& ...args) {
         //            cout << "Compartment::addReaction()..." << endl;
         ReactionBase *r = _internal_reactions.addReaction<M,N>(forward<Args>(args)...);
         r->setParent(this);
@@ -374,8 +370,7 @@ public:
     /// Add an internal reaction to this compartment
     /// @param species, rate - specifying the species and rate that should be assigned
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
-    ReactionBase* addInternal(initializer_list<Species*> species, float rate)
-    {
+    ReactionBase* addInternal(initializer_list<Species*> species, float rate) {
         ReactionBase *r = _internal_reactions.add<RXN,M,N>(species,rate);
         r->setParent(this);
         return r;
@@ -383,8 +378,7 @@ public:
     
     /// Add a diffusion reaction to this compartment
     template<typename ...Args>
-    ReactionBase* addDiffusionReaction (Args&& ...args)
-    {
+    ReactionBase* addDiffusionReaction (Args&& ...args) {
         ReactionBase *r = _diffusion_reactions.addReaction<1,1>(forward<Args>(args)...);
         r->setParent(this);
         return r;
@@ -435,37 +429,32 @@ public:
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
-    float getDiffusionRate(string species_name)
-    {
+    float getDiffusionRate(string species_name) {
         int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
         return _diffusion_rates[molecule];
     }
     
     /// Set the diffusion rate of a species in the compartment
-    void setDiffusionRate(Species *sp, float diff_rate)
-    {
+    void setDiffusionRate(Species *sp, float diff_rate) {
         int molecule = sp->getMolecule();
         _diffusion_rates[molecule]=diff_rate;
     }
     
     /// Set the diffusion rate of a species in the compartment
     /// @param - molecule, an integer representing the species in the speciesDB
-    void setDiffusionRate(int molecule, float diff_rate)
-    {
+    void setDiffusionRate(int molecule, float diff_rate) {
         _diffusion_rates[molecule]=diff_rate;
     }
     
     /// Set the diffusion rate of a species in the compartment
     /// @param - species_name, a string
-    void setDiffusionRate(string species_name, float diff_rate)
-    {
+    void setDiffusionRate(string species_name, float diff_rate) {
         int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
         _diffusion_rates[molecule]=diff_rate;
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
-    void addNeighbour(Compartment *comp)
-    {
+    void addNeighbour(Compartment *comp) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit==_neighbours.end())
             _neighbours.push_back(comp);
@@ -475,16 +464,14 @@ public:
     }
     
     /// Remove a neighboring compartment
-    void removeNeighbour(Compartment *comp)
-    {
+    void removeNeighbour(Compartment *comp) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
     }
     
     /// Clone the species values of another compartment into this one
-    void cloneSpecies (Compartment *target) const
-    {
+    void cloneSpecies (Compartment *target) const {
         assert(target->numberOfSpecies()==0);
         for(auto &s : _species.species()){
             Species* sClone = s->clone();
@@ -493,8 +480,7 @@ public:
     }
     
     /// Clone the reaction values of another compartment into this one
-    void cloneReactions (Compartment *target) const
-    {
+    void cloneReactions (Compartment *target) const {
         assert(target->numberOfReactions()==0);
         for(auto &r : _internal_reactions.reactions()){
             target->addInternalReactionUnique(unique_ptr<ReactionBase>(
@@ -503,8 +489,7 @@ public:
     }
 
     /// Clone both the species and compartments into this compartment
-    void cloneSpeciesReactions(Compartment* C)
-    {
+    void cloneSpeciesReactions(Compartment* C) {
         if(_activated) this->cloneSpecies(C);
         this->cloneReactions(C);
         C->_diffusion_rates = this->_diffusion_rates;
@@ -513,8 +498,7 @@ public:
     
     /// Clone a compartment
     /// @note - this does not clone the neighbors, just reactions and species
-    virtual Compartment* clone()
-    {
+    virtual Compartment* clone() {
         Compartment *C = new Compartment(*this);
         return C;
     }
@@ -531,22 +515,16 @@ public:
     
     
     ///Get the species container vector
-    SpeciesPtrContainerVector& getSpeciesContainer()
-        {return _species;}
-    const SpeciesPtrContainerVector& getSpeciesContainer() const
-        {return _species;}
+    SpeciesPtrContainerVector& getSpeciesContainer() {return _species;}
+    const SpeciesPtrContainerVector& getSpeciesContainer() const {return _species;}
     
     ///Get the internal reaction container vector
-    ReactionPtrContainerVector& getInternalReactionContainer()
-        {return _internal_reactions;}
-    const ReactionPtrContainerVector& getInternalReactionContainer() const
-        {return _internal_reactions;}
+    ReactionPtrContainerVector& getInternalReactionContainer() {return _internal_reactions;}
+    const ReactionPtrContainerVector& getInternalReactionContainer() const {return _internal_reactions;}
     
     ///Get the diffusion reaction container vector
-    ReactionPtrContainerVector& getDiffusionReactionContainer()
-        {return _diffusion_reactions;}
-    const ReactionPtrContainerVector& getDiffusionReactionContainer() const
-        {return _diffusion_reactions;}
+    ReactionPtrContainerVector& getDiffusionReactionContainer() {return _diffusion_reactions;}
+    const ReactionPtrContainerVector& getDiffusionReactionContainer() const {return _diffusion_reactions;}
     
     /// Get the vector list of neighbors to this compartment
     vector<Compartment*>& getNeighbours() {return _neighbours;}
@@ -555,8 +533,7 @@ public:
     /// Print the species in this compartment
     void printSpecies() {_species.printSpecies();}
     /// Print the reactions in this compartment
-    void printReactions()
-    {
+    void printReactions() {
         _internal_reactions.printReactions();
         _diffusion_reactions.printReactions();
     }
@@ -566,15 +543,13 @@ public:
     
     /// Adds the reactions of this compartment to the ChemSim object
     /// @param - chem, a ChemSim object that runs the reaction-diffusion algorithm
-    virtual void addChemSimReactions()
-    {
+    virtual void addChemSimReactions() {
         for(auto &r : _internal_reactions.reactions()) ChemSim::addReaction(r.get());
         for(auto &r : _diffusion_reactions.reactions()) ChemSim::addReaction(r.get());
     }
     
     /// Print properties of this compartment
-    virtual void printSelf()
-    {
+    virtual void printSelf() {
         cout << this->getFullName() << "\n"
         << "Number of neighbors: " << numberOfNeighbours() << endl;
         printSpecies();

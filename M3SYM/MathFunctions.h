@@ -35,6 +35,7 @@ namespace mathfunc {
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
+        
         return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
@@ -71,6 +72,7 @@ namespace mathfunc {
     /// (x4-x3,y4-y3,z4-z3)
     inline double scalarProduct(const vector<double>& v1, const vector<double>& v2,
                                 const vector<double>& v3, const vector<double>& v4) {
+        
         return ((v2[0] - v1[0])*(v4[0] - v3[0]) +
                 (v2[1] - v1[1])*(v4[1] - v3[1]) +
                 (v2[2] - v1[2])*(v4[2] - v3[2]));
@@ -92,7 +94,8 @@ namespace mathfunc {
                                          const vector<double>& v3,
                                          const vector<double>& p3,
                                          const vector<double>& v4,
-                                         const vector<double>& p4, double d){
+                                         const vector<double>& p4,
+                                         double d){
         
         double xx = ((v2[0] + d*p2[0]) - (v1[0] + d*p1[0]))*
                     ((v4[0] + d*p4[0]) - (v3[0] + d*p3[0]));
@@ -168,7 +171,8 @@ namespace mathfunc {
                                                   const vector<double>& v3,
                                                   const vector<double>& p3,
                                                   const vector<double>& v4,
-                                                  const vector<double>& p4, double d){
+                                                  const vector<double>& p4,
+                                                  double d){
         vector<double> v;
         
         double vx =
@@ -274,7 +278,8 @@ namespace mathfunc {
     vector<double> movePointOutOfPlane(const vector<double>& p1,
                                        const vector<double>& p2,
                                        const vector<double>& p3,
-                                       const vector<double>& p4, int i, double d);
+                                       const vector<double>& p4,
+                                       int i, double d);
     
     
     /// Function to create a initial branching point and direction, given an

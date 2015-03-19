@@ -22,7 +22,7 @@
 /// Represents a container for all Species that could be contained in a
 /// particular filament element at a given position.
 /*!
- *  CMonomer provides a container to hold all Species that are possibly held at a given
+ *  CMonomer provides a container to hold all Species that are held at a given
  *  filament position. The species are held in an standard vector.
  */
 class CMonomer {
@@ -39,9 +39,9 @@ private:
     
     //@{
     /// Species index vectors
-    /// These vectors are used to access the correct species in the species vectors
-    /// Each index in the species index vector corresponds to an offset for that
-    /// species in the species array.
+    /// These index vectors are used to access the correct species in the actual
+    /// species arrays. Each index in the species index vector corresponds to an
+    /// offset for that species in the species array.
     static vector<short> _speciesFilamentIndex;
     static vector<short> _speciesBoundIndex;
     //@}

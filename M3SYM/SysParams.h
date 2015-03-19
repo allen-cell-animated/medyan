@@ -117,12 +117,12 @@ struct GeoParams {
     double largestCompartmentSide = 0;
     
     double monomerSize = 0;
-    double cylinderSize = 0;
+    
     int cylinderIntSize = 0;
+    double cylinderSize = 0;
     
     /// Minimum monomer length of a cylinder is preset
     int minCylinderIntSize = 3;
-    
     double minCylinderSize = 0;
     //@}
     

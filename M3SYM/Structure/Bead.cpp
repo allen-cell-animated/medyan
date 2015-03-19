@@ -22,6 +22,7 @@
 using namespace mathfunc;
 
 Bead::Bead (vector<double> v, int positionFilament)
+
     : coordinate(v), coordinateAux(v), force(3, 0), forceAux(3, 0),
       _positionFilament(positionFilament) {
           
@@ -41,7 +42,6 @@ Bead::Bead (vector<double> v, int positionFilament)
 }
 
 Bead::~Bead() {
-    
     //remove from bead db
     BeadDB::instance()->removeBead(this);
     

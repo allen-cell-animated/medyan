@@ -22,7 +22,7 @@ float BrownianRatchet::changeRate(float bareRate, double force) {
     
     double newRate = bareRate * exp( - force * _x / kT);
     
-    return newRate;
+    return bareRate;
 }
 
 float BasicCatchSlip::changeRate(float bareRate, double force) {
@@ -33,9 +33,8 @@ float BasicCatchSlip::changeRate(float bareRate, double force) {
 
 float BasicSlip::changeRate(float bareRate, double force) {
     
-    
     double newRate = bareRate * exp( force * _x / kT);
-    
+
     return newRate;
 }
 
@@ -46,7 +45,7 @@ float LowDutyPCMCatch::changeRate(float bareRate, int numHeads, double force) {
 
     //calculate new rate
     double newRate = (bareRate / N_b) * exp(-force / (N_b * _F0));
-    
+
     return newRate;
 
 }
@@ -59,7 +58,6 @@ float LowDutyHillStall::changeRate(float bareRate, int numHeads, double force) {
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force / numHeads)
                           / (_F0 + (force / (0.12 * numHeads))));
-    
     return newRate;
 
     

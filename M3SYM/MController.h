@@ -57,8 +57,7 @@ public:
     MController(SubSystem* s) {_subSystem = s;}
     
     /// Initialze the force fields and minimizers used
-    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers)
-    {
+    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {
         initializeFF(forceFields);
         initializeMinAlgorithms(Minimizers);
     }
