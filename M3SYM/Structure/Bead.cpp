@@ -59,7 +59,7 @@ void Bead::updatePosition() {
     
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
-    
+
     if(c != _compartment) {
         //remove from old compartment, add to new
         _compartment->removeBead(this);

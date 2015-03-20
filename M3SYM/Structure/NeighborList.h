@@ -14,16 +14,10 @@
 #ifndef M3SYM_NeighborList_h
 #define M3SYM_NeighborList_h
 
-#include <unordered_map>
-#include <vector>
-
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Neighbor;
-class Cylinder;
-class BoundaryElement;
-class Bead;
 
 /// To hold an external neighbor list of general type.
 
@@ -38,8 +32,6 @@ class Bead;
 class NeighborList {
     
 protected:
-    unordered_map<Neighbor*, vector<Neighbor*>>
-        _list; ///< The neighbors list, as a hash map
     float _rMax;  ///< max distance cutoff
     float _rMin;  ///< min distance cutoff
     
@@ -54,23 +46,10 @@ public:
     /// be fixed in the future.
     virtual ~NeighborList() noexcept {}
     
-    /// Remove a neighbor if possible
-    virtual void removeNeighbor(Neighbor* n) {_list.erase(n);}
-    
-    /// Re-initialize the neighborlist
-    virtual void reset() {
-        //loop through all neighbor keys
-        for(auto it = _list.begin(); it != _list.end(); it++) {
-            
-            it->second.clear(); ///clear vector of neighbors
-            updateNeighbors(it->first);
-        }
-    }
-    
     /// Add neighbor
     virtual void addNeighbor(Neighbor* n) = 0;
-    /// Update a neighbor
-    virtual void updateNeighbors(Neighbor* n) = 0;
+    /// Remove a neighbor if possible
+    virtual void removeNeighbor(Neighbor* n) = 0;
     
     /// Add a dynamic neighbor to the system.
     /// For BoundaryElementNeighborList list, this will be Bead.
@@ -81,63 +60,8 @@ public:
     /// For BoundaryElementNeighborList list, this will be Bead.
     /// For CylinderNeighborList, all elements in neighbors list are dynamic.
     virtual void removeDynamicNeighbor(Neighbor* n) = 0;
-};
-
-
-/// An implementation of NeighborList for Cylinder-Cylinder interactions
-class CCNeighborList : public NeighborList {
     
-private:
-    bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
-    
-public:
-    CCNeighborList(float rMax, float rMin=0.0, bool crossFilamentOnly = false)
-        : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
-    
-    virtual void addNeighbor(Neighbor* n);
-    virtual void updateNeighbors(Neighbor* n);
-    
-    /// The implementation of this function calls the static version, all cylinders
-    /// are dynamic
-    virtual void addDynamicNeighbor(Neighbor* n) {addNeighbor(n);}
-    virtual void removeDynamicNeighbor(Neighbor* n);
-    
-    /// Get all cylinder neighbors
-    vector<Cylinder*> getNeighbors(Cylinder* cylinder);
-
-};
-
-/// An implementation of NeighborList for Bead-BoundaryElement interactions
-class BBENeighborList : public NeighborList {
-    
-public:
-    BBENeighborList(float rMax): NeighborList(rMax) {}
-
-    virtual void addNeighbor(Neighbor* n);
-    virtual void updateNeighbors(Neighbor* n);
-    
-    virtual void addDynamicNeighbor(Neighbor* n);
-    virtual void removeDynamicNeighbor(Neighbor* n);
-    
-    /// Get all Bead neighbors of a boundary element
-    vector<Bead*> getNeighbors(BoundaryElement* be);
-};
-
-/// An implementation of NeighborList for Cylinder-BoundaryElement interaction
-class CBENeighborList : public NeighborList {
-    
-public:
-    CBENeighborList(float rMax): NeighborList(rMax) {}
-    
-    virtual void addNeighbor(Neighbor* n);
-    virtual void updateNeighbors(Neighbor* n);
-    
-    virtual void addDynamicNeighbor(Neighbor* n);
-    virtual void removeDynamicNeighbor(Neighbor* n);
-    
-    /// Get all Cylinder neighbors of a boundary element
-    vector<Cylinder*> getNeighbors(BoundaryElement* be);
-};
-
+    /// Re-initialize the neighborlist
+    virtual void reset() = 0;
 
 #endif

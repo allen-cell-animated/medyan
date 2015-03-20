@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+#include "NeighborListImpl.h"
 #include "NeighborListDB.h"
 
 /// Holds a CCNeighborList.

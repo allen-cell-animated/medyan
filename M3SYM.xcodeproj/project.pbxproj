@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B58E178D1A2E5E1F005BBC44 /* (null) in Headers */ = {isa = PBXBuildFile; };
+		BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */; };
+		BF365D881ABC728F006EE099 /* NeighborListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF365D861ABC728F006EE099 /* NeighborListImpl.h */; };
 		F716AE331A448235001BDBFE /* (null) in Headers */ = {isa = PBXBuildFile; };
 		F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */; };
 		F7199B2B1A30B8F700CD5DCC /* BranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B291A30B8F700CD5DCC /* BranchingPoint.h */; };
@@ -206,7 +208,6 @@
 		F7C9D01A1A2D165D0087434A /* MotorGhostDB.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD31A2D165D0087434A /* MotorGhostDB.h */; };
 		F7C9D01B1A2D165D0087434A /* Movable.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD41A2D165D0087434A /* Movable.h */; };
 		F7C9D01C1A2D165D0087434A /* Neighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD51A2D165D0087434A /* Neighbor.h */; };
-		F7C9D01D1A2D165D0087434A /* NeighborList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFD61A2D165D0087434A /* NeighborList.cpp */; };
 		F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD71A2D165D0087434A /* NeighborList.h */; };
 		F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */; };
 		F7C9D0201A2D165D0087434A /* NeighborListContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */; };
@@ -251,6 +252,8 @@
 /* Begin PBXFileReference section */
 		BF365D811ABC685A006EE099 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = ../googletest/libgtest_main.a; sourceTree = "<group>"; };
 		BF365D821ABC685A006EE099 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../googletest/libgtest.a; sourceTree = "<group>"; };
+		BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListImpl.cpp; sourceTree = "<group>"; };
+		BF365D861ABC728F006EE099 /* NeighborListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListImpl.h; sourceTree = "<group>"; };
 		F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPoint.cpp; sourceTree = "<group>"; };
 		F7199B291A30B8F700CD5DCC /* BranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPoint.h; sourceTree = "<group>"; };
 		F7199B2C1A30C24D00CD5DCC /* BranchingPointDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPointDB.cpp; sourceTree = "<group>"; };
@@ -450,7 +453,6 @@
 		F7C9CFD31A2D165D0087434A /* MotorGhostDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostDB.h; sourceTree = "<group>"; };
 		F7C9CFD41A2D165D0087434A /* Movable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movable.h; sourceTree = "<group>"; };
 		F7C9CFD51A2D165D0087434A /* Neighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Neighbor.h; sourceTree = "<group>"; };
-		F7C9CFD61A2D165D0087434A /* NeighborList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborList.cpp; sourceTree = "<group>"; wrapsLines = 1; };
 		F7C9CFD71A2D165D0087434A /* NeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborList.h; sourceTree = "<group>"; };
 		F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListContainer.cpp; sourceTree = "<group>"; };
 		F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListContainer.h; sourceTree = "<group>"; };
@@ -561,7 +563,8 @@
 				F7C9CFD31A2D165D0087434A /* MotorGhostDB.h */,
 				F7C9CFD41A2D165D0087434A /* Movable.h */,
 				F7C9CFD51A2D165D0087434A /* Neighbor.h */,
-				F7C9CFD61A2D165D0087434A /* NeighborList.cpp */,
+				BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */,
+				BF365D861ABC728F006EE099 /* NeighborListImpl.h */,
 				F7C9CFD71A2D165D0087434A /* NeighborList.h */,
 				F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */,
 				F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */,
@@ -964,6 +967,7 @@
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,
 				F7525A951A702461007A4E9F /* LinkerFF.h in Headers */,
 				F7525A031A7023A4007A4E9F /* BoundaryFF.h in Headers */,
+				BF365D881ABC728F006EE099 /* NeighborListImpl.h in Headers */,
 				F7525A8A1A70244D007A4E9F /* MotorGhostStretching.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1064,7 +1068,6 @@
 				F7525A051A7023A4007A4E9F /* BoundaryRepulsion.cpp in Sources */,
 				F735B77E1A2D16F200AE21D1 /* Output.cpp in Sources */,
 				F7C9CFEF1A2D165D0087434A /* BoundaryElementDB.cpp in Sources */,
-				F7C9D01D1A2D165D0087434A /* NeighborList.cpp in Sources */,
 				F735B79C1A2D172800AE21D1 /* ChemManager.cpp in Sources */,
 				F7525A541A70241E007A4E9F /* BranchingBendingCosine.cpp in Sources */,
 				F7C9D0051A2D165D0087434A /* Cylinder.cpp in Sources */,
@@ -1088,6 +1091,7 @@
 				F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */,
 				F735B7831A2D16F200AE21D1 /* SysParams.cpp in Sources */,
 				F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */,
+				BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */,
 				F7525A5F1A70241E007A4E9F /* BranchingPositionCosine.cpp in Sources */,
 				F7525A8B1A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp in Sources */,
 				F7525A891A70244D007A4E9F /* MotorGhostStretching.cpp in Sources */,
