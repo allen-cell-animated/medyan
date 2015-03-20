@@ -249,6 +249,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BF365D811ABC685A006EE099 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = ../googletest/libgtest_main.a; sourceTree = "<group>"; };
+		BF365D821ABC685A006EE099 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../googletest/libgtest.a; sourceTree = "<group>"; };
 		F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPoint.cpp; sourceTree = "<group>"; };
 		F7199B291A30B8F700CD5DCC /* BranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPoint.h; sourceTree = "<group>"; };
 		F7199B2C1A30C24D00CD5DCC /* BranchingPointDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPointDB.cpp; sourceTree = "<group>"; };
@@ -709,6 +711,8 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
+				BF365D811ABC685A006EE099 /* libgtest_main.a */,
+				BF365D821ABC685A006EE099 /* libgtest.a */,
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED071548FFC70069DA61 /* Products */,
 				F7954C4A197D98BE00074A12 /* M3SYM */,
@@ -1427,18 +1431,15 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
 				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/jameskomianos/Code/googletest,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/Users/jameskomianos/Code/googletest,
+					/Users/jimmy/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (
@@ -1457,19 +1458,16 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/Users/jameskomianos/Code/googletest,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/Users/jameskomianos/Code/googletest,
+					/Users/jimmy/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (

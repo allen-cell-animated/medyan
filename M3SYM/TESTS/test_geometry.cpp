@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_GEOMETRY_TEST
+//#define DO_THIS_GEOMETRY_TEST
 #ifdef DO_THIS_GEOMETRY_TEST
 
 #include "gtest/gtest.h"
@@ -22,30 +22,19 @@
 
 #include "GController.h"
 #include "SysParams.h"
+
 ///testing basic initialization and getters
 TEST(GeometryTest, Basic) {
 
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 10.0;
+    SysParams::GParams.compartmentSizeZ = 10.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
+    SysParams::GParams.NX = 5;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 5;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.monomerSize = 2.7;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 27.0;
-    
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -53,37 +42,35 @@ TEST(GeometryTest, Basic) {
     ///checking out of bounds
     EXPECT_ANY_THROW(GController::getCompartment(vector<double>{60.0,50.0,50.0}));
     
+    //checking equivalence
     EXPECT_EQ(GController::getCompartment(vector<size_t>{0,0,0}),
               GController::getCompartment(vector<double>{5.0,5.0,5.0}));
     EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,0}),
               GController::getCompartment(vector<double>{5.0,15.0,5.0}));
     EXPECT_EQ(GController::getCompartment(vector<size_t>{0,1,1}),
               GController::getCompartment(vector<double>{5.0,15.0,15.0}));
+    
+    //checking edges
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{4,4,4}),
+              GController::getCompartment(vector<double>{49.0,49.0,49.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{4,0,0}),
+              GController::getCompartment(vector<double>{49.0,0.0,0.0}));
+    EXPECT_EQ(GController::getCompartment(vector<size_t>{0,0,0}),
+              GController::getCompartment(vector<double>{0.0,0.0,0.0}));
+    
 }
 
 TEST(GeometryTest, NonCubicGrid) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 20.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 100.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 20.0;
+    SysParams::GParams.compartmentSizeZ = 100.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 15;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 10;
+    SysParams::GParams.NX = 15;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 10;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.monomerSize = 1;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 5.0;
-    
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();

@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_NRM_TEST
+//#define DO_THIS_NRM_TEST
 #ifdef DO_THIS_NRM_TEST
 
 #include <boost/accumulators/accumulators.hpp>

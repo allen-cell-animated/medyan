@@ -12,8 +12,8 @@
 //------------------------------------------------------------------
 
 #ifdef TESTING
-#define DO_THIS_LONG_TEST
 
+//#define DO_THIS_LONG_TEST
 #ifdef DO_THIS_LONG_TEST 
 
 #include <boost/accumulators/accumulators.hpp>

@@ -95,6 +95,7 @@ void Cylinder::updatePosition() {
     _mCylinder->setLength(twoPointDistance(_b1->coordinate, _b2->coordinate));
     
     Compartment* c;
+    
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     

@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_BOUNDARY_TEST
+//#define DO_THIS_BOUNDARY_TEST
 #ifdef DO_THIS_BOUNDARY_TEST
 
 #include "gtest/gtest.h"
@@ -25,22 +25,15 @@
 #include "SysParams.h"
 TEST(PlaneBoundaryElementTest, Distances) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 10.0;
+    SysParams::GParams.compartmentSizeZ = 10.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
+    SysParams::GParams.NX = 5;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 5;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -57,22 +50,15 @@ TEST(PlaneBoundaryElementTest, Distances) {
 
 TEST(SphereBoundaryElementTest, Distances) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 10.0;
+    SysParams::GParams.compartmentSizeZ = 10.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
+    SysParams::GParams.NX = 5;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 5;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -91,22 +77,15 @@ TEST(SphereBoundaryElementTest, Distances) {
 
 TEST(CylindricalZBoundaryElementTest, Distances){
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 10.0;
+    SysParams::GParams.compartmentSizeZ = 10.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
+    SysParams::GParams.NX = 5;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 5;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();
@@ -130,22 +109,15 @@ TEST(CylindricalZBoundaryElementTest, Distances){
 
 TEST(HalfSphereZBoundaryElementTest, Distances){
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 10.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 10.0;
+    SysParams::GParams.compartmentSizeX = 10.0;
+    SysParams::GParams.compartmentSizeY = 10.0;
+    SysParams::GParams.compartmentSizeZ = 10.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 5;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 5;
+    SysParams::GParams.NX = 5;
+    SysParams::GParams.NY = 5;
+    SysParams::GParams.NZ = 5;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.nDim = 3;
     
     GController g;
     g.initializeGrid();

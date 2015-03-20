@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_COMPARTMENT_TEST
+//#define DO_THIS_COMPARTMENT_TEST
 #ifdef DO_THIS_COMPARTMENT_TEST
 
 #include "gtest/gtest.h"
@@ -88,27 +88,18 @@ TEST(CompartmentTest, SpeciesAndReactions){
 TEST(CompartmentContainerTest, Main) {
     
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeX = 100.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeY = 100.0;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.compartmentSizeZ = 100.0;
+    SysParams::GParams.compartmentSizeX = 100.0;
+    SysParams::GParams.compartmentSizeY = 100.0;
+    SysParams::GParams.compartmentSizeZ = 100.0;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NX = 50;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NY = 50;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.NZ = 50;
+    SysParams::GParams.NX = 50;
+    SysParams::GParams.NY = 50;
+    SysParams::GParams.NZ = 50;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.monomerSize = 2.7;
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.cylinderSize = 27.0;
+    SysParams::GParams.nDim = 3;
     
-    SysParams
-//  http://papoian.chem.umd.edu/::GParams.nDim = 3;
+    SysParams::GParams.monomerSize = 2.7;
+    SysParams::GParams.cylinderSize = 27.0;
     
     int _numSpecies; ///for testing
 

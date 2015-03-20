@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_COMPOSITE_TEST
+//#define DO_THIS_COMPOSITE_TEST
 #ifdef DO_THIS_COMPOSITE_TEST
 
 #include "gtest/gtest.h"

@@ -117,7 +117,6 @@ MotorGhost::~MotorGhost() noexcept {
 void MotorGhost::updatePosition() {
     
     //check if were still in same compartment
-    
     auto c1b1 = _c1->getFirstBead()->coordinate;
     auto c1b2 = _c1->getSecondBead()->coordinate;
     auto c2b1 = _c2->getFirstBead()->coordinate;
@@ -131,6 +130,7 @@ void MotorGhost::updatePosition() {
     _mMotorGhost->setLength(twoPointDistance(m1, m2));
     
     Compartment* c;
+    
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     

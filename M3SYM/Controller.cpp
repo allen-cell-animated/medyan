@@ -326,6 +326,7 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             _mController->run();
+            
             updatePositions();
             
             if(i % _numStepsPerSnapshot == 0 ||

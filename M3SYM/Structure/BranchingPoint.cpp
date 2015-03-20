@@ -132,6 +132,7 @@ void BranchingPoint::updatePosition() {
                                     _c1->getSecondBead()->coordinate, _position);
 
     Compartment* c;
+    
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     

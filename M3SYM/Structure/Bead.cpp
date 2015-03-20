@@ -56,6 +56,7 @@ void Bead::updatePosition() {
     
     //Update the compartment
     Compartment* c;
+    
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
     

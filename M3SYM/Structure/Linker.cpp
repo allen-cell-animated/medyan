@@ -119,6 +119,7 @@ void Linker::updatePosition() {
     _mLinker->setLength(twoPointDistance(m1, m2));
     
     Compartment* c;
+    
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     

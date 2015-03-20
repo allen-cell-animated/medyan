@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-#define DO_THIS_CCYLINDERS_TEST
+//#define DO_THIS_CCYLINDERS_TEST
 #ifdef DO_THIS_CCYLINDERS_TEST
 
 #include "gtest/gtest.h"
@@ -25,8 +25,7 @@
 
 TEST(CMonomer, Main) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
+    SysParams::CParams.numFilamentSpecies = 2;
     
     CMonomer* m1 = new CMonomer;
     Compartment* c1 = new Compartment;
@@ -53,8 +52,7 @@ TEST(CMonomer, Main) {
 
 TEST(CCylinder, Basic) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
+    SysParams::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(new ChemSimpleGillespieImpl);
     ChemSim::initialize();
@@ -68,9 +66,9 @@ TEST(CCylinder, Basic) {
     
         CMonomer* m = new CMonomer;
         sf1 =
-        c->addSpeciesFilament(SpeciesNamesDB::Instance()->genUniqueName("A"));
+        c->addSpeciesFilament(SpeciesNamesDB::instance()->genUniqueName("A"));
         sf2 =
-        c->addSpeciesFilament(SpeciesNamesDB::Instance()->genUniqueName("B"));
+        c->addSpeciesFilament(SpeciesNamesDB::instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -103,8 +101,7 @@ TEST(CCylinder, Basic) {
 
 TEST(CCylinder, AdvancedCloning) {
     
-    SysParams
-//  http://papoian.chem.umd.edu/::CParams.numFilamentSpecies = 2;
+    SysParams::CParams.numFilamentSpecies = 2;
     
     ChemSim::setInstance(new ChemSimpleGillespieImpl);
     ChemSim::initialize();
@@ -123,9 +120,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c1->addSpeciesFilament(
-        SpeciesNamesDB::Instance()->genUniqueName("A"));
+        SpeciesNamesDB::instance()->genUniqueName("A"));
         SpeciesFilament* sf2 = c1->addSpeciesFilament(
-        SpeciesNamesDB::Instance()->genUniqueName("B"));
+        SpeciesNamesDB::instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -137,9 +134,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c2->addSpeciesFilament(
-        SpeciesNamesDB::Instance()->genUniqueName("A"));
+        SpeciesNamesDB::instance()->genUniqueName("A"));
         SpeciesFilament* sf2 = c2->addSpeciesFilament(
-        SpeciesNamesDB::Instance()->genUniqueName("B"));
+        SpeciesNamesDB::instance()->genUniqueName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);

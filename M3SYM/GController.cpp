@@ -62,8 +62,16 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         
         i++;
     }
+    try {
     return static_cast<Compartment*>(
         CompartmentGrid::instance()->children().at(index).get());
+    }
+    catch (exception& e){
+        cout << "Bad compartment access at..." << endl;
+        cout << "Compartment index = " << index << endl;
+        cout << "Indices = " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 Compartment* GController::getCompartment(const vector<double> &coords)
@@ -106,8 +114,17 @@ Compartment* GController::getCompartment(const vector<double> &coords)
         }
         i++;
     }
+    
+    try {
     return static_cast<Compartment*>(
         CompartmentGrid::instance()->children().at(index).get());
+    }
+    catch (exception& e){
+        cout << "Bad compartment access at..." << endl;
+        cout << "Compartment index = " << index << endl;
+        cout << "Coords = " << coords[0] << " " << coords[1] << " " << coords[2] << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 void GController::generateConnections()
