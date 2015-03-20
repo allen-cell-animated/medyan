@@ -236,8 +236,8 @@ struct BranchingPointCreationCallback {
         double s = SysParams::Geometry().monomerSize;
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
-        auto bp = get<1>(branchPosDir);
         auto bd = get<0>(branchPosDir);
+        auto bp = get<1>(branchPosDir);
         
         //create a new filament
         Filament* f = _ps->addNewFilament(bp, bd, true);

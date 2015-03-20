@@ -63,5 +63,6 @@ public:
     
     /// Re-initialize the neighborlist
     virtual void reset() = 0;
+};
 
 #endif

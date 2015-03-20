@@ -250,8 +250,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BF365D811ABC685A006EE099 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = ../googletest/libgtest_main.a; sourceTree = "<group>"; };
-		BF365D821ABC685A006EE099 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../googletest/libgtest.a; sourceTree = "<group>"; };
 		BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListImpl.cpp; sourceTree = "<group>"; };
 		BF365D861ABC728F006EE099 /* NeighborListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListImpl.h; sourceTree = "<group>"; };
 		F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPoint.cpp; sourceTree = "<group>"; };
@@ -714,8 +712,6 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
-				BF365D811ABC685A006EE099 /* libgtest_main.a */,
-				BF365D821ABC685A006EE099 /* libgtest.a */,
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED071548FFC70069DA61 /* Products */,
 				F7954C4A197D98BE00074A12 /* M3SYM */,
