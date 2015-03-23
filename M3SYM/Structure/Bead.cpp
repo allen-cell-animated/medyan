@@ -58,7 +58,17 @@ void Bead::updatePosition() {
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        
+        //print exception
+        cout << e.what() << endl;
+        
+        cout << "BeadID = " << _positionFilament << endl;
+        
+        //reset bead position by randomly placing in old compartment
+        coordinate = GController::getRandomCoordinates(_compartment);
+        return;
+    }
 
     if(c != _compartment) {
         //remove from old compartment, add to new

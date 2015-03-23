@@ -230,22 +230,33 @@ void Controller::initialize(string inputFile,
 
 void Controller::updatePositions() {
     
-    /// update all moveables
+    //update all moveables
+    
+    //Beads
     for(auto &f : *FilamentDB::instance()) {
         for (auto cylinder : f->getCylinderVector()){
             cylinder->getFirstBead()->updatePosition();
-            cylinder->updatePosition();
         }
         //update last bead
         f->getCylinderVector().back()->
         getSecondBead()->updatePosition();
     }
+    
+    //Cylinders
+    for(auto &f : *FilamentDB::instance()) {
+        for (auto cylinder : f->getCylinderVector()){
+            cylinder->updatePosition();
+        }
+    }
+    //Linkers
     for(auto &l : *LinkerDB::instance())
         l->updatePosition();
     
+    //Motors
     for(auto &m : *MotorGhostDB::instance())
         m->updatePosition();
     
+    //Branchers
     for(auto &b : *BranchingPointDB::instance())
         b->updatePosition();
 }
@@ -253,12 +264,16 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
+    
+    //Boundary cylinders
     for(auto &c : _subSystem->getBoundaryCylinders())
         c->updateReactionRates();
     
+    //Linkers
     for(auto &l : *LinkerDB::instance())
         l->updateReactionRates();
     
+    //Motors
     for(auto &m : *MotorGhostDB::instance())
         m->updateReactionRates();
 }

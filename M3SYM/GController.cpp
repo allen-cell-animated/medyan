@@ -22,6 +22,11 @@
 
 using namespace mathfunc;
 
+//static params
+vector<int> GController::_grid = {};
+vector<double> GController::_compartmentSize = {};
+short GController::_nDim = 0;
+
 Compartment* GController::getCompartment(const vector<size_t> &indices)
 {
     size_t index = 0;
@@ -70,7 +75,7 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         cout << "Bad compartment access at..." << endl;
         cout << "Compartment index = " << index << endl;
         cout << "Indices = " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
-        exit(EXIT_FAILURE);
+        throw NaNCoordinateException();
     }
 }
 
@@ -123,7 +128,7 @@ Compartment* GController::getCompartment(const vector<double> &coords)
         cout << "Bad compartment access at..." << endl;
         cout << "Compartment index = " << index << endl;
         cout << "Coords = " << coords[0] << " " << coords[1] << " " << coords[2] << endl;
-        exit(EXIT_FAILURE);
+        throw NaNCoordinateException();
     }
 }
 
@@ -279,10 +284,4 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     
     return coords;
 }
-
-
-
-vector<int> GController::_grid = {};
-vector<double> GController::_compartmentSize = {};
-short GController::_nDim = 0;
 

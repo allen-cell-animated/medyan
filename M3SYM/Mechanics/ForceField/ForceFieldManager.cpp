@@ -38,8 +38,7 @@ void ForceFieldManager::computeForces() {
 
 void ForceFieldManager::computeForcesAux() {
     resetForcesAux();
-    for(auto &f : _forceFields)
-        f->computeForcesAux();
+    for(auto &f : _forceFields) f->computeForcesAux();
 }
 
 void ForceFieldManager::resetForces() {

@@ -18,12 +18,21 @@
 
 #include "common.h"
 
-/// A exception to be thrown when an index/coordinate is out of bounds of the grid
+/// An exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public exception {
     
     virtual const char* what() const throw() {
         return "An element is out of the bounds of the grid.";
     }
+};
+
+/// An exception to be thrown when an index/coordinate is NaN
+class NaNCoordinateException : public exception {
+    
+    virtual const char* what() const throw() {
+        return "A element coordinate is NaN.";
+    }
+    
 };
 
 //FORWARD DECLARATIONS
