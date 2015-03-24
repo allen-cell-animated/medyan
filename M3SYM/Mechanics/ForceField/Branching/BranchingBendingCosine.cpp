@@ -36,7 +36,10 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double theta = acos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
     
-    return kBend * ( 1 - cos(dtheta) );
+    
+    double energy = kBend * ( 1 - cos(dtheta) );
+
+    return energy;
     
 }
 
@@ -61,7 +64,9 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double theta = acos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
     
-    return kBend * ( 1 - cos(dtheta) );
+    double energy = kBend * ( 1 - cos(dtheta) );
+
+    return energy;
     
 }
 

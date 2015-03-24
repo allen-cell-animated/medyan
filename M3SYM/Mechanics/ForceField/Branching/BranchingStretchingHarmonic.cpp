@@ -25,7 +25,10 @@ double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position);
     
     double dist = twoPointDistance(v1, b3->coordinate) - eqLength;
-    return 0.5 * kStretch * dist * dist ;
+    
+    double energy =  0.5 * kStretch * dist * dist ;
+
+    return energy;
 }
 
 double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
@@ -36,7 +39,10 @@ double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
                                           b2->coordinate, b2->force, position, d);
     
     double dist = twoPointDistance(v1, b3->coordinate) - eqLength;
-    return 0.5 * kStretch * dist * dist;
+    
+    double energy =  0.5 * kStretch * dist * dist ;
+
+    return energy;
 }
 
 void BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
@@ -66,7 +72,8 @@ void BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
     b3->force[1] +=  -f0 * ( b3->coordinate[1] - v1[1] );
     b3->force[2] +=  -f0 * ( b3->coordinate[2] - v1[2] );
     
-   }
+}
+
 void BranchingStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3,
                                             double position, double kStretch,
                                             double eqLength){

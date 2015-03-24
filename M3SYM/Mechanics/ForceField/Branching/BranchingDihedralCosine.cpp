@@ -46,8 +46,9 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double n1n2 = dotProduct(n1, n2);
    
-    
-    return kDihed * ( 1 - n1n2*N1*N2 );
+    double energy = kDihed * ( 1 - n1n2*N1*N2 );
+
+    return energy;
     
 }
 
@@ -87,10 +88,11 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double n1n2 = dotProduct(n1, n2);
     
+    double energy = kDihed * ( 1 - n1n2*N1*N2 );
     
-    return kDihed * ( 1 - n1n2*N1*N2 );
+    return energy;
 }
-    
+
 void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                             double kDihed, double position){
 

@@ -64,6 +64,7 @@ void Bead::updatePosition() {
         cout << e.what() << endl;
         
         cout << "BeadID = " << _positionFilament << endl;
+        cout << "Force = " << force[0] << " " << force[1] << " " << force[2] << endl;
         
         //reset bead position by randomly placing in old compartment
         coordinate = GController::getRandomCoordinates(_compartment);
