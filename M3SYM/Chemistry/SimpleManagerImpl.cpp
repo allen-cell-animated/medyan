@@ -1893,7 +1893,7 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
 void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
     
 #if !defined(REACTION_SIGNALING)
-    if(chem.nucleationReactions.size() != 0) {
+    if(!chem.nucleationReactions.empty()) {
         
         cout << "Nucleation reactions rely on reaction signaling. Please set this "
              << "compilation macro. Exiting." << endl;
@@ -2195,7 +2195,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     //Base case, initialization
     else {
         //Check if this is the first cylinder
-        if(f->getCylinderVector().size() != 0) {
+        if(!f->getCylinderVector().empty()) {
             
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();

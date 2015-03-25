@@ -22,7 +22,8 @@ MMotorGhost::MMotorGhost(int motorType, int numHeads, double position1, double p
                         const vector<double>& coord11, const vector<double>& coord12,
                         const vector<double>& coord21, const vector<double>& coord22) {
     
-    _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numHeads;
+    if(!SysParams::Mechanics().MStretchingK.empty())
+        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numHeads;
     
     auto m1 = midPointCoordinate(coord11, coord12, position1);
     auto m2 = midPointCoordinate(coord21, coord22, position2);

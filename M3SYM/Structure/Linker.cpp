@@ -145,6 +145,9 @@ void Linker::updatePosition() {
 
 void Linker::updateReactionRates() {
 
+    //if no rate changers were defined, skip
+    if(_unbindingChangers.empty()) return;
+    
     //current force on linker
     double force = max(0.0, _mLinker->stretchForce);
     
@@ -153,7 +156,9 @@ void Linker::updateReactionRates() {
 
     //change the rate
     float newRate =
-        _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
+        _unbindingChangers[_linkerType]->
+        changeRate(offRxn->getBareRate(), force);
+    
     offRxn->setRate(newRate);
     offRxn->activateReaction();
 }

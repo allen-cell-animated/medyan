@@ -22,7 +22,7 @@ float BrownianRatchet::changeRate(float bareRate, double force) {
     
     double newRate = bareRate * exp( - force * _x / kT);
     
-    return bareRate;
+    return newRate;
 }
 
 float BasicCatchSlip::changeRate(float bareRate, double force) {

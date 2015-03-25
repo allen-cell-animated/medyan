@@ -57,23 +57,23 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     
     double X = sqrt(scalarProductStretched(
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero, b2->coordinate,b2->force,
+                                zero, b2->coordinate,b2->force,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero,b2->coordinate,b2->force, d));
+                                zero,b2->coordinate,b2->force, d));
     
     double D = sqrt(scalarProductStretched(
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero, b3->coordinate,b2->force,
+                                zero, b3->coordinate,b2->force,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero, b3->coordinate,b3->force, d));
+                                zero, b3->coordinate,b3->force, d));
     
     double XD = X*D;
     
     double xd = scalarProductStretched(
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero ,b2->coordinate,b2->force,
+                                zero ,b2->coordinate,b2->force,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-    zero, b3->coordinate,b3->force, d);
+                                zero, b3->coordinate,b3->force, d);
     
     double theta = acos(xd / XD);
     double eqTheta = 0.5*M_PI;

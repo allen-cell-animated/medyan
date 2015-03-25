@@ -295,24 +295,21 @@ bool SysParams::checkGeoParameters() {
 bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
     
     //check types match number of species
-    if(dy.dFPolymerizationType == "") {
-        cout << "Must specify a filament polymerization dynamic rate form."
-             << " Exiting." << endl;
-        return false;
-    }
-    
-    if(dy.dLUnbindingType.size() != CParams.numLinkerSpecies) {
+    if(dy.dLUnbindingType.size() != CParams.numLinkerSpecies &&
+       !dy.dLUnbindingType.empty()) {
         cout << "Number of linker dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
     
-    if(dy.dMUnbindingType.size() != CParams.numMotorSpecies) {
+    if(dy.dMUnbindingType.size() != CParams.numMotorSpecies &&
+       !dy.dMUnbindingType.empty()) {
         cout << "Number of motor dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
-    if(dy.dMWalkingType.size() != CParams.numMotorSpecies) {
+    if(dy.dMWalkingType.size() != CParams.numMotorSpecies &&
+       !dy.dMWalkingType.empty()) {
         cout << "Number of motor dynamic rate walking forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;

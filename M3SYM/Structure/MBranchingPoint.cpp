@@ -18,13 +18,19 @@
 MBranchingPoint::MBranchingPoint(int branchType) {
     
     //set parameters
-    _kStretch = SysParams::Mechanics().BrStretchingK[branchType];
-    _eqLength = SysParams::Mechanics().BrStretchingL[branchType];
-
-    _kBend = SysParams::Mechanics().BrBendingK[branchType];
-    _eqTheta = SysParams::Mechanics().BrBendingTheta[branchType];
+    if(!SysParams::Mechanics().BrStretchingK.empty()) {
+        _kStretch = SysParams::Mechanics().BrStretchingK[branchType];
+        _eqLength = SysParams::Mechanics().BrStretchingL[branchType];
+    }
     
-    _kDihedr = SysParams::Mechanics().BrDihedralK[branchType];
+    if(!SysParams::Mechanics().BrBendingK.empty()) {
+        _kBend = SysParams::Mechanics().BrBendingK[branchType];
+        _eqTheta = SysParams::Mechanics().BrBendingTheta[branchType];
+    }
+    
+    if(!SysParams::Mechanics().BrDihedralK.empty())
+        _kDihedr = SysParams::Mechanics().BrDihedralK[branchType];
  
-    _kPosition = SysParams::Mechanics().BrPositionK[branchType];
+    if(!SysParams::Mechanics().BrPositionK.empty())
+        _kPosition = SysParams::Mechanics().BrPositionK[branchType];
 }

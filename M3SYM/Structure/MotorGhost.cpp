@@ -161,68 +161,75 @@ void MotorGhost::updateReactionRates() {
     //current force
     double force = max(0.0, _mMotorGhost->stretchForce);
     
-    auto c1b1 = _c1->getFirstBead()->coordinate;
-    auto c1b2 = _c1->getSecondBead()->coordinate;
-    auto c2b1 = _c2->getFirstBead()->coordinate;
-    auto c2b2 = _c2->getSecondBead()->coordinate;
-    
-    //get component of force in direction of forward walk for C1, C2
-    vector<double> motorC1Direction =
-    twoPointDirection(midPointCoordinate(c1b1, c1b2, _position1),
-                      midPointCoordinate(c2b1, c2b2, _position2));
-    
-    vector<double> motorC2Direction =
-    twoPointDirection(midPointCoordinate(c2b1, c2b2, _position2),
-                      midPointCoordinate(c1b1, c1b2, _position1));
-    
-    vector<double> c1Direction = twoPointDirection(c1b2,c1b1);
-    vector<double> c2Direction = twoPointDirection(c2b2,c2b1);
-    
-    double forceDotDirectionC1 =
+    //walking rate changer
+    if(!_walkingChangers.empty()) {
+        
+        auto c1b1 = _c1->getFirstBead()->coordinate;
+        auto c1b2 = _c1->getSecondBead()->coordinate;
+        auto c2b1 = _c2->getFirstBead()->coordinate;
+        auto c2b2 = _c2->getSecondBead()->coordinate;
+        
+        //get component of force in direction of forward walk for C1, C2
+        vector<double> motorC1Direction =
+        twoPointDirection(midPointCoordinate(c1b1, c1b2, _position1),
+                          midPointCoordinate(c2b1, c2b2, _position2));
+        
+        vector<double> motorC2Direction =
+        twoPointDirection(midPointCoordinate(c2b1, c2b2, _position2),
+                          midPointCoordinate(c1b1, c1b2, _position1));
+        
+        vector<double> c1Direction = twoPointDirection(c1b2,c1b1);
+        vector<double> c2Direction = twoPointDirection(c2b2,c2b1);
+        
+        double forceDotDirectionC1 =
         max(0.0, force * dotProduct(motorC1Direction, c1Direction));
-    double forceDotDirectionC2 =
+        double forceDotDirectionC2 =
         max(0.0, force * dotProduct(motorC2Direction, c2Direction));
-    
-    //WALKING REACTIONS
-    Species* s1 = _cMotorGhost->getFirstSpecies();
-    Species* s2 = _cMotorGhost->getSecondSpecies();
-    
-    for(auto r : s1->getRSpecies().reactantReactions()) {
         
-        if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+        //WALKING REACTIONS
+        Species* s1 = _cMotorGhost->getFirstSpecies();
+        Species* s2 = _cMotorGhost->getSecondSpecies();
+        
+        for(auto r : s1->getRSpecies().reactantReactions()) {
             
-            float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(r->getBareRate(), _numHeads, forceDotDirectionC1);
+            if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+                
+                float newRate =
+                    _walkingChangers[_motorType]->
+                    changeRate(r->getBareRate(), _numHeads, forceDotDirectionC1);
+                
+                r->setRate(newRate);
+                r->activateReaction();
+            }
+        }
+        for(auto r : s2->getRSpecies().reactantReactions()) {
             
-            r->setRate(newRate);
-            r->activateReaction();
+            if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+                
+                float newRate =
+                    _walkingChangers[_motorType]->
+                    changeRate(r->getBareRate(), _numHeads, forceDotDirectionC2);
+                
+                r->setRate(newRate);
+                r->activateReaction();
+            }
         }
     }
-    for(auto r : s2->getRSpecies().reactantReactions()) {
+    
+    //unbinding rate changer
+    if(!_unbindingChangers.empty()) {
         
-        if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
-            
-            float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(r->getBareRate(), _numHeads, forceDotDirectionC2);
-            
-            r->setRate(newRate);
-            r->activateReaction();
-        }
+        //get the unbinding reaction
+        ReactionBase* offRxn = _cMotorGhost->getOffReaction();
+        
+        //change the rate
+        float newRate =
+            _unbindingChangers[_motorType]->
+            changeRate(offRxn->getBareRate(), _numHeads, force);
+        
+        offRxn->setRate(newRate);
+        offRxn->activateReaction();
     }
-    
-    ///UNBINDING REACTION
-    //get the unbinding reaction
-    ReactionBase* offRxn = _cMotorGhost->getOffReaction();
-    
-    //change the rate
-    float newRate =
-        _unbindingChangers[_motorType]->
-        changeRate(offRxn->getBareRate(), _numHeads, force);
-    
-    offRxn->setRate(newRate);
-    offRxn->activateReaction();
     
     
 }

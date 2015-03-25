@@ -23,7 +23,7 @@
 
 using namespace mathfunc;
 
-FilamentRateChanger* Cylinder::_polyChanger;
+FilamentRateChanger* Cylinder::_polyChanger = nullptr;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack, bool creation)
@@ -120,6 +120,9 @@ void Cylinder::updatePosition() {
 void Cylinder::updateReactionRates() {
     
     double force;
+    
+    //if no rate changer was defined, skip
+    if(_polyChanger == nullptr) return;
     
     //load force from front (affects plus end polymerization)
     if(_plusEnd) {

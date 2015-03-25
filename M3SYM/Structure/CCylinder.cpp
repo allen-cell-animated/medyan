@@ -133,7 +133,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
         
         //if number of reactions in cross-cylinder
         //has dropped to zero, delete it
-        if(_crossCylinderReactions[other].size() == 0) {
+        if(_crossCylinderReactions[other].empty()) {
             
             _crossCylinderReactions.erase(other);
             
