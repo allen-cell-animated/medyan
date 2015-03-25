@@ -81,6 +81,8 @@ public:
     
     //@{
     /// Off reaction management
+    virtual void createOffReaction(ReactionBase* onRxn, float offRxn, SubSystem* ps) = 0;
+    
     void setOffReaction(ReactionBase* offRxn) {
         _offRxn = offRxn;
         _offRxn->setCBound(this);

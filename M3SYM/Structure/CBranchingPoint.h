@@ -59,6 +59,8 @@ public:
         {_pBranchingPoint = BranchingPoint;}
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
+    
+    virtual void createOffReaction(ReactionBase* onRxn, float offRxn, SubSystem* ps) {}
 };
 
 #endif

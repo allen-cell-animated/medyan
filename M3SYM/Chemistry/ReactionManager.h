@@ -75,8 +75,8 @@ public:
 #endif
             
         //Figure out the binding sites
-        int deltaBinding = SysParams::Geometry().cylinderIntSize
-                           / SysParams::Chemistry().numBindingSites;
+        int deltaBinding = SysParams::Geometry().cylinderIntSize /
+                           SysParams::Chemistry().numBindingSites;
         
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
@@ -137,6 +137,7 @@ public:
     CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
                             vector<tuple<int, SpeciesType>> products,
                             float onRate, float offRate, float rMax, float rMin)
+    
         : CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
                         max(rMin - SysParams::Geometry().cylinderSize, 0.0), true),
     
@@ -149,8 +150,8 @@ public:
             exit(EXIT_FAILURE);
 #endif
         //Figure out the binding sites
-        int deltaBinding = SysParams::Geometry().cylinderIntSize
-                           / SysParams::Chemistry().numBindingSites;
+        int deltaBinding = SysParams::Geometry().cylinderIntSize /
+                           SysParams::Chemistry().numBindingSites;
                                   
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;

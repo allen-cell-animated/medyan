@@ -52,44 +52,20 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
-    
-#ifdef CHEMISTRY
-    _cMotorGhost = unique_ptr<CMotorGhost>(
-        new CMotorGhost(_compartment, _c1->getCCylinder(), _c2->getCCylinder()));
-    _cMotorGhost->setMotorGhost(this);
           
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
           
     //set number of heads by picking random int between maxheads and minheads
     _numHeads = (int) randomDouble(
         SysParams::Chemistry().motorNumHeadsMin[_motorType],
         SysParams::Chemistry().motorNumHeadsMax[_motorType]);
-        
-    //Find species on cylinder that should be marked. If initialization,
-    //this should be done. But, if this is because of a reaction callback,
-    //it will have already been done.
     
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
-    
-    SpeciesBound* sm1 =
-    _c1->getCCylinder()->getCMonomer(pos1)->speciesMotor(_motorType);
-    SpeciesBound* sm2 =
-    _c2->getCCylinder()->getCMonomer(pos2)->speciesMotor(_motorType);
-    
-    if(!creation) {
-        SpeciesBound* se1 =
-        _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-        sm1->up(); se1->down();
-        
-        SpeciesBound* se2 =
-        _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-        sm2->up(); se2->down();
-    }
-    
-    //attach this motor to the species
-    _cMotorGhost->setFirstSpecies(sm1);
-    _cMotorGhost->setSecondSpecies(sm2);
-    
+#ifdef CHEMISTRY
+    _cMotorGhost = unique_ptr<CMotorGhost>(
+        new CMotorGhost(motorType, _compartment,
+                        _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+    _cMotorGhost->setMotorGhost(this);
 #endif
     
 #ifdef MECHANICS
@@ -106,13 +82,6 @@ MotorGhost::~MotorGhost() noexcept {
     
     //remove from motor ghost db
     MotorGhostDB::instance()->removeMotorGhost(this);
-    
-#ifdef CHEMISTRY
-    //remove the unbinding reaction
-    CCylinder* cc1 = _c1->getCCylinder();
-    CCylinder* cc2 = _c2->getCCylinder();
-    cc1->removeCrossCylinderReaction(cc2, _cMotorGhost->getOffReaction());
-#endif
 }
 
 void MotorGhost::updatePosition() {

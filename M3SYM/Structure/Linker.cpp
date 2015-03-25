@@ -52,36 +52,16 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+          
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
-        new CLinker(_compartment, _c1->getCCylinder(), _c2->getCCylinder()));
+        new CLinker(linkerType, _compartment,
+                    _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cLinker->setLinker(this);
         
-    //Find species on cylinder that should be marked. If initialization,
-    //this should be done. But, if this is because of a reaction callback,
-    //it will have already been done.
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
-    
-    SpeciesBound* sl1 =
-    _c1->getCCylinder()->getCMonomer(pos1)->speciesLinker(linkerType);
-    SpeciesBound* sl2 =
-    _c2->getCCylinder()->getCMonomer(pos2)->speciesLinker(linkerType);
-        
-    if(!creation) {
-        SpeciesBound* se1 =
-        _c1->getCCylinder()->getCMonomer(pos1)->speciesBound(0);
-        sl1->up(); se1->down();
-        
-        SpeciesBound* se2 =
-        _c2->getCCylinder()->getCMonomer(pos2)->speciesBound(0);
-        sl2->up(); se2->down();
-    }
-        
-    //attach this linker to the species
-    _cLinker->setFirstSpecies(sl1);
-    _cLinker->setSecondSpecies(sl2);
 #endif
     
 #ifdef MECHANICS
@@ -93,15 +73,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 }
 
 Linker::~Linker() noexcept {
+    
     //Remove from linker db
     LinkerDB::instance()->removeLinker(this);
     
-#ifdef CHEMISTRY
-    //remove the unbinding reaction
-    CCylinder* cc1 = _c1->getCCylinder();
-    CCylinder* cc2 = _c2->getCCylinder();
-    cc1->removeCrossCylinderReaction(cc2, _cLinker->getOffReaction());
-#endif
 }
 
 void Linker::updatePosition() {

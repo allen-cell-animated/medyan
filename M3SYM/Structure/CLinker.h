@@ -38,10 +38,15 @@ private:
     CCylinder* _cc2; ///< Pointer to second CCylinder
 
 public:
-    CLinker(Compartment* c, CCylinder* cc1, CCylinder* cc2)
-        : CBound(c), _cc1(cc1), _cc2(cc2) {}
     
-    ~CLinker() {}
+    ///Constructor
+    ///@param pos1 - monomer index on first cylinder
+    ///@param pos2 - monomer index on second cylinder
+    CLinker(short linkerType, Compartment* c,
+            CCylinder* cc1, CCylinder* cc2, int pos1, int pos2);
+    
+    ///Destructor, removes off reaction from system
+    ~CLinker();
     
     /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c)
@@ -67,7 +72,7 @@ public:
     Linker* getLinker() {return _pLinker;}
     
     /// Create the off reaction for this Linker
-    void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
+    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
     
 };
 

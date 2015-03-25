@@ -210,8 +210,7 @@ struct BranchingPointCreationCallback {
     
     void operator() (ReactionBase *r) {
         
-        int cylinderSize = SysParams::Geometry().cylinderIntSize;
-        double pos = double(_position) / cylinderSize;
+        double pos = double(_position) / SysParams::Geometry().cylinderIntSize;
         
         //Get a position and direction of a new filament
         auto c1b1 = _c1->getFirstBead()->coordinate;

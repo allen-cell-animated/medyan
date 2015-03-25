@@ -38,11 +38,14 @@ private:
     CCylinder* _cc2; ///< Pointer to second CCylinder
     
 public:
-    /// Default constructor and destructor
-    CMotorGhost(Compartment* c, CCylinder* cc1, CCylinder* cc2)
-        : CBound(c), _cc1(cc1), _cc2(cc2)  {}
+    ///Constructor
+    ///@param pos1 - monomer index on first cylinder
+    ///@param pos2 - monomer index on second cylinder
+    CMotorGhost(short motorType, Compartment* c,
+                CCylinder* cc1, CCylinder* cc2, int pos1, int pos2);
     
-    ~CMotorGhost() {}
+    ///Destructor, removes off reaction from system
+    ~CMotorGhost();
     
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
@@ -68,7 +71,7 @@ public:
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
     
     /// Create the off reaction for this MotorGhost
-    void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
+    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
     
 };
 
