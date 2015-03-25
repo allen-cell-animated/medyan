@@ -54,7 +54,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
         
 #ifdef CHEMISTRY
-    _cLinker = unique_ptr<CLinker>(new CLinker(_compartment));
+    _cLinker = unique_ptr<CLinker>(
+        new CLinker(_compartment, _c1->getCCylinder(), _c2->getCCylinder()));
     _cLinker->setLinker(this);
         
     //Find species on cylinder that should be marked. If initialization,
@@ -86,7 +87,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #ifdef MECHANICS
     _mLinker = unique_ptr<MLinker>(
         new MLinker(linkerType, position1, position2,
-                    c1b1, c1b2,c2b1, c2b2));
+                    c1b1, c1b2, c2b1, c2b2));
     _mLinker->setLinker(this);
 #endif
 }

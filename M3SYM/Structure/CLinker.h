@@ -20,6 +20,8 @@
 
 //FORWARD DECLARATIONS
 class Linker;
+class SubSystem;
+class CCylinder;
 class Compartment;
 
 /// To represent the chemical component of a Linker.
@@ -31,14 +33,19 @@ class CLinker : public CBound {
     
 private:
     Linker* _pLinker; ///< Pointer to parent
+    
+    CCylinder* _cc1; ///< Pointer to first CCylinder
+    CCylinder* _cc2; ///< Pointer to second CCylinder
 
 public:
-    CLinker(Compartment* c) :CBound(c) {}
+    CLinker(Compartment* c, CCylinder* cc1, CCylinder* cc2)
+        : CBound(c), _cc1(cc1), _cc2(cc2) {}
     
     ~CLinker() {}
     
     /// Copy constructor, standard
-    CLinker(const CLinker& rhs, Compartment* c) : CBound(c), _pLinker(rhs._pLinker) {
+    CLinker(const CLinker& rhs, Compartment* c)
+        : CBound(c), _pLinker(rhs._pLinker), _cc1(rhs._cc1), _cc2(rhs._cc2) {
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
@@ -58,6 +65,9 @@ public:
     void setLinker(Linker* linker) {_pLinker = linker;}
     /// Get parent 
     Linker* getLinker() {return _pLinker;}
+    
+    /// Create the off reaction for this Linker
+    void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
     
 };
 

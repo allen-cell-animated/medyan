@@ -320,31 +320,8 @@ struct LinkerBindingCallback {
         
         Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
         
-        //Attach the callback to the off reaction, add it
-        //first, get species from this rxn
-        Reaction< LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
-        (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
-        
-        RSpecies** rSpecies = onRxn->rspecies();
-        vector<Species*> offSpecies;
-        
-        //copy into offspecies vector in opposite order
-        for(int i = LMBINDINGREACTANTS;
-            i < LMBINDINGREACTANTS + LMBINDINGPRODUCTS; i++)
-            offSpecies.push_back(&rSpecies[i]->getSpecies());
-        for(int i = 0; i < LMBINDINGREACTANTS; i++)
-            offSpecies.push_back(&rSpecies[i]->getSpecies());
-        
-        ReactionBase* offRxn =
-        new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(offSpecies, _offRate);
-        offRxn->setReactionType(ReactionType::LINKERUNBINDING);
-        
-        LinkerUnbindingCallback lcallback(l, _ps);
-        boost::signals2::shared_connection_block
-            rcb(offRxn->connect(lcallback,false));
-        
-        _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
-        l->getCLinker()->setOffReaction(offRxn);
+        //create off reaction
+        l->getCLinker()->createOffReaction(r, _offRate, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -399,31 +376,8 @@ struct MotorBindingCallback {
         
         MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
         
-        //Attach the callback to the off reaction, add it
-        //first, get species from this rxn
-        Reaction< LMBINDINGREACTANTS, LMBINDINGPRODUCTS>* onRxn =
-        (Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>*)r;
-        
-        RSpecies** rSpecies = onRxn->rspecies();
-        vector<Species*> offSpecies;
-        
-        //copy into offspecies vector in opposite order
-        for(int i = LMBINDINGREACTANTS;
-            i < LMBINDINGREACTANTS + LMBINDINGPRODUCTS; i++)
-            offSpecies.push_back(&rSpecies[i]->getSpecies());
-        for(int i = 0; i < LMBINDINGREACTANTS; i++)
-            offSpecies.push_back(&rSpecies[i]->getSpecies());
-        
-        ReactionBase* offRxn =
-        new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(offSpecies, _offRate);
-        offRxn->setReactionType(ReactionType::MOTORUNBINDING);
-        
-        MotorUnbindingCallback mcallback(m, _ps);
-        boost::signals2::shared_connection_block
-            rcb(offRxn->connect(mcallback,false));
-        
-        _c1->getCCylinder()->addCrossCylinderReaction(_c2->getCCylinder(), offRxn);
-        m->getCMotorGhost()->setOffReaction(offRxn);
+        //create off reaction
+        m->getCMotorGhost()->createOffReaction(r, _offRate, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions

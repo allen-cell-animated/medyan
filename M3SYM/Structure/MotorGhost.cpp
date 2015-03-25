@@ -54,7 +54,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
     
 #ifdef CHEMISTRY
-    _cMotorGhost = unique_ptr<CMotorGhost>(new CMotorGhost(_compartment));
+    _cMotorGhost = unique_ptr<CMotorGhost>(
+        new CMotorGhost(_compartment, _c1->getCCylinder(), _c2->getCCylinder()));
     _cMotorGhost->setMotorGhost(this);
           
           
