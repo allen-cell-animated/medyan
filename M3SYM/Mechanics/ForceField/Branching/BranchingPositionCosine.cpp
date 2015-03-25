@@ -45,7 +45,7 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     double dtheta = theta-eqTheta;
     
     double U = kPosition * ( 1 - cos(dtheta) );
-
+    
     return U;
     
 }
@@ -63,7 +63,7 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     
     double D = sqrt(scalarProductStretched(
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero, b3->coordinate,b2->force,
+                                zero, b3->coordinate,b3->force,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
                                 zero, b3->coordinate,b3->force, d));
     
