@@ -34,9 +34,6 @@ class CMotorGhost : public CBound {
 private:
     MotorGhost* _pMotorGhost; ///< Pointer to parent
     
-    CCylinder* _cc1; ///< Pointer to first CCylinder
-    CCylinder* _cc2; ///< Pointer to second CCylinder
-    
 public:
     ///Constructor
     ///@param pos1 - monomer index on first cylinder
@@ -49,7 +46,7 @@ public:
     
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
-        : CBound(c), _pMotorGhost(rhs._pMotorGhost), _cc1(rhs._cc1), _cc2(rhs._cc2) {
+        : CBound(c, rhs._cc1, rhs._cc2), _pMotorGhost(rhs._pMotorGhost){
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
@@ -62,7 +59,8 @@ public:
     
     /// Clone, calls copy constructor
     virtual CMotorGhost* clone(Compartment* c) {
-        return new CMotorGhost(*this, c);
+        CMotorGhost* cm = new CMotorGhost(*this, c);
+        _offRxn = nullptr; return cm;
     }
     
     /// Set parent

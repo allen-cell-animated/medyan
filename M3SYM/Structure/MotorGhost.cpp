@@ -72,7 +72,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _mMotorGhost = unique_ptr<MMotorGhost>(
         new MMotorGhost(motorType, _numHeads,
                         position1, position2,
-                        c1b1, c1b2,c2b1, c2b2));
+                        c1b1, c1b2, c2b1, c2b2));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -85,6 +85,13 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
+    
+#ifdef CHEMISTRY
+    //update ccylinders
+    _cMotorGhost->setFirstCCylinder(_c1->getCCylinder());
+    _cMotorGhost->setSecondCCylinder(_c2->getCCylinder());
+    
+#endif
     
     //check if were still in same compartment
     auto c1b1 = _c1->getFirstBead()->coordinate;
@@ -118,6 +125,7 @@ void MotorGhost::updatePosition() {
         _cMotorGhost->setSecondSpecies(secondSpecies);
 #endif
     }
+    
 }
 
 /// @note - This function updates forward walking rates using the

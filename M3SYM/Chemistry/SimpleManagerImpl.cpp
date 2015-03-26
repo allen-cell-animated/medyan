@@ -2254,7 +2254,7 @@ void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
         
         auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
         for(auto &n : neighbors)
-            r->addReaction(cc, ((Cylinder*)(n))->getCCylinder());
+            r->addReaction(cc, n->getCCylinder());
     }
 }
 

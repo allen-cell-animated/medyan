@@ -39,100 +39,107 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
     int ampIndex = 0;
     int linkerIndex = 0;
     
-    for(auto &changer : drTypes.dLUnbindingType) {
-        
-        if(changer == "BASICCATCHSLIP") {
+    if(SysParams::Chemistry().numLinkerSpecies != 0) {
+    
+        for(auto &changer : drTypes.dLUnbindingType) {
             
-            //if user did not specify enough parameters, return
-            if(ampIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingAmplitude.size() ||
-               charLengthIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size())
-                return;
+            if(changer == "BASICCATCHSLIP") {
+                
+                //if user did not specify enough parameters, return
+                if(ampIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingAmplitude.size() ||
+                   charLengthIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size())
+                    return;
+                
+                //get two params for each, amp
+                double a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
+                double a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
+                
+                //now char length
+                double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
+                double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
+                
+                //add the rate changer
+                Linker::_unbindingChangers.push_back(
+                    new BasicCatchSlip(linkerIndex, a1, a2, x1, x2));
+                
+                charLengthIndex += 2;
+                ampIndex += 2;
+            }
             
-            //get two params for each, amp
-            double a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
-            double a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
+            else if(changer == "BASICSLIP") {
+                
+                //if user did not specify enough parameters, return
+                if(charLengthIndex >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size() )
+                    return;
+                
+                //get the param
+                double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
+                
+                //add the rate changer
+                Linker::_unbindingChangers.push_back(new BasicSlip(linkerIndex, x1));
+                charLengthIndex += 1;
+            }
+            else {
+                cout << "Linker unbinding rate changing form not recognized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
             
-            //now char length
-            double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
-            double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
-            
-            //add the rate changer
-            Linker::_unbindingChangers.push_back(
-                new BasicCatchSlip(linkerIndex, a1, a2, x1, x2));
-            
-            charLengthIndex += 2;
-            ampIndex += 2;
+            linkerIndex++;
         }
         
-        else if(changer == "BASICSLIP") {
-            
-            //if user did not specify enough parameters, return
-            if(charLengthIndex >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size() )
-                return;
-            
-            //get the param
-            double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
-            
-            //add the rate changer
-            Linker::_unbindingChangers.push_back(new BasicSlip(linkerIndex, x1));
-            charLengthIndex += 1;
-        }
-        else {
-            cout << "Linker unbinding rate changing form not recognized. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        linkerIndex++;
     }
     int forceIndex = 0;
     int motorIndex = 0;
     
-    //motor unbinding changer
-    for(auto &changer : drTypes.dMUnbindingType) {
-        
-        if(changer == "LOWDUTYPCMCATCH") {
-            
-            //if user did not specify enough parameters, return
-            if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
-                return;
-            
-            //get param
-            double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
-            
-            //add the rate changer
-            MotorGhost::_unbindingChangers.push_back(new LowDutyPCMCatch(motorIndex, f));
-            forceIndex++;
-        }
-        else {
-            cout << "Motor unbinding rate changing form not recognized. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        motorIndex++;
-    }
-    forceIndex = 0;
-    motorIndex = 0;
+    if(SysParams::Chemistry().numMotorSpecies != 0) {
     
-    //motor walking 
-    for(auto &changer : drTypes.dMWalkingType) {
+        //motor unbinding changer
+        for(auto &changer : drTypes.dMUnbindingType) {
+            
+            if(changer == "LOWDUTYPCMCATCH") {
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
+                    return;
+                
+                //get param
+                double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                
+                //add the rate changer
+                MotorGhost::_unbindingChangers.push_back(new LowDutyPCMCatch(motorIndex, f));
+                forceIndex++;
+            }
+            else {
+                cout << "Motor unbinding rate changing form not recognized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            motorIndex++;
+        }
+        forceIndex = 0;
+        motorIndex = 0;
+        
+        //motor walking 
+        for(auto &changer : drTypes.dMWalkingType) {
 
-        if(changer == "LOWDUTYHILLSTALL") {
-            
-            //if user did not specify enough parameters, return
-            if(forceIndex >= SysParams::DynamicRates().dMotorWalkingCharForce.size())
-                return;
-            
-            //get the param
-            double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
-            
-            //add the rate changer
-            MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, f));
-            forceIndex++;
+            if(changer == "LOWDUTYHILLSTALL") {
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorWalkingCharForce.size())
+                    return;
+                
+                //get the param
+                double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
+                
+                //add the rate changer
+                MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, f));
+                forceIndex++;
+            }
+            else {
+                cout << "Motor walking rate changing form not recognized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            motorIndex++;
         }
-        else {
-            cout << "Motor walking rate changing form not recognized. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        motorIndex++;
     }
 }
 

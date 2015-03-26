@@ -22,6 +22,7 @@
 //FORWARD DECLARATIONS
 class Compartment;
 class SubSystem;
+class CCylinder;
 
 /// Represents a chemical object that is bound to a Filament.
 /*!
@@ -36,13 +37,18 @@ class CBound {
 protected:
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
     SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
+    
+    CCylinder* _cc1 = nullptr; ///< Pointer to first CCylinder
+    CCylinder* _cc2 = nullptr; ///< Pointer to second CCylinder
+    
     Compartment* _compartment; ///< Compartment this CBound is in
     
     ReactionBase* _offRxn; ///< The off reaction for this bound object
     
 public:
     /// Constructor, just sets species
-    CBound(Compartment* c) : _compartment(c) {}
+    CBound(Compartment* c, CCylinder* cc1, CCylinder* cc2)
+        : _compartment(c), _cc1(cc1), _cc2(cc2) {}
     
     /// Virtual destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
@@ -75,6 +81,16 @@ public:
     }
     /// Get second species
     SpeciesBound* getSecondSpecies() {return _secondSpecies;}
+    
+    /// Set first CCylinder
+    void setFirstCCylinder(CCylinder* cc) {_cc1 = cc;}
+    /// Get first CCylinder
+    CCylinder* getFirstCCylinder() {return _cc1;}
+    
+    /// Set second CCylinder
+    void setSecondCCylinder(CCylinder* cc) {_cc2 = cc;}
+    /// Get first CCylinder
+    CCylinder* getSecondCCylinder() {return _cc2;}
     
     /// Get compartment that this CBound is in
     Compartment* getCompartment() {return _compartment;}

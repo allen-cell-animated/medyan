@@ -919,11 +919,11 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
                 r = _reactants[2];
                 if(getType(r) == SpeciesType::BULK)
                     reactantSpecies.push_back(CompartmentGrid::instance()->
-                                              findSpeciesBulkByMolecule(getType(r)));
+                                              findSpeciesBulkByMolecule(getInt(r)));
                 
                 else if(getType(r) == SpeciesType::DIFFUSING) {
                     Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(getType(r)));
+                    reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
                 }
                 
                 //FIRST AND SECOND PRODUCT SHOULD BE LINKER

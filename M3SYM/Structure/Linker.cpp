@@ -81,6 +81,13 @@ Linker::~Linker() noexcept {
 
 void Linker::updatePosition() {
     
+#ifdef CHEMISTRY
+    //update ccylinders
+    _cLinker->setFirstCCylinder(_c1->getCCylinder());
+    _cLinker->setSecondCCylinder(_c2->getCCylinder());
+    
+#endif
+    
     //check if were still in same compartment
     auto c1b1 = _c1->getFirstBead()->coordinate;
     auto c1b2 = _c1->getSecondBead()->coordinate;

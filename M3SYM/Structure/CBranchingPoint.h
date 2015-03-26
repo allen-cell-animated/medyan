@@ -34,13 +34,13 @@ private:
     
 public:
     /// Default constructor and destructor
-    CBranchingPoint(Compartment* c) :CBound(c) {}
+    CBranchingPoint(Compartment* c) :CBound(c, nullptr, nullptr) {}
     
     ~CBranchingPoint() {}
     
     /// Copy constructor, standard
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
-        : CBound(c), _pBranchingPoint(rhs._pBranchingPoint) {
+        : CBound(c, nullptr, nullptr), _pBranchingPoint(rhs._pBranchingPoint) {
         
           setFirstSpecies(rhs._firstSpecies);
           setOffReaction(rhs._offRxn);

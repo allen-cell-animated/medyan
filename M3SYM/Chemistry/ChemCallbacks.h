@@ -319,8 +319,10 @@ struct LinkerBindingCallback {
         
         Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
         
+#ifdef CHEMISTRY
         //create off reaction
         l->getCLinker()->createOffReaction(r, _offRate, _ps);
+#endif
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -375,8 +377,10 @@ struct MotorBindingCallback {
         
         MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
         
+#ifdef CHEMISTRY
         //create off reaction
         m->getCMotorGhost()->createOffReaction(r, _offRate, _ps);
+#endif
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions

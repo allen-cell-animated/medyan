@@ -33,12 +33,8 @@ class CLinker : public CBound {
     
 private:
     Linker* _pLinker; ///< Pointer to parent
-    
-    CCylinder* _cc1; ///< Pointer to first CCylinder
-    CCylinder* _cc2; ///< Pointer to second CCylinder
 
 public:
-    
     ///Constructor
     ///@param pos1 - monomer index on first cylinder
     ///@param pos2 - monomer index on second cylinder
@@ -50,7 +46,7 @@ public:
     
     /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c)
-        : CBound(c), _pLinker(rhs._pLinker), _cc1(rhs._cc1), _cc2(rhs._cc2) {
+        : CBound(c, rhs._cc1, rhs._cc2), _pLinker(rhs._pLinker){
         
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
@@ -63,7 +59,8 @@ public:
     
     /// Clone, calls copy constructor
     virtual CLinker* clone(Compartment* c) {
-        return new CLinker(*this, c);
+        CLinker* cl = new CLinker(*this, c);
+        _offRxn = nullptr; return cl;
     }
     
     /// Set parent
