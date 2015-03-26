@@ -41,36 +41,14 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                     _c1->getSecondBead()->coordinate, _position);
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
-    
-#ifdef CHEMISTRY
-    _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(_compartment));
-    _cBranchingPoint->setBranchingPoint(this);
         
-    //Find species on cylinder that should be marked. If initialization,
-    //this should be done. But, if this is because of a reaction callback,
-    //it will have already been done.
     int pos = int(position * SysParams::Geometry().cylinderIntSize);
     
-    SpeciesBound* sb1 =
-    _c1->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
-    SpeciesBound* sb2 =
-    _c2->getCCylinder()->getCMonomer(pos)->speciesBrancher(branchType);
-    
-    if(!creation) {
-        SpeciesBound* se1 =
-        _c1->getCCylinder()->getCMonomer(pos)->speciesBound(0);
-        sb1->up();
-        se1->down();
-        
-        SpeciesBound* se2 =
-        _c2->getCCylinder()->getCMonomer(pos)->speciesBound(0);
-        sb2->up();
-        se2->down();
-    }
-    
-    //attach this branchpoint to the species
-    _cBranchingPoint->setFirstSpecies(sb1);
-    _cBranchingPoint->setSecondSpecies(sb2);
+#ifdef CHEMISTRY
+    _cBranchingPoint = unique_ptr<CBranchingPoint>(
+        new CBranchingPoint(branchType, _compartment,
+                            c1->getCCylinder(), c2->getCCylinder(), pos));
+    _cBranchingPoint->setBranchingPoint(this);
 #endif
     
 #ifdef MECHANICS
@@ -85,10 +63,6 @@ BranchingPoint::~BranchingPoint() noexcept {
     BranchingPointDB::instance()->removeBranchingPoint(this);
     
 #ifdef CHEMISTRY
-    //remove the unbinding reaction
-    CCylinder* cc = _c1->getCCylinder();
-    cc->removeInternalReaction(_cBranchingPoint->getOffReaction());
-    
     //mark the correct species on the minus end of the branched
     //filament. If this is a filament species, change it to its
     //corresponding minus end. If a plus end, release a diffusing
@@ -113,24 +87,28 @@ BranchingPoint::~BranchingPoint() noexcept {
         if(freeMonomer == nullptr)
             freeMonomer = CompartmentGrid::instance()->
                           findSpeciesBulkByName(speciesName);
-        
-        //remove the filament from the system
-        delete _c2->getFilament();
-        
-        //update reaction rates
-        for(auto &r : freeMonomer->getRSpecies().reactantReactions())
-            r->activateReaction();
+            
+            //remove the filament from the system
+            delete _c2->getFilament();
+            
+            //update reactions
+            freeMonomer->getRSpecies().activateAssocReactantReactions();
     }
 #endif
-    
 }
 
 void BranchingPoint::updatePosition() {
     
+#ifdef CHEMISTRY
+    //update ccylinders
+    _cBranchingPoint->setFirstCCylinder(_c1->getCCylinder());
+    _cBranchingPoint->setSecondCCylinder(_c2->getCCylinder());
+    
+#endif
+    
     //Find compartment
     coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
                                     _c1->getSecondBead()->coordinate, _position);
-
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}

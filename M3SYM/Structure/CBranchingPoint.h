@@ -32,15 +32,20 @@ class CBranchingPoint : public CBound {
 private:
     BranchingPoint* _pBranchingPoint; ///< Pointer to parent
     
+    int _pos; ///< Monomer position on cylinder
+    short _branchType; ///< Branching point type
+    
 public:
     /// Default constructor and destructor
-    CBranchingPoint(Compartment* c) :CBound(c, nullptr, nullptr) {}
-    
-    ~CBranchingPoint() {}
+    /// @param pos - monomer index on first cylinder
+    CBranchingPoint(short branchType, Compartment* c,
+                    CCylinder* cc1, CCylinder* cc2, int pos);
+    ///Destructor, removes off reaction from system
+    ~CBranchingPoint();
     
     /// Copy constructor, standard
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
-        : CBound(c, nullptr, nullptr), _pBranchingPoint(rhs._pBranchingPoint) {
+        : CBound(c, rhs._cc1, rhs._cc2), _pBranchingPoint(rhs._pBranchingPoint) {
         
           setFirstSpecies(rhs._firstSpecies);
           setOffReaction(rhs._offRxn);
@@ -51,16 +56,19 @@ public:
     
     /// Clone, calls copy constructor
     virtual CBranchingPoint* clone(Compartment* c) {
-        return new CBranchingPoint(*this, c);
+        
+        CBranchingPoint* cb = new CBranchingPoint(*this, c);
+        _offRxn = nullptr; return cb;
     }
     
     /// Set parent
-    void setBranchingPoint(BranchingPoint* BranchingPoint)
-        {_pBranchingPoint = BranchingPoint;}
+    void setBranchingPoint(BranchingPoint* BranchingPoint) {
+        _pBranchingPoint = BranchingPoint;
+    }
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
-    virtual void createOffReaction(ReactionBase* onRxn, float offRxn, SubSystem* ps) {}
+    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
 };
 
 #endif

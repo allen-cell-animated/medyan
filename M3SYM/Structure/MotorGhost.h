@@ -119,7 +119,10 @@ public:
 
     /// Update the reaction rates
     virtual void updateReactionRates();
-
+    
+    ///Move a motor head forward
+    ///@note - Updates chemical binding and mechanical parameters accordingly
+    //void moveMotorHead(Cylinder* c, );
 };
 
 #endif

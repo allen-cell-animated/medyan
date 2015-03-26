@@ -249,28 +249,8 @@ struct BranchingPointCreationCallback {
         //create new branch
         BranchingPoint* b= _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
         
-        //add the unbinding reaction and callback
-        //first, find the correct diffusing or bulk species
-        Reaction< BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>* br =
-        (Reaction<BRANCHINGREACTANTS, BRANCHINGPRODUCTS - 1>*)(r);
-        Species* sfb = &(br->rspecies()[0]->getSpecies());
-        
-        //create the reaction species
-        m = _c1->getCCylinder()->getCMonomer(_position);
-        vector<Species*> offSpecies = {m->speciesBrancher(_branchType),
-                                       m->speciesBound(0), sfb};
-        //create reaction, add to cylinder
-        ReactionBase* offRxn =
-        new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(offSpecies, _offRate);
-        
-        offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
-        
-        BranchingPointUnbindingCallback bcallback(b, _ps);
-        boost::signals2::shared_connection_block
-            rcb(offRxn->connect(bcallback,false));
-        
-        b->getCBranchingPoint()->setOffReaction(offRxn);
-        _c1->getCCylinder()->addInternalReaction(offRxn);
+        //create off reaction
+        b->getCBranchingPoint()->createOffReaction(r, _offRate, _ps);
     }
 };
 
@@ -319,10 +299,8 @@ struct LinkerBindingCallback {
         
         Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
         
-#ifdef CHEMISTRY
         //create off reaction
         l->getCLinker()->createOffReaction(r, _offRate, _ps);
-#endif
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -376,11 +354,9 @@ struct MotorBindingCallback {
         double pos2 = double(_position2) / cylinderSize;
         
         MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
-        
-#ifdef CHEMISTRY
+
         //create off reaction
         m->getCMotorGhost()->createOffReaction(r, _offRate, _ps);
-#endif
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions
