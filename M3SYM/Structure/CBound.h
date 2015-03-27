@@ -38,10 +38,10 @@ protected:
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
     SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
     
+    Compartment* _compartment; ///< Compartment this CBound is in
+    
     CCylinder* _cc1 = nullptr; ///< Pointer to first CCylinder
     CCylinder* _cc2 = nullptr; ///< Pointer to second CCylinder
-    
-    Compartment* _compartment; ///< Compartment this CBound is in
     
     ReactionBase* _offRxn; ///< The off reaction for this bound object
     
