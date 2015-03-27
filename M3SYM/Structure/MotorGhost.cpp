@@ -39,14 +39,14 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _motorID = MotorGhostDB::instance()->getMotorID();
     _birthTime = tau();
           
-    auto c1b1 = _c1->getFirstBead()->coordinate;
-    auto c1b2 = _c1->getSecondBead()->coordinate;
-    auto c2b1 = _c2->getFirstBead()->coordinate;
-    auto c2b2 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
           
     //Find compartment
-    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
-    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _position1);
+    auto m2 = midPointCoordinate(x3, x4, _position2);
           
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
@@ -72,7 +72,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _mMotorGhost = unique_ptr<MMotorGhost>(
         new MMotorGhost(motorType, _numHeads,
                         position1, position2,
-                        c1b1, c1b2, c2b1, c2b2));
+                        x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -94,13 +94,13 @@ void MotorGhost::updatePosition() {
 #endif
     
     //check if were still in same compartment
-    auto c1b1 = _c1->getFirstBead()->coordinate;
-    auto c1b2 = _c1->getSecondBead()->coordinate;
-    auto c2b1 = _c2->getFirstBead()->coordinate;
-    auto c2b2 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
     
-    auto m1 = midPointCoordinate(c1b1, c1b2, _position1);
-    auto m2 = midPointCoordinate(c2b1, c2b2, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _position1);
+    auto m2 = midPointCoordinate(x3, x4, _position2);
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
     
@@ -142,22 +142,22 @@ void MotorGhost::updateReactionRates() {
     //walking rate changer
     if(!_walkingChangers.empty()) {
         
-        auto c1b1 = _c1->getFirstBead()->coordinate;
-        auto c1b2 = _c1->getSecondBead()->coordinate;
-        auto c2b1 = _c2->getFirstBead()->coordinate;
-        auto c2b2 = _c2->getSecondBead()->coordinate;
+        auto x1 = _c1->getFirstBead()->coordinate;
+        auto x2 = _c1->getSecondBead()->coordinate;
+        auto x3 = _c2->getFirstBead()->coordinate;
+        auto x4 = _c2->getSecondBead()->coordinate;
         
         //get component of force in direction of forward walk for C1, C2
         vector<double> motorC1Direction =
-        twoPointDirection(midPointCoordinate(c1b1, c1b2, _position1),
-                          midPointCoordinate(c2b1, c2b2, _position2));
+        twoPointDirection(midPointCoordinate(x1, x2, _position1),
+                          midPointCoordinate(x3, x4, _position2));
         
         vector<double> motorC2Direction =
-        twoPointDirection(midPointCoordinate(c2b1, c2b2, _position2),
-                          midPointCoordinate(c1b1, c1b2, _position1));
+        twoPointDirection(midPointCoordinate(x3, x4, _position2),
+                          midPointCoordinate(x1, x2, _position1));
         
-        vector<double> c1Direction = twoPointDirection(c1b2,c1b1);
-        vector<double> c2Direction = twoPointDirection(c2b2,c2b1);
+        vector<double> c1Direction = twoPointDirection(x2,x1);
+        vector<double> c2Direction = twoPointDirection(x4,x3);
         
         double forceDotDirectionC1 =
         max(0.0, force * dotProduct(motorC1Direction, c1Direction));
@@ -208,6 +208,59 @@ void MotorGhost::updateReactionRates() {
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }
+}
+
+void MotorGhost::moveMotorHead(Cylinder* c,
+                               double oldPosition,
+                               double newPosition,
+                               short boundType,
+                               SubSystem* ps) {
     
+    //shift the position of one side of the motor
+    double shift =  newPosition - oldPosition;
     
+    //shift the head
+    if(c == _c1) {
+        if(shift > 0) _position1 += shift;
+        else _position1 -= shift;
+    }
+    else {
+        if(shift > 0) _position2 += shift;
+        else _position2 -= shift;
+    }
+    
+#ifdef CHEMISTRY
+    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize);
+    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize);
+    
+    _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
+                                _motorType, boundType, ps);
+#endif
+    
+}
+
+void MotorGhost::moveMotorHead(Cylinder* oldC,
+                               Cylinder* newC,
+                               double oldPosition,
+                               double newPosition,
+                               short boundType,
+                               SubSystem* ps) {
+    
+    //shift the head
+    if(oldC == _c1) {
+        _position1 = newPosition;
+        _c1 = newC;
+    }
+    else {
+        _position2 = newPosition;
+        _c2 = newC;
+    }
+    
+#ifdef CHEMISTRY
+    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize);
+    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize);
+    
+    _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
+                                oldpos, newpos, _motorType, boundType, ps);
+#endif
 }

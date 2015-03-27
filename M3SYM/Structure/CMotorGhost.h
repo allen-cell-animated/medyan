@@ -71,6 +71,23 @@ public:
     /// Create the off reaction for this MotorGhost
     virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
     
+    /// Move the motor head to a new position chemically
+    void moveMotorHead(CCylinder* cc,
+                       short oldPosition,
+                       short newPosition,
+                       short motorType,
+                       short boundType,
+                       SubSystem* ps);
+    
+    /// Move the motor head to a new CCylinder chemically
+    void moveMotorHead(CCylinder* oldCC,
+                       CCylinder* newCC,
+                       short oldPosition,
+                       short newPosition,
+                       short motorType,
+                       short boundType,
+                       SubSystem* ps);
+    
 };
 
 #endif

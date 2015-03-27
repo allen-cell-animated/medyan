@@ -26,9 +26,11 @@
 #include "RateChangerImpl.h"
 
 #include "SysParams.h"
+
 //FORWARD DECLARATIONS
 class Cylinder;
 class DRController;
+class SubSystem;
 
 /// A container to store a MMotorGhost and CMotorGhost.
 /*!
@@ -100,6 +102,7 @@ public:
     ///Position management function
     double getFirstPosition() {return _position1;}
     void setFirstPosition(double position1) {_position1 = position1;}
+    
     double getSecondPosition() {return _position2;}
     void setSecondPosition(double position2) {_position2 = position2;}
     //@}
@@ -122,7 +125,20 @@ public:
     
     ///Move a motor head forward
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    //void moveMotorHead(Cylinder* c, );
+    void moveMotorHead(Cylinder* c,
+                       double oldPosition,
+                       double newPosition,
+                       short boundType,
+                       SubSystem* ps);
+    
+    ///Move a motor head to a new cylinder
+    ///@note - Updates chemical binding and mechanical parameters accordingly
+    void moveMotorHead(Cylinder* oldC,
+                       Cylinder* newC,
+                       double oldPosition,
+                       double newPosition,
+                       short boundType,
+                       SubSystem* ps);
 };
 
 #endif

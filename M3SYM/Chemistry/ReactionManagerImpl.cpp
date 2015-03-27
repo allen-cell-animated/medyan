@@ -475,7 +475,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
         
         //callbacks
 #ifdef REACTION_SIGNALING
-        MotorWalkingForwardCallback
+        MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
                           motorType, boundType, _ps);
         boost::signals2::shared_connection_block
@@ -523,7 +523,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //callbacks
 #ifdef REACTION_SIGNALING
-    MotorMovingCylinderForwardCallback
+    MotorMovingCylinderCallback
     motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
                         _bindingSites.back(), _bindingSites.front(),
                         motorType, boundType, _ps);
@@ -577,7 +577,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
         
         //callbacks
 #ifdef REACTION_SIGNALING
-        MotorWalkingBackwardCallback
+        MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
                           motorType, boundType, _ps);
         boost::signals2::shared_connection_block
@@ -625,7 +625,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     //callbacks
 #ifdef REACTION_SIGNALING
-    MotorMovingCylinderBackwardCallback
+    MotorMovingCylinderCallback
     motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
                         _bindingSites.front(), _bindingSites.back(),
                         motorType, boundType, _ps);
