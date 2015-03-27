@@ -110,10 +110,14 @@ public:
     /// length. Updates cylinder parameters accordingly.
     void depolymerizeBack();
     
+    /// Initialize the nucleation of a new filament
+    /// Initializes all chemical species in initial Cylinder
+    void nucleate(short plusEnd, short filament, short minusEnd);
+    
     /// Sever a filament at a given cylinder position. The back part of the filament
     /// will remain as this (original) filament, and the new filament, which is
     /// the front part of the originally severed filament, will be returned.
-    Filament* severFilament(int cylinderPosition);
+    Filament* sever(int cylinderPosition);
     
     /// Get vector of cylinders that this filament contains.
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}

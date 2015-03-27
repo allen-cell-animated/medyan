@@ -492,7 +492,8 @@ struct FilamentCreationCallback {
         //no compartment was set, pick a random one
         if(_compartment == nullptr)
             c = GController::getRandomCompartment();
-        else c = _compartment;
+        else
+            c = _compartment;
         
         //set up a random initial position and direction
         vector<double> position;
@@ -518,22 +519,8 @@ struct FilamentCreationCallback {
         //create filament, set up ends and filament species
         Filament* f = _ps->addNewFilament(position, direction);
         
-        CCylinder* cc = f->getCylinderVector()[0]->getCCylinder();
-        int monomerPosition = SysParams::Geometry().cylinderIntSize / 2 + 1;
-        
-        CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
-        CMonomer* m2 = cc->getCMonomer(monomerPosition);
-        CMonomer* m3 = cc->getCMonomer(monomerPosition + 1);
-        
-        //minus end
-        m1->speciesMinusEnd(_minusEnd)->up();
-
-        //filament
-        m2->speciesFilament(_filament)->up();
-        m2->speciesBound(0)->up();
-        
-        //plus end
-        m3->speciesPlusEnd(_plusEnd)->up();
+        //initialize the nucleation
+        f->nucleate(_plusEnd, _filament, _minusEnd);
     }
     
 };
@@ -548,37 +535,14 @@ struct FilamentSeveringCallback {
     void operator() (ReactionBase* r) {
         
         //reactants should be re-marked
-        Reaction< SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>* severRxn =
-        (Reaction<SEVERINGREACTANTS + 1, SEVERINGPRODUCTS>*)r;
-        
-        for(int i = 0; i < SEVERINGREACTANTS + 1; i++) severRxn->rspecies()[i]->up();
+        for(int i = 0; i < SEVERINGREACTANTS + 1; i++)
+            r->rspecies()[i]->up();
         
         //sever the filament at given position
         Filament* f = _c1->getFilament();
-        Filament* newFilament = f->severFilament(_c1->getPositionFilament());
         
-        //if we didn't split, return
-        if(newFilament == nullptr) return;
-        
-        //mark the plus and minus ends of the new and old filament
-        CCylinder* cc1 = newFilament->getCylinderVector().back()->getCCylinder();
-        CCylinder* cc2 = f->getCylinderVector().front()->getCCylinder();
-        
-        CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
-        CMonomer* m2 = cc2->getCMonomer(0);
-        
-        short filamentInt1 = m1->activeSpeciesFilament();
-        short filamentInt2 = m2->activeSpeciesFilament();
-        
-        //plus end
-        m1->speciesFilament(filamentInt1)->down();
-        m1->speciesPlusEnd(filamentInt1)->up();
-        m1->speciesBound(0)->down();
-        
-        //minus end
-        m2->speciesFilament(filamentInt2)->down();
-        m2->speciesMinusEnd(filamentInt2)->up();
-        m2->speciesBound(0)->down();
+        //create a new filament by severing
+        f->sever(_c1->getPositionFilament());
     }
 };
 

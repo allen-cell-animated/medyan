@@ -301,8 +301,8 @@ void Filament::polymerizeFront() {
     b2->coordinate = nextPointProjection(
         b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
-    //increase eq length, update
 #ifdef MECHANICS
+    //increase eq length, update
     cBack->getMCylinder()->setEqLength(
         cBack->getMCylinder()->getEqLength() +
         SysParams::Geometry().monomerSize);
@@ -320,8 +320,8 @@ void Filament::polymerizeBack() {
     b2->coordinate = nextPointProjection(
         b2->coordinate, SysParams::Geometry().monomerSize, direction);
 
-    //increase eq length, update
 #ifdef MECHANICS
+    //increase eq length, update
     cFront->getMCylinder()->setEqLength(
         cFront->getMCylinder()->getEqLength() +
         SysParams::Geometry().monomerSize);
@@ -339,8 +339,8 @@ void Filament::depolymerizeFront() {
     b2->coordinate = nextPointProjection(
         b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
-    //decrease eq length, update
 #ifdef MECHANICS
+    //increase eq length, update
     cBack->getMCylinder()->setEqLength(
         cBack->getMCylinder()->getEqLength() -
         SysParams::Geometry().monomerSize);
@@ -358,15 +358,40 @@ void Filament::depolymerizeBack() {
     b2->coordinate = nextPointProjection(
         b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
-    //decrease eq length, update
 #ifdef MECHANICS
+    //increase eq length, update
     cFront->getMCylinder()->setEqLength(
         cFront->getMCylinder()->getEqLength() -
         SysParams::Geometry().monomerSize);
 #endif
 }
 
-Filament* Filament::severFilament(int cylinderPosition) {
+
+void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
+    
+#ifdef CHEMISTRY
+    //chemically initialize species
+    CCylinder* cc = _cylinderVector[0]->getCCylinder();
+    int monomerPosition = SysParams::Geometry().cylinderIntSize / 2 + 1;
+    
+    CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
+    CMonomer* m2 = cc->getCMonomer(monomerPosition);
+    CMonomer* m3 = cc->getCMonomer(monomerPosition + 1);
+    
+    //minus end
+    m1->speciesMinusEnd(minusEnd)->up();
+    
+    //filament
+    m2->speciesFilament(filament)->up();
+    m2->speciesBound(0)->up();
+    
+    //plus end
+    m3->speciesPlusEnd(plusEnd)->up();
+#endif
+}
+
+
+Filament* Filament::sever(int cylinderPosition) {
     
     int vectorPosition = 0;
     
@@ -379,9 +404,9 @@ Filament* Filament::severFilament(int cylinderPosition) {
     
     //if vector position is zero, we can't sever. return null
     if(vectorPosition == 0) return nullptr;
-    
-    //if the cylinder is only one monomer long, we can't sever
+
 #ifdef CHEMISTRY
+    //if the cylinder is only one monomer long, we can't sever
     CCylinder* cc = _cylinderVector[vectorPosition - 1]->getCCylinder();
     if(cc->getCMonomer(cc->getSize() - 1)->activeSpeciesMinusEnd() != -1)
         return nullptr;
@@ -408,7 +433,28 @@ Filament* Filament::severFilament(int cylinderPosition) {
     newFilament->_cylinderVector.back()->setPlusEnd(true);
     _cylinderVector.front()->setMinusEnd(true);
     
-    //return the new filament
+#ifdef CHEMISTRY
+    //mark the plus and minus ends of the new and old filament
+    CCylinder* cc1 = newFilament->getCylinderVector().back()->getCCylinder();
+    CCylinder* cc2 = _cylinderVector.front()->getCCylinder();
+    
+    CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
+    CMonomer* m2 = cc2->getCMonomer(0);
+    
+    short filamentInt1 = m1->activeSpeciesFilament();
+    short filamentInt2 = m2->activeSpeciesFilament();
+    
+    //plus end
+    m1->speciesFilament(filamentInt1)->down();
+    m1->speciesPlusEnd(filamentInt1)->up();
+    m1->speciesBound(0)->down();
+    
+    //minus end
+    m2->speciesFilament(filamentInt2)->down();
+    m2->speciesMinusEnd(filamentInt2)->up();
+    m2->speciesBound(0)->down();
+#endif
+    
     return newFilament;
 }
 
