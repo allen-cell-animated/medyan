@@ -405,7 +405,6 @@ struct MotorWalkingCallback {
         
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
-        
 #ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();

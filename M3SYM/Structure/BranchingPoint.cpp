@@ -80,19 +80,38 @@ BranchingPoint::~BranchingPoint() noexcept {
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
         string speciesName = SpeciesNamesDB::instance()->
-        removeUniqueName(speciesFilament->getName());
+                             removeUniqueName(speciesFilament->getName());
+        string speciesFirstChar = speciesName.substr(0,1);
         
         //find the free monomer, either bulk or diffusing
-        Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
-        if(freeMonomer == nullptr)
-            freeMonomer = CompartmentGrid::instance()->
-                          findSpeciesBulkByName(speciesName);
+        Species* freeMonomer = nullptr;
+        
+        //try diffusing
+        if((freeMonomer = _compartment->
+            findSpeciesByName(speciesName)) != nullptr) {}
+        // try bulk
+        else if((freeMonomer = CompartmentGrid::instance()->
+                 findSpeciesBulkByName(speciesName)) != nullptr) {}
+        //diffusing, remove all but first char
+        else if((freeMonomer = _compartment->
+                 findSpeciesByName(speciesFirstChar)) != nullptr) {}
+        //bulk, remove all but first char
+        else if((freeMonomer = CompartmentGrid::instance()->
+                 findSpeciesBulkByName(speciesFirstChar)) != nullptr) {}
+        //could not find. exit ungracefully
+        else {
+            cout << "In unbranching reaction, could not find corresponding " <<
+                    "diffusing species of filament species " << speciesName <<
+                    ". Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
             
-            //remove the filament from the system
-            delete _c2->getFilament();
+        //remove the filament from the system
+        delete _c2->getFilament();
             
-            //update reactions
-            freeMonomer->getRSpecies().activateAssocReactantReactions();
+        //update reactions
+        freeMonomer->getRSpecies().activateAssocReactantReactions();
     }
 #endif
 }
