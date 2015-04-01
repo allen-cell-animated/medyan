@@ -28,6 +28,8 @@ public:
     virtual string getName() = 0;
     
     /// Compute total energy of this forcefield in the system
+    /// @return  the energy value if valid. If an inf or NaN value has been
+    /// calculated, return -1.
     virtual double computeEnergy(double d) = 0;
     /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead)
     /// forces accordingly.

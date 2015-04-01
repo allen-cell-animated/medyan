@@ -38,12 +38,22 @@ BoundaryFF::BoundaryFF (string type) {
 double BoundaryFF::computeEnergy(double d) {
     
     double U = 0;
+    double U_i;
+    
     for (auto &boundaryInteraction : _BoundaryInteractionVector){
         
         auto neighborList = boundaryInteraction->getNeighborList();
-        for (auto boundaryElement: *BoundaryElementDB::instance())
-            for(auto &bead : neighborList->getNeighbors(boundaryElement))
-                U += boundaryInteraction->computeEnergy(boundaryElement, bead, d);
+        for (auto boundaryElement: *BoundaryElementDB::instance()) {
+            for(auto &bead : neighborList->getNeighbors(boundaryElement)) {
+                
+                U_i = boundaryInteraction->computeEnergy(boundaryElement, bead, d);
+                
+                if(U_i == numeric_limits<double>::infinity() || U != U)
+                    return -1;
+                else
+                    U += U_i;
+            }
+        }
     }
     return U;
 }

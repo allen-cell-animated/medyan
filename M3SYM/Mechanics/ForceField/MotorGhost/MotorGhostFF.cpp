@@ -31,12 +31,22 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
 }
 
 double MotorGhostFF::computeEnergy(double d) {
-    double U_motor = 0;
     
-    for ( auto motor: *MotorGhostDB::instance())
-        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            U_motor += motorGhostInteraction.get()->computeEnergy(motor, d);
-    return U_motor;
+    double U = 0;
+    double U_i;
+    
+    for ( auto motor: *MotorGhostDB::instance()) {
+        for (auto &motorGhostInteraction : _motorGhostInteractionVector) {
+            
+            U_i = motorGhostInteraction.get()->computeEnergy(motor, d);
+            
+            if(U_i == numeric_limits<double>::infinity() || U != U)
+                return -1;
+            else
+                U += U_i;
+        }
+    }
+    return U;
 }
 
 void MotorGhostFF::computeForces() {

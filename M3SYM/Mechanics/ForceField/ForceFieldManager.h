@@ -33,6 +33,9 @@ public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
     
     /// Compute the energy using all available force fields
+    /// @return Returns infinity if there was a problem with a ForceField
+    /// energy calculation, such that beads will not be moved to this
+    /// problematic configuration.
     double computeEnergy(double d);
     
     /// Compute the forces of all force fields

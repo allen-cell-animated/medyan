@@ -97,7 +97,7 @@ public:
 /// @note - This function updates unbinding rates based on the
 /// following exponential form (Erdmann et al 2013):
 ///
-///      k_eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
+///      k_eff = (k_0 / (2 * N_b)) * exp(-F / (N_b * F_0))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// F_0 is the characteristic force defining this catch,
@@ -136,11 +136,16 @@ public:
 /// k_0 is the walking rate under zero load, which was approximated
 /// by Erdmann et al 2013 to be:
 ///
-///  k_0 = ((N_t - N_b) / N_b) * (d_step / d_total) * k_b
+///        k_0 = ((N_t - N_b) / N_b) * k_b
 ///
 /// where k_b is the binding rate of a single motor, d_step is
 /// the size of a single motor step, d_total is the total step size
 /// of the ensemble in simulation, and N_t is the total number of heads.
+///
+/// It is noted that the true k_0 is also multipilied by a fractional
+/// step size corresponding to the step size in simulation,
+/// d_step / d_total where d_total is the total step size in simulation,
+/// based on the number of binding sites per cylinder.
 ///
 /// N_b is the number of bound motor heads under zero load,
 /// which for the low duty ratio motor (p = 0.1) has been set to

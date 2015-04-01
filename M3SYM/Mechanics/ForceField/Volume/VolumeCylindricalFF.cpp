@@ -30,16 +30,28 @@ VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
 }
 
 double VolumeCylindricalFF::computeEnergy(double d) {
-    double U_cyl= 0;
+    
+    double U= 0;
+    double U_i;
     
     for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
         
         auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance())
-            for(auto &cNeighbor : neighborList->getNeighbors(cylinder))
-                U_cyl += cylinderVolInteraction->computeEnergy(cylinder, cNeighbor, d);
+        for(auto &cylinder : *CylinderDB::instance()) {
+            for(auto &cNeighbor : neighborList->getNeighbors(cylinder)) {
+                
+                U_i = cylinderVolInteraction->computeEnergy(cylinder, cNeighbor, d);
+                
+                if(U_i == numeric_limits<double>::infinity() || U != U){
+                    cout << "volume inf" << endl;
+                    return -1;
+                }
+                else
+                    U += U_i;
+            }
+        }
     }
-    return U_cyl;
+    return U;
 }
 
 void VolumeCylindricalFF::computeForces() {

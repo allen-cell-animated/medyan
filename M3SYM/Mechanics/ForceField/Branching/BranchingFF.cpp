@@ -70,11 +70,21 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
 
 
 double BranchingFF::computeEnergy(double d) {
-    double U_branch = 0;
-    for (auto branch: *BranchingPointDB::instance())
-        for (auto &branchingInteraction : _branchingInteractionVector)
-            U_branch += branchingInteraction.get()->computeEnergy(branch, d);
-    return U_branch;
+    double U = 0;
+    double U_i;
+    
+    for (auto branch: *BranchingPointDB::instance()) {
+        for (auto &branchingInteraction : _branchingInteractionVector) {
+            
+            U_i = branchingInteraction.get()->computeEnergy(branch, d);
+            
+            if(U_i == numeric_limits<double>::infinity() || U != U)
+                return -1;
+            else
+                U += U_i;
+        }
+    }
+    return U;
 }
 
 void BranchingFF::computeForces() {

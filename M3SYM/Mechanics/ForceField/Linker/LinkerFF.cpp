@@ -31,13 +31,22 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 }
 
 double LinkerFF::computeEnergy(double d) {
-    double U_linker = 0;
     
-    for (auto linker: *LinkerDB::instance())
-        for (auto &linkerInteraction : _linkerInteractionVector)
-            U_linker += linkerInteraction.get()->computeEnergy(linker, d);
-
-    return U_linker;
+    double U = 0;
+    double U_i;
+    
+    for (auto linker: *LinkerDB::instance()) {
+        for (auto &linkerInteraction : _linkerInteractionVector) {
+            
+            U_i = linkerInteraction.get()->computeEnergy(linker, d);
+            
+            if(U_i == numeric_limits<double>::infinity() || U != U)
+                return -1;
+            else
+                U += U_i;
+        }
+    }
+    return U;
 }
 
 void LinkerFF::computeForces() {

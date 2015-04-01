@@ -48,11 +48,22 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 
 
 double FilamentFF::computeEnergy(double d) {
-    double U_fil = 0;
-    for (auto fil: *FilamentDB::instance())
-        for (auto &filamentInteraction : _filamentInteractionVector)
-            U_fil += filamentInteraction.get()->computeEnergy(fil, d);
-    return U_fil;
+    
+    double U = 0;
+    double U_i;
+    
+    for (auto fil: *FilamentDB::instance()) {
+        for (auto &filamentInteraction : _filamentInteractionVector) {
+            
+            U_i = filamentInteraction.get()->computeEnergy(fil, d);
+            
+            if(U_i == numeric_limits<double>::infinity() || U != U)
+                return -1;
+            else
+                U += U_i;
+        }
+    }
+    return U;
 }
 
 void FilamentFF::computeForces() {

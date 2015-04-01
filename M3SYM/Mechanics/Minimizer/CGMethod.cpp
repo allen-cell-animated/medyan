@@ -158,7 +158,6 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
-        //cout << "EnergyLambda = " << energyLambda << endl;
         
         //calculate ideal change
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
