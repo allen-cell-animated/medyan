@@ -47,7 +47,7 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double n1n2 = dotProduct(n1, n2);
    
     double energy = kDihed * ( 1 - n1n2*N1*N2 );
-
+    
     return energy;
     
 }
@@ -141,25 +141,19 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 //
     
     b1->force[0] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + b*(b4->coordinate[0] - b3->coordinate[0])) + (1-position)*N1*N1*( (X-a)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + (c+DX)*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) ) );
-    
     b1->force[1] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + b*(b4->coordinate[1] - b3->coordinate[1])) + (1-position)*N1*N1*( (X-a)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + (c+DX)*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) ) );
-    
     b1->force[2] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + b*(b4->coordinate[2] - b3->coordinate[2])) + (1-position)*N1*N1*( (X-a)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + (c+DX)*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) ) );
     
  //
     
     b2->force[0] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) -b*(b4->coordinate[0] - b3->coordinate[0])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinate[0] - b1->coordinate[0])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinate[0] - b1->coordinate[0]));
-    
     b2->force[1] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) -b*(b4->coordinate[1] - b3->coordinate[1])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinate[1] - b1->coordinate[1])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinate[1] - b1->coordinate[1]));
-    
     b2->force[2] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) -b*(b4->coordinate[2] - b3->coordinate[2])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinate[2] - b1->coordinate[2])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinate[2] - b1->coordinate[2]));
 //
     
     
     b3->force[0] += kDihed*( N2*N2*( (DY-b)*(b4->coordinate[0] - b3->coordinate[0]) +(a-Y)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + N1*N1*( (a-X)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) -c*(1-position)*(b2->coordinate[0] - b1->coordinate[0])) );
-    
     b3->force[1] += kDihed*( N2*N2*( (DY-b)*(b4->coordinate[1] - b3->coordinate[1]) +(a-Y)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + N1*N1*( (a-X)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) -c*(1-position)*(b2->coordinate[0] - b1->coordinate[1])) );
-    
     b3->force[2] += kDihed*( N2*N2*( (DY-b)*(b4->coordinate[2] - b3->coordinate[2]) +(a-Y)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + N1*N1*( (a-X)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) -c*(1-position)*(b2->coordinate[2] - b1->coordinate[2])) );
     
 //
@@ -219,25 +213,19 @@ void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     //
     
     b1->forceAux[0] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) + b*(b4->coordinateAux[0] - b3->coordinateAux[0])) + (1-position)*N1*N1*( (X-a)*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) + (c+DX)*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0]) ) );
-    
     b1->forceAux[1] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) + b*(b4->coordinateAux[1] - b3->coordinateAux[1])) + (1-position)*N1*N1*( (X-a)*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) + (c+DX)*(1-position)*(b2->coordinateAux[1] - b1->coordinateAux[1]) ) );
-    
     b1->forceAux[2] += kDihed*( (1-position)*N2*N2*((Y-a)*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) + b*(b4->coordinateAux[2] - b3->coordinateAux[2])) + (1-position)*N1*N1*( (X-a)*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) + (c+DX)*(1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2]) ) );
     
     //
     
     b2->forceAux[0] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) -b*(b4->coordinateAux[0] - b3->coordinateAux[0])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0]));
-    
     b2->forceAux[1] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) -b*(b4->coordinateAux[1] - b3->coordinateAux[1])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinateAux[1] - b1->coordinateAux[1])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinateAux[1] - b1->coordinateAux[1]));
-    
     b2->forceAux[2] += kDihed*( position*N2*N2*((Y-a)*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) -b*(b4->coordinateAux[2] - b3->coordinateAux[2])) + position*N1*N1*((X-a) + c*(1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2])) - (1-position)*N1*N1*DX*(1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2]));
     //
     
     
     b3->forceAux[0] += kDihed*( N2*N2*( (DY-b)*(b4->coordinateAux[0] - b3->coordinateAux[0]) +(a-Y)*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) ) + N1*N1*( (a-X)*(b3->coordinateAux[0] - (1-position)*b1->coordinateAux[0] - position*b2->coordinateAux[0]) -c*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[0])) );
-    
     b3->forceAux[1] += kDihed*( N2*N2*( (DY-b)*(b4->coordinateAux[1] - b3->coordinateAux[1]) +(a-Y)*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) ) + N1*N1*( (a-X)*(b3->coordinateAux[1] - (1-position)*b1->coordinateAux[1] - position*b2->coordinateAux[1]) -c*(1-position)*(b2->coordinateAux[0] - b1->coordinateAux[1])) );
-    
     b3->forceAux[2] += kDihed*( N2*N2*( (DY-b)*(b4->coordinateAux[2] - b3->coordinateAux[2]) +(a-Y)*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) ) + N1*N1*( (a-X)*(b3->coordinateAux[2] - (1-position)*b1->coordinateAux[2] - position*b2->coordinateAux[2]) -c*(1-position)*(b2->coordinateAux[2] - b1->coordinateAux[2])) );
     
     //

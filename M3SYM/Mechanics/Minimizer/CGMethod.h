@@ -35,11 +35,11 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMIN = 1e-4; ///< Minimum lambda that can be returned,
+    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned,
                                     ///< used in all methods
-    const double LAMBDAMAX = 1e-2;   ///< Max lambda that can be returned,
-                                    ///<used in all methods
-    const double MAXDIST = 0.1;     ///< Max distance parameter,
+    const double LAMBDAMAX = 1.0; ///< Max lambda that can be returned,
+                                    ///< used in all methods
+    const double MAXDIST = 10.0;     ///< Max distance parameter,
                                     ///< used only in backtracking line search
     //@}
     
@@ -83,6 +83,10 @@ protected:
     double binarySearch(ForceFieldManager& FFM);
     
     double backtrackingLineSearch(ForceFieldManager& FFM);
+    
+    
+    ///@note - this is VERY unstable for most systems. Backtracking
+    ///        line search will be the most robust method.
     double quadraticLineSearch(ForceFieldManager& FFM);
     //@}
     

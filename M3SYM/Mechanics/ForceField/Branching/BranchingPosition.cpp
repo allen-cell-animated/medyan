@@ -30,9 +30,9 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(BranchingPoint
     double position = b->getPosition();
     
     if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, position, kPosition);
+        return _FFType.energy(b1, b2, b3, kPosition, position);
     else
-        return _FFType.energy(b1, b2, b3, position, kPosition, d);
+        return _FFType.energy(b1, b2, b3, kPosition, position, d);
     
     
 }
@@ -47,7 +47,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* 
     double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double position = b->getPosition();
     
-    _FFType.forces(b1, b2, b3, position, kPosition);
+    _FFType.forces(b1, b2, b3, kPosition, position);
     
 }
 
@@ -62,7 +62,7 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoin
     double kPosition = b->getMBranchingPoint()->getPositionConstant();
     double position = b->getPosition();
     
-    _FFType.forcesAux(b1, b2, b3, position, kPosition);
+    _FFType.forcesAux(b1, b2, b3, kPosition, position);
     
 }
 

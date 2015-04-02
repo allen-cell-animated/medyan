@@ -42,10 +42,8 @@ double VolumeCylindricalFF::computeEnergy(double d) {
                 
                 U_i = cylinderVolInteraction->computeEnergy(cylinder, cNeighbor, d);
                 
-                if(U_i == numeric_limits<double>::infinity() || U != U){
-                    cout << "volume inf" << endl;
+                if(U_i == numeric_limits<double>::infinity() || U != U)
                     return -1;
-                }
                 else
                     U += U_i;
             }

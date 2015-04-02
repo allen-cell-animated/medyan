@@ -26,7 +26,7 @@ using namespace mathfunc;
 FilamentRateChanger* Cylinder::_polyChanger = nullptr;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront, bool extensionBack, bool creation)
+                   bool extensionFront, bool extensionBack, bool creation, bool branch)
 
     : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
     
@@ -59,7 +59,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     //set eqLength according to cylinder size
     double eqLength;
         
-    if(extensionFront || extensionBack)
+    if(extensionFront || extensionBack || branch)
         eqLength = SysParams::Geometry().monomerSize;
     else if(creation)
         eqLength = SysParams::Geometry().minCylinderSize;

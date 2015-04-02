@@ -17,7 +17,7 @@
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
-    
+
     int SpaceSize = 3 * (int) BeadDB::instance()->size();
     if (SpaceSize == 0) return;
     
@@ -36,7 +36,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 		vector<double> newGrad;
         
         //find lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         moveBeads(lambda);
 
         //compute new forces
@@ -59,5 +59,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
         
 		gSquare = newGradSquare;
 	}
-	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
+	while (gSquare > GRADTOL);
 }

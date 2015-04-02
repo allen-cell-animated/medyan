@@ -61,9 +61,9 @@ void CGMethod::moveBeadsAux(double d) {
     
     for(auto it: *BeadDB::instance()) {
         
-        (*it).coordinateAux[0] = (*it).coordinateAux[0] + d* (*it).force[0];
-        (*it).coordinateAux[1] = (*it).coordinateAux[1] + d* (*it).force[1];
-        (*it).coordinateAux[2] = (*it).coordinateAux[2] + d* (*it).force[2];
+        (*it).coordinateAux[0] = (*it).coordinate[0] + d* (*it).force[0];
+        (*it).coordinateAux[1] = (*it).coordinate[1] + d* (*it).force[1];
+        (*it).coordinateAux[2] = (*it).coordinate[2] + d* (*it).force[2];
 	}
 }
 
@@ -140,6 +140,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
     double conjDirection = 0.0;
     double maxForce = 0.0;
+    double prevLambda;
     
     for(auto it: *BeadDB::instance()) {
         conjDirection += it->calcDotForceProduct();
@@ -167,17 +168,11 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         if(energyChange <= idealEnergyChange) return lambda;
         
         //reduce lambda
+        prevLambda = lambda;
         lambda *= LAMBDAREDUCE;
-        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL) {
-            
-            if(energyChange < 0) {
-                //see if we can return LAMBDAMIN
-                if(FFM.computeEnergy(LAMBDAMIN) <= currentEnergy) return LAMBDAMIN;
-                else return lambda;
-            }
-            //can't, just return 0
-            else return 0.0;
-        }
+        
+        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL)
+            return LAMBDAMIN;
     }
 }
 
@@ -197,18 +192,20 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
     double lambdaPrev = 0.0;
     
+    double conjDirectionOrig = conjDirection;
     double conjDirectionPrev = conjDirection;
-    double deltaconjDirection, relErr, lambda0;
+    double deltaConjDirection, relErr, lambda0;
     
-    double energyCurrent = FFM.computeEnergy(0.0);
-    double energyPrev = energyCurrent;
+    double energyOrig = FFM.computeEnergy(0.0);
+    
+    double energyLambda;
+    double energyPrevLambda = energyOrig;
     double idealEnergyChange, energyChange;
     
     //backtracking loop
     while(true) {
-        
         //move beads
-        energyCurrent = FFM.computeEnergy(lambda);
+        energyLambda = FFM.computeEnergy(lambda);
         moveBeadsAux(lambda);
         
         //calculate new gradients
@@ -216,44 +213,43 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         conjDirection = gradDotProduct();
         
         //compute gradient change
-        deltaconjDirection = conjDirection - conjDirectionPrev;
+        deltaConjDirection = conjDirection - conjDirectionPrev;
         
         //if no gradient change, return 0.0
-        if(fabs(conjDirection) < EPS_QUAD || fabs(deltaconjDirection) < EPS_QUAD)
+        if(fabs(conjDirection) < EPS_QUAD || fabs(deltaConjDirection) < EPS_QUAD)
             return 0.0;
         
         //Check if ready for a quadratic projection
         relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
-                     (conjDirection + conjDirectionPrev) + energyCurrent) / energyPrev);
-        lambda0 = lambda - (lambda - lambdaPrev) * conjDirection / deltaconjDirection;
+                     (conjDirection + conjDirectionPrev) +
+                      energyLambda) / energyPrevLambda);
         
-        if(relErr <= QUADRATICTOL && lambda0 > 0.0 && lambda0 < LAMBDAMAX)
+        lambda0 = lambda - (lambda - lambdaPrev) *
+                  conjDirection / deltaConjDirection;
+        
+        if(relErr <= QUADRATICTOL &&
+           lambda0 > 0.0 && lambda0 < LAMBDAMAX &&
+           FFM.computeEnergy(lambda0) <= energyOrig)
             return lambda0;
         
         //calculate ideal change
-        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
-        energyChange = energyCurrent - energyPrev;
+        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirectionOrig;
+        energyChange = energyLambda - energyOrig;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
-        
+        if(energyChange <= idealEnergyChange)
+            return lambda;
+            
         //save previous state
         conjDirectionPrev = conjDirection;
-        energyPrev = energyCurrent;
-        lambdaPrev = lambda;
+        energyPrevLambda = energyLambda;
         
         //reduce lambda
+        lambdaPrev = lambda;
         lambda *= LAMBDAREDUCE;
-        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL) {
-            
-            if(energyChange < 0) {
-                //see if we can return LAMBDAMIN
-                if(FFM.computeEnergy(LAMBDAMIN) <= energyCurrent) return LAMBDAMIN;
-                else return lambda;
-            }
-            //can't, just return 0
-            else return 0.0;
-        }
+        
+        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL)
+            return LAMBDAMIN;
     }
 }
 

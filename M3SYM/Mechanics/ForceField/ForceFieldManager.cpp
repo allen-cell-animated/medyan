@@ -18,7 +18,8 @@ double ForceFieldManager::computeEnergy(double d) {
     double energy = 0;
     for(auto &f : _forceFields) {
         auto tempEnergy = f->computeEnergy(d);
-        //if energy is infinity, exit ungracefully.
+        
+        //if energy is infinity, exit with infinity.
         if(tempEnergy == -1) {
             cout << "Warning: Energy became garbage. Try adjusting equilibration step size."
                  << endl;

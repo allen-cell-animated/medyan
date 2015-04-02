@@ -36,7 +36,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 		vector<double> newGrad;
 
         //compute lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         moveBeads(lambda);
         
         //compute new forces
@@ -62,7 +62,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 		gSquare = newGradSquare;
         
 	}
-	while (gSquare > GRADTOL && (curEnergy - prevEnergy) < -ENERGYTOL);
+	while (gSquare > GRADTOL);
 }
 
 

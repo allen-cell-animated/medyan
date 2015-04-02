@@ -69,7 +69,7 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     Bead* b2 = new Bead(pos2, 1);
     
     //create cylinder
-    Cylinder* c0 = new Cylinder(this, b1, b2, 0, false, false, creation);
+    Cylinder* c0 = new Cylinder(this, b1, b2, 0, false, false, creation, branch);
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
@@ -313,12 +313,12 @@ void Filament::polymerizeBack() {
     
     Cylinder* cFront = _cylinderVector.front();
     
-    Bead* b2 = cFront->getFirstBead();
-    Bead* b1 = cFront->getSecondBead();
+    Bead* b1 = cFront->getFirstBead();
+    Bead* b2 = cFront->getSecondBead();
 
-    auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
-    b2->coordinate = nextPointProjection(
-        b2->coordinate, SysParams::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
+    b1->coordinate = nextPointProjection(
+        b1->coordinate, SysParams::Geometry().monomerSize, direction);
 
 #ifdef MECHANICS
     //increase eq length, update
@@ -340,7 +340,7 @@ void Filament::depolymerizeFront() {
         b2->coordinate, SysParams::Geometry().monomerSize, direction);
     
 #ifdef MECHANICS
-    //increase eq length, update
+    //decrease eq length, update
     cBack->getMCylinder()->setEqLength(
         cBack->getMCylinder()->getEqLength() -
         SysParams::Geometry().monomerSize);
@@ -351,15 +351,15 @@ void Filament::depolymerizeBack() {
     
     Cylinder* cFront = _cylinderVector.front();
     
-    Bead* b2 = cFront->getFirstBead();
-    Bead* b1 = cFront->getSecondBead();
+    Bead* b1 = cFront->getFirstBead();
+    Bead* b2 = cFront->getSecondBead();
     
-    auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
-    b2->coordinate = nextPointProjection(
-        b2->coordinate, SysParams::Geometry().monomerSize, direction);
+    auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
+    b1->coordinate = nextPointProjection(
+        b1->coordinate, SysParams::Geometry().monomerSize, direction);
     
 #ifdef MECHANICS
-    //increase eq length, update
+    //decrease eq length, update
     cFront->getMCylinder()->setEqLength(
         cFront->getMCylinder()->getEqLength() -
         SysParams::Geometry().monomerSize);
