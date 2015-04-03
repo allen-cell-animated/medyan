@@ -191,8 +191,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     //set up backtracking
     double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
     double lambdaPrev = 0.0;
-    
-    double conjDirectionOrig = conjDirection;
+
     double conjDirectionPrev = conjDirection;
     double deltaConjDirection, relErr, lambda0;
     
@@ -220,21 +219,23 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
             return 0.0;
         
         //Check if ready for a quadratic projection
-        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
-                     (conjDirection + conjDirectionPrev) +
-                      energyLambda) / energyPrevLambda);
+        if(deltaConjDirection <= 0) {
         
-        lambda0 = lambda - (lambda - lambdaPrev) *
-                  conjDirection / deltaConjDirection;
-        
-        if(relErr <= QUADRATICTOL &&
-           lambda0 > 0.0 && lambda0 < LAMBDAMAX &&
-           FFM.computeEnergy(lambda0) <= energyOrig)
-            return lambda0;
+            relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
+                         (conjDirection + conjDirectionPrev) +
+                          energyLambda) / energyPrevLambda);
+            
+            lambda0 = lambda - (lambda - lambdaPrev) *
+                      conjDirection / deltaConjDirection;
+            
+            if(relErr <= QUADRATICTOL &&
+               0.0 < lambda0 && lambda0 < LAMBDAMAX)
+                return lambda0;
+        }
         
         //calculate ideal change
-        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirectionOrig;
-        energyChange = energyLambda - energyOrig;
+        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
+        energyChange = energyLambda - energyPrevLambda;
         
         //return if ok
         if(energyChange <= idealEnergyChange)

@@ -60,7 +60,6 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 		curEnergy = FFM.computeEnergy(0.0);
         
 		gSquare = newGradSquare;
-        
 	}
 	while (gSquare > GRADTOL);
 }

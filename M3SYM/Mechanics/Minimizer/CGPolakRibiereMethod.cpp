@@ -50,9 +50,12 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 		if (numIter % (5 * SpaceSize) == 0) beta = 0;
 		else {
             if(gSquare == 0) beta = 0;
-            else beta = min(max(0.0, (newGradSquare - conjSquare)/ gSquare), 1.0);
+            else beta = max(0.0, (newGradSquare - conjSquare)/ gSquare);
         }
-        shiftGradient(beta);
+        
+        //reset direction if not downhill
+        if(conjSquare <= 0.0) shiftGradient(0.0);
+        else shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
