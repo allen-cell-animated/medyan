@@ -65,9 +65,9 @@ protected:
 public:
     MotorRateChanger(short motorType) : _motorType(motorType) {}
     
-    /// Change the reaction rate based on a bare rate,
+    /// Change the reaction rate based on an on rate, off rate,
     /// number of heads, and given force.
-    virtual float changeRate(float bareRate, int numHeads, double force) = 0;
+    virtual float changeRate(float onRate, float offRate, int numHeads, double force) = 0;
 };
 
 #endif

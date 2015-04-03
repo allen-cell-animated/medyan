@@ -43,6 +43,12 @@ protected:
     CCylinder* _cc1 = nullptr; ///< Pointer to first CCylinder
     CCylinder* _cc2 = nullptr; ///< Pointer to second CCylinder
     
+    //@{
+    ///Reaction rates
+    float _onRate = 0.0;
+    float _offRate = 0.0;
+    //@}
+    
     ReactionBase* _offRxn; ///< The off reaction for this bound object
     
 public:
@@ -96,8 +102,21 @@ public:
     Compartment* getCompartment() {return _compartment;}
     
     //@{
+    /// On rate management
+    void setOnRate(float rate) {_onRate = rate;}
+    double getOnRate(){return _onRate;}
+    //@}
+    
+    //@{
+    /// Off rate management
+    void setOffRate(float rate) {_offRate = rate;}
+    double getOffRate(){return _offRate;}
+    //@}
+    
+    
+    //@{
     /// Off reaction management
-    virtual void createOffReaction(ReactionBase* onRxn, float offRxn, SubSystem* ps) = 0;
+    virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps) = 0;
     
     void setOffReaction(ReactionBase* offRxn) {
         _offRxn = offRxn;

@@ -48,10 +48,16 @@ public:
     CLinker(const CLinker& rhs, Compartment* c)
         : CBound(c, rhs._cc1, rhs._cc2), _pLinker(rhs._pLinker){
         
+        //set species
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
         
+        //set reaction
         setOffReaction(rhs._offRxn);
+            
+        //set rates
+        setOnRate(rhs._onRate);
+        setOffRate(rhs._offRate);
     }
     
     /// Assignment is not allowed
@@ -69,7 +75,7 @@ public:
     Linker* getLinker() {return _pLinker;}
     
     /// Create the off reaction for this Linker
-    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
+    virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
     
 };
 

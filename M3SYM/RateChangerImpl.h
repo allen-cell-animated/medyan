@@ -94,20 +94,27 @@ public:
 ///Used for a low duty ratio motor unbinding when under stress
 
 /// @note - Assuming a duty ratio p = 0.1
-/// @note - This function updates unbinding rates based on the
-/// following exponential form (Erdmann et al 2013):
+/// @note - This function updates unbinding rates of a
+/// Myosin II ensemble based on the following exponential form
+/// (adopted from Erdmann et al 2013):
 ///
-///      k_eff = (k_0 / (2 * N_b)) * exp(-F / (N_b * F_0))
+///      k_unbinding,eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// F_0 is the characteristic force defining this catch,
 /// and N_b is the number of bound motor heads in the ensemble,
 /// approximated by Erdmann et al 2013 to be:
 ///
-///             N_b = 0.1 * N_t + (F * alpha)
+///             N_b = p * N_t + (F * alpha)
 ///
 /// where alpha has been empirically determined to be 0.04
 /// for a low duty ratio motor (p = 0.1).
+/// The total rate for unbinding for the entire mini-filament
+/// unbinding from two actin filaments is:
+///
+///   k_unbinding,total = k_unbinding,eff^2 / k_binding,eff
+///
+/// where k_binding,eff is as previously defined.
 
 class LowDutyPCMCatch : public MotorRateChanger {
     
@@ -118,7 +125,7 @@ public:
     LowDutyPCMCatch(short motorType, double charForce) :
     MotorRateChanger(motorType), _F0(charForce) {}
     
-    virtual float changeRate(float bareRate, int numHeads, double force);
+    virtual float changeRate(float onRate, float offRate, int numHeads, double force);
 };
 
 
@@ -150,7 +157,7 @@ public:
 /// N_b is the number of bound motor heads under zero load,
 /// which for the low duty ratio motor (p = 0.1) has been set to
 ///
-///             N_b = 0.1 * Nt
+///             N_b = p * Nt
 ///
 class LowDutyHillStall : public MotorRateChanger  {
     
@@ -171,7 +178,7 @@ public:
         _stepFrac = d_step / d_total;
     }
     
-    virtual float changeRate(float bareRate, int numHeads, double force);
+    virtual float changeRate(float onRate, float offRate, int numHeads, double force);
 };
 
 

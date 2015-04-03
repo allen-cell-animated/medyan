@@ -37,7 +37,7 @@ CMotorGhost::~CMotorGhost() {
     
 }
 
-void CMotorGhost::createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps) {
+void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     RSpecies** rs = onRxn->rspecies();
     vector<Species*> os;
@@ -50,7 +50,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, float offRate, SubSyste
         os.push_back(&rs[i]->getSpecies());
     
     ReactionBase* offRxn =
-    new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, offRate);
+    new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     
     //Attach the callback to the off reaction, add it
@@ -87,7 +87,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({sm2, s1, sb2, s3, s4}, _offRxn->getBareRate());
+                          ({sm2, s1, sb2, s3, s4}, _offRate);
     }
     else {
         setSecondSpecies(sm2);
@@ -101,7 +101,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({s0, sm2, s2, sb2, s4}, _offRxn->getBareRate());
+                          ({s0, sm2, s2, sb2, s4}, _offRate);
     }
     //set new reaction type
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -147,7 +147,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({sm2, s1, sb2, s3, s4}, _offRxn->getBareRate());
+                          ({sm2, s1, sb2, s3, s4}, _offRate);
         
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
@@ -167,7 +167,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({s0, sm2, s2, sb2, s4}, _offRxn->getBareRate());
+                          ({s0, sm2, s2, sb2, s4}, _offRate);
         
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);

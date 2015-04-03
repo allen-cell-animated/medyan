@@ -196,17 +196,19 @@ struct BranchingPointCreationCallback {
     
     short _plusEnd;        ///< Plus end marker of new cylinder
     
+    float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
     BranchingPointCreationCallback(Cylinder* c1,
                                    short branchType,
                                    short plusEnd,
                                    short position,
+                                   float onRate,
                                    float offRate,
                                    SubSystem* ps)
     
         : _ps(ps), _c1(c1), _branchType(branchType), _position(position),
-          _plusEnd(plusEnd), _offRate(offRate) {}
+          _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -250,7 +252,9 @@ struct BranchingPointCreationCallback {
         BranchingPoint* b= _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
         
         //create off reaction
-        b->getCBranchingPoint()->createOffReaction(r, _offRate, _ps);
+        b->getCBranchingPoint()->setOnRate(_onRate);
+        b->getCBranchingPoint()->setOffRate(_offRate);
+        b->getCBranchingPoint()->createOffReaction(r, _ps);
     }
 };
 
@@ -277,17 +281,20 @@ struct LinkerBindingCallback {
     short _linkerType;            ///< Type of linker
     short _position1, _position2; ///< Positions to attach this linker
     
+    float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
 
     LinkerBindingCallback(Cylinder* c1, Cylinder* c2,
                           short linkerType,
                           short position1,
                           short position2,
+                          float onRate,
                           float offRate,
                           SubSystem* ps)
     
         : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),
-          _position1(position1), _position2(position2), _offRate(offRate) {}
+          _position1(position1), _position2(position2),
+          _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -300,7 +307,9 @@ struct LinkerBindingCallback {
         Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
         
         //create off reaction
-        l->getCLinker()->createOffReaction(r, _offRate, _ps);
+        l->getCLinker()->setOnRate(_onRate);
+        l->getCLinker()->setOffRate(_offRate);
+        l->getCLinker()->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -333,17 +342,20 @@ struct MotorBindingCallback {
     short _motorType;             ///< Type of motor
     short _position1, _position2; ///< Positions to attach this motor
     
+    float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
     
     MotorBindingCallback(Cylinder* c1, Cylinder* c2,
                          short motorType,
                          short position1,
                          short position2,
+                         float onRate,
                          float offRate,
                          SubSystem* ps)
     
         : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),
-          _position1(position1), _position2(position2), _offRate(offRate) {}
+          _position1(position1), _position2(position2),
+          _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
 
@@ -356,7 +368,9 @@ struct MotorBindingCallback {
         MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
 
         //create off reaction
-        m->getCMotorGhost()->createOffReaction(r, _offRate, _ps);
+        m->getCMotorGhost()->setOnRate(_onRate);
+        m->getCMotorGhost()->setOffRate(_offRate);
+        m->getCMotorGhost()->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions

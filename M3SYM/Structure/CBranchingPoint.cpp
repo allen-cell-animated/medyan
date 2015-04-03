@@ -37,7 +37,7 @@ CBranchingPoint::~CBranchingPoint() {
     
 }
 
-void CBranchingPoint::createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps){
+void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //first, find the correct diffusing or bulk species
     RSpecies** rs = onRxn->rspecies();
@@ -50,7 +50,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, float offRate, SubS
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =
-    new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(os, offRate);
+    new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(os, _offRate);
     
     offRxn->setReactionType(ReactionType::BRANCHUNBINDING);
     

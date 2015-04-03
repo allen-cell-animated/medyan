@@ -46,12 +46,21 @@ public:
     
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
-        : CBound(c, rhs._cc1, rhs._cc2), _pMotorGhost(rhs._pMotorGhost){
+    
+        : CBound(c, rhs._cc1, rhs._cc2),
+          _pMotorGhost(rhs._pMotorGhost) {
         
+        //set species
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
         
+        //set reaction
         setOffReaction(rhs._offRxn);
+        
+        //set rates
+        setOnRate(rhs._onRate);
+        setOffRate(rhs._offRate);
+              
     }
     
     /// Assignment is not allowed
@@ -68,8 +77,9 @@ public:
     /// Get parent
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
     
+    
     /// Create the off reaction for this MotorGhost
-    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
+    virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
     
     /// Move the motor head to a new position chemically
     void moveMotorHead(CCylinder* cc,

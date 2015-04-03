@@ -38,26 +38,29 @@ float BasicSlip::changeRate(float bareRate, double force) {
     return newRate;
 }
 
-float LowDutyPCMCatch::changeRate(float bareRate, int numHeads, double force) {
+float LowDutyPCMCatch::changeRate(float onRate, float offRate, int numHeads, double force) {
     
     //determine N_b
     float N_b = min(double(numHeads), 0.1 * numHeads + (force * 0.04));
 
     //calculate new rate
-    double newRate = (bareRate / (2 * N_b)) * exp(-force / (N_b * _F0));
+    double rateOneSide = (offRate / N_b) * exp(-force / (N_b * _F0));
+    
+    double newRate = (rateOneSide * rateOneSide) / (numHeads * onRate);
 
     return newRate;
 
 }
 
-float LowDutyHillStall::changeRate(float bareRate, int numHeads, double force) {
+float LowDutyHillStall::changeRate(float onRate, float offRate, int numHeads, double force) {
     
     //determine k_0
-    float k_0 = 9.0 * bareRate * _stepFrac;
+    float k_0 = 9.0 * onRate * _stepFrac;
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force / numHeads)
                           / (_F0 + (force / (0.12 * numHeads))));
+    
     return newRate;
 
     

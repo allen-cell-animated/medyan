@@ -37,7 +37,7 @@ CLinker::~CLinker() {
 
 }
 
-void CLinker::createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps) {
+void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     RSpecies** rs = onRxn->rspecies();
     vector<Species*> os;
@@ -50,7 +50,7 @@ void CLinker::createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* p
         os.push_back(&rs[i]->getSpecies());
     
     ReactionBase* offRxn =
-    new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, offRate);
+    new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
     //Attach the callback to the off reaction, add it

@@ -870,7 +870,7 @@ void BranchingManager::addReaction(CCylinder* cc) {
         short plusEndProduct = getInt(_products[1]);
         BranchingPointCreationCallback
         bcallback(cc->getCylinder(), branchType,
-                  plusEndProduct, site, _offRate, _ps);
+                  plusEndProduct, site, _rate, _offRate, _ps);
         boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
 #endif
         
@@ -946,7 +946,7 @@ void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
                 LinkerBindingCallback
                 lcallback(cc1->getCylinder(), cc2->getCylinder(),
-                          linkerNumber, i, j, _offRate, _ps);
+                          linkerNumber, i, j, _onRate, _offRate, _ps);
                 boost::signals2::shared_connection_block
                 rcb(onRxn->connect(lcallback,false));
 #endif
@@ -1028,7 +1028,7 @@ void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
                 MotorBindingCallback
                 mcallback(cc1->getCylinder(), cc2->getCylinder(),
-                          motorNumber, i, j, _offRate, _ps);
+                          motorNumber, i, j, _onRate, _offRate, _ps);
                 boost::signals2::shared_connection_block
                 rcb(onRxn->connect(mcallback,false));
 #endif

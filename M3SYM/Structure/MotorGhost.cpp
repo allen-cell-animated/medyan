@@ -174,7 +174,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(r->getBareRate(), _numHeads, forceDotDirectionC1);
+                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                               _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
                 r->activateReaction();
@@ -186,7 +187,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(r->getBareRate(), _numHeads, forceDotDirectionC2);
+                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                               _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
                 r->activateReaction();
@@ -203,7 +205,8 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
             _unbindingChangers[_motorType]->
-            changeRate(offRxn->getBareRate(), _numHeads, force);
+            changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                       _numHeads, force);
         
         offRxn->setRate(newRate);
         offRxn->activateReaction();

@@ -47,8 +47,15 @@ public:
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
         : CBound(c, rhs._cc1, rhs._cc2), _pBranchingPoint(rhs._pBranchingPoint) {
         
+          //set species
           setFirstSpecies(rhs._firstSpecies);
+            
+          //set reaction
           setOffReaction(rhs._offRxn);
+            
+          //set rates
+          setOnRate(rhs._onRate);
+          setOffRate(rhs._offRate);
     }
     
     /// Assignment is not allowed
@@ -68,7 +75,7 @@ public:
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
-    virtual void createOffReaction(ReactionBase* onRxn, float offRate, SubSystem* ps);
+    virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
 };
 
 #endif
