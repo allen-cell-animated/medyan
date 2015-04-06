@@ -17,28 +17,28 @@
 #include "Bead.h"
 
 
-double CGMethod::gradSquare()
+double CGMethod::allFDotF()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance())
-        g += (*it).calcForceSquare();
+	for(auto b: *BeadDB::instance())
+        g += b->FDotF();
     return g;
 }
 
-double CGMethod::gradAuxSquare()
+double CGMethod::allFADotFA()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance())
-        g += (*it).calcForceAuxSquare();
+	for(auto b: *BeadDB::instance())
+        g += b->FADotFA();
     
     return g;
 }
 
-double CGMethod::gradDotProduct()
+double CGMethod::allFDotFA()
 {
     double g = 0;
-	for(auto it: *BeadDB::instance())
-        g += (*it).calcDotForceProduct();
+	for(auto b: *BeadDB::instance())
+        g += b->FDotFA();
     
     return g;
 }
@@ -46,46 +46,46 @@ double CGMethod::gradDotProduct()
 
 void CGMethod::moveBeads(double d)
 {
-	for(auto it: *BeadDB::instance()) {
+	for(auto b: *BeadDB::instance()) {
         
-        (*it).coordinate[0] = (*it).coordinate[0] + d* (*it).force[0];
-        (*it).coordinate[1] = (*it).coordinate[1] + d* (*it).force[1];
-        (*it).coordinate[2] = (*it).coordinate[2] + d* (*it).force[2];
+        b->coordinate[0] = b->coordinate[0] + d* b->force[0];
+        b->coordinate[1] = b->coordinate[1] + d* b->force[1];
+        b->coordinate[2] = b->coordinate[2] + d* b->force[2];
         
         //reset coord Aux
-        (*it).coordinateAux = (*it).coordinate;
+        b->coordinateAux = b->coordinate;
 	}
 }
 
 void CGMethod::moveBeadsAux(double d) {
     
-    for(auto it: *BeadDB::instance()) {
+    for(auto b: *BeadDB::instance()) {
         
-        (*it).coordinateAux[0] = (*it).coordinate[0] + d* (*it).force[0];
-        (*it).coordinateAux[1] = (*it).coordinate[1] + d* (*it).force[1];
-        (*it).coordinateAux[2] = (*it).coordinate[2] + d* (*it).force[2];
+        b->coordinateAux[0] = b->coordinate[0] + d* b->force[0];
+        b->coordinateAux[1] = b->coordinate[1] + d* b->force[1];
+        b->coordinateAux[2] = b->coordinate[2] + d* b->force[2];
 	}
 }
 
 
 void CGMethod::shiftGradient(double d)
 {
-	for(auto it: *BeadDB::instance()) {
+	for(auto b: *BeadDB::instance()) {
         
-        (*it).force[0] = (*it).forceAux[0] + d* (*it).force[0];
-        (*it).force[1] = (*it).forceAux[1] + d* (*it).force[1];
-        (*it).force[2] = (*it).forceAux[2] + d* (*it).force[2];
+        b->force[0] = b->forceAux[0] + d* b->force[0];
+        b->force[1] = b->forceAux[1] + d* b->force[1];
+        b->force[2] = b->forceAux[2] + d* b->force[2];
 	}
 }
 
 void CGMethod::printForces()
 {
 	cout << "Print Forces" << endl;
-    for(auto it: *BeadDB::instance()) {
+    for(auto b: *BeadDB::instance()) {
         
 		for (int i = 0; i<3; i++)
-            cout << (*it).coordinate[i] << "  "<< (*it).force[i]<<"  "
-                 <<(*it).forceAux[i]<<endl;
+            cout << b->coordinate[i] << "  "<<
+                    b->force[i] <<"  "<<b->forceAux[i]<<endl;
 	}
     cout << "End of Print Forces" << endl;
 }
@@ -135,22 +135,28 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
-    double conjDirection = 0.0;
-    double maxForce = 0.0;
+    double allFDotFA = 0.0; double maxF = 0.0;
     
-    for(auto it: *BeadDB::instance()) {
-        conjDirection += it->calcDotForceProduct();
-        for(int i=0 ; i < 3; i++)
-            maxForce = max(maxForce, fabs(it->force[i]));
+    for(auto b: *BeadDB::instance()) {
+        
+        //calc f dot fa
+        allFDotFA += b->FDotFA();
+        
+        //calc max force
+        for(int i = 0 ; i < 3; i++)
+            maxF = max(maxF, fabs(b->force[i]));
     }
     
     //return zero if no forces
-    if(maxForce == 0.0) return 0.0;
+    if(maxF == 0.0) return 0.0;
  
-    //calculate first lambda. cannot be greater than
-    //lambda max, less than lambdamin
-    double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
+    //calculate first lambda
+    double lambda = min(LAMBDAMAX, MAXDIST / maxF);
     double currentEnergy = FFM.computeEnergy(0.0);
+    
+    //reserve lambda
+    double rLambda = 0.0;
+    double rEnergyLambda = currentEnergy;
     
     //backtracking loop
     while(true) {
@@ -158,7 +164,14 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
+        //save lambda if decrease in energy
+        if(energyLambda - rEnergyLambda <= -LSENERGYTOL) {
+            
+            rLambda = lambda;
+            rEnergyLambda = energyLambda;
+        }
+        
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
@@ -168,40 +181,48 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
-        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
-            return 0.0;
-        }
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
+            return rLambda;
     }
 }
 
 double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     
-    double conjDirection = 0.0;
-    double maxForce = 0.0;
-    double lambdaPrev = 0.0;
+    double allFDotFA = 0.0; double maxF = 0.0;
     
-    for(auto it: *BeadDB::instance()) {
-        conjDirection += it->calcDotForceProduct();
-        for(int i=0 ; i < 3; i++)
-            maxForce = max(maxForce, fabs(it->force[i]));
+    for(auto b: *BeadDB::instance()) {
+        
+        //calc f dot fa
+        allFDotFA += b->FDotFA();
+        
+        //calc max force
+        for(int i = 0 ; i < 3; i++)
+            maxF = max(maxF, fabs(b->force[i]));
     }
-    //return zero if no forces
-    if(maxForce == 0.0) return 0.0;
     
-    //set up backtracking
-    double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
+    //return zero if no forces
+    if(maxF == 0.0) return 0.0;
+    
+    //calculate first lambda
+    double lambda = min(LAMBDAMAX, MAXDIST / maxF);
 
     //tracking conjugate direction
-    double conjDirectionPrev = conjDirection;
-    double conjDirectionOrig = conjDirection;
+    double allFDotFAPrev = allFDotFA;
+    double allFDotFAOrig = allFDotFA;
     
-    double deltaConjDirection, relErr, lambda0;
+    double deltaFDotFA, relErr, lambda0;
     
     double energyOrig = FFM.computeEnergy(0.0);
     
     double energyLambda;
     double energyPrevLambda = energyOrig;
     double idealEnergyChange, energyChange;
+    
+    double lambdaPrev = 0.0;
+    
+    //reserve lambda
+    double rLambda = 0.0;
+    double rEnergyLambda = energyOrig;
     
     //backtracking loop
     while(true) {
@@ -211,32 +232,39 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         
         //calculate new gradients
         FFM.computeForcesAux();
-        conjDirection = gradDotProduct();
+        allFDotFA = CGMethod::allFDotFA();
         
         //compute gradient change
-        deltaConjDirection = conjDirection - conjDirectionPrev;
+        deltaFDotFA = allFDotFA - allFDotFAPrev;
         
         //if no gradient change, return 0.0
-        if(fabs(conjDirection) < EPS_QUAD || fabs(deltaConjDirection) < EPS_QUAD)
+        if(fabs(allFDotFA) < EPS_QUAD || fabs(deltaFDotFA) < EPS_QUAD)
             return 0.0;
         
         //Check if ready for a quadratic projection
-        if(deltaConjDirection <= 0) {
+        if(deltaFDotFA <= 0) {
         
             relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
-                         (conjDirection + conjDirectionPrev) +
-                          energyLambda) / energyPrevLambda);
+                                 (allFDotFA + allFDotFAPrev) +
+                                  energyLambda) / energyPrevLambda);
             
             lambda0 = lambda - (lambda - lambdaPrev) *
-                      conjDirection / deltaConjDirection;
+                      allFDotFA / deltaFDotFA;
             
             if(relErr <= QUADRATICTOL &&
                0.0 < lambda0 && lambda0 < LAMBDAMAX)
                 return lambda0;
         }
         
+        //save lambda if decrease in energy
+        if(energyLambda - rEnergyLambda <= -LSENERGYTOL) {
+            
+            rLambda = lambda;
+            rEnergyLambda = energyLambda;
+        }
+        
         //calculate ideal change
-        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirectionOrig;
+        idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFAOrig;
         energyChange = energyLambda - energyOrig;
         
         //return if ok
@@ -244,7 +272,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
             return lambda;
             
         //save previous state
-        conjDirectionPrev = conjDirection;
+        allFDotFAPrev = allFDotFA;
         energyPrevLambda = energyLambda;
         
         //reduce lambda

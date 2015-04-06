@@ -20,50 +20,54 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 {
     //system size
     int n = BeadDB::instance()->size();
-    int nd = 3 * n;
-    if (nd == 0) return;
+    int ndof = 3 * n;
+    if (ndof == 0) return;
     
-	double curEnergy = FFM.computeEnergy(0.0);
+    double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
     
-	FFM.computeForces();
-
-    //compute first gradient
-	double gSquare = gradSquare();
+    FFM.computeForces();
     
-	int numIter = 0;
-	do {
-		numIter++;
-		double lambda, beta, newGradSquare;
-		vector<double> newGrad;
-
-        //compute lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM);
+    //compute first gradient
+    double allFDotF = CGMethod::allFDotF();
+    
+    int numIter = 0;
+    do {
+        numIter++;
+        double lambda, beta, allFADotFA, allFDotFA;
+        vector<double> newGrad;
+        
+        //find lambda by line search, move beads
+        lambda = quadraticLineSearch(FFM);
         moveBeads(lambda);
         
         //compute new forces
         FFM.computeForcesAux();
         
-        //compute new direction
-		newGradSquare = gradAuxSquare();
-		
-        //calculate beta
-		if (numIter % (5 * nd) == 0) beta = 0;
-		else {
-            if(gSquare == 0) beta = 0;
-            else beta = min(newGradSquare / gSquare, 1.0);
-            
-        }
-        //shift gradient by beta
-        if(gradDotProduct() < 0) shiftGradient(0.0);
-        else shiftGradient(beta);
+        //compute direction
+        allFADotFA = CGMethod::allFADotFA();
+        allFDotFA = CGMethod::allFDotFA();
         
-		prevEnergy = curEnergy;
-		curEnergy = FFM.computeEnergy(0.0);
+        //choose beta
+        //reset after ndof iterations
+        if (numIter % ndof == 0)  beta = 0.0;
+        //reset if no force
+        else if (allFDotF == 0.0) beta = 0.0;
+        //reset if not downhill
+        else if(allFDotFA < 0.0)  beta = 0.0;
+        //reset if linesearch returned 0
+        else if (lambda == 0.0)   beta = 0.0;
         
-		gSquare = newGradSquare;
-	}
-	while (gSquare > GRADTOL);
+        //Fletcher-Rieves update
+        else beta = allFADotFA / allFDotF;
+        
+        //shift gradient
+        shiftGradient(beta);
+        
+        prevEnergy = curEnergy;
+        curEnergy = FFM.computeEnergy(0.0);
+        
+        allFDotF = allFADotFA;
+    }
+    while (allFDotF / n > GRADTOL);
 }
-
-

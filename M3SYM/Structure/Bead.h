@@ -61,19 +61,19 @@ public:
     
     //@{
     /// Auxiliary method for CG minimization
-    inline double calcForceSquare() {
+    inline double FDotF() {
         return force[0]*force[0] +
                force[1]*force[1] +
                force[2]*force[2];
     }
     
-    inline double calcForceAuxSquare() {
+    inline double FADotFA() {
         return forceAux[0]*forceAux[0] +
                forceAux[1]*forceAux[1] +
                forceAux[2]*forceAux[2];
     }
     
-    inline double calcDotForceProduct() {
+    inline double FDotFA() {
         return force[0]*forceAux[0] +
                force[1]*forceAux[1] +
                force[2]*forceAux[2];

@@ -208,14 +208,14 @@ void Forces::print(int step) {
         //print force
         for (auto cylinder : filament->getCylinderVector()){
             
-            double forceMag= cylinder->getFirstBead()->calcForceSquare();
+            double forceMag= cylinder->getFirstBead()->FDotF();
             forceMag = sqrt(forceMag);
             _outputFile<<forceMag << " ";
             
         }
         //print last bead force
         double forceMag = filament->getCylinderVector().back()->
-                          getSecondBead()->calcForceSquare();
+                          getSecondBead()->FDotF();
         forceMag = sqrt(forceMag);
         _outputFile<<forceMag;
         

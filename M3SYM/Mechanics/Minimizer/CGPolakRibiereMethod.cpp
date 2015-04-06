@@ -18,11 +18,10 @@
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 
-    
     //system size
     int n = BeadDB::instance()->size();
-    int nd = 3 * n;
-    if (nd == 0) return;
+    int ndof = 3 * n;
+    if (ndof == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
@@ -30,40 +29,45 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 	FFM.computeForces();
 
     //compute first gradient
-    double gSquare = gradSquare();
+    double allFDotF = CGMethod::allFDotF();
     
 	int numIter = 0;
 	do {
 		numIter++;
-		double lambda, beta, newGradSquare, conjSquare;
+		double lambda, beta, allFADotFA, allFDotFA;
 		vector<double> newGrad;
         
         //find lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         moveBeads(lambda);
         
         //compute new forces
         FFM.computeForcesAux();
         
         //compute direction
-        newGradSquare = gradAuxSquare();
-        conjSquare = gradDotProduct();
+        allFADotFA = CGMethod::allFADotFA();
+        allFDotFA = CGMethod::allFDotFA();
 
-        //choose beta, safeguard for blowups
-		if (numIter % (5 * nd) == 0) beta = 0;
-		else {
-            if(gSquare == 0) beta = 0;
-            else beta = max(0.0, (newGradSquare - conjSquare)/ gSquare);
-        }
+        //choose beta
+        //reset after ndof iterations
+		if (numIter % ndof == 0)  beta = 0.0;
+        //reset if no force
+        else if (allFDotF == 0.0) beta = 0.0;
+        //reset if not downhill
+        else if(allFDotFA < 0.0)  beta = 0.0;
+        //reset if linesearch returned 0
+        else if (lambda == 0.0)   beta = 0.0;
         
+        //Polak-Ribieri update
+        else beta = max(0.0, (allFADotFA - allFDotFA)/ allFDotF);
+    
         //shift gradient
-        if(conjSquare < 0) shiftGradient(0.0);
-        else shiftGradient(beta);
+        shiftGradient(beta);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
         
-		gSquare = newGradSquare;
+        allFDotF = allFADotFA;
 	}
-	while (gSquare > GRADTOL);
+	while (allFDotF / n > GRADTOL);
 }

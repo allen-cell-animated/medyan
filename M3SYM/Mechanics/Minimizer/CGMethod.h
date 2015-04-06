@@ -35,16 +35,16 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 0.01;   ///< Max lambda that can be returned,
-                                    ///< used in all methods
-    const double MAXDIST = 1.0;    ///< Max distance parameter,
-                                    ///< used only in backtracking line search
+    const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
+                                   ///< used in all methods
+    const double MAXDIST = 0.01;   ///< Max distance parameter,
+                                   ///< used only in backtracking line search
     //@}
     
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
+    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
     //@}
     
     //@{
@@ -62,13 +62,12 @@ protected:
     
     const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
                                      ///< linesearch methods
-    const double ENERGYTOL = 1e-8;   ///< Energy tolerance
     
     //@{
     /// For use in minimization
-    double gradSquare();
-    double gradAuxSquare();
-    double gradDotProduct();
+    double allFDotF();
+    double allFADotFA();
+    double allFDotFA();
     
     void moveBeads(double d);
     void moveBeadsAux(double d);

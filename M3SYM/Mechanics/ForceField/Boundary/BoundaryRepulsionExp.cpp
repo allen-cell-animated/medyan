@@ -29,7 +29,7 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
     
     //ceiling to avoid blowups
     double R = -r/screenLength;
-    double f0 = min(kRep * exp(R)/screenLength, kRep * SysParams::Boundaries().BCeiling  / screenLength);
+    double f0 = min(kRep * exp(R)/screenLength, kRep * SysParams::Boundaries().BCeiling / screenLength);
 
     //update the load force of the bead
     b->loadForce = f0;
@@ -45,7 +45,7 @@ void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& n
     
     //ceiling to avoid blowups
     double R = -r/screenLength;
-    double f0 = min(kRep * exp(R)/screenLength, kRep * SysParams::Boundaries().BCeiling  / screenLength);
+    double f0 = min(kRep * exp(R)/screenLength, kRep * SysParams::Boundaries().BCeiling / screenLength);
     
     //update the load force of the bead
     b->loadForce = f0;
