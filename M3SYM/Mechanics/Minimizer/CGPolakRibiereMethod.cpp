@@ -18,8 +18,11 @@
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 
-    int SpaceSize = 3 * (int) BeadDB::instance()->size();
-    if (SpaceSize == 0) return;
+    
+    //system size
+    int n = BeadDB::instance()->size();
+    int nd = 3 * n;
+    if (nd == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
@@ -27,7 +30,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 	FFM.computeForces();
 
     //compute first gradient
-	double gSquare = gradSquare();
+    double gSquare = gradSquare();
     
 	int numIter = 0;
 	do {
@@ -36,25 +39,25 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 		vector<double> newGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM);
+        lambda = quadraticLineSearch(FFM);
         moveBeads(lambda);
-
+        
         //compute new forces
         FFM.computeForcesAux();
         
         //compute direction
-		newGradSquare = gradAuxSquare();
+        newGradSquare = gradAuxSquare();
         conjSquare = gradDotProduct();
 
         //choose beta, safeguard for blowups
-		if (numIter % (5 * SpaceSize) == 0) beta = 0;
+		if (numIter % (5 * nd) == 0) beta = 0;
 		else {
             if(gSquare == 0) beta = 0;
             else beta = max(0.0, (newGradSquare - conjSquare)/ gSquare);
         }
         
-        //reset direction if not downhill
-        if(conjSquare <= 0.0) shiftGradient(0.0);
+        //shift gradient
+        if(conjSquare < 0) shiftGradient(0.0);
         else shiftGradient(beta);
         
 		prevEnergy = curEnergy;

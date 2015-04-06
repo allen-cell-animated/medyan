@@ -35,11 +35,9 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMIN = 0.001; ///< Minimum lambda that can be returned,
+    const double LAMBDAMAX = 0.01;   ///< Max lambda that can be returned,
                                     ///< used in all methods
-    const double LAMBDAMAX = 1.0;   ///< Max lambda that can be returned,
-                                    ///< used in all methods
-    const double MAXDIST = 10.0;    ///< Max distance parameter,
+    const double MAXDIST = 1.0;    ///< Max distance parameter,
                                     ///< used only in backtracking line search
     //@}
     
@@ -62,9 +60,9 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all
+    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
                                      ///< linesearch methods
-    const double ENERGYTOL = 1e-6;   ///< Energy tolerance
+    const double ENERGYTOL = 1e-8;   ///< Energy tolerance
     
     //@{
     /// For use in minimization
@@ -82,10 +80,11 @@ protected:
     double goldenSection(ForceFieldManager &FFM);
     double binarySearch(ForceFieldManager& FFM);
     
+    ///@note - the most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM);
     
     
-    ///@note - this is VERY unstable for most systems. Backtracking
+    ///@note - this is somewhat unstable for most systems. Backtracking
     ///        line search will be the most robust method.
     double quadraticLineSearch(ForceFieldManager& FFM);
     //@}

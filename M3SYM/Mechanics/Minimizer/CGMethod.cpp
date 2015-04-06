@@ -115,10 +115,7 @@ double CGMethod::goldenSection(ForceFieldManager& FFM)
     }
     double returnLambda = (a + b)/2.0;
     
-    //check if return value is in bounds of lambda min and max
-    if (returnLambda > LAMBDAMAX) return LAMBDAMAX;
-    else if(returnLambda < LAMBDAMIN) return LAMBDAMIN;
-    else return returnLambda;
+    return returnLambda;
 }
 
 
@@ -140,12 +137,13 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
     double conjDirection = 0.0;
     double maxForce = 0.0;
-    double prevLambda;
     
     for(auto it: *BeadDB::instance()) {
         conjDirection += it->calcDotForceProduct();
-        for(int i=0 ; i < 3; i++) maxForce = max(maxForce, fabs(it->force[i]));
+        for(int i=0 ; i < 3; i++)
+            maxForce = max(maxForce, fabs(it->force[i]));
     }
+    
     //return zero if no forces
     if(maxForce == 0.0) return 0.0;
  
@@ -160,19 +158,19 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         
-        //calculate ideal change
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
+        if(energyChange <= idealEnergyChange)
+            return lambda;
         
         //reduce lambda
-        prevLambda = lambda;
         lambda *= LAMBDAREDUCE;
         
-        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL)
-            return LAMBDAMIN;
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL) {
+            return 0.0;
+        }
     }
 }
 
@@ -180,19 +178,23 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     
     double conjDirection = 0.0;
     double maxForce = 0.0;
+    double lambdaPrev = 0.0;
     
     for(auto it: *BeadDB::instance()) {
         conjDirection += it->calcDotForceProduct();
-        for(int i=0 ; i < 3; i++) maxForce = max(maxForce, fabs(it->force[i]));
+        for(int i=0 ; i < 3; i++)
+            maxForce = max(maxForce, fabs(it->force[i]));
     }
     //return zero if no forces
     if(maxForce == 0.0) return 0.0;
     
     //set up backtracking
     double lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-    double lambdaPrev = 0.0;
 
+    //tracking conjugate direction
     double conjDirectionPrev = conjDirection;
+    double conjDirectionOrig = conjDirection;
+    
     double deltaConjDirection, relErr, lambda0;
     
     double energyOrig = FFM.computeEnergy(0.0);
@@ -234,8 +236,8 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         }
         
         //calculate ideal change
-        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirection;
-        energyChange = energyLambda - energyPrevLambda;
+        idealEnergyChange = -BACKTRACKSLOPE * lambda * conjDirectionOrig;
+        energyChange = energyLambda - energyOrig;
         
         //return if ok
         if(energyChange <= idealEnergyChange)
@@ -249,8 +251,8 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
         lambdaPrev = lambda;
         lambda *= LAMBDAREDUCE;
         
-        if(lambda <= LAMBDAMIN || idealEnergyChange >= -LSENERGYTOL)
-            return LAMBDAMIN;
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
+            return 0.0;
     }
 }
 

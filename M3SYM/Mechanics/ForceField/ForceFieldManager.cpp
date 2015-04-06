@@ -34,12 +34,24 @@ double ForceFieldManager::computeEnergy(double d) {
 }
 
 void ForceFieldManager::computeForces() {
+    
+    //reset
     resetForces();
+    
+    //recompute
     for(auto &f : _forceFields) f->computeForces();
+    
+    //copy to aux
+    for(auto it: *BeadDB::instance())
+        it->forceAux = it->force;
 }
 
 void ForceFieldManager::computeForcesAux() {
+    
+    //reset just aux
     resetForcesAux();
+    
+    //recompute
     for(auto &f : _forceFields) f->computeForcesAux();
 }
 

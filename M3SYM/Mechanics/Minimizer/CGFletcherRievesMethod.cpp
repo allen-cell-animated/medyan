@@ -18,8 +18,10 @@
 
 void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 {
-    int SpaceSize = 3 * BeadDB::instance()->size();
-    if (SpaceSize == 0) return;
+    //system size
+    int n = BeadDB::instance()->size();
+    int nd = 3 * n;
+    if (nd == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
@@ -46,7 +48,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
 		newGradSquare = gradAuxSquare();
 		
         //calculate beta
-		if (numIter % (5 * SpaceSize) == 0) beta = 0;
+		if (numIter % (5 * nd) == 0) beta = 0;
 		else {
             if(gSquare == 0) beta = 0;
             else beta = min(newGradSquare / gSquare, 1.0);
