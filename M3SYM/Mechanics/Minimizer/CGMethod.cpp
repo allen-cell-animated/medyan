@@ -121,12 +121,12 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     
-    double allFDotFA = 0.0; double maxF = 0.0;
+    double proj = 0.0; double maxF = 0.0;
     
     for(auto b: *BeadDB::instance()) {
         
         //calc f dot fa
-        allFDotFA += b->FDotFA();
+        proj += b->FDotFA();
         
         //calc max force
         for(int i = 0 ; i < 3; i++)
@@ -146,7 +146,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA;
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok

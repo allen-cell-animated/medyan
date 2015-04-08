@@ -49,12 +49,15 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
         //choose beta
         //reset after ndof iterations
         if (numIter % ndof == 0)  beta = 0.0;
-        
         //Fletcher-Rieves update
         else beta = newGradient / curGradient;
         
         //shift gradient
         shiftGradient(beta);
+        
+        //reset if not downhill
+        if(CGMethod::allFDotFA() < 0)
+            shiftGradient(0.0);
         
         prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
