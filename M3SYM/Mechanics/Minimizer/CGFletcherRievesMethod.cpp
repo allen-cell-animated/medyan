@@ -29,7 +29,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
     FFM.computeForces();
     
     //compute first gradient
-    double allFDotF = CGMethod::allFDotF();
+    double curGrad = CGMethod::allFDotF();
     
     int numIter = 0;
     do {
@@ -38,7 +38,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
         vector<double> newGrad;
         
         //find lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM);
         moveBeads(lambda);
         
         //compute new forces
@@ -51,23 +51,21 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL)
         //choose beta
         //reset after ndof iterations
         if (numIter % ndof == 0)  beta = 0.0;
-        //reset if no force
-        else if (allFDotF == 0.0) beta = 0.0;
-        //reset if not downhill
-        else if(allFDotFA < 0.0)  beta = 0.0;
-        //reset if linesearch returned 0
-        else if (lambda == 0.0)   beta = 0.0;
         
-        //Fletcher-Rieves update
-        else beta = allFADotFA / allFDotF;
+        //Polak-Ribieri update
+        else beta = allFADotFA / curGrad;
         
         //shift gradient
-        shiftGradient(beta);
+        shiftGradient(0.0);
+        
+        //reset if direction not downhill
+        if(CGMethod::allFDotFA() <= 0)
+            shiftGradient(0.0);
         
         prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
         
-        allFDotF = allFADotFA;
+        curGrad = allFADotFA;
     }
-    while (allFDotF / n > GRADTOL);
+    while (curGrad / n > GRADTOL);
 }

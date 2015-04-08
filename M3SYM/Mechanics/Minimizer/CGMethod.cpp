@@ -154,22 +154,11 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
     double lambda = min(LAMBDAMAX, MAXDIST / maxF);
     double currentEnergy = FFM.computeEnergy(0.0);
     
-    //reserve lambda
-    double rLambda = 0.0;
-    double rEnergyLambda = currentEnergy;
-    
     //backtracking loop
     while(true) {
         
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
-        
-        //save lambda if decrease in energy
-        if(energyLambda - rEnergyLambda <= -LSENERGYTOL) {
-            
-            rLambda = lambda;
-            rEnergyLambda = energyLambda;
-        }
         
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA;
         double energyChange = energyLambda - currentEnergy;
@@ -182,7 +171,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         lambda *= LAMBDAREDUCE;
         
         if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
-            return rLambda;
+            return 0.0;
     }
 }
 
@@ -220,10 +209,6 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
     
     double lambdaPrev = 0.0;
     
-    //reserve lambda
-    double rLambda = 0.0;
-    double rEnergyLambda = energyOrig;
-    
     //backtracking loop
     while(true) {
         //move beads
@@ -254,13 +239,6 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM) {
             if(relErr <= QUADRATICTOL &&
                0.0 < lambda0 && lambda0 < LAMBDAMAX)
                 return lambda0;
-        }
-        
-        //save lambda if decrease in energy
-        if(energyLambda - rEnergyLambda <= -LSENERGYTOL) {
-            
-            rLambda = lambda;
-            rEnergyLambda = energyLambda;
         }
         
         //calculate ideal change
