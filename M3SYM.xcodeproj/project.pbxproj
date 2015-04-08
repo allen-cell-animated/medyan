@@ -226,6 +226,8 @@
 		F7C9D02D1A2D165D0087434A /* SpeciesContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFE61A2D165D0087434A /* SpeciesContainer.h */; };
 		F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFE71A2D165D0087434A /* SubSystem.cpp */; };
 		F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFE81A2D165D0087434A /* SubSystem.h */; };
+		F7E9F8311AD5CD4600E0CBBC /* CGSteepestDescent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7E9F82F1AD5CD4600E0CBBC /* CGSteepestDescent.cpp */; };
+		F7E9F8321AD5CD4600E0CBBC /* CGSteepestDescent.h in Headers */ = {isa = PBXBuildFile; fileRef = F7E9F8301AD5CD4600E0CBBC /* CGSteepestDescent.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -469,6 +471,8 @@
 		F7C9CFE61A2D165D0087434A /* SpeciesContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesContainer.h; sourceTree = "<group>"; };
 		F7C9CFE71A2D165D0087434A /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubSystem.cpp; sourceTree = "<group>"; };
 		F7C9CFE81A2D165D0087434A /* SubSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubSystem.h; sourceTree = "<group>"; };
+		F7E9F82F1AD5CD4600E0CBBC /* CGSteepestDescent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGSteepestDescent.cpp; sourceTree = "<group>"; };
+		F7E9F8301AD5CD4600E0CBBC /* CGSteepestDescent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSteepestDescent.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -777,6 +781,8 @@
 			children = (
 				F735B7AE1A2D173F00AE21D1 /* CGMethod.cpp */,
 				F735B7AF1A2D173F00AE21D1 /* CGMethod.h */,
+				F7E9F82F1AD5CD4600E0CBBC /* CGSteepestDescent.cpp */,
+				F7E9F8301AD5CD4600E0CBBC /* CGSteepestDescent.h */,
 				F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */,
 				F735B7AD1A2D173F00AE21D1 /* CGFletcherRievesMethod.h */,
 				F735B7B01A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp */,
@@ -926,6 +932,7 @@
 				F7C9D0141A2D165D0087434A /* MLinker.h in Headers */,
 				F7525A961A702461007A4E9F /* LinkerInteractions.h in Headers */,
 				F735B79B1A2D172800AE21D1 /* ChemGillespieImpl.h in Headers */,
+				F7E9F8321AD5CD4600E0CBBC /* CGSteepestDescent.h in Headers */,
 				F735B7811A2D16F200AE21D1 /* Parser.h in Headers */,
 				F735B7851A2D16F200AE21D1 /* utility.h in Headers */,
 				F7525A391A7023EF007A4E9F /* CylinderExclVolRepulsion.h in Headers */,
@@ -1070,6 +1077,7 @@
 				F7C9CFEB1A2D165D0087434A /* BeadDB.cpp in Sources */,
 				F7525A611A70241E007A4E9F /* BranchingStretching.cpp in Sources */,
 				F7525A5A1A70241E007A4E9F /* BranchingFF.cpp in Sources */,
+				F7E9F8311AD5CD4600E0CBBC /* CGSteepestDescent.cpp in Sources */,
 				F7C9CFF31A2D165D0087434A /* BoundaryImpl.cpp in Sources */,
 				F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,

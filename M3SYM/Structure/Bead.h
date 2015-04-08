@@ -40,11 +40,10 @@ class Compartment;
 class Bead : public Component, public Neighbor, public Movable {
 public:
     vector<double> coordinate; ///< Coordinates of the bead
-    vector<double> coordinateAux; ///< An auxiliary coordinate field needed
-                                  ///< during CG minimization
+    
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
-    vector<double> forceAux; ///< An auxiliary field needed during CG minimization.
+    vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
     
     double loadForce = 0.0; ///< The force on this bead due to an external load
                             ///< Usually a boundary element
@@ -54,7 +53,7 @@ public:
     
     ///Default constructor
     Bead(int positionFilament)
-        : coordinate (3, 0), coordinateAux(3, 0), force(3, 0), forceAux(3, 0),
+        : coordinate (3, 0), force(3, 0), forceAux(3, 0),
           _positionFilament(positionFilament) {}
     
     ~Bead();

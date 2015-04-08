@@ -29,10 +29,12 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
     if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance));
-    
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance));
+    else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
+        _minimizerAlgorithms.push_back(
+        new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance));
     
     else {
         cout << "Conjugate gradient method not recognized. Exiting." << endl;

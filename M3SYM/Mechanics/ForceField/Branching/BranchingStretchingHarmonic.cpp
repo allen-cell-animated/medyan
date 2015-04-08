@@ -78,26 +78,26 @@ void BranchingStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3,
                                             double position, double kStretch,
                                             double eqLength){
     
-    auto v1 = midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position);
+    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position);
     
-    double dist = twoPointDistance( v1, b3->coordinateAux);
+    double dist = twoPointDistance( v1, b3->coordinate);
     
     double invL = 1 / dist;
     double f0 = kStretch * ( dist - eqLength ) * invL;
     
     //force on i
-    b1->forceAux[0] +=  -f0 * ( b3->coordinateAux[0] - v1[0] ) * (position - 1);
-    b1->forceAux[1] +=  -f0 * ( b3->coordinateAux[1] - v1[1] ) * (position - 1);
-    b1->forceAux[2] +=  -f0 * ( b3->coordinateAux[2] - v1[2] ) * (position - 1);
+    b1->forceAux[0] +=  -f0 * ( b3->coordinate[0] - v1[0] ) * (position - 1);
+    b1->forceAux[1] +=  -f0 * ( b3->coordinate[1] - v1[1] ) * (position - 1);
+    b1->forceAux[2] +=  -f0 * ( b3->coordinate[2] - v1[2] ) * (position - 1);
     
     // force i+1
-    b2->forceAux[0] +=  f0 * ( b3->coordinateAux[0] - v1[0] ) * position;
-    b2->forceAux[1] +=  f0 * ( b3->coordinateAux[1] - v1[1] ) * position;
-    b2->forceAux[2] +=  f0 * ( b3->coordinateAux[2] - v1[2] ) * position;
+    b2->forceAux[0] +=  f0 * ( b3->coordinate[0] - v1[0] ) * position;
+    b2->forceAux[1] +=  f0 * ( b3->coordinate[1] - v1[1] ) * position;
+    b2->forceAux[2] +=  f0 * ( b3->coordinate[2] - v1[2] ) * position;
     
     //force on j
-    b3->forceAux[0] +=  -f0 * ( b3->coordinateAux[0] - v1[0] );
-    b3->forceAux[1] +=  -f0 * ( b3->coordinateAux[1] - v1[1] );
-    b3->forceAux[2] +=  -f0 * ( b3->coordinateAux[2] - v1[2] );
+    b3->forceAux[0] +=  -f0 * ( b3->coordinate[0] - v1[0] );
+    b3->forceAux[1] +=  -f0 * ( b3->coordinate[1] - v1[1] );
+    b3->forceAux[2] +=  -f0 * ( b3->coordinate[2] - v1[2] );
     
 }

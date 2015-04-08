@@ -56,9 +56,9 @@ void BoundaryRepulsion<BRepulsionInteractionType>::computeForcesAux(
     double kRep = be->getRepulsionConst();
     double screenLength = be->getScreeningLength();
     
-    auto normal = be->normal(b->coordinateAux);
+    auto normal = be->normal(b->coordinate);
     _FFType.computeForcesAux(
-        b, be->distance(b->coordinateAux), normal, kRep, screenLength);
+        b, be->distance(b->coordinate), normal, kRep, screenLength);
 }
 
 ///Template specializations

@@ -82,8 +82,8 @@ double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bea
                                                double position1, double position2,
                                                double kStretch, double eqLength){
     
-    auto v1 = midPointCoordinate(b1->coordinateAux, b2->coordinateAux, position1);
-    auto v2 = midPointCoordinate(b3->coordinateAux, b4->coordinateAux, position2);
+    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
+    auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
     double dist = twoPointDistance( v1, v2);
     

@@ -81,11 +81,6 @@ protected:
     
     ///@note - the most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM);
-    
-    
-    ///@note - this is somewhat unstable for most systems. Backtracking
-    ///        line search will be the most robust method.
-    double quadraticLineSearch(ForceFieldManager& FFM);
     //@}
     
     void printForces();
