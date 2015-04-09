@@ -42,7 +42,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.1; ///< Backtrack slope parameter
+    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
     //@}
     
     //@{
@@ -60,6 +60,7 @@ protected:
     
     const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
                                      ///< linesearch methods
+    const double CGENERGYTOL = 1e-8; ///< CG energy tolerance
     
     //@{
     /// For use in minimization

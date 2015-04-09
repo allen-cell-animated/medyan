@@ -38,9 +38,9 @@ double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
     auto v1 = midPointCoordinateStretched(b1->coordinate, b1->force,
                                           b2->coordinate, b2->force, position, d);
     
-    double dist = twoPointDistance(v1, b3->coordinate) - eqLength;
+    double dist = twoPointDistanceStretched(v1, {0,0,0}, b3->coordinate, b3->force, d) - eqLength;
     
-    double energy =  0.5 * kStretch * dist * dist ;
+    double energy =  0.5 * kStretch * dist * dist;
 
     return energy;
 }
