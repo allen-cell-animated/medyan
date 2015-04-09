@@ -16,7 +16,8 @@
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL)
+void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
+                                                       double MAXDIST)
 {
     //system size
     int n = BeadDB::instance()->size();
@@ -29,22 +30,22 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL)
     FFM.computeForces();
     
     //compute first gradient
-    double curGradient = CGMethod::allFDotF();
+    double curGrad = CGMethod::allFDotF();
     
     int numIter = 0;
     do {
         numIter++;
-        double lambda, newGradient;
+        double lambda, newGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM, MAXDIST);
         moveBeads(lambda);
         
         //compute new forces
         FFM.computeForcesAux();
         
         //compute direction
-        newGradient = CGMethod::allFADotFA();
+        newGrad = CGMethod::allFADotFA();
         
         //shift gradient
         shiftGradient(0.0);
@@ -52,7 +53,8 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL)
         prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
         
-        curGradient = newGradient;
+        curGrad = newGrad;
     }
-    while (curGradient / n > GRADTOL);
+    while (curGrad / n > GRADTOL);
 }
+

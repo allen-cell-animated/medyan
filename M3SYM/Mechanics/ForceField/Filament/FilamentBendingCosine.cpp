@@ -166,20 +166,20 @@ void FilamentBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     }
     
     //force on i-1, f = k*(-A*l2 + B*l1):
-    b1->force[0] +=  k * ( (-b3->coordinate[0] +
-                            b2->coordinate[0])*A +
-                            (b2->coordinate[0] -
-                            b1->coordinate[0])*B );
+    b1->forceAux[0] +=  k * ( (-b3->coordinate[0] +
+                               b2->coordinate[0])*A +
+                              (b2->coordinate[0] -
+                               b1->coordinate[0])*B );
     
-    b1->force[1] +=  k * ( (-b3->coordinate[1] +
-                            b2->coordinate[1])*A +
-                            (b2->coordinate[1] -
-                            b1->coordinate[1])*B );
+    b1->forceAux[1] +=  k * ( (-b3->coordinate[1] +
+                               b2->coordinate[1])*A +
+                              (b2->coordinate[1] -
+                               b1->coordinate[1])*B );
     
-    b1->force[2] +=  k* ( (-b3->coordinate[2] +
-                           b2->coordinate[2])*A +
-                           (b2->coordinate[2] -
-                           b1->coordinate[2])*B );
+    b1->forceAux[2] +=  k* ( (-b3->coordinate[2] +
+                              b2->coordinate[2])*A +
+                             (b2->coordinate[2] -
+                              b1->coordinate[2])*B );
     
     //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
     b2->forceAux[0] +=  k *( (b3->coordinate[0] -

@@ -16,7 +16,8 @@
 #include "ForceFieldManager.h"
 #include "Output.h"
 
-void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
+void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
+                                                    double MAXDIST){
 
     //system size
     int n = BeadDB::instance()->size();
@@ -34,38 +35,39 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL){
 	int numIter = 0;
 	do {
 		numIter++;
-		double lambda, beta, allFADotFA, allFDotFA;
-		vector<double> newGrad;
+		double lambda, beta, newGrad, prevGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM);
+        lambda = backtrackingLineSearch(FFM, MAXDIST);
         moveBeads(lambda);
         
         //compute new forces
         FFM.computeForcesAux();
         
         //compute direction
-        allFADotFA = CGMethod::allFADotFA();
-        allFDotFA = CGMethod::allFDotFA();
-
+        newGrad = CGMethod::allFADotFA();
+        prevGrad = CGMethod::allFADotFAP();
+        
         //choose beta
         //reset after ndof iterations
 		if (numIter % ndof == 0)  beta = 0.0;
-        
         //Polak-Ribieri update
-        else beta = max(0.0, (allFADotFA - allFDotFA)/ curGrad);
-    
+        else beta = max(0.0, (newGrad - prevGrad)/ curGrad);
+
+        //update prev forces
+        FFM.computeForcesAuxP();
+        
         //shift gradient
         shiftGradient(beta);
         
-        //reset if direction not downhill
+        //reset if search direction not downhill
         if(CGMethod::allFDotFA() <= 0)
             shiftGradient(0.0);
         
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
         
-        curGrad = allFADotFA;
+        curGrad = newGrad;
 	}
 	while (curGrad / n > GRADTOL);
 }

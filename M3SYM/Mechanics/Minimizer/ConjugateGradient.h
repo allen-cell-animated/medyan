@@ -30,12 +30,14 @@ class ConjugateGradient : public Minimizer {
 private:
     CGType _CGType;  ///< Implementation of a CG method
     double _GRADTOL; ///< Gradient tolerance used;
+    double _MAXDIST; ///< Max distance used to move
     
 public:
     /// Constructor sets gradient tolerance parameter
-    ConjugateGradient(double gradientTolerance) : _GRADTOL(gradientTolerance) {}
+    ConjugateGradient(double gradientTolerance, double maxDistance)
+        : _GRADTOL(gradientTolerance), _MAXDIST(maxDistance) {}
     
-    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM, _GRADTOL);}
+    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM, _GRADTOL, _MAXDIST);}
 };
 
 #endif

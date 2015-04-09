@@ -49,9 +49,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         double invDSquare =  1 / (d * d);
         double energy = kRepuls * invDSquare * invDSquare;
         
-        //check for inf or nan
-        if(energy == numeric_limits<double>::infinity() || energy != energy) return 0.0;
-        else return energy;
+        return energy;
     }
     
     double a = scalarProduct(b1->coordinate, b2->coordinate,
@@ -104,8 +102,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
-        
-        if(abs(JJ) < 1e-10 || JJ != JJ) return 0.0;
     }
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
@@ -114,9 +110,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-    
-    if(energy == numeric_limits<double>::infinity() || energy != energy) return 0.0;
-    else return energy;
+
+    return energy;
 }
 
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
@@ -131,9 +126,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         double invDSquare =  1/ (d * d);
         double energy =  kRepuls * invDSquare * invDSquare;
         
-        //check for inf or nan
-        if(energy == numeric_limits<double>::infinity() || energy != energy) return 0.0;
-        else return energy;
+        return energy;
     }
     
     double a = scalarProductStretched(b1->coordinate, b1->force,
@@ -205,8 +198,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
-        
-        if(abs(JJ) < 1e-10 || JJ != JJ) return 0.0;
     }
     
     
@@ -217,8 +208,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     
     double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
     
-    if(energy == numeric_limits<double>::infinity() || energy != energy) return 0.0;
-    else return energy;
+    return energy;
 
 }
 
@@ -231,10 +221,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
         double d = twoPointDistance(b1->coordinate, b3->coordinate);
         double invDSquare =  1/ (d * d);
         double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
-        
-        //check for inf or nan
-        if(f0 == numeric_limits<double>::infinity() || f0 != f0)
-            return;
         
         b1->force[0] += - f0 * (b3->coordinate[0] - b1->coordinate[0]);
         b1->force[1] += - f0 * (b3->coordinate[1] - b1->coordinate[1]);
@@ -306,8 +292,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
-        
-        if(abs(JJ) < 1e-10 || JJ != JJ) return;
     }
     
     double invJJ = 1/JJ;
@@ -318,8 +302,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    if(U == numeric_limits<double>::infinity() || U != U) return;
-    
     
     double A1 = AA*AA/(AA*AA + e*e);
     double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -397,10 +379,6 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
         double invDSquare =  1/ (d * d);
         double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
         
-        //check for inf or nan
-        if(f0 == numeric_limits<double>::infinity() || f0 != f0)
-            return;
-        
         b1->forceAux[0] += - f0 * (b3->coordinate[0] - b1->coordinate[0]);
         b1->forceAux[1] += - f0 * (b3->coordinate[1] - b1->coordinate[1]);
         b1->forceAux[2] += - f0 * (b3->coordinate[2] - b1->coordinate[2]);
@@ -471,8 +449,6 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - f*CC;
-        
-        if(abs(JJ) < 1e-10 || JJ != JJ) return;
     }
     
     
@@ -484,7 +460,6 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    if(U == numeric_limits<double>::infinity() || U != U) return;
     
     double A1 = AA*AA/(AA*AA + e*e);
     double A2 = AA*AA/(AA*AA + (a + e)*(a + e));

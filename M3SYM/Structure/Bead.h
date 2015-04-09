@@ -44,6 +44,7 @@ public:
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
+    vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     double loadForce = 0.0; ///< The force on this bead due to an external load
                             ///< Usually a boundary element
@@ -70,6 +71,12 @@ public:
         return forceAux[0]*forceAux[0] +
                forceAux[1]*forceAux[1] +
                forceAux[2]*forceAux[2];
+    }
+    
+    inline double FADotFAP() {
+        return forceAux[0]*forceAuxP[0] +
+               forceAux[1]*forceAuxP[1] +
+               forceAux[2]*forceAuxP[2];
     }
     
     inline double FDotFA() {

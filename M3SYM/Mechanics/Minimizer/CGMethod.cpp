@@ -34,6 +34,15 @@ double CGMethod::allFADotFA()
     return g;
 }
 
+double CGMethod::allFADotFAP()
+{
+    double g = 0;
+    for(auto b: *BeadDB::instance())
+        g += b->FADotFAP();
+    
+    return g;
+}
+
 double CGMethod::allFDotFA()
 {
     double g = 0;
@@ -119,7 +128,7 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 }
 
 
-double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
+double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) {
     
     double proj = 0.0; double maxF = 0.0;
     
@@ -145,6 +154,8 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM) {
         
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
+        
+        //cout << "Energy lambda = " << energyLambda << endl;
         
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj;
         double energyChange = energyLambda - currentEnergy;

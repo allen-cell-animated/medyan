@@ -21,9 +21,9 @@ double ForceFieldManager::computeEnergy(double d) {
         
         //if energy is infinity, exit with infinity.
         if(tempEnergy == -1) {
-            cout << "Warning: Energy became garbage. Try adjusting equilibration step size."
+            cout << "WARNING: Energy became garbage."
                  << endl;
-            cout << "The culprit was... " << f->getName() << endl;
+            cout << "The culprit ForceField was... " << f->getName() << endl;
             return numeric_limits<double>::infinity();
         }
         else {
@@ -41,9 +41,9 @@ void ForceFieldManager::computeForces() {
     //recompute
     for(auto &f : _forceFields) f->computeForces();
     
-    //copy to aux
-    for(auto it: *BeadDB::instance())
-        it->forceAux = it->force;
+    //copy to auxs
+    for(auto b: *BeadDB::instance())
+        b->forceAux = b->forceAuxP = b->force;
 }
 
 void ForceFieldManager::computeForcesAux() {
@@ -53,6 +53,13 @@ void ForceFieldManager::computeForcesAux() {
     
     //recompute
     for(auto &f : _forceFields) f->computeForcesAux();
+}
+
+void ForceFieldManager::computeForcesAuxP() {
+    
+    //copy to auxp
+    for(auto b: *BeadDB::instance())
+        b->forceAuxP = b->forceAux;
 }
 
 void ForceFieldManager::resetForces() {

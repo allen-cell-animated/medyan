@@ -134,9 +134,6 @@ struct BoundParams {
     double BoundaryK = 0;
     double BScreenLength = 0;
     
-    ///This parameter is preset
-    double BCeiling = 100.0;
-    
     double BoundaryCutoff = 0;
     double diameter = 0;
 };

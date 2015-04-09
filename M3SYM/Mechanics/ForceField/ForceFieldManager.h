@@ -42,6 +42,8 @@ public:
     void computeForces();
     /// Compute the forcesAux of all force fields
     void computeForcesAux();
+    /// Compute forcesAuxP of all force fields
+    void computeForcesAuxP();
     
     /// Reset the forces of all objects
     void resetForces();

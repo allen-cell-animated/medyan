@@ -912,6 +912,13 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
                 MAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
             }
         }
+        else if (line.find("MAXDISTANCE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.maxDistance = atof(lineVector[1].c_str());
+            }
+        }
     }
     return MAlgorithm;
 }

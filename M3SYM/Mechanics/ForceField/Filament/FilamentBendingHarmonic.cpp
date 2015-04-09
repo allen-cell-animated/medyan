@@ -76,11 +76,11 @@ void FilamentBendingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
     
     //force on i-1, f = k*(-A*l2 + B*l1):
     b1->force[0] +=  kBend * ( (-b3->coordinate[0] + b2->coordinate[0])*A +
-                              (b2->coordinate[0] - b1->coordinate[0])*B );
+                                (b2->coordinate[0] - b1->coordinate[0])*B );
     b1->force[1] +=  kBend * ( (-b3->coordinate[1] + b2->coordinate[1])*A +
-                              (b2->coordinate[1] - b1->coordinate[1])*B );
+                                (b2->coordinate[1] - b1->coordinate[1])*B );
     b1->force[2] +=  kBend * ( (-b3->coordinate[2] + b2->coordinate[2])*A +
-                              (b2->coordinate[2] - b1->coordinate[2])*B );
+                                (b2->coordinate[2] - b1->coordinate[2])*B );
     
     
     //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
@@ -101,11 +101,11 @@ void FilamentBendingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
     
     //force on i-1, f = k*(A*l - B*l2):
     b3->force[0] +=  kBend *( (b2->coordinate[0] - b1->coordinate[0])*A -
-                             (b3->coordinate[0] - b2->coordinate[0])*C );
+                              (b3->coordinate[0] - b2->coordinate[0])*C );
     b3->force[1] +=  kBend *( (b2->coordinate[1] - b1->coordinate[1])*A -
-                             (b3->coordinate[1] - b2->coordinate[1])*C );
+                              (b3->coordinate[1] - b2->coordinate[1])*C );
     b3->force[2] +=  kBend *( (b2->coordinate[2] - b1->coordinate[2])*A -
-                             (b3->coordinate[2] - b2->coordinate[2])*C );
+                              (b3->coordinate[2] - b2->coordinate[2])*C );
     
     
 }
@@ -128,12 +128,12 @@ void FilamentBendingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     double C = l1l2*invL2*A*A*L1;
     
     //force on i-1, f = k*(-A*l2 + B*l1):
-    b1->force[0] +=  kBend * ( (-b3->coordinate[0] + b2->coordinate[0])*A +
-                               (b2->coordinate[0] - b1->coordinate[0])*B );
-    b1->force[1] +=  kBend * ( (-b3->coordinate[1] + b2->coordinate[1])*A +
-                              ( b2->coordinate[1] - b1->coordinate[1])*B );
-    b1->force[2] +=  kBend * ( (-b3->coordinate[2] + b2->coordinate[2])*A +
-                               (b2->coordinate[2] - b1->coordinate[2])*B );
+    b1->forceAux[0] +=  kBend * ( (-b3->coordinate[0] + b2->coordinate[0])*A +
+                                   (b2->coordinate[0] - b1->coordinate[0])*B );
+    b1->forceAux[1] +=  kBend * ( (-b3->coordinate[1] + b2->coordinate[1])*A +
+                                  ( b2->coordinate[1] - b1->coordinate[1])*B );
+    b1->forceAux[2] +=  kBend * ( (-b3->coordinate[2] + b2->coordinate[2])*A +
+                                   (b2->coordinate[2] - b1->coordinate[2])*B );
     
     //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
     b2->forceAux[0] +=  kBend *( (b3->coordinate[0] - 2*b2->coordinate[0] +

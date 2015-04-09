@@ -35,10 +35,8 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 0.01;  ///< Max lambda that can be returned,
+    const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
                                    ///< used in all methods
-    const double MAXDIST = 1.0;    ///< Max distance parameter,
-                                   ///< used only in backtracking line search
     //@}
     
     //@{
@@ -67,6 +65,7 @@ protected:
     /// For use in minimization
     double allFDotF();
     double allFADotFA();
+    double allFADotFAP();
     double allFDotFA();
     
     void moveBeads(double d);
@@ -80,7 +79,7 @@ protected:
     double binarySearch(ForceFieldManager& FFM);
     
     ///@note - the most robust linesearch method, but slow at times.
-    double backtrackingLineSearch(ForceFieldManager& FFM);
+    double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
     //@}
     
     void printForces();
@@ -90,7 +89,7 @@ public:
     virtual ~CGMethod() {};
     
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL) = 0;
+    virtual void minimize(ForceFieldManager &FFM, double GRADTOL, double MAXDIST) = 0;
 };
 
 

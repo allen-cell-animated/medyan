@@ -44,9 +44,12 @@ struct OutputTypes {
 /// Struct to hold mechanics algorithm information
 struct MechanicsAlgorithm {
     string ConjugateGradient = "";
-    double gradientTolerance = 0.001;
     
-    //not yet used
+    /// Tolerance and cg parameters
+    double gradientTolerance = 0.001;
+    double maxDistance = 0.0001;
+    
+    /// Not yet used
     string MD = "";
 };
 
