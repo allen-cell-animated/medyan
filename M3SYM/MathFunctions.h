@@ -263,7 +263,7 @@ namespace mathfunc {
         v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );
         
         double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
-        return norm <= 1e-28 || norm == numeric_limits<double>::infinity();
+        return norm <= 1e-20;
     }
     
     /// Function to calculate a diatance between two segments

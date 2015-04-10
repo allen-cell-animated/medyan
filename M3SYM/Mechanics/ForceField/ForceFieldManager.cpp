@@ -17,18 +17,23 @@ double ForceFieldManager::computeEnergy(double d) {
     
     double energy = 0;
     for(auto &f : _forceFields) {
+        
         auto tempEnergy = f->computeEnergy(d);
         
         //if energy is infinity, exit with infinity.
         if(tempEnergy == -1) {
-            cout << "WARNING: Energy became garbage."
-                 << endl;
-            cout << "The culprit ForceField was... " << f->getName() << endl;
-            return numeric_limits<double>::infinity();
+            
+            //if this is the current energy, exit ungracefully
+            if(d == 0.0) {
+                cout << "Energy became infinite. Try adjusting minimization parameters." << endl;
+                cout << "The culprit was ... " << f->getName() << endl;
+                exit(EXIT_FAILURE);
+            }
+            //if this is a minimization try, just return infinity
+            else
+                return numeric_limits<double>::infinity();
         }
-        else {
-            energy += tempEnergy;
-        }
+        else energy += tempEnergy;
     }
     return energy;
 }

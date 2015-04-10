@@ -29,7 +29,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position,
                                bool creation)
     : _c1(c1), _c2(c2), _position(position), _branchType(branchType) {
-                             
+        
     //Add to branch point db
     BranchingPointDB::instance()->addBranchingPoint(this);
     _branchID = BranchingPointDB::instance()->getBranchID();
@@ -55,6 +55,9 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     _mBranchingPoint = unique_ptr<MBranchingPoint>(new MBranchingPoint(branchType));
     _mBranchingPoint->setBranchingPoint(this);
 #endif
+        
+    //set the branching cylinder
+    _c1->setBranchingCylinder(_c2);
 }
 
 BranchingPoint::~BranchingPoint() noexcept {

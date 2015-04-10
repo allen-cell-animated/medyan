@@ -54,14 +54,19 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     
     double a = scalarProduct(b1->coordinate, b2->coordinate,
                              b1->coordinate, b2->coordinate);
+    
     double b = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double c = scalarProduct(b3->coordinate, b1->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double d = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double e = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double f = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b1->coordinate);
     
@@ -78,31 +83,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
-    if (abs(JJ) < 1e-10 || JJ != JJ) {
-
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 4, 1.0);
-        
-        a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-        c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
-        d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
-        e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
-        f = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, v);
-        
-        AA = sqrt(a*c - e*e);
-        BB = sqrt(b*c - f*f);
-        
-        CC = d*e - a*f;
-        DD = b*e - d*f;
-        
-        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-        
-        GG = d*d - a*b - CC;
-        HH = CC + GG - DD;
-        JJ = c*(GG + CC) + e*DD - f*CC;
-    }
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
@@ -116,13 +96,31 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
 
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
                                         Bead* b3, Bead* b4,
-                                        double kRepuls, double lambda) {
+                                        double kRepuls, double z) {
     
-    if(ifParallel(b1->coordinate, b2->coordinate,
-                  b3->coordinate, b4->coordinate)) {
+    vector<double> zero (3,0); //Aux zero vector;
+    
+    auto b1Stretched = {b1->coordinate[0] + z * b1->force[0],
+                        b1->coordinate[1] + z * b1->force[1],
+                        b1->coordinate[2] + z * b1->force[2]};
+    
+    auto b2Stretched = {b2->coordinate[0] + z * b2->force[0],
+                        b2->coordinate[1] + z * b2->force[1],
+                        b2->coordinate[2] + z * b2->force[2]};
+    
+    auto b3Stretched = {b3->coordinate[0] + z * b3->force[0],
+                        b3->coordinate[1] + z * b3->force[1],
+                        b3->coordinate[2] + z * b3->force[2]};
+    
+    auto b4Stretched = {b4->coordinate[0] + z * b4->force[0],
+                        b4->coordinate[1] + z * b4->force[1],
+                        b4->coordinate[2] + z * b4->force[2]};
+    
+    if(ifParallel(b1Stretched, b2Stretched,
+                  b3Stretched, b4Stretched)) {
         
         double d = twoPointDistanceStretched(b1->coordinate, b1->force,
-                                             b3->coordinate, b3->force, lambda);
+                                             b3->coordinate, b3->force, z);
         double invDSquare =  1/ (d * d);
         double energy =  kRepuls * invDSquare * invDSquare;
         
@@ -132,27 +130,32 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double a = scalarProductStretched(b1->coordinate, b1->force,
                                       b2->coordinate, b2->force,
                                       b1->coordinate, b1->force,
-                                      b2->coordinate, b2->force, lambda);
+                                      b2->coordinate, b2->force, z);
+    
     double b = scalarProductStretched(b3->coordinate, b3->force,
                                       b4->coordinate, b4->force,
                                       b3->coordinate, b3->force,
-                                      b4->coordinate, b4->force, lambda);
+                                      b4->coordinate, b4->force, z);
+    
     double c = scalarProductStretched(b3->coordinate, b3->force,
                                       b1->coordinate, b1->force,
                                       b3->coordinate, b3->force,
-                                      b1->coordinate, b1->force, lambda);
+                                      b1->coordinate, b1->force, z);
+    
     double d = scalarProductStretched(b1->coordinate, b1->force,
                                       b2->coordinate, b2->force,
                                       b3->coordinate, b3->force,
-                                      b4->coordinate, b4->force, lambda);
+                                      b4->coordinate, b4->force, z);
+    
     double e = scalarProductStretched(b1->coordinate, b1->force,
                                       b2->coordinate, b2->force,
                                       b3->coordinate, b3->force,
-                                      b1->coordinate, b1->force, lambda);
+                                      b1->coordinate, b1->force, z);
+    
     double f = scalarProductStretched(b3->coordinate, b3->force,
                                       b4->coordinate, b4->force,
                                       b3->coordinate, b3->force,
-                                      b1->coordinate, b1->force, lambda);
+                                      b1->coordinate, b1->force, z);
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -163,43 +166,9 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
     double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
     
-    
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    if (abs(JJ) < 1e-10 || JJ != JJ){
-        
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 4, 1.0);
-        
-        a = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
-                                   v, b1->force, b2->coordinate, b2->force, lambda);
-        b = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
-                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-        c = scalarProductStretched(b3->coordinate, b3->force, v, b1->force,
-                                   b3->coordinate, b3->force, v, b1->force, lambda);
-        d = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
-                                   b3->coordinate, b3->force, b4->coordinate, b4->force, lambda);
-        e = scalarProductStretched(v, b1->force, b2->coordinate, b2->force,
-                                   b3->coordinate, b3->force, v, b1->force, lambda);
-        f = scalarProductStretched(b3->coordinate, b3->force, b4->coordinate, b4->force,
-                                   b3->coordinate, b3->force, v, b1->force, lambda);
-        
-        AA = sqrt(a*c - e*e);
-        BB = sqrt(b*c - f*f);
-        
-        CC = d*e - a*f;
-        DD = b*e - d*f;
-        
-        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-        
-        GG = d*d - a*b - CC;
-        HH = CC + GG - DD;
-        JJ = c*(GG + CC) + e*DD - f*CC;
-    }
-    
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
@@ -243,14 +212,19 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
 
     double a = scalarProduct(b1->coordinate, b2->coordinate,
                              b1->coordinate, b2->coordinate);
+    
     double b = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double c = scalarProduct(b3->coordinate, b1->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double d = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double e = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double f = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b1->coordinate);
     
@@ -267,32 +241,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    if (abs(JJ) < 1e-10 || JJ != JJ){
-        
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 4, 1.0);
-        
-        a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-        c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
-        d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
-        e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
-        f = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, v);
-        
-        AA = sqrt(a*c - e*e);
-        BB = sqrt(b*c - f*f);
-        
-        CC = d*e - a*f;
-        DD = b*e - d*f;
-        
-        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-        
-        GG = d*d - a*b - CC;
-        HH = CC + GG - DD;
-        JJ = c*(GG + CC) + e*DD - f*CC;
-    }
     
     double invJJ = 1/JJ;
     
@@ -400,14 +348,19 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     
     double a = scalarProduct(b1->coordinate, b2->coordinate,
                              b1->coordinate, b2->coordinate);
+    
     double b = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double c = scalarProduct(b3->coordinate, b1->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double d = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b4->coordinate);
+    
     double e = scalarProduct(b1->coordinate, b2->coordinate,
                              b3->coordinate, b1->coordinate);
+    
     double f = scalarProduct(b3->coordinate, b4->coordinate,
                              b3->coordinate, b1->coordinate);
     
@@ -424,34 +377,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     double GG = d*d - a*b - CC;
     double HH = CC + GG - DD;
     double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    if (abs(JJ) < 1e-10 || JJ != JJ){
         
-        auto v = movePointOutOfPlane(b1->coordinate, b2->coordinate,
-                                     b3->coordinate, b4->coordinate, 4, 1.0);
-        
-        a = scalarProduct(v, b2->coordinate, v, b2->coordinate);
-        b = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-        c = scalarProduct(b3->coordinate, v, b3->coordinate, v);
-        d = scalarProduct(v, b2->coordinate, b3->coordinate, b4->coordinate);
-        e = scalarProduct(v, b2->coordinate, b3->coordinate, v);
-        f = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, v);
-        
-        AA = sqrt(a*c - e*e);
-        BB = sqrt(b*c - f*f);
-        
-        CC = d*e - a*f;
-        DD = b*e - d*f;
-        
-        EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-        FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-        
-        GG = d*d - a*b - CC;
-        HH = CC + GG - DD;
-        JJ = c*(GG + CC) + e*DD - f*CC;
-    }
-    
-    
     double invJJ = 1/JJ;
     
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);

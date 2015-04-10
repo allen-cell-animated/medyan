@@ -63,6 +63,8 @@ private:
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
+    Cylinder* _branchingCylinder = nullptr; ///< ptr if the cylinder has a branching cylinder
+    
     ///For dynamic polymerization rate
     static FilamentRateChanger* _polyChanger;
     
@@ -103,6 +105,13 @@ public:
     
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
+    
+    //@{
+    /// Branching cylinder management
+    Cylinder* getBranchingCylinder() {return _branchingCylinder;}
+    void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
+    //@}
+    
     
     /// Get ID
     const int getID() {return _ID;}

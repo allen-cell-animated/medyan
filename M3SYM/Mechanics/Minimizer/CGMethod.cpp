@@ -131,7 +131,7 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) {
     
     //system size
-    int n = BeadDB::instance()->size();
+    //int n = BeadDB::instance()->size();
     
     double proj = 0.0; double maxF = 0.0;
     
@@ -158,7 +158,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj / n;
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok

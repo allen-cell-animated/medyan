@@ -26,14 +26,15 @@ using namespace mathfunc;
 FilamentRateChanger* Cylinder::_polyChanger = nullptr;
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront, bool extensionBack, bool creation, bool branch)
+                   bool extensionFront, bool extensionBack,
+                   bool creation, bool branch)
 
     : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
     
     //Add to cylinder DB
     CylinderDB::instance()->addCylinder(this);
     _ID = CylinderDB::instance()->getCylinderID();
-                       
+    
     //Set coordinate
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 
@@ -75,6 +76,8 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 }
 
 Cylinder::~Cylinder() noexcept {
+    
+    
     
     //Remove from cylinder DB
     CylinderDB::instance()->removeCylinder(this);

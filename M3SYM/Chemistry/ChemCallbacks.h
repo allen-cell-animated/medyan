@@ -232,7 +232,7 @@ struct BranchingPointCreationCallback {
              << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
              << endl;
         double l = 10.0;
-        double t = 70.7;
+        double t = 1.22;
 #endif
         double s = SysParams::Geometry().monomerSize;
         

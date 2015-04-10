@@ -171,7 +171,7 @@ void Filament::extendBack(vector<double>& coordinates) {
 
 //extend front at runtime
 void Filament::extendFront(short plusEnd) {
-    
+
     Cylinder* cBack = _cylinderVector.back();
     int lastPositionFilament = cBack->getPositionFilament();
     

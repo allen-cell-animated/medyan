@@ -29,7 +29,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
     //clear existing
     _list[cylinder].clear();
     
-    //Find surrounding compartments (For now its conservative, change soon)
+    //Find surrounding compartments (For now its conservative)
     vector<Compartment*> compartments;
     
     GController::findCompartments(
@@ -37,30 +37,30 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
         SysParams::Geometry().largestCompartmentSide * 2, compartments);
     
     for(auto &comp : compartments) {
-        for(auto &nearbyCylinder : comp->getCylinders()) {
+        for(auto &ncylinder : comp->getCylinders()) {
             
             //Dont add if ID is more than cylinder
-            if(cylinder->getID() <= nearbyCylinder->getID()) continue;
+            if(cylinder->getID() <= ncylinder->getID()) continue;
             
             //Don't add if on the same filament
-            if(cylinder->getFilament() == nearbyCylinder->getFilament()) {
+            if(cylinder->getFilament() == ncylinder->getFilament()) {
                 
                 //if cross filament only interaction, dont add
                 if(_crossFilamentOnly) continue;
                 
                 //if not cross filament, check if not neighboring
-                auto dist = abs(cylinder->getPositionFilament() -
-                                nearbyCylinder->getPositionFilament());
+                auto dist = fabs(cylinder->getPositionFilament() -
+                                ncylinder->getPositionFilament());
                 if(dist <= 2) continue;
             }
             
             //Dont add if not within range
             double dist = twoPointDistance(cylinder->coordinate,
-                                           nearbyCylinder->coordinate);
+                                           ncylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
             
             //If we got through all of this, add it!
-            _list[cylinder].push_back(nearbyCylinder);
+            _list[cylinder].push_back(ncylinder);
         }
     }
 }
