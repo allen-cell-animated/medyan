@@ -62,6 +62,7 @@ void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
     double invL = 1 / dist;
     double f0 = kStretch * ( dist - eqLength ) * invL;
 
+    //force on i
     b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
     b2->forceAux[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
     b2->forceAux[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );

@@ -32,6 +32,8 @@ public:
     virtual double computeEnergy(BranchingPoint*, double d);
     virtual void computeForces(BranchingPoint*);
     virtual void computeForcesAux(BranchingPoint*);
+    
+    virtual const string getName() {return "Bending";}
 };
 
 #endif

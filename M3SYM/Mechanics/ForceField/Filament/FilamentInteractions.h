@@ -23,8 +23,6 @@ class Filament;
 
 /// Represents an internal Filament interaction
 class FilamentInteractions {
-private:
-    string _name;
 
 public:
     /// Compute the energy of this interaction
@@ -35,8 +33,7 @@ public:
     virtual void computeForcesAux(Filament*) = 0;
     
     /// Get the name of this interaction
-    const string& getName() {return _name;}
-    
+    virtual const string getName() = 0;
 };
 
 #endif

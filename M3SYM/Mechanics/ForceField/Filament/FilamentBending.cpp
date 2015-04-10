@@ -21,6 +21,7 @@
 
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, double d) {
+    
     if (f->getCylinderVector().size()>1){
     double U = 0.0;
     
@@ -39,7 +40,6 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
             }
         }
         else {
-            int index = 0;
             for ( auto it = f->getCylinderVector().begin()+1;
                        it != f->getCylinderVector().end(); it++){
                 
@@ -51,7 +51,6 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(Filament* f, doub
                 double eqTheta = (*it)->getMCylinder()->getEqTheta();
                 
                 U += _FFType.energy(b1, b2, b3, kBend, eqTheta, d);
-                index++;
             }
         }
         return U;

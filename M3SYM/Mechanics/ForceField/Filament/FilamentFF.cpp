@@ -54,7 +54,7 @@ double FilamentFF::computeEnergy(double d) {
     
     for (auto fil: *FilamentDB::instance()) {
         for (auto &filamentInteraction : _filamentInteractionVector) {
-            
+    
             U_i = filamentInteraction.get()->computeEnergy(fil, d);
             
             if(U_i == numeric_limits<double>::infinity() || U_i != U_i)

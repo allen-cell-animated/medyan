@@ -32,6 +32,8 @@ public:
     virtual double computeEnergy(MotorGhost*, double d);
     virtual void computeForces(MotorGhost*);
     virtual void computeForcesAux(MotorGhost*);
+    
+    virtual const string getName() {return "Stretching";}
 };
 
 #endif

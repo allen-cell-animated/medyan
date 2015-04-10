@@ -39,5 +39,7 @@ public:
     virtual void computeForces(BoundaryElement*, Bead*);
     virtual void computeForcesAux(BoundaryElement*, Bead*);
     //@}
+    
+    virtual const string getName() {return "Repulsion";}
 };
 #endif

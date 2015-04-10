@@ -22,8 +22,6 @@ class MotorGhost;
 
 /// Represents an internal MotorGhost interaction
 class MotorGhostInteractions {
-private:
-    string _name; ///< Name of interaction
     
 public:
     /// Compute the energy of this interaction
@@ -33,8 +31,8 @@ public:
     /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux(MotorGhost*) = 0;
 
-    /// Get name of this interaction
-    const string& getName() {return _name;}
+    /// Get the name of this interaction
+    virtual const string getName() = 0;
 };
 
 #endif

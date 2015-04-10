@@ -43,7 +43,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(
             U += _FFType.energy(b1, b2, kStretch, eqLength, d);
         }
     }
-    
     return U;
 }
 

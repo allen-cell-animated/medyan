@@ -24,8 +24,6 @@ class Cylinder;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
 class CylinderVolumeInteractions : public CCNLContainer {
-private:
-    string _name; ///< Name of interaction
     
 public:
     ///Constructor, initializes a cylinder neighbor list
@@ -39,8 +37,8 @@ public:
     /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux(Cylinder*, Cylinder*) = 0;
     
-    /// Get name of interaction
-    const string& getName() {return _name;}
+    /// Get the name of this interaction
+    virtual const string getName() = 0;
 };
 
 

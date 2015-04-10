@@ -24,8 +24,6 @@ class Bead;
 
 /// Represents a BoundaryElement interaction with a Bead.
 class BoundaryInteractions : public BBENLContainer {
-private:
-    string _name; ///< Name of interaction
     
 public:
     /// Constructor, intializes the neighbor list needed
@@ -39,9 +37,8 @@ public:
     /// Compute auxiliary forces of this interaction
     virtual void computeForcesAux(BoundaryElement*, Bead*) = 0;
     
-    /// Get name of interaction
-    string getName() {return _name;}
-    
+    /// Get the name of this interaction
+    virtual const string getName() = 0;
 };
 
 #endif

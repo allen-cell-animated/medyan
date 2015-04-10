@@ -32,6 +32,8 @@ public:
     virtual double computeEnergy(Cylinder*, Cylinder*, double d);
     virtual void computeForces(Cylinder*, Cylinder*);
     virtual void computeForcesAux(Cylinder*, Cylinder*);
+
+    virtual const string getName() {return "Excluded Volume";}
 };
 
 #endif

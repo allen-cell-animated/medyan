@@ -29,6 +29,8 @@ public:
     virtual double computeEnergy(Filament*, double d);
     virtual void computeForces(Filament*);
     virtual void computeForcesAux(Filament*);
+    
+    virtual const string getName() {return "Stretching";}
 };
 
 

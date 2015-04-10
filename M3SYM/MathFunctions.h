@@ -68,6 +68,11 @@ namespace mathfunc {
         return tau;
     }
     
+    /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
+    inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {
+        return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+    }
+    
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3)
     inline double scalarProduct(const vector<double>& v1, const vector<double>& v2,
@@ -77,13 +82,6 @@ namespace mathfunc {
                 (v2[1] - v1[1])*(v4[1] - v3[1]) +
                 (v2[2] - v1[2])*(v4[2] - v3[2]));
     }
-    
-    /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
-    inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {
-        return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-    }
-
-    
     
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
@@ -123,7 +121,6 @@ namespace mathfunc {
     }
     
     
-    
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
     inline vector<double> vectorProduct(const vector<double>& v1,
@@ -135,24 +132,6 @@ namespace mathfunc {
         double vx = (v2[1]-v1[1])*(v4[2]-v3[2]) - (v2[2]-v1[2])*(v4[1]-v3[1]);
         double vy = (v2[2]-v1[2])*(v4[0]-v3[0]) - (v2[0]-v1[0])*(v4[2]-v3[2]);
         double vz = (v2[0]-v1[0])*(v4[1]-v3[1]) - (v2[1]-v1[1])*(v4[0]-v3[0]);
-        
-        v.push_back(vx);
-        v.push_back(vy);
-        v.push_back(vz);
-        
-        return v;
-    };
-    
-    
-    /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
-    inline vector<double> crossProduct(const vector<double>& v1,
-                                       const vector<double>& v2) {
-        
-        vector<double> v;
-        
-        double vx = v1[1]*v2[2] - v1[2]*v2[1];
-        double vy = v1[2]*v2[0] - v1[0]*v2[2];
-        double vz = v1[0]*v2[1] - v1[1]*v2[0];
         
         v.push_back(vx);
         v.push_back(vy);
@@ -194,6 +173,23 @@ namespace mathfunc {
         return v;
         
         
+    };
+    
+    /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
+    inline vector<double> crossProduct(const vector<double>& v1,
+                                       const vector<double>& v2) {
+        
+        vector<double> v;
+        
+        double vx = v1[1]*v2[2] - v1[2]*v2[1];
+        double vy = v1[2]*v2[0] - v1[0]*v2[2];
+        double vz = v1[0]*v2[1] - v1[1]*v2[0];
+        
+        v.push_back(vx);
+        v.push_back(vy);
+        v.push_back(vz);
+        
+        return v;
     };
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.

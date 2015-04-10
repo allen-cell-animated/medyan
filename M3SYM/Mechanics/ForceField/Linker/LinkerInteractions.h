@@ -21,8 +21,6 @@ class Linker;
 
 /// Represents an internal Linker interaction
 class LinkerInteractions {
-private:
-    string _name; ///< Name of interaction
     
 public:
     /// Compute the energy of this interaction
@@ -32,8 +30,8 @@ public:
     /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux(Linker*) = 0;
     
-    /// Get the name of his interaction
-    const string& getName() {return _name;}
+    /// Get the name of this interaction
+    virtual const string getName() = 0;
     
 };
 

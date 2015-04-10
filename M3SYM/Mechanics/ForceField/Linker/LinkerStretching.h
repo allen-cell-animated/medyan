@@ -32,6 +32,8 @@ public:
     virtual double computeEnergy(Linker*, double d);
     virtual void computeForces(Linker*);
     virtual void computeForcesAux(Linker*);
+    
+    virtual const string getName() {return "Stretching";}
 };
 
 #endif
