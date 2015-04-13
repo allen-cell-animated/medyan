@@ -251,7 +251,9 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.25)
+		tube=mlab.pipeline.tube(src, tube_radius=0.5)
+		#outline=mlab.pipeline.outline(src, line_width=0.25)
+
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):

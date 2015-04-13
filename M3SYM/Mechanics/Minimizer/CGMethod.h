@@ -58,9 +58,9 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
+    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all
                                      ///< linesearch methods
-    const double CGENERGYTOL = 1e-8; ///< CG energy tolerance
+    const double CGENERGYTOL = 1e-6; ///< CG energy tolerance
     
     //@{
     /// For use in minimization
