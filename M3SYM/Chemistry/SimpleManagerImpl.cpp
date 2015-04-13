@@ -1618,11 +1618,10 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
 
 void SimpleManagerImpl::updateCopyNumbers() {
     
-    auto tempSpeciesDiffusing = _chemData.speciesDiffusing;
-    auto tempSpeciesBulk = _chemData.speciesBulk;
+
     
     //look at copy number for each species
-    for(auto &s : tempSpeciesDiffusing) {
+    for(auto &s : _chemData.speciesDiffusing) {
         
         auto name = get<0>(s);
         auto copyNumber = get<1>(s);
@@ -1645,22 +1644,18 @@ void SimpleManagerImpl::updateCopyNumbers() {
                 copyNumber--;
             }
             
-            //remove from list
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            _chemData.speciesDiffusing.erase(it);
-            
+            //set zero copy number
+            get<1>(s) = 0;
         }
     }
     
-    for(auto &s : tempSpeciesBulk) {
+    for(auto &s : _chemData.speciesBulk) {
         
         auto name = get<0>(s);
         auto copyNumber = get<1>(s);
         auto releaseTime = get<3>(s);
         
-        if(tau() >= releaseTime) {
+        if(tau() >= releaseTime && copyNumber != 0) {
         
             //find the species, set copy number
             Species* species = CompartmentGrid::instance()->
@@ -1670,11 +1665,8 @@ void SimpleManagerImpl::updateCopyNumbers() {
             //update reactions
             species->getRSpecies().activateAssocReactantReactions();
             
-            //remove from list
-            auto it = find_if(_chemData.speciesBulk.begin(),_chemData.speciesBulk.end(),
-                              [name](tuple<string, int, double, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            _chemData.speciesBulk.erase(it);
+            //set zero copy number
+            get<1>(s) = 0;
         }
     }
 }
