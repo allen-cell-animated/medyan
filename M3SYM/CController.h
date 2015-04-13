@@ -49,7 +49,16 @@ public:
     void initialize(string& chemAlgorithm, ChemistryData& chem);
     
     ///Run a number of chemical steps
-    bool run(int steps) { return ChemSim::run(steps); }
+    bool run(int steps) {
+        
+        //run the steps
+        bool success = ChemSim::run(steps);
+        
+        //update copy numbers
+        ChemManager::updateCopyNumbers();
+        
+        return success;
+    }
 };
     
 

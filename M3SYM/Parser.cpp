@@ -1388,26 +1388,26 @@ ChemistryData ChemistryParser::readChemistryInput() {
         else if(line.find("SPECIESBULK") != string::npos) {
         
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  4) {
+            if(lineVector.size() !=  5) {
                 cout << "Error reading a bulk species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 4) {
-                chem.speciesBulk.push_back(tuple<string, int, string>
-                    (lineVector[1], atoi(lineVector[2].c_str()), lineVector[3]));
+            else if (lineVector.size() == 5) {
+                chem.speciesBulk.push_back(tuple<string, int, string, double>
+                    (lineVector[1], atoi(lineVector[2].c_str()), lineVector[3], atof(lineVector[4].c_str())));
             }
             else {}
         }
         else if(line.find("SPECIESDIFFUSING") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  4) {
+            if(lineVector.size() !=  5) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 4) {
-                chem.speciesDiffusing.push_back(tuple<string, int, double>
-            (lineVector[1], atoi(lineVector[2].c_str()), atof(lineVector[3].c_str())));
+            else if (lineVector.size() == 5) {
+                chem.speciesDiffusing.push_back(tuple<string, int, double, double>
+                    (lineVector[1], atoi(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())));
             }
             else {}
         }

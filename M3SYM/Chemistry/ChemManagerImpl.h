@@ -40,12 +40,15 @@ public:
     /// be fixed in the future.
     virtual ~ChemManagerImpl() noexcept{}
     
-    virtual void initialize(ChemistryData& chem) = 0;
+    virtual void initialize() = 0;
     
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
                                      bool extensionFront, bool extensionBack,
                                      bool creation) = 0;
+    
     virtual void updateCCylinder(CCylinder* cc) = 0;
+    
+    virtual void updateCopyNumbers() = 0;
 };
 
 #endif 

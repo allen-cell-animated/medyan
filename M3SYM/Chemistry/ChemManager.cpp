@@ -20,15 +20,21 @@ void ChemManager::setInstance(ChemManagerImpl *cii) {
     _pimpl=cii;
 }
 
-void ChemManager::initialize(ChemistryData& chem) {
-    _pimpl->initialize(chem);
+void ChemManager::initialize() {
+    _pimpl->initialize();
 }
 
 void ChemManager::initializeCCylinder(CCylinder* cc, Filament* f,
-                                      bool extensionFront, bool extensionBack,
+                                      bool extensionFront,
+                                      bool extensionBack,
                                       bool creation) {
     
     _pimpl->initializeCCylinder(cc, f, extensionFront, extensionBack, creation);
+}
+
+void ChemManager::updateCopyNumbers() {
+    
+    _pimpl->updateCopyNumbers();
 }
 
 void ChemManager::updateCCylinder(CCylinder* cc) {

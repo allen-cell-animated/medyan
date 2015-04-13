@@ -38,7 +38,7 @@ public:
     static void setInstance(ChemManagerImpl *cii);
     
     ///Initialize the compartment grid, based on the given simulation
-    static void initialize(ChemistryData& chem);
+    static void initialize();
     
     ///Initializer, based on the given simulation
     static void initializeCCylinder(CCylinder* cc, Filament* f,
@@ -47,6 +47,14 @@ public:
     
     ///Add/update cross cylinder reactions that are within range
     static void updateCCylinder(CCylinder* cc);
+    
+    
+    /// Initialize the copy numbers of all species
+    /// @note - this only sets the copy number if the simulation time
+    ///         tau has passed the release time of the molecule. This
+    ///         function is called at every set of chemical steps to check
+    ///         if molecules should be released at the current time.
+    static void updateCopyNumbers();
     
 private:
     static ChemManagerImpl* _pimpl; ///< Store a pointer to a specific implementation

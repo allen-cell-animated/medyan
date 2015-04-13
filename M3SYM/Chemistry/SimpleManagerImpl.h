@@ -20,6 +20,7 @@
 
 #include "ChemManagerImpl.h"
 #include "ReactionManagerImpl.h"
+#include "Parser.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -29,13 +30,12 @@ class Compartment;
 class InternalFilamentRxnManager;
 class CrossFilamentRxnManager;
 
-struct ChemistryData;
-
 /// A concrete implementation of the ChemManagerImpl class.
 /// @see ChemManager for documentation on implemented methods.
 class SimpleManagerImpl : public ChemManagerImpl {
     
 private:
+    ChemistryData _chemData; ///<The chemistry data for the system
     SubSystem* _subSystem; ///< A pointer to subsytem for creation of callbacks, etc.
     
     /// A list of reactions to add to every new CCylinder
@@ -43,50 +43,44 @@ private:
     /// A list of cross filament reactions to add to [CCylinders] (@ref CCylinder)
     vector<unique_ptr<CrossFilamentRxnManager>> _CFRxnManagers;
     
-    //@{
-    /// Vector of Filament -related species in system
-    vector<string> _speciesFilament, _speciesPlusEnd,
-                   _speciesMinusEnd, _speciesBound,
-                   _speciesLinker, _speciesMotor, _speciesBrancher;
-    //@}
     
+    /// Configure memory and parameters of CMonomer class
+    void configureCMonomer();
     /// Intialize a CMonomer based on system chemistry
     void initCMonomer(CMonomer* m, Compartment* c);
     
     /// Generate the general, non-filament reactions
-    void genGeneralReactions(ChemistryData& chem,
-                             Compartment& protoCompartment);
+    void genGeneralReactions(Compartment& protoCompartment);
     /// Generate bulk reactions
-    void genBulkReactions(ChemistryData& chem);
+    void genBulkReactions();
     /// Generate reactions that create new filaments from
     /// diffusing and/or bulk species
-    void genNucleationReactions(ChemistryData& chem);
+    void genNucleationReactions();
     
     //@{
     /// Set up all Filament ReactionManagers from the setup struct
-    void genIFRxnManagers(ChemistryData& chem);
-    void genCFRxnManagers(ChemistryData& chem);
+    void genIFRxnManagers();
+    void genCFRxnManagers();
     //@}
     
     /// Generate all species, bulk and diffusing
-    void genSpecies(ChemistryData& chem,
-                    Compartment& protoCompartment);
-    /// Initialize the copy numbers of all species
-    void initDiffusingCopyNumbers(ChemistryData& chem);
-    
-    /// Copies species from chem struct
-    void copySpecies(ChemistryData& chem);
+    void genSpecies(Compartment& protoCompartment);
     
 public:
     ///Constructor sets subsystem pointer
-    SimpleManagerImpl(SubSystem* subSystem) : _subSystem(subSystem) {}
+    SimpleManagerImpl(SubSystem* subSystem, ChemistryData chem)
+        : _subSystem(subSystem), _chemData(chem) {}
 
-    virtual void initialize(ChemistryData& chem);
+    virtual void initialize();
+    
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
                                      bool extensionFront,
                                      bool extensionBack,
                                      bool creation);
+    
     virtual void updateCCylinder(CCylinder* cc);
+    
+    virtual void updateCopyNumbers();
     
 };
 

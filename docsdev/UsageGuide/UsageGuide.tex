@@ -158,9 +158,11 @@ The following mechanical parameters can be set. It should be noted that the numb
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
-  CONJUGATEGRADIENT & POLAKRIBIERE, FLETCHERRIEVES & Type of conjugate gradient minimization \\
+  CONJUGATEGRADIENT & POLAKRIBIERE, FLETCHERRIEVES, STEEPESTDESCENT & Type of conjugate gradient minimization \\
   \hline
   GRADIENTTOLERANCE & double & Gradient tolerance in conjugate gradient \\
+  \hline
+   MAXDISTANCE & double & Maximum distance beads can be moved in minimization \\
   \hline
   FSTRETCHINGTYPE & HARMONIC & Filament stretching force field \\
   \hline
@@ -351,9 +353,9 @@ Different types of species can be defined as follows:
 
 \begin{itemize}
 \item 
-A \textbf{diffusing species} is defined in the following form:\newline\newline \centerline{\texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFUSIONRATE>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments.
+A \textbf{diffusing species} is defined in the following form:\newline\newline \centerline{\texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFUSIONRATE> <RELEASETIME>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
 \item
-A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> CONST/NOCONST}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{CONST/NOCONST} defines whether this copy number is constant. The \texttt{CONST/NOCONST} are exclusive and one value must be defined, or a startup error will result.
+A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> CONST/NOCONST <RELEASETIME>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{CONST/NOCONST} defines whether this copy number is constant. The \texttt{CONST/NOCONST} are exclusive and one value must be defined, or a startup error will result. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
 \item
 Any \textbf{filament-related species} can be defined in the following form:\newline\newline\centerline{\texttt{SPECIES<SPECIESTYPE>: <NAME>}}\newline\newline where \texttt{SPECIESTYPE} can be:
 \begin{itemize}

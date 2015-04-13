@@ -20,7 +20,7 @@
 
 ///Species constants
 typedef unsigned short species_copy_t;
-const species_copy_t max_ulim = 10000;
+const species_copy_t max_ulim = 50000;
 
 ///Global time
 extern double global_time;

@@ -31,14 +31,14 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     // FILAMENT SPECIES
     
     int fIndex = 0;
-    for(auto &f : _speciesFilament) {
+    for(auto &f : _chemData.speciesFilament) {
         SpeciesFilament* sf =
         c->addSpeciesFilament(
         SpeciesNamesDB::instance()->genUniqueName(f));
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }
-    for (auto &p : _speciesPlusEnd) {
+    for (auto &p : _chemData.speciesPlusEnd) {
         SpeciesPlusEnd* sp =
         c->addSpeciesPlusEnd(
         SpeciesNamesDB::instance()->genUniqueName(p));
@@ -46,7 +46,7 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
         fIndex++;
                             
     }
-    for (auto &mi : _speciesMinusEnd) {
+    for (auto &mi : _chemData.speciesMinusEnd) {
         SpeciesMinusEnd* smi =
         c->addSpeciesMinusEnd(
         SpeciesNamesDB::instance()->genUniqueName(mi));
@@ -57,28 +57,28 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     // BOUND SPECIES
     
     int bIndex = 0;
-    for (auto &b : _speciesBound) {
+    for (auto &b : _chemData.speciesBound) {
         SpeciesBound* sb =
         c->addSpeciesBound(
         SpeciesNamesDB::instance()->genUniqueName(b));
         m->_speciesBound[bIndex] = sb;
         bIndex++;
     }
-    for (auto &l : _speciesLinker) {
+    for (auto &l : _chemData.speciesLinker) {
         SpeciesLinker* sl =
         c->addSpeciesLinker(
         SpeciesNamesDB::instance()->genUniqueName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
-    for (auto &mo : _speciesMotor) {
+    for (auto &mo : _chemData.speciesMotor) {
         SpeciesMotor* sm =
         c->addSpeciesMotor(
         SpeciesNamesDB::instance()->genUniqueName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
-    for (auto &br : _speciesBrancher) {
+    for (auto &br : _chemData.speciesBrancher) {
         SpeciesBrancher* sbr =
         c->addSpeciesBrancher(
         SpeciesNamesDB::instance()->genUniqueName(br));
@@ -87,10 +87,10 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     }
 }
 
-void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
+void SimpleManagerImpl::genIFRxnManagers() {
     
     //set up reaction templates
-    for(auto &r: chem.polymerizationReactions) {
+    for(auto &r: _chemData.polymerizationReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -113,11 +113,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                              [name](tuple<string, int, string, double> element) {
                               return get<0>(element) == name ? true : false; });
                                        
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -131,10 +131,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
                               return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -156,13 +156,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::PLUSEND));
                 
@@ -180,13 +180,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::MINUSEND));
                 
@@ -214,13 +214,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesFilament.end()) {
+            if(it != _chemData.speciesFilament.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesFilament.begin(), it);
+                position = distance(_chemData.speciesFilament.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                    SpeciesType::FILAMENT));
             }
@@ -245,13 +245,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::PLUSEND));
             }
@@ -267,13 +267,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                     SpeciesType::MINUSEND));
             }
@@ -303,7 +303,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     
     
     //set up reaction templates
-    for(auto &r: chem.depolymerizationReactions) {
+    for(auto &r: _chemData.depolymerizationReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -326,13 +326,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesFilament.end()) {
+            if(it != _chemData.speciesFilament.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesFilament.begin(), it);
+                position = distance(_chemData.speciesFilament.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::FILAMENT));
             }
@@ -357,13 +357,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::PLUSEND));
                 
@@ -381,13 +381,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::MINUSEND));
                 d = FilamentReactionDirection::FORWARD;
@@ -413,11 +413,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                              [name](tuple<string, int, string, double> element) {
                               return get<0>(element) == name ? true : false; });
             
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -431,10 +431,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                                [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                [name](tuple<string, int, double, double> element) {
                                 return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -456,13 +456,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                     SpeciesType::PLUSEND));
             }
@@ -478,13 +478,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                    SpeciesType::MINUSEND));
             }
@@ -511,7 +511,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             new DepolyPlusEndManager(reactantTemplate, productTemplate, get<2>(r)));
     }
 
-    for(auto &r: chem.motorWalkingReactions) {
+    for(auto &r: _chemData.motorWalkingReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -535,10 +535,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
             int position = 0;
             
-            if(it != _speciesMotor.end()) {
+            if(it != _chemData.speciesMotor.end()) {
                 species1 = name;
                 
                 //check if forward or backward walking
@@ -548,7 +548,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                     type = ReactionType::MOTORWALKINGFORWARD;
                 
                 //get position of iterator
-                position = distance(_speciesMotor.begin(), it);
+                position = distance(_chemData.speciesMotor.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::MOTOR));
             }
@@ -574,13 +574,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -604,7 +604,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
             int position = 0;
             
             if(name != species1) {
@@ -623,10 +623,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 
             }
             
-            if(it != _speciesMotor.end()) {
+            if(it != _chemData.speciesMotor.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMotor.begin(), it);
+                position = distance(_chemData.speciesMotor.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                        SpeciesType::MOTOR));
             }
@@ -650,13 +650,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -685,7 +685,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     }
     
     //set up reaction templates
-    for(auto &r: chem.agingReactions) {
+    for(auto &r: _chemData.agingReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -708,13 +708,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesFilament.end()) {
+            if(it != _chemData.speciesFilament.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesFilament.begin(), it);
+                position = distance(_chemData.speciesFilament.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::FILAMENT));
             }
@@ -729,13 +729,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::PLUSEND));
             }
@@ -750,13 +750,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                      SpeciesType::MINUSEND));
             }
@@ -781,13 +781,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesFilament.end()) {
+            if(it != _chemData.speciesFilament.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesFilament.begin(), it);
+                position = distance(_chemData.speciesFilament.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                    SpeciesType::FILAMENT));
             }
@@ -802,13 +802,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
             }
             else {
@@ -822,13 +822,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMinusEnd.begin(), it);
+                position = distance(_chemData.speciesMinusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                     SpeciesType::MINUSEND));
             }
@@ -853,7 +853,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     
     
     //set up reaction templates
-    for(auto &r: chem.destructionReactions) {
+    for(auto &r: _chemData.destructionReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -875,11 +875,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 //get position of iterator
-                int position = distance(_speciesPlusEnd.begin(), it);
+                int position = distance(_chemData.speciesPlusEnd.begin(), it);
                 reactantTemplate.push_back(
                     tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
             }
@@ -903,11 +903,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
             
-            if(it != _speciesMinusEnd.end()) {
+            if(it != _chemData.speciesMinusEnd.end()) {
                 //get position of iterator
-                int position = distance(_speciesMinusEnd.begin(), it);
+                int position = distance(_chemData.speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(
                     tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
             }
@@ -932,11 +932,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                     
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                  [name](tuple<string, int, string> element) {
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
                 
-                if(it == chem.speciesBulk.end()) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
                     "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -950,10 +950,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
                 
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double> element) {
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double> element) {
                                   return get<0>(element) == name ? true : false; });
-                if(it == chem.speciesDiffusing.end()) {
+                if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
                     "A diffusing species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -976,7 +976,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     }
     
     //set up reaction templates
-    for(auto &r: chem.severingReactions) {
+    for(auto &r: _chemData.severingReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -990,12 +990,12 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
             int position = 0;
             
-            if(it != _speciesFilament.end()) {
+            if(it != _chemData.speciesFilament.end()) {
                 //get position of iterator
-                position = distance(_speciesFilament.begin(), it);
+                position = distance(_chemData.speciesFilament.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                     SpeciesType::FILAMENT));
             }
@@ -1019,7 +1019,7 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     }
     
     //set up reaction templates
-    for(auto &r: chem.branchingReactions) {
+    for(auto &r: _chemData.branchingReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -1040,11 +1040,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                              [name](tuple<string, int, string, double> element) {
                               return get<0>(element) == name ? true : false; });
             
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1058,10 +1058,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
                               return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1082,11 +1082,11 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                              [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
             
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1100,10 +1100,10 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
                                   return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1125,13 +1125,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::BOUND));
             }
@@ -1155,13 +1155,13 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesBrancher.begin(), _speciesBrancher.end(), name);
+            auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
             int position = 0;
             
-            if(it != _speciesBrancher.end()) {
+            if(it != _chemData.speciesBrancher.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBrancher.begin(), it);
+                position = distance(_chemData.speciesBrancher.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                    SpeciesType::BRANCHER));
             }
@@ -1185,12 +1185,12 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
             int position = 0;
             
-            if(it != _speciesPlusEnd.end()) {
+            if(it != _chemData.speciesPlusEnd.end()) {
                 //get position of iterator
-                position = distance(_speciesPlusEnd.begin(), it);
+                position = distance(_chemData.speciesPlusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                    SpeciesType::PLUSEND));
             }
@@ -1214,9 +1214,9 @@ void SimpleManagerImpl::genIFRxnManagers(ChemistryData& chem) {
     }
 }
 
-void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
+void SimpleManagerImpl::genCFRxnManagers() {
     
-    for(auto &r: chem.linkerReactions) {
+    for(auto &r: _chemData.linkerReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -1238,13 +1238,13 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                        SpeciesType::BOUND));
             }
@@ -1266,13 +1266,13 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -1296,11 +1296,11 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                [name](tuple<string, int, string, double> element) {
                                 return get<0>(element) == name ? true : false; });
             
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1314,10 +1314,10 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
                               return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1340,15 +1340,15 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesLinker.begin(), _speciesLinker.end(), name);
+            auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
             int position = 0;
             
             species1 = name;
             
-            if(it != _speciesLinker.end()) {
+            if(it != _chemData.speciesLinker.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesLinker.begin(), it);
+                position = distance(_chemData.speciesLinker.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::LINKER));
             }
@@ -1371,7 +1371,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesLinker.begin(), _speciesLinker.end(), name);
+            auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
             int position = 0;
             
             if(name != species1) {
@@ -1381,10 +1381,10 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
         
-            if(it != _speciesLinker.end()) {
+            if(it != _chemData.speciesLinker.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesLinker.begin(), it);
+                position = distance(_chemData.speciesLinker.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::LINKER));
             }
             else {
@@ -1409,7 +1409,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                                  get<2>(r), get<3>(r), rMax, rMin));
     }
    
-    for(auto &r: chem.motorReactions) {
+    for(auto &r: _chemData.motorReactions) {
         
         vector<tuple<int, SpeciesType>> reactantTemplate;
         vector<tuple<int, SpeciesType>> productTemplate;
@@ -1431,13 +1431,13 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -1459,13 +1459,13 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_speciesBound.begin(), _speciesBound.end(), name);
+            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
             int position = 0;
             
-            if(it != _speciesBound.end()) {
+            if(it != _chemData.speciesBound.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesBound.begin(), it);
+                position = distance(_chemData.speciesBound.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                        SpeciesType::BOUND));
             }
@@ -1489,11 +1489,11 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                              [name](tuple<string, int, string> element) {
+            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                              [name](tuple<string, int, string, double> element) {
                               return get<0>(element) == name ? true : false; });
             
-            if(it == chem.speciesBulk.end()) {
+            if(it == _chemData.speciesBulk.end()) {
                 cout <<
                 "A bulk species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1507,10 +1507,10 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(chem.speciesDiffusing.begin(),chem.speciesDiffusing.end(),
-                              [name](tuple<string, int, double> element) {
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
                               return get<0>(element) == name ? true : false; });
-            if(it == chem.speciesDiffusing.end()) {
+            if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
                 "A diffusing species that was included in a reaction was not initialized. Exiting."
                 << endl;
@@ -1533,15 +1533,15 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
             int position = 0;
             
             species1 = name;
             
-            if(it != _speciesMotor.end()) {
+            if(it != _chemData.speciesMotor.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMotor.begin(), it);
+                position = distance(_chemData.speciesMotor.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                        SpeciesType::MOTOR));
             }
@@ -1564,7 +1564,7 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
             
             //look up species, make sure in list
             string name = product.substr(0, product.find(":"));
-            auto it = find(_speciesMotor.begin(), _speciesMotor.end(), name);
+            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
             int position = 0;
             
             if(name != species1) {
@@ -1574,10 +1574,10 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
                 exit(EXIT_FAILURE);
             }
  
-            if(it != _speciesMotor.end()) {
+            if(it != _chemData.speciesMotor.end()) {
                 
                 //get position of iterator
-                position = distance(_speciesMotor.begin(), it);
+                position = distance(_chemData.speciesMotor.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                       SpeciesType::MOTOR));
             }
@@ -1603,51 +1603,86 @@ void SimpleManagerImpl::genCFRxnManagers(ChemistryData& chem) {
 }
 
 
-void SimpleManagerImpl::genSpecies(ChemistryData& chem,
-                                   Compartment& protoCompartment) {
+void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
     
     // add diffusing species (zero copy number for now)
-    for(auto &sd : chem.speciesDiffusing)
+    for(auto &sd : _chemData.speciesDiffusing)
         protoCompartment.addSpeciesUnique(unique_ptr<Species>(
         new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
     
-    // add bulk species (with copy number)
-    for(auto &sb : chem.speciesBulk)
+    // add bulk species (zero copy number for now)
+    for(auto &sb : _chemData.speciesBulk)
         CompartmentGrid::instance()->
-        addSpeciesBulk(get<0>(sb), get<1>(sb),
-        (get<2>(sb) == "CONST") ? true : false);
+        addSpeciesBulk(get<0>(sb), 0, (get<2>(sb) == "CONST") ? true : false);
 }
 
-void SimpleManagerImpl::initDiffusingCopyNumbers(ChemistryData& chem) {
+void SimpleManagerImpl::updateCopyNumbers() {
+    
+    auto tempSpeciesDiffusing = _chemData.speciesDiffusing;
+    auto tempSpeciesBulk = _chemData.speciesBulk;
     
     //look at copy number for each species
-    for(auto &s : chem.speciesDiffusing) {
+    for(auto &s : tempSpeciesDiffusing) {
         
         auto name = get<0>(s);
         auto copyNumber = get<1>(s);
+        auto releaseTime = get<3>(s);
         
-        //add randomly in compartment
-        while (copyNumber > 0) {
-            
-            //find a random compartment within the boundary
-            Compartment* randomCompartment;
-            while(true) {
-                randomCompartment = GController::getRandomCompartment();
-                if(randomCompartment->isActivated()) break;
+        if(tau() >= releaseTime) {
+        
+            //add randomly in compartment
+            while (copyNumber > 0) {
+                
+                //find a random compartment within the boundary
+                Compartment* randomCompartment;
+                while(true) {
+                    randomCompartment = GController::getRandomCompartment();
+                    if(randomCompartment->isActivated()) break;
+                }
+                //find the species, increase copy number
+                Species* species = randomCompartment->findSpeciesByName(name);
+                species->up();
+                copyNumber--;
             }
-            //find the species, increase copy number
-            Species* species = randomCompartment->findSpeciesByName(name);
-            species->up();
-            copyNumber--;
+            
+            //remove from list
+            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                              [name](tuple<string, int, double, double> element) {
+                              return get<0>(element) == name ? true : false; });
+            _chemData.speciesDiffusing.erase(it);
+            
+        }
+    }
+    
+    for(auto &s : tempSpeciesBulk) {
+        
+        auto name = get<0>(s);
+        auto copyNumber = get<1>(s);
+        auto releaseTime = get<3>(s);
+        
+        if(tau() >= releaseTime) {
+        
+            //find the species, set copy number
+            Species* species = CompartmentGrid::instance()->
+                               findSpeciesBulkByName(name);
+            species->setN(copyNumber);
+            
+            //update reactions
+            species->getRSpecies().activateAssocReactantReactions();
+            
+            //remove from list
+            auto it = find_if(_chemData.speciesBulk.begin(),_chemData.speciesBulk.end(),
+                              [name](tuple<string, int, double, double> element) {
+                              return get<0>(element) == name ? true : false; });
+            _chemData.speciesBulk.erase(it);
         }
     }
 }
 
-void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
-                                            Compartment& protoCompartment) {
+void SimpleManagerImpl::genGeneralReactions(Compartment& protoCompartment) {
     
      //go through reactions, add each
-    for(auto &r: chem.genReactions) {
+    for(auto &r: _chemData.genReactions) {
     
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
@@ -1660,11 +1695,11 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
                 
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                 [name](tuple<string, int, string> element) {
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                 [name](tuple<string, int, string, double> element) {
                                  return get<0>(element) == name ? true : false; });
                 
-                if(it == chem.speciesBulk.end()) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
                     "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1679,10 +1714,10 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it =
-                    find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
-                            [name](tuple<string, int, double> element) {
+                    find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
+                            [name](tuple<string, int, double, double> element) {
                             return get<0>(element) == name ? true : false; });
-                if(it == chem.speciesDiffusing.end()) {
+                if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
                     "A diffusing species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1703,11 +1738,11 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
                 
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                  [name](tuple<string, int, string> element) {
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
                 
-                if(it == chem.speciesBulk.end()) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
                     "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1722,10 +1757,10 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it =
-                    find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
-                            [name](tuple<string, int, double> element) {
+                    find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
+                            [name](tuple<string, int, double, double> element) {
                             return get<0>(element) == name ? true : false; });
-                if(it == chem.speciesDiffusing.end()) {
+                if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
                     "A diffusing species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1784,10 +1819,10 @@ void SimpleManagerImpl::genGeneralReactions(ChemistryData& chem,
     }
 }
 
-void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
+void SimpleManagerImpl::genBulkReactions() {
     
     //go through reactions, add each
-    for(auto &r: chem.bulkReactions) {
+    for(auto &r: _chemData.bulkReactions) {
         
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
@@ -1800,11 +1835,11 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                 
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                  [name](tuple<string, int, string> element) {
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
                 
-                if(it == chem.speciesBulk.end()) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
                     "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1826,11 +1861,11 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
                 
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                  [name](tuple<string, int, string> element) {
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
                 
-                if(it == chem.speciesBulk.end()) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
                     "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
@@ -1890,10 +1925,10 @@ void SimpleManagerImpl::genBulkReactions(ChemistryData& chem) {
     }
 }
 
-void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
+void SimpleManagerImpl::genNucleationReactions() {
     
 #if !defined(REACTION_SIGNALING)
-    if(!chem.nucleationReactions.empty()) {
+    if(!_chemData.nucleationReactions.empty()) {
         
         cout << "Nucleation reactions rely on reaction signaling. Please set this "
              << "compilation macro. Exiting." << endl;
@@ -1908,7 +1943,7 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
         if(!C->isActivated()) continue;
         
         //go through reactions, add each
-        for(auto &r: chem.nucleationReactions) {
+        for(auto &r: _chemData.nucleationReactions) {
             
             vector<Species*> reactantSpecies;
             
@@ -1927,11 +1962,11 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
                     
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
-                    auto it = find_if(chem.speciesBulk.begin(), chem.speciesBulk.end(),
-                                      [name](tuple<string, int, string> element) {
+                    auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                      [name](tuple<string, int, string, double> element) {
                                       return get<0>(element) == name ? true : false; });
                     
-                    if(it == chem.speciesBulk.end()) {
+                    if(it == _chemData.speciesBulk.end()) {
                         cout <<
                         "A bulk species that was included in a reaction was not initialized. Exiting."
                         << endl;
@@ -1946,10 +1981,10 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it =
-                    find_if(chem.speciesDiffusing.begin(), chem.speciesDiffusing.end(),
-                            [name](tuple<string, int, double> element) {
+                    find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
+                            [name](tuple<string, int, double, double> element) {
                             return get<0>(element) == name ? true : false; });
-                    if(it == chem.speciesDiffusing.end()) {
+                    if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
                         "A diffusing species that was included in a reaction was not initialized. Exiting."
                         << endl;
@@ -1986,11 +2021,11 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find(_speciesPlusEnd.begin(), _speciesPlusEnd.end(), name);
+                auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
                 
-                if(it != _speciesPlusEnd.end()) {
+                if(it != _chemData.speciesPlusEnd.end()) {
                     //get position of iterator
-                    plusEnd = distance(_speciesPlusEnd.begin(), it);
+                    plusEnd = distance(_chemData.speciesPlusEnd.begin(), it);
                 }
                 else {
                     cout <<
@@ -2012,11 +2047,11 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find(_speciesFilament.begin(), _speciesFilament.end(), name);
+                auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
                 
-                if(it != _speciesFilament.end()) {
+                if(it != _chemData.speciesFilament.end()) {
                     //get position of iterator
-                    filament = distance(_speciesFilament.begin(), it);
+                    filament = distance(_chemData.speciesFilament.begin(), it);
                 }
                 else {
                     cout <<
@@ -2038,11 +2073,11 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                auto it = find(_speciesMinusEnd.begin(), _speciesMinusEnd.end(), name);
+                auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
                 
-                if(it != _speciesMinusEnd.end()) {
+                if(it != _chemData.speciesMinusEnd.end()) {
                     //get position of iterator
-                    minusEnd = distance(_speciesMinusEnd.begin(), it);
+                    minusEnd = distance(_chemData.speciesMinusEnd.begin(), it);
                 }
                 else {
                     cout <<
@@ -2077,35 +2112,25 @@ void SimpleManagerImpl::genNucleationReactions(ChemistryData& chem) {
 }
 
 
-void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
-    
-    //Copy all species from chem struct
-    _speciesFilament =  chem.speciesFilament;
-    _speciesPlusEnd  =  chem.speciesPlusEnd;
-    _speciesMinusEnd =  chem.speciesMinusEnd;
-    
-    _speciesBound  =   chem.speciesBound;
-    _speciesLinker =   chem.speciesLinker;
-    _speciesMotor  =   chem.speciesMotor;
-    _speciesBrancher = chem.speciesBrancher;
+void SimpleManagerImpl::configureCMonomer() {
     
     //set up static CMonomer things
-    CMonomer::_numFSpecies = chem.speciesFilament.size() +
-                             chem.speciesPlusEnd.size()  +
-                             chem.speciesMinusEnd.size();
+    CMonomer::_numFSpecies = _chemData.speciesFilament.size() +
+                             _chemData.speciesPlusEnd.size()  +
+                             _chemData.speciesMinusEnd.size();
     
-    CMonomer::_numBSpecies = chem.speciesBound.size()   +
-                             chem.speciesLinker.size()  +
-                             chem.speciesMotor.size()   +
-                             chem.speciesBrancher.size();
+    CMonomer::_numBSpecies = _chemData.speciesBound.size()   +
+                             _chemData.speciesLinker.size()  +
+                             _chemData.speciesMotor.size()   +
+                             _chemData.speciesBrancher.size();
     
     //set up species offsets
-    short o1 = _speciesFilament.size();
-    short o2 = o1 + _speciesPlusEnd.size();
+    short o1 = _chemData.speciesFilament.size();
+    short o2 = o1 + _chemData.speciesPlusEnd.size();
     
-    short o3 = _speciesBound.size();
-    short o4 = o3 + _speciesLinker.size();
-    short o5 = o4 + _speciesMotor.size();
+    short o3 = _chemData.speciesBound.size();
+    short o4 = o3 + _chemData.speciesLinker.size();
+    short o5 = o4 + _chemData.speciesMotor.size();
     
     //create offset vector for filament
     CMonomer::_speciesFilamentIndex.push_back(0);
@@ -2120,22 +2145,23 @@ void SimpleManagerImpl::copySpecies(ChemistryData& chem) {
 }
 
 
-void SimpleManagerImpl::initialize(ChemistryData& chem) {
+void SimpleManagerImpl::initialize() {
     
     //set static system ptr
     InternalFilamentRxnManager::_ps = _subSystem;
     CrossFilamentRxnManager::_ps = _subSystem;
     
-    //copy species
-    copySpecies(chem);
+    //config CMonomer
+    configureCMonomer();
     
     //Setup all species diffusing and bulk
-    Compartment& cProto = CompartmentGrid::instance()->getProtoCompartment();
+    Compartment& cProto = CompartmentGrid::instance()->
+                          getProtoCompartment();
     
-    genSpecies(chem, cProto);
+    genSpecies(cProto);
     //will print reactions as well
-    genGeneralReactions(chem, cProto);
-    genBulkReactions(chem);
+    genGeneralReactions(cProto);
+    genBulkReactions();
     
     //initialize all compartments equivalent to cproto
     //will copy all general and bulk reactions
@@ -2147,15 +2173,18 @@ void SimpleManagerImpl::initialize(ChemistryData& chem) {
         Compartment *C = (Compartment*)(c.get());
         C->generateAllDiffusionReactions();
     }
-    initDiffusingCopyNumbers(chem);
-    genNucleationReactions(chem);
+    //try initial copy number setting
+    updateCopyNumbers();
+    
+    //generate the nucleation reactions in system
+    genNucleationReactions();
     
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();
     
     //create reaction managers
-    genIFRxnManagers(chem);
-    genCFRxnManagers(chem);
+    genIFRxnManagers();
+    genCFRxnManagers();
 }
 
 
