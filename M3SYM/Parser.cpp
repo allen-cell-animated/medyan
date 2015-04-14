@@ -984,13 +984,7 @@ void SystemParser::readBoundParams() {
         else if (line.find("BDIAMETER") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Boundary parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
+            if (lineVector.size() == 2) {
                 BParams.diameter = atof((lineVector[1].c_str()));
             }
             else {}
