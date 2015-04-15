@@ -35,8 +35,8 @@ class CrossFilamentRxnManager;
 class SimpleManagerImpl : public ChemManagerImpl {
     
 private:
-    ChemistryData _chemData; ///<The chemistry data for the system
     SubSystem* _subSystem; ///< A pointer to subsytem for creation of callbacks, etc.
+    ChemistryData _chemData; ///<The chemistry data for the system
     
     /// A list of reactions to add to every new CCylinder
     vector<unique_ptr<InternalFilamentRxnManager>> _IFRxnManagers;
