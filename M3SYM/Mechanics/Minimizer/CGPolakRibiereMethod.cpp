@@ -68,8 +68,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 		curEnergy = FFM.computeEnergy(0.0);
         
         curGrad = newGrad;
+        
 	}
-	while (curGrad > GRADTOL && curEnergy - prevEnergy <= -CGENERGYTOL);
-    
+	while (curGrad > GRADTOL &&
+           curEnergy - prevEnergy <= -CGENERGYTOL &&
+           numIter <= MAXITER);
+
     cout << "Energy = " << curEnergy << endl;
 }

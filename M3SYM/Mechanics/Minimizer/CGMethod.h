@@ -33,6 +33,9 @@ class CGMethod {
 
 protected:
     
+    ///Maximum number of iterations for the CG solver
+    const int MAXITER = 10000;
+    
     //@{
     /// Lambda parameter for use in linear search methods
     const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
