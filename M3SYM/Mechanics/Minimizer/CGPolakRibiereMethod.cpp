@@ -73,6 +73,4 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 	while (curGrad > GRADTOL &&
            curEnergy - prevEnergy <= -CGENERGYTOL &&
            numIter <= MAXITER);
-
-    cout << "Energy = " << curEnergy << endl;
 }
