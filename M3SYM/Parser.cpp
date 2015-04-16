@@ -950,7 +950,7 @@ void SystemParser::readBoundParams() {
             //Default value to be half compartment size
             else {
                 BParams.BoundaryCutoff =
-                    SysParams::Geometry().compartmentSizeX / 2;
+                SysParams::Geometry().compartmentSizeX / 2;
             }
         }
         else if (line.find("BINTERACTIONK") != string::npos) {

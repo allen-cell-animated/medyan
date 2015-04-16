@@ -87,6 +87,30 @@ void Controller::initialize(string inputFile,
     _gController->initializeGrid();
     cout << "Done." << endl;
     
+    //Always read boundary type
+    auto BTypes = p.readBoundaryType();
+    p.readBoundParams();
+    
+    //Initialize boundary
+    cout << "---" << endl;
+    cout << "Initializing boundary...";
+    if(BTypes.boundaryShape == "CUBIC") {
+        _subSystem->addBoundary(new BoundaryCubic());
+    }
+    else if(BTypes.boundaryShape == "SPHERICAL") {
+        _subSystem->addBoundary(
+        new BoundarySpherical(SysParams::Boundaries().diameter));
+    }
+    else if(BTypes.boundaryShape == "CAPSULE") {
+        _subSystem->addBoundary(
+        new BoundaryCapsule(SysParams::Boundaries().diameter));
+    }
+    else{
+        cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
+        exit(EXIT_FAILURE);
+    }
+    cout << "Done." <<endl;
+    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -100,31 +124,7 @@ void Controller::initialize(string inputFile,
     cout << "Initializing mechanics...";
     _mController->initialize(MTypes, MAlgorithm);
     cout << "Done." <<endl;
-    
 #endif
-    //Always read boundary type
-    auto BTypes = p.readBoundaryType();
-    p.readBoundParams();
-    
-    //Initialize boundary
-    cout << "---" << endl;
-    cout << "Initializing boundary...";
-    if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->addBoundary(new BoundaryCubic());
-    }
-    else if(BTypes.boundaryShape == "SPHERICAL") {
-        _subSystem->addBoundary(
-            new BoundarySpherical(SysParams::Boundaries().diameter));
-    }
-    else if(BTypes.boundaryShape == "CAPSULE") {
-        _subSystem->addBoundary(
-            new BoundaryCapsule(SysParams::Boundaries().diameter));
-    }
-    else{
-        cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
-        exit(EXIT_FAILURE);
-    }
-    cout << "Done." <<endl;
     
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion

@@ -29,8 +29,6 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     FFM.computeForces();
     
-    cout << "Initial energy = " << curEnergy << endl;
-    
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
     
@@ -68,5 +66,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-    while (curGrad / n > GRADTOL && curEnergy - prevEnergy <= -CGENERGYTOL);
+    while (curGrad > GRADTOL && curEnergy - prevEnergy <= -CGENERGYTOL);
+    
+    cout << "Energy = " << curEnergy << endl;
 }

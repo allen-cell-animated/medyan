@@ -87,7 +87,6 @@ for line in traj_file:
 
 	if(first_frame_line):
 		F=Frame()
-		print line.split()
 		F.step, F.time, F.n_filaments, F.n_linkers, \
 		F.n_motors, F.n_branchers = map(double,line.split())
 		F.n_filaments = int(F.n_filaments)

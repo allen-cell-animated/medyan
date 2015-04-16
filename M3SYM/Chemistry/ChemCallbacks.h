@@ -519,6 +519,7 @@ struct FilamentCreationCallback {
             direction = {randomDouble(-1,1),
                          randomDouble(-1,1),
                          randomDouble(-1,1)};
+            normalize(direction);
             
             auto npp = nextPointProjection(position,
                 SysParams::Geometry().cylinderSize, direction);
