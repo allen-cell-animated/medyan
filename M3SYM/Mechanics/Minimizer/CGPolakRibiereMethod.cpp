@@ -17,12 +17,13 @@
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
+                                                    double ENERGYTOL,
                                                     double MAXDIST){
 
     //system size
-    int n = BeadDB::instance()->size();
-    int ndof = 3 * n;
-    if (ndof == 0) return;
+    int N = BeadDB::instance()->size();
+    int NDOF = 3 * N;
+    if (NDOF == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
@@ -50,7 +51,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //choose beta
         //reset after ndof iterations
-		if (numIter % ndof == 0)  beta = 0.0;
+		if (numIter % NDOF == 0)  beta = 0.0;
         //Polak-Ribieri update
         else beta = max(0.0, (newGrad - prevGrad)/ curGrad);
 
@@ -69,8 +70,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
         
-	}
-	while (curGrad > GRADTOL &&
-           curEnergy - prevEnergy <= -CGENERGYTOL &&
-           numIter <= MAXITER);
+    }
+	while (/* Iteration criterion */  numIter < NDOF &&
+           /* Gradient tolerance  */  curGrad > GRADTOL &&
+           /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }

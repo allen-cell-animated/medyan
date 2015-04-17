@@ -29,15 +29,28 @@ class ConjugateGradient : public Minimizer {
     
 private:
     CGType _CGType;  ///< Implementation of a CG method
-    double _GRADTOL; ///< Gradient tolerance used;
-    double _MAXDIST; ///< Max distance used to move
+    double _ENERGYTOL; ///< Energy tolerance used
+    double _GRADTOL;   ///< Gradient tolerance used
+    double _MAXDIST;   ///< Max distance used to move
     
 public:
     /// Constructor sets gradient tolerance parameter
-    ConjugateGradient(double gradientTolerance, double maxDistance)
-        : _GRADTOL(gradientTolerance), _MAXDIST(maxDistance) {}
+    ConjugateGradient(double gradientTolerance,
+                      double energyTolerance,
+                      double maxDistance)
     
-    void equlibrate(ForceFieldManager &FFM) {_CGType.minimize(FFM, _GRADTOL, _MAXDIST);}
+        : _GRADTOL(gradientTolerance),
+          _ENERGYTOL(energyTolerance),
+          _MAXDIST(maxDistance) {}
+    
+    
+    /// This function will minimize the system until the following criterion are met:
+    /// 1) Sum of all forces in network are < GRADTOL
+    /// 2) Difference in energy between steps < -ENERGYTOL
+    /// 3) Number of iterations exceeds NDOF
+    void equlibrate(ForceFieldManager &FFM) {
+        _CGType.minimize(FFM, _GRADTOL, _ENERGYTOL, _MAXDIST);
+    }
 };
 
 #endif

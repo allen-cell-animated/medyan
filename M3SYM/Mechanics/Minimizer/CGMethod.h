@@ -33,9 +33,6 @@ class CGMethod {
 
 protected:
     
-    ///Maximum number of iterations for the CG solver
-    const int MAXITER = 10000;
-    
     //@{
     /// Lambda parameter for use in linear search methods
     const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
@@ -62,8 +59,7 @@ protected:
     //@}
     
     const double LSENERGYTOL = 1e-15; ///< Line search energy tolerance for all
-                                     ///< linesearch methods
-    const double CGENERGYTOL = 1e-8; ///< CG energy tolerance
+                                      ///< linesearch methods
     
     //@{
     /// For use in minimization
@@ -93,7 +89,9 @@ public:
     virtual ~CGMethod() {};
     
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL, double MAXDIST) = 0;
+    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
+                                                  double ENERGYTOL,
+                                                  double MAXDIST) = 0;
 };
 
 

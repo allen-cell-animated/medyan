@@ -141,7 +141,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
         for(int i = 0 ; i < 3; i++)
             maxF = max(maxF, fabs(b->force[i]));
     }
-    
+        
     //return zero if no forces
     if(maxF == 0.0) return 0.0;
  

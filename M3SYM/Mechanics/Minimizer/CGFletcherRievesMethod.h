@@ -26,7 +26,9 @@
 /// The Fletcher-Rieves method for conjugate gradient minimization
 class FletcherRieves : public CGMethod {
 public:
-   void minimize(ForceFieldManager &FFM, double GRADTOL, double MAXDIST);
+    void minimize(ForceFieldManager &FFM, double GRADTOL,
+                                          double ENERGYTOL,
+                                          double MAXDIST);
 };
 
 #endif

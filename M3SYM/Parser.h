@@ -47,6 +47,7 @@ struct MechanicsAlgorithm {
     
     /// Tolerance and cg parameters
     double gradientTolerance = 0.001;
+    double energyTolerance = 1e-6;
     double maxDistance = 0.0001;
     
     /// Not yet used
