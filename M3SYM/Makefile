@@ -22,7 +22,7 @@ OBJECTS := $(SOURCES:.cpp=.o)
 #CPP COMPILER CHOICE AND FLAGS
 CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
-FAST = -O3 -ffast-math -mtune=corei7-avx -flto -funroll-loops -DNDEBUG -mtune=native
+FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
 LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl 
 
