@@ -70,10 +70,8 @@ protected:
     
     /// Move beads in search direction by d
     void moveBeads(double d);
-    
     /// Reset to previous position
     void resetBeads();
-    
     /// Update the previous position
     void setBeads();
     

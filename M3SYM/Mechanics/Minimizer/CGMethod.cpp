@@ -66,13 +66,13 @@ void CGMethod::moveBeads(double d)
 void CGMethod::resetBeads() {
     
     for(auto b: *BeadDB::instance())
-        b->coordinate = b->coordinatePrev;
+        b->coordinate = b->coordinateP;
 }
 
 void CGMethod::setBeads() {
     
     for(auto b: *BeadDB::instance())
-        b->coordinatePrev = b->coordinate;
+        b->coordinateP = b->coordinate;
 }
 
 
