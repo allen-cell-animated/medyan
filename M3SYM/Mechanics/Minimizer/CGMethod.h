@@ -35,7 +35,7 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
+    const double LAMBDAMAX = 10.0;  ///< Max lambda that can be returned,
                                    ///< used in all methods
     //@}
     
@@ -68,8 +68,16 @@ protected:
     double allFADotFAP();
     double allFDotFA();
     
+    /// Move beads in search direction by d
     void moveBeads(double d);
-    void moveBeadsAux(double d);
+    
+    /// Reset to previous position
+    void resetBeads();
+    
+    /// Update the previous position
+    void setBeads();
+    
+    /// shift the gradient by d
     void shiftGradient(double d);
     //@}
     
@@ -80,6 +88,9 @@ protected:
     
     ///@note - the most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
+    
+    ///@note - the fastest linesearch method
+    double quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST);
     //@}
     
     void printForces();

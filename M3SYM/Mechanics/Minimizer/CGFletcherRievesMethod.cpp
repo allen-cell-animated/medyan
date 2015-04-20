@@ -28,7 +28,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
     
-    FFM.computeForces();
+    FFM.computeForces(); setBeads();
     
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
@@ -39,8 +39,8 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         double lambda, beta, newGrad, prevGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST);
-        moveBeads(lambda);
+        lambda = quadraticLineSearch(FFM, MAXDIST);
+        moveBeads(lambda); setBeads();
         
         //compute new forces
         FFM.computeForcesAux();
@@ -67,7 +67,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-    while (/* Iteration criterion */  numIter < 2 * NDOF &&
+    while (/* Iteration criterion */  numIter < 5 * NDOF &&
            /* Gradient tolerance  */  curGrad > GRADTOL &&
            /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }

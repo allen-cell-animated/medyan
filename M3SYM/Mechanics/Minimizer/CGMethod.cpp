@@ -63,6 +63,19 @@ void CGMethod::moveBeads(double d)
 	}
 }
 
+void CGMethod::resetBeads() {
+    
+    for(auto b: *BeadDB::instance())
+        b->coordinate = b->coordinatePrev;
+}
+
+void CGMethod::setBeads() {
+    
+    for(auto b: *BeadDB::instance())
+        b->coordinatePrev = b->coordinate;
+}
+
+
 void CGMethod::shiftGradient(double d)
 {
 	for(auto b: *BeadDB::instance()) {
@@ -159,8 +172,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange)
-            return lambda;
+        if(energyChange <= idealEnergyChange) return lambda;
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
@@ -169,3 +181,82 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
             return 0.0;
     }
 }
+
+double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
+    
+    double proj = 0.0; double maxF = 0.0;
+    
+    for(auto b: *BeadDB::instance()) {
+        
+        //calc f dot fa
+        proj += b->FDotFA();
+        
+        //calc max force
+        for(int i = 0 ; i < 3; i++)
+            maxF = max(maxF, fabs(b->force[i]));
+    }
+    
+    //return zero if no forces
+    if(maxF == 0.0) return 0.0;
+    
+    //calculate first lambda
+    double lambda = min(LAMBDAMAX, MAXDIST / maxF);
+    double currentEnergy = FFM.computeEnergy(0.0);
+    
+    //more vars
+    double projOrig = proj;
+    double projPrev = proj;
+    double lambdaPrev = lambda;
+    double energyPrevLambda = currentEnergy;
+    
+    double relErr, lambda0, delProj;
+    
+    //backtracking loop
+    while(true) {
+        
+        //new energy when moved by lambda
+        double energyLambda = FFM.computeEnergy(lambda);
+        
+        //compute new projection
+        moveBeads(lambda);
+        FFM.computeForcesAux();
+        
+        //move beads back
+        resetBeads();
+        
+        proj = allFDotFA();
+        delProj = proj - projPrev;
+        
+        if(fabs(proj) < EPS_QUAD || fabs(delProj) < EPS_QUAD)
+            return 0.0;
+            
+        //check if ready for a quadratic projection
+        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) * (proj + projPrev)+
+                                           energyLambda) / energyPrevLambda);
+        lambda0 = lambda - (lambda - lambdaPrev) * proj / delProj;
+        
+        //check if energy is decreasing and lambda within bounds
+        if(relErr <= QUADRATICTOL &&
+           energyLambda - currentEnergy <= 0 &&
+           lambda0 > 0.0 && lambda0 < LAMBDAMAX)
+            
+            return lambda0;
+    
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * projOrig;
+        double energyChange = energyLambda - currentEnergy;
+        
+        //return if ok
+        if(energyChange <= idealEnergyChange) return lambda;
+        
+        //save state
+        projPrev = proj; lambdaPrev = lambda;
+        energyPrevLambda = energyLambda;
+        
+        //reduce lambda
+        lambda *= LAMBDAREDUCE;
+        
+        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
+            return 0.0;
+    }
+}
+

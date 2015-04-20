@@ -40,6 +40,7 @@ class Compartment;
 class Bead : public Component, public Neighbor, public Movable {
 public:
     vector<double> coordinate; ///< Coordinates of the bead
+    vector<double> coordinatePrev; ///< Previous coordinates of bead
     
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.

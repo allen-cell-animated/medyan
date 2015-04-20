@@ -29,6 +29,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     double prevEnergy;
     
     FFM.computeForces();
+    setBeads();
     
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
@@ -39,8 +40,8 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         double lambda, newGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST);
-        moveBeads(lambda);
+        lambda = quadraticLineSearch(FFM, MAXDIST);
+        moveBeads(lambda); setBeads();
         
         //compute new forces
         FFM.computeForcesAux();
@@ -56,7 +57,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-    while (/* Iteration criterion */  numIter < 2 * NDOF &&
+    while (/* Iteration criterion */  numIter < 5 * NDOF &&
            /* Gradient tolerance  */  curGrad > GRADTOL &&
            /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }
