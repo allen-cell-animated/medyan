@@ -67,7 +67,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-    while (/* Iteration criterion */  numIter < NDOF &&
+    while (/* Iteration criterion */  numIter < 2 * NDOF &&
            /* Gradient tolerance  */  curGrad > GRADTOL &&
            /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }
