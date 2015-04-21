@@ -40,7 +40,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         double lambda, newGrad;
         
         //find lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM, MAXDIST);
+        lambda = backtrackingLineSearch(FFM, MAXDIST);
         moveBeads(lambda); setBeads();
         
         //compute new forces
