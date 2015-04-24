@@ -266,10 +266,6 @@ namespace mathfunc {
         return norm <= 1e-20;
     }
     
-    /// Function to calculate a diatance between two segments
-    double twoSegmentDistance(const vector<double>& v1, const vector<double>& v2,
-                              const vector<double>& v3, const vector<double>& v4);
-    
     /// Function to move bead out of plane by specified amount
     vector<double> movePointOutOfPlane(const vector<double>& p1,
                                        const vector<double>& p2,

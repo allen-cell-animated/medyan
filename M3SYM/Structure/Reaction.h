@@ -98,7 +98,7 @@ template <unsigned short M, unsigned short N>
                 auto s = _rspecies[i];
                 
                 for(auto it = s->beginReactantReactions();
-                    it != s->endReactantReactions(); it++) {
+                         it != s->endReactantReactions(); it++) {
                     ReactionBase* r = (*it);
                     rxns.insert(r);
                 }

@@ -35,7 +35,7 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 10.0;  ///< Max lambda that can be returned,
+    const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
                                    ///< used in all methods
     //@}
     
@@ -58,8 +58,8 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-15; ///< Line search energy tolerance for all
-                                      ///< linesearch methods
+    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
+                                     ///< linesearch methods
     
     //@{
     /// For use in minimization
