@@ -15,6 +15,9 @@
 
 double ForceFieldManager::computeEnergy(double d) {
     
+    chrono::high_resolution_clock::time_point chk1, chk2;
+    chk1 = chrono::high_resolution_clock::now();
+    
     double energy = 0;
     for(auto &f : _forceFields) {
         
@@ -35,10 +38,17 @@ double ForceFieldManager::computeEnergy(double d) {
         }
         else energy += tempEnergy;
     }
+    chk2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(chk2-chk1);
+    
+    cout << "Energy calculation took " << elapsed_run.count() << endl;
     return energy;
 }
 
 void ForceFieldManager::computeForces() {
+    
+    chrono::high_resolution_clock::time_point chk1, chk2;
+    chk1 = chrono::high_resolution_clock::now();
     
     //reset
     resetForces();
@@ -49,15 +59,29 @@ void ForceFieldManager::computeForces() {
     //copy to auxs
     for(auto b: *BeadDB::instance())
         b->forceAux = b->forceAuxP = b->force;
+    
+    chk2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(chk2-chk1);
+    
+    cout << "Force calculation took " << elapsed_run.count() << endl;
 }
 
 void ForceFieldManager::computeForcesAux() {
+    
+    chrono::high_resolution_clock::time_point chk1, chk2;
+    chk1 = chrono::high_resolution_clock::now();
     
     //reset just aux
     resetForcesAux();
     
     //recompute
     for(auto &f : _forceFields) f->computeForcesAux();
+    
+    
+    chk2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(chk2-chk1);
+    
+    cout << "ForceAux calculation took " << elapsed_run.count() << endl;
 }
 
 void ForceFieldManager::computeForcesAuxP() {
