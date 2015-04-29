@@ -35,10 +35,11 @@ double MotorGhostFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for ( auto motor: *MotorGhostDB::instance()) {
-        for (auto &motorGhostInteraction : _motorGhostInteractionVector) {
+    for (auto &interaction : _motorGhostInteractionVector) {
+        
+        for (auto m: *MotorGhostDB::instance()) {
             
-            U_i = motorGhostInteraction.get()->computeEnergy(motor, d);
+            U_i = interaction->computeEnergy(m, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
                 return -1;
@@ -50,15 +51,20 @@ double MotorGhostFF::computeEnergy(double d) {
 }
 
 void MotorGhostFF::computeForces() {
-    for (auto motor: *MotorGhostDB::instance())
-        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            motorGhostInteraction.get()->computeForces(motor);
+    
+    for (auto &interaction : _motorGhostInteractionVector) {
+        
+        for (auto m: *MotorGhostDB::instance())
+            interaction->computeForces(m);
+    }
 }
 
 void MotorGhostFF::computeForcesAux() {
     
-    for (auto motor: *MotorGhostDB::instance())
-        for (auto &motorGhostInteraction : _motorGhostInteractionVector)
-            motorGhostInteraction.get()->computeForcesAux(motor);
+    for (auto &interaction : _motorGhostInteractionVector) {
+        
+        for (auto m: *MotorGhostDB::instance())
+            interaction->computeForcesAux(m);
+    }
 }
 

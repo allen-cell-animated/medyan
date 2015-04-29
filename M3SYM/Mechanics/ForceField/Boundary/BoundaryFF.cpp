@@ -40,13 +40,14 @@ double BoundaryFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto &boundaryInteraction : _BoundaryInteractionVector){
+    for (auto &interaction : _BoundaryInteractionVector){
         
-        auto neighborList = boundaryInteraction->getNeighborList();
-        for (auto boundaryElement: *BoundaryElementDB::instance()) {
-            for(auto &bead : neighborList->getNeighbors(boundaryElement)) {
+        auto nl = interaction->getNeighborList();
+        for (auto be: *BoundaryElementDB::instance()) {
+            
+            for(auto bd : nl->getNeighbors(be)) {
                 
-                U_i = boundaryInteraction->computeEnergy(boundaryElement, bead, d);
+                U_i = interaction->computeEnergy(be, bd, d);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
                     return -1;
@@ -59,23 +60,29 @@ double BoundaryFF::computeEnergy(double d) {
 }
 
 void BoundaryFF::computeForces() {
-    
-    for (auto &boundaryInteraction : _BoundaryInteractionVector){
+
+    for (auto &interaction : _BoundaryInteractionVector){
         
-        auto neighborList = boundaryInteraction->getNeighborList();
-        for (auto boundaryElement: *BoundaryElementDB::instance())
-            for(auto &bead : neighborList->getNeighbors(boundaryElement))
-                boundaryInteraction->computeForces(boundaryElement, bead);
+        auto nl = interaction->getNeighborList();
+        
+        for (auto be: *BoundaryElementDB::instance()) {
+            
+            for(auto bd : nl->getNeighbors(be))
+                interaction->computeForces(be, bd);
+        }
     }
 }
 
 void BoundaryFF::computeForcesAux() {
     
-    for (auto &boundaryInteraction : _BoundaryInteractionVector){
+    for (auto &interaction : _BoundaryInteractionVector){
         
-        auto neighborList = boundaryInteraction->getNeighborList();
-        for (auto boundaryElement: *BoundaryElementDB::instance())
-            for(auto &bead : neighborList->getNeighbors(boundaryElement))
-                boundaryInteraction->computeForcesAux(boundaryElement, bead);
+        auto nl = interaction->getNeighborList();
+        
+        for (auto be: *BoundaryElementDB::instance()) {
+            
+            for(auto bd : nl->getNeighbors(be))
+                interaction->computeForcesAux(be, bd);
+        }
     }
 }

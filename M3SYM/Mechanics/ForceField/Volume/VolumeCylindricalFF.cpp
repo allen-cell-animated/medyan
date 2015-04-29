@@ -34,22 +34,22 @@ double VolumeCylindricalFF::computeEnergy(double d) {
     double U= 0;
     double U_i;
     
-    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
+    for (auto &interaction : _cylinderVolInteractionVector) {
         
-        auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance()) {
+        auto nl = interaction->getNeighborList();
+        for(auto ci : *CylinderDB::instance()) {
             
             //do not calculate exvol for a non full length cylinder
-            if(cylinder->getMCylinder()->getEqLength() !=
+            if(ci->getMCylinder()->getEqLength() !=
                SysParams::Geometry().cylinderSize) continue;
             
-            for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
+            for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(neighbor->getMCylinder()->getEqLength() !=
+                if(cn->getMCylinder()->getEqLength() !=
                    SysParams::Geometry().cylinderSize) continue;
                 
-                U_i = cylinderVolInteraction->computeEnergy(cylinder, neighbor, d);
+                U_i = interaction->computeEnergy(ci, cn, d);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
                     return -1;
@@ -63,22 +63,22 @@ double VolumeCylindricalFF::computeEnergy(double d) {
 
 void VolumeCylindricalFF::computeForces() {
     
-    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
+    for (auto &interaction : _cylinderVolInteractionVector) {
         
-        auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance()) {
+        auto nl = interaction->getNeighborList();
+        for(auto ci : *CylinderDB::instance()) {
             
             //do not calculate exvol for a non full length cylinder
-            if(cylinder->getMCylinder()->getEqLength() !=
+            if(ci->getMCylinder()->getEqLength() !=
                SysParams::Geometry().cylinderSize) continue;
             
-            for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
+            for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(neighbor->getMCylinder()->getEqLength() !=
+                if(cn->getMCylinder()->getEqLength() !=
                    SysParams::Geometry().cylinderSize) continue;
-        
-                cylinderVolInteraction->computeForces(cylinder, neighbor);
+                
+                interaction->computeForces(ci, cn);
             }
         }
     }
@@ -86,22 +86,22 @@ void VolumeCylindricalFF::computeForces() {
 
 void VolumeCylindricalFF::computeForcesAux() {
     
-    for (auto &cylinderVolInteraction : _cylinderVolInteractionVector) {
+    for (auto &interaction : _cylinderVolInteractionVector) {
         
-        auto neighborList = cylinderVolInteraction->getNeighborList();
-        for(auto &cylinder : *CylinderDB::instance()) {
+        auto nl = interaction->getNeighborList();
+        for(auto ci : *CylinderDB::instance()) {
             
             //do not calculate exvol for a non full length cylinder
-            if(cylinder->getMCylinder()->getEqLength() !=
+            if(ci->getMCylinder()->getEqLength() !=
                SysParams::Geometry().cylinderSize) continue;
             
-            for(auto &neighbor : neighborList->getNeighbors(cylinder)) {
+            for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(neighbor->getMCylinder()->getEqLength() !=
+                if(cn->getMCylinder()->getEqLength() !=
                    SysParams::Geometry().cylinderSize) continue;
                 
-                cylinderVolInteraction->computeForcesAux(cylinder, neighbor);
+                interaction->computeForcesAux(ci, cn);
             }
         }
     }

@@ -35,10 +35,11 @@ double LinkerFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto linker: *LinkerDB::instance()) {
-        for (auto &linkerInteraction : _linkerInteractionVector) {
+    for (auto &interaction : _linkerInteractionVector) {
+        
+        for (auto l: *LinkerDB::instance()) {
             
-            U_i = linkerInteraction.get()->computeEnergy(linker, d);
+            U_i = interaction->computeEnergy(l, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
                 return -1;
@@ -51,15 +52,19 @@ double LinkerFF::computeEnergy(double d) {
 
 void LinkerFF::computeForces() {
     
-    for (auto linker: *LinkerDB::instance())
-        for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->computeForces(linker);
+    for (auto &interaction : _linkerInteractionVector) {
+        
+        for (auto l: *LinkerDB::instance())
+            interaction->computeForces(l);
+    }
 }
 
 void LinkerFF::computeForcesAux() {
     
-    for (auto linker: *LinkerDB::instance())
-        for (auto &linkerInteraction : _linkerInteractionVector)
-            linkerInteraction.get()->computeForcesAux(linker);
+    for (auto &interaction : _linkerInteractionVector) {
+        
+        for (auto l: *LinkerDB::instance())
+            interaction->computeForcesAux(l);
+    }
 }
 

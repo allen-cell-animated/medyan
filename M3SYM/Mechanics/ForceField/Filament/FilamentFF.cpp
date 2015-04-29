@@ -52,10 +52,11 @@ double FilamentFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto fil: *FilamentDB::instance()) {
-        for (auto &filamentInteraction : _filamentInteractionVector) {
-    
-            U_i = filamentInteraction.get()->computeEnergy(fil, d);
+    for (auto &interaction : _filamentInteractionVector) {
+        
+        for (auto f: *FilamentDB::instance()) {
+        
+            U_i = interaction->computeEnergy(f, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
                 return -1;
@@ -67,14 +68,19 @@ double FilamentFF::computeEnergy(double d) {
 }
 
 void FilamentFF::computeForces() {
-    for (auto fil: *FilamentDB::instance())
-        for (auto &filamentInteraction : _filamentInteractionVector)
-          filamentInteraction.get()->computeForces(fil);
+    
+    for (auto &interaction : _filamentInteractionVector) {
+        
+        for (auto f: *FilamentDB::instance())
+            interaction->computeForces(f);
+    }
 }
 
 void FilamentFF::computeForcesAux() {
     
-    for (auto fil: *FilamentDB::instance())
-        for (auto &filamentInteraction : _filamentInteractionVector)
-            filamentInteraction.get()->computeForcesAux(fil);
+    for (auto &interaction : _filamentInteractionVector) {
+        
+        for (auto f: *FilamentDB::instance())
+            interaction->computeForcesAux(f);
+    }
 }
