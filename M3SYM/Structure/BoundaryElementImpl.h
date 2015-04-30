@@ -26,8 +26,6 @@ class PlaneBoundaryElement : public BoundaryElement {
 private:
     /// Parameters of equation (ax + by + cz + d = 0)
     double _a, _b, _c, _d;
-    double _k_rep;
-    double _r0;
 
 public:
     /// Constructor, sets parameters of equation

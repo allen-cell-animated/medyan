@@ -43,9 +43,10 @@ double BoundaryFF::computeEnergy(double d) {
     for (auto &interaction : _BoundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
+        
         for (auto be: *BoundaryElementDB::instance()) {
             
-            for(auto bd : nl->getNeighbors(be)) {
+            for(auto &bd : nl->getNeighbors(be)) {
                 
                 U_i = interaction->computeEnergy(be, bd, d);
                 

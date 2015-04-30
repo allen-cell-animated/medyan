@@ -91,6 +91,21 @@ void Controller::initialize(string inputFile,
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
     
+#ifdef MECHANICS
+    //read algorithm and types
+    auto MTypes = p.readMechanicsFFType();
+    auto MAlgorithm = p.readMechanicsAlgorithm();
+    
+    //read const parameters
+    p.readMechParams();
+    
+    //Initialize Mechanical controller
+    cout << "---" << endl;
+    cout << "Initializing mechanics...";
+    _mController->initialize(MTypes, MAlgorithm);
+    cout << "Done." <<endl;
+#endif
+    
     //Initialize boundary
     cout << "---" << endl;
     cout << "Initializing boundary...";
@@ -110,21 +125,6 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
     }
     cout << "Done." <<endl;
-    
-#ifdef MECHANICS
-    //read algorithm and types
-    auto MTypes = p.readMechanicsFFType();
-    auto MAlgorithm = p.readMechanicsAlgorithm();
-    
-    //read const parameters
-    p.readMechParams();
-    
-    //Initialize Mechanical controller
-    cout << "---" << endl;
-    cout << "Initializing mechanics...";
-    _mController->initialize(MTypes, MAlgorithm);
-    cout << "Done." <<endl;
-#endif
     
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
@@ -314,6 +314,7 @@ void Controller::run() {
 #ifdef MECHANICS
     _mController->run();
     
+    //reupdate positions and neighbor lists
     updatePositions();
     updateNeighborLists(true);
     
