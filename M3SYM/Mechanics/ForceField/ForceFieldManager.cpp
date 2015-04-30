@@ -41,7 +41,7 @@ double ForceFieldManager::computeEnergy(double d) {
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     
-    cout << "Energy calculation took " << elapsed_run.count() << endl;
+    //cout << "Energy calculation took " << elapsed_run.count() << endl;
     return energy;
 }
 
@@ -63,7 +63,7 @@ void ForceFieldManager::computeForces() {
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     
-    cout << "Force calculation took " << elapsed_run.count() << endl;
+    //cout << "Force calculation took " << elapsed_run.count() << endl;
 }
 
 void ForceFieldManager::computeForcesAux() {
@@ -81,7 +81,7 @@ void ForceFieldManager::computeForcesAux() {
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     
-    cout << "ForceAux calculation took " << elapsed_run.count() << endl;
+    //cout << "ForceAux calculation took " << elapsed_run.count() << endl;
 }
 
 void ForceFieldManager::computeForcesAuxP() {
