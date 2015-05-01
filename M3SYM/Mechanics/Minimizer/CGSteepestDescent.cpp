@@ -57,8 +57,8 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-    while (/* Iteration criterion */  numIter < 5 * NDOF &&
-           /* Gradient tolerance  */  curGrad > GRADTOL &&
+    while (/* Iteration criterion */  numIter < 2 * NDOF &&
+           /* Gradient tolerance  */  maxF() > GRADTOL &&
            /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }
 

@@ -58,7 +58,7 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
+    const double LSENERGYTOL = 1e-3; ///< Line search energy tolerance for all
                                      ///< linesearch methods
     
     //@{
@@ -67,6 +67,9 @@ protected:
     double allFADotFA();
     double allFADotFAP();
     double allFDotFA();
+    
+    /// Get the max force in the system
+    double maxF();
     
     /// Move beads in search direction by d
     void moveBeads(double d);

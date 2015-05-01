@@ -52,6 +52,18 @@ double CGMethod::allFDotFA()
     return g;
 }
 
+double CGMethod::maxF() {
+    
+    double maxF = 0;
+    
+    for(auto b: *BeadDB::instance())
+        //calc max force
+        for(int i = 0 ; i < 3; i++)
+            maxF = max(maxF, fabs(b->force[i]));
+
+    return maxF;
+}
+
 
 void CGMethod::moveBeads(double d)
 {
@@ -143,23 +155,14 @@ double CGMethod::binarySearch(ForceFieldManager& FFM)
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) {
     
-    double proj = 0.0; double maxF = 0.0;
+    double proj = allFDotFA();
+    double f = maxF();
     
-    for(auto b: *BeadDB::instance()) {
-        
-        //calc f dot fa
-        proj += b->FDotFA();
-        
-        //calc max force
-        for(int i = 0 ; i < 3; i++)
-            maxF = max(maxF, fabs(b->force[i]));
-    }
-        
     //return zero if no forces
-    if(maxF == 0.0) return 0.0;
+    if(f == 0.0) return 0.0;
  
     //calculate first lambda
-    double lambda = min(LAMBDAMAX, MAXDIST / maxF);
+    double lambda = min(LAMBDAMAX, MAXDIST / f);
     double currentEnergy = FFM.computeEnergy(0.0);
     
     //backtracking loop
@@ -184,23 +187,14 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
 
 double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
     
-    double proj = 0.0; double maxF = 0.0;
-    
-    for(auto b: *BeadDB::instance()) {
-        
-        //calc f dot fa
-        proj += b->FDotFA();
-        
-        //calc max force
-        for(int i = 0 ; i < 3; i++)
-            maxF = max(maxF, fabs(b->force[i]));
-    }
+    double proj = allFDotFA();
+    double f = maxF();
     
     //return zero if no forces
-    if(maxF == 0.0) return 0.0;
+    if(f == 0.0) return 0.0;
     
     //calculate first lambda
-    double lambda = min(LAMBDAMAX, MAXDIST / maxF);
+    double lambda = min(LAMBDAMAX, MAXDIST / f);
     double currentEnergy = FFM.computeEnergy(0.0);
     
     //more vars

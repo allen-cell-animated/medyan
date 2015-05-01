@@ -28,8 +28,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 	double curEnergy = FFM.computeEnergy(0.0);
     double prevEnergy;
     
-	FFM.computeForces();
-    setBeads();
+	FFM.computeForces(); setBeads();
 
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
@@ -71,7 +70,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curGrad = newGrad;
     }
-	while (/* Iteration criterion */  numIter < 5 * NDOF &&
-           /* Gradient tolerance  */  curGrad > GRADTOL &&
+	while (/* Iteration criterion */  numIter < 2 * NDOF &&
+           /* Gradient tolerance  */  maxF() > GRADTOL &&
            /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
 }
