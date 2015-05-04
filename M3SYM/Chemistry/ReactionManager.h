@@ -19,7 +19,6 @@
 
 #include "common.h"
 
-#include "NeighborListContainer.h"
 #include "Species.h"
 
 #include "SysParams.h"
@@ -35,7 +34,7 @@ class CCylinder;
 
 /// To store Filament chemical reaction information read from an input file
 /*!
- *  InternalFilamentRxnManager is used to store a filament reaction. It contains vectors 
+ *  FilamentRxnManager is used to store a filament reaction. It contains vectors
  *  of tuples that represent the position in the CMonomer in which the species is stored 
  *  (for products and reactants), as well as the rate of the reaction. The integer value 
  *  that is the position of the species in the CMonomer vector is held by the 
@@ -46,7 +45,7 @@ class CCylinder;
  *  This class also has functions to add the filament reaction to a CCylinder, as well 
  *  as add a connection reaction between two neighboring [CCylinders](@ref CCylinder).
  */
-class InternalFilamentRxnManager {
+class FilamentRxnManager {
     
     friend class SimpleManagerImpl;
     
@@ -57,37 +56,39 @@ protected:
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
+    /// Info about binding chemistry
+    short _empty = 0;
+    
     float _rate; ///< Rate of reaction
     
-    vector<short> _bindingSites; ///< Binding sites on Cylinder
+    vector<short> _bindingSites; ///< The binding sites on the Cylinder
     
 public:
-    InternalFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
-                               vector<tuple<int, SpeciesType>> products,
-                               float rate)
+    FilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
+                       vector<tuple<int, SpeciesType>> products,
+                       float rate)
         : _reactants(reactants), _products(products), _rate(rate) {
-    
-        
+
 #if !defined(REACTION_SIGNALING)
-        cout << "Any filament-related reaction relies on reaction signaling. Please"
+        cout << "Any filament reaction relies on reaction signaling. Please"
             << " set this compilation macro and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
-            
         //Figure out the binding sites
         int deltaBinding = SysParams::Geometry().cylinderIntSize /
-                           SysParams::Chemistry().numBindingSites;
+        SysParams::Chemistry().numBindingSites;
         
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
         
         //add all other binding sites
         while(bindingCount < SysParams::Geometry().cylinderIntSize) {
+            
             _bindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
     }
-    ~InternalFilamentRxnManager() {}
+    ~FilamentRxnManager() {}
 
     /// Add this chemical reaction. Adds all extension and retraction callbacks needed
     virtual void addReaction(CCylinder* cc) = 0;
@@ -98,54 +99,39 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
 
-/// To store cross-filament reactions, including Linker and MotorGhost binding
+/// To store binding reactions, including Linker, MotorGhost, and BranchingPoint binding
 
 /*!
- *  CrossFilamentRxnManager is used to store a cross-filament reaction. It contains 
- *  vectors of tuples that represent the position in the CMonomer in which the species 
- *  is stored (for products and reactants), as well as the rate of the reaction and 
- *  direction. The integer value that is the position of the species in the CMonomer 
- *  vector is held by the ChemManager. Also contains the range of this reaction.
- *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
- *  active reactions.
- *  @note if the species is a bulk or diffusing species, the integer molecule value in 
- *  the tuple stored in the SpeciesNamesDB.
- *  This class also has functions to add the cross filament reaction to two 
- *  [CCylinders] (@ref CCylinder).
+ *  BindingRxnManager is used to store a binding reaction on filaments in compartments.
+ *  Contains the binding reaction, possible binding sites, and integers representing the 
+ *  binding species involved in the reaction.
+ *  Classes that extend this will implement their own data structures for holding 
+ *  possible reaction sites, etc.
+ *  The main function of this class is to call updatePossibleBindings(), which will 
+ *  update the possible binding sites if the binding reaction is called in this compartment.
  */
-class CrossFilamentRxnManager : public CCNLContainer {
+class BindingRxnManager {
 
     friend class SimpleManagerImpl;
     
 protected:
-    static SubSystem* _ps; ///< A subsystem pointer to intialize
-                           ///< and call chemical callbacks
-    
-    ///Species identifier vectors
-    vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
-    vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
-    
-    float _onRate; ///< On-rate for interaction
-    float _offRate; ///< Off-rate for interaction
-    
-    float _rMin; ///< Minimum reaction range
-    float _rMax; ///< Maximum reaction range
+    ReactionBase* _bindingReaction; ///< The binding reaction for this compartment
     
     vector<short> _bindingSites; ///< The binding sites on the Cylinder
+    
+    //@{
+    /// Info about binding chemistry
+    short _empty = 0;
+    short _bound;
+    //@}
 
 public:
-    CrossFilamentRxnManager(vector<tuple<int, SpeciesType>> reactants,
-                            vector<tuple<int, SpeciesType>> products,
-                            float onRate, float offRate, float rMax, float rMin)
+    BindingRxnManager(ReactionBase* reaction, short bound)
     
-        : CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                        max(rMin - SysParams::Geometry().cylinderSize, 0.0), true),
-    
-        _reactants(reactants), _products(products),
-        _onRate(onRate), _offRate(offRate), _rMin(rMin), _rMax(rMax) {
+        : _bindingReaction(reaction), _bound(bound) {
             
 #if !defined(REACTION_SIGNALING)
-            cout << "Any filament-related reaction relies on reaction signaling. Please"
+            cout << "Any filament binding reaction relies on reaction signaling. Please"
             << " set this compilation macro and try again. Exiting." << endl;
             exit(EXIT_FAILURE);
 #endif
@@ -163,17 +149,9 @@ public:
             bindingCount += deltaBinding;
         }
     }
-    ~CrossFilamentRxnManager() {}
     
-    /// Add this chemical reaction to two ccylinders if within the reaction range
-    virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
-    
-    //@{
-    /// Getter for parameters of reaction
-    float getRMin() {return _rMin;}
-    float getRMax() {return _rMax;}
-    //@}
-    
+    ///update the possible binding reactions that could occur
+    virtual void updatePossibleBindings(CCylinder* cc) = 0;
 };
 
 //@{

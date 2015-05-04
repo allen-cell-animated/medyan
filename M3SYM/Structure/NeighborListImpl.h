@@ -33,14 +33,11 @@ private:
     unordered_map<Cylinder*, vector<Cylinder*>>
         _list; ///< The neighbors list, as a hash map
     
-    bool _crossFilamentOnly; ///< Whether to include cylinders in same filament
-    
     ///Helper function to update neighbors
     void updateNeighbors(Cylinder* cylinder);
     
 public:
-    CCNeighborList(float rMax, float rMin=0.0, bool crossFilamentOnly = false)
-        : NeighborList(rMax, rMin), _crossFilamentOnly(crossFilamentOnly) {}
+    CCNeighborList(float rMax, float rMin=0.0) : NeighborList(rMax, rMin) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);

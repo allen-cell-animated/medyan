@@ -23,6 +23,7 @@
 
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
+#include "ReactionManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
 
@@ -49,21 +50,32 @@ class BoundaryElement;
 
 class Compartment : public Composite {
 protected:
+    
+    ///CHEMICAL CONTAINERS
     SpeciesPtrContainerVector _species;  ///< Container with all species
                                          ///< in this compartment
     ReactionPtrContainerVector _internal_reactions; ///< Container with all internal
                                                     ///< reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion
                                                      ///< reactions in compartment
-    vector<Compartment*> _neighbours; ///< Neighbors of the compartment
+    
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
+    
+    vector<BindingRxnManager> _bindingManagers; ///< All binding managers for this compartment
 
+    ///ELEMENT CONTAINERS
     set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
                                              ///< that are in this compartment
+    
     set<Bead*> _beads; ///< Set of beads that are in this compartment
+    
     set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+    
+    vector<Compartment*> _neighbours; ///< Neighbors of the compartment
 
+    
+    ///OTHER COMPARTMENT PROPERTIES
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
     

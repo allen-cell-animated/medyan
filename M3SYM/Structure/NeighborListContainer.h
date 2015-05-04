@@ -22,14 +22,14 @@
 /// Holds a CCNeighborList.
 class CCNLContainer {
 
-private:
+protected:
     CCNeighborList* _neighborList;
     
 public:
     /// Constructor, adds a cylinder-cylinder neighbor list to the database
-    CCNLContainer(float rMax = 0.0, float rMin = 0.0, bool crossFilamentOnly = false) {
+    CCNLContainer(float rMax = 0.0, float rMin = 0.0) {
         
-        _neighborList = new CCNeighborList(rMax, rMin,crossFilamentOnly);
+        _neighborList = new CCNeighborList(rMax, rMin);
         NeighborListDB::instance()->addNeighborList(_neighborList);
     }
     /// Destructor, removes cylinder-cylinder neighbor list from the database
@@ -46,7 +46,7 @@ public:
 /// Holds a BBENeighborList.
 class BBENLContainer {
     
-private:
+protected:
     BBENeighborList* _neighborList;
 
 public:
@@ -69,7 +69,7 @@ public:
 /// Holds a CBENeighborList.
 class CBENLContainer {
     
-private:
+protected:
     CBENeighborList* _neighborList;
     
 public:

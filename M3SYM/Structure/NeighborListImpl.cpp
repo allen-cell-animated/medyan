@@ -45,9 +45,6 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
             //Don't add if on the same filament
             if(cylinder->getFilament() == ncylinder->getFilament()) {
                 
-                //if cross filament only interaction, dont add
-                if(_crossFilamentOnly) continue;
-                
                 //if not cross filament, check if not neighboring
                 auto dist = fabs(cylinder->getPositionFilament() -
                                 ncylinder->getPositionFilament());
