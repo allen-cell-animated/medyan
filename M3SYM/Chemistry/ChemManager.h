@@ -38,16 +38,13 @@ public:
     static void setInstance(ChemManagerImpl *cii);
     
     ///Initialize the compartment grid, based on the given simulation
-    static void initialize();
+    static void initializeSystem();
     
     ///Initializer, based on the given simulation
     static void initializeCCylinder(CCylinder* cc, Filament* f,
-                                    bool extensionFront, bool extensionBack,
+                                    bool extensionFront,
+                                    bool extensionBack,
                                     bool creation);
-    
-    ///Add/update cross cylinder reactions that are within range
-    static void updateCCylinder(CCylinder* cc);
-    
     
     /// Initialize the copy numbers of all species
     /// @note - this only sets the copy number if the simulation time

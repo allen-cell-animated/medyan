@@ -63,7 +63,7 @@ protected:
                                                ///< in compartment
     
     /// All binding managers for this compartment
-    vector<FilamentBindingManager*> _bindingManagers;
+    vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
 
     ///ELEMENT CONTAINERS
     unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
@@ -399,11 +399,11 @@ public:
     
     /// Add a binding manager to this compartment
     void addFilamentBindingManager(FilamentBindingManager* m) {
-        _bindingManagers.push_back(m);
+        _bindingManagers.emplace_back(m);
     }
     
     /// Get binding managers for this compartment
-    vector<FilamentBindingManager*>& getFilamentBindingManagers() {
+    vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
         return _bindingManagers;
     }
     

@@ -25,7 +25,12 @@ CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
     //Find species on cylinder that should be marked
     SpeciesBound* sb1 =
     _cc1->getCMonomer(pos)->speciesBrancher(branchType);
+    SpeciesBound* se1 =
+    _cc1->getCMonomer(pos)->speciesBound(BOUND_EMPTY);
     
+    //mark species
+    sb1->up(); se1->down();
+        
     //attach this branchpoint to the species
     setFirstSpecies(sb1);
 }

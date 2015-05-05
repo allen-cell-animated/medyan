@@ -15,6 +15,8 @@
 
 #include "Cylinder.h"
 
+mt19937* FilamentBindingManager::_eng = 0;
+
 void BranchingManager::updatePossibleBindings(CCylinder* cc) {
     
     //remove all tuples which have this ccylinder
@@ -28,9 +30,9 @@ void BranchingManager::updatePossibleBindings(CCylinder* cc) {
     
     //now re add valid binding sites
     for(auto it = SysParams::Chemistry().bindingSites.begin();
-        it != SysParams::Chemistry().bindingSites.end(); it++)
+             it != SysParams::Chemistry().bindingSites.end(); it++)
         
-        if (cc->getCMonomer(*it)->activeSpeciesBound() == _empty)
+        if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY)
             
             _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it));
 }
@@ -87,7 +89,7 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc) {
     for(auto it = SysParams::Chemistry().bindingSites.begin();
         it != SysParams::Chemistry().bindingSites.end(); it++) {
         
-        if (cc->getCMonomer(*it)->activeSpeciesBound() == _empty) {
+        if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
             
             //loop through neighbors
             //now re add valid based on CCNL
@@ -98,7 +100,7 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc) {
                 for(auto it2 = SysParams::Chemistry().bindingSites.begin();
                          it2 != SysParams::Chemistry().bindingSites.end(); it2++)
                     
-                    if (ccn->getCMonomer(*it2)->activeSpeciesBound() == _empty)
+                    if (ccn->getCMonomer(*it2)->activeSpeciesBound() == BOUND_EMPTY)
                         
                         _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it),
                                                  tuple<CCylinder*, short>(ccn, *it2));
@@ -169,7 +171,7 @@ void MotorBindingManager::updatePossibleBindings(CCylinder* cc) {
     for(auto it = SysParams::Chemistry().bindingSites.begin();
         it != SysParams::Chemistry().bindingSites.end(); it++) {
         
-        if (cc->getCMonomer(*it)->activeSpeciesBound() == _empty) {
+        if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
             
             //loop through neighbors
             //now re add valid based on CCNL
@@ -180,7 +182,7 @@ void MotorBindingManager::updatePossibleBindings(CCylinder* cc) {
                 for(auto it2 = SysParams::Chemistry().bindingSites.begin();
                          it2 != SysParams::Chemistry().bindingSites.end(); it2++)
                     
-                    if (ccn->getCMonomer(*it2)->activeSpeciesBound() == _empty)
+                    if (ccn->getCMonomer(*it2)->activeSpeciesBound() == BOUND_EMPTY)
                         
                         _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it),
                                                  tuple<CCylinder*, short>(ccn, *it2));

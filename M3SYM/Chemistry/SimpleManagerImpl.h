@@ -19,7 +19,7 @@
 #include "common.h"
 
 #include "ChemManagerImpl.h"
-#include "ReactionManagerImpl.h"
+#include "FilamentReactionTemplate.h"
 #include "Parser.h"
 
 //FORWARD DECLARATIONS
@@ -27,22 +27,22 @@ class SubSystem;
 class CMonomer;
 class Compartment;
 
-class InternalFilamentRxnManager;
-class CrossFilamentRxnManager;
 
 /// A concrete implementation of the ChemManagerImpl class.
 /// @see ChemManager for documentation on implemented methods.
 class SimpleManagerImpl : public ChemManagerImpl {
     
 private:
-    SubSystem* _subSystem; ///< A pointer to subsytem for creation of callbacks, etc.
+    
+//DATA MEMBERS
+    
+    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
     ChemistryData _chemData; ///<The chemistry data for the system
     
     /// A list of reactions to add to every new CCylinder
-    vector<unique_ptr<InternalFilamentRxnManager>> _IFRxnManagers;
-    /// A list of cross filament reactions to add to [CCylinders] (@ref CCylinder)
-    vector<unique_ptr<CrossFilamentRxnManager>> _CFRxnManagers;
-    
+    vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
+
+//HELPER FUNCTIONS
     
     /// Configure memory and parameters of CMonomer class
     void configureCMonomer();
@@ -57,11 +57,12 @@ private:
     /// diffusing and/or bulk species
     void genNucleationReactions();
     
-    //@{
-    /// Set up all Filament ReactionManagers from the setup struct
-    void genIFRxnManagers();
-    void genCFRxnManagers();
-    //@}
+    /// Set up all [FilamentReactionTemplate](@ref FilamentReactionTemplate)
+    /// from the setup struct
+    void genFilRxnTemplates();
+    /// Set up all [FilamentBindingManagers](@ref FilamentBindingManager)
+    /// from the setup struct. Adds to each Compartment.
+    void genFilBindingManagers();
     
     /// Generate all species, bulk and diffusing
     void genSpecies(Compartment& protoCompartment);
@@ -69,16 +70,15 @@ private:
 public:
     ///Constructor sets subsystem pointer
     SimpleManagerImpl(SubSystem* subSystem, ChemistryData chem)
+    
         : _subSystem(subSystem), _chemData(chem) {}
 
-    virtual void initialize();
+    virtual void initializeSystem();
     
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
                                      bool extensionFront,
                                      bool extensionBack,
                                      bool creation);
-    
-    virtual void updateCCylinder(CCylinder* cc);
     
     virtual void updateCopyNumbers();
     

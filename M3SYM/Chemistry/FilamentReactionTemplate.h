@@ -38,7 +38,7 @@ class CCylinder;
  *  of tuples that represent the position in the CMonomer in which the species is stored 
  *  (for products and reactants), as well as the rate of the reaction. The integer value 
  *  that is the position of the species in the CMonomer vector is held by the 
- *  ChemManager.
+ *  ChemTemplate.
  *  @note if the species is a bulk or diffusing species, the integer molecule value in 
  *  the tuple stored in the SpeciesNamesDB.
  *
@@ -84,133 +84,133 @@ public:
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
 
-/// Manager for polymerization at plus end of Filament
-class PolyPlusEndManager : public FilamentReactionTemplate {
+/// Template for polymerization at plus end of Filament
+class PolyPlusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    PolyPlusEndManager(vector<tuple<int, SpeciesType>> reactants,
+    PolyPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
                        float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~PolyPlusEndManager() {}
+    ~PolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
-/// Manager for polymerization at minus end of Filament
-class PolyMinusEndManager : public FilamentReactionTemplate {
+/// Template for polymerization at minus end of Filament
+class PolyMinusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    PolyMinusEndManager(vector<tuple<int, SpeciesType>> reactants,
+    PolyMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
                         vector<tuple<int, SpeciesType>> products,
                         float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~PolyMinusEndManager() {}
+    ~PolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 
-/// Manager for depolymerization at plus end of Filament
-class DepolyPlusEndManager : public FilamentReactionTemplate {
+/// Template for depolymerization at plus end of Filament
+class DepolyPlusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    DepolyPlusEndManager(vector<tuple<int, SpeciesType>> reactants,
+    DepolyPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
                          vector<tuple<int, SpeciesType>> products,
                          float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~DepolyPlusEndManager() {}
+    ~DepolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for depolymerization at minus end of Filament
-class DepolyMinusEndManager : public FilamentReactionTemplate {
+/// Template for depolymerization at minus end of Filament
+class DepolyMinusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    DepolyMinusEndManager(vector<tuple<int, SpeciesType>> reactants,
+    DepolyMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
                           vector<tuple<int, SpeciesType>> products,
                           float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~DepolyMinusEndManager() {}
+    ~DepolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for MotorGhost walking
-class MotorWalkFManager : public FilamentReactionTemplate {
+/// Template for MotorGhost walking
+class MotorWalkFTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkFManager(vector<tuple<int, SpeciesType>> reactants,
+    MotorWalkFTemplate(vector<tuple<int, SpeciesType>> reactants,
                       vector<tuple<int, SpeciesType>> products,
                       float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~MotorWalkFManager() {}
+    ~MotorWalkFTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
-/// Manager for MotorGhost walking
-class MotorWalkBManager : public FilamentReactionTemplate {
+/// Template for MotorGhost walking
+class MotorWalkBTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkBManager(vector<tuple<int, SpeciesType>> reactants,
+    MotorWalkBTemplate(vector<tuple<int, SpeciesType>> reactants,
                       vector<tuple<int, SpeciesType>> products,
                       float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~MotorWalkBManager() {}
+    ~MotorWalkBTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 
-/// Manager for Filament aging
-class AgingManager : public FilamentReactionTemplate {
+/// Template for Filament aging
+class AgingTemplate : public FilamentReactionTemplate {
     
 public:
-    AgingManager(vector<tuple<int, SpeciesType>> reactants,
+    AgingTemplate(vector<tuple<int, SpeciesType>> reactants,
                  vector<tuple<int, SpeciesType>> products,
                  float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~AgingManager() {}
+    ~AgingTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
-/// Manager for Filament destruction
-class DestructionManager : public FilamentReactionTemplate {
+/// Template for Filament destruction
+class DestructionTemplate : public FilamentReactionTemplate {
     
     
 public:
-    DestructionManager(vector<tuple<int, SpeciesType>> reactants,
+    DestructionTemplate(vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
                        float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~DestructionManager() {}
+    ~DestructionTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
     
 };
 
-/// Manager for severing a Filament
-class SeveringManager : public FilamentReactionTemplate {
+/// Template for severing a Filament
+class SeveringTemplate : public FilamentReactionTemplate {
     
 public:
-    SeveringManager(vector<tuple<int, SpeciesType>> reactants,
+    SeveringTemplate(vector<tuple<int, SpeciesType>> reactants,
                     vector<tuple<int, SpeciesType>> products,
                     float rate)
     : FilamentReactionTemplate(reactants, products, rate) {}
-    ~SeveringManager() {}
+    ~SeveringTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}

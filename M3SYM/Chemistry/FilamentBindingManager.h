@@ -16,6 +16,7 @@
 
 #include <unordered_set>
 #include <unordered_map>
+#include <random>
 
 #include "common.h"
 
@@ -50,23 +51,23 @@ class FilamentBindingManager {
 protected:
     ReactionBase* _bindingReaction; ///< The binding reaction for this compartment
     
-    //@{
-    /// Info about binding chemistry
-    short _empty = 0;
+    /// Integer index of bound chemical value
     short _bound;
-    //@}
+    
+    static mt19937 *_eng; ///< Random number generator
     
 public:
     FilamentBindingManager(ReactionBase* reaction, short bound)
     
     : _bindingReaction(reaction), _bound(bound) {
-        
+    
 #if !defined(REACTION_SIGNALING)
         cout << "Any filament binding reaction relies on reaction signaling. Please"
         << " set this compilation macro and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
     }
+    ~FilamentBindingManager() {delete _eng;}
     
     ///update the possible binding reactions that could occur
     virtual void updatePossibleBindings(CCylinder* cc) = 0;
@@ -77,6 +78,9 @@ public:
     /// In the case of a cylinder copy, copy all possible bindings
     /// to a new cylinder.
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc) = 0;
+    
+    ///Get the bound species
+    virtual short getBound() {return _bound;}
 };
 
 
@@ -96,6 +100,19 @@ public:
     virtual void updatePossibleBindings(CCylinder* cc);
     virtual void removePossibleBindings(CCylinder* cc);
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    
+    /// Choose a random binding site based on current state
+    tuple<CCylinder*, short> chooseBindingSite() {
+        
+        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
+        
+        int randomIndex = dis(_eng);
+        auto it = _possibleBindings.begin();
+        
+        advance(it, randomIndex);
+        
+        return *it;
+    }
 };
 
 /// Manager for Linker binding.
@@ -121,13 +138,26 @@ public:
     CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
                   max(rMin - SysParams::Geometry().cylinderSize, 0.0)),
     
-    _rMin(rMin), _rMax(_rMax) {}
+    _rMin(rMin), _rMax(rMax) {}
     
     ~LinkerBindingManager() {}
     
     virtual void updatePossibleBindings(CCylinder* cc);
     virtual void removePossibleBindings(CCylinder* cc);
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    
+    /// Choose random binding sites based on current state
+    vector<tuple<CCylinder*, short>> chooseBindingSites() {
+        
+        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
+        
+        int randomIndex = dis(_eng);
+        auto it = _possibleBindings.begin();
+        
+        advance(it, randomIndex);
+        
+        return vector<tuple<CCylinder*, short>>{it->first, it->second};
+    }
 };
 
 /// Manager for MotorGhost binding
@@ -152,13 +182,26 @@ public:
     CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
                   max(rMin - SysParams::Geometry().cylinderSize, 0.0)),
     
-    _rMin(rMin), _rMax(_rMax) {}
+    _rMin(rMin), _rMax(rMax) {}
     
     ~MotorBindingManager() {}
     
     virtual void updatePossibleBindings(CCylinder* cc);
     virtual void removePossibleBindings(CCylinder* cc);
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    
+    /// Choose random binding sites based on current state
+    vector<tuple<CCylinder*, short>> chooseBindingSites() {
+        
+        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
+        
+        int randomIndex = dis(_eng);
+        auto it = _possibleBindings.begin();
+        
+        advance(it, randomIndex);
+        
+        return vector<tuple<CCylinder*, short>>{it->first, it->second};
+    }
 };
 
 #endif

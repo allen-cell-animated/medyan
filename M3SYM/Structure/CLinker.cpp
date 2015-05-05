@@ -24,6 +24,12 @@ CLinker::CLinker(short linkerType, Compartment* c,
         //Find species on cylinder that should be marked
         SpeciesBound* sl1 = _cc1->getCMonomer(pos1)->speciesLinker(linkerType);
         SpeciesBound* sl2 = _cc2->getCMonomer(pos2)->speciesLinker(linkerType);
+        SpeciesBound* se1 = _cc1->getCMonomer(pos1)->speciesBound(BOUND_EMPTY);
+        SpeciesBound* se2 = _cc2->getCMonomer(pos2)->speciesBound(BOUND_EMPTY);
+        
+        //mark species
+        sl1->up(); sl2->up();
+        se1->down(); se2->down();
         
         //attach this linker to the species
         setFirstSpecies(sl1);

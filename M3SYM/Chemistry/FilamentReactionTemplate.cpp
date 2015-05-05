@@ -26,7 +26,7 @@ using namespace mathfunc;
 
 SubSystem* FilamentReactionTemplate::_ps = 0;
 
-void PolyPlusEndManager::addReaction(CCylinder* cc) {
+void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -65,7 +65,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(_empty));
+        productSpecies.push_back(m1->speciesBound(BOUND_EMPTY));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -108,7 +108,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(_empty));
+    productSpecies.push_back(m->speciesBound(BOUND_EMPTY));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -126,7 +126,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
 }
 
-void PolyMinusEndManager::addReaction(CCylinder* cc) {
+void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -164,7 +164,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(_empty));
+        productSpecies.push_back(m1->speciesBound(BOUND_EMPTY));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -206,7 +206,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(_empty));
+    productSpecies.push_back(m->speciesBound(BOUND_EMPTY));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -223,7 +223,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
 }
 
-void DepolyPlusEndManager::addReaction(CCylinder* cc) {
+void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -247,7 +247,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(_empty));
+        reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -280,7 +280,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DepolyMinusEndManager::addReaction(CCylinder* cc) {
+void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -304,7 +304,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(_empty));
+        reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -337,7 +337,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
@@ -355,7 +355,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(_empty));
+    reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -385,7 +385,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
 }
 
-void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -402,7 +402,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(_empty));
+    reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -432,7 +432,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 }
 
-void MotorWalkFManager::addReaction(CCylinder* cc) {
+void MotorWalkFTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites.begin();
@@ -487,7 +487,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
     CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
@@ -536,7 +536,7 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
-void MotorWalkBManager::addReaction(CCylinder* cc) {
+void MotorWalkBTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites.end() - 1;
@@ -591,7 +591,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
     CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
@@ -640,7 +640,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
 }
 
-void AgingManager::addReaction(CCylinder* cc) {
+void AgingTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -688,7 +688,7 @@ void AgingManager::addReaction(CCylinder* cc) {
 }
 
 
-void DestructionManager::addReaction(CCylinder* cc) {
+void DestructionTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -745,7 +745,7 @@ void DestructionManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -794,7 +794,7 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
 }
 
-void SeveringManager::addReaction(CCylinder* cc) {
+void SeveringTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites.begin();
@@ -809,7 +809,7 @@ void SeveringManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m->speciesFilament(getInt(r)));
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
-        reactantSpecies.push_back(m->speciesBound(_empty));
+        reactantSpecies.push_back(m->speciesBound(BOUND_EMPTY));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
@@ -826,7 +826,7 @@ void SeveringManager::addReaction(CCylinder* cc) {
 }
 
 
-//void BranchingManager::addReaction(CCylinder* cc) {
+//void BranchingTemplate::addReaction(CCylinder* cc) {
 //    
 //    //loop through all monomers
 //    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
@@ -885,7 +885,7 @@ void SeveringManager::addReaction(CCylinder* cc) {
 //}
 //
 //
-//void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+//void LinkerRxnTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 //    
 //    //Add reaction to the binding sites that are within range
 //    for(int i : _bindingSites) {
@@ -962,7 +962,7 @@ void SeveringManager::addReaction(CCylinder* cc) {
 //    }
 //}
 //
-//void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+//void MotorRxnTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 //    
 //    //Add reaction to the binding sites that are within range
 //    for(int i : _bindingSites) {

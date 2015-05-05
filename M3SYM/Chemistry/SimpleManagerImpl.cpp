@@ -87,7 +87,7 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     }
 }
 
-void SimpleManagerImpl::genIFRxnManagers() {
+void SimpleManagerImpl::genFilRxnTemplates() {
     
     //set up reaction templates
     for(auto &r: _chemData.polymerizationReactions) {
@@ -293,11 +293,11 @@ void SimpleManagerImpl::genIFRxnManagers() {
         
         //Add polymerization managers
         if(d == FilamentReactionDirection::FORWARD)
-            _IFRxnManagers.emplace_back(
-                new PolyPlusEndManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new PolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _IFRxnManagers.emplace_back(
-                new PolyMinusEndManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new PolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     
@@ -504,11 +504,11 @@ void SimpleManagerImpl::genIFRxnManagers() {
         
         //Add depolymerization managers
         if(d == FilamentReactionDirection::FORWARD)
-            _IFRxnManagers.emplace_back(
-            new DepolyMinusEndManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new DepolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else
-            _IFRxnManagers.emplace_back(
-            new DepolyPlusEndManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new DepolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
 
     for(auto &r: _chemData.motorWalkingReactions) {
@@ -676,11 +676,11 @@ void SimpleManagerImpl::genIFRxnManagers() {
 
         //add reaction
         if(type == ReactionType::MOTORWALKINGFORWARD)
-            _IFRxnManagers.emplace_back(
-                new MotorWalkFManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new MotorWalkFTemplate(reactantTemplate, productTemplate, get<2>(r)));
         else {
-            _IFRxnManagers.emplace_back(
-                new MotorWalkBManager(reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates.emplace_back(
+            new MotorWalkBTemplate(reactantTemplate, productTemplate, get<2>(r)));
         }
     }
     
@@ -847,8 +847,8 @@ void SimpleManagerImpl::genIFRxnManagers() {
         }
         
         //add reaction
-        _IFRxnManagers.emplace_back(
-            new AgingManager(reactantTemplate, productTemplate, get<2>(r)));
+        _filRxnTemplates.emplace_back(
+        new AgingTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     
@@ -971,8 +971,8 @@ void SimpleManagerImpl::genIFRxnManagers() {
         }
             
         //add reaction
-        _IFRxnManagers.emplace_back(
-            new DestructionManager(reactantTemplate, productTemplate, get<2>(r)));
+        _filRxnTemplates.emplace_back(
+        new DestructionTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
     
     //set up reaction templates
@@ -1014,591 +1014,594 @@ void SimpleManagerImpl::genIFRxnManagers() {
         }
         
         //add reaction
-        _IFRxnManagers.emplace_back(
-          new SeveringManager(reactantTemplate, productTemplate, get<1>(r)));
-    }
-    
-    //set up reaction templates
-    for(auto &r: _chemData.branchingReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != BRANCHINGREACTANTS ||
-           products.size() != BRANCHINGPRODUCTS) {
-            cout << "Invalid branching reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST AND SECOND SPECIES MUST BE BULK OR DIFFUSING
-        auto reactant = reactants[0];
-        if(reactant.find("BULK") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, string, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            
-            if(it == _chemData.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back( tuple<int, SpeciesType>(
-            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(reactant.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "First species listed in a branching reaction must be either bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        reactant = reactants[1];
-        if(reactant.find("BULK") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, string, double> element) {
-                                  return get<0>(element) == name ? true : false; });
-            
-            if(it == _chemData.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back( tuple<int, SpeciesType>(
-            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(reactant.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
-                                  return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "Second species listed in a branching reaction must be either bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        //THIRD REACTANT SPECIES MUST BE BOUND
-        reactant = reactants[2];
-        if(reactant.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                      SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Third species listed in a branching reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        //FIRST PRODUCT SPECIES MUST BE BRANCHER
-        auto product = products[0];
-        if(product.find("BRANCHER") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBrancher.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesBrancher.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                   SpeciesType::BRANCHER));
-            }
-            else {
-                cout <<
-                "A brancher species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Fourth species listed in a branching reaction must be brancher. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND PRODUCT SPECIES MUST BE PLUS END
-        product = products[1];
-        if(product.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                   SpeciesType::PLUSEND));
-            }
-            else {
-                cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Second product species listed in a branching reaction must be plus end. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //add reaction
-        _IFRxnManagers.emplace_back(
-        new BranchingManager(reactantTemplate, productTemplate, get<2>(r), get<3>(r)));
+        _filRxnTemplates.emplace_back(
+        new SeveringTemplate(reactantTemplate, productTemplate, get<1>(r)));
     }
 }
 
-void SimpleManagerImpl::genCFRxnManagers() {
+void SimpleManagerImpl::genFilBindingManagers() {
     
-    for(auto &r: _chemData.linkerReactions) {
+    //loop through all compartments
+    for(auto &c : CompartmentGrid::instance()->children()) {
+        Compartment *C = (Compartment*)(c.get());
         
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        string species1;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
+        if(!C->isActivated()) continue;
     
-        //Checks on number of reactants, products
-        if(reactants.size() != LMBINDINGREACTANTS ||
-           products.size() != LMBINDINGPRODUCTS) {
-            cout << "Invalid linker reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST TWO SPECIES SHOULD BE BOUND
-        auto reactant = reactants[0];
-        if(reactant.find("BOUND") != string::npos) {
+        for(auto &r: _chemData.branchingReactions) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
+            vector<Species*> reactantSpecies;
+            vector<Species*> productSpecies;
             
-            if(it != _chemData.speciesBound.end()) {
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != BRANCHINGREACTANTS ||
+               products.size() != BRANCHINGPRODUCTS) {
+                cout << "Invalid branching reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST AND SECOND SPECIES MUST BE BULK OR DIFFUSING
+            auto reactant = reactants[0];
+            if(reactant.find("BULK") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                       SpeciesType::BOUND));
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
+                                  return get<0>(element) == name ? true : false; });
+                
+                if(it == _chemData.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
+            }
+            
+            else if(reactant.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double> element) {
+                                      return get<0>(element) == name ? true : false; });
+                if(it == _chemData.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(C->findSpeciesByName(name));
             }
             else {
                 cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
+                "First species listed in a branching reaction must be either bulk or diffusing. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "First species listed in a linker reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        reactant = reactants[1];
-        if(reactant.find("BOUND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
+            reactant = reactants[1];
+            if(reactant.find("BULK") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::BOUND));
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
+                                      return get<0>(element) == name ? true : false; });
+                
+                if(it == _chemData.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
+            }
+            
+            else if(reactant.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double> element) {
+                                      return get<0>(element) == name ? true : false; });
+                if(it == _chemData.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantSpecies.push_back(C->findSpeciesByName(name));
             }
             else {
                 cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
+                "Second species listed in a branching reaction must be either bulk or diffusing. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Second species listed in a linker reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
-        reactant = reactants[2];
-        if(reactant.find("BULK") != string::npos) {
             
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                [name](tuple<string, int, string, double> element) {
-                                return get<0>(element) == name ? true : false; });
-            
-            if(it == _chemData.speciesBulk.end()) {
+            //THIRD REACTANT SPECIES MUST BE BOUND
+            reactant = reactants[2];
+            if(reactant.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound.begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                                       SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
                 cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
+                "Third species listed in a branching reaction must be bound. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(reactant.find("DIFFUSING") != string::npos) {
             
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
+            //FIRST PRODUCT SPECIES MUST BE BRANCHER
+            auto product = products[0];
+            if(product.find("BRANCHER") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBrancher.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBrancher.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                                      SpeciesType::BRANCHER));
+                }
+                else {
+                    cout <<
+                    "A brancher species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
                 cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
+                "Fourth species listed in a branching reaction must be brancher. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
+            
+            //SECOND PRODUCT SPECIES MUST BE PLUS END
+            product = products[1];
+            if(product.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd.end()) {
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                                      SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Second product species listed in a branching reaction must be plus end. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //Create reaction
+            .emplace_back(
+            new BranchingManager(reactantTemplate, productTemplate, get<2>(r), get<3>(r)));
         }
         
+        
+        for(auto &r: _chemData.linkerReactions) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            string species1;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+        
+            //Checks on number of reactants, products
+            if(reactants.size() != LMBINDINGREACTANTS ||
+               products.size() != LMBINDINGPRODUCTS) {
+                cout << "Invalid linker reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST TWO SPECIES SHOULD BE BOUND
+            auto reactant = reactants[0];
+            if(reactant.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound.begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                           SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "First species listed in a linker reaction must be bound. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            reactant = reactants[1];
+            if(reactant.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound.begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                            SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Second species listed in a linker reaction must be bound. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
+            reactant = reactants[2];
+            if(reactant.find("BULK") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                    [name](tuple<string, int, string, double> element) {
+                                    return get<0>(element) == name ? true : false; });
+                
+                if(it == _chemData.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
+            }
+            
+            else if(reactant.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double> element) {
+                                  return get<0>(element) == name ? true : false; });
+                if(it == _chemData.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
+            }
+            else {
+                cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
 
-        //FIRST TWO SPECIES IN PRODUCTS MUST BE LINKER
-        auto product = products[0];
-        
-        if(product.find("LINKER") != string::npos) {
+            //FIRST TWO SPECIES IN PRODUCTS MUST BE LINKER
+            auto product = products[0];
             
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
-            int position = 0;
-            
-            species1 = name;
-            
-            if(it != _chemData.speciesLinker.end()) {
+            if(product.find("LINKER") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesLinker.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                      SpeciesType::LINKER));
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
+                int position = 0;
+                
+                species1 = name;
+                
+                if(it != _chemData.speciesLinker.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesLinker.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                          SpeciesType::LINKER));
+                }
+                else {
+                    cout <<
+                    "A linker species that was included in a reaction was not initialized. Exiting." <<
+                    endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A linker species that was included in a reaction was not initialized. Exiting." <<
-                endl;
+                "Fourth species listed in a linker reaction must be linker. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Fourth species listed in a linker reaction must be linker. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        product = products[1];
-        if(product.find("LINKER") != string::npos) {
             
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
-            int position = 0;
-            
-            if(name != species1) {
-                cout <<
-                "Linker species in reactants and products of linker reaction must be same. Exiting." <<
-                endl;
-                exit(EXIT_FAILURE);
-            }
-        
-            if(it != _chemData.speciesLinker.end()) {
+            product = products[1];
+            if(product.find("LINKER") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesLinker.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::LINKER));
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
+                int position = 0;
+                
+                if(name != species1) {
+                    cout <<
+                    "Linker species in reactants and products of linker reaction must be same. Exiting." <<
+                    endl;
+                    exit(EXIT_FAILURE);
+                }
+            
+                if(it != _chemData.speciesLinker.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesLinker.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::LINKER));
+                }
+                else {
+                    cout <<
+                    "A linker species that was included in a reaction was not initialized. Exiting." <<
+                    endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else {
+                cout <<
+                "Fifth species listed in a linker reaction must be linker. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            //extend range of rMax, rMin by cylinder size
+            double rMax = get<4>(r);
+            double rMin = get<5>(r);
+            _CFRxnManagers.emplace_back(
+                new LinkerRxnManager(reactantTemplate, productTemplate,
+                                     get<2>(r), get<3>(r), rMax, rMin));
+        }
+       
+        for(auto &r: _chemData.motorReactions) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            string species1;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != LMBINDINGREACTANTS ||
+               products.size() != LMBINDINGPRODUCTS) {
+                cout << "Invalid motor reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST TWO SPECIES SHOULD BE BOUND
+            auto reactant = reactants[0];
+            if(reactant.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound.begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                            SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A linker species that was included in a reaction was not initialized. Exiting." <<
-                endl;
+                "First species listed in a motor reaction must be bound. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        
-        else {
-            cout <<
-            "Fifth species listed in a linker reaction must be linker. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        //extend range of rMax, rMin by cylinder size
-        double rMax = get<4>(r);
-        double rMin = get<5>(r);
-        _CFRxnManagers.emplace_back(
-            new LinkerRxnManager(reactantTemplate, productTemplate,
-                                 get<2>(r), get<3>(r), rMax, rMin));
-    }
-   
-    for(auto &r: _chemData.motorReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        string species1;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != LMBINDINGREACTANTS ||
-           products.size() != LMBINDINGPRODUCTS) {
-            cout << "Invalid motor reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST TWO SPECIES SHOULD BE BOUND
-        auto reactant = reactants[0];
-        if(reactant.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
+            reactant = reactants[1];
+            if(reactant.find("BOUND") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::BOUND));
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound.begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                           SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
+                "Second species listed in a motor reaction must be bound. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "First species listed in a motor reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        reactant = reactants[1];
-        if(reactant.find("BOUND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
+            //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
+            reactant = reactants[2];
+            if(reactant.find("BULK") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                       SpeciesType::BOUND));
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, string, double> element) {
+                                  return get<0>(element) == name ? true : false; });
+                
+                if(it == _chemData.speciesBulk.end()) {
+                    cout <<
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
+            }
+            
+            else if(reactant.find("DIFFUSING") != string::npos) {
+                
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double> element) {
+                                  return get<0>(element) == name ? true : false; });
+                if(it == _chemData.speciesDiffusing.end()) {
+                    cout <<
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                reactantTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
+                "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Second species listed in a motor reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
-        reactant = reactants[2];
-        if(reactant.find("BULK") != string::npos) {
             
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, string, double> element) {
-                              return get<0>(element) == name ? true : false; });
             
-            if(it == _chemData.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(reactant.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
-                              return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        
-        //FIRST TWO SPECIES IN PRODUCTS MUST BE MOTOR
-        auto product = products[0];
-        if(product.find("MOTOR") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-            int position = 0;
-            
-            species1 = name;
-            
-            if(it != _chemData.speciesMotor.end()) {
+            //FIRST TWO SPECIES IN PRODUCTS MUST BE MOTOR
+            auto product = products[0];
+            if(product.find("MOTOR") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesMotor.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                       SpeciesType::MOTOR));
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
+                int position = 0;
+                
+                species1 = name;
+                
+                if(it != _chemData.speciesMotor.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMotor.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                           SpeciesType::MOTOR));
+                }
+                else {
+                    cout <<
+                    "A motor species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A motor species that was included in a reaction was not initialized. Exiting."
+                "Fourth species listed in a motor reaction must be motor. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Fourth species listed in a motor reaction must be motor. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        product = products[1];
-        if(product.find("MOTOR") != string::npos) {
             
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-            int position = 0;
-            
-            if(name != species1) {
-                cout <<
-                "Motor species in reactants and products of motor binding reaction must be same. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
- 
-            if(it != _chemData.speciesMotor.end()) {
+            product = products[1];
+            if(product.find("MOTOR") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesMotor.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                      SpeciesType::MOTOR));
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
+                int position = 0;
+                
+                if(name != species1) {
+                    cout <<
+                    "Motor species in reactants and products of motor binding reaction must be same. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+     
+                if(it != _chemData.speciesMotor.end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMotor.begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                          SpeciesType::MOTOR));
+                }
+                else {
+                    cout <<
+                    "A motor species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A motor species that was included in a reaction was not initialized. Exiting."
+                "Fifth species listed in a motor reaction must be motor. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
+            double rMax = get<4>(r);
+            double rMin = get<5>(r);
+            _CFRxnManagers.emplace_back(
+                new MotorRxnManager(reactantTemplate, productTemplate,
+                                    get<2>(r), get<3>(r), rMax, rMin));
         }
-        else {
-            cout <<
-            "Fifth species listed in a motor reaction must be motor. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        double rMax = get<4>(r);
-        double rMin = get<5>(r);
-        _CFRxnManagers.emplace_back(
-            new MotorRxnManager(reactantTemplate, productTemplate,
-                                get<2>(r), get<3>(r), rMax, rMin));
     }
 }
 
@@ -1617,9 +1620,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
 }
 
 void SimpleManagerImpl::updateCopyNumbers() {
-    
 
-    
     //look at copy number for each species
     for(auto &s : _chemData.speciesDiffusing) {
         
@@ -2137,11 +2138,14 @@ void SimpleManagerImpl::configureCMonomer() {
 }
 
 
-void SimpleManagerImpl::initialize() {
+void SimpleManagerImpl::initializeSystem() {
     
     //set static system ptr
-    InternalFilamentRxnManager::_ps = _subSystem;
-    CrossFilamentRxnManager::_ps = _subSystem;
+    FilamentReactionTemplate::_ps = _subSystem;
+    
+    //init rand number gen
+    FilamentBindingManager::_eng =
+    new mt19937(static_cast<unsigned long>(time(nullptr)));
     
     //config CMonomer
     configureCMonomer();
@@ -2151,6 +2155,7 @@ void SimpleManagerImpl::initialize() {
                           getProtoCompartment();
     
     genSpecies(cProto);
+    
     //will print reactions as well
     genGeneralReactions(cProto);
     genBulkReactions();
@@ -2170,13 +2175,14 @@ void SimpleManagerImpl::initialize() {
     
     //generate the nucleation reactions in system
     genNucleationReactions();
-    
+    //generate filament binding managers
+    genFilBindingManagers();
+
     //add reactions to chemsim
     CompartmentGrid::instance()->addChemSimReactions();
     
-    //create reaction managers
-    genIFRxnManagers();
-    genCFRxnManagers();
+    //create filament reaction templates
+    genFilRxnTemplates();
 }
 
 
@@ -2201,12 +2207,12 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     //extension of front
     if(extensionFront) {
         lastcc = f->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
+        for(auto &r : _filRxnTemplates) r->addReaction(lastcc, cc);
     }
     //extension of back
     else if(extensionBack) {
         lastcc = f->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _IFRxnManagers) r->addReaction(cc, lastcc);
+        for(auto &r : _filRxnTemplates) r->addReaction(cc, lastcc);
     }
 
     else if(creation) {
@@ -2224,61 +2230,36 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             m1->speciesPlusEnd(0)->down();
             
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->setN(1);
+            m2->speciesPlusEnd(0)->up();
             
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
-            m1->speciesBound(0)->up();
+            m1->speciesBound(BOUND_EMPTY)->up();
 
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->setN(1);
-                cc->getCMonomer(i)->speciesBound(0)->setN(1);
+                cc->getCMonomer(i)->speciesFilament(0)->up();
+                cc->getCMonomer(i)->speciesBound(BOUND_EMPTY)->up();
             }
-            for(auto &r : _IFRxnManagers) r->addReaction(lastcc, cc);
+            for(auto &r : _filRxnTemplates) r->addReaction(lastcc, cc);
         }
         //this is first one
         else {
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
-            m1->speciesPlusEnd(0)->setN(1);
+            m1->speciesPlusEnd(0)->up();
             
             CMonomer* m2 = cc->getCMonomer(0);
-            m2->speciesMinusEnd(0)->setN(1);
+            m2->speciesMinusEnd(0)->up();
             
             //fill with default filament value
             for(int i = 1; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->setN(1);
-                cc->getCMonomer(i)->speciesBound(0)->setN(1);
+                cc->getCMonomer(i)->speciesFilament(0)->up();
+                cc->getCMonomer(i)->speciesBound(BOUND_EMPTY)->up();
             }
         }
     }    
     //Add all reaction templates to this cylinder
-    for(auto &r : _IFRxnManagers) { r->addReaction(cc); }
-
+    for(auto &r : _filRxnTemplates) { r->addReaction(cc); }
 }
-
-void SimpleManagerImpl::updateCCylinder(CCylinder* cc) {
-    
-    //loop through all cross cylinder reactions, remove if cross filament
-    auto ccReactions = cc->getCrossCylinderReactions();
-    for(auto it = ccReactions.begin(); it != ccReactions.end(); it++) {
-        
-        auto ccOther = it->first;
-        if(ccOther->getCylinder()->getFilament() != cc->getCylinder()->getFilament())
-            
-            cc->removeCrossCylinderReactions(ccOther, true);
-    }
-    
-    //Add reactions from manager, using the local neighbor list
-    for(auto &r : _CFRxnManagers) {
-        
-        auto neighbors = r->getNeighborList()->getNeighbors(cc->getCylinder());
-        for(auto &n : neighbors)
-            r->addReaction(cc, n->getCCylinder());
-    }
-}
-
-
-
 

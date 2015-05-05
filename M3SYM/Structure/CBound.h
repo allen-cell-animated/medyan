@@ -113,6 +113,8 @@ public:
     double getOffRate(){return _offRate;}
     //@}
     
+    /// Set all rates at once
+    void setRates(float onRate, float offRate) {_onRate = onRate; _offRate = offRate;}
     
     //@{
     /// Off reaction management

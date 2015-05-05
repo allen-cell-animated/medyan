@@ -20,8 +20,8 @@ void ChemManager::setInstance(ChemManagerImpl *cii) {
     _pimpl=cii;
 }
 
-void ChemManager::initialize() {
-    _pimpl->initialize();
+void ChemManager::initializeSystem() {
+    _pimpl->initializeSystem();
 }
 
 void ChemManager::initializeCCylinder(CCylinder* cc, Filament* f,
@@ -37,7 +37,3 @@ void ChemManager::updateCopyNumbers() {
     _pimpl->updateCopyNumbers();
 }
 
-void ChemManager::updateCCylinder(CCylinder* cc) {
-    
-    _pimpl->updateCCylinder(cc);
-}
