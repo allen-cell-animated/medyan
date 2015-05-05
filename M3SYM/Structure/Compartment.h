@@ -17,13 +17,13 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
-#include <set>
+#include <unordered_set>
 
 #include "common.h"
 
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
-#include "ReactionManager.h"
+#include "FilamentBindingManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
 
@@ -62,15 +62,16 @@ protected:
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
     
-    vector<BindingRxnManager> _bindingManagers; ///< All binding managers for this compartment
+    /// All binding managers for this compartment
+    vector<FilamentBindingManager*> _bindingManagers;
 
     ///ELEMENT CONTAINERS
-    set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
-                                             ///< that are in this compartment
+    unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
+                                                       ///< that are in this compartment
     
-    set<Bead*> _beads; ///< Set of beads that are in this compartment
+    unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
     
-    set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
 
@@ -395,6 +396,17 @@ public:
         r->setParent(this);
         return r;
     }
+    
+    /// Add a binding manager to this compartment
+    void addFilamentBindingManager(FilamentBindingManager* m) {
+        _bindingManagers.push_back(m);
+    }
+    
+    /// Get binding managers for this compartment
+    vector<FilamentBindingManager*>& getFilamentBindingManagers() {
+        return _bindingManagers;
+    }
+    
     ///Add a bead to this compartment
     void addBead(Bead* b) {_beads.insert(b);}
     
@@ -406,8 +418,7 @@ public:
     }
     
     ///get the beads in this compartment
-    set<Bead*>& getBeads() {return _beads;}
-    
+   unordered_set<Bead*>& getBeads() {return _beads;}
     
     ///Add a boundary element to this compartment
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
@@ -424,7 +435,7 @@ public:
         return (it != _boundaryElements.end());   
     }
     ///get the boundary elements in this compartment
-    set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
+   unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
     
     ///Add a cylinder to this compartment
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
@@ -436,8 +447,7 @@ public:
         if(it != _cylinders.end()) _cylinders.erase(it);
     }
     ///get the cylinders in this compartment
-    set<Cylinder*>& getCylinders() {return _cylinders;}
-    
+   unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

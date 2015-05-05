@@ -851,7 +851,7 @@ def contractileVelocity(FrameList):
 
 #Calculate contractile velocity towards the center of mass from a number of trajectories
 #plot the data over time. If file is provided, save to that file
-def contractileVelocities(FrameLists):
+def contractileVelocities(FrameLists, saveFile=''):
 
 	velocitiesList = []
 
@@ -980,7 +980,7 @@ def density(Frame, grid, compartment):
 	yVals = [x[1] + compartment[1] / 2 for x in compartmentCoords]
 	zVals = [x[2] + compartment[2] / 2 for x in compartmentCoords]
 
-	plt.xlim([0, compartment[]])
+	#plt.xlim([0, compartment[]])
 
 	plt.scatter(xVals, yVals, zs=zVals, c=densityValues)
 

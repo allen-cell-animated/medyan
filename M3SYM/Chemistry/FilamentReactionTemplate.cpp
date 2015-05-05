@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "ReactionManagerImpl.h"
+#include "FilamentReactionTemplate.h"
 
 #include "CompartmentContainer.h"
 #include "ChemCallbacks.h"
@@ -24,7 +24,7 @@
 
 using namespace mathfunc;
 
-SubSystem* FilamentRxnManager::_ps = 0;
+SubSystem* FilamentReactionTemplate::_ps = 0;
 
 void PolyPlusEndManager::addReaction(CCylinder* cc) {
     
@@ -435,7 +435,8 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void MotorWalkFManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end() - 1; it++) {
+    for(auto it = SysParams::Chemistry().bindingSites.begin();
+             it != SysParams::Chemistry().bindingSites.end() - 1; it++) {
         
         int site1 = *(it);
         int site2 = *(it+1);
@@ -488,8 +489,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
 
 void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc1->getCMonomer(_bindingSites.back());
-    CMonomer* m2 = cc2->getCMonomer(_bindingSites.front());
+    CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
+    CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -524,7 +525,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                        _bindingSites.back(), _bindingSites.front(),
+                        SysParams::Chemistry().bindingSites.back(),
+                        SysParams::Chemistry().bindingSites.front(),
                         motorType, boundType, _ps);
     boost::signals2::shared_connection_block
     rcb(rxn->connect(motorChangeCallback, false));
@@ -537,7 +539,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void MotorWalkBManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.end() - 1; it != _bindingSites.begin(); it--) {
+    for(auto it = SysParams::Chemistry().bindingSites.end() - 1;
+             it != SysParams::Chemistry().bindingSites.begin(); it--) {
         
         int site1 = *(it);
         int site2 = *(it-1);
@@ -590,8 +593,8 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
 
 void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc2->getCMonomer(_bindingSites.front());
-    CMonomer* m2 = cc1->getCMonomer(_bindingSites.back());
+    CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
+    CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -626,7 +629,8 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
-                        _bindingSites.front(), _bindingSites.back(),
+                        SysParams::Chemistry().bindingSites.front(),
+                        SysParams::Chemistry().bindingSites.back(),
                         motorType, boundType, _ps);
     boost::signals2::shared_connection_block
     rcb(rxn->connect(motorChangeCallback, false));
@@ -793,7 +797,8 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void SeveringManager::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
+    for(auto it = SysParams::Chemistry().bindingSites.begin();
+             it != SysParams::Chemistry().bindingSites.end(); it++) {
         
         int site = *(it);
         CMonomer* m = cc->getCMonomer(site);
@@ -819,51 +824,6 @@ void SeveringManager::addReaction(CCylinder* cc) {
         rxn->setReactionType(ReactionType::SEVERING);
     }
 }
-
-
-void BranchingManager::updatePossibleBindings(CCylinder* cc) {
-    
-    //remove all tuples which have this ccylinder
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-        
-        if (get<0>(*it) == cc) _possibleBindings.erase(it++);
-        
-        else ++it;
-    }
-    
-    //now re add valid binding sites
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++)
-    
-        if (cc->getCMonomer(*it)->activeSpeciesBound() == _empty)
-            
-            _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it));
-}
-
-void LinkerBindingManager::updatePossibleBindings(CCylinder* cc) {
-    
-    //remove all tuples which have this ccylinder
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-        
-        if (get<0>(it->first) == cc) _possibleBindings.erase(it++);
-        
-        else ++it;
-    }
-    
-    //now re add valid based on CCNL
-    for (auto ccn : _neighborList->getNeighbors(cc->getCylinder())) {
-        
-        
-        
-        
-        
-    }
-    
-    
-    
-    
-    
-}
-
 
 
 //void BranchingManager::addReaction(CCylinder* cc) {

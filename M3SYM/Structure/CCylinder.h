@@ -45,10 +45,10 @@ private:
     vector<unique_ptr<CMonomer>> _monomers; ///< List of monomers
     
     ///REACTION CONTAINERS
-    set<ReactionBase*> _internalReactions;///< Set of internal reactions associated
-    set<CCylinder*> _reactingCylinders; ///< Set of ccylinders that this ccylinder has
+    unordered_set<ReactionBase*> _internalReactions;///< Set of internal reactions associated
+    unordered_set<CCylinder*> _reactingCylinders; ///< Set of ccylinders that this ccylinder has
                                         ///< reactions with, but not ownership
-    map<CCylinder*, set<ReactionBase*>> _crossCylinderReactions;
+    map<CCylinder*,unordered_set<ReactionBase*>> _crossCylinderReactions;
     ///< Map of cross-cylinder reactions owned
     
     Compartment* _compartment; ///< Compartment this ccylinder is in
@@ -98,13 +98,13 @@ public:
     CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
     ///Get list of reactions associated
-    const set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
+    const unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     
     ///Get list of reacting cylinders associated
-    const set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
+    const unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
     
     ///Get map of reactions associated
-    map<CCylinder*, set<ReactionBase*>>& getCrossCylinderReactions() {
+    map<CCylinder*,unordered_set<ReactionBase*>>& getCrossCylinderReactions() {
         return _crossCylinderReactions;
     }
     

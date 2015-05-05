@@ -18,6 +18,8 @@
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder) {
         
+    CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
+        
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
@@ -47,7 +49,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
-        CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
         for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
@@ -56,6 +57,11 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             ccyl->addCrossCylinderReaction(this, rxnClone);
         }
     }
+        
+    //copy binding sites to new ccylinder
+    for(auto m : _compartment->getFilamentBindingManagers())
+        m->replacePossibleBindings(rhsPtr, this);
+    
 }
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
