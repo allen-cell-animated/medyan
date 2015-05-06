@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_FilamentReactionTemplate_h
-#define M3SYM_FilamentReactionTemplate_h
+#ifndef M3SYM_ReactionTemplate_h
+#define M3SYM_ReactionTemplate_h
 
 #include <vector>
 #include <cmath>
@@ -67,9 +67,9 @@ public:
                              float rate)
         : _reactants(reactants), _products(products), _rate(rate) {
 
-#if !defined(REACTION_SIGNALING)
-        cout << "Any filament reaction relies on reaction signaling. Please"
-            << " set this compilation macro and try again. Exiting." << endl;
+#if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
+        cout << "Any filament reaction relies on reaction and species signaling. Please"
+            << " set this compilation macros and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
     }

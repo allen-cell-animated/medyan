@@ -23,7 +23,7 @@
 
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
-#include "FilamentBindingManager.h"
+#include "BindingManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
 
@@ -369,6 +369,30 @@ public:
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
+    }
+    
+    /// Add a single binding species to this compartment
+    /// @param args - any number of SpeciesSingleBinding objects
+    template<typename ...Args>
+    SpeciesSingleBinding* addSpeciesSingleBinding(Args&& ...args) {
+        SpeciesSingleBinding *sb =
+        static_cast<SpeciesSingleBinding*>(
+            _species.addSpecies<SpeciesSingleBinding>(forward<Args>(args)...));
+        sb->setParent(this);
+        _diffusion_rates[sb->getMolecule()]=-1.0;
+        return sb;
+    }
+    
+    /// Add a pair binding species to this compartment
+    /// @param args - any number of SpeciesPairBinding objects
+    template<typename ...Args>
+    SpeciesPairBinding* addSpeciesPairBinding(Args&& ...args) {
+        SpeciesPairBinding *sb =
+        static_cast<SpeciesPairBinding*>(
+            _species.addSpecies<SpeciesPairBinding>(forward<Args>(args)...));
+        sb->setParent(this);
+        _diffusion_rates[sb->getMolecule()]=-1.0;
+        return sb;
     }
 
     /// Add an internal reaction to this compartment

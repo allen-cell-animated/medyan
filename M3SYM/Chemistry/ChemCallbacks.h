@@ -26,13 +26,40 @@
 #include "BranchingPoint.h"
 #include "Boundary.h"
 
-#include "FilamentBindingManager.h"
+#include "BindingManager.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
 
 using namespace mathfunc;
+
+#ifdef RSPECIES_SIGNALING
+
+/// Callback to update the compartment-local binding species based on
+/// a change of copy number for an empty site.
+struct UpdateBindingCallback {
+    
+    Cylinder* _cylinder;
+    short _bindingSite;
+    
+    //Constructor, sets members
+    UpdateBindingCallback(Cylinder* cylinder, short bindingSite)
+    
+        : _cylinder(cylinder), _bindingSite(bindingSite) {}
+    
+    //callback
+    void operator() (ReactionBase *r) {
+        
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+        
+        for(auto &manager : c->getFilamentBindingManagers())
+            manager->updatePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+    }
+};
+
+#endif
 
 #ifdef REACTION_SIGNALING
 
@@ -257,8 +284,10 @@ struct BranchingCallback {
         BranchingPoint* b= _ps->addNewBranchingPoint(c1, c, branchType, pos);
         
         //create off reaction
-        b->getCBranchingPoint()->setRates(_onRate, _offRate);
-        b->getCBranchingPoint()->createOffReaction(r, _ps);
+        auto cBrancher = b->getCBranchingPoint();
+        
+        cBrancher->setRates(_onRate, _offRate);
+        cBrancher->createOffReaction(r, _ps);
     }
 };
 
@@ -315,8 +344,10 @@ struct LinkerBindingCallback {
         Linker* l = _ps->addNewLinker(c1, c2, linkerType, pos1, pos2);
         
         //create off reaction
-        l->getCLinker()->setRates(_onRate, _offRate);
-        l->getCLinker()->createOffReaction(r, _ps);
+        auto cLinker = l->getCLinker();
+        
+        cLinker->setRates(_onRate, _offRate);
+        cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -377,8 +408,10 @@ struct MotorBindingCallback {
         MotorGhost* m = _ps->addNewMotorGhost(c1, c2, motorType, pos1, pos2);
 
         //create off reaction
-        m->getCMotorGhost()->setRates(_onRate, _offRate);
-        m->getCMotorGhost()->createOffReaction(r, _ps);
+        auto cMotorGhost = m->getCMotorGhost();
+        
+        cMotorGhost->setRates(_onRate, _offRate);
+        cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions

@@ -47,13 +47,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
     _cCylinder->setCylinder(this);
-    ChemManager::initializeCCylinder(
-        _cCylinder.get(), f, extensionFront, extensionBack, creation);
-    
-    if(creation || extensionFront || extensionBack)
-        //Update filament reactions, only if not initialization
-        ChemManager::updateCCylinder(_cCylinder.get());
-    
+        
+    ChemManager::initializeCCylinder(_cCylinder.get(), f,
+                                     extensionFront,extensionBack,creation);
 #endif
 
 #ifdef MECHANICS

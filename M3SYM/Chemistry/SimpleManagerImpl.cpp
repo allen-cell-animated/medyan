@@ -16,9 +16,9 @@
 #include "SimpleManagerImpl.h"
 
 #include "ChemCallbacks.h"
+#include "ReactionTemplate.h"
+#include "BindingManager.h"
 #include "Parser.h"
-
-#include "Bead.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -34,14 +34,14 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     for(auto &f : _chemData.speciesFilament) {
         SpeciesFilament* sf =
         c->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueName(f));
+        SpeciesNamesDB::instance()->genUniqueFilName(f));
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }
     for (auto &p : _chemData.speciesPlusEnd) {
         SpeciesPlusEnd* sp =
         c->addSpeciesPlusEnd(
-        SpeciesNamesDB::instance()->genUniqueName(p));
+        SpeciesNamesDB::instance()->genUniqueFilName(p));
         m->_speciesFilament[fIndex] = sp;
         fIndex++;
                             
@@ -49,7 +49,7 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     for (auto &mi : _chemData.speciesMinusEnd) {
         SpeciesMinusEnd* smi =
         c->addSpeciesMinusEnd(
-        SpeciesNamesDB::instance()->genUniqueName(mi));
+        SpeciesNamesDB::instance()->genUniqueFilName(mi));
         m->_speciesFilament[fIndex] = smi;
         fIndex++;
     }
@@ -60,28 +60,28 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     for (auto &b : _chemData.speciesBound) {
         SpeciesBound* sb =
         c->addSpeciesBound(
-        SpeciesNamesDB::instance()->genUniqueName(b));
+        SpeciesNamesDB::instance()->genUniqueFilName(b));
         m->_speciesBound[bIndex] = sb;
         bIndex++;
     }
     for (auto &l : _chemData.speciesLinker) {
         SpeciesLinker* sl =
         c->addSpeciesLinker(
-        SpeciesNamesDB::instance()->genUniqueName(l));
+        SpeciesNamesDB::instance()->genUniqueFilName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
     for (auto &mo : _chemData.speciesMotor) {
         SpeciesMotor* sm =
         c->addSpeciesMotor(
-        SpeciesNamesDB::instance()->genUniqueName(mo));
+        SpeciesNamesDB::instance()->genUniqueFilName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
     for (auto &br : _chemData.speciesBrancher) {
         SpeciesBrancher* sbr =
         c->addSpeciesBrancher(
-        SpeciesNamesDB::instance()->genUniqueName(br));
+        SpeciesNamesDB::instance()->genUniqueFilName(br));
         m->_speciesBound[bIndex] = sbr;
         bIndex++;
     }
@@ -567,7 +567,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
         }
 
         
-        //SECOND REACTANT SPECIES MUST BE BOUND
+        //SECOND REACTANT SPECIES MUST BE EMPTY SITE
         reactant = reactants[1];
         //read strings, and look up type
         if(reactant.find("BOUND") != string::npos) {
@@ -581,6 +581,14 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
+                
+                if(position != BOUND_EMPTY) {
+                    cout <<
+                    "Second species listed in a motor walking reaction must be the empty site. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -644,7 +652,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
             exit(EXIT_FAILURE);
         }
         
-        //SECOND PRODUCT SPECIES MUST BE BOUND
+        //SECOND PRODUCT SPECIES MUST BE EMPTY SITE
         product = products[1];
         if(product.find("BOUND") != string::npos) {
             
@@ -657,6 +665,14 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
+                
+                if(position != BOUND_EMPTY) {
+                    cout <<
+                    "Second species listed in a motor walking reaction must be the empty site. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
                                                         SpeciesType::BOUND));
             }
@@ -1021,8 +1037,11 @@ void SimpleManagerImpl::genFilRxnTemplates() {
 
 void SimpleManagerImpl::genFilBindingManagers() {
     
+    double rMax, rMin;
+    
     //loop through all compartments
     for(auto &c : CompartmentGrid::instance()->children()) {
+        
         Compartment *C = (Compartment*)(c.get());
         
         if(!C->isActivated()) continue;
@@ -1136,8 +1155,18 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
-                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                       SpeciesType::BOUND));
+                    
+                    if(position != BOUND_EMPTY) {
+                        cout <<
+                        "Third species listed in a branching reaction must be the empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    
+                    //find the species single binding, push
+                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[0], reactant);
+                    
+                    reactantSpecies.push_back(C->findSpeciesByName(bname));
                 }
                 else {
                     cout <<
@@ -1154,20 +1183,19 @@ void SimpleManagerImpl::genFilBindingManagers() {
             }
             
             //FIRST PRODUCT SPECIES MUST BE BRANCHER
+            short brancher;
+            
             auto product = products[0];
             if(product.find("BRANCHER") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
-                int position = 0;
                 
                 if(it != _chemData.speciesBrancher.end()) {
                     
                     //get position of iterator
-                    position = distance(_chemData.speciesBrancher.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                      SpeciesType::BRANCHER));
+                    brancher = distance(_chemData.speciesBrancher.begin(), it);
                 }
                 else {
                     cout <<
@@ -1184,19 +1212,19 @@ void SimpleManagerImpl::genFilBindingManagers() {
             }
             
             //SECOND PRODUCT SPECIES MUST BE PLUS END
+            short plusEnd;
+            
             product = products[1];
             if(product.find("PLUSEND") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-                int position = 0;
                 
                 if(it != _chemData.speciesPlusEnd.end()) {
+                    
                     //get position of iterator
-                    position = distance(_chemData.speciesPlusEnd.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                      SpeciesType::PLUSEND));
+                    plusEnd = distance(_chemData.speciesPlusEnd.begin(), it);
                 }
                 else {
                     cout <<
@@ -1213,16 +1241,27 @@ void SimpleManagerImpl::genFilBindingManagers() {
             }
             
             //Create reaction
-            .emplace_back(
-            new BranchingManager(reactantTemplate, productTemplate, get<2>(r), get<3>(r)));
+            float onRate = get<2>(r);
+            float offRate = get<3>(r);
+            
+            ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
+            rxn->setReactionType(ReactionType::BRANCHING);
+            
+            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            
+            //create manager
+            BranchingManager* bManager = new BranchingManager(rxn, C, brancher);
+            C->addFilamentBindingManager(bManager);
+            
+            //attach callback
+            BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
+            boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
         }
-        
         
         for(auto &r: _chemData.linkerReactions) {
             
-            vector<tuple<int, SpeciesType>> reactantTemplate;
-            vector<tuple<int, SpeciesType>> productTemplate;
-            string species1;
+            vector<Species*> reactantSpecies;
+            vector<Species*> productSpecies;
             
             vector<string> reactants = get<0>(r);
             vector<string> products = get<1>(r);
@@ -1247,8 +1286,18 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
-                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                           SpeciesType::BOUND));
+                    
+                    if(position != BOUND_EMPTY) {
+                        cout <<
+                        "First species listed in a linker reaction must be the empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    
+                    //find the species pair binding, push
+                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[2], reactant);
+                    
+                    reactantSpecies.push_back(C->findSpeciesByName(bname));
                 }
                 else {
                     cout <<
@@ -1275,12 +1324,24 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
-                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                            SpeciesType::BOUND));
+                    
+                    if(position != BOUND_EMPTY) {
+                        cout <<
+                        "Second species listed in a linker reaction must be the empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
                 }
-                else {
+                
+                else if(it == _chemData.speciesBound.end()) {
                     cout <<
                     "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(name != reactants[0]) {
+                    cout <<
+                    "Both bound species listed in a linker reaction must be the same. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
@@ -1308,8 +1369,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             
             else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1325,8 +1385,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                reactantSpecies.push_back(C->findSpeciesByName(name));
             }
             else {
                 cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
@@ -1337,22 +1396,17 @@ void SimpleManagerImpl::genFilBindingManagers() {
 
             //FIRST TWO SPECIES IN PRODUCTS MUST BE LINKER
             auto product = products[0];
+            short linker;
             
             if(product.find("LINKER") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
-                int position = 0;
-                
-                species1 = name;
                 
                 if(it != _chemData.speciesLinker.end()) {
-                    
                     //get position of iterator
-                    position = distance(_chemData.speciesLinker.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                          SpeciesType::LINKER));
+                    linker = distance(_chemData.speciesLinker.begin(), it);
                 }
                 else {
                     cout <<
@@ -1374,22 +1428,14 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
-                int position = 0;
                 
-                if(name != species1) {
+                if(name != products[0]) {
                     cout <<
                     "Linker species in reactants and products of linker reaction must be same. Exiting." <<
                     endl;
                     exit(EXIT_FAILURE);
                 }
-            
-                if(it != _chemData.speciesLinker.end()) {
-                    
-                    //get position of iterator
-                    position = distance(_chemData.speciesLinker.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::LINKER));
-                }
-                else {
+                if(it == _chemData.speciesLinker.end()) {
                     cout <<
                     "A linker species that was included in a reaction was not initialized. Exiting." <<
                     endl;
@@ -1403,19 +1449,37 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            //extend range of rMax, rMin by cylinder size
-            double rMax = get<4>(r);
-            double rMin = get<5>(r);
-            _CFRxnManagers.emplace_back(
-                new LinkerRxnManager(reactantTemplate, productTemplate,
-                                     get<2>(r), get<3>(r), rMax, rMin));
+        
+            double onRate = get<2>(r);
+            double offRate = get<3>(r);
+        
+            rMax = get<4>(r);
+            rMin = get<5>(r);
+            
+            ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+            rxn->setReactionType(ReactionType::LINKERBINDING);
+            
+            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            
+            //create manager
+            LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linker, rMax, rMin);
+            C->addFilamentBindingManager(lManager);
+            
+            //attach callback
+            LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
+            boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
         }
+        
+        //init neighbor list
+        LinkerBindingManager::_nlContainer =
+        new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
+                      max(rMin - SysParams::Geometry().cylinderSize, 0.0));
+        
        
         for(auto &r: _chemData.motorReactions) {
             
-            vector<tuple<int, SpeciesType>> reactantTemplate;
-            vector<tuple<int, SpeciesType>> productTemplate;
-            string species1;
+            vector<Species*> reactantSpecies;
+            vector<Species*> productSpecies;
             
             vector<string> reactants = get<0>(r);
             vector<string> products = get<1>(r);
@@ -1440,8 +1504,18 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
-                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                            SpeciesType::BOUND));
+                    
+                    if(position != BOUND_EMPTY) {
+                        cout <<
+                        "First species listed in a motor reaction must be the empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    
+                    //find the species pair binding, push
+                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[2], reactant);
+                    
+                    reactantSpecies.push_back(C->findSpeciesByName(bname));
                 }
                 else {
                     cout <<
@@ -1465,15 +1539,25 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 int position = 0;
                 
                 if(it != _chemData.speciesBound.end()) {
-                    
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
-                    reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                           SpeciesType::BOUND));
+                    
+                    if(position != BOUND_EMPTY) {
+                        cout <<
+                        "Second species listed in a motor reaction must be the empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
                 }
-                else {
+                else if(it == _chemData.speciesBound.end()) {
                     cout <<
                     "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(name != reactants[0]) {
+                    cout <<
+                    "Both bound species listed in a motor reaction must be the same. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
@@ -1501,8 +1585,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::BULK));
+                reactantSpecies.push_back(CompartmentGrid::instance()->findSpeciesBulkByName(name));
             }
             
             else if(reactant.find("DIFFUSING") != string::npos) {
@@ -1511,19 +1594,17 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
                                   [name](tuple<string, int, double, double> element) {
-                                  return get<0>(element) == name ? true : false; });
+                                      return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
                     "A diffusing species that was included in a reaction was not initialized. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                reactantTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::instance()->stringToInt(name), SpeciesType::DIFFUSING));
+                reactantSpecies.push_back(C->findSpeciesByName(name));
             }
             else {
-                cout <<
-                "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
+                cout << "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1531,26 +1612,22 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //FIRST TWO SPECIES IN PRODUCTS MUST BE MOTOR
             auto product = products[0];
+            short motor;
+            
             if(product.find("MOTOR") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-                int position = 0;
-                
-                species1 = name;
                 
                 if(it != _chemData.speciesMotor.end()) {
-                    
                     //get position of iterator
-                    position = distance(_chemData.speciesMotor.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                           SpeciesType::MOTOR));
+                    motor = distance(_chemData.speciesMotor.begin(), it);
                 }
                 else {
                     cout <<
-                    "A motor species that was included in a reaction was not initialized. Exiting."
-                    << endl;
+                    "A motor species that was included in a reaction was not initialized. Exiting." <<
+                    endl;
                     exit(EXIT_FAILURE);
                 }
             }
@@ -1567,26 +1644,17 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-                int position = 0;
                 
-                if(name != species1) {
+                if(name != products[0]) {
                     cout <<
-                    "Motor species in reactants and products of motor binding reaction must be same. Exiting."
-                    << endl;
+                    "Motor species in reactants and products of motor reaction must be same. Exiting." <<
+                    endl;
                     exit(EXIT_FAILURE);
                 }
-     
-                if(it != _chemData.speciesMotor.end()) {
-                    
-                    //get position of iterator
-                    position = distance(_chemData.speciesMotor.begin(), it);
-                    productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                          SpeciesType::MOTOR));
-                }
-                else {
+                if(it == _chemData.speciesLinker.end()) {
                     cout <<
-                    "A motor species that was included in a reaction was not initialized. Exiting."
-                    << endl;
+                    "A motor species that was included in a reaction was not initialized. Exiting." <<
+                    endl;
                     exit(EXIT_FAILURE);
                 }
             }
@@ -1596,12 +1664,31 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            double rMax = get<4>(r);
-            double rMin = get<5>(r);
-            _CFRxnManagers.emplace_back(
-                new MotorRxnManager(reactantTemplate, productTemplate,
-                                    get<2>(r), get<3>(r), rMax, rMin));
+            
+            double onRate = get<2>(r);
+            double offRate = get<3>(r);
+            
+            rMax = get<4>(r);
+            rMin = get<5>(r);
+            
+            ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+            rxn->setReactionType(ReactionType::MOTORBINDING);
+            
+            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            
+            //create manager
+            MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motor, rMax, rMin);
+            C->addFilamentBindingManager(mManager);
+            
+            //attach callback
+            MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);
+            boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
         }
+        
+        //init neighbor list
+        MotorBindingManager::_nlContainer =
+        new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
+                      max(rMin - SysParams::Geometry().cylinderSize, 0.0));
     }
 }
 
@@ -1610,13 +1697,125 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
     
     // add diffusing species (zero copy number for now)
     for(auto &sd : _chemData.speciesDiffusing)
-        protoCompartment.addSpeciesUnique(unique_ptr<Species>(
-        new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
+        protoCompartment.addSpeciesUnique(
+            unique_ptr<Species>(new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
     
     // add bulk species (zero copy number for now)
     for(auto &sb : _chemData.speciesBulk)
         CompartmentGrid::instance()->
-        addSpeciesBulk(get<0>(sb), 0, (get<2>(sb) == "CONST") ? true : false);
+            addSpeciesBulk(get<0>(sb), 0, (get<2>(sb) == "CONST") ? true : false);
+    
+    // create single binding and pair binding species
+    for(auto &sb : _chemData.speciesBrancher) {
+        
+        //look at brancher reaction that is associated with this species
+        for(auto &rb : _chemData.branchingReactions) {
+            
+            auto reactants = get<0>(rb);
+            auto products = get<1>(rb);
+            
+            //basic check because we have not yet checked reactions
+            if(reactants.size() != BRANCHINGREACTANTS ||
+               products.size() != BRANCHINGPRODUCTS) {
+                cout << "Invalid branching reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            if(reactants[0] == sb) {
+                
+                //look at bound species associated
+                string bound = reactants[2].substr(0, reactants[2].find(":"));
+                
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), bound);
+                
+                //quick check for validity
+                if(it == _chemData.speciesBound.end()) {
+                    cout <<
+                        "A bound species that was included in a reaction was not initialized. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                //add a single binding species with name sb + bound
+                protoCompartment.addSpeciesSingleBinding(
+                    SpeciesNamesDB::instance()->genBindingName(sb, bound));
+            }
+        }
+    }
+    
+    for(auto &sl : _chemData.speciesLinker) {
+        
+        //look at brancher reaction that is associated with this species
+        for(auto &rl : _chemData.linkerReactions) {
+            
+            auto reactants = get<0>(rl);
+            auto products = get<1>(rl);
+            
+            //basic check because we have not yet checked reactions
+            if(reactants.size() != LMBINDINGREACTANTS ||
+               products.size() != LMBINDINGPRODUCTS) {
+                cout << "Invalid linker reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            if(reactants[0] == sl) {
+                
+                //look at bound species associated
+                string bound = reactants[2].substr(0, reactants[2].find(":"));
+                
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), bound);
+                
+                //quick check for validity
+                if(it == _chemData.speciesBound.end()) {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                //add a single binding species with name sl + bound
+                protoCompartment.addSpeciesPairBinding(
+                    SpeciesNamesDB::instance()->genBindingName(sl, bound));
+            }
+        }
+    }
+    
+    for(auto &sm : _chemData.speciesMotor) {
+        
+        //look at brancher reaction that is associated with this species
+        for(auto &rm : _chemData.motorReactions) {
+            
+            auto reactants = get<0>(rm);
+            auto products = get<1>(rm);
+            
+            //basic check because we have not yet checked reactions
+            if(reactants.size() != LMBINDINGREACTANTS ||
+               products.size() != LMBINDINGPRODUCTS) {
+                cout << "Invalid motor reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            if(reactants[0] == sm) {
+                
+                //look at bound species associated
+                string bound = reactants[2].substr(0, reactants[2].find(":"));
+                
+                auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), bound);
+                
+                //quick check for validity
+                if(it == _chemData.speciesBound.end()) {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                //add a single binding species with name sm + bound
+                protoCompartment.addSpeciesPairBinding(
+                   SpeciesNamesDB::instance()->genBindingName(sm, bound));
+            }
+        }
+    }
 }
 
 void SimpleManagerImpl::updateCopyNumbers() {

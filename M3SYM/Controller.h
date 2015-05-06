@@ -67,7 +67,7 @@ private:
 #endif
     
     /// Update neighbors lists, called in run
-    void updateNeighborLists(bool updateReactions=false);
+    void updateNeighborLists(bool updateBindings=false);
     
 public:
     Controller(SubSystem* s);

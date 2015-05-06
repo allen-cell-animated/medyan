@@ -279,17 +279,20 @@ void Controller::updateReactionRates() {
 }
 #endif
 
-void Controller::updateNeighborLists(bool updateReactions) {
+void Controller::updateNeighborLists(bool updateBindings) {
     
     //Full reset of neighbor lists
     NeighborListDB::instance()->resetAll();
     
-    if(updateReactions) {
+    if(updateBindings) {
 #ifdef CHEMISTRY
-        //Update cross cylinder reactions
-        for(auto &filament : *FilamentDB::instance())
-            for (auto &cylinder : filament->getCylinderVector())
-                ChemManager::updateCCylinder(cylinder->getCCylinder());
+        //Update binding reactions
+        for(auto &child : CompartmentGrid::instance()->children()) {
+            Compartment* c = (Compartment*)child.get();
+            
+            for(auto &manager : c->getFilamentBindingManagers())
+                manager->updateAllPossibleBindings();
+        }
 #endif
     }
 }

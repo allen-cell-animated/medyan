@@ -48,8 +48,8 @@ enum SpeciesType {
  *  a singleton, and should be used by first calling SpeciesNamesDB::Instance() method.
  *
  *  @code
- *  int y = SpeciesNamesDB::Instance()->stringToInt("Arp2/3");//let's say y=2
- *  string x = SpeciesNamesDB::Instance()->intToString(2); //then x should be "Arp2/3"
+ *  int y = SpeciesNamesDB::instance()->stringToInt("Arp2/3");//let's say y=2
+ *  string x = SpeciesNamesDB::instance()->intToString(2); //then x should be "Arp2/3"
  *  @endcode
  *
  * SpeciesNamesDB also has a function to generate a unique name given a string seed. 
@@ -97,7 +97,7 @@ public:
     /// Generate a unique name based on a seed name
     /// (just adds integer value to end of string with a -)
     /// @note - used only for filament species.
-    string genUniqueName(string name) {
+    string genUniqueFilName(string name) {
         string uniqueName = name + to_string(_num);
         if(_map_string_int.find(uniqueName) != _map_string_int.end())
             return uniqueName;
@@ -107,7 +107,7 @@ public:
     
     /// Remove the unique integer value identifier with this filament species name
     /// @return The name without the integer ending.
-    string removeUniqueName(string name) {
+    string removeUniqueFilName(string name) {
         
         //loop through string, get to integer
         for(unsigned long i = 0; i < name.length(); i++) {
@@ -120,7 +120,14 @@ public:
         //if there was no integer, return the name
         return name;
     }
-
+    
+    /// Generate a single binding name based on two strings:
+    /// one string being the binding species and the other being
+    /// the bound species on the filament.
+    string genBindingName(string binding, string bound) {
+        return binding + "-" + bound;
+    }
+    
     /// Clear the contents of the database
     void clear() {
         _map_string_int.clear();
@@ -420,7 +427,8 @@ public:
 };
 
 /// Used for species which can move spatially from one compartment to
-/// the neighboring one (i.e. they are the stochastic analogue of determenistic reaction-diffusion processes)
+/// the neighboring one (i.e. they are the stochastic analogue of determenistic
+/// reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
 public:
     /// Default constructor
@@ -793,6 +801,104 @@ public:
     
     /// Default destructor
     ~SpeciesMinusEnd () noexcept {};
+};
+
+/// Used to represent a single binding site in a compartment.
+/*!
+ *  The SpeciesSingleBinding is used to track singular binding sites on filaments for an
+ *  entire compartment, to optimize binding reactions. For each compartment and binding reaction,
+ *  a SpeciesSingleBinding is created and included in the binding reaction for that compartment.
+ *  This species' copy number is increased/decreased based upon the change in binding sites of
+ *  filaments in the local compartment.
+ */
+class SpeciesSingleBinding : public Species {
+public:
+    /// Default constructor
+    SpeciesSingleBinding()  : Species() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesSingleBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
+    :  Species(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesSingleBinding (const SpeciesSingleBinding &rhs)  : Species(rhs) {}
+    
+    /// Move constructor
+    SpeciesSingleBinding(SpeciesSingleBinding &&rhs) noexcept : Species(move(rhs)) {}
+    
+    /// Regular Assignment
+    SpeciesSingleBinding& operator=(const SpeciesSingleBinding& rhs)  {
+        Species::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesSingleBinding& operator=(SpeciesSingleBinding&& rhs)
+    {
+        Species::operator=(move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesSingleBinding* clone() {
+        return new SpeciesSingleBinding(*this);
+    }
+    
+    /// Return the full name of this Species in a string format (e.g. "BrancherEmpty{SingleBinding}"
+    virtual string getFullName() const {return getName() + "{SingleBinding}";}
+    
+    /// Default destructor
+    ~SpeciesSingleBinding () noexcept {};
+};
+
+/// Used to represent a pair binding site in a compartment.
+/*!
+ *  The SpeciesPairBinding is used to track pair binding sites on filaments that are within a 
+ *  specified range for an entire compartment, to optimize binding reactions. For each compartment 
+ *  and pairwise binding reaction, a SpeciesPairBinding is created and included in the binding reaction 
+ *  for that compartment. This species' copy number is increased/decreased based upon the change in 
+ *  binding sites of filaments in the local compartment.
+ */
+class SpeciesPairBinding : public Species {
+public:
+    /// Default constructor
+    SpeciesPairBinding()  : Species() {}
+    
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesPairBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
+    :  Species(name, n, ulim) {};
+    
+    /// Copy constructor
+    SpeciesPairBinding (const SpeciesPairBinding &rhs)  : Species(rhs) {}
+    
+    /// Move constructor
+    SpeciesPairBinding(SpeciesPairBinding &&rhs) noexcept : Species(move(rhs)) {}
+    
+    /// Regular Assignment
+    SpeciesPairBinding& operator=(const SpeciesPairBinding& rhs)  {
+        Species::operator=(rhs);
+        return *this;
+    }
+    
+    /// Move assignment
+    SpeciesPairBinding& operator=(SpeciesPairBinding&& rhs)
+    {
+        Species::operator=(move(rhs));
+        return *this;
+    }
+    
+    virtual SpeciesPairBinding* clone() {
+        return new SpeciesPairBinding(*this);
+    }
+    
+    /// Return the full name of this Species in a string format (e.g. "LinkerEmpty{PairBinding}"
+    virtual string getFullName() const {return getName() + "{PairBinding}";}
+    
+    /// Default destructor
+    ~SpeciesPairBinding () noexcept {};
 };
 
 /// Print self into an iostream

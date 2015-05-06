@@ -22,6 +22,7 @@
 class Compartment;
 class Filament;
 class CCylinder;
+
 struct ChemistryData;
 
 /// For initailizing chemical reactions based on a specific system
@@ -46,7 +47,7 @@ public:
                                     bool extensionBack,
                                     bool creation);
     
-    /// Initialize the copy numbers of all species
+    /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time
     ///         tau has passed the release time of the molecule. This
     ///         function is called at every set of chemical steps to check

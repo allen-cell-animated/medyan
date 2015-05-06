@@ -19,7 +19,7 @@
 #include "common.h"
 
 #include "ChemManagerImpl.h"
-#include "FilamentReactionTemplate.h"
+#include "ReactionTemplate.h"
 #include "Parser.h"
 
 //FORWARD DECLARATIONS

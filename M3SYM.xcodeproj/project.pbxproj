@@ -57,7 +57,7 @@
 		F735B7A41A2D172800AE21D1 /* ChemSimImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7921A2D172800AE21D1 /* ChemSimImpl.h */; };
 		F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */; };
 		F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */; };
-		F735B7A81A2D172800AE21D1 /* FilamentReactionTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7961A2D172800AE21D1 /* FilamentReactionTemplate.h */; };
+		F735B7A81A2D172800AE21D1 /* ReactionTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7961A2D172800AE21D1 /* ReactionTemplate.h */; };
 		F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7971A2D172800AE21D1 /* SimpleManagerImpl.cpp */; };
 		F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7981A2D172800AE21D1 /* SimpleManagerImpl.h */; };
 		F735B7AB1A2D172D00AE21D1 /* M3Sym.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B75F1A2D16F200AE21D1 /* M3Sym.cpp */; };
@@ -72,8 +72,8 @@
 		F735B8071A2D175800AE21D1 /* ForceField.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D61A2D175800AE21D1 /* ForceField.h */; };
 		F735B8081A2D175800AE21D1 /* ForceFieldManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */; };
 		F735B8091A2D175800AE21D1 /* ForceFieldManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */; };
-		F7401C2A1AF934A200BA97A5 /* FilamentBindingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7401C281AF934A200BA97A5 /* FilamentBindingManager.cpp */; };
-		F7401C2B1AF934A200BA97A5 /* FilamentBindingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F7401C291AF934A200BA97A5 /* FilamentBindingManager.h */; };
+		F7401C2A1AF934A200BA97A5 /* BindingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7401C281AF934A200BA97A5 /* BindingManager.cpp */; };
+		F7401C2B1AF934A200BA97A5 /* BindingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F7401C291AF934A200BA97A5 /* BindingManager.h */; };
 		F7401C361AF9388D00BA97A5 /* Reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7401C2C1AF9388D00BA97A5 /* Reaction.cpp */; };
 		F7401C371AF9388D00BA97A5 /* Reaction.h in Headers */ = {isa = PBXBuildFile; fileRef = F7401C2D1AF9388D00BA97A5 /* Reaction.h */; };
 		F7401C381AF9388D00BA97A5 /* ReactionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7401C2E1AF9388D00BA97A5 /* ReactionBase.cpp */; };
@@ -149,7 +149,7 @@
 		F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */; };
 		F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */; };
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
-		F7A5200D1A8260EE003C49E0 /* FilamentReactionTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200B1A8260EE003C49E0 /* FilamentReactionTemplate.cpp */; };
+		F7A5200D1A8260EE003C49E0 /* ReactionTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */; };
 		F7A520121A8BB820003C49E0 /* RateChanger.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520101A8BB820003C49E0 /* RateChanger.h */; };
 		F7A520151A8BBF24003C49E0 /* DRController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A520131A8BBF24003C49E0 /* DRController.cpp */; };
 		F7A520161A8BBF24003C49E0 /* DRController.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520141A8BBF24003C49E0 /* DRController.h */; };
@@ -302,7 +302,7 @@
 		F735B7921A2D172800AE21D1 /* ChemSimImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSimImpl.h; sourceTree = "<group>"; };
 		F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSimpleGillespieImpl.cpp; sourceTree = "<group>"; };
 		F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSimpleGillespieImpl.h; sourceTree = "<group>"; };
-		F735B7961A2D172800AE21D1 /* FilamentReactionTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentReactionTemplate.h; sourceTree = "<group>"; };
+		F735B7961A2D172800AE21D1 /* ReactionTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionTemplate.h; sourceTree = "<group>"; };
 		F735B7971A2D172800AE21D1 /* SimpleManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleManagerImpl.cpp; sourceTree = "<group>"; };
 		F735B7981A2D172800AE21D1 /* SimpleManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleManagerImpl.h; sourceTree = "<group>"; };
 		F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGFletcherRievesMethod.cpp; sourceTree = "<group>"; };
@@ -316,8 +316,8 @@
 		F735B7D61A2D175800AE21D1 /* ForceField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceField.h; sourceTree = "<group>"; };
 		F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceFieldManager.cpp; sourceTree = "<group>"; };
 		F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceFieldManager.h; sourceTree = "<group>"; };
-		F7401C281AF934A200BA97A5 /* FilamentBindingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBindingManager.cpp; sourceTree = "<group>"; };
-		F7401C291AF934A200BA97A5 /* FilamentBindingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBindingManager.h; sourceTree = "<group>"; };
+		F7401C281AF934A200BA97A5 /* BindingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BindingManager.cpp; sourceTree = "<group>"; };
+		F7401C291AF934A200BA97A5 /* BindingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindingManager.h; sourceTree = "<group>"; };
 		F7401C2C1AF9388D00BA97A5 /* Reaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reaction.cpp; sourceTree = "<group>"; };
 		F7401C2D1AF9388D00BA97A5 /* Reaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reaction.h; sourceTree = "<group>"; };
 		F7401C2E1AF9388D00BA97A5 /* ReactionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionBase.cpp; sourceTree = "<group>"; };
@@ -395,7 +395,7 @@
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
-		F7A5200B1A8260EE003C49E0 /* FilamentReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentReactionTemplate.cpp; sourceTree = "<group>"; };
+		F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionTemplate.cpp; sourceTree = "<group>"; };
 		F7A520101A8BB820003C49E0 /* RateChanger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChanger.h; sourceTree = "<group>"; };
 		F7A520131A8BBF24003C49E0 /* DRController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DRController.cpp; sourceTree = "<group>"; };
 		F7A520141A8BBF24003C49E0 /* DRController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRController.h; sourceTree = "<group>"; };
@@ -753,10 +753,10 @@
 				F7401C331AF9388D00BA97A5 /* Species.cpp */,
 				F7401C341AF9388D00BA97A5 /* Species.h */,
 				F7401C351AF9388D00BA97A5 /* SpeciesContainer.h */,
-				F7A5200B1A8260EE003C49E0 /* FilamentReactionTemplate.cpp */,
-				F735B7961A2D172800AE21D1 /* FilamentReactionTemplate.h */,
-				F7401C281AF934A200BA97A5 /* FilamentBindingManager.cpp */,
-				F7401C291AF934A200BA97A5 /* FilamentBindingManager.h */,
+				F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */,
+				F735B7961A2D172800AE21D1 /* ReactionTemplate.h */,
+				F7401C281AF934A200BA97A5 /* BindingManager.cpp */,
+				F7401C291AF934A200BA97A5 /* BindingManager.h */,
 			);
 			name = Chemistry;
 			path = M3SYM/Chemistry;
@@ -860,7 +860,7 @@
 				F735B7721A2D16F200AE21D1 /* Component.h in Headers */,
 				F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */,
 				F7C9CFEA1A2D165D0087434A /* Bead.h in Headers */,
-				F7401C2B1AF934A200BA97A5 /* FilamentBindingManager.h in Headers */,
+				F7401C2B1AF934A200BA97A5 /* BindingManager.h in Headers */,
 				F7525A621A70241E007A4E9F /* BranchingStretching.h in Headers */,
 				F735B77D1A2D16F200AE21D1 /* MController.h in Headers */,
 				F7401C3C1AF9388D00BA97A5 /* RSpecies.h in Headers */,
@@ -894,7 +894,7 @@
 				F7525A871A70244D007A4E9F /* MotorGhostFF.h in Headers */,
 				F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */,
 				F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */,
-				F735B7A81A2D172800AE21D1 /* FilamentReactionTemplate.h in Headers */,
+				F735B7A81A2D172800AE21D1 /* ReactionTemplate.h in Headers */,
 				F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */,
 				F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */,
 				F7199B371A30C84600CD5DCC /* MBranchingPoint.h in Headers */,
@@ -1140,11 +1140,11 @@
 				F7525A091A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp in Sources */,
 				F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */,
 				F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */,
-				F7A5200D1A8260EE003C49E0 /* FilamentReactionTemplate.cpp in Sources */,
+				F7A5200D1A8260EE003C49E0 /* ReactionTemplate.cpp in Sources */,
 				F7C9D0031A2D165D0087434A /* CompartmentContainer.cpp in Sources */,
 				F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */,
 				F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */,
-				F7401C2A1AF934A200BA97A5 /* FilamentBindingManager.cpp in Sources */,
+				F7401C2A1AF934A200BA97A5 /* BindingManager.cpp in Sources */,
 				F735B7A21A2D172800AE21D1 /* ChemSim.cpp in Sources */,
 				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
 				F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */,
