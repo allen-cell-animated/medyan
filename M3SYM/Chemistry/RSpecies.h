@@ -127,6 +127,7 @@ public:
     /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a
     /// "callback"-like method to activated previously passivated [Reactions](@ref
     /// Reaction), where this RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
     virtual inline void up() {
         _n+=1;
 #ifdef TRACK_ZERO_COPY_N
@@ -137,11 +138,16 @@ public:
         if(_n==_ulim)
             passivateAssocProductReactions();
 #endif
+        
+#ifdef RSPECIES_SIGNALING
+    if(isSignaling()) emitSignal(+1);
+#endif
     }
     
     /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a
     /// "callback"-like method to passivate [Reactions](@ref Reaction), where this
     /// RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
     virtual inline void down() {
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
@@ -154,6 +160,10 @@ public:
 #ifdef TRACK_UPPER_COPY_N
         if(prev_n == _ulim)
             activateAssocProductReactions();
+#endif
+        
+#ifdef RSPECIES_SIGNALING
+    if(isSignaling()) emitSignal(-1);
 #endif
     }
     

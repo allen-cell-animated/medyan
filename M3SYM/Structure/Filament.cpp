@@ -383,7 +383,7 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     
     //filament
     m2->speciesFilament(filament)->up();
-    m2->speciesBound(0)->up();
+    m2->speciesBound(BOUND_EMPTY)->up();
     
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();

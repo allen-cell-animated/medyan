@@ -134,10 +134,7 @@ bool ChemGillespieImpl::makeStep() {
         _a_total = _a_total - a_penult + a_new;
     }
     
-    // Send signals
-#ifdef RSPECIES_SIGNALING
-    r->broadcastRSpeciesSignals();
-#endif
+    // Send signal
 #ifdef REACTION_SIGNALING
     r->emitSignal();
 #endif

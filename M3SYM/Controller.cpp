@@ -222,10 +222,6 @@ void Controller::initialize(string inputFile,
     _subSystem->addNewFilaments(filamentData);
     cout << "Done. " << filamentData.size()
          << " filaments created." << endl;
-    
-    //First update of system
-    updatePositions();
-    updateNeighborLists();
 }
 
 void Controller::updatePositions() {

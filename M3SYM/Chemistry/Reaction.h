@@ -236,27 +236,6 @@ template <unsigned short M, unsigned short N>
                << computePropensity() << ", ReactionBase ptr=" << this << "\n";
         }
         
-#ifdef RSPECIES_SIGNALING
-        /// This method may be called after a makeStep() took place. It iterates over
-        /// all reactants and products, and call the emitSignal(delta) of the
-        /// corresponding RSpecies objects, where delta=-1 for reactants and delta=+1
-        /// for products.
-        virtual void broadcastRSpeciesSignals() 
-        {
-            for(auto i=0U; i<M; ++i)
-            {
-                if(_rspecies[i]->isSignaling())
-                    _rspecies[i]->emitSignal(-1);
-
-            }
-            for(auto i=M; i<(M+N); ++i)
-            {
-                if(_rspecies[i]->isSignaling())
-                    _rspecies[i]->emitSignal(+1);
-            }
-        }
-#endif
-        
         /// Implementation of  clone()
         virtual Reaction<M,N>* cloneImpl(
             const SpeciesPtrContainerVector &spcv) override;
@@ -271,27 +250,14 @@ template <unsigned short M, unsigned short N>
 #endif
         return _rate*_rspecies[0]->getN();
     }
-    
 
-    
     /// Partial template speciatialization for Reaction<1,1> to gain efficiency
     template <> inline void Reaction<1,1>::makeStepImpl()
     {
         _rspecies[0]->down();
         _rspecies[1]->up();
     }
-    
-#ifdef RSPECIES_SIGNALING
-    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
-    template <>  inline void Reaction<1,1>::broadcastRSpeciesSignals()
-    {
-        if(_rspecies[0]->isSignaling())
-            _rspecies[0]->emitSignal(-1);
-        
-        if(_rspecies[1]->isSignaling())
-            _rspecies[1]->emitSignal(+1);
-    }
-#endif
+
 
 #endif
 

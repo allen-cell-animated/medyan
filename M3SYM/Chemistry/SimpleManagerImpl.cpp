@@ -1103,6 +1103,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             }
             
             reactant = reactants[1];
+            
             if(reactant.find("BULK") != string::npos) {
                 
                 //Look up species, make sure in list
@@ -1164,9 +1165,10 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     }
                     
                     //find the species single binding, push
-                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[0], reactant);
+                    string brancherName = reactants[0].substr(0, reactants[0].find(":"));
+                    string bename = SpeciesNamesDB::instance()->genBindingName(brancherName, name);
                     
-                    reactantSpecies.push_back(C->findSpeciesByName(bname));
+                    reactantSpecies.push_back(C->findSpeciesByName(bename));
                 }
                 else {
                     cout <<
@@ -1297,9 +1299,10 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     }
                     
                     //find the species pair binding, push
-                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[2], reactant);
+                    string linkerName = reactants[2].substr(0, reactants[2].find(":"));
+                    string lname = SpeciesNamesDB::instance()->genBindingName(linkerName, name);
                     
-                    reactantSpecies.push_back(C->findSpeciesByName(bname));
+                    reactantSpecies.push_back(C->findSpeciesByName(lname));
                 }
                 else {
                     cout <<
@@ -1434,7 +1437,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
                 
-                if(name != products[0]) {
+                if(name != products[0].substr(0, products[0].find(":"))) {
                     cout <<
                     "Linker species in reactants and products of linker reaction must be same. Exiting." <<
                     endl;
@@ -1518,9 +1521,10 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     }
                     
                     //find the species pair binding, push
-                    string bname = SpeciesNamesDB::instance()->genBindingName(reactants[2], reactant);
+                    string motorName = reactants[2].substr(0, reactants[2].find(":"));
+                    string mname = SpeciesNamesDB::instance()->genBindingName(motorName, name);
                     
-                    reactantSpecies.push_back(C->findSpeciesByName(bname));
+                    reactantSpecies.push_back(C->findSpeciesByName(mname));
                 }
                 else {
                     cout <<
@@ -1653,7 +1657,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
                 
-                if(name != products[0]) {
+                if(name != products[0].substr(0, products[0].find(":"))) {
                     cout <<
                     "Motor species in reactants and products of motor reaction must be same. Exiting." <<
                     endl;
@@ -1729,7 +1733,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[0] == sb) {
+            if(reactants[0].substr(0, reactants[0].find(":")) == sb) {
                 
                 //look at bound species associated
                 string bound = reactants[2].substr(0, reactants[2].find(":"));
@@ -1766,10 +1770,10 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[0] == sl) {
+            if(reactants[2].substr(0, reactants[2].find(":"))  == sl) {
                 
                 //look at bound species associated
-                string bound = reactants[2].substr(0, reactants[2].find(":"));
+                string bound = reactants[0].substr(0, reactants[0].find(":"));
                 
                 auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), bound);
                 
@@ -1803,10 +1807,10 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[0] == sm) {
+            if(reactants[2].substr(0, reactants[2].find(":"))  == sm) {
                 
                 //look at bound species associated
-                string bound = reactants[2].substr(0, reactants[2].find(":"));
+                string bound = reactants[0].substr(0, reactants[0].find(":"));
                 
                 auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), bound);
                 

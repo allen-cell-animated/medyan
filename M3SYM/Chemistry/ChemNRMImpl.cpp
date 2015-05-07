@@ -184,10 +184,7 @@ bool ChemNRMImpl::makeStep() {
         rn_other->updateHeap();
     }
     
-    // Send signals
-#ifdef RSPECIES_SIGNALING
-    r->broadcastRSpeciesSignals();
-#endif
+    // Send signal
 #ifdef REACTION_SIGNALING
     r->emitSignal();
 #endif
