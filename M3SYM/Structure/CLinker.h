@@ -39,14 +39,15 @@ public:
     ///@param pos1 - monomer index on first cylinder
     ///@param pos2 - monomer index on second cylinder
     CLinker(short linkerType, Compartment* c,
-            CCylinder* cc1, CCylinder* cc2, int pos1, int pos2);
+            CCylinder* cc1, CCylinder* cc2, int position1, int position2);
     
     ///Destructor, removes off reaction from system
     ~CLinker();
     
     /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c)
-        : CBound(c, rhs._cc1, rhs._cc2), _pLinker(rhs._pLinker){
+        : CBound(c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+          _pLinker(rhs._pLinker){
         
         //set species
         setFirstSpecies(rhs._firstSpecies);

@@ -50,25 +50,49 @@ struct UpdateBindingCallback {
         : _cylinder(cylinder), _bindingSite(bindingSite) {}
     
     //callback
-    void operator() (RSpecies *r, int i) {
+    void operator() (RSpecies *r, int delta) {
         
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
         
         for(auto &manager : c->getFilamentBindingManagers()) {
             
+            int oldN = manager->numBindingSites();
+            
             //update binding sites
             manager->updatePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
             
+            int newN = manager->numBindingSites();
+            int diff = newN - oldN;
+            
+            //find the species
             string bindingName = manager->getBoundName();
             string emptyName = SpeciesNamesDB::instance()->removeUniqueFilName(
-                _cylinder->getCCylinder()->getCMonomer(_bindingSite)->
-                speciesBound(BOUND_EMPTY)->getName());
+                               _cylinder->getCCylinder()->getCMonomer(_bindingSite)->
+                               speciesBound(BOUND_EMPTY)->getName());
             
-            //update binding species
             Species* s = c->findSpeciesByName(
                 SpeciesNamesDB::instance()->genBindingName(bindingName, emptyName));
-            s->setN(manager->numBindingSites());
+            
+            //update copy number
+            if(diff > 0) {
+                while (diff != 0) {
+                    s->up();
+                    diff--;
+                }
+            }
+            else if(diff < 0) {
+                while (diff != 0) {
+                    s->down();
+                    diff++;
+                }
+            }
+            else {} //do nothing
+            
+            //check if matching
+            assert((s->getN() != manager->numBindingSites())
+                    && "Species representing binding sites does not match \
+                        number of binding sites held by the manager.");
             
             //update the reaction based on the change
             manager->updateBindingReaction();

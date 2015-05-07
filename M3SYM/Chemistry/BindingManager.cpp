@@ -23,8 +23,8 @@ using namespace mathfunc;
 
 mt19937* FilamentBindingManager::_eng = 0;
 
-CCNLContainer* LinkerBindingManager::_nlContainer = 0;
-CCNLContainer* MotorBindingManager::_nlContainer = 0;
+vector<CCNLContainer*> LinkerBindingManager::_nlContainers;
+vector<CCNLContainer*> MotorBindingManager::_nlContainers;
 
 void BranchingManager::updatePossibleBindings(CCylinder* cc, short bindingSite) {
     
@@ -96,8 +96,8 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSi
             
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _nlContainer->getNeighborList()->getNeighbors(cc->getCylinder())) {
-                
+        for (auto cn : _nlContainers[_index]->getNeighborList()->getNeighbors(cc->getCylinder())) {
+            
             auto ccn = cn->getCCylinder();
                 
             for(auto it = SysParams::Chemistry().bindingSites.begin();
@@ -119,12 +119,16 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSi
                     if(dist > _rMax || dist < _rMin) continue;
                     
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getID() > cn->getID()) {
                         _possibleBindings.emplace(tuple<CCylinder*, short>(cc, bindingSite),
                                                   tuple<CCylinder*, short>(ccn, *it));
-                    else
-                        _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                  tuple<CCylinder*, short>(cc, bindingSite));
+                    }
+                    else {
+                        if(ccn->getCylinder()->getCompartment() == _compartment) {
+                            _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
+                                                      tuple<CCylinder*, short>(cc, bindingSite));
+                        }
+                    }
                 }
             }
         }
@@ -163,7 +167,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     
     _possibleBindings.clear();
     
-    for(auto c : *CylinderDB::instance()) {
+    for(auto c : _compartment->getCylinders()) {
     
         auto cc = c->getCCylinder();
     
@@ -175,7 +179,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
-                for (auto cn : _nlContainer->getNeighborList()->getNeighbors(cc->getCylinder())) {
+                for (auto cn : _nlContainers[_index]->getNeighborList()->getNeighbors(cc->getCylinder())) {
                     
                     auto ccn = cn->getCCylinder();
                     
@@ -201,9 +205,11 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             if(c->getID() > cn->getID())
                                 _possibleBindings.emplace(tuple<CCylinder*, short>(cc, *it1),
                                                           tuple<CCylinder*, short>(ccn, *it2));
-                            else
-                                _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it2),
-                                                          tuple<CCylinder*, short>(cc, *it1));
+                            else {
+                                if(ccn->getCylinder()->getCompartment() == _compartment)
+                                    _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it2),
+                                                              tuple<CCylinder*, short>(cc, *it1));
+                            }
                         }
                     }
                 }
@@ -233,7 +239,7 @@ void MotorBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSit
         
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _nlContainer->getNeighborList()->getNeighbors(cc->getCylinder())) {
+        for (auto cn : _nlContainers[_index]->getNeighborList()->getNeighbors(cc->getCylinder())) {
             
             auto ccn = cn->getCCylinder();
             
@@ -259,9 +265,11 @@ void MotorBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSit
                     if(c->getID() > cn->getID())
                         _possibleBindings.emplace(tuple<CCylinder*, short>(cc, bindingSite),
                                                   tuple<CCylinder*, short>(ccn, *it));
-                    else
-                        _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                  tuple<CCylinder*, short>(cc, bindingSite));
+                    else {
+                        if(ccn->getCylinder()->getCompartment() == _compartment)
+                            _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
+                                                      tuple<CCylinder*, short>(cc, bindingSite));
+                    }
                 }
             }
         }
@@ -301,7 +309,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
     
     _possibleBindings.clear();
     
-    for(auto c : *CylinderDB::instance()) {
+    for(auto c : _compartment->getCylinders()) {
         
         auto cc = c->getCCylinder();
         
@@ -313,7 +321,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
-                for (auto cn : _nlContainer->getNeighborList()->getNeighbors(cc->getCylinder())) {
+                for (auto cn : _nlContainers[_index]->getNeighborList()->getNeighbors(cc->getCylinder())) {
                     
                     auto ccn = cn->getCCylinder();
                     
@@ -340,8 +348,9 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                 _possibleBindings.emplace(tuple<CCylinder*, short>(cc, *it1),
                                                           tuple<CCylinder*, short>(ccn, *it2));
                             else
-                                _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it2),
-                                                          tuple<CCylinder*, short>(cc, *it1));
+                                if(ccn->getCylinder()->getCompartment() == _compartment)
+                                    _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it2),
+                                                              tuple<CCylinder*, short>(cc, *it1));
                         }
                     }
                 }

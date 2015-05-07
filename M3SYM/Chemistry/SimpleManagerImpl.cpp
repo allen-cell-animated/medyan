@@ -1043,8 +1043,6 @@ void SimpleManagerImpl::genFilBindingManagers() {
     for(auto &c : CompartmentGrid::instance()->children()) {
         
         Compartment *C = (Compartment*)(c.get());
-        
-        if(!C->isActivated()) continue;
     
         for(auto &r: _chemData.branchingReactions) {
             
@@ -1262,6 +1260,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
             boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
         }
         
+        int linkerIndex = 0;
+        
         for(auto &r: _chemData.linkerReactions) {
             
             vector<Species*> reactantSpecies;
@@ -1437,7 +1437,9 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
                 
-                if(name != products[0].substr(0, products[0].find(":"))) {
+                auto name_prod = products[0].substr(0, products[0].find(":"));
+                
+                if(name != name_prod) {
                     cout <<
                     "Linker species in reactants and products of linker reaction must be same. Exiting." <<
                     endl;
@@ -1461,8 +1463,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
             double onRate = get<2>(r);
             double offRate = get<3>(r);
         
-            rMax = get<4>(r);
-            rMin = get<5>(r);
+            rMin = get<4>(r);
+            rMax = get<5>(r);
             
             ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::LINKERBINDING);
@@ -1473,17 +1475,15 @@ void SimpleManagerImpl::genFilBindingManagers() {
             LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName, rMax, rMin);
             C->addFilamentBindingManager(lManager);
             
+            lManager->setIndex(linkerIndex++);
+            
             //attach callback
             LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
             boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
         }
-        
-        //init neighbor list
-        LinkerBindingManager::_nlContainer =
-        new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                      max(rMin - SysParams::Geometry().cylinderSize, 0.0), true);
-        
        
+        int motorIndex = 0;
+        
         for(auto &r: _chemData.motorReactions) {
             
             vector<Species*> reactantSpecies;
@@ -1657,7 +1657,9 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
                 
-                if(name != products[0].substr(0, products[0].find(":"))) {
+                name_prod = products[0].substr(0, products[0].find(":"));
+                
+                if(name != name_prod) {
                     cout <<
                     "Motor species in reactants and products of motor reaction must be same. Exiting." <<
                     endl;
@@ -1680,8 +1682,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
             double onRate = get<2>(r);
             double offRate = get<3>(r);
             
-            rMax = get<4>(r);
-            rMin = get<5>(r);
+            rMin = get<4>(r);
+            rMax = get<5>(r);
             
             ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::MOTORBINDING);
@@ -1692,15 +1694,34 @@ void SimpleManagerImpl::genFilBindingManagers() {
             MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName, rMax, rMin);
             C->addFilamentBindingManager(mManager);
             
+            mManager->setIndex(motorIndex++);
+            
             //attach callback
             MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);
             boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
         }
+    }
+    
+    //init neighbor lists
+    //get a compartment
+    Compartment* c = (Compartment*) CompartmentGrid::instance()->children(0);
+    
+    for(auto &manager : c->getFilamentBindingManagers()) {
         
-        //init neighbor list
-        MotorBindingManager::_nlContainer =
-        new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                      max(rMin - SysParams::Geometry().cylinderSize, 0.0), true);
+        LinkerBindingManager* lManager;
+        MotorBindingManager* mManager;
+        
+        if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
+        
+            LinkerBindingManager::_nlContainers.push_back(
+               new CCNLContainer(lManager->getRMax() + SysParams::Geometry().cylinderSize,
+                             max(lManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
+        }
+        
+        else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get())))
+            MotorBindingManager::_nlContainers.push_back(
+               new CCNLContainer(mManager->getRMax() + SysParams::Geometry().cylinderSize,
+                             max(mManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
     }
 }
 
@@ -1709,13 +1730,15 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
     
     // add diffusing species (zero copy number for now)
     for(auto &sd : _chemData.speciesDiffusing)
+        
         protoCompartment.addSpeciesUnique(
-            unique_ptr<Species>(new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
+        unique_ptr<Species>(new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
     
     // add bulk species (zero copy number for now)
     for(auto &sb : _chemData.speciesBulk)
+        
         CompartmentGrid::instance()->
-            addSpeciesBulk(get<0>(sb), 0, (get<2>(sb) == "CONST") ? true : false);
+        addSpeciesBulk(get<0>(sb), 0, max_ulim, (get<2>(sb) == "CONST") ? true : false);
     
     // create single binding and pair binding species
     for(auto &sb : _chemData.speciesBrancher) {
@@ -1726,6 +1749,8 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
             auto reactants = get<0>(rb);
             auto products = get<1>(rb);
             
+            auto sb_react = reactants[0].substr(0, reactants[0].find(":"));
+            
             //basic check because we have not yet checked reactions
             if(reactants.size() != BRANCHINGREACTANTS ||
                products.size() != BRANCHINGPRODUCTS) {
@@ -1733,7 +1758,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[0].substr(0, reactants[0].find(":")) == sb) {
+            if(sb_react == sb) {
                 
                 //look at bound species associated
                 string bound = reactants[2].substr(0, reactants[2].find(":"));
@@ -1770,7 +1795,9 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[2].substr(0, reactants[2].find(":"))  == sl) {
+            auto sl_react = reactants[2].substr(0, reactants[2].find(":"));
+            
+            if(sl_react == sl) {
                 
                 //look at bound species associated
                 string bound = reactants[0].substr(0, reactants[0].find(":"));
@@ -1807,7 +1834,9 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 exit(EXIT_FAILURE);
             }
             
-            if(reactants[2].substr(0, reactants[2].find(":"))  == sm) {
+            auto sm_react = reactants[2].substr(0, reactants[2].find(":"));
+            
+            if(sm_react == sm) {
                 
                 //look at bound species associated
                 string bound = reactants[0].substr(0, reactants[0].find(":"));
@@ -2143,8 +2172,6 @@ void SimpleManagerImpl::genNucleationReactions() {
     //loop through all compartments
     for(auto &c : CompartmentGrid::instance()->children()) {
         Compartment *C = (Compartment*)(c.get());
-        
-        if(!C->isActivated()) continue;
         
         //go through reactions, add each
         for(auto &r: _chemData.nucleationReactions) {

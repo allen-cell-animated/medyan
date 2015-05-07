@@ -55,10 +55,10 @@ protected:
     
     Compartment* _compartment; ///< Compartment this is in
     
-    /// Integer index of bound chemical value
-    short _boundInt;
-    /// String name of bound chemical value
-    string _boundName;
+    short _boundInt; ///< Integer index of bound chemical value
+    string _boundName; ///< String name of bound chemical value
+    
+    short _index = 0; ///<Index of this manager (for access of neighbor lists)
     
     static mt19937 *_eng; ///< Random number generator
     
@@ -95,9 +95,11 @@ public:
     
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
-    
     ///Get the bound species name
     string getBoundName() {return _boundName;}
+    
+    ///Set the index of this manager
+    void setIndex(int index) {_index = index;}
 };
 
 
@@ -129,6 +131,10 @@ public:
     /// Choose a random binding site based on current state
     tuple<CCylinder*, short> chooseBindingSite() {
         
+        assert((_possibleBindings.size() != 0)
+               && "Major bug: Branching manager should not have zero binding \
+                  sites when called to choose a binding site.");
+        
         uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
         
         int randomIndex = dis(*_eng);
@@ -146,7 +152,7 @@ public:
  *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
  *  cylinders within range of binding for this reaction
  */
-class LinkerBindingManager : public FilamentBindingManager{
+class LinkerBindingManager : public FilamentBindingManager {
     
 friend class SimpleManagerImpl;
     
@@ -158,7 +164,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static CCNLContainer* _nlContainer;
+    static vector<CCNLContainer*> _nlContainers;
     
 public:
     LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
@@ -180,9 +186,19 @@ public:
         return _possibleBindings.size();
     }
     
+    //@{
+    /// Getters for distances
+    float getRMin() {return _rMin;}
+    float getRMax() {return _rMax;}
+    //@}
+    
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites() {
         
+        assert((_possibleBindings.size() != 0)
+               && "Major bug: Linker binding manager should not have zero binding \
+                   sites when called to choose a binding site.");
+
         uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
         
         int randomIndex = dis(*_eng);
@@ -200,7 +216,7 @@ public:
  *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
  *  cylinders within range of binding for this reaction
  */
-class MotorBindingManager : public FilamentBindingManager, public CCNLContainer {
+class MotorBindingManager : public FilamentBindingManager {
     
 friend class SimpleManagerImpl;
     
@@ -212,7 +228,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static CCNLContainer* _nlContainer;
+    static vector<CCNLContainer*> _nlContainers;
     
 public:
     MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
@@ -234,8 +250,18 @@ public:
         return _possibleBindings.size();
     }
     
+    //@{
+    /// Getters for distances
+    float getRMin() {return _rMin;}
+    float getRMax() {return _rMax;}
+    //@}
+    
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites() {
+        
+        assert((_possibleBindings.size() != 0)
+               && "Major bug: Motor binding manager should not have zero binding \
+                   sites when called to choose a binding site.");
         
         uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
         
