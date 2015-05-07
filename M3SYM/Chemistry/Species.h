@@ -164,6 +164,7 @@ public:
  *  @note The Species class allows callbacks (see makeSignaling and related methods). 
 */
 class Species {
+    
 private: //Variables
     int _molecule; ///< unique id identifying the molecule (e.g. the integer id
                    ///< corresponding to "Arp2/3")
@@ -384,6 +385,7 @@ public:
 
 /// Used for species without spatial information (i.e. well-mixed in the container)
 class SpeciesBulk : public Species {
+    
 public:
     /// Default constructor
     SpeciesBulk()  : Species() {}
@@ -476,6 +478,7 @@ public:
 /// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
+    
 public:
     /// Default constructor
     SpeciesFilament()  : Species() {}

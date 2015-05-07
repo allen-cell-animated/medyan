@@ -41,23 +41,33 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
 
     for(int i = 0; i < _numFSpecies; i++) {
         
+        //clone and add to array
         SpeciesFilament* s = rhs._speciesFilament[i];
         SpeciesFilament* sNew = s->clone();
         
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         _speciesFilament[i] = sNew;
-    
+        
+        //transfer any signal;
+        sNew->getRSpecies()._signal = s->getRSpecies()._signal;
+        s->getRSpecies()._signal = nullptr;
+        
     }
     
     //For bound species, transfer the CBound (if any)
     
     for(int i = 0; i < _numBSpecies; i++) {
         
+        //clone and add to array
         SpeciesBound* s = rhs._speciesBound[i];
         SpeciesBound* sNew = s->clone();
         
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         _speciesBound[i] = sNew;
+        
+        //transfer any signal
+        sNew->getRSpecies()._signal = s->getRSpecies()._signal;
+        s->getRSpecies()._signal = nullptr;
         
         //update cbound
         CBound* cBound = s->getCBound();

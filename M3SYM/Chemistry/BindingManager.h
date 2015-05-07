@@ -21,6 +21,7 @@
 #include "common.h"
 
 #include "NeighborListContainer.h"
+#include "ReactionBase.h"
 
 #include "SysParams.h"
 
@@ -55,14 +56,18 @@ protected:
     Compartment* _compartment; ///< Compartment this is in
     
     /// Integer index of bound chemical value
-    short _bound;
+    short _boundInt;
+    /// String name of bound chemical value
+    string _boundName;
     
     static mt19937 *_eng; ///< Random number generator
     
 public:
-    FilamentBindingManager(ReactionBase* reaction, Compartment* compartment, short bound)
+    FilamentBindingManager(ReactionBase* reaction, Compartment* compartment,
+                           short boundInt, string boundName)
     
-    : _bindingReaction(reaction), _compartment(compartment), _bound(bound) {
+    : _bindingReaction(reaction), _compartment(compartment),
+      _boundInt(boundInt), _boundName(boundName) {
     
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament binding reaction relies on reaction and species signaling. Please"
@@ -82,8 +87,17 @@ public:
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings() = 0;
     
-    ///Get the bound species
-    virtual short getBound() {return _bound;}
+    /// Get current number of binding sites
+    virtual int numBindingSites() = 0;
+    
+    //update the binding reaction (called due to a copy number change)
+    void updateBindingReaction() {_bindingReaction->activateReaction();}
+    
+    ///Get the bound species integer index
+    short getBoundInt() {return _boundInt;}
+    
+    ///Get the bound species name
+    string getBoundName() {return _boundName;}
 };
 
 
@@ -95,8 +109,9 @@ private:
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
     
 public:
-    BranchingManager(ReactionBase* reaction, Compartment* compartment, short bound)
-    : FilamentBindingManager(reaction, compartment, bound) {}
+    BranchingManager(ReactionBase* reaction, Compartment* compartment,
+                     short boundInt, string boundName)
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName) {}
     
     ~BranchingManager() {}
     
@@ -105,6 +120,11 @@ public:
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
     
     virtual void updateAllPossibleBindings();
+    
+    virtual int numBindingSites() {
+        
+        return _possibleBindings.size();
+    }
     
     /// Choose a random binding site based on current state
     tuple<CCylinder*, short> chooseBindingSite() {
@@ -135,16 +155,17 @@ private:
     float _rMax; ///< Maximum reaction range
     
     //possible bindings at current state. updated according to neighbor list
-    unordered_map<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+    unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
     static CCNLContainer* _nlContainer;
     
 public:
     LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
-                         short bound, float rMax, float rMin)
+                         short boundInt, string boundName, float rMax, float rMin)
     
-    : FilamentBindingManager(reaction, compartment, bound), _rMin(rMin), _rMax(rMax) {}
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+      _rMin(rMin), _rMax(rMax) {}
     
     ~LinkerBindingManager() {}
     
@@ -153,6 +174,11 @@ public:
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
     
     virtual void updateAllPossibleBindings();
+    
+    virtual int numBindingSites() {
+        
+        return _possibleBindings.size();
+    }
     
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites() {
@@ -183,16 +209,17 @@ private:
     float _rMax; ///< Maximum reaction range
     
     //possible bindings at current state. updated according to neighbor list
-    unordered_map<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+    unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
     static CCNLContainer* _nlContainer;
     
 public:
     MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
-                        short bound, float rMax, float rMin)
+                        short boundInt, string boundName, float rMax, float rMin)
     
-    : FilamentBindingManager(reaction, compartment, bound), _rMin(rMin), _rMax(rMax) {}
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+      _rMin(rMin), _rMax(rMax) {}
     
     ~MotorBindingManager() {}
     
@@ -201,6 +228,11 @@ public:
     virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
     
     virtual void updateAllPossibleBindings();
+    
+    virtual int numBindingSites() {
+        
+        return _possibleBindings.size();
+    }
     
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites() {

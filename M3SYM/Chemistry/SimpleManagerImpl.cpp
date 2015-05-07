@@ -1183,19 +1183,21 @@ void SimpleManagerImpl::genFilBindingManagers() {
             }
             
             //FIRST PRODUCT SPECIES MUST BE BRANCHER
-            short brancher;
+            short brancherInt;
+            string brancherName;
             
             auto product = products[0];
             if(product.find("BRANCHER") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
+                brancherName = name;
                 auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
                 
                 if(it != _chemData.speciesBrancher.end()) {
                     
                     //get position of iterator
-                    brancher = distance(_chemData.speciesBrancher.begin(), it);
+                    brancherInt = distance(_chemData.speciesBrancher.begin(), it);
                 }
                 else {
                     cout <<
@@ -1250,7 +1252,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
             
             //create manager
-            BranchingManager* bManager = new BranchingManager(rxn, C, brancher);
+            BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName);
             C->addFilamentBindingManager(bManager);
             
             //attach callback
@@ -1396,17 +1398,20 @@ void SimpleManagerImpl::genFilBindingManagers() {
 
             //FIRST TWO SPECIES IN PRODUCTS MUST BE LINKER
             auto product = products[0];
-            short linker;
+            
+            short linkerInt;
+            string linkerName;
             
             if(product.find("LINKER") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
+                linkerName = name;
                 auto it = find(_chemData.speciesLinker.begin(), _chemData.speciesLinker.end(), name);
                 
                 if(it != _chemData.speciesLinker.end()) {
                     //get position of iterator
-                    linker = distance(_chemData.speciesLinker.begin(), it);
+                    linkerInt = distance(_chemData.speciesLinker.begin(), it);
                 }
                 else {
                     cout <<
@@ -1462,7 +1467,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
             
             //create manager
-            LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linker, rMax, rMin);
+            LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName, rMax, rMin);
             C->addFilamentBindingManager(lManager);
             
             //attach callback
@@ -1473,7 +1478,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
         //init neighbor list
         LinkerBindingManager::_nlContainer =
         new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                      max(rMin - SysParams::Geometry().cylinderSize, 0.0));
+                      max(rMin - SysParams::Geometry().cylinderSize, 0.0), true);
         
        
         for(auto &r: _chemData.motorReactions) {
@@ -1612,17 +1617,20 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //FIRST TWO SPECIES IN PRODUCTS MUST BE MOTOR
             auto product = products[0];
-            short motor;
+            
+            short motorInt;
+            string motorName;
             
             if(product.find("MOTOR") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
+                motorName = name;
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
                 
                 if(it != _chemData.speciesMotor.end()) {
                     //get position of iterator
-                    motor = distance(_chemData.speciesMotor.begin(), it);
+                    motorInt = distance(_chemData.speciesMotor.begin(), it);
                 }
                 else {
                     cout <<
@@ -1677,7 +1685,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
             
             //create manager
-            MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motor, rMax, rMin);
+            MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName, rMax, rMin);
             C->addFilamentBindingManager(mManager);
             
             //attach callback
@@ -1688,7 +1696,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
         //init neighbor list
         MotorBindingManager::_nlContainer =
         new CCNLContainer(rMax + SysParams::Geometry().cylinderSize,
-                      max(rMin - SysParams::Geometry().cylinderSize, 0.0));
+                      max(rMin - SysParams::Geometry().cylinderSize, 0.0), true);
     }
 }
 
@@ -2398,6 +2406,18 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         CMonomer* m = new CMonomer();
         initCMonomer(m, c);
         cc->addCMonomer(m);
+        
+        if(find(SysParams::Chemistry().bindingSites.begin(),
+                SysParams::Chemistry().bindingSites.end(), i) !=
+                SysParams::Chemistry().bindingSites.end()) {
+        
+            //add callback to binding sites
+            UpdateBindingCallback bcallback(cc->getCylinder(), i);
+            
+            Species* es = cc->getCMonomer(i)->speciesBound(BOUND_EMPTY);
+            
+            boost::signals2::shared_connection_block rcb(es->connect(bcallback,false));
+        }
     }
     
     //get last ccylinder

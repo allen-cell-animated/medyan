@@ -220,7 +220,6 @@
 		F7C9D01B1A2D165D0087434A /* Movable.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD41A2D165D0087434A /* Movable.h */; };
 		F7C9D01C1A2D165D0087434A /* Neighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD51A2D165D0087434A /* Neighbor.h */; };
 		F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD71A2D165D0087434A /* NeighborList.h */; };
-		F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */; };
 		F7C9D0201A2D165D0087434A /* NeighborListContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */; };
 		F7C9D0211A2D165D0087434A /* NeighborListDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */; };
 		F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */; };
@@ -466,7 +465,6 @@
 		F7C9CFD41A2D165D0087434A /* Movable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movable.h; sourceTree = "<group>"; };
 		F7C9CFD51A2D165D0087434A /* Neighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Neighbor.h; sourceTree = "<group>"; };
 		F7C9CFD71A2D165D0087434A /* NeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborList.h; sourceTree = "<group>"; };
-		F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListContainer.cpp; sourceTree = "<group>"; };
 		F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListContainer.h; sourceTree = "<group>"; };
 		F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListDB.cpp; sourceTree = "<group>"; };
 		F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListDB.h; sourceTree = "<group>"; };
@@ -570,7 +568,6 @@
 				BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */,
 				BF365D861ABC728F006EE099 /* NeighborListImpl.h */,
 				F7C9CFD71A2D165D0087434A /* NeighborList.h */,
-				F7C9CFD81A2D165D0087434A /* NeighborListContainer.cpp */,
 				F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */,
 				F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */,
 				F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */,
@@ -1147,7 +1144,6 @@
 				F7401C2A1AF934A200BA97A5 /* BindingManager.cpp in Sources */,
 				F735B7A21A2D172800AE21D1 /* ChemSim.cpp in Sources */,
 				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
-				F7C9D01F1A2D165D0087434A /* NeighborListContainer.cpp in Sources */,
 				F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */,
 				F7199B2E1A30C24D00CD5DCC /* BranchingPointDB.cpp in Sources */,
 				F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */,

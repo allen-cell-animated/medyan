@@ -32,6 +32,7 @@ class Species;
 class RSpecies;
 class ReactionBase;
 class ChemSignal;
+class CMonomer;
 
 /// vr stands for vector of Reactions
 typedef vector<ReactionBase*>::iterator vr_iterator; 
@@ -60,6 +61,7 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
  */
 class RSpecies {
     friend Species;
+    friend CMonomer;
     /// Reactions calls addAsReactant(), removeAsReactant() - which other classes
     /// should not call
 private: //Variables

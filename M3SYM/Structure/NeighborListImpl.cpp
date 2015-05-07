@@ -40,8 +40,8 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
             
-            //Dont add if ID is more than cylinder
-            if(cylinder->getID() <= ncylinder->getID()) continue;
+            //Dont add if ID is more than cylinder for half-list
+            if(!_full && cylinder->getID() <= ncylinder->getID()) continue;
             
             //Don't add if on the same filament
             if(cylinder->getFilament() == ncylinder->getFilament()) {

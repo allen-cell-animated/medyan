@@ -27,9 +27,9 @@ protected:
     
 public:
     /// Constructor, adds a cylinder-cylinder neighbor list to the database
-    CCNLContainer(float rMax = 0.0, float rMin = 0.0) {
+    CCNLContainer(float rMax = 0.0, float rMin = 0.0, bool full = false) {
         
-        _neighborList = new CCNeighborList(rMax, rMin);
+        _neighborList = new CCNeighborList(rMax, rMin, full);
         NeighborListDB::instance()->addNeighborList(_neighborList);
     }
     /// Destructor, removes cylinder-cylinder neighbor list from the database

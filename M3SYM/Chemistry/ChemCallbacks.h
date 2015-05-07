@@ -40,8 +40,9 @@ using namespace mathfunc;
 /// a change of copy number for an empty site.
 struct UpdateBindingCallback {
     
-    Cylinder* _cylinder;
-    short _bindingSite;
+    Cylinder* _cylinder; ///< cylinder to update
+    
+    short _bindingSite;  ///< binding site to update
     
     //Constructor, sets members
     UpdateBindingCallback(Cylinder* cylinder, short bindingSite)
@@ -49,13 +50,29 @@ struct UpdateBindingCallback {
         : _cylinder(cylinder), _bindingSite(bindingSite) {}
     
     //callback
-    void operator() (ReactionBase *r) {
+    void operator() (RSpecies *r, int i) {
         
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
         
-        for(auto &manager : c->getFilamentBindingManagers())
+        for(auto &manager : c->getFilamentBindingManagers()) {
+            
+            //update binding sites
             manager->updatePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+            
+            string bindingName = manager->getBoundName();
+            string emptyName = SpeciesNamesDB::instance()->removeUniqueFilName(
+                _cylinder->getCCylinder()->getCMonomer(_bindingSite)->
+                speciesBound(BOUND_EMPTY)->getName());
+            
+            //update binding species
+            Species* s = c->findSpeciesByName(
+                SpeciesNamesDB::instance()->genBindingName(bindingName, emptyName));
+            s->setN(manager->numBindingSites());
+            
+            //update the reaction based on the change
+            manager->updateBindingReaction();
+        }
     }
 };
 
@@ -238,7 +255,7 @@ struct BranchingCallback {
     
     void operator() (ReactionBase *r) {
         
-        short branchType = _bManager->getBound();
+        short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
@@ -327,7 +344,7 @@ struct LinkerBindingCallback {
     void operator() (ReactionBase *r) {
         
         //get a random binding
-        short linkerType = _lManager->getBound();
+        short linkerType = _lManager->getBoundInt();
         
         //choose a random binding site from manager
         auto site = _lManager->chooseBindingSites();
@@ -391,7 +408,7 @@ struct MotorBindingCallback {
     void operator() (ReactionBase *r) {
 
         //get a random binding
-        short motorType = _mManager->getBound();
+        short motorType = _mManager->getBoundInt();
         
         //choose a random binding site from manager
         auto site = _mManager->chooseBindingSites();

@@ -27,17 +27,22 @@ class Cylinder;
 class BoundaryElement;
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
+/// This can be a half or full list depending on the usage.
 class CCNeighborList : public NeighborList {
     
 private:
     unordered_map<Cylinder*, vector<Cylinder*>>
         _list; ///< The neighbors list, as a hash map
     
+    bool _full; ///<Specifying whether this is a full or half list
+    
     ///Helper function to update neighbors
     void updateNeighbors(Cylinder* cylinder);
     
 public:
-    CCNeighborList(float rMax, float rMin=0.0) : NeighborList(rMax, rMin) {}
+    CCNeighborList(float rMax, float rMin=0.0, bool full = false)
+    
+        : NeighborList(rMax, rMin), _full(full) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
