@@ -1657,7 +1657,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 string name = product.substr(0, product.find(":"));
                 auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
                 
-                name_prod = products[0].substr(0, products[0].find(":"));
+                auto name_prod = products[0].substr(0, products[0].find(":"));
                 
                 if(name != name_prod) {
                     cout <<
@@ -2490,6 +2490,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 cc->getCMonomer(i)->speciesBound(BOUND_EMPTY)->up();
+                
             }
             for(auto &r : _filRxnTemplates) r->addReaction(lastcc, cc);
         }

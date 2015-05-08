@@ -37,6 +37,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
              it != rhs._crossCylinderReactions.end(); it++) {
         
         for(auto &r : it->second) {
+
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             if(r->getCBound() != nullptr)
@@ -50,6 +51,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 
         //clone reactions
         for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
+            
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             if(r->getCBound() != nullptr)
@@ -88,9 +90,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
-        
-        _compartment->removeInternalReaction(r);
+        ChemSim::removeReaction(r); _compartment->removeInternalReaction(r);
         
         _internalReactions.erase(r);
     }
@@ -124,7 +124,7 @@ void CCylinder:: removeAllInternalReactions() {
 
 void CCylinder::removeCrossCylinderReaction(CCylinder* other,
                                             ReactionBase* r) {
-    
+
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) {
        
@@ -135,9 +135,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
-        
-        _compartment->removeInternalReaction(r);
+        ChemSim::removeReaction(r); _compartment->removeInternalReaction(r);
         
         //if number of reactions in cross-cylinder
         //has dropped to zero, delete it

@@ -32,8 +32,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
     //Find surrounding compartments (For now its conservative)
     vector<Compartment*> compartments;
     
-    GController::findCompartments(cylinder->coordinate,
-                                  cylinder->getCompartment(),
+    GController::findCompartments(cylinder->coordinate, cylinder->getCompartment(),
                                   SysParams::Geometry().largestCompartmentSide * 2,
                                   compartments);
     
@@ -59,6 +58,15 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
             
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
+            
+            if(_full) {
+            
+                bool inList = find(_list[ncylinder].begin(),
+                                   _list[ncylinder].end(), cylinder) !=
+                                   _list[ncylinder].end();
+            
+                if(!inList) _list[ncylinder].push_back(cylinder);
+            }
         }
     }
 }
@@ -100,12 +108,12 @@ void CCNeighborList::removeDynamicNeighbor(Neighbor* n) {
 
 void CCNeighborList::reset() {
     
-    //loop through all neighbor keys
-    for(auto it = _list.begin(); it != _list.end(); it++) {
+    _list.clear();
     
-        it->second.clear(); ///clear vector of neighbors
-        updateNeighbors(it->first);
-    }
+    //loop through all neighbor keys
+    for(auto cylinder: *CylinderDB::instance())
+        
+        updateNeighbors(cylinder);
 }
 
 vector<Cylinder*> CCNeighborList::getNeighbors(Cylinder* cylinder) {
@@ -174,12 +182,12 @@ void BBENeighborList::removeDynamicNeighbor(Neighbor* n) {
 
 void BBENeighborList::reset() {
     
+    _list.clear();
+    
     //loop through all neighbor keys
-    for(auto it = _list.begin(); it != _list.end(); it++) {
+    for(auto boundary: *BoundaryElementDB::instance())
         
-        it->second.clear(); ///clear vector of neighbors
-        updateNeighbors(it->first);
-    }
+        updateNeighbors(boundary);
 }
 
 vector<Bead*> BBENeighborList::getNeighbors(BoundaryElement* be) {
@@ -249,12 +257,12 @@ void CBENeighborList::removeDynamicNeighbor(Neighbor* n) {
 
 void CBENeighborList::reset() {
     
+    _list.clear();
+    
     //loop through all neighbor keys
-    for(auto it = _list.begin(); it != _list.end(); it++) {
+    for(auto boundary: *BoundaryElementDB::instance())
         
-        it->second.clear(); ///clear vector of neighbors
-        updateNeighbors(it->first);
-    }
+        updateNeighbors(boundary);
 }
 
 vector<Cylinder*> CBENeighborList::getNeighbors(BoundaryElement* be) {

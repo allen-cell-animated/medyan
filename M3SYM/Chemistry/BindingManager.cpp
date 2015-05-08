@@ -13,6 +13,7 @@
 
 #include "BindingManager.h"
 
+#include "Compartment.h"
 #include "Cylinder.h"
 #include "Bead.h"
 
@@ -26,14 +27,31 @@ mt19937* FilamentBindingManager::_eng = 0;
 vector<CCNLContainer*> LinkerBindingManager::_nlContainers;
 vector<CCNLContainer*> MotorBindingManager::_nlContainers;
 
+BranchingManager::BranchingManager(ReactionBase* reaction, Compartment* compartment,
+                                   short boundInt, string boundName)
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName) {
+    
+    //find the single binding species
+    RSpecies** rs = reaction->rspecies();
+    string name = rs[2]->getSpecies().getName();
+    
+    _bindingSpecies = _compartment->findSpeciesByName(name);
+}
+
 void BranchingManager::updatePossibleBindings(CCylinder* cc, short bindingSite) {
     
     //remove all tuples which have this ccylinder
+    int oldN = _bindingSpecies->getN();
+    
     _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
 
     //now re add valid binding site
     if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY)
             _possibleBindings.insert(tuple<CCylinder*, short>(cc, bindingSite));
+    
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
 }
 
 void BranchingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc) {
@@ -59,6 +77,8 @@ void BranchingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* newc
 void BranchingManager::updateAllPossibleBindings() {
     
     //clear all
+    int oldN = _bindingSpecies->getN();
+    
     _possibleBindings.clear();
     
     for(auto &c : _compartment->getCylinders()) {
@@ -73,11 +93,31 @@ void BranchingManager::updateAllPossibleBindings() {
                 
                 _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it));
     }
+    
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
 }
+
+LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
+                                           short boundInt, string boundName, float rMax, float rMin)
+
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+      _rMin(rMin), _rMax(rMax) {
+    
+    //find the pair binding species
+    RSpecies** rs = reaction->rspecies();
+    string name = rs[0]->getSpecies().getName();
+          
+    _bindingSpecies = _compartment->findSpeciesByName(name);
+}
+
 
 void LinkerBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSite) {
     
     Cylinder* c = cc->getCylinder();
+    
+    int oldN = _bindingSpecies->getN();
     
     //remove all tuples which have this ccylinder as key
     _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
@@ -93,9 +133,10 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSi
     
     //now re add valid binding sites
     if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY) {
-            
+        
         //loop through neighbors
         //now re add valid based on CCNL
+        
         for (auto cn : _nlContainers[_index]->getNeighborList()->getNeighbors(cc->getCylinder())) {
             
             auto ccn = cn->getCCylinder();
@@ -133,6 +174,9 @@ void LinkerBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSi
             }
         }
     }
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
 }
 
 void LinkerBindingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc) {
@@ -164,6 +208,8 @@ void LinkerBindingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* 
 }
 
 void LinkerBindingManager::updateAllPossibleBindings() {
+    
+    int oldN = _bindingSpecies->getN();
     
     _possibleBindings.clear();
     
@@ -216,11 +262,29 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             }
         }
     }
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
+}
+
+MotorBindingManager::MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
+                                         short boundInt, string boundName, float rMax, float rMin)
+
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+      _rMin(rMin), _rMax(rMax) {
+    
+    //find the pair binding species
+    RSpecies** rs = reaction->rspecies();
+    string name = rs[0]->getSpecies().getName();
+    
+    _bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
 void MotorBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSite) {
     
     Cylinder* c = cc->getCylinder();
+    
+    int oldN = _bindingSpecies->getN();
     
     //remove all tuples which have this ccylinder as key
     _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
@@ -262,18 +326,23 @@ void MotorBindingManager::updatePossibleBindings(CCylinder* cc, short bindingSit
                     if(dist > _rMax || dist < _rMin) continue;
                     
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getID() > cn->getID()) {
                         _possibleBindings.emplace(tuple<CCylinder*, short>(cc, bindingSite),
                                                   tuple<CCylinder*, short>(ccn, *it));
+                    }
                     else {
-                        if(ccn->getCylinder()->getCompartment() == _compartment)
+                        if(ccn->getCylinder()->getCompartment() == _compartment) {
                             _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
                                                       tuple<CCylinder*, short>(cc, bindingSite));
+                        }
                     }
                 }
             }
         }
     }
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
 }
 
 void MotorBindingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc) {
@@ -306,6 +375,8 @@ void MotorBindingManager::replacePossibleBindings(CCylinder* oldcc, CCylinder* n
 
 
 void MotorBindingManager::updateAllPossibleBindings() {
+    
+    int oldN = _bindingSpecies->getN();
     
     _possibleBindings.clear();
     
@@ -347,15 +418,19 @@ void MotorBindingManager::updateAllPossibleBindings() {
                             if(c->getID() > cn->getID())
                                 _possibleBindings.emplace(tuple<CCylinder*, short>(cc, *it1),
                                                           tuple<CCylinder*, short>(ccn, *it2));
-                            else
+                            else {
                                 if(ccn->getCylinder()->getCompartment() == _compartment)
                                     _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it2),
                                                               tuple<CCylinder*, short>(cc, *it1));
+                            }
                         }
                     }
                 }
             }
         }
     }
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
 }
 

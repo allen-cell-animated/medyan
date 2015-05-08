@@ -33,15 +33,6 @@ class Compartment;
 class SimpleManagerImpl : public ChemManagerImpl {
     
 private:
-    
-//DATA MEMBERS
-    
-    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
-    ChemistryData _chemData; ///<The chemistry data for the system
-    
-    /// A list of reactions to add to every new CCylinder
-    vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
-
 //HELPER FUNCTIONS
     
     /// Configure memory and parameters of CMonomer class
@@ -49,10 +40,9 @@ private:
     /// Intialize a CMonomer based on system chemistry
     void initCMonomer(CMonomer* m, Compartment* c);
     
-    /// Generate the general, non-filament reactions
     void genGeneralReactions(Compartment& protoCompartment);
-    /// Generate bulk reactions
     void genBulkReactions();
+    
     /// Generate reactions that create new filaments from
     /// diffusing and/or bulk species
     void genNucleationReactions();
@@ -64,7 +54,6 @@ private:
     /// from the setup struct. Adds to each Compartment.
     void genFilBindingManagers();
     
-    /// Generate all species, bulk and diffusing
     void genSpecies(Compartment& protoCompartment);
     
 public:
@@ -81,6 +70,15 @@ public:
                                      bool creation);
     
     virtual void updateCopyNumbers();
+    
+private:
+    //DATA MEMBERS
+    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
+    ChemistryData _chemData; ///<The chemistry data for the system
+    
+    /// A list of reactions to add to every new CCylinder
+    vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
+
     
 };
 

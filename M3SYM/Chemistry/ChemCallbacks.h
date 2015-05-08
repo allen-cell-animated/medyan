@@ -57,45 +57,9 @@ struct UpdateBindingCallback {
         
         for(auto &manager : c->getFilamentBindingManagers()) {
             
-            int oldN = manager->numBindingSites();
-            
             //update binding sites
             manager->updatePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
-            
-            int newN = manager->numBindingSites();
-            int diff = newN - oldN;
-            
-            //find the species
-            string bindingName = manager->getBoundName();
-            string emptyName = SpeciesNamesDB::instance()->removeUniqueFilName(
-                               _cylinder->getCCylinder()->getCMonomer(_bindingSite)->
-                               speciesBound(BOUND_EMPTY)->getName());
-            
-            Species* s = c->findSpeciesByName(
-                SpeciesNamesDB::instance()->genBindingName(bindingName, emptyName));
-            
-            //update copy number
-            if(diff > 0) {
-                while (diff != 0) {
-                    s->up();
-                    diff--;
-                }
-            }
-            else if(diff < 0) {
-                while (diff != 0) {
-                    s->down();
-                    diff++;
-                }
-            }
-            else {} //do nothing
-            
-            //check if matching
-            assert((s->getN() != manager->numBindingSites())
-                    && "Species representing binding sites does not match \
-                        number of binding sites held by the manager.");
-            
-            //update the reaction based on the change
-            manager->updateBindingReaction();
+
         }
     }
 };
@@ -343,6 +307,7 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+        
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -440,7 +405,7 @@ struct MotorBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        // Create a linker
+        // Create a motor
         int cylinderSize = SysParams::Geometry().cylinderIntSize;
         
         double pos1 = double(get<1>(site[0])) / cylinderSize;

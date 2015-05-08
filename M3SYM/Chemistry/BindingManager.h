@@ -55,12 +55,43 @@ protected:
     
     Compartment* _compartment; ///< Compartment this is in
     
-    short _boundInt; ///< Integer index of bound chemical value
+    short _boundInt; ///< Integer index in CMonomer of bound chemical value
     string _boundName; ///< String name of bound chemical value
+    
+    Species* _bindingSpecies; ///< The binding species that this manager tracks.
+                              ///< Resposible for all copy number changes
     
     short _index = 0; ///<Index of this manager (for access of neighbor lists)
     
     static mt19937 *_eng; ///< Random number generator
+    
+    ///helper function to update copy number and reactions
+    void updateBindingReaction(int oldN, int newN) {
+        
+        int diff = newN - oldN;
+        
+        //update copy number
+        if(diff > 0) {
+            while (diff != 0) {
+                _bindingSpecies->up();
+                diff--;
+            }
+        }
+        else if(diff < 0) {
+            while (diff != 0) {
+                _bindingSpecies->down();
+                diff++;
+            }
+        }
+        else {} //do nothing
+        
+        //check if matching
+        assert((_bindingSpecies->getN() == numBindingSites())
+               && "Species representing binding sites does not match \
+                   number of binding sites held by the manager.");
+        
+        _bindingReaction->activateReaction();
+    }
     
 public:
     FilamentBindingManager(ReactionBase* reaction, Compartment* compartment,
@@ -74,6 +105,7 @@ public:
         << " set these compilation macros and try again. Exiting." << endl;
         exit(EXIT_FAILURE);
 #endif
+
     }
     ~FilamentBindingManager() {delete _eng;}
     
@@ -91,14 +123,16 @@ public:
     virtual int numBindingSites() = 0;
     
     //update the binding reaction (called due to a copy number change)
-    void updateBindingReaction() {_bindingReaction->activateReaction();}
+    void updateBindingReaction() {
+        _bindingReaction->activateReaction();
+    }
     
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
     ///Get the bound species name
     string getBoundName() {return _boundName;}
     
-    ///Set the index of this manager
+    ///Set the index of this manager, for access
     void setIndex(int index) {_index = index;}
 };
 
@@ -112,9 +146,7 @@ private:
     
 public:
     BranchingManager(ReactionBase* reaction, Compartment* compartment,
-                     short boundInt, string boundName)
-    : FilamentBindingManager(reaction, compartment, boundInt, boundName) {}
-    
+                     short boundInt, string boundName);
     ~BranchingManager() {}
     
     virtual void updatePossibleBindings(CCylinder* cc, short bindingSite);
@@ -168,10 +200,7 @@ private:
     
 public:
     LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
-                         short boundInt, string boundName, float rMax, float rMin)
-    
-    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
-      _rMin(rMin), _rMax(rMax) {}
+                         short boundInt, string boundName, float rMax, float rMin);
     
     ~LinkerBindingManager() {}
     
@@ -232,10 +261,7 @@ private:
     
 public:
     MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
-                        short boundInt, string boundName, float rMax, float rMin)
-    
-    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
-      _rMin(rMin), _rMax(rMax) {}
+                        short boundInt, string boundName, float rMax, float rMin);
     
     ~MotorBindingManager() {}
     

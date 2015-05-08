@@ -53,7 +53,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     os.push_back(_firstSpecies);
     os.push_back(_secondSpecies);
     
-    os.push_back(&rs[0]->getSpecies());
+    os.push_back(&rs[1]->getSpecies());
     
     Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
     Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
@@ -104,9 +104,9 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
                           ({sm2, s1, sb2, s3, s4}, _offRate);
     }
     else {
-        setSecondSpecies(sm2);
-        
         _position2 = newPosition;
+        
+        setSecondSpecies(sm2);
         
         //change off reaction to include new species
         
@@ -174,7 +174,6 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         setFirstCCylinder(newCC);
     }
     else {
-        
         _position2 = newPosition;
         
         setSecondSpecies(sm2);

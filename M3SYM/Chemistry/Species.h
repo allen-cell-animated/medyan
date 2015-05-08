@@ -486,7 +486,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesFilament (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, false, n, ulim) {};
+        :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
@@ -535,7 +535,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, false, n, ulim) {};
+        :  Species(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
