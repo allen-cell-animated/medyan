@@ -1044,6 +1044,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
         
         Compartment *C = (Compartment*)(c.get());
     
+        int managerIndex = 0;
+        
         for(auto &r: _chemData.branchingReactions) {
             
             vector<Species*> reactantSpecies;
@@ -1253,6 +1255,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //create manager
             BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName);
+            bManager->setMIndex(managerIndex++);
             C->addFilamentBindingManager(bManager);
             
             //attach callback
@@ -1475,7 +1478,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
             LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName, rMax, rMin);
             C->addFilamentBindingManager(lManager);
             
-            lManager->setIndex(linkerIndex++);
+            lManager->setNLIndex(linkerIndex++);
+            lManager->setMIndex(managerIndex++);
             
             //attach callback
             LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
@@ -1694,7 +1698,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
             MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName, rMax, rMin);
             C->addFilamentBindingManager(mManager);
             
-            mManager->setIndex(motorIndex++);
+            mManager->setNLIndex(motorIndex++);
+            mManager->setMIndex(managerIndex++);
             
             //attach callback
             MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);

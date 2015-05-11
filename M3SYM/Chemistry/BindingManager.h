@@ -61,7 +61,8 @@ protected:
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
                               ///< Resposible for all copy number changes
     
-    short _index = 0; ///<Index of this manager (for access of neighbor lists)
+    short _nlIndex = 0; ///<Index of this manager (for access of neighbor lists)
+    short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
     
     static mt19937 *_eng; ///< Random number generator
     
@@ -109,12 +110,17 @@ public:
     }
     ~FilamentBindingManager() {delete _eng;}
     
-    ///update the possible binding reactions that could occur
-    virtual void updatePossibleBindings(CCylinder* cc, short bindingSite) = 0;
+    //@{
+    ///add possible binding reactions that could occur
+    virtual void addPossibleBindings(CCylinder* cc, short bindingSite) = 0;
+    virtual void addPossibleBindings(CCylinder* cc) = 0;
+    //@}
     
-    /// In the case of a cylinder copy, copy all possible bindings
-    /// to a new cylinder.
-    virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc) = 0;
+    //@{
+    /// Remove all bindings including this cylinder
+    virtual void removePossibleBindings(CCylinder* cc, short bindingSite) = 0;
+    virtual void removePossibleBindings(CCylinder* cc) = 0;
+    //@}
     
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings() = 0;
@@ -132,8 +138,11 @@ public:
     ///Get the bound species name
     string getBoundName() {return _boundName;}
     
-    ///Set the index of this manager, for access
-    void setIndex(int index) {_index = index;}
+    ///Set the index of this manager, for access to NeighborList
+    void setNLIndex(int index) {_nlIndex = index;}
+    
+    ///Set the index of this manager, for access to other managers
+    void setMIndex(int index) {_mIndex = index;}
 };
 
 
@@ -149,10 +158,19 @@ public:
                      short boundInt, string boundName);
     ~BranchingManager() {}
     
-    virtual void updatePossibleBindings(CCylinder* cc, short bindingSite);
+    //@{
+    ///add possible binding reactions that could occur
+    virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void addPossibleBindings(CCylinder* cc);
+    //@}
     
-    virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    //@{
+    /// Remove all bindings including this cylinder
+    virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void removePossibleBindings(CCylinder* cc);
+    //@}
     
+    ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
     
     virtual int numBindingSites() {
@@ -204,10 +222,19 @@ public:
     
     ~LinkerBindingManager() {}
     
-    virtual void updatePossibleBindings(CCylinder* cc, short bindingSite);
+    //@{
+    ///add possible binding reactions that could occur
+    virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void addPossibleBindings(CCylinder* cc);
+    //@}
     
-    virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    //@{
+    /// Remove all bindings including this cylinder
+    virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void removePossibleBindings(CCylinder* cc);
+    //@}
     
+    ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
     
     virtual int numBindingSites() {
@@ -265,10 +292,19 @@ public:
     
     ~MotorBindingManager() {}
     
-    virtual void updatePossibleBindings(CCylinder* cc, short bindingSite);
+    //@{
+    ///add possible binding reactions that could occur
+    virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void addPossibleBindings(CCylinder* cc);
+    //@}
     
-    virtual void replacePossibleBindings(CCylinder* oldcc, CCylinder* newcc);
+    //@{
+    /// Remove all bindings including this cylinder
+    virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void removePossibleBindings(CCylinder* cc);
+    //@}
     
+    ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
     
     virtual int numBindingSites() {

@@ -125,7 +125,8 @@ public:
     LowDutyPCMCatch(short motorType, double charForce) :
     MotorRateChanger(motorType), _F0(charForce) {}
     
-    virtual float changeRate(float onRate, float offRate, int numHeads, double force);
+    virtual float changeRate(float onRate, float offRate,
+                             int numHeads, double force);
 };
 
 
@@ -178,7 +179,8 @@ public:
         _stepFrac = d_step / d_total;
     }
     
-    virtual float changeRate(float onRate, float offRate, int numHeads, double force);
+    virtual float changeRate(float onRate, float offRate,
+                             int numHeads, double force);
 };
 
 

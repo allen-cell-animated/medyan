@@ -31,7 +31,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             r->getCBound()->setOffReaction(rxnClone);
         addInternalReaction(rxnClone);
     }
-    
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
@@ -45,7 +44,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             addCrossCylinderReaction(it->first, rxnClone);
         }
     }
-    
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
     for(auto &ccyl : rhs._reactingCylinders) {
 
@@ -59,11 +57,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             ccyl->addCrossCylinderReaction(this, rxnClone);
         }
     }
-        
-    //copy binding sites to new ccylinder
-    for(auto &m : _compartment->getFilamentBindingManagers())
-        m->replacePossibleBindings(rhsPtr, this);
-    
 }
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
@@ -90,7 +83,8 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r); _compartment->removeInternalReaction(r);
+        ChemSim::removeReaction(r);
+        _compartment->removeInternalReaction(r);
         
         _internalReactions.erase(r);
     }
@@ -135,7 +129,8 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r); _compartment->removeInternalReaction(r);
+        ChemSim::removeReaction(r);
+        _compartment->removeInternalReaction(r);
         
         //if number of reactions in cross-cylinder
         //has dropped to zero, delete it

@@ -58,8 +58,10 @@ struct UpdateBindingCallback {
         for(auto &manager : c->getFilamentBindingManagers()) {
             
             //update binding sites
-            manager->updatePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
-
+            if(delta == +1)
+                manager->addPossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+            else //-1
+                manager->removePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
         }
     }
 };

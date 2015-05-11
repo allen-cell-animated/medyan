@@ -20,15 +20,17 @@
 
 CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
                                  CCylinder* cc1, CCylinder* cc2, int position)
+
     : CBound(c, cc1, cc2, position, 0), _branchType(branchType) {
 
     //Find species on cylinder that should be marked
-    SpeciesBound* sb1 =
-    _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
-    SpeciesBound* se1 =
-    _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
     
     //mark species
+    assert(sb1->getN() == 0 && se1->getN() == 1 &&
+           "Major bug: Brancher binding to an occupied site.");
+        
     sb1->up(); se1->down();
         
     //attach this branchpoint to the species

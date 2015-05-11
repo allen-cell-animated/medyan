@@ -21,19 +21,23 @@ CLinker::CLinker(short linkerType, Compartment* c,
 
     : CBound(c, cc1, cc2, position1, position2) {
     
-        //Find species on cylinder that should be marked
-        SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
-        SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
-        SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
-        SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
-        
-        //mark species
-        sl1->up(); sl2->up();
-        se1->down(); se2->down();
-        
-        //attach this linker to the species
-        setFirstSpecies(sl1);
-        setSecondSpecies(sl2);
+    //Find species on cylinder that should be marked
+    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
+    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+    
+    //mark species
+    assert(sl1->getN() == 0 && sl2->getN() == 0 &&
+           se1->getN() == 1 && se2->getN() == 1 &&
+           "Major bug: Motor binding to an occupied site.");
+    
+    sl1->up(); sl2->up();
+    se1->down(); se2->down();
+    
+    //attach this linker to the species
+    setFirstSpecies(sl1);
+    setSecondSpecies(sl2);
 }
 
 CLinker::~CLinker() {
