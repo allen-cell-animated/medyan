@@ -314,8 +314,8 @@ void Controller::run() {
     _mController->run();
     
     //reupdate positions and neighbor lists
-//    updatePositions();
-//    updateNeighborLists(true);
+    updatePositions();
+    updateNeighborLists(true);
     
 #ifdef DYNAMICRATES
     updateReactionRates();
