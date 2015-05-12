@@ -36,7 +36,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction, Compartment* compartm
     
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[2]->getSpecies().getName();
+    string name = rs[SPECIESBB_BINDING_INDEX]->getSpecies().getName();
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
@@ -117,7 +117,7 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction, Compartment* 
     
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[0]->getSpecies().getName();
+    string name = rs[SPECIESLB_BINDING_INDEX]->getSpecies().getName();
           
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
@@ -345,7 +345,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction, Compartment* co
     
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[0]->getSpecies().getName();
+    string name = rs[SPECIESMB_BINDING_INDEX]->getSpecies().getName();
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }

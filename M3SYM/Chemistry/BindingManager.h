@@ -25,6 +25,10 @@
 
 #include "SysParams.h"
 
+#define SPECIESBB_BINDING_INDEX 2
+#define SPECIESLB_BINDING_INDEX 0
+#define SPECIESMB_BINDING_INDEX 0
+
 //FORWARD DECLARATIONS
 class ReactionBase;
 class CCylinder;
