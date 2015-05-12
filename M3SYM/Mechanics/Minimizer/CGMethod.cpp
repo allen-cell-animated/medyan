@@ -56,10 +56,9 @@ double CGMethod::maxF() {
     
     double maxF = 0;
     
+    //calc max force
     for(auto b: *BeadDB::instance())
-        //calc max force
-        for(int i = 0 ; i < 3; i++)
-            maxF = max(maxF, fabs(b->force[i]));
+        maxF = max(maxF, sqrt(b->FADotFA()));
 
     return maxF;
 }
