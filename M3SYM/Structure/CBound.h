@@ -43,6 +43,9 @@ protected:
     CCylinder* _cc1 = nullptr; ///< Pointer to first CCylinder
     CCylinder* _cc2 = nullptr; ///< Pointer to second CCylinder
     
+    short _position1; ///< position of first head
+    short _position2; ///< position of second head
+    
     //@{
     ///Reaction rates
     float _onRate = 0.0;
@@ -53,8 +56,11 @@ protected:
     
 public:
     /// Constructor, just sets species
-    CBound(Compartment* c, CCylinder* cc1, CCylinder* cc2)
-        : _compartment(c), _cc1(cc1), _cc2(cc2) {}
+    CBound(Compartment* c, CCylinder* cc1, CCylinder* cc2,
+           short position1, short position2)
+    
+        : _compartment(c), _cc1(cc1), _cc2(cc2),
+          _position1(position1), _position2(position2) {}
     
     /// Virtual destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
@@ -113,6 +119,8 @@ public:
     double getOffRate(){return _offRate;}
     //@}
     
+    /// Set all rates at once
+    void setRates(float onRate, float offRate) {_onRate = onRate; _offRate = offRate;}
     
     //@{
     /// Off reaction management

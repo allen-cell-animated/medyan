@@ -89,7 +89,6 @@ struct ChemParams {
     short numBindingSites = 0;
     //@}
     
-    
     //@{
     ///Extra motor parameters
     vector<short> motorNumHeadsMin = {};
@@ -97,6 +96,9 @@ struct ChemParams {
     
     vector<double> motorStepSize = {};
     //@}
+    
+    /// Binding sites on filaments
+    vector<short> bindingSites = {};
 };
 
 /// Struct to hold geometry parameters for the system
@@ -125,6 +127,7 @@ struct GeoParams {
     int minCylinderIntSize = 3;
     double minCylinderSize = 0;
     //@}
+    
     
 };
 

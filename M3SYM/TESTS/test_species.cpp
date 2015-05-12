@@ -44,9 +44,9 @@ TEST(SpeciesNamesDBTest, All) {
     EXPECT_NO_THROW(SpeciesNamesDB::instance()->intToString(1));
     
     //testing unique name generator
-    string a1 = SpeciesNamesDB::instance()->genUniqueName("Actin");
-    string a2 = SpeciesNamesDB::instance()->genUniqueName("Actin");
-    string a3 = SpeciesNamesDB::instance()->genUniqueName("Actin");
+    string a1 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
+    string a2 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
+    string a3 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
     
     EXPECT_FALSE(a1 == a2);
     EXPECT_FALSE(a2 == a3);

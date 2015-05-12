@@ -32,6 +32,11 @@ const double kT = 4.1; //in pN * nm
 ///To use STL containers, libraries, etc
 using namespace std;
 
+/// Default empty site number in CMonomer (SpeciesBound)
+/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+
+#define BOUND_EMPTY       0
+
 //@{
 /// Constant Species identifiers
 /// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!

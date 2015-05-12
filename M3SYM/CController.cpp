@@ -58,7 +58,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     cii = new SimpleManagerImpl(_subSystem, chem);
 
     ChemManager::setInstance(cii);
-    ChemManager::initialize();
+    ChemManager::initializeSystem();
     
     ChemSim::initialize();
 }

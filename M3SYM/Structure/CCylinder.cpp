@@ -18,6 +18,8 @@
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder) {
         
+    CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
+        
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
@@ -29,12 +31,12 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             r->getCBound()->setOffReaction(rxnClone);
         addInternalReaction(rxnClone);
     }
-    
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
         
         for(auto &r : it->second) {
+
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             if(r->getCBound() != nullptr)
@@ -42,13 +44,12 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             addCrossCylinderReaction(it->first, rxnClone);
         }
     }
-    
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
-        CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
         for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
+            
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             if(r->getCBound() != nullptr)
@@ -61,8 +62,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 void CCylinder::addInternalReaction(ReactionBase* r) {
     
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(
-                  unique_ptr<ReactionBase>(r));
+    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
+    
     ChemSim::addReaction(r);
     
     //add to local reaction list
@@ -93,8 +94,8 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
                                          ReactionBase* r) {
     
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(
-                  unique_ptr<ReactionBase>(r));
+    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
+    
     ChemSim::addReaction(r);
     
     //add to this reaction map
@@ -117,7 +118,7 @@ void CCylinder:: removeAllInternalReactions() {
 
 void CCylinder::removeCrossCylinderReaction(CCylinder* other,
                                             ReactionBase* r) {
-    
+
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) {
        
@@ -146,42 +147,37 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
     }
 }
 
-void CCylinder::removeCrossCylinderReactions(CCylinder* other,
-                                             bool bindingOnly) {
+void CCylinder::removeCrossCylinderReactions(CCylinder* other) {
     
     auto tempReactions = _crossCylinderReactions[other];
-    for(auto &r : tempReactions) {
-        
-        if(bindingOnly) {
-            if (!(r->getReactionType() == ReactionType::
-                                          LINKERUNBINDING
-                ||r->getReactionType() == ReactionType::
-                                          MOTORUNBINDING))
-                removeCrossCylinderReaction(other, r);
-        }
-        else removeCrossCylinderReaction(other, r);
-    }
+    
+    for(auto &r : tempReactions)
+        removeCrossCylinderReaction(other, r);
 }
 
 void CCylinder::removeAllCrossCylinderReactions() {
     
     auto tempMap = _crossCylinderReactions;
+    
     for(auto it = tempMap.begin(); it != tempMap.end(); it++)
-
         removeCrossCylinderReactions(it->first);
 }
 
 void CCylinder::removeReactingCylinder(CCylinder* other) {
+    
     other->removeCrossCylinderReactions(this);
 }
 
 void CCylinder::removeAllReactingCylinders() {
+    
     auto tempReactingCylinders = _reactingCylinders;
+    
     for(auto &cc : tempReactingCylinders)
         cc->removeCrossCylinderReactions(this);
 }
 
 CCylinder::~CCylinder() {
+    
     //Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
     removeAllCrossCylinderReactions(); 

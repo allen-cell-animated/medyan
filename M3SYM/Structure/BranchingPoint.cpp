@@ -83,7 +83,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
         string speciesName = SpeciesNamesDB::instance()->
-                             removeUniqueName(speciesFilament->getName());
+                             removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
         
         //find the free monomer, either bulk or diffusing

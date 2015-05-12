@@ -261,10 +261,6 @@ public:
     }
 #endif
     
-#ifdef RSPECIES_SIGNALING
-    virtual void broadcastRSpeciesSignals() = 0;
-#endif
-    
     /// Return a const reference to the set of dependent ReactionBases
     /// @note One can obtain two different lists of affected ReactionBases:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the

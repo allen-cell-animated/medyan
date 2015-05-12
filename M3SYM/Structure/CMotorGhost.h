@@ -39,7 +39,7 @@ public:
     ///@param pos1 - monomer index on first cylinder
     ///@param pos2 - monomer index on second cylinder
     CMotorGhost(short motorType, Compartment* c,
-                CCylinder* cc1, CCylinder* cc2, int pos1, int pos2);
+                CCylinder* cc1, CCylinder* cc2, int position1, int position2);
     
     ///Destructor, removes off reaction from system
     ~CMotorGhost();
@@ -47,7 +47,7 @@ public:
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
     
-        : CBound(c, rhs._cc1, rhs._cc2),
+        : CBound(c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pMotorGhost(rhs._pMotorGhost) {
         
         //set species

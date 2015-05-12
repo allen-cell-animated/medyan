@@ -227,6 +227,20 @@ void SystemParser::readChemParams() {
         }
         
     }
+    //Figure out the binding sites
+    int deltaBinding = SysParams::Geometry().cylinderIntSize /
+                       CParams.numBindingSites;
+    
+    int firstBindingSite = deltaBinding / 2 + 1;
+    int bindingCount = firstBindingSite;
+    
+    //add all other binding sites
+    while(bindingCount < SysParams::Geometry().cylinderIntSize) {
+        
+        CParams.bindingSites.push_back(bindingCount);
+        bindingCount += deltaBinding;
+    }
+    
     //set system parameters
     SysParams::CParams = CParams;
 }

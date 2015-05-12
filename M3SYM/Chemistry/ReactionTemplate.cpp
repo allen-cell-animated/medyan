@@ -11,7 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "ReactionManagerImpl.h"
+#include "ReactionTemplate.h"
 
 #include "CompartmentContainer.h"
 #include "ChemCallbacks.h"
@@ -24,10 +24,9 @@
 
 using namespace mathfunc;
 
-SubSystem* InternalFilamentRxnManager::_ps = 0;
-SubSystem* CrossFilamentRxnManager::_ps = 0;
+SubSystem* FilamentReactionTemplate::_ps = 0;
 
-void PolyPlusEndManager::addReaction(CCylinder* cc) {
+void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -66,7 +65,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(0));
+        productSpecies.push_back(m1->speciesBound(BOUND_EMPTY));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -109,7 +108,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(0));
+    productSpecies.push_back(m->speciesBound(BOUND_EMPTY));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -127,7 +126,7 @@ void PolyPlusEndManager::addReaction(CCylinder* cc) {
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
 }
 
-void PolyMinusEndManager::addReaction(CCylinder* cc) {
+void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -165,7 +164,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(0));
+        productSpecies.push_back(m1->speciesBound(BOUND_EMPTY));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -207,7 +206,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(0));
+    productSpecies.push_back(m->speciesBound(BOUND_EMPTY));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -224,7 +223,7 @@ void PolyMinusEndManager::addReaction(CCylinder* cc) {
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
 }
 
-void DepolyPlusEndManager::addReaction(CCylinder* cc) {
+void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -248,7 +247,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(0));
+        reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -281,7 +280,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DepolyMinusEndManager::addReaction(CCylinder* cc) {
+void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -305,7 +304,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(0));
+        reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -338,7 +337,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(0);
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
@@ -356,7 +355,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(0));
+    reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -386,7 +385,7 @@ void DepolyPlusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
 }
 
-void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -403,7 +402,7 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(0));
+    reactantSpecies.push_back(m2->speciesBound(BOUND_EMPTY));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -433,10 +432,11 @@ void DepolyMinusEndManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 }
 
-void MotorWalkFManager::addReaction(CCylinder* cc) {
+void MotorWalkFTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end() - 1; it++) {
+    for(auto it = SysParams::Chemistry().bindingSites.begin();
+             it != SysParams::Chemistry().bindingSites.end() - 1; it++) {
         
         int site1 = *(it);
         int site2 = *(it+1);
@@ -487,10 +487,10 @@ void MotorWalkFManager::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc1->getCMonomer(_bindingSites.back());
-    CMonomer* m2 = cc2->getCMonomer(_bindingSites.front());
+    CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
+    CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -525,7 +525,8 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                        _bindingSites.back(), _bindingSites.front(),
+                        SysParams::Chemistry().bindingSites.back(),
+                        SysParams::Chemistry().bindingSites.front(),
                         motorType, boundType, _ps);
     boost::signals2::shared_connection_block
     rcb(rxn->connect(motorChangeCallback, false));
@@ -535,10 +536,11 @@ void MotorWalkFManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
-void MotorWalkBManager::addReaction(CCylinder* cc) {
+void MotorWalkBTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.end() - 1; it != _bindingSites.begin(); it--) {
+    for(auto it = SysParams::Chemistry().bindingSites.end() - 1;
+             it != SysParams::Chemistry().bindingSites.begin(); it--) {
         
         int site1 = *(it);
         int site2 = *(it-1);
@@ -589,10 +591,10 @@ void MotorWalkBManager::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc2->getCMonomer(_bindingSites.front());
-    CMonomer* m2 = cc1->getCMonomer(_bindingSites.back());
+    CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
+    CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -627,7 +629,8 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
-                        _bindingSites.front(), _bindingSites.back(),
+                        SysParams::Chemistry().bindingSites.front(),
+                        SysParams::Chemistry().bindingSites.back(),
                         motorType, boundType, _ps);
     boost::signals2::shared_connection_block
     rcb(rxn->connect(motorChangeCallback, false));
@@ -637,7 +640,7 @@ void MotorWalkBManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
 }
 
-void AgingManager::addReaction(CCylinder* cc) {
+void AgingTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -685,7 +688,7 @@ void AgingManager::addReaction(CCylinder* cc) {
 }
 
 
-void DestructionManager::addReaction(CCylinder* cc) {
+void DestructionTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
     int maxlength = cc->getSize();
@@ -742,7 +745,7 @@ void DestructionManager::addReaction(CCylinder* cc) {
     }
 }
 
-void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -791,10 +794,11 @@ void DestructionManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
 }
 
-void SeveringManager::addReaction(CCylinder* cc) {
+void SeveringTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
+    for(auto it = SysParams::Chemistry().bindingSites.begin();
+             it != SysParams::Chemistry().bindingSites.end(); it++) {
         
         int site = *(it);
         CMonomer* m = cc->getCMonomer(site);
@@ -805,7 +809,7 @@ void SeveringManager::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m->speciesFilament(getInt(r)));
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
-        reactantSpecies.push_back(m->speciesBound(0));
+        reactantSpecies.push_back(m->speciesBound(BOUND_EMPTY));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
@@ -818,223 +822,5 @@ void SeveringManager::addReaction(CCylinder* cc) {
 #endif
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::SEVERING);
-    }
-}
-
-void BranchingManager::addReaction(CCylinder* cc) {
-    
-    //loop through all monomers
-    for(auto it = _bindingSites.begin(); it != _bindingSites.end(); it++) {
-        
-        int site = *(it);
-        CMonomer* m = cc->getCMonomer(site);
-        vector<Species*> reactantSpecies;
-        vector<Species*> productSpecies;
-        
-        
-        //FIRST TWO REACTANTS MUST BE BULK OR DIFFUSING
-        auto r = _reactants[0];
-        if(getType(r) == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(getInt(r)));
-        else if(getType(r) == SpeciesType::DIFFUSING) {
-            Compartment* c = cc->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
-        }
-        
-        r = _reactants[1];
-        if(getType(r) == SpeciesType::BULK)
-            reactantSpecies.push_back(CompartmentGrid::instance()->
-                                      findSpeciesBulkByMolecule(getInt(r)));
-        else if(getType(r) == SpeciesType::DIFFUSING) {
-            Compartment* c = cc->getCompartment();
-            reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
-        }
-        
-        //THIRD REACTANT MUST BE BOUND
-        r = _reactants[2];
-        reactantSpecies.push_back(m->speciesBound(getInt(r)));
-        
-        //FIRST PRODUCT MUST BE BRANCH
-        auto p = _products[0];
-        int branchType = getInt(p);
-        productSpecies.push_back(m->speciesBrancher(branchType));
-        
-        //Add the reaction
-        vector<Species*> species = reactantSpecies;
-        species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn =
-        new Reaction<BRANCHINGREACTANTS,BRANCHINGPRODUCTS - 1>(species, _rate);
-        
-#ifdef REACTION_SIGNALING
-        short plusEndProduct = getInt(_products[1]);
-        BranchingPointCreationCallback
-        bcallback(cc->getCylinder(), branchType,
-                  plusEndProduct, site, _rate, _offRate, _ps);
-        boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
-#endif
-        
-        cc->addInternalReaction(rxn);
-        rxn->setReactionType(ReactionType::BRANCHING);
-    }
-}
-
-
-void LinkerRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
-    
-    //Add reaction to the binding sites that are within range
-    for(int i : _bindingSites) {
-        for(int j : _bindingSites) {
-            
-            //check if these sites are within range
-            auto coord1 =
-            midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
-                               cc1->getCylinder()->getSecondBead()->coordinate,
-                               (double)i / SysParams::Geometry().cylinderIntSize);
-            
-            auto coord2 =
-            midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
-                               cc2->getCylinder()->getSecondBead()->coordinate,
-                               (double)j / SysParams::Geometry().cylinderIntSize);
-            
-            double dist = twoPointDistance(coord1, coord2);
-            
-            if(dist < _rMax && dist > _rMin) {
-                
-                CMonomer* m1 = cc1->getCMonomer(i);
-                CMonomer* m2 = cc2->getCMonomer(j);
-                vector<Species*> reactantSpecies;
-                vector<Species*> productSpecies;
-                
-                //loop through reactants, products. find all species
-                
-                //FIRST AND SECOND REACTANT SHOULD BE BOUND
-                auto r = _reactants[0];
-                reactantSpecies.push_back(m1->speciesBound(getInt(r)));
-                
-                r = _reactants[1];
-                reactantSpecies.push_back(m2->speciesBound(getInt(r)));
-                
-                //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
-                r = _reactants[2];
-                if(getType(r) == SpeciesType::BULK)
-                    reactantSpecies.push_back(CompartmentGrid::instance()->
-                                              findSpeciesBulkByMolecule(getInt(r)));
-                
-                else if(getType(r) == SpeciesType::DIFFUSING) {
-                    Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
-                }
-                
-                //FIRST AND SECOND PRODUCT SHOULD BE LINKER
-                auto p = _products[0];
-                short linkerNumber = getInt(p);
-                
-                productSpecies.push_back(m1->speciesLinker(linkerNumber));
-                
-                p = _products[1];
-                productSpecies.push_back(m2->speciesLinker(getInt(p)));
-                
-                //Add the reaction. If it needs a callback then attach
-                vector<Species*> onSpecies = reactantSpecies;
-                onSpecies.insert(onSpecies.end(), productSpecies.begin(),
-                                 productSpecies.end());
-                ReactionBase* onRxn =
-                new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>(onSpecies, _onRate);
-                
-                //set up callbacks
-#ifdef REACTION_SIGNALING
-                LinkerBindingCallback
-                lcallback(cc1->getCylinder(), cc2->getCylinder(),
-                          linkerNumber, i, j, _onRate, _offRate, _ps);
-                boost::signals2::shared_connection_block
-                rcb(onRxn->connect(lcallback,false));
-#endif
-                cc1->addCrossCylinderReaction(cc2, onRxn);
-                onRxn->setReactionType(ReactionType::LINKERBINDING);
-            }
-        }
-    }
-}
-
-void MotorRxnManager::addReaction(CCylinder* cc1, CCylinder* cc2) {
-    
-    //Add reaction to the binding sites that are within range
-    for(int i : _bindingSites) {
-        for(int j : _bindingSites) {
-            
-            //check if these sites are within range
-            auto coord1 =
-            midPointCoordinate(cc1->getCylinder()->getFirstBead()->coordinate,
-                               cc1->getCylinder()->getSecondBead()->coordinate,
-                               (double)i / SysParams::Geometry().cylinderIntSize);
-            
-            auto coord2 =
-            midPointCoordinate(cc2->getCylinder()->getFirstBead()->coordinate,
-                               cc2->getCylinder()->getSecondBead()->coordinate,
-                               (double)j / SysParams::Geometry().cylinderIntSize);
-            
-            double dist = twoPointDistance(coord1, coord2);
-            
-            if(dist < _rMax && dist > _rMin) {
-                
-                CMonomer* m1 = cc1->getCMonomer(i);
-                CMonomer* m2 = cc2->getCMonomer(j);
-                vector<Species*> reactantSpecies;
-                vector<Species*> productSpecies;
-                
-                //loop through reactants, products. find all species
-                
-                //FIRST AND SECOND REACTANT SHOULD BE BOUND
-                auto r = _reactants[0];
-                reactantSpecies.push_back(m1->speciesBound(getInt(r)));
-                
-                r = _reactants[1];
-                reactantSpecies.push_back(m2->speciesBound(getInt(r)));
-                
-                //THIRD REACTANT SHOULD BE BULK OR DIFFUSING
-                r = _reactants[2];
-                if(getType(r) == SpeciesType::BULK)
-                    reactantSpecies.push_back(CompartmentGrid::instance()->
-                                              findSpeciesBulkByMolecule(getInt(r)));
-                
-                else if(getType(r) == SpeciesType::DIFFUSING) {
-                    Compartment* c = cc1->getCompartment();
-                    reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
-                }
-                
-                //FIRST AND SECOND PRODUCT SHOULD BE MOTOR
-                auto p = _products[0];
-                short motorNumber = getInt(p);
-                productSpecies.push_back(m1->speciesMotor(motorNumber));
-                
-                p = _products[1];
-                productSpecies.push_back(m2->speciesMotor(getInt(p)));
-                
-                //calculate on rate based on avg number of heads
-                float numHeads = (SysParams::Chemistry().motorNumHeadsMin[motorNumber] +
-                                  SysParams::Chemistry().motorNumHeadsMax[motorNumber]) / 2;
-                
-                float onRate = _onRate * numHeads;
-                
-                //Add the reaction. If it needs a callback then attach
-                vector<Species*> onSpecies = reactantSpecies;
-                onSpecies.insert(onSpecies.end(), productSpecies.begin(),
-                                 productSpecies.end());
-                ReactionBase* onRxn =
-                new Reaction<LMBINDINGREACTANTS, LMBINDINGPRODUCTS>(onSpecies, onRate);
-                
-                //set up callbacks
-#ifdef REACTION_SIGNALING
-                MotorBindingCallback
-                mcallback(cc1->getCylinder(), cc2->getCylinder(),
-                          motorNumber, i, j, _onRate, _offRate, _ps);
-                boost::signals2::shared_connection_block
-                rcb(onRxn->connect(mcallback,false));
-#endif
-                cc1->addCrossCylinderReaction(cc2, onRxn);
-                onRxn->setReactionType(ReactionType::MOTORBINDING);
-            }
-        }
     }
 }

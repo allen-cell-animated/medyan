@@ -73,10 +73,7 @@ bool ChemSimpleGillespieImpl::makeStep() {
     }
     r_selected->makeStep();
 
-    // Send signals
-#ifdef RSPECIES_SIGNALING
-    r_selected->broadcastRSpeciesSignals();
-#endif
+    // Send signal
 #ifdef REACTION_SIGNALING
     r_selected->emitSignal();
 #endif

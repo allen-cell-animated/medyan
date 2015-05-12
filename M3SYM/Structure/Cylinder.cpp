@@ -43,17 +43,16 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    
    //add to compartment
    _compartment->addCylinder(this);
+        
+   //add to neighbor list db
+   NeighborListDB::instance()->addDynamicNeighbor(this);
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
     _cCylinder->setCylinder(this);
-    ChemManager::initializeCCylinder(
-        _cCylinder.get(), f, extensionFront, extensionBack, creation);
-    
-    if(creation || extensionFront || extensionBack)
-        //Update filament reactions, only if not initialization
-        ChemManager::updateCCylinder(_cCylinder.get());
-    
+        
+    ChemManager::initializeCCylinder(_cCylinder.get(), f,
+                                     extensionFront,extensionBack,creation);
 #endif
 
 #ifdef MECHANICS
@@ -70,23 +69,19 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
 #endif
-                       
-   //add to neighbor list db
-   NeighborListDB::instance()->addDynamicNeighbor(this);
+        
 }
 
 Cylinder::~Cylinder() noexcept {
     
-    
+    //remove from neighbor lists
+    NeighborListDB::instance()->removeDynamicNeighbor(this);
     
     //Remove from cylinder DB
     CylinderDB::instance()->removeCylinder(this);
     
     //remove from compartment
     _compartment->removeCylinder(this);
-    
-    //remove from neighbor lists
-    NeighborListDB::instance()->removeDynamicNeighbor(this);
 }
 
 void Cylinder::updatePosition() {

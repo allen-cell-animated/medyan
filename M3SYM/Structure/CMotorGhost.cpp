@@ -17,13 +17,24 @@
 #include "CCylinder.h"
 
 CMotorGhost::CMotorGhost(short motorType, Compartment* c,
-                         CCylinder* cc1, CCylinder* cc2, int pos1, int pos2)
+                         CCylinder* cc1, CCylinder* cc2, int position1, int position2)
 
-    : CBound(c, cc1, cc2) {
+    : CBound(c, cc1, cc2, position1, position2) {
     
     //Find species on cylinder that should be marked
-    SpeciesBound* sm1 = _cc1->getCMonomer(pos1)->speciesMotor(motorType);
-    SpeciesBound* sm2 = _cc2->getCMonomer(pos2)->speciesMotor(motorType);
+    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(motorType);
+    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(motorType);
+
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+        
+    //mark species
+    assert(sm1->getN() == 0 && sm2->getN() == 0 &&
+           se1->getN() == 1 && se2->getN() == 1 &&
+           "Major bug: Motor binding to an occupied site.");
+        
+    sm1->up(); sm2->up();
+    se1->down(); se2->down();
         
     //attach this motor to the species
     setFirstSpecies(sm1);
@@ -42,12 +53,17 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     RSpecies** rs = onRxn->rspecies();
     vector<Species*> os;
     
-    //copy into offspecies vector in opposite order
-    for(int i = LMBINDINGREACTANTS; i < LMBINDINGREACTANTS+LMBINDINGPRODUCTS; i++)
-        os.push_back(&rs[i]->getSpecies());
+    //copy into offspecies vector
+    os.push_back(_firstSpecies);
+    os.push_back(_secondSpecies);
     
-    for(int i = 0; i < LMBINDINGREACTANTS; i++)
-        os.push_back(&rs[i]->getSpecies());
+    os.push_back(&rs[1]->getSpecies());
+    
+    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+    
+    os.push_back(empty1);
+    os.push_back(empty2);
     
     ReactionBase* offRxn =
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
@@ -68,40 +84,43 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
                                 short boundType,
                                 SubSystem* ps) {
     
-    auto sm1 = cc->getCMonomer(oldPosition)->speciesMotor(motorType);
-    auto sm2 = cc->getCMonomer(newPosition)->speciesMotor(motorType);
-    auto sb2 = cc->getCMonomer(newPosition)->speciesBound(boundType);
+    auto smOld = cc->getCMonomer(oldPosition)->speciesMotor(motorType);
+    auto smNew = cc->getCMonomer(newPosition)->speciesMotor(motorType);
+
+    auto seNew = cc->getCMonomer(newPosition)->speciesBound(boundType);
     
     ReactionBase* newOffRxn;
     
-    if(getFirstSpecies() == sm1) {
+    if(getFirstSpecies() == smOld) {
         
-        setFirstSpecies(sm2);
+        _position1 = newPosition;
+        
+        setFirstSpecies(smNew);
         
         //change off reaction to include new species
+        Species* smOther = _secondSpecies;
+        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
         
-        //take the first, third, and fourth species
-        Species* s1 = &(_offRxn->rspecies()[1]->getSpecies());
-        Species* s3 = &(_offRxn->rspecies()[3]->getSpecies());
-        Species* s4 = &(_offRxn->rspecies()[4]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({sm2, s1, sb2, s3, s4}, _offRate);
+                          ({smNew, smOther, sbd, seNew, seOther}, _offRate);
     }
     else {
-        setSecondSpecies(sm2);
+        _position2 = newPosition;
+        
+        setSecondSpecies(smNew);
         
         //change off reaction to include new species
+        Species* smOther = _firstSpecies;
+        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
         
-        //take the zeroth, second, and fourth species
-        Species* s0 = &(_offRxn->rspecies()[0]->getSpecies());
-        Species* s2 = &(_offRxn->rspecies()[2]->getSpecies());
-        Species* s4 = &(_offRxn->rspecies()[4]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({s0, sm2, s2, sb2, s4}, _offRate);
+                          ({smOther, smNew, sbd, seNew, seOther}, _offRate);
     }
     //set new reaction type
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
@@ -128,26 +147,28 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
                                 SubSystem* ps) {
 
     
-    auto sm1 =oldCC->getCMonomer(oldPosition)->speciesMotor(motorType);
-    auto sm2 =newCC->getCMonomer(newPosition)->speciesMotor(motorType);
-    auto sb2 =newCC->getCMonomer(newPosition)->speciesBound(boundType);
+    auto smOld = oldCC->getCMonomer(oldPosition)->speciesMotor(motorType);
+    auto smNew = newCC->getCMonomer(newPosition)->speciesMotor(motorType);
+    
+    auto seNew = newCC->getCMonomer(newPosition)->speciesBound(boundType);
     
     ReactionBase* newOffRxn;
     
-    if(getFirstSpecies() == sm1) {
+    if(getFirstSpecies() == smOld) {
         
-        setFirstSpecies(sm2);
+        _position1 = newPosition;
+        
+        setFirstSpecies(smNew);
         
         //change off reaction to include new species
+        Species* smOther = _secondSpecies;
+        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
         
-        //take the first, third, and fourth species
-        Species* s1 = &(_offRxn->rspecies()[1]->getSpecies());
-        Species* s3 = &(_offRxn->rspecies()[3]->getSpecies());
-        Species* s4 = &(_offRxn->rspecies()[4]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({sm2, s1, sb2, s3, s4}, _offRate);
+                          ({smNew, smOther, sbd, seNew, seOther}, _offRate);
         
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
@@ -156,18 +177,19 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         setFirstCCylinder(newCC);
     }
     else {
-        setSecondSpecies(sm2);
+        _position2 = newPosition;
+        
+        setSecondSpecies(smNew);
         
         //change off reaction to include new species
+        Species* smOther = _firstSpecies;
+        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
         
-        //take the zeroth, second, and fourth species
-        Species* s0 = &(_offRxn->rspecies()[0]->getSpecies());
-        Species* s2 = &(_offRxn->rspecies()[2]->getSpecies());
-        Species* s4 = &(_offRxn->rspecies()[4]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
-                          ({s0, sm2, s2, sb2, s4}, _offRate);
+                         ({smOther, smNew, sbd, seNew, seOther}, _offRate);
         
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);

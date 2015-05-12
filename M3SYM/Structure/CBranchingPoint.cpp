@@ -19,13 +19,20 @@
 #include "CMonomer.h"
 
 CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
-                                 CCylinder* cc1, CCylinder* cc2, int pos)
-    : CBound(c, cc1, cc2), _pos(pos), _branchType(branchType) {
+                                 CCylinder* cc1, CCylinder* cc2, int position)
+
+    : CBound(c, cc1, cc2, position, 0), _branchType(branchType) {
 
     //Find species on cylinder that should be marked
-    SpeciesBound* sb1 =
-    _cc1->getCMonomer(pos)->speciesBrancher(branchType);
+    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
     
+    //mark species
+    assert(sb1->getN() == 0 && se1->getN() == 1 &&
+           "Major bug: Brancher binding to an occupied site.");
+        
+    sb1->up(); se1->down();
+        
     //attach this branchpoint to the species
     setFirstSpecies(sb1);
 }
@@ -44,9 +51,9 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     Species* sfb = &(rs[0]->getSpecies());
     
     //create the reaction species
-    CMonomer* m = _cc1->getCMonomer(_pos);
+    CMonomer* m = _cc1->getCMonomer(_position1);
     vector<Species*> os = {m->speciesBrancher(_branchType),
-                           m->speciesBound(0), sfb};
+                           m->speciesBound(BOUND_EMPTY), sfb};
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =

@@ -26,11 +26,47 @@
 #include "BranchingPoint.h"
 #include "Boundary.h"
 
+#include "BindingManager.h"
+
 #include "GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
 
 using namespace mathfunc;
+
+#ifdef RSPECIES_SIGNALING
+
+/// Callback to update the compartment-local binding species based on
+/// a change of copy number for an empty site.
+struct UpdateBindingCallback {
+    
+    Cylinder* _cylinder; ///< cylinder to update
+    
+    short _bindingSite;  ///< binding site to update
+    
+    //Constructor, sets members
+    UpdateBindingCallback(Cylinder* cylinder, short bindingSite)
+    
+        : _cylinder(cylinder), _bindingSite(bindingSite) {}
+    
+    //callback
+    void operator() (RSpecies *r, int delta) {
+        
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+        
+        for(auto &manager : c->getFilamentBindingManagers()) {
+            
+            //update binding sites
+            if(delta == +1)
+                manager->addPossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+            else //-1
+                manager->removePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+        }
+    }
+};
+
+#endif
 
 #ifdef REACTION_SIGNALING
 
@@ -185,38 +221,43 @@ struct BranchingPointUnbindingCallback {
     }
 };
 
+
 /// Callback to create a BranchingPoint on a Filament
-struct BranchingPointCreationCallback {
+struct BranchingCallback {
     
     SubSystem* _ps;        ///< ptr to subsystem
-    Cylinder* _c1;         ///< Cylinders to attach this branchingpoint to
     
-    short _branchType;     ///< Type of branchingpoint
-    short _position;       ///< Position to attach this branchingpoint
+    BranchingManager* _bManager; ///< Branching manager for this compartment
     
     short _plusEnd;        ///< Plus end marker of new cylinder
     
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
-    BranchingPointCreationCallback(Cylinder* c1,
-                                   short branchType,
-                                   short plusEnd,
-                                   short position,
-                                   float onRate,
-                                   float offRate,
-                                   SubSystem* ps)
+    BranchingCallback(BranchingManager* bManager,
+                      short plusEnd,
+                      float onRate,
+                      float offRate,
+                      SubSystem* ps)
     
-        : _ps(ps), _c1(c1), _branchType(branchType), _position(position),
-          _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
+    : _ps(ps), _bManager(_bManager),
+      _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
-        double pos = double(_position) / SysParams::Geometry().cylinderIntSize;
+        short branchType = _bManager->getBoundInt();
+        
+        //choose a random binding site from manager
+        auto site = _bManager->chooseBindingSite();
+        
+        //get info from site
+        Cylinder* c1 = get<0>(site)->getCylinder();
+        
+        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize;
         
         //Get a position and direction of a new filament
-        auto x1 = _c1->getFirstBead()->coordinate;
-        auto x2= _c1->getSecondBead()->coordinate;
+        auto x1 = c1->getFirstBead()->coordinate;
+        auto x2 = c1->getSecondBead()->coordinate;
         
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
@@ -225,8 +266,8 @@ struct BranchingPointCreationCallback {
         //get branch projection
 #ifdef MECHANICS
         //use mechanical parameters
-        double l = SysParams::Mechanics().BrStretchingL[_branchType];
-        double t = SysParams::Mechanics().BrBendingTheta[_branchType];
+        double l = SysParams::Mechanics().BrStretchingL[branchType];
+        double t = SysParams::Mechanics().BrBendingTheta[branchType];
 #else
         cout << "Branching reaction cannot occur unless mechanics is enabled. Using"
              << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
@@ -237,26 +278,27 @@ struct BranchingPointCreationCallback {
         double s = SysParams::Geometry().monomerSize;
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
-        auto bd = get<0>(branchPosDir);
-        auto bp = get<1>(branchPosDir);
+        auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
         
         //create a new filament
         Filament* f = _ps->addNewFilament(bp, bd, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();
-        CMonomer* m = c->getCCylinder()->getCMonomer(0);
-        m->speciesPlusEnd(_plusEnd)->up();
+        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-        BranchingPoint* b= _ps->addNewBranchingPoint(_c1, c, _branchType, pos);
+        BranchingPoint* b= _ps->addNewBranchingPoint(c1, c, branchType, pos);
         
         //create off reaction
-        b->getCBranchingPoint()->setOnRate(_onRate);
-        b->getCBranchingPoint()->setOffRate(_offRate);
-        b->getCBranchingPoint()->createOffReaction(r, _ps);
+        auto cBrancher = b->getCBranchingPoint();
+        
+        cBrancher->setRates(_onRate, _offRate);
+        cBrancher->createOffReaction(r, _ps);
     }
 };
+
+
 
 /// Callback to unbind a Linker from a Filament
 struct LinkerUnbindingCallback {
@@ -267,6 +309,7 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+        
         //remove the linker
         _ps->removeLinker(_linker);
     }
@@ -276,40 +319,43 @@ struct LinkerUnbindingCallback {
 struct LinkerBindingCallback {
     
     SubSystem* _ps;               ///< ptr to subsystem
-    Cylinder* _c1, *_c2;          ///< Cylinders to attach this linker to
     
-    short _linkerType;            ///< Type of linker
-    short _position1, _position2; ///< Positions to attach this linker
+    LinkerBindingManager* _lManager; ///< Linker binding manager for this compartment
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
 
-    LinkerBindingCallback(Cylinder* c1, Cylinder* c2,
-                          short linkerType,
-                          short position1,
-                          short position2,
+    LinkerBindingCallback(LinkerBindingManager* lManager,
                           float onRate,
                           float offRate,
                           SubSystem* ps)
     
-        : _ps(ps), _c1(c1), _c2(c2), _linkerType(linkerType),
-          _position1(position1), _position2(position2),
-          _onRate(onRate), _offRate(offRate) {}
+        : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+        
+        //get a random binding
+        short linkerType = _lManager->getBoundInt();
+        
+        //choose a random binding site from manager
+        auto site = _lManager->chooseBindingSites();
+        
+        Cylinder* c1 = get<0>(site[0])->getCylinder();
+        Cylinder* c2 = get<0>(site[1])->getCylinder();
         
         // Create a linker
         int cylinderSize = SysParams::Geometry().cylinderIntSize;
         
-        double pos1 = double(_position1) / cylinderSize;
-        double pos2 = double(_position2) / cylinderSize;
+        double pos1 = double(get<1>(site[0])) / cylinderSize;
+        double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        Linker* l = _ps->addNewLinker(_c1, _c2, _linkerType, pos1, pos2);
+        Linker* l = _ps->addNewLinker(c1, c2, linkerType, pos1, pos2);
         
         //create off reaction
-        l->getCLinker()->setOnRate(_onRate);
-        l->getCLinker()->setOffRate(_offRate);
-        l->getCLinker()->createOffReaction(r, _ps);
+        auto cLinker = l->getCLinker();
+        
+        cLinker->setRates(_onRate, _offRate);
+        cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -336,41 +382,44 @@ struct MotorUnbindingCallback {
 /// Callback to bind a MotorGhost to Filament
 struct MotorBindingCallback {
     
-    SubSystem* _ps;               ///< Ptr to subsystem
-    Cylinder* _c1, *_c2;          ///< Cylinders to attach this motor to
+    SubSystem* _ps;               ///< ptr to subsystem
     
-    short _motorType;             ///< Type of motor
-    short _position1, _position2; ///< Positions to attach this motor
+    MotorBindingManager* _mManager;///< Motor binding manager for this compartment
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
     
-    MotorBindingCallback(Cylinder* c1, Cylinder* c2,
-                         short motorType,
-                         short position1,
-                         short position2,
+    MotorBindingCallback(MotorBindingManager* mManager,
                          float onRate,
                          float offRate,
                          SubSystem* ps)
     
-        : _ps(ps), _c1(c1), _c2(c2), _motorType(motorType),
-          _position1(position1), _position2(position2),
-          _onRate(onRate), _offRate(offRate) {}
+    : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
 
+        //get a random binding
+        short motorType = _mManager->getBoundInt();
+        
+        //choose a random binding site from manager
+        auto site = _mManager->chooseBindingSites();
+        
+        Cylinder* c1 = get<0>(site[0])->getCylinder();
+        Cylinder* c2 = get<0>(site[1])->getCylinder();
+        
         // Create a motor
         int cylinderSize = SysParams::Geometry().cylinderIntSize;
         
-        double pos1 = double(_position1) / cylinderSize;
-        double pos2 = double(_position2) / cylinderSize;
+        double pos1 = double(get<1>(site[0])) / cylinderSize;
+        double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        MotorGhost* m = _ps->addNewMotorGhost(_c1, _c2, _motorType, pos1, pos2);
+        MotorGhost* m = _ps->addNewMotorGhost(c1, c2, motorType, pos1, pos2);
 
         //create off reaction
-        m->getCMotorGhost()->setOnRate(_onRate);
-        m->getCMotorGhost()->setOffRate(_offRate);
-        m->getCMotorGhost()->createOffReaction(r, _ps);
+        auto cMotorGhost = m->getCMotorGhost();
+        
+        cMotorGhost->setRates(_onRate, _offRate);
+        cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions

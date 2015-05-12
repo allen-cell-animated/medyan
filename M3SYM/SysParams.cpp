@@ -100,6 +100,12 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         return false;
     }
     
+    //at least one bound
+    if(CParams.numBoundSpecies == 0) {
+        cout << "Must provide at least one bound species, which is the empty binding site. Exiting."
+        << endl;
+        return false;
+    }
     
     //additional motor params
     if(chem.speciesMotor.size() != CParams.motorNumHeadsMin.size()) {
