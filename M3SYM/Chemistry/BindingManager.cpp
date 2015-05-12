@@ -340,8 +340,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 MotorBindingManager::MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
                                          short boundInt, string boundName, float rMax, float rMin)
 
-: FilamentBindingManager(reaction, compartment, boundInt, boundName),
-_rMin(rMin), _rMax(rMax) {
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+     _rMin(rMin), _rMax(rMax) {
     
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();

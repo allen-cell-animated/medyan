@@ -30,7 +30,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
     //mark species
     assert(sl1->getN() == 0 && sl2->getN() == 0 &&
            se1->getN() == 1 && se2->getN() == 1 &&
-           "Major bug: Motor binding to an occupied site.");
+           "Major bug: Linker binding to an occupied site.");
     
     sl1->up(); sl2->up();
     se1->down(); se2->down();

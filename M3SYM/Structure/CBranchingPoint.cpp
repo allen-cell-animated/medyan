@@ -53,7 +53,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     //create the reaction species
     CMonomer* m = _cc1->getCMonomer(_position1);
     vector<Species*> os = {m->speciesBrancher(_branchType),
-                           m->speciesBound(0), sfb};
+                           m->speciesBound(BOUND_EMPTY), sfb};
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =
