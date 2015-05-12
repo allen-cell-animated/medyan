@@ -16,6 +16,9 @@
 #include "ChemCallbacks.h"
 #include "CCylinder.h"
 
+#
+
+
 CMotorGhost::CMotorGhost(short motorType, Compartment* c,
                          CCylinder* cc1, CCylinder* cc2, int position1, int position2)
 
@@ -57,7 +60,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     os.push_back(_firstSpecies);
     os.push_back(_secondSpecies);
     
-    os.push_back(&rs[1]->getSpecies());
+    os.push_back(&rs[SPECIESM_BINDING_INDEX]->getSpecies());
     
     Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
     Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
@@ -101,7 +104,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         Species* smOther = _secondSpecies;
         Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
         
-        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
@@ -116,7 +119,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         Species* smOther = _firstSpecies;
         Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
         
-        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
@@ -164,7 +167,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         Species* smOther = _secondSpecies;
         Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
         
-        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
@@ -185,7 +188,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         Species* smOther = _firstSpecies;
         Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
         
-        Species* sbd = &(_offRxn->rspecies()[2]->getSpecies());
+        Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>

@@ -18,6 +18,9 @@
 
 #include "CBound.h"
 
+#define SPECIESM_BINDING_INDEX 1
+#define SPECIESM_UNBINDING_INDEX 2
+
 //FORWARD DECLARATIONS
 class MotorGhost;
 class SubSystem;

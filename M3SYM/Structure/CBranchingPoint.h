@@ -19,6 +19,8 @@
 #include "CBound.h"
 #include "Compartment.h"
 
+#define SPECIESB_BINDING_INDEX 0
+
 //FORWARD DECLARATIONS
 class BranchingPoint;
 class SubSystem;

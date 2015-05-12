@@ -18,6 +18,8 @@
 
 #include "CBound.h"
 
+#define SPECIESL_BINDING_INDEX 1
+
 //FORWARD DECLARATIONS
 class Linker;
 class SubSystem;

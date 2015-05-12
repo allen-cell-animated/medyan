@@ -56,7 +56,7 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     os.push_back(_firstSpecies);
     os.push_back(_secondSpecies);
     
-    os.push_back(&rs[1]->getSpecies());
+    os.push_back(&rs[SPECIESL_BINDING_INDEX]->getSpecies());
     
     Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
     Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
