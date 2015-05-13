@@ -19,7 +19,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A cosine potential used by the BranchingBending template.
+/// A cosine potential used by the BranchingDihedraltemplate.
 class BranchingDihedralCosine {
     
 public:
