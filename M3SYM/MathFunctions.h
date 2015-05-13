@@ -32,9 +32,7 @@ namespace mathfunc {
         v[2] /= norm;
     }
     
-    
     /// Return normalized vector
-    
     inline vector<double>normalizedVector(vector<double>& v) {
         
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
@@ -46,10 +44,7 @@ namespace mathfunc {
         v1.push_back(v[2]/norm);
         
         return v1;
-        
     }
-
-    
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
@@ -196,7 +191,6 @@ namespace mathfunc {
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<double> crossProduct(const vector<double>& v1,
                                        const vector<double>& v2) {
-        
         vector<double> v;
         
         double vx = v1[1]*v2[2] - v1[2]*v2[1];
@@ -216,7 +210,6 @@ namespace mathfunc {
                                                 const vector<double>& v2,
                                                 const vector<double>& p2,
                                                 double d) {
-        
         vector<double> v;
         
         double vx = (v1[1]+d*p1[1])*(v2[2]+d*p2[2]) - (v1[2]+d*p1[2])*(v2[1]+d*p2[1]);
@@ -228,10 +221,7 @@ namespace mathfunc {
         v.push_back(vz);
         
         return v;
-        
-        
     };
-    
     
     /// Projection of a new point based on a given direction and starting point
     inline vector<double> nextPointProjection(const vector<double>& coordinate,
