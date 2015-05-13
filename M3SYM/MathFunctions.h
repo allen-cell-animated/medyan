@@ -33,6 +33,24 @@ namespace mathfunc {
     }
     
     
+    /// Return normalized vector
+    
+    inline vector<double>normalizedVector(vector<double>& v) {
+        
+        double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        
+        vector<double> v1;
+        
+        v1.push_back(v[0]/norm);
+        v1.push_back(v[1]/norm);
+        v1.push_back(v[2]/norm);
+        
+        return v1;
+        
+    }
+
+    
+    
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
         
