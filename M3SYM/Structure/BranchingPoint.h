@@ -50,7 +50,7 @@ private:
     
     float _birthTime; ///Birth time
     
-    Compartment* _compartment; ///< Where this linker is
+    Compartment* _compartment; ///< Where this branch point is
     
 public:
     vector<double> coordinate; ///< coordinate of midpoint,

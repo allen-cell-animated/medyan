@@ -50,6 +50,7 @@ private:
     /// Set up all [FilamentReactionTemplate](@ref FilamentReactionTemplate)
     /// from the setup struct
     void genFilRxnTemplates();
+    
     /// Set up all [FilamentBindingManagers](@ref FilamentBindingManager)
     /// from the setup struct. Adds to each Compartment.
     void genFilBindingManagers();

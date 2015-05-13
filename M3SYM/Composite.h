@@ -89,9 +89,7 @@ public:
     virtual void removeChild (Component* child) {
         auto child_iter = find_if(_children.begin(),_children.end(),
                     [&child](const unique_ptr<Component> &element)
-                     {
-                         return element.get()==child ? true : false;
-                     });
+                     {return element.get()==child ? true : false;});
         if(child_iter!=_children.end())
             _children.erase(child_iter);
         else

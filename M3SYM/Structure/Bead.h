@@ -63,27 +63,19 @@ public:
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return force[0]*force[0] +
-               force[1]*force[1] +
-               force[2]*force[2];
+        return force[0]*force[0]+force[1]*force[1]+force[2]*force[2];
     }
     
     inline double FADotFA() {
-        return forceAux[0]*forceAux[0] +
-               forceAux[1]*forceAux[1] +
-               forceAux[2]*forceAux[2];
+        return forceAux[0]*forceAux[0]+forceAux[1]*forceAux[1]+forceAux[2]*forceAux[2];
     }
     
     inline double FADotFAP() {
-        return forceAux[0]*forceAuxP[0] +
-               forceAux[1]*forceAuxP[1] +
-               forceAux[2]*forceAuxP[2];
+        return forceAux[0]*forceAuxP[0]+forceAux[1]*forceAuxP[1]+forceAux[2]*forceAuxP[2];
     }
     
     inline double FDotFA() {
-        return force[0]*forceAux[0] +
-               force[1]*forceAux[1] +
-               force[2]*forceAux[2];
+        return force[0]*forceAux[0]+force[1]*forceAux[1]+force[2]*forceAux[2];
     }
     //@}
     

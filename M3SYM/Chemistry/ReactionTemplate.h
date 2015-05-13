@@ -56,9 +56,6 @@ protected:
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
-    /// Info about binding chemistry
-    short _empty = 0;
-    
     float _rate; ///< Rate of reaction
     
 public:

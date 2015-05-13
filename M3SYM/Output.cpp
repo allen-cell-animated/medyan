@@ -110,7 +110,7 @@ void BasicSnapshot::print(int step) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
-        branch->getBranchType() << endl;
+                               branch->getBranchType() << endl;
         
         //print coordinates
         auto x = branch->coordinate;
@@ -177,7 +177,7 @@ void BirthTimes::print(int step) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
-        branch->getBranchType() << endl;
+                               branch->getBranchType() << endl;
         
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
@@ -248,7 +248,7 @@ void Forces::print(int step) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
-                        branch->getBranchType() << endl;
+                               branch->getBranchType() << endl;
         
         //Nothing for branchers
         _outputFile << 0.0 << endl;
@@ -332,7 +332,7 @@ void Stresses::print(int step) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
-        branch->getBranchType() << endl;
+                               branch->getBranchType() << endl;
         
         //Nothing for branchers
         _outputFile << 0.0 << endl;

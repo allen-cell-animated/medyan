@@ -53,7 +53,9 @@ class GController {
     
 private:
     static short _nDim; ///< Number of dimensions in the system
+    
     static vector<int> _grid; ///< Size of each dimension, in compartment lengths
+    
     static vector<double> _compartmentSize; ///< Compartment size in each dimension
     
     ///Generate all neighbors lists for each compartment in the CompartmentGrid

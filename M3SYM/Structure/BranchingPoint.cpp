@@ -39,6 +39,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //Find compartment
     coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
                                     _c1->getSecondBead()->coordinate, _position);
+        
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
         

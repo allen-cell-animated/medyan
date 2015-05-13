@@ -78,18 +78,13 @@ struct ChemistryAlgorithm {
 struct ChemistryData {
     
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> genReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
+    
     /// Reaction happening between SpeciesBulk ONLY
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> bulkReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
     
     /// Filament nucleation reaction
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> nucleationReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> nucleationReactions = {};
     
     //@{
     /// Filament reactions
@@ -98,27 +93,19 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> polymerizationReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> polymerizationReactions = {};
+    
     /// Depolymerization reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> depolymerizationReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> depolymerizationReactions = {};
+    
     /// Aging reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> agingReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
     
     /// Destruction reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> destructionReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> destructionReactions = {};
     
     /// Branching reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double, double>> branchingReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double>> branchingReactions = {};
     
     /// Severing reactions
     vector<tuple<string, double>> severingReactions = {};
@@ -132,19 +119,13 @@ struct ChemistryData {
      *  range.
      */
     /// Linker reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                 double, double, double, double>> linkerReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double, double, double>> linkerReactions = {};
     /// MotorGhost reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                 double, double, double, double>> motorReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double, double, double>> motorReactions = {};
     //@}
     
     /// MotorGhost walking reactions
-    vector<tuple<vector<string>,
-                 vector<string>,
-                        double>> motorWalkingReactions = {};
+    vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, whether this is a constant species, and release time
@@ -247,15 +228,6 @@ struct FilamentSetup {
     ///Filament length, in number of cylinders
     int filamentLength = 1;
 };
-
-
-/// Split a string by whitespace into generic type
-template<typename T>
-vector<T> split(const string& line) {
-    istringstream is(line);
-    return vector<T>(istream_iterator<T>(is), istream_iterator<T>());
-}
-
 
 /// A general parser
 /*!

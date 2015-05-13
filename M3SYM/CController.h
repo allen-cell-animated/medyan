@@ -51,13 +51,11 @@ public:
     ///Run a number of chemical steps
     bool run(int steps) {
         
-        //run the steps
-        bool success = ChemSim::run(steps);
-        
         //update copy numbers
         ChemManager::updateCopyNumbers();
         
-        return success;
+        //run the steps
+        return ChemSim::run(steps);
     }
 };
     

@@ -17,18 +17,28 @@
 #include <tuple>
 #include <memory>
 #include <random>
+#include <sstream>
 
 using namespace std;
 
+/// Make a unique ptr
 template<typename T, typename ...Args>
 unique_ptr<T> make_unique( Args&& ...args )
 {
     return unique_ptr<T>( new T( forward<Args>(args)... ) );
 }
 
+/// Compare types
 template<typename T, typename U>
 bool isSame(const U& x) {
     return typeid(x) == typeid(T&); 
+}
+
+/// Split a string by whitespace into generic type
+template<typename T>
+vector<T> split(const string& line) {
+    istringstream is(line);
+    return vector<T>(istream_iterator<T>(is), istream_iterator<T>());
 }
 
 //Functions to hash by a tuple
@@ -82,6 +92,7 @@ namespace std{
     };
 }
 
+///Get a random double between low and high
 inline double randomDouble(double low, double high) {
     return ((float)rand() / RAND_MAX) * (high - low) + low;
 }

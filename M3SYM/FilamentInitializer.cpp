@@ -29,17 +29,14 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
-        double firstX = randomDouble(0,1) *
-                        SysParams::Geometry().compartmentSizeX *
-                        SysParams::Geometry().NX;
+        double firstX = randomDouble(0,1) * SysParams::Geometry().NX *
+                        SysParams::Geometry().compartmentSizeX;
         
-        double firstY = randomDouble(0,1) *
-                        SysParams::Geometry().compartmentSizeY *
-                        SysParams::Geometry().NY;
+        double firstY = randomDouble(0,1) * SysParams::Geometry().NY *
+                        SysParams::Geometry().compartmentSizeY;
         
-        double firstZ = randomDouble(0,1) *
-                        SysParams::Geometry().compartmentSizeZ *
-                        SysParams::Geometry().NZ;
+        double firstZ = randomDouble(0,1) * SysParams::Geometry().NZ *
+                        SysParams::Geometry().compartmentSizeZ;
         
         double directionX = randomDouble(-1,1);
         double directionY = randomDouble(-1,1);
@@ -48,13 +45,8 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
         //Create a random filament vector one cylinder long
         vector<double> firstPoint = {firstX, firstY, firstZ};
         
-        auto normFactor = sqrt(directionX * directionX +
-                               directionY * directionY +
-                               directionZ * directionZ);
-        
-        vector<double> direction = {directionX/normFactor,
-                                    directionY/normFactor,
-                                    directionZ/normFactor};
+        vector<double> direction = {directionX, directionY, directionZ};
+        normalize(direction);
         
         vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *

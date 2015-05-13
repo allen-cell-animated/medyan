@@ -29,8 +29,10 @@ private:
 
 public:
     /// Constructor, sets parameters of equation
-    PlaneBoundaryElement(vector<double> coords, vector<double> normal,
-                         double repulsConst, double screenLength);
+    PlaneBoundaryElement(vector<double> coords,
+                         vector<double> normal,
+                         double repulsConst,
+                         double screenLength);
     
     virtual double distance(const vector<double>& point);
     
@@ -48,9 +50,13 @@ private:
     
 public:
     /// Constructor, sets parameters of equation
-    SphereBoundaryElement(vector<double> coords, double radius,
-                          double repulsConst, double screenLength)
-        : BoundaryElement(coords, repulsConst, screenLength), _radius(radius) {}
+    SphereBoundaryElement(vector<double> coords,
+                          double radius,
+                          double repulsConst,
+                          double screenLength)
+    
+        : BoundaryElement(coords, repulsConst, screenLength),
+          _radius(radius) {}
     
     virtual double distance(const vector<double>& point);
     
@@ -69,8 +75,11 @@ private:
     
 public:
     ///Constructor, sets parameters of equation
-    CylindricalZBoundaryElement(vector<double> coords, double radius,
-                                double height, double repulsConst, double screenLength)
+    CylindricalZBoundaryElement(vector<double> coords,
+                                double radius,
+                                double height,
+                                double repulsConst,
+                                double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
           _radius(radius), _height(height) {}
@@ -92,8 +101,11 @@ private:
     
 public:
     /// Constructor, sets parameters of equation
-    HalfSphereZBoundaryElement(vector<double> coords, double radius,
-                               bool up, double repulsConst, double screenLength)
+    HalfSphereZBoundaryElement(vector<double> coords,
+                               double radius,
+                               bool up,
+                               double repulsConst,
+                               double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
           _radius(radius), _up(up){}

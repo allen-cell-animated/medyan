@@ -57,15 +57,15 @@ struct UpdateBindingCallback {
         
         for(auto &manager : c->getFilamentBindingManagers()) {
             
+            CCylinder* cc = _cylinder->getCCylinder();
+            
             //update binding sites
-            if(delta == +1)
-                manager->addPossibleBindings(_cylinder->getCCylinder(), _bindingSite);
-            else //-1
-                manager->removePossibleBindings(_cylinder->getCCylinder(), _bindingSite);
+            if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+            
+            else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
         }
     }
 };
-
 #endif
 
 #ifdef REACTION_SIGNALING
@@ -240,7 +240,7 @@ struct BranchingCallback {
                       float offRate,
                       SubSystem* ps)
     
-    : _ps(ps), _bManager(_bManager),
+    : _ps(ps), _bManager(bManager),
       _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {

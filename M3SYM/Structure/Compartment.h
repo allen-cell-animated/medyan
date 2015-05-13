@@ -138,21 +138,20 @@ public:
     virtual const vector<double>& coordinates() {return _coords;}
     
     /// Removes all reactions from this compartment, diffusing and internal
-    virtual void clearReactions()
-    {
+    virtual void clearReactions() {
+        
         _internal_reactions.reactions().clear();
         _diffusion_reactions.reactions().clear();
     }
     
     /// Clear all species from this compartment
-    virtual void clearSpecies()
-    {
+    virtual void clearSpecies() {
         _species.species().clear();
     }
 
     /// Remove diffusion reactions between this compartment and its neighbors
-    virtual void clearNeighbouringReactions()
-    {
+    virtual void clearNeighbouringReactions() {
+        
         for(auto &s : _species.species())
         {
             for(auto &n : _neighbours)
@@ -163,8 +162,8 @@ public:
         }
     }
     /// Remove this compartment from the neighbor list
-    virtual void removeFromNeighboursList()
-    {
+    virtual void removeFromNeighboursList() {
+        
         for(auto &n : _neighbours)
         {
             n->removeNeighbour(this);

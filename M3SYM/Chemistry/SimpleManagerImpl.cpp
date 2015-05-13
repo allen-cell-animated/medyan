@@ -27,29 +27,25 @@ using namespace mathfunc;
 
 void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     
-    
     // FILAMENT SPECIES
     
     int fIndex = 0;
     for(auto &f : _chemData.speciesFilament) {
         SpeciesFilament* sf =
-        c->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueFilName(f));
+        c->addSpeciesFilament(SpeciesNamesDB::instance()->genUniqueFilName(f));
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }
     for (auto &p : _chemData.speciesPlusEnd) {
         SpeciesPlusEnd* sp =
-        c->addSpeciesPlusEnd(
-        SpeciesNamesDB::instance()->genUniqueFilName(p));
+        c->addSpeciesPlusEnd(SpeciesNamesDB::instance()->genUniqueFilName(p));
         m->_speciesFilament[fIndex] = sp;
         fIndex++;
                             
     }
     for (auto &mi : _chemData.speciesMinusEnd) {
         SpeciesMinusEnd* smi =
-        c->addSpeciesMinusEnd(
-        SpeciesNamesDB::instance()->genUniqueFilName(mi));
+        c->addSpeciesMinusEnd(SpeciesNamesDB::instance()->genUniqueFilName(mi));
         m->_speciesFilament[fIndex] = smi;
         fIndex++;
     }
@@ -59,29 +55,25 @@ void SimpleManagerImpl::initCMonomer(CMonomer* m, Compartment* c) {
     int bIndex = 0;
     for (auto &b : _chemData.speciesBound) {
         SpeciesBound* sb =
-        c->addSpeciesBound(
-        SpeciesNamesDB::instance()->genUniqueFilName(b));
+        c->addSpeciesBound(SpeciesNamesDB::instance()->genUniqueFilName(b));
         m->_speciesBound[bIndex] = sb;
         bIndex++;
     }
     for (auto &l : _chemData.speciesLinker) {
         SpeciesLinker* sl =
-        c->addSpeciesLinker(
-        SpeciesNamesDB::instance()->genUniqueFilName(l));
+        c->addSpeciesLinker(SpeciesNamesDB::instance()->genUniqueFilName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
     for (auto &mo : _chemData.speciesMotor) {
         SpeciesMotor* sm =
-        c->addSpeciesMotor(
-        SpeciesNamesDB::instance()->genUniqueFilName(mo));
+        c->addSpeciesMotor(SpeciesNamesDB::instance()->genUniqueFilName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
     for (auto &br : _chemData.speciesBrancher) {
         SpeciesBrancher* sbr =
-        c->addSpeciesBrancher(
-        SpeciesNamesDB::instance()->genUniqueFilName(br));
+        c->addSpeciesBrancher(SpeciesNamesDB::instance()->genUniqueFilName(br));
         m->_speciesBound[bIndex] = sbr;
         bIndex++;
     }
@@ -299,8 +291,6 @@ void SimpleManagerImpl::genFilRxnTemplates() {
             _filRxnTemplates.emplace_back(
             new PolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
     }
-    
-    
     
     //set up reaction templates
     for(auto &r: _chemData.depolymerizationReactions) {
@@ -550,7 +540,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesMotor.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::MOTOR));
+                                                      SpeciesType::MOTOR));
             }
             else {
                 cout <<
@@ -590,7 +580,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 }
                 
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::BOUND));
+                                                      SpeciesType::BOUND));
             }
             else {
                 cout <<
@@ -636,7 +626,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesMotor.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                       SpeciesType::MOTOR));
+                                                     SpeciesType::MOTOR));
             }
             else {
                 cout <<
@@ -674,7 +664,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 }
 
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                        SpeciesType::BOUND));
+                                                     SpeciesType::BOUND));
             }
             else {
                 cout <<
@@ -774,7 +764,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesMinusEnd.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                     SpeciesType::MINUSEND));
+                                                      SpeciesType::MINUSEND));
             }
             else {
                 cout <<
@@ -805,7 +795,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesFilament.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                   SpeciesType::FILAMENT));
+                                                     SpeciesType::FILAMENT));
             }
             else {
                 cout <<
@@ -825,7 +815,8 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 
                 //get position of iterator
                 position = distance(_chemData.speciesPlusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                productTemplate.push_back(tuple<int, SpeciesType>(position,
+                                                     SpeciesType::PLUSEND));
             }
             else {
                 cout <<
@@ -846,7 +837,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesMinusEnd.begin(), it);
                 productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                    SpeciesType::MINUSEND));
+                                                     SpeciesType::MINUSEND));
             }
             else {
                 cout <<
@@ -1013,7 +1004,7 @@ void SimpleManagerImpl::genFilRxnTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesFilament.begin(), it);
                 reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                    SpeciesType::FILAMENT));
+                                                      SpeciesType::FILAMENT));
             }
             else {
                 cout <<
@@ -1061,12 +1052,17 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 exit(EXIT_FAILURE);
             }
             
+            string brancherName;
+            
             //FIRST AND SECOND SPECIES MUST BE BULK OR DIFFUSING
             auto reactant = reactants[0];
+            
             if(reactant.find("BULK") != string::npos) {
                 
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
+                brancherName = name;
+                
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
                                   [name](tuple<string, int, string, double> element) {
                                   return get<0>(element) == name ? true : false; });
@@ -1084,6 +1080,8 @@ void SimpleManagerImpl::genFilBindingManagers() {
                 
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
+                brancherName = name;
+                
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
                                   [name](tuple<string, int, double, double> element) {
                                       return get<0>(element) == name ? true : false; });
@@ -1165,7 +1163,6 @@ void SimpleManagerImpl::genFilBindingManagers() {
                     }
                     
                     //find the species single binding, push
-                    string brancherName = reactants[0].substr(0, reactants[0].find(":"));
                     string bename = SpeciesNamesDB::instance()->genBindingName(brancherName, name);
                     
                     reactantSpecies.push_back(C->findSpeciesByName(bename));
@@ -1186,14 +1183,12 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //FIRST PRODUCT SPECIES MUST BE BRANCHER
             short brancherInt;
-            string brancherName;
             
             auto product = products[0];
             if(product.find("BRANCHER") != string::npos) {
                 
                 //look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
-                brancherName = name;
                 auto it = find(_chemData.speciesBrancher.begin(), _chemData.speciesBrancher.end(), name);
                 
                 if(it != _chemData.speciesBrancher.end()) {
@@ -1255,8 +1250,9 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //create manager
             BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName);
-            bManager->setMIndex(managerIndex++);
             C->addFilamentBindingManager(bManager);
+            
+            bManager->setMIndex(managerIndex++);
             
             //attach callback
             BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
@@ -1734,16 +1730,24 @@ void SimpleManagerImpl::genFilBindingManagers() {
 void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
     
     // add diffusing species (zero copy number for now)
-    for(auto &sd : _chemData.speciesDiffusing)
+    for(auto &sd : _chemData.speciesDiffusing) {
+        
+        auto name = get<0>(sd);
+        auto diffRate = get<2>(sd);
         
         protoCompartment.addSpeciesUnique(
-        unique_ptr<Species>(new SpeciesDiffusing(get<0>(sd), 0)), get<2>(sd));
+        unique_ptr<Species>(new SpeciesDiffusing(name, 0)), diffRate);
+    }
     
     // add bulk species (zero copy number for now)
-    for(auto &sb : _chemData.speciesBulk)
+    for(auto &sb : _chemData.speciesBulk) {
+        
+        auto name = get<0>(sb);
+        auto constant = (get<2>(sb) == "CONST") ? true : false;
         
         CompartmentGrid::instance()->
-        addSpeciesBulk(get<0>(sb), 0, max_ulim, (get<2>(sb) == "CONST") ? true : false);
+        addSpeciesBulk(name, 0, max_ulim, constant);
+    }
     
     // create single binding and pair binding species
     for(auto &sb : _chemData.speciesBrancher) {
@@ -1779,8 +1783,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 //add a single binding species with name sb + bound
-                protoCompartment.addSpeciesSingleBinding(
-                    SpeciesNamesDB::instance()->genBindingName(sb, bound));
+                protoCompartment.addSpeciesSingleBinding(SpeciesNamesDB::instance()->genBindingName(sb, bound));
             }
         }
     }
@@ -1818,8 +1821,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 //add a single binding species with name sl + bound
-                protoCompartment.addSpeciesPairBinding(
-                    SpeciesNamesDB::instance()->genBindingName(sl, bound));
+                protoCompartment.addSpeciesPairBinding(SpeciesNamesDB::instance()->genBindingName(sl, bound));
             }
         }
     }
@@ -1857,8 +1859,7 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 //add a single binding species with name sm + bound
-                protoCompartment.addSpeciesPairBinding(
-                   SpeciesNamesDB::instance()->genBindingName(sm, bound));
+                protoCompartment.addSpeciesPairBinding(SpeciesNamesDB::instance()->genBindingName(sm, bound));
             }
         }
     }

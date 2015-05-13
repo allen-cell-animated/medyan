@@ -27,9 +27,8 @@ namespace mathfunc {
     inline void normalize(vector<double>& v) {
         
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-        v[0] /= norm;
-        v[1] /= norm;
-        v[2] /= norm;
+        
+        v[0] /= norm; v[1] /= norm; v[2] /= norm;
     }
     
     /// Return normalized vector
@@ -39,9 +38,7 @@ namespace mathfunc {
         
         vector<double> v1;
         
-        v1.push_back(v[0]/norm);
-        v1.push_back(v[1]/norm);
-        v1.push_back(v[2]/norm);
+        v1.push_back(v[0]/norm); v1.push_back(v[1]/norm); v1.push_back(v[2]/norm);
         
         return v1;
     }

@@ -32,6 +32,7 @@ class BrownianRatchet : public FilamentRateChanger {
     
 private:
     double _x; ///< The characteristic length for this function
+    
 public:
     BrownianRatchet(double charLength) : _x(charLength) {}
     
@@ -60,10 +61,11 @@ private:
 public:
     BasicCatchSlip(short linkerType,
                    double amplitude1, double amplitude2,
-                   double charLength1, double charLength2) :
-    LinkerRateChanger(linkerType),
-    _a1(amplitude1),  _a2(amplitude2),
-    _x1(charLength1), _x2(charLength2) {}
+                   double charLength1, double charLength2)
+    
+        : LinkerRateChanger(linkerType),
+          _a1(amplitude1),  _a2(amplitude2),
+          _x1(charLength1), _x2(charLength2) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -84,8 +86,9 @@ private:
     double _x; ///< The characteristic length for this function
     
 public:
-    BasicSlip(short linkerType, double charLength) :
-    LinkerRateChanger(linkerType), _x(charLength) {}
+    BasicSlip(short linkerType, double charLength)
+    
+        : LinkerRateChanger(linkerType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -122,8 +125,9 @@ private:
     double _F0;  ///< characteristic force
     
 public:
-    LowDutyPCMCatch(short motorType, double charForce) :
-    MotorRateChanger(motorType), _F0(charForce) {}
+    LowDutyPCMCatch(short motorType, double charForce)
+    
+        : MotorRateChanger(motorType), _F0(charForce) {}
     
     virtual float changeRate(float onRate, float offRate,
                              int numHeads, double force);
@@ -167,8 +171,9 @@ private:
     float _stepFrac = 1.0; ///< step size of a single head relative to sim
     
 public:
-    LowDutyHillStall(short motorType, double charForce) :
-    MotorRateChanger(motorType), _F0(charForce) {
+    LowDutyHillStall(short motorType, double charForce)
+    
+        : MotorRateChanger(motorType), _F0(charForce) {
     
         //calculate rate based on step fraction
         double d_step = SysParams::Chemistry().motorStepSize[_motorType];

@@ -52,7 +52,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _cCylinder->setCylinder(this);
         
     ChemManager::initializeCCylinder(_cCylinder.get(), f,
-                                     extensionFront,extensionBack,creation);
+                                     extensionFront,
+                                     extensionBack,
+                                     creation);
 #endif
 
 #ifdef MECHANICS

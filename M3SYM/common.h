@@ -38,7 +38,7 @@ using namespace std;
 #define BOUND_EMPTY       0
 
 //@{
-/// Constant Species identifiers
+/// Constant Species index identifiers
 /// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
 
 #define SPECIESFILAMENT   0

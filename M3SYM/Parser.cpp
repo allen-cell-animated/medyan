@@ -36,18 +36,13 @@ OutputTypes SystemParser::readOutputTypes() {
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector[1] == "SNAPSHOT") {
-                oTypes.basicSnapshot = true;
-            }
-            else if (lineVector[1] == "BIRTHTIMES") {
-                oTypes.birthTimes = true;
-            }
-            else if (lineVector[1] == "FORCES") {
-                oTypes.forces = true;
-            }
-            else if (lineVector[1] == "STRESSES") {
-                oTypes.stresses = true;
-            }
+            else if (lineVector[1] == "SNAPSHOT")   oTypes.basicSnapshot = true;
+            
+            else if (lineVector[1] == "BIRTHTIMES") oTypes.birthTimes = true;
+            
+            else if (lineVector[1] == "FORCES")     oTypes.forces = true;
+            
+            else if (lineVector[1] == "STRESSES")   oTypes.stresses = true;
         }
     }
     return oTypes;
@@ -1295,6 +1290,7 @@ void SystemParser::readGeoParams() {
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
     if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
     if(gridTemp.size() >= 3) GParams.NZ = gridTemp[2];
+    
     if(compartmentTemp.size() >= 1) GParams.compartmentSizeX = compartmentTemp[0];
     if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
@@ -1302,8 +1298,10 @@ void SystemParser::readGeoParams() {
     //find max compartment side
     if(GParams.compartmentSizeX > GParams.largestCompartmentSide)
         GParams.largestCompartmentSide = GParams.compartmentSizeX;
+    
     if(GParams.compartmentSizeY > GParams.largestCompartmentSide)
         GParams.largestCompartmentSide = GParams.compartmentSizeY;
+    
     if(GParams.compartmentSizeZ > GParams.largestCompartmentSide)
         GParams.largestCompartmentSide = GParams.compartmentSizeZ;
     
@@ -1409,7 +1407,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
             else if (lineVector.size() == 5) {
                 chem.speciesBulk.push_back(tuple<string, int, string, double>
-                    (lineVector[1], atoi(lineVector[2].c_str()), lineVector[3], atof(lineVector[4].c_str())));
+                    (lineVector[1], atoi(lineVector[2].c_str()),
+                     lineVector[3], atof(lineVector[4].c_str())));
             }
             else {}
         }
@@ -1422,7 +1421,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
             else if (lineVector.size() == 5) {
                 chem.speciesDiffusing.push_back(tuple<string, int, double, double>
-                    (lineVector[1], atoi(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())));
+                    (lineVector[1], atoi(lineVector[2].c_str()),
+                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str())));
             }
             else {}
         }

@@ -85,9 +85,10 @@ struct ChemParams {
     short numLinkerSpecies   = 0;
     short numMotorSpecies    = 0;
     short numBrancherSpecies = 0;
-    
-    short numBindingSites = 0;
     //@}
+    
+    /// Number of binding sites per cylinder
+    short numBindingSites = 0;
     
     //@{
     ///Extra motor parameters
@@ -125,6 +126,7 @@ struct GeoParams {
     
     /// Minimum monomer length of a cylinder is preset
     int minCylinderIntSize = 3;
+    
     double minCylinderSize = 0;
     //@}
     
@@ -134,9 +136,13 @@ struct GeoParams {
 /// Struct to hold Boundary parameters for the system
 struct BoundParams {
     
+    //@{
+    /// Mechanical parameter
     double BoundaryK = 0;
     double BScreenLength = 0;
+    //@}
     
+    /// Cutoff for force calculation
     double BoundaryCutoff = 0;
     double diameter = 0;
 };
