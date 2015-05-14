@@ -30,8 +30,10 @@ vector<CCNLContainer*> MotorBindingManager::_nlContainers;
 
 //BRANCHER
 
-BranchingManager::BranchingManager(ReactionBase* reaction, Compartment* compartment,
+BranchingManager::BranchingManager(ReactionBase* reaction,
+                                   Compartment* compartment,
                                    short boundInt, string boundName)
+
     : FilamentBindingManager(reaction, compartment, boundInt, boundName) {
     
     //find the single binding species
@@ -44,8 +46,11 @@ BranchingManager::BranchingManager(ReactionBase* reaction, Compartment* compartm
 void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     //add valid site
-    if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY)
-        _possibleBindings.insert(tuple<CCylinder*, short>(cc, bindingSite));
+    if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY) {
+        
+        auto t = tuple<CCylinder*, short>(cc, bindingSite);
+        _possibleBindings.insert(t);
+    }
     
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
@@ -96,9 +101,11 @@ void BranchingManager::updateAllPossibleBindings() {
         for(auto it = SysParams::Chemistry().bindingSites.begin();
                  it != SysParams::Chemistry().bindingSites.end(); it++)
             
-            if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY)
+            if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
                 
-                _possibleBindings.insert(tuple<CCylinder*, short>(cc, *it));
+                auto t = tuple<CCylinder*, short>(cc, *it);
+                _possibleBindings.insert(t);
+            }
     }
     
     int oldN = _bindingSpecies->getN();
@@ -109,8 +116,10 @@ void BranchingManager::updateAllPossibleBindings() {
 
 //LINKER
 
-LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
-                                           short boundInt, string boundName, float rMax, float rMin)
+LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
+                                           Compartment* compartment,
+                                           short boundInt, string boundName,
+                                           float rMax, float rMin)
 
     : FilamentBindingManager(reaction, compartment, boundInt, boundName),
       _rMin(rMin), _rMax(rMax) {
@@ -148,39 +157,41 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                 if (ccn->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
                     
                     //check distances..
-                    auto midpoint1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
-                    auto pos1 = midPointCoordinate(c->getFirstBead()->coordinate,
-                                                   c->getSecondBead()->coordinate, midpoint1);
+                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
+                    auto mp2 = (float)*it / SysParams::Geometry().cylinderIntSize;
                     
-                    auto midpoint2 = (float)*it / SysParams::Geometry().cylinderIntSize;
-                    auto pos2 = midPointCoordinate(cn->getFirstBead()->coordinate,
-                                                   cn->getSecondBead()->coordinate, midpoint2);
+                    auto x1 = c->getFirstBead()->coordinate;
+                    auto x2 = c->getSecondBead()->coordinate;
+                    auto x3 = cn->getFirstBead()->coordinate;
+                    auto x4 = cn->getSecondBead()->coordinate;
                     
-                    double dist = twoPointDistance(pos1, pos2);
+                    auto m1 = midPointCoordinate(x1, x2, mp1);
+                    auto m2 = midPointCoordinate(x3, x4, mp2);
+                    
+                    double dist = twoPointDistance(m1, m2);
                     
                     if(dist > _rMax || dist < _rMin) continue;
                     
+                    auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
+                    auto t2 = tuple<CCylinder*, short>(ccn, *it);
+                    
                     //add in correct order
                     if(c->getID() > cn->getID())
-                        _possibleBindings.emplace(tuple<CCylinder*, short>(cc, bindingSite),
-                                                  tuple<CCylinder*, short>(ccn, *it));
+                        _possibleBindings.emplace(t1,t2);
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {
                             
-                            _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                      tuple<CCylinder*, short>(cc, bindingSite));
+                            _possibleBindings.emplace(t2,t1);
                         }
                         //add in other
                         else {
-                            
                             auto m = (LinkerBindingManager*)cn->getCompartment()->
                                       getFilamentBindingManagers()[_mIndex].get();
                             
                             affectedManagers.push_back(m);
                             
-                            m->_possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                         tuple<CCylinder*, short>(cc, bindingSite));
+                            m->_possibleBindings.emplace(t2,t1);
                         }
                     }
                 }
@@ -221,7 +232,8 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     vector<LinkerBindingManager*> affectedManagers;
     
     //remove all tuples which have this ccylinder as key
-    _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
+    auto t = tuple<CCylinder*, short>(cc, bindingSite);
+    _possibleBindings.erase(t);
     
     //remove all tuples which have this as value
     for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
@@ -231,6 +243,11 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
         
         else ++it;
     }
+    
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
     
     //remove all neighbors which have this binding site pair
     for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
@@ -262,11 +279,6 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
         m->updateBindingReaction(oldNOther, newNOther);
         
     }
-    
-    int oldN = _bindingSpecies->getN();
-    int newN = numBindingSites();
-    
-    updateBindingReaction(oldN, newN);
 }
 
 void LinkerBindingManager::removePossibleBindings(CCylinder* cc) {
@@ -306,22 +318,27 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                         if (ccn->getCMonomer(*it2)->activeSpeciesBound() == BOUND_EMPTY) {
                             
                             //check distances..
-                            auto midpoint1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;
-                            auto pos1 = midPointCoordinate(c->getFirstBead()->coordinate,
-                                                           c->getSecondBead()->coordinate, midpoint1);
+                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;
+                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderIntSize;
                             
-                            auto midpoint2 = (float)*it2 / SysParams::Geometry().cylinderIntSize;
-                            auto pos2 = midPointCoordinate(cn->getFirstBead()->coordinate,
-                                                           cn->getSecondBead()->coordinate, midpoint2);
+                            auto x1 = c->getFirstBead()->coordinate;
+                            auto x2 = c->getSecondBead()->coordinate;
+                            auto x3 = cn->getFirstBead()->coordinate;
+                            auto x4 = cn->getSecondBead()->coordinate;
                             
-                            double dist = twoPointDistance(pos1, pos2);
+                            auto m1 = midPointCoordinate(x1, x2, mp1);
+                            auto m2 = midPointCoordinate(x3, x4, mp2);
+                            
+                            double dist = twoPointDistance(m1,m2);
                             
                             if(dist > _rMax || dist < _rMin) continue;
                             
+                            auto t1 = tuple<CCylinder*, short>(cc, *it1);
+                            auto t2 = tuple<CCylinder*, short>(ccn, *it2);
+                            
                             //add in correct order
                             if(c->getID() > cn->getID())
-                                _possibleBindings.emplace(tuple<CCylinder*, short>(cc, *it1),
-                                                          tuple<CCylinder*, short>(ccn, *it2));
+                                _possibleBindings.emplace(t1, t2);
                         }
                     }
                 }
@@ -337,8 +354,10 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
 //MOTOR
 
-MotorBindingManager::MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
-                                         short boundInt, string boundName, float rMax, float rMin)
+MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
+                                         Compartment* compartment,
+                                         short boundInt, string boundName,
+                                         float rMax, float rMin)
 
     : FilamentBindingManager(reaction, compartment, boundInt, boundName),
      _rMin(rMin), _rMax(rMax) {
@@ -376,39 +395,42 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                 if (ccn->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
                     
                     //check distances..
-                    auto midpoint1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
-                    auto pos1 = midPointCoordinate(c->getFirstBead()->coordinate,
-                                                   c->getSecondBead()->coordinate, midpoint1);
+                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
+                    auto mp2 = (float)*it / SysParams::Geometry().cylinderIntSize;
                     
-                    auto midpoint2 = (float)*it / SysParams::Geometry().cylinderIntSize;
-                    auto pos2 = midPointCoordinate(cn->getFirstBead()->coordinate,
-                                                   cn->getSecondBead()->coordinate, midpoint2);
+                    auto x1 = c->getFirstBead()->coordinate;
+                    auto x2 = c->getSecondBead()->coordinate;
+                    auto x3 = cn->getFirstBead()->coordinate;
+                    auto x4 = cn->getSecondBead()->coordinate;
                     
-                    double dist = twoPointDistance(pos1, pos2);
+                    auto m1 = midPointCoordinate(x1, x2, mp1);
+                    auto m2 = midPointCoordinate(x3, x4, mp2);
+                    
+                    double dist = twoPointDistance(m1, m2);
                     
                     if(dist > _rMax || dist < _rMin) continue;
                     
+                    auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
+                    auto t2 = tuple<CCylinder*, short>(ccn, *it);
+                    
                     //add in correct order
                     if(c->getID() > cn->getID())
-                        _possibleBindings.emplace(tuple<CCylinder*, short>(cc, bindingSite),
-                                                  tuple<CCylinder*, short>(ccn, *it));
+                        _possibleBindings.emplace(t1,t2);
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {
                             
-                            _possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                      tuple<CCylinder*, short>(cc, bindingSite));
+                            _possibleBindings.emplace(t2,t1);
                         }
                         //add in other
                         else {
                             
                             auto m = (MotorBindingManager*)cn->getCompartment()->
-                            getFilamentBindingManagers()[_mIndex].get();
+                                      getFilamentBindingManagers()[_mIndex].get();
                             
                             affectedManagers.push_back(m);
                             
-                            m->_possibleBindings.emplace(tuple<CCylinder*, short>(ccn, *it),
-                                                         tuple<CCylinder*, short>(cc, bindingSite));
+                            m->_possibleBindings.emplace(t2,t1);
                         }
                     }
                 }
@@ -448,7 +470,8 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     vector<MotorBindingManager*> affectedManagers;
     
     //remove all tuples which have this ccylinder as key
-    _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
+    auto t = tuple<CCylinder*, short>(cc, bindingSite);
+    _possibleBindings.erase(t);
     
     //remove all tuples which have this as value
     for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
@@ -458,6 +481,11 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
         
         else ++it;
     }
+    
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
     
     //remove all neighbors which have this binding site pair
     for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
@@ -489,11 +517,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
         m->updateBindingReaction(oldNOther, newNOther);
         
     }
-    
-    int oldN = _bindingSpecies->getN();
-    int newN = numBindingSites();
-    
-    updateBindingReaction(oldN, newN);
 }
 
 void MotorBindingManager::removePossibleBindings(CCylinder* cc) {
@@ -533,22 +556,27 @@ void MotorBindingManager::updateAllPossibleBindings() {
                         if (ccn->getCMonomer(*it2)->activeSpeciesBound() == BOUND_EMPTY) {
                             
                             //check distances..
-                            auto midpoint1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;
-                            auto pos1 = midPointCoordinate(c->getFirstBead()->coordinate,
-                                                           c->getSecondBead()->coordinate, midpoint1);
+                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;
+                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderIntSize;
                             
-                            auto midpoint2 = (float)*it2 / SysParams::Geometry().cylinderIntSize;
-                            auto pos2 = midPointCoordinate(cn->getFirstBead()->coordinate,
-                                                           cn->getSecondBead()->coordinate, midpoint2);
+                            auto x1 = c->getFirstBead()->coordinate;
+                            auto x2 = c->getSecondBead()->coordinate;
+                            auto x3 = cn->getFirstBead()->coordinate;
+                            auto x4 = cn->getSecondBead()->coordinate;
                             
-                            double dist = twoPointDistance(pos1, pos2);
+                            auto m1 = midPointCoordinate(x1, x2, mp1);
+                            auto m2 = midPointCoordinate(x3, x4, mp2);
+                            
+                            double dist = twoPointDistance(m1, m2);
                             
                             if(dist > _rMax || dist < _rMin) continue;
                             
+                            auto t1 = tuple<CCylinder*, short>(cc, *it1);
+                            auto t2 = tuple<CCylinder*, short>(ccn, *it2);
+                            
                             //add in correct order
                             if(c->getID() > cn->getID())
-                                _possibleBindings.emplace(tuple<CCylinder*, short>(cc, *it1),
-                                                          tuple<CCylinder*, short>(ccn, *it2));
+                                _possibleBindings.emplace(t1,t2);
                         }
                     }
                 }

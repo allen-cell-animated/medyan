@@ -99,7 +99,8 @@ protected:
     }
     
 public:
-    FilamentBindingManager(ReactionBase* reaction, Compartment* compartment,
+    FilamentBindingManager(ReactionBase* reaction,
+                           Compartment* compartment,
                            short boundInt, string boundName)
     
     : _bindingReaction(reaction), _compartment(compartment),
@@ -158,7 +159,8 @@ private:
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
     
 public:
-    BranchingManager(ReactionBase* reaction, Compartment* compartment,
+    BranchingManager(ReactionBase* reaction,
+                     Compartment* compartment,
                      short boundInt, string boundName);
     ~BranchingManager() {}
     
@@ -203,8 +205,7 @@ public:
 /// Manager for Linker binding.
 /*!
  *  LinkerBindingManager controls linker binding in a compartment.
- *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
- *  cylinders within range of binding for this reaction
+ *  Manages a multimap of possible binding sites.
  */
 class LinkerBindingManager : public FilamentBindingManager {
     
@@ -221,8 +222,10 @@ private:
     static vector<CCNLContainer*> _nlContainers;
     
 public:
-    LinkerBindingManager(ReactionBase* reaction, Compartment* compartment,
-                         short boundInt, string boundName, float rMax, float rMin);
+    LinkerBindingManager(ReactionBase* reaction,
+                         Compartment* compartment,
+                         short boundInt, string boundName,
+                         float rMax, float rMin);
     
     ~LinkerBindingManager() {}
     
@@ -258,7 +261,7 @@ public:
         assert((_possibleBindings.size() != 0)
                && "Major bug: Linker binding manager should not have zero binding \
                    sites when called to choose a binding site.");
-
+        
         uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
         
         int randomIndex = dis(*_eng);
@@ -273,8 +276,7 @@ public:
 /// Manager for MotorGhost binding
 /*!
  *  MotorBindingManager controls motor binding in a compartment.
- *  Also a subclass of CCNLContainer, contains a cylinder neighbors list of
- *  cylinders within range of binding for this reaction
+ *  Manages a multimap of possible binding sites.
  */
 class MotorBindingManager : public FilamentBindingManager {
     
@@ -291,8 +293,10 @@ private:
     static vector<CCNLContainer*> _nlContainers;
     
 public:
-    MotorBindingManager(ReactionBase* reaction, Compartment* compartment,
-                        short boundInt, string boundName, float rMax, float rMin);
+    MotorBindingManager(ReactionBase* reaction,
+                        Compartment* compartment,
+                        short boundInt, string boundName,
+                        float rMax, float rMin);
     
     ~MotorBindingManager() {}
     

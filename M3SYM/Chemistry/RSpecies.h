@@ -320,7 +320,8 @@ public:
     /// Constructors
     /// @param parent - the Species object to which this RSpeciesConst belongs
     /// @param n - copy number, will not change
-    RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) : RSpecies(parent, n, ulim) {}
+    RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
+        : RSpecies(parent, n, ulim) {}
     /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent
     /// Species
     RSpeciesConst(const RSpeciesConst &r) = delete;

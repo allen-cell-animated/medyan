@@ -72,6 +72,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         //update cbound
         CBound* cBound = s->getCBound();
         if(cBound != nullptr) {
+            //set species
             if(cBound->getFirstSpecies() == s)
                 cBound->setFirstSpecies(sNew);
             else

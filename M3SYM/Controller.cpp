@@ -277,22 +277,20 @@ void Controller::updateReactionRates() {
 }
 #endif
 
-void Controller::updateNeighborLists(bool updateBindings) {
+void Controller::updateNeighborLists() {
     
     //Full reset of neighbor lists
     NeighborListDB::instance()->resetAll();
     
-    if(updateBindings) {
 #ifdef CHEMISTRY
-        //Update binding reactions
-        for(auto &child : CompartmentGrid::instance()->children()) {
-            Compartment* c = (Compartment*)child.get();
+    //Update binding reactions
+    for(auto &child : CompartmentGrid::instance()->children()) {
+        Compartment* c = (Compartment*)child.get();
             
-            for(auto &manager : c->getFilamentBindingManagers())
-                manager->updateAllPossibleBindings();
-        }
-#endif
+        for(auto &manager : c->getFilamentBindingManagers())
+            manager->updateAllPossibleBindings();
     }
+#endif
 }
 
 void Controller::run() {
@@ -317,7 +315,7 @@ void Controller::run() {
     
     //reupdate positions and neighbor lists
     updatePositions();
-    updateNeighborLists(true);
+    updateNeighborLists();
     
 #ifdef DYNAMICRATES
     updateReactionRates();
@@ -371,7 +369,7 @@ void Controller::run() {
 #ifdef CHEMISTRY
             // update neighbor lists
             if(i % _numStepsPerNeighbor == 0 && i != 0)
-                updateNeighborLists(true);
+                updateNeighborLists();
             
             i += _numChemSteps;
             oldTau = tau();
@@ -419,7 +417,7 @@ void Controller::run() {
 #ifdef CHEMISTRY
             // update neighbor lists
             if(i % _numStepsPerNeighbor == 0 && i != 0)
-                updateNeighborLists(true);
+                updateNeighborLists();
             
             oldTau = tau();
         }
