@@ -247,21 +247,19 @@ TEST(ReactionTest, ReactionSignaling) {
     
     // function<void (Reaction *)> rcb(reaction_callback);
 
-    boost::signals2::shared_connection_block
-        rcb(rxn.connect(reaction_callback), false);
+    ConnectionBlock rcb(rxn.connect(reaction_callback), false);
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-    boost::signals2::shared_connection_block
-        RCB(rxn.connect(ReactionCallback()), false);
+    ConnectionBlock RCB(rxn.connect(ReactionCallback()), false);
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(1.05, rxn.getRate());
     RCB.block();
     
     boost::signals2::connection clambda =
-        rxn.connect([](ReactionBase *r){r->setRate(2.05);});
-    boost::signals2::shared_connection_block Rlambda (clambda, false); 
+    rxn.connect([](ReactionBase *r){r->setRate(2.05);});
+    ConnectionBlock Rlambda (clambda, false); 
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(2.05, rxn.getRate());
     clambda.disconnect(); // permanently disconnecting this signal

@@ -15,12 +15,13 @@
 #define M3SYM_common_h
 
 #include <iostream>
+#include <boost/signals2/shared_connection_block.hpp>
 
 #include "utility.h"
 
 ///Species constants
 typedef unsigned short species_copy_t;
-const species_copy_t max_ulim = 50000;
+const species_copy_t max_ulim = 1000000;
 
 ///Global time
 extern double global_time;
@@ -32,14 +33,17 @@ const double kT = 4.1; //in pN * nm
 ///To use STL containers, libraries, etc
 using namespace std;
 
-/// Default empty site number in CMonomer (SpeciesBound)
-/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+///Boost typedef
+typedef boost::signals2::shared_connection_block ConnectionBlock;
+
+/// Default empty site number in CMonomer
+/// @note - DO NOT CHANGE!!!
 
 #define BOUND_EMPTY       0
 
 //@{
 /// Constant Species index identifiers
-/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+/// @note - DO NOT CHANGE!!!
 
 #define SPECIESFILAMENT   0
 #define SPECIESPLUSEND    1
@@ -53,7 +57,7 @@ using namespace std;
 
 //@{
 /// Constant Reaction reactant and product numbers
-/// @note - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
+/// @note - DO NOT CHANGE!!!
 
 /// Polymerization
 #define POLYREACTANTS         2

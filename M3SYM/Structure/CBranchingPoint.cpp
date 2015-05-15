@@ -63,8 +63,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //add the unbinding reaction and callback
     BranchingPointUnbindingCallback bcallback(_pBranchingPoint, ps);
-    boost::signals2::shared_connection_block
-    rcb(offRxn->connect(bcallback,false));
+    ConnectionBlock rcb(offRxn->connect(bcallback,false));
     
     setOffReaction(offRxn);
     _cc1->addInternalReaction(offRxn);

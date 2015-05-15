@@ -16,9 +16,6 @@
 #include "ChemCallbacks.h"
 #include "CCylinder.h"
 
-#
-
-
 CMotorGhost::CMotorGhost(short motorType, Compartment* c,
                          CCylinder* cc1, CCylinder* cc2, int position1, int position2)
 
@@ -74,7 +71,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     //Attach the callback to the off reaction, add it
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
-    boost::signals2::shared_connection_block rcb(offRxn->connect(mcallback,false));
+    ConnectionBlock rcb(offRxn->connect(mcallback,false));
     
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
@@ -130,7 +127,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
-    boost::signals2::shared_connection_block rcb(newOffRxn->connect(mcallback,false));
+    ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
     
     //remove old reaction, add new one
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
@@ -206,7 +203,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
-    boost::signals2::shared_connection_block rcb(newOffRxn->connect(mcallback,false));
+    ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
 
     //add new
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);

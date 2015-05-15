@@ -1288,7 +1288,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //attach callback
             BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
-            boost::signals2::shared_connection_block rcb(rxn->connect(bcallback,false));
+            ConnectionBlock rcb(rxn->connect(bcallback,false));
         }
         
         int linkerIndex = 0;
@@ -1511,7 +1511,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //attach callback
             LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
-            boost::signals2::shared_connection_block rcb(rxn->connect(lcallback,false));
+            ConnectionBlock rcb(rxn->connect(lcallback,false));
         }
        
         int motorIndex = 0;
@@ -1731,7 +1731,7 @@ void SimpleManagerImpl::genFilBindingManagers() {
             
             //attach callback
             MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);
-            boost::signals2::shared_connection_block rcb(rxn->connect(mcallback,false));
+            ConnectionBlock rcb(rxn->connect(mcallback,false));
         }
     }
     
@@ -1767,8 +1767,8 @@ void SimpleManagerImpl::genSpecies(Compartment& protoCompartment) {
         auto name = get<0>(sd);
         auto diffRate = get<2>(sd);
         
-        protoCompartment.addSpeciesUnique(
-        unique_ptr<Species>(new SpeciesDiffusing(name, 0)), diffRate);
+        protoCompartment.addSpeciesDiffusing(name, 0);
+        protoCompartment.setDiffusionRate(name, diffRate);
     }
     
     // add bulk species (zero copy number for now)
@@ -2372,9 +2372,7 @@ void SimpleManagerImpl::genNucleationReactions() {
 #ifdef REACTION_SIGNALING
             FilamentCreationCallback
             fcallback(plusEnd, filament, minusEnd, _subSystem, creationCompartment);
-
-            boost::signals2::shared_connection_block
-            rcb(rxn->connect(fcallback,false));
+            ConnectionBlock rcb(rxn->connect(fcallback,false));
 #endif
         }
     }
@@ -2450,8 +2448,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
             UpdateBindingCallback bcallback(cc->getCylinder(), i);
             
             Species* es = cc->getCMonomer(i)->speciesBound(BOUND_EMPTY);
-            
-            boost::signals2::shared_connection_block rcb(es->connect(bcallback,false));
+            ConnectionBlock rcb(es->connect(bcallback,false));
         }
     }
     

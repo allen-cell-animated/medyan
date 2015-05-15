@@ -75,7 +75,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         //callback
 #ifdef REACTION_SIGNALING
         FilamentPolymerizationFrontCallback polyCallback(cc->getCylinder());
-        boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+        ConnectionBlock rcb(rxn->connect(polyCallback,false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -119,7 +119,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
 #ifdef REACTION_SIGNALING
     short plusEndProduct = getInt(_products[1]);
     FilamentExtensionFrontCallback extCallback(cc->getCylinder(), plusEndProduct);
-    boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+    ConnectionBlock rcb(rxn->connect(extCallback,false));
 #endif
     
     cc->addInternalReaction(rxn);
@@ -173,7 +173,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
 #ifdef REACTION_SIGNALING
         FilamentPolymerizationBackCallback polyCallback(cc->getCylinder());
-        boost::signals2::shared_connection_block rcb(rxn->connect(polyCallback,false));
+        ConnectionBlock rcb(rxn->connect(polyCallback,false));
 #endif
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
@@ -216,7 +216,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
 #ifdef REACTION_SIGNALING
     auto minusEndType = get<0>(_products[1]);
     FilamentExtensionBackCallback extCallback(cc->getCylinder(), minusEndType);
-    boost::signals2::shared_connection_block rcb(rxn->connect(extCallback,false));
+    ConnectionBlock rcb(rxn->connect(extCallback,false));
 #endif
     
     cc->addInternalReaction(rxn);
@@ -271,8 +271,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
 #ifdef REACTION_SIGNALING
         FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder());
-        boost::signals2::shared_connection_block
-        rcb(rxn->connect(depolyCallback,false));
+        ConnectionBlock rcb(rxn->connect(depolyCallback,false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -328,8 +327,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
 #ifdef REACTION_SIGNALING
         FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder());
-        boost::signals2::shared_connection_block
-        rcb(rxn->connect(depolyCallback,false));
+        ConnectionBlock rcb(rxn->connect(depolyCallback,false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -378,7 +376,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
 #ifdef REACTION_SIGNALING
     FilamentRetractionFrontCallback retCallback(cc1->getCylinder());
-    boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
+    ConnectionBlock rcb(rxn->connect(retCallback,false));
 #endif
     
     cc2->addCrossCylinderReaction(cc1, rxn);
@@ -425,7 +423,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
 #ifdef REACTION_SIGNALING
     FilamentRetractionBackCallback retCallback(cc1->getCylinder());
-    boost::signals2::shared_connection_block rcb(rxn->connect(retCallback,false));
+    ConnectionBlock rcb(rxn->connect(retCallback,false));
 #endif
     
     cc1->addCrossCylinderReaction(cc2, rxn);
@@ -478,8 +476,7 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc) {
         MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
                           motorType, boundType, _ps);
-        boost::signals2::shared_connection_block
-        rcb(rxn->connect(motorMoveCallback, false));
+        ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -528,8 +525,7 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                         SysParams::Chemistry().bindingSites.back(),
                         SysParams::Chemistry().bindingSites.front(),
                         motorType, boundType, _ps);
-    boost::signals2::shared_connection_block
-    rcb(rxn->connect(motorChangeCallback, false));
+    ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
 #endif
     
     cc1->addCrossCylinderReaction(cc2, rxn);
@@ -582,8 +578,7 @@ void MotorWalkBTemplate::addReaction(CCylinder* cc) {
         MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
                           motorType, boundType, _ps);
-        boost::signals2::shared_connection_block
-        rcb(rxn->connect(motorMoveCallback, false));
+        ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -632,8 +627,7 @@ void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
                         SysParams::Chemistry().bindingSites.front(),
                         SysParams::Chemistry().bindingSites.back(),
                         motorType, boundType, _ps);
-    boost::signals2::shared_connection_block
-    rcb(rxn->connect(motorChangeCallback, false));
+    ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
 #endif
     
     cc1->addCrossCylinderReaction(cc2, rxn);
@@ -737,7 +731,7 @@ void DestructionTemplate::addReaction(CCylinder* cc) {
         
 #ifdef REACTION_SIGNALING
         FilamentDestructionCallback dcallback(cc->getCylinder());
-        boost::signals2::shared_connection_block rcb(rxn->connect(dcallback,false));
+        ConnectionBlock rcb(rxn->connect(dcallback,false));
 #endif
         
         cc->addInternalReaction(rxn);
@@ -787,7 +781,7 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
 #ifdef REACTION_SIGNALING
     FilamentDestructionCallback dcallback(cc1->getCylinder());
-    boost::signals2::shared_connection_block rcb(rxn->connect(dcallback,false));
+    ConnectionBlock rcb(rxn->connect(dcallback,false));
 #endif
     
     cc1->addCrossCylinderReaction(cc2, rxn);
@@ -818,7 +812,7 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         
 #ifdef REACTION_SIGNALING
         FilamentSeveringCallback scallback(cc->getCylinder());
-        boost::signals2::shared_connection_block rcb(rxn->connect(scallback,false));
+        ConnectionBlock rcb(rxn->connect(scallback,false));
 #endif
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::SEVERING);
