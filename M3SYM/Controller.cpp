@@ -247,33 +247,23 @@ void Controller::updatePositions() {
         }
     }
     //Linkers
-    for(auto &l : *LinkerDB::instance())
-        l->updatePosition();
-    
+    for(auto &l : *LinkerDB::instance()) l->updatePosition();
     //Motors
-    for(auto &m : *MotorGhostDB::instance())
-        m->updatePosition();
-    
+    for(auto &m : *MotorGhostDB::instance()) m->updatePosition();
     //Branchers
-    for(auto &b : *BranchingPointDB::instance())
-        b->updatePosition();
+    for(auto &b : *BranchingPointDB::instance()) b->updatePosition();
 }
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
     
-    //Boundary cylinders
-    for(auto &c : _subSystem->getBoundaryCylinders())
-        c->updateReactionRates();
-    
     //Linkers
-    for(auto &l : *LinkerDB::instance())
-        l->updateReactionRates();
-    
+    for(auto &l : *LinkerDB::instance()) l->updateReactionRates();
     //Motors
-    for(auto &m : *MotorGhostDB::instance())
-        m->updateReactionRates();
+    for(auto &m : *MotorGhostDB::instance()) m->updateReactionRates();
+    //Boundary cylinders
+    for(auto &c : _subSystem->getBoundaryCylinders()) c->updateReactionRates();
 }
 #endif
 

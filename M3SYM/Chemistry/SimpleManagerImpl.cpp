@@ -2445,8 +2445,8 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
         cc->addCMonomer(m);
         
         if(find(SysParams::Chemistry().bindingSites.begin(),
-                SysParams::Chemistry().bindingSites.end(), i) !=
-                SysParams::Chemistry().bindingSites.end()) {
+                SysParams::Chemistry().bindingSites.end(), i)
+            !=  SysParams::Chemistry().bindingSites.end()) {
         
             //add callback to binding sites
             UpdateBindingCallback bcallback(cc->getCylinder(), i);

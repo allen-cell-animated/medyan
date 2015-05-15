@@ -32,9 +32,11 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
     //Find surrounding compartments (For now its conservative)
     vector<Compartment*> compartments;
     
-    GController::findCompartments(cylinder->coordinate, cylinder->getCompartment(),
-                                  SysParams::Geometry().largestCompartmentSide * 2,
-                                  compartments);
+    auto coord = cylinder->coordinate;
+    auto comp = cylinder->getCompartment();
+    auto searchDist = SysParams::Geometry().largestCompartmentSide * 2;
+    
+    GController::findCompartments(coord, comp, searchDist, compartments);
     
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
@@ -58,15 +60,6 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
             
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
-            
-            if(_full) {
-            
-                bool inList = find(_list[ncylinder].begin(),
-                                   _list[ncylinder].end(), cylinder) !=
-                                   _list[ncylinder].end();
-            
-                if(!inList) _list[ncylinder].push_back(cylinder);
-            }
         }
     }
 }
