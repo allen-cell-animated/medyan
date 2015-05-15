@@ -20,7 +20,7 @@
 #include "utility.h"
 
 ///Species constants
-typedef unsigned short species_copy_t;
+typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;
 
 ///Global time
