@@ -24,7 +24,7 @@ using namespace mathfunc;
 
 //CYLINDER-CYLINDER
 
-void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
+void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool run) {
     
     //clear existing
     _list[cylinder].clear();
@@ -60,6 +60,9 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder) {
             
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
+            
+            //if runtime, add to other list as well if full
+            if(run && _full) _list[ncylinder].push_back(cylinder);
         }
     }
 }
@@ -71,7 +74,7 @@ void CCNeighborList::addNeighbor(Neighbor* n) {
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
     
     //update neighbors
-    updateNeighbors(cylinder);
+    updateNeighbors(cylinder, true);
 }
 
 void CCNeighborList::removeNeighbor(Neighbor* n) {
@@ -80,16 +83,6 @@ void CCNeighborList::removeNeighbor(Neighbor* n) {
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
     
     _list.erase(cylinder);
-}
-
-void CCNeighborList::removeDynamicNeighbor(Neighbor* n) {
-    
-    //return if not a cylinder!
-    Cylinder* cylinder;
-    if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
-    
-    //remove its own list
-    removeNeighbor(n);
     
     //remove from other lists
     for(auto it = _list.begin(); it != _list.end(); it++) {

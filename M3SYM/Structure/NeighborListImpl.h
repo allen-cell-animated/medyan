@@ -37,7 +37,9 @@ private:
     bool _full; ///<Specifying whether this is a full or half list
     
     ///Helper function to update neighbors
-    void updateNeighbors(Cylinder* cylinder);
+    ///@param runtime - specifying whether the cylinder is being
+    ///created/destroyed at runtime vs at a full neighbor list update.
+    void updateNeighbors(Cylinder* cylinder, bool runtime = false);
     
 public:
     CCNeighborList(float rMax, float rMin=0.0, bool full = false)
@@ -47,10 +49,12 @@ public:
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
     
-    /// The implementation of this function calls the static version,
+    //@{
+    /// The implementation of these functions calls the static version,
     /// all cylinders are dynamic
     virtual void addDynamicNeighbor(Neighbor* n) {addNeighbor(n);}
-    virtual void removeDynamicNeighbor(Neighbor* n);
+    virtual void removeDynamicNeighbor(Neighbor* n) {removeNeighbor(n);}
+    //@}
     
     virtual void reset();
     
