@@ -24,7 +24,7 @@ using namespace mathfunc;
 
 //CYLINDER-CYLINDER
 
-void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool run) {
+void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
     
     //clear existing
     _list[cylinder].clear();
@@ -62,7 +62,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool run) {
             _list[cylinder].push_back(ncylinder);
             
             //if runtime, add to other list as well if full
-            if(run && _full) _list[ncylinder].push_back(cylinder);
+            if(runtime && _full) _list[ncylinder].push_back(cylinder);
         }
     }
 }

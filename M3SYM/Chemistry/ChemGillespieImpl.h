@@ -230,11 +230,10 @@ private:
     /// more reactions to fire
     bool makeStep();
 private:
-    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>>
-        _map_rnodes; ///< The database of RNodeGillespie objects, representing the reaction network
+    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
+                                                                          ///< objects, representing the reaction network
     mt19937 _eng; ///< Random number generator
-    exponential_distribution<double>
-        _exp_distr; ///< Adaptor for the exponential distribution
+    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time
     double _a_total; 

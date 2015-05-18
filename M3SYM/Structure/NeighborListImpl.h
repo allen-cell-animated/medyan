@@ -31,8 +31,7 @@ class BoundaryElement;
 class CCNeighborList : public NeighborList {
     
 private:
-    unordered_map<Cylinder*, vector<Cylinder*>>
-        _list; ///< The neighbors list, as a hash map
+    unordered_map<Cylinder*, vector<Cylinder*>> _list; ///< The neighbors list, as a hash map
     
     bool _full; ///<Specifying whether this is a full or half list
     
@@ -67,8 +66,7 @@ public:
 class BBENeighborList : public NeighborList {
     
 private:
-    unordered_map<BoundaryElement*, vector<Bead*>>
-        _list; ///< The neighbors list, as a hash map
+    unordered_map<BoundaryElement*, vector<Bead*>> _list; ///< The neighbors list, as a hash map
     
     ///Helper function to update neighbors
     void updateNeighbors(BoundaryElement* be);
@@ -92,8 +90,7 @@ public:
 class CBENeighborList : public NeighborList {
     
 private:
-    unordered_map<BoundaryElement*, vector<Cylinder*>>
-        _list; ///< The neighbors list, as a hash map
+    unordered_map<BoundaryElement*, vector<Cylinder*>> _list; ///< The neighbors list, as a hash map
     
     ///Helper function to update neighbors
     void updateNeighbors(BoundaryElement* be);
