@@ -126,7 +126,7 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
     
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[SPECIESLB_BINDING_INDEX]->getSpecies().getName();
+    string name = rs[SPECIESMLB_BINDING_INDEX]->getSpecies().getName();
           
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
@@ -364,7 +364,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[SPECIESMB_BINDING_INDEX]->getSpecies().getName();
+    string name = rs[SPECIESMLB_BINDING_INDEX]->getSpecies().getName();
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
