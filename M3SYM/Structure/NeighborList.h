@@ -18,6 +18,7 @@
 
 //FORWARD DECLARATIONS
 class Neighbor;
+class DynamicNeighbor;
 
 /// To hold an external neighbor list of general type.
 
@@ -54,12 +55,12 @@ public:
     /// Add a dynamic neighbor to the system.
     /// For BoundaryElementNeighborList list, this will be Bead.
     /// For CylinderNeighborList, all elements in neighbors list are dynamic.
-    virtual void addDynamicNeighbor(Neighbor* n) = 0;
+    virtual void addDynamicNeighbor(DynamicNeighbor* n) = 0;
     
     /// Remove a dynamic neighbor from the system.
     /// For BoundaryElementNeighborList list, this will be Bead.
     /// For CylinderNeighborList, all elements in neighbors list are dynamic.
-    virtual void removeDynamicNeighbor(Neighbor* n) = 0;
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n) = 0;
     
     /// Re-initialize the neighborlist
     virtual void reset() = 0;

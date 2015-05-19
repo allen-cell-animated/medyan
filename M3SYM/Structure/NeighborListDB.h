@@ -67,11 +67,11 @@ public:
     }
     
     /// Add a dynamic neighbor to the DB. adds to all possible lists
-    void addDynamicNeighbor(Neighbor* n) {
+    void addDynamicNeighbor(DynamicNeighbor* n) {
         for(auto &nlist : *this) nlist->addDynamicNeighbor(n);
     }
     /// Remove a dynamic neighbor from the DB. removes from all possible lists
-    void removeDynamicNeighbor(Neighbor* n) {
+    void removeDynamicNeighbor(DynamicNeighbor* n) {
         for(auto &nlist : *this) nlist->removeDynamicNeighbor(n);
     }
     

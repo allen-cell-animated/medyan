@@ -21,13 +21,12 @@
 
 using namespace mathfunc;
 
+Database<Bead*> Bead::_beads;
+
 Bead::Bead (vector<double> v, int positionFilament)
 
     : coordinate(v), force(3, 0), forceAux(3, 0),
       _positionFilament(positionFilament) {
-          
-    //add to bead db
-    BeadDB::instance()->addBead(this);
                                                          
     //set birth time
     _birthTime = tau();
@@ -35,21 +34,14 @@ Bead::Bead (vector<double> v, int positionFilament)
     //Find compartment, add this bead
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
+          
     _compartment->addBead(this);
-                    
-    //add to neighbor lists
-    NeighborListDB::instance()->addDynamicNeighbor(this);
 }
 
 Bead::~Bead() {
-    //remove from bead db
-    BeadDB::instance()->removeBead(this);
     
     //remove from compartment
     _compartment->removeBead(this);
-    
-    //remove from neighbor lists
-    NeighborListDB::instance()->removeDynamicNeighbor(this);
 }
 
 void Bead::updatePosition() {

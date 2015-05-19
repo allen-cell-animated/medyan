@@ -76,7 +76,7 @@ double BranchingFF::computeEnergy(double d) {
     
     for (auto &interaction : _branchingInteractionVector) {
         
-        for (auto b: *BranchingPointDB::instance()) {
+        for (auto b: BranchingPoint::getBranchingPoints()) {
        
             U_i = interaction->computeEnergy(b, d);
             
@@ -93,7 +93,7 @@ void BranchingFF::computeForces() {
     
     for (auto &interaction : _branchingInteractionVector) {
         
-        for (auto b: *BranchingPointDB::instance())
+        for (auto b: BranchingPoint::getBranchingPoints())
             interaction->computeForces(b);
     }
 }
@@ -102,7 +102,7 @@ void BranchingFF::computeForcesAux() {
     
     for (auto &interaction : _branchingInteractionVector) {
         
-        for (auto b: *BranchingPointDB::instance())
+        for (auto b: BranchingPoint::getBranchingPoints())
             interaction->computeForcesAux(b);
     }
 }

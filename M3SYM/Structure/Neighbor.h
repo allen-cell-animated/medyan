@@ -16,14 +16,14 @@
 
 #include "common.h"
 
-/// An abstract class for any object that can be added/removed from a NeighborList.
-/// @note - any subclass that inherits from Neighbor MUST add and remove itself to
-/// the NeighborListDB.
+/// An abstract base class for any element that can be
+/// added or removed from a NeighborList statically at system initialization.
 class Neighbor {
     
 protected:
     Neighbor() {}
     
+public:
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL

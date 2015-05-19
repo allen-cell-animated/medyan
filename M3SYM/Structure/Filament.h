@@ -21,7 +21,8 @@
 
 #include "common.h"
 
-#include "FilamentDB.h"
+#include "Database.h"
+#include "Trackable.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -35,11 +36,13 @@ class Bead;
  * (@ref Bead) connectivity. It has functionality to polymerize and depolymerize,
  * as well as extend and retract by creating and deleting Cylinder and Bead in the 
  * system.
+ *
+ * Extending the Trackable class, all instances are kept and easily accessed by the SubSystem.
  * 
  * A Filament can also be initialized as a number of shapes, including a zig zag and 
  * arc projection.
  */
-class Filament {
+class Filament : public Trackable {
 
 private:
     deque<Cylinder*> _cylinderVector; ///< Vector of cylinders;
@@ -51,6 +54,8 @@ private:
                                ///< at plus end since last snapshot
     short _deltaMinusEnd = 0;  ///< Change in filament's cylinders
                                ///< at minus end since last snapshot
+    
+    static Database<Filament*> _filaments; ///< Collection in SubSystem
     
 public:
     /// This constructor creates a short filament, containing only two beads.
@@ -136,6 +141,21 @@ public:
     
     /// Get ID
     int getID() {return _ID;}
+    
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _filaments.addElement(this);}
+    virtual void removeFromSubSystem() {_filaments.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const unordered_set<Filament*>& getFilaments() {
+        return _filaments.getElements();
+    }
+    /// Get the number of filaments in this system
+    static int numFilaments() {
+        return _filaments.countElements();
+    }
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation

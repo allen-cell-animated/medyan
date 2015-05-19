@@ -25,20 +25,26 @@
 
 using namespace mathfunc;
 
+Database<BranchingPoint*> BranchingPoint::_branchingPoints;
+
+void BranchingPoint::updateCoordinate() {
+    
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                    _c1->getSecondBead()->coordinate,
+                                    _position);
+}
+
+
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
-                               short branchType, double position,
-                               bool creation)
+                               short branchType, double position)
     : _c1(c1), _c2(c2), _position(position), _branchType(branchType) {
         
-    //Add to branch point db
-    BranchingPointDB::instance()->addBranchingPoint(this);
-    _branchID = BranchingPointDB::instance()->getBranchID();
-    
+    //Get id and time
+    _branchID = _branchingPoints.getID();
     _birthTime = tau();
     
     //Find compartment
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                    _c1->getSecondBead()->coordinate, _position);
+    updateCoordinate();
         
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -62,9 +68,6 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 }
 
 BranchingPoint::~BranchingPoint() noexcept {
-    
-    //Remove from branch point db
-    BranchingPointDB::instance()->removeBranchingPoint(this);
     
 #ifdef CHEMISTRY
     //mark the correct species on the minus end of the branched
@@ -109,7 +112,6 @@ BranchingPoint::~BranchingPoint() noexcept {
                     ". Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        
             
         //remove the filament from the system
         delete _c2->getFilament();
@@ -128,10 +130,9 @@ void BranchingPoint::updatePosition() {
     _cBranchingPoint->setSecondCCylinder(_c2->getCCylinder());
     
 #endif
-    
     //Find compartment
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                    _c1->getSecondBead()->coordinate, _position);
+    updateCoordinate();
+    
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}

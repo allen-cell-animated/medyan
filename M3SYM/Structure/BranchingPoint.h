@@ -16,10 +16,11 @@
 
 #include "common.h"
 
-#include "BranchingPointDB.h"
-
 #include "MBranchingPoint.h"
 #include "CBranchingPoint.h"
+
+#include "Database.h"
+#include "Trackable.h"
 #include "Movable.h"
 
 //FORWARD DECLARATIONS
@@ -31,9 +32,10 @@ class Cylinder;
  * BranchingPoint class is used to manage and store a MBranchingPoint and 
  * CBranchingPoint. Upon intialization, both of these components are created. Extending
  * the Movable class, the BranchingPoint can update its position according to mechanical 
- * equilibration.
+ * equilibration. Extending the Trackable class, all instances are kept and easily accessed
+ * by the SubSystem.
  */
-class BranchingPoint : public Movable {
+class BranchingPoint : public Trackable, Movable {
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
@@ -42,23 +44,28 @@ private:
     Cylinder* _c1; ///< Mother cylinder
     Cylinder* _c2; ///< Branching cylinder
     
-    double _position; ///< Position on mother cylinder
+    double _position;  ///< Position on mother cylinder
     
     short _branchType; ///< Integer specifying the type
-    int _branchID; ///< Integer ID of this specific branch point,
-                   ///< managed by BranchingPointDB
     
-    float _birthTime; ///Birth time
+    int _branchID;     ///< Integer ID of this specific
+                       ///< branch point, managed by the Database
+    
+    float _birthTime;  ///<Birth time
     
     Compartment* _compartment; ///< Where this branch point is
+    
+    static Database<BranchingPoint*> _branchingPoints; ///< Collection in SubSystem
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
     
 public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
     BranchingPoint(Cylinder* c1, Cylinder* c2,
-                   short branchType, double position = 0.5,
-                   bool creation = false);
+                   short branchType, double position = 0.5);
     virtual ~BranchingPoint() noexcept;
     
     //@{
@@ -95,7 +102,22 @@ public:
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     
-    /// Update the position
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _branchingPoints.addElement(this);}
+    virtual void removeFromSubSystem() {_branchingPoints.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const unordered_set<BranchingPoint*>& getBranchingPoints() {
+        return _branchingPoints.getElements();
+    }
+    /// Get the number of branching points in this system
+    static int numBranchingPoints() {
+        return _branchingPoints.countElements();
+    }
+
+    /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
 };

@@ -44,7 +44,7 @@ double BoundaryFF::computeEnergy(double d) {
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto &bd : nl->getNeighbors(be)) {
                 
@@ -66,7 +66,7 @@ void BoundaryFF::computeForces() {
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto bd : nl->getNeighbors(be))
                 interaction->computeForces(be, bd);
@@ -80,7 +80,7 @@ void BoundaryFF::computeForcesAux() {
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto bd : nl->getNeighbors(be))
                 interaction->computeForcesAux(be, bd);

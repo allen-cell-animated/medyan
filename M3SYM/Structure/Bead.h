@@ -19,11 +19,11 @@
 
 #include "common.h"
 
-#include "BeadDB.h"
-
+#include "Database.h"
 #include "Component.h"
-#include "Neighbor.h"
+#include "Trackable.h"
 #include "Movable.h"
+#include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -35,9 +35,11 @@ class Compartment;
  *  algorithms, beads are moved corresponding to external forces, for example, Filament 
  *  stretching and bending. The bead class contains currernt coordinates and forces, and 
  *  has functions to calculate dot products for the minimization algorithms.
+ *  Extending the Movable and Trackable class, all instances are kept, can be moved,
+ *  and easily accessed by the SubSystem.
  */
 
-class Bead : public Component, public Neighbor, public Movable {
+class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor {
 public:
     vector<double> coordinate; ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead
@@ -63,27 +65,31 @@ public:
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return force[0]*force[0]+force[1]*force[1]+force[2]*force[2];
+        return force[0]*force[0]+
+               force[1]*force[1]+
+               force[2]*force[2];
+    }
+    inline double FDotFA() {
+        return force[0]*forceAux[0]+
+               force[1]*forceAux[1]+
+               force[2]*forceAux[2];
     }
     
     inline double FADotFA() {
-        return forceAux[0]*forceAux[0]+forceAux[1]*forceAux[1]+forceAux[2]*forceAux[2];
+        return forceAux[0]*forceAux[0]+
+               forceAux[1]*forceAux[1]+
+               forceAux[2]*forceAux[2];
     }
     
     inline double FADotFAP() {
-        return forceAux[0]*forceAuxP[0]+forceAux[1]*forceAuxP[1]+forceAux[2]*forceAuxP[2];
-    }
-    
-    inline double FDotFA() {
-        return force[0]*forceAux[0]+force[1]*forceAux[1]+force[2]*forceAux[2];
+        return forceAux[0]*forceAuxP[0]+
+               forceAux[1]*forceAuxP[1]+
+               forceAux[2]*forceAuxP[2];
     }
     //@}
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
-    
-    /// Update the position
-    virtual void updatePosition();
     
     /// Set position on the local Filament
     void setPositionFilament(int positionFilament) {
@@ -94,7 +100,25 @@ public:
     
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
-
+    
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _beads.addElement(this);}
+    virtual void removeFromSubSystem() {_beads.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const unordered_set<Bead*>& getBeads() {
+        return _beads.getElements();
+    }
+    /// Get the number of beads in this system
+    static int numBeads() {
+        return _beads.countElements();
+    }
+    
+    /// Update the position, inherited from Movable
+    virtual void updatePosition();
+    
     
 private:
     Compartment* _compartment = nullptr;
@@ -102,6 +126,8 @@ private:
     
     int _positionFilament; ///< Position on Filament
     float _birthTime; ///< Time of birth
+    
+    static Database<Bead*> _beads; ///< Collection of beads in SubSystem
 };
 
 

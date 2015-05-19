@@ -20,7 +20,7 @@
 
 #include "common.h"
 
-#include "NeighborListContainer.h"
+#include "NeighborListImpl.h"
 #include "ReactionBase.h"
 
 #include "SysParams.h"
@@ -218,7 +218,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNLContainer*> _nlContainers;
+    static vector<CCNeighborList*> _neighborLists;
     
 public:
     LinkerBindingManager(ReactionBase* reaction,
@@ -289,7 +289,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNLContainer*> _nlContainers;
+    static vector<CCNeighborList*> _neighborLists;
     
 public:
     MotorBindingManager(ReactionBase* reaction,

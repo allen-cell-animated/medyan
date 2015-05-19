@@ -11,11 +11,11 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-
 #include "MotorGhostFF.h"
 
 #include "MotorGhostStretching.h"
 #include "MotorGhostStretchingHarmonic.h"
+
 #include "MotorGhost.h"
 
 MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twisting)
@@ -37,7 +37,7 @@ double MotorGhostFF::computeEnergy(double d) {
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        for (auto m: *MotorGhostDB::instance()) {
+        for (auto m: MotorGhost::getMotorGhosts()) {
             
             U_i = interaction->computeEnergy(m, d);
             
@@ -54,7 +54,7 @@ void MotorGhostFF::computeForces() {
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        for (auto m: *MotorGhostDB::instance())
+        for (auto m: MotorGhost::getMotorGhosts())
             interaction->computeForces(m);
     }
 }
@@ -63,7 +63,7 @@ void MotorGhostFF::computeForcesAux() {
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        for (auto m: *MotorGhostDB::instance())
+        for (auto m: MotorGhost::getMotorGhosts())
             interaction->computeForcesAux(m);
     }
 }

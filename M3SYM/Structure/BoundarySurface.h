@@ -20,6 +20,9 @@
 
 #include "BoundaryElement.h"
 
+//FORWARD DECLARATIONS
+class SubSystem;
+
 /// A boundary shape that holds [BoundaryElements](@ref BoundaryElement).
 /*!
  *  The BoundarySurface class is a basic boundary shape that is owned and
@@ -30,19 +33,23 @@
 class BoundarySurface {
     
 protected:
+    SubSystem* _subSystem; ///< SubSystem ptr
+    
     /// Vector of boundary elements that make up this surface
     vector<unique_ptr<BoundaryElement>> _boundaryElements;
+    
     short _nDim; ///< Dimensionality of surface
     
 public:
     ///Constructor, does nothing
-    BoundarySurface(int nDim) : _nDim(nDim) {};
-    /// Destructor, removes boundary elements from DB
+    BoundarySurface(SubSystem* s, int nDim) : _subSystem(s), _nDim(nDim) {};
+    /// Destructor
     ~BoundarySurface() {};
 
     /// Get boundary elements
-    const vector<unique_ptr<BoundaryElement>>& boundaryElements()
-        {return _boundaryElements;}
+    const vector<unique_ptr<BoundaryElement>>& boundaryElements() {
+        return _boundaryElements;
+    }
     
 };
 

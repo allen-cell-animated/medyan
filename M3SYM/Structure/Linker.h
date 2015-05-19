@@ -16,11 +16,12 @@
 
 #include "common.h"
 
-#include "LinkerDB.h"
-
 #include "Composite.h"
 #include "CLinker.h"
 #include "MLinker.h"
+
+#include "Database.h"
+#include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
 #include "RateChangerImpl.h"
@@ -34,9 +35,10 @@ class DRController;
  * Linker class is used to manage and store a MLinker and CLinker. Upon intialization,
  * both of these components are created. Extending the Movable and Reactable classes, 
  * the Linker can update its position and reactions according to mechanical 
- * equilibration.
+ * equilibration. Extending the Trackable class, all instances are kept and easily 
+ * accessed by the SubSystem.
  */
-class Linker : public Composite, public Movable, public Reactable {
+class Linker : public Composite, public Trackable, public Movable, public Reactable {
 
 friend class DRController;
     
@@ -51,23 +53,28 @@ private:
     double _position2; ///< Position on second cylinder
     
     short _linkerType; ///< Integer specifying the type
-    int _linkerID; ///< Integer ID of this specific linker, managed by LinkerDB
+    int _linkerID; ///< Integer ID of this specific linker, managed by Database
     
     float _birthTime; ///Birth time
     
     Compartment* _compartment; ///< Where this linker is
     
+    static Database<Linker*> _linkers; ///< Collection in SubSystem
+    
     ///For dynamic rate unbinding
     static vector<LinkerRateChanger*> _unbindingChangers;
     
+    ///Helper to get coordinate
+    void updateCoordinate();
+    
 public:
     vector<double> coordinate;
-        ///< coordinate of midpoint, updated with updatePosition()
+    ///< coordinate of midpoint, updated with updatePosition()
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-           double position1 = 0.5, double position2 = 0.5,
-           bool creation = false);
-    virtual ~Linker() noexcept;
+           double position1 = 0.5, double position2 = 0.5);
+    
+    virtual ~Linker() noexcept {};
     
     //@{
     ///Get attached cylinder
@@ -101,11 +108,26 @@ public:
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     
-    /// Update the position
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _linkers.addElement(this);}
+    virtual void removeFromSubSystem() {_linkers.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const unordered_set<Linker*>& getLinkers() {
+        return _linkers.getElements();
+    }
+    /// Get the number of linkers in this system
+    static int numLinkers() {
+        return _linkers.countElements();
+    }
+    
+    /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
     
-    /// Update the reaction rates
+    /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
     
 };

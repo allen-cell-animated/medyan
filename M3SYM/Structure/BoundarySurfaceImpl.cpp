@@ -20,8 +20,8 @@
 
 using namespace mathfunc;
 
-Plane::Plane(vector<double> coords, vector<double> normal ) :
-    BoundarySurface(3), _coords(coords), _normal(normal) {
+Plane::Plane(SubSystem* s, vector<double> coords, vector<double> normal ) :
+    BoundarySurface(s, 3), _coords(coords), _normal(normal) {
     
     //Create a plane boundary element
     _boundaryElements.emplace_back(new PlaneBoundaryElement(coords, normal,
@@ -29,8 +29,8 @@ Plane::Plane(vector<double> coords, vector<double> normal ) :
                                    SysParams::Boundaries().BScreenLength));
 }
 
-Sphere::Sphere(vector<double> coords, double radius)
-    : BoundarySurface(3), _coords(coords) {
+Sphere::Sphere(SubSystem* s, vector<double> coords, double radius)
+    : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a sphere boundary element
     _boundaryElements.emplace_back(new SphereBoundaryElement(coords, radius,
@@ -39,8 +39,8 @@ Sphere::Sphere(vector<double> coords, double radius)
     
 }
 
-CylinderZ::CylinderZ(vector<double> coords, double radius, double height)
-    : BoundarySurface(3), _coords(coords) {
+CylinderZ::CylinderZ(SubSystem* s, vector<double> coords, double radius, double height)
+    : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a cylindricalZ boundary element
     _boundaryElements.emplace_back(new CylindricalZBoundaryElement(coords, radius, height,
@@ -48,8 +48,8 @@ CylinderZ::CylinderZ(vector<double> coords, double radius, double height)
                                    SysParams::Boundaries().BScreenLength));
 }
 
-HalfSphereZ::HalfSphereZ(vector<double> coords, double radius, bool up)
-    : BoundarySurface(3), _coords(coords) {
+HalfSphereZ::HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up)
+    : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a half sphere Z boundary element
     _boundaryElements.emplace_back(new HalfSphereZBoundaryElement(coords, radius, up,

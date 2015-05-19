@@ -24,6 +24,13 @@
 using namespace mathfunc;
 
 FilamentRateChanger* Cylinder::_polyChanger = nullptr;
+Database<Cylinder*> Cylinder::_cylinders;
+
+void Cylinder::updateCoordinate() {
+    
+    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+}
+
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionFront, bool extensionBack,
@@ -32,20 +39,16 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
     
     //Add to cylinder DB
-    CylinderDB::instance()->addCylinder(this);
-    _ID = CylinderDB::instance()->getCylinderID();
+    _ID = _cylinders.getID();
     
     //Set coordinate
-    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    updateCoordinate();
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
                    
    //add to compartment
    _compartment->addCylinder(this);
-        
-   //add to neighbor list db
-   NeighborListDB::instance()->addDynamicNeighbor(this);
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
@@ -76,12 +79,6 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 
 Cylinder::~Cylinder() noexcept {
     
-    //remove from neighbor lists
-    NeighborListDB::instance()->removeDynamicNeighbor(this);
-    
-    //Remove from cylinder DB
-    CylinderDB::instance()->removeCylinder(this);
-    
     //remove from compartment
     _compartment->removeCylinder(this);
 }
@@ -89,11 +86,8 @@ Cylinder::~Cylinder() noexcept {
 void Cylinder::updatePosition() {
 
     //check if were still in same compartment, set new position
-    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
-    
-    //update length
-    _mCylinder->setLength(twoPointDistance(_b1->coordinate, _b2->coordinate));
-    
+    updateCoordinate();
+
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
@@ -111,6 +105,12 @@ void Cylinder::updatePosition() {
         setCCylinder(clone);
 #endif
     }
+    
+#ifdef MECHANICS
+    //update length
+    _mCylinder->setLength(twoPointDistance(_b1->coordinate,
+                                           _b2->coordinate));
+#endif
 
 }
 

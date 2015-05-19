@@ -24,36 +24,32 @@
 #include <fstream>
 
 #include "Filament.h"
-
-#include "Bead.h"
 #include "Cylinder.h"
+#include "Bead.h"
+
+#include "SubSystem.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-Filament::Filament(SubSystem* s) {
+Filament::Filament(SubSystem* s) : _subSystem(s) {
     
-    _subSystem = s;
-    
-    //add to filament db
-    FilamentDB::instance()->addFilament(this);
-    _ID = FilamentDB::instance()->getFilamentID();
+    _ID = _filaments.getID();
 }
 
 
 Filament::Filament(SubSystem* s, vector<double>& position,
                                  vector<double>& direction,
-                                 bool creation, bool branch) {
-    _subSystem = s;
-    
-    //add to filament db
-    FilamentDB::instance()->addFilament(this);
-    _ID = FilamentDB::instance()->getFilamentID();
+                                 bool creation, bool branch)
+
+    : _subSystem(s) {
+
+    _ID = _filaments.getID();
  
     //create beads
-    Bead* b1 = new Bead(position, 0);
+    Bead* b1 = _subSystem->addTrackable<Bead>(position, 0);
     
     //choose length
     double length;
@@ -66,10 +62,12 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     else length = SysParams::Geometry().cylinderSize;
     
     auto pos2 = nextPointProjection(position, length, direction);
-    Bead* b2 = new Bead(pos2, 1);
+    Bead* b2 = _subSystem->addTrackable<Bead>(pos2, 1);
     
     //create cylinder
-    Cylinder* c0 = new Cylinder(this, b1, b2, 0, false, false, creation, branch);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
+                    (this, b1, b2, 0, false, false, creation, branch);
+    
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
@@ -77,17 +75,14 @@ Filament::Filament(SubSystem* s, vector<double>& position,
 
 
 Filament::Filament(SubSystem* s, vector<vector<double> >& position,
-                   int numBeads, string projectionType) {
+                   int numBeads, string projectionType)
 
-    _subSystem = s;
+    : _subSystem(s) {
     
-    //add to filament db
-    FilamentDB::instance()->addFilament(this);
-    _ID = FilamentDB::instance()->getFilamentID();
-    
-    vector<vector<double> > tmpBeadsCoord;
+    _ID = _filaments.getID();
     
     //create a projection of beads
+    vector<vector<double>> tmpBeadsCoord;
     
     //straight projection
     if(projectionType == "STRAIGHT")
@@ -101,8 +96,8 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
    
     //create beads
     auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
-    Bead* b1 = new Bead(tmpBeadsCoord[0], 0);
-    Bead* b2 = new Bead(tmpBeadsCoord[1], 1);
+    Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], 0);
+    Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], 1);
     
     Cylinder* c0 = new Cylinder(this, b1, b2, 0);
     c0->setMinusEnd(true);
@@ -114,14 +109,15 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
 
 Filament::~Filament() {
     
-    //remove from filament db
-    FilamentDB::instance()->removeFilament(this);
-    
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
+        //delete bead
         delete c->getFirstBead();
+        
         //remove second bead if last
         if(c->isPlusEnd()) delete c->getSecondBead();
+        
+        //delete cylinder
         delete c;
     }
 }
@@ -140,10 +136,14 @@ void Filament::extendFront(vector<double>& coordinates) {
     auto newBeadCoords = nextPointProjection(
         b2->coordinate, SysParams::Geometry().cylinderSize, direction);
     
-    Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() + 1);
+    //create bead
+    Bead* bNew = _subSystem->addTrackable<Bead>
+                 (newBeadCoords, b2->getPositionFilament() + 1);
     
     //create cylinder
-    Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
+                   (this, b2, bNew, lastPositionFilament + 1);
+    
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
@@ -161,9 +161,15 @@ void Filament::extendBack(vector<double>& coordinates) {
     auto direction = twoPointDirection(b2->coordinate, coordinates);
     auto newBeadCoords = nextPointProjection(
         b2->coordinate, SysParams::Geometry().cylinderSize, direction);
-    Bead* bNew = new Bead(newBeadCoords, b2->getPositionFilament() - 1);
     
-    Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1);
+    //create bead
+    Bead* bNew = _subSystem->addTrackable<Bead>
+                 (newBeadCoords, b2->getPositionFilament() - 1);
+    
+    //create cylinder
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
+                   (this, bNew, b2, lastPositionFilament - 1);
+    
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
@@ -184,14 +190,17 @@ void Filament::extendFront(short plusEnd) {
                SysParams::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
-    Bead* bNew = new Bead(npp, b2->getPositionFilament() + 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>
+                 (npp, b2->getPositionFilament() + 1);
     
 #ifdef MECHANICS
     //transfer the same load force to new bead (approximation until next minimization)
     bNew->loadForce = b2->loadForce;
 #endif
     
-    Cylinder* c0 = new Cylinder(this, b2, bNew, lastPositionFilament + 1, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
+                   (this, b2, bNew, lastPositionFilament + 1, true);
+    
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -225,14 +234,17 @@ void Filament::extendBack(short minusEnd) {
                SysParams::Geometry().monomerSize, direction1);
     
     //create a new bead in same place as b2
-    Bead* bNew = new Bead(npp, b2->getPositionFilament() - 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>
+                 (npp, b2->getPositionFilament() - 1);
 
 #ifdef MECHANICS
     //transfer the same load force to new bead (approximation until next minimization)
     bNew->loadForce = b2->loadForce;
 #endif
     
-    Cylinder* c0 = new Cylinder(this, bNew, b2, lastPositionFilament - 1, false, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
+                   (this, bNew, b2, lastPositionFilament - 1, false, true);
+    
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
@@ -413,7 +425,7 @@ Filament* Filament::sever(int cylinderPosition) {
 #endif
     
     //create a new filament
-    Filament* newFilament = new Filament(_subSystem);
+    Filament* newFilament = _subSystem->addTrackable<Filament>(_subSystem);
     
     //Split the cylinder vector at position, transfer cylinders to new filament
     for(int i = vectorPosition; i > 0; i--) {
@@ -426,7 +438,9 @@ Filament* Filament::sever(int cylinderPosition) {
     }
     
     ///copy bead at severing point, attach to new filament
-    Bead* b = new Bead(*(_cylinderVector.front()->getFirstBead()));
+    Bead* b = _subSystem->addTrackable<Bead>
+              (*(_cylinderVector.front()->getFirstBead()));
+    
     newFilament->_cylinderVector.back()->setSecondBead(b);
     
     //set plus and minus ends
@@ -447,12 +461,12 @@ Filament* Filament::sever(int cylinderPosition) {
     //plus end
     m1->speciesFilament(filamentInt1)->down();
     m1->speciesPlusEnd(filamentInt1)->up();
-    m1->speciesBound(0)->down();
+    m1->speciesBound(BOUND_EMPTY)->down();
     
     //minus end
     m2->speciesFilament(filamentInt2)->down();
     m2->speciesMinusEnd(filamentInt2)->up();
-    m2->speciesBound(0)->down();
+    m2->speciesBound(BOUND_EMPTY)->down();
 #endif
     
     return newFilament;

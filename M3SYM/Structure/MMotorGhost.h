@@ -45,8 +45,8 @@ public:
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
     MMotorGhost(int motorType, int numHeads, double position1, double position2,
-            const vector<double>& coord11, const vector<double>& coord12,
-            const vector<double>& coord21, const vector<double>& coord22);
+                const vector<double>& coord11, const vector<double>& coord12,
+                const vector<double>& coord21, const vector<double>& coord22);
     
     //@{
     /// Getter for constants

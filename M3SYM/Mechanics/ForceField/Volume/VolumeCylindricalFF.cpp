@@ -37,7 +37,7 @@ double VolumeCylindricalFF::computeEnergy(double d) {
     for (auto &interaction : _cylinderVolInteractionVector) {
         
         auto nl = interaction->getNeighborList();
-        for(auto ci : *CylinderDB::instance()) {
+        for(auto ci : Cylinder::getCylinders()) {
             
             //do not calculate exvol for a non full length cylinder
             if(ci->getMCylinder()->getEqLength() !=
@@ -66,7 +66,7 @@ void VolumeCylindricalFF::computeForces() {
     for (auto &interaction : _cylinderVolInteractionVector) {
         
         auto nl = interaction->getNeighborList();
-        for(auto ci : *CylinderDB::instance()) {
+        for(auto ci : Cylinder::getCylinders()) {
             
             //do not calculate exvol for a non full length cylinder
             if(ci->getMCylinder()->getEqLength() !=
@@ -89,7 +89,7 @@ void VolumeCylindricalFF::computeForcesAux() {
     for (auto &interaction : _cylinderVolInteractionVector) {
         
         auto nl = interaction->getNeighborList();
-        for(auto ci : *CylinderDB::instance()) {
+        for(auto ci : Cylinder::getCylinders()) {
             
             //do not calculate exvol for a non full length cylinder
             if(ci->getMCylinder()->getEqLength() !=

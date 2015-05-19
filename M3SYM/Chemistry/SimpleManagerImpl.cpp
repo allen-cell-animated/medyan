@@ -1746,15 +1746,15 @@ void SimpleManagerImpl::genFilBindingManagers() {
         
         if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
         
-            LinkerBindingManager::_nlContainers.push_back(
-               new CCNLContainer(lManager->getRMax() + SysParams::Geometry().cylinderSize,
-                             max(lManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
+            LinkerBindingManager::_neighborLists.push_back(
+               new CCNeighborList(lManager->getRMax() + SysParams::Geometry().cylinderSize,
+                              max(lManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
         }
         
         else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get())))
-            MotorBindingManager::_nlContainers.push_back(
-               new CCNLContainer(mManager->getRMax() + SysParams::Geometry().cylinderSize,
-                             max(mManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
+            MotorBindingManager::_neighborLists.push_back(
+               new CCNeighborList(mManager->getRMax() + SysParams::Geometry().cylinderSize,
+                              max(mManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
     }
 }
 

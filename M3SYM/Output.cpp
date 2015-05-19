@@ -33,12 +33,12 @@ void BasicSnapshot::print(int step) {
     // print first line (step number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
-        FilamentDB::instance()->size() << " " <<
-        LinkerDB::instance()->size() << " " <<
-        MotorGhostDB::instance()->size() << " " <<
-        BranchingPointDB::instance()->size() << endl;
+        Filament::numFilaments() << " " <<
+        Linker::numLinkers() << " " <<
+        MotorGhost::numMotorGhosts() << " " <<
+        BranchingPoint::numBranchingPoints() << endl;
     
-    for(auto &filament : *FilamentDB::instance()) {
+    for(auto &filament : Filament::getFilaments()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
@@ -64,7 +64,7 @@ void BasicSnapshot::print(int step) {
     }
     
     
-    for(auto &linker : *LinkerDB::instance()) {
+    for(auto &linker : Linker::getLinkers()) {
         
         //print first line
         _outputFile << "L " << linker->getLinkerID()<< " " <<
@@ -85,7 +85,7 @@ void BasicSnapshot::print(int step) {
         _outputFile << endl;
     }
 
-    for(auto &motor : *MotorGhostDB::instance()) {
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
         _outputFile << "M " << motor->getMotorID() << " " <<
@@ -106,7 +106,7 @@ void BasicSnapshot::print(int step) {
         _outputFile << endl;
     }
     
-    for(auto &branch : *BranchingPointDB::instance()) {
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
@@ -127,12 +127,12 @@ void BirthTimes::print(int step) {
     // print first line (step number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
-        FilamentDB::instance()->size() << " " <<
-        LinkerDB::instance()->size() << " " <<
-        MotorGhostDB::instance()->size() << " " <<
-        BranchingPointDB::instance()->size() << endl;
+        Filament::numFilaments() << " " <<
+        Linker::numLinkers() << " " <<
+        MotorGhost::numMotorGhosts() << " " <<
+        BranchingPoint::numBranchingPoints() << endl;
     
-    for(auto &filament : *FilamentDB::instance()) {
+    for(auto &filament : Filament::getFilaments()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
@@ -151,7 +151,7 @@ void BirthTimes::print(int step) {
                       ->getSecondBead()->getBirthTime();
         _outputFile << endl;
     }
-    for(auto &linker : *LinkerDB::instance()) {
+    for(auto &linker : Linker::getLinkers()) {
         
         //print first line
         _outputFile << "L " << linker->getLinkerID()<< " " <<
@@ -162,7 +162,7 @@ void BirthTimes::print(int step) {
                        linker->getBirthTime() << endl;
     }
     
-    for(auto &motor : *MotorGhostDB::instance()) {
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
         _outputFile << "M " << motor->getMotorID() << " " <<
@@ -173,7 +173,7 @@ void BirthTimes::print(int step) {
                        motor->getBirthTime() << endl;
     }
     
-    for(auto &branch : *BranchingPointDB::instance()) {
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
@@ -193,12 +193,12 @@ void Forces::print(int step) {
     // print first line (step number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
-        FilamentDB::instance()->size() << " " <<
-        LinkerDB::instance()->size() << " " <<
-        MotorGhostDB::instance()->size() << " " <<
-        BranchingPointDB::instance()->size() << endl;
+        Filament::numFilaments() << " " <<
+        Linker::numLinkers() << " " <<
+        MotorGhost::numMotorGhosts() << " " <<
+        BranchingPoint::numBranchingPoints() << endl;
     
-    for(auto &filament : *FilamentDB::instance()) {
+    for(auto &filament : Filament::getFilaments()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
@@ -222,7 +222,7 @@ void Forces::print(int step) {
         _outputFile << endl;
     }
     
-    for(auto &linker : *LinkerDB::instance()) {
+    for(auto &linker : Linker::getLinkers()) {
         
         //print first line
         _outputFile << "L " << linker->getLinkerID()<< " " <<
@@ -233,7 +233,7 @@ void Forces::print(int step) {
                        linker->getMLinker()->stretchForce << endl;
     }
     
-    for(auto &motor : *MotorGhostDB::instance()) {
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
         _outputFile << "M " << motor->getMotorID() << " " <<
@@ -244,7 +244,7 @@ void Forces::print(int step) {
                        motor->getMMotorGhost()->stretchForce << endl;
     }
     
-    for(auto &branch : *BranchingPointDB::instance()) {
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<
@@ -265,12 +265,12 @@ void Stresses::print(int step) {
     // print first line (step number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << step << " " << tau() << " " <<
-    FilamentDB::instance()->size() << " " <<
-    LinkerDB::instance()->size() << " " <<
-    MotorGhostDB::instance()->size() << " " <<
-    BranchingPointDB::instance()->size() << endl;
+        Filament::numFilaments() << " " <<
+        Linker::numLinkers() << " " <<
+        MotorGhost::numMotorGhosts() << " " <<
+        BranchingPoint::numBranchingPoints() << endl;
     
-    for(auto &filament : *FilamentDB::instance()) {
+    for(auto &filament : Filament::getFilaments()) {
         
         //print first line(Filament ID, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
@@ -297,7 +297,7 @@ void Stresses::print(int step) {
         _outputFile << endl;
     }
     
-    for(auto &linker : *LinkerDB::instance()) {
+    for(auto &linker : Linker::getLinkers()) {
         
         //print first line
         _outputFile << "L " << linker->getLinkerID()<< " " <<
@@ -313,7 +313,7 @@ void Stresses::print(int step) {
                        abs(k * deltaL) << endl;
     }
     
-    for(auto &motor : *MotorGhostDB::instance()) {
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
         _outputFile << "M " << motor->getMotorID() << " " <<
@@ -328,7 +328,7 @@ void Stresses::print(int step) {
                        abs(k * deltaL) << endl;
     }
     
-    for(auto &branch : *BranchingPointDB::instance()) {
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
         _outputFile << "B " << branch->getBranchID() << " " <<

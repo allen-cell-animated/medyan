@@ -29,6 +29,9 @@
 #include "BranchingPoint.h"
 
 #include "SysParams.h"
+#include "MathFunctions.h"
+
+using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
     
@@ -67,14 +70,20 @@ void Controller::initialize(string inputFile,
     
     //snapshot type output
     cout << endl;
+    
+    string snapName = _outputDirectory + "snapshot.traj";
+    string birtName = _outputDirectory + "birthtimes.traj";
+    string forcName = _outputDirectory + "forces.traj";
+    string streName = _outputDirectory + "stresses.traj";
+    
     if(oTypes.basicSnapshot)
-        _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
+        _outputs.push_back(new BasicSnapshot(snapName));
     if(oTypes.birthTimes)
-        _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
+        _outputs.push_back(new BirthTimes(birtName));
     if(oTypes.forces)
-        _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
+        _outputs.push_back(new Forces(forcName));
     if(oTypes.stresses)
-        _outputs.push_back(new Stresses(_outputDirectory + "stresses.traj"));
+        _outputs.push_back(new Stresses(streName));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -111,15 +120,15 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->addBoundary(new BoundaryCubic());
+        _subSystem->addBoundary(new BoundaryCubic(_subSystem));
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
         _subSystem->addBoundary(
-        new BoundarySpherical(SysParams::Boundaries().diameter));
+        new BoundarySpherical(_subSystem, SysParams::Boundaries().diameter));
     }
     else if(BTypes.boundaryShape == "CAPSULE") {
         _subSystem->addBoundary(
-        new BoundaryCapsule(SysParams::Boundaries().diameter));
+        new BoundaryCapsule(_subSystem, SysParams::Boundaries().diameter));
     }
     else{
         cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
@@ -221,7 +230,21 @@ void Controller::initialize(string inputFile,
         delete fInit;
     }
     //add filaments
-    _subSystem->addNewFilaments(filamentData);
+    for (auto it: filamentData) {
+        
+        double d = twoPointDistance(it[0], it[1]);
+        vector<double> tau = twoPointDirection(it[0], it[1]);
+
+        int numSegment = d / SysParams::Geometry().cylinderSize;
+
+        // check how many segments can fit between end-to-end of the filament
+        if (numSegment == 0)
+            _subSystem->addTrackable<Filament>
+            (_subSystem, it[0], tau, false, false);
+        else
+            _subSystem->addTrackable<Filament>
+            (_subSystem, it, numSegment + 1, "STRAIGHT");
+    }
     cout << "Done. " << filamentData.size()
          << " filaments created." << endl;
 }
@@ -229,48 +252,20 @@ void Controller::initialize(string inputFile,
 void Controller::updatePositions() {
     
     //update all moveables
-    
-    //Beads
-    for(auto &f : *FilamentDB::instance()) {
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->getFirstBead()->updatePosition();
-        }
-        //update last bead
-        f->getCylinderVector().back()->
-        getSecondBead()->updatePosition();
-    }
-    
-    //Cylinders
-    for(auto &f : *FilamentDB::instance()) {
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->updatePosition();
-        }
-    }
-    //Linkers
-    for(auto &l : *LinkerDB::instance()) l->updatePosition();
-    //Motors
-    for(auto &m : *MotorGhostDB::instance()) m->updatePosition();
-    //Branchers
-    for(auto &b : *BranchingPointDB::instance()) b->updatePosition();
+    for(auto m : _subSystem->getMovables()) m->updatePosition();
 }
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    
-    //Linkers
-    for(auto &l : *LinkerDB::instance()) l->updateReactionRates();
-    //Motors
-    for(auto &m : *MotorGhostDB::instance()) m->updateReactionRates();
-    //Boundary cylinders
-    for(auto &c : _subSystem->getBoundaryCylinders()) c->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
 }
 #endif
 
 void Controller::updateNeighborLists() {
     
     //Full reset of neighbor lists
-    NeighborListDB::instance()->resetAll();
+    for(auto nl : _subSystem->getNeighborLists()) nl->reset();
     
 #ifdef CHEMISTRY
     //Update binding reactions

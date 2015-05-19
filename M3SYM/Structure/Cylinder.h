@@ -18,16 +18,16 @@
 
 #include "common.h"
 
-#include "CylinderDB.h"
-
 #include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
-#include "Neighbor.h"
 #include "RateChanger.h"
 
+#include "Database.h"
+#include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
+#include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -39,10 +39,12 @@ class DRController;
  * Cylinder class is used to manage and store a MCylinder and CCylinder.
  * Upon intialization, both of these components are created. Extending the Movable and 
  * Reactable classes, the Cylinder can update its position and reactions according to 
- * mechanical equilibration.
+ * mechanical equilibration. Extending the Trackable class, all instances are kept and 
+ * easily accessed by the SubSystem.
  */
 
-class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
+class Cylinder : public Composite, public Trackable, public Movable,
+                                   public Reactable, public DynamicNeighbor {
     
 friend class DRController;
     
@@ -59,14 +61,19 @@ private:
     bool _plusEnd = false; ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
     
-    int _ID; ///< Unique ID of cylinder, managed by CylinderDB
+    int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr if the cylinder has a branching cylinder
     
+    static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
+    
     ///For dynamic polymerization rate
     static FilamentRateChanger* _polyChanger;
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
     
 public:
     vector<double> coordinate;
@@ -127,11 +134,26 @@ public:
     
     int getPositionFilament() {return _positionFilament;}
     
-    /// Update the position
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _cylinders.addElement(this);}
+    virtual void removeFromSubSystem() {_cylinders.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const unordered_set<Cylinder*>& getCylinders() {
+        return _cylinders.getElements();
+    }
+    /// Get the number of cylinders in this system
+    static int numCylinders() {
+        return _cylinders.countElements();
+    }
+    
+    /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
     
-    /// Update the reaction rates
+    /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
 
 };
