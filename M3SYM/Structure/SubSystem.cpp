@@ -19,11 +19,10 @@
 vector<Cylinder*> SubSystem::getBoundaryCylinders() {
 
     vector<Cylinder*> cylinders;
-    auto list = getNeighborList();
     
     //loop through neighbor list, construct vector
     for(auto be : BoundaryElement::getBoundaryElements()) {
-        auto localCylinders = list->getNeighbors(be);
+        auto localCylinders = _neighborList.getNeighbors(be);
         cylinders.insert(cylinders.end(), localCylinders.begin(),
                                           localCylinders.end());
     }

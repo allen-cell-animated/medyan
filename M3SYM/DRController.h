@@ -22,11 +22,10 @@ struct DynamicRateTypes;
 /// Used to initialize the dynamic rate components of a simulation.
 
 /*!
- *  The DRController intializes all dynamic rate objects in the
- *  system, as specified in the input file. The controller's
- *  intiailize function will set [Cylinders](@ref Cylinder),
- *  [Linkers](@Linker) and [MotorGhosts](@MotorGhost) with
- *  corresponding static DynamicRateChanger objects.
+ *  The DRController intializes all dynamic rate objects in the system, 
+ *  as specified in the input file. The controller's intiailize function will 
+ *  set [Cylinders](@ref Cylinder), [Linkers](@Linker) and [MotorGhosts](@MotorGhost)
+ *  with corresponding static DynamicRateChanger objects.
  */
 class DRController {
     

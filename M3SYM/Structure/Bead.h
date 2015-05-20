@@ -35,13 +35,20 @@ class Compartment;
  *  algorithms, beads are moved corresponding to external forces, for example, Filament 
  *  stretching and bending. The bead class contains currernt coordinates and forces, and 
  *  has functions to calculate dot products for the minimization algorithms.
- *  Extending the Movable and Trackable class, all instances are kept, can be moved,
- *  and easily accessed by the SubSystem.
+ *  
+ *  Extending the Trackable class, all instances are kept and easily 
+ *  accessed by the SubSystem.
+ *
+ *  Extending the Movable class, the positions of all instances can 
+ *  be updated by the SubSystem.
+ *
+ *  Extending the DynamicNeighbor class, all instances can be kept in 
+ *  [NeighborLists](@ref NeighborList).
  */
 
 class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor {
 public:
-    vector<double> coordinate; ///< Coordinates of the bead
+    vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead
     
 	vector<double> force; ///< Forces based on curent coordinates.
@@ -108,7 +115,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<Bead*>& getBeads() {
+    static const vector<Bead*>& getBeads() {
         return _beads.getElements();
     }
     /// Get the number of beads in this system
@@ -124,8 +131,8 @@ private:
     Compartment* _compartment = nullptr;
         ///< Pointer to the compartment that this bead is in
     
-    int _positionFilament; ///< Position on Filament
-    float _birthTime; ///< Time of birth
+    int _positionFilament; ///< Position on Filament (1st, 2nd, etc...)
+    float _birthTime;      ///< Time of birth
     
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
 };

@@ -33,11 +33,17 @@ class SubSystem;
 
 /// A container to store a MMotorGhost and CMotorGhost.
 /*!
- * MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
- * Upon intialization, both of these components are created. Extending the Movable and
- * Reactable classes, the MotorGhost can update its position and reactions according to 
- * mechanical equilibration. Extending the Trackable class, all instances are kept and 
- * easily accessed by the SubSystem.
+ *  MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
+ *  Upon intialization, both of these components are created.
+ *
+ *  Extending the Trackable class, all instances are kept and 
+ *  easily accessed by the SubSystem.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
+ *
+ *  Extending the Reactable class, the reactions associated with 
+ *  all instances can be updated by the SubSystem.
  */
 class MotorGhost : public Composite, public Trackable, public Movable, public Reactable {
    
@@ -62,7 +68,7 @@ private:
     
     int _numHeads = 1; ///< Number of heads that this motor contains
     
-    static Database<MotorGhost*> _motorGhosts; ///< Collection in SubSystem
+    static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
     ///For dynamic rate unbinding
     static vector<MotorRateChanger*> _unbindingChangers;
@@ -114,8 +120,8 @@ public:
     
     //@{
     ///Parameter management
-    short getMotorType() {return _motorType;}
-    int getMotorID() {return _motorID;}
+    short getType() {return _motorType;}
+    int getID() {return _motorID;}
     //@}
     
     /// Get the birth time
@@ -128,7 +134,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<MotorGhost*>& getMotorGhosts() {
+    static const vector<MotorGhost*>& getMotorGhosts() {
         return _motorGhosts.getElements();
     }
     /// Get the number of motors in this system

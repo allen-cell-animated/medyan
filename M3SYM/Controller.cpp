@@ -239,33 +239,32 @@ void Controller::initialize(string inputFile,
 
         // check how many segments can fit between end-to-end of the filament
         if (numSegment == 0)
-            _subSystem->addTrackable<Filament>
-            (_subSystem, it[0], tau);
+            _subSystem->addTrackable<Filament> (_subSystem, it, 2);
         else
-            _subSystem->addTrackable<Filament>
-            (_subSystem, it, numSegment + 1, "STRAIGHT");
+            _subSystem->addTrackable<Filament> (_subSystem, it, numSegment + 1);
     }
-    cout << "Done. " << filamentData.size()
-         << " filaments created." << endl;
+    cout << "Done. " << filamentData.size() << " filaments created." << endl;
 }
 
 void Controller::updatePositions() {
     
     //update all moveables
-    for(auto m : _subSystem->getMovables()) m->updatePosition();
+    for(auto m : _subSystem->getMovables())
+        m->updatePosition();
 }
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem->getReactables())
+        r->updateReactionRates();
 }
 #endif
 
 void Controller::updateNeighborLists() {
     
     //Full reset of neighbor lists
-    for(auto nl : _subSystem->getNeighborLists().getElements()) nl->reset();
+    _subSystem->resetNeighborLists();
     
 #ifdef CHEMISTRY
     //Update binding reactions
@@ -353,7 +352,7 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
+            if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
             
             i += _numChemSteps;
@@ -401,7 +400,7 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
+            if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
             
             oldTau = tau();

@@ -67,8 +67,8 @@ void BasicSnapshot::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getLinkerID()<< " " <<
-            linker->getLinkerType() << endl;
+        _outputFile << "L " << linker->getID()<< " " <<
+                               linker->getType() << endl;
         
         //print coordinates
         auto x =
@@ -88,8 +88,8 @@ void BasicSnapshot::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getMotorID() << " " <<
-            motor->getMotorType() << endl;
+        _outputFile << "M " << motor->getID() << " " <<
+                               motor->getType() << endl;
         
         //print coordinates
         auto x =
@@ -109,8 +109,8 @@ void BasicSnapshot::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getBranchID() << " " <<
-                               branch->getBranchType() << endl;
+        _outputFile << "B " << branch->getID() << " " <<
+                               branch->getType() << endl;
         
         //print coordinates
         auto x = branch->coordinate;
@@ -154,8 +154,8 @@ void BirthTimes::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getLinkerID()<< " " <<
-        linker->getLinkerType() << endl;
+        _outputFile << "L " << linker->getID()<< " " <<
+                               linker->getType() << endl;
         
         //print birth times
         _outputFile << linker->getBirthTime() << " " <<
@@ -165,8 +165,8 @@ void BirthTimes::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getMotorID() << " " <<
-        motor->getMotorType() << endl;
+        _outputFile << "M " << motor->getID() << " " <<
+                               motor->getType() << endl;
         
         //print birth times
         _outputFile << motor->getBirthTime() << " " <<
@@ -176,8 +176,8 @@ void BirthTimes::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getBranchID() << " " <<
-                               branch->getBranchType() << endl;
+        _outputFile << "B " << branch->getID() << " " <<
+                               branch->getType() << endl;
         
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
@@ -225,8 +225,8 @@ void Forces::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getLinkerID()<< " " <<
-        linker->getLinkerType() << endl;
+        _outputFile << "L " << linker->getID()<< " " <<
+                               linker->getType() << endl;
         
         //print stretch force
         _outputFile << linker->getMLinker()->stretchForce << " " <<
@@ -236,8 +236,8 @@ void Forces::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getMotorID() << " " <<
-        motor->getMotorType() << endl;
+        _outputFile << "M " << motor->getID() << " " <<
+                               motor->getType() << endl;
         
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
@@ -247,8 +247,8 @@ void Forces::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getBranchID() << " " <<
-                               branch->getBranchType() << endl;
+        _outputFile << "B " << branch->getID() << " " <<
+                               branch->getType() << endl;
         
         //Nothing for branchers
         _outputFile << 0.0 << endl;
@@ -300,8 +300,8 @@ void Stresses::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getLinkerID()<< " " <<
-        linker->getLinkerType() << endl;
+        _outputFile << "L " << linker->getID()<< " " <<
+                               linker->getType() << endl;
         
         //print
         double k = linker->getMLinker()->getStretchingConstant();
@@ -316,8 +316,8 @@ void Stresses::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getMotorID() << " " <<
-        motor->getMotorType() << endl;
+        _outputFile << "M " << motor->getID() << " " <<
+                               motor->getType() << endl;
         
         //print
         double k = motor->getMMotorGhost()->getStretchingConstant();
@@ -331,8 +331,8 @@ void Stresses::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getBranchID() << " " <<
-                               branch->getBranchType() << endl;
+        _outputFile << "B " << branch->getID() << " " <<
+                               branch->getType() << endl;
         
         //Nothing for branchers
         _outputFile << 0.0 << endl;

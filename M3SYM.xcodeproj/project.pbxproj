@@ -210,9 +210,6 @@
 		F7C9D01B1A2D165D0087434A /* Movable.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD41A2D165D0087434A /* Movable.h */; };
 		F7C9D01C1A2D165D0087434A /* Neighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD51A2D165D0087434A /* Neighbor.h */; };
 		F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD71A2D165D0087434A /* NeighborList.h */; };
-		F7C9D0201A2D165D0087434A /* NeighborListContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */; };
-		F7C9D0211A2D165D0087434A /* NeighborListDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */; };
-		F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */; };
 		F7C9D0231A2D165D0087434A /* Reactable.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFDC1A2D165D0087434A /* Reactable.h */; };
 		F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFE71A2D165D0087434A /* SubSystem.cpp */; };
 		F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFE81A2D165D0087434A /* SubSystem.h */; };
@@ -445,9 +442,6 @@
 		F7C9CFD41A2D165D0087434A /* Movable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movable.h; sourceTree = "<group>"; };
 		F7C9CFD51A2D165D0087434A /* Neighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Neighbor.h; sourceTree = "<group>"; };
 		F7C9CFD71A2D165D0087434A /* NeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborList.h; sourceTree = "<group>"; };
-		F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListContainer.h; sourceTree = "<group>"; };
-		F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListDB.cpp; sourceTree = "<group>"; };
-		F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListDB.h; sourceTree = "<group>"; };
 		F7C9CFDC1A2D165D0087434A /* Reactable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactable.h; sourceTree = "<group>"; };
 		F7C9CFE71A2D165D0087434A /* SubSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubSystem.cpp; sourceTree = "<group>"; };
 		F7C9CFE81A2D165D0087434A /* SubSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubSystem.h; sourceTree = "<group>"; };
@@ -541,9 +535,6 @@
 				F7C9CFD71A2D165D0087434A /* NeighborList.h */,
 				BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */,
 				BF365D861ABC728F006EE099 /* NeighborListImpl.h */,
-				F7C9CFDA1A2D165D0087434A /* NeighborListDB.cpp */,
-				F7C9CFDB1A2D165D0087434A /* NeighborListDB.h */,
-				F7C9CFD91A2D165D0087434A /* NeighborListContainer.h */,
 			);
 			name = Structure;
 			path = M3SYM/Structure;
@@ -844,7 +835,6 @@
 				F735B7781A2D16F200AE21D1 /* GController.h in Headers */,
 				F735B76E1A2D16F200AE21D1 /* CController.h in Headers */,
 				F7401C391AF9388D00BA97A5 /* ReactionBase.h in Headers */,
-				F7C9D0201A2D165D0087434A /* NeighborListContainer.h in Headers */,
 				F735B79D1A2D172800AE21D1 /* ChemManager.h in Headers */,
 				F7525A3B1A7023EF007A4E9F /* CylinderExclVolume.h in Headers */,
 				F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */,
@@ -863,7 +853,6 @@
 				F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */,
 				F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */,
 				F735B7A81A2D172800AE21D1 /* ReactionTemplate.h in Headers */,
-				F7C9D0221A2D165D0087434A /* NeighborListDB.h in Headers */,
 				F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */,
 				F7199B371A30C84600CD5DCC /* MBranchingPoint.h in Headers */,
 				F7C9D0231A2D165D0087434A /* Reactable.h in Headers */,
@@ -1075,7 +1064,6 @@
 				F7525A861A70244D007A4E9F /* MotorGhostFF.cpp in Sources */,
 				F7199B361A30C84600CD5DCC /* MBranchingPoint.cpp in Sources */,
 				F7C9D0151A2D165D0087434A /* MMotorGhost.cpp in Sources */,
-				F7C9D0211A2D165D0087434A /* NeighborListDB.cpp in Sources */,
 				F7C9D0171A2D165D0087434A /* MotorGhost.cpp in Sources */,
 				F75259E41A6EBDFE007A4E9F /* FilamentInitializer.cpp in Sources */,
 				F7C9D00D1A2D165D0087434A /* Linker.cpp in Sources */,

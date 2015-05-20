@@ -40,7 +40,7 @@ public:
     virtual ~FilamentInitializer() noexcept {}
     
     virtual vector<vector<vector<double>>>
-        createFilaments(Boundary* b, int numFilaments, int lenFilaments) = 0;
+    createFilaments(Boundary* b, int numFilaments, int lenFilaments) = 0;
 };
 
 /// An implementation of FilamentInitialzer that creates a completely random
@@ -49,7 +49,7 @@ class RandomFilamentDist : public FilamentInitializer {
     
 public:
     virtual vector<vector<vector<double>>>
-        createFilaments(Boundary* b, int numFilaments, int lenFilaments);
+    createFilaments(Boundary* b, int numFilaments, int lenFilaments);
 };
 
 #endif

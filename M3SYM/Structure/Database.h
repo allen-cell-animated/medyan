@@ -14,7 +14,7 @@
 #ifndef M3SYM_Database_h
 #define M3SYM_Database_h
 
-#include <unordered_set>
+#include <set>
 
 #include "common.h"
 
@@ -26,13 +26,15 @@
  *  the given class. The databases are then used in various ways, i.e.
  *  mechanical minimization uses all beads for its Minimizer methods,
  *  ForceField uses the collections to calculate forces and energy, etc.
- !*/
-
+ *  
+ *  @param T - class to hold
+ *
+ */
 template<class T>
 class Database {
     
 protected:
-    unordered_set<T> _elems;  ///< The elements in the collection
+    vector<T> _elems;  ///< The elements in the collection
     
     int _ID = 0; ///< Running unique index of each element
 public:
@@ -40,34 +42,25 @@ public:
     /// Add an element to the collection
     void addElement(T elem) {
         
-        _elems.insert(elem);
+        _elems.push_back(elem);
     }
     
     /// Remove an element from the collection
     void removeElement(T elem) {
         
         //try to find
-        auto it = _elems.find(elem);
+        auto it = find(_elems.begin(), _elems.end(), elem);
         if(it != _elems.end()) _elems.erase(it);
     }
     
     /// Clear the contents of the database
-    void clearElements() {
-        
-        _elems.clear();
-    }
+    void clearElements() { _elems.clear(); }
     
     /// Get all items in database
-    const unordered_set<T>& getElements() {
-        
-        return _elems;
-    }
+    vector<T>& getElements() { return _elems; }
     
     /// Count the number of objects in the collection
-    int countElements() {
-        
-        return _elems.size();
-    }
+    int countElements() { return _elems.size(); }
     
     ///Return a unique id
     int getID() { return _ID++;}

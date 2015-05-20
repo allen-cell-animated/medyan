@@ -25,8 +25,9 @@
 
 using namespace mathfunc;
 
-Database<Linker*> Linker::_linkers;
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
+
+Database<Linker*> Linker::_linkers;
 
 void Linker::updateCoordinate() {
     
@@ -45,10 +46,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2)
 
     : _c1(c1), _c2(c2),
-      _position1(position1), _position2(position2), _linkerType(linkerType) {
-          
-    _linkerID = _linkers.getID();
-    _birthTime = tau();
+      _position1(position1), _position2(position2), _linkerType(linkerType),
+      _linkerID(_linkers.getID()), _birthTime(tau()) {
         
     updateCoordinate();
 

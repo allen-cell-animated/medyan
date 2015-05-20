@@ -44,7 +44,8 @@ public:
     
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
                                      bool extensionFront,
-                                     bool extensionBack) = 0;
+                                     bool extensionBack,
+                                     bool initialization) = 0;
     
     virtual void updateCopyNumbers() = 0;
 };

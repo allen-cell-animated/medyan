@@ -38,13 +38,14 @@ public:
     ///Set the chemManager instance
     static void setInstance(ChemManagerImpl *cii);
     
-    ///Initialize the compartment grid, based on the given simulation
+    ///Initialize the CompartmentGrid, based on the given simulation
     static void initializeSystem();
     
-    ///Initializer, based on the given simulation
+    ///Initializer for a Cylinder, based on the given simulation
     static void initializeCCylinder(CCylinder* cc, Filament* f,
                                     bool extensionFront,
-                                    bool extensionBack);
+                                    bool extensionBack,
+                                    bool initialization);
     
     /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time

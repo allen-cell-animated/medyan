@@ -29,7 +29,7 @@ class BoundaryFF : public ForceField {
     
 private:
     vector<unique_ptr<BoundaryInteractions>>
-    _BoundaryInteractionVector; ///< Vector of initialized boundary element interactions
+    _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)
@@ -40,6 +40,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists();
 };
 
 #endif

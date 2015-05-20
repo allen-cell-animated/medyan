@@ -16,19 +16,25 @@
 
 #include "common.h"
 
-#include "NeighborListContainer.h"
+#include "NeighborListImpl.h"
+
 #include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
-class CylinderVolumeInteractions : public CCNLContainer {
+class CylinderVolumeInteractions {
+    
+protected:
+    CCNeighborList* _neighborList;  ///< Neighbor list of cylinders
     
 public:
     ///Constructor, initializes a cylinder neighbor list
-    CylinderVolumeInteractions()
-        : CCNLContainer(SysParams::Mechanics().VolumeCutoff) {}
+    CylinderVolumeInteractions() {
+    
+        _neighborList = new CCNeighborList(SysParams::Mechanics().VolumeCutoff);
+    }
     
     /// Compute the energy of this interaction
     virtual double computeEnergy(Cylinder*, Cylinder*,  double d) = 0;
@@ -36,6 +42,9 @@ public:
     virtual void computeForces(Cylinder*, Cylinder*) = 0;
     /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux(Cylinder*, Cylinder*) = 0;
+    
+    /// Get the neighbor list for this interaction
+    CCNeighborList* getNeighborList() {return _neighborList;}
     
     /// Get the name of this interaction
     virtual const string getName() = 0;

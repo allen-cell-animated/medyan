@@ -36,13 +36,21 @@ class DRController;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
- * Cylinder class is used to manage and store a MCylinder and CCylinder.
- * Upon intialization, both of these components are created. Extending the Movable and 
- * Reactable classes, the Cylinder can update its position and reactions according to 
- * mechanical equilibration. Extending the Trackable class, all instances are kept and 
- * easily accessed by the SubSystem.
+ *  Cylinder class is used to manage and store a MCylinder and CCylinder.
+ *  Upon intialization, both of these components are created.
+ *
+ *  Extending the Trackable class, all instances are kept and easily 
+ *  accessed by the SubSystem.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
+ *
+ *  Extending the Reactable class, the reactions associated with 
+ *  all instances can be updated by the SubSystem.
+ *
+ *  Extending the DynamicNeighbor class, all instances can be 
+ *  kept in [NeighborLists](@ref NeighborList).
  */
-
 class Cylinder : public Composite, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
     
@@ -55,17 +63,17 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
-    Filament* _pFilament; //< Pointer to parent filament where this cylinder belongs
+    Filament* _pFilament;  ///< Pointer to parent filament where this cylinder belongs
     int _positionFilament; ///< Position on filament (1st, 2nd, ... etc)
     
-    bool _plusEnd = false; ///< If the cylinder is at the plus end
+    bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
     
     int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
-    Cylinder* _branchingCylinder = nullptr; ///< ptr if the cylinder has a branching cylinder
+    Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
     
     static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
@@ -81,7 +89,10 @@ public:
                                        
     /// Constructor, initializes a cylinder and
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
-             bool extensionFront = false, bool extensionBack = false);
+             bool extensionFront = false,
+             bool extensionBack = false,
+             bool initialization = false);
+                                       
     virtual ~Cylinder() noexcept;
     
     /// Get mech cylinder
@@ -120,7 +131,7 @@ public:
     //@}
     
     /// Get ID
-    const int getID() {return _ID;}
+    int getID() {return _ID;}
     
     ///@{
     /// Set plus and minus end boolean markers
@@ -140,7 +151,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<Cylinder*>& getCylinders() {
+    static const vector<Cylinder*>& getCylinders() {
         return _cylinders.getElements();
     }
     /// Get the number of cylinders in this system
@@ -154,6 +165,9 @@ public:
     
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
+                                       
+    /// Check if this cylinder is grown to full length
+    bool isFullLength();
 
 };
 

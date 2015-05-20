@@ -29,7 +29,7 @@ class MotorGhostFF : public ForceField {
     
 private:
     vector <unique_ptr<MotorGhostInteractions>>
-        _motorGhostInteractionVector; ///< Vector of initialized motor interactions
+    _motorGhostInteractionVector; ///< Vector of initialized motor interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
@@ -40,6 +40,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
 };
 
 #endif

@@ -23,10 +23,10 @@
 BoundaryFF::BoundaryFF (string type) {
     
     if (type == "REPULSIONLJ")
-        _BoundaryInteractionVector.emplace_back(
+        _boundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionLJ>());
     else if (type == "REPULSIONEXP")
-        _BoundaryInteractionVector.emplace_back(
+        _boundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionExp>());
     else if(type == "") {}
     else {
@@ -40,7 +40,7 @@ double BoundaryFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
@@ -62,7 +62,7 @@ double BoundaryFF::computeEnergy(double d) {
 
 void BoundaryFF::computeForces() {
 
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
@@ -76,7 +76,7 @@ void BoundaryFF::computeForces() {
 
 void BoundaryFF::computeForcesAux() {
     
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
@@ -86,4 +86,14 @@ void BoundaryFF::computeForcesAux() {
                 interaction->computeForcesAux(be, bd);
         }
     }
+}
+
+vector<NeighborList*> BoundaryFF::getNeighborLists() {
+    
+    vector<NeighborList*> neighborLists;
+    
+    for(auto &interaction : _boundaryInteractionVector)
+        neighborLists.push_back(interaction->getNeighborList());
+    
+    return neighborLists;
 }

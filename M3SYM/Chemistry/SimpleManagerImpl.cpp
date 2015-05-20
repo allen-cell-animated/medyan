@@ -1745,16 +1745,26 @@ void SimpleManagerImpl::genFilBindingManagers() {
         MotorBindingManager* mManager;
         
         if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
-        
-            LinkerBindingManager::_neighborLists.push_back(
-               new CCNeighborList(lManager->getRMax() + SysParams::Geometry().cylinderSize,
-                              max(lManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
+            
+            auto nl =
+            new CCNeighborList(lManager->getRMax() + SysParams::Geometry().cylinderSize,
+                           max(lManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true);
+            
+            //add to subsystem and manager
+            LinkerBindingManager::_neighborLists.push_back(nl);
+            _subSystem->addNeighborList(nl);
         }
         
-        else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get())))
-            MotorBindingManager::_neighborLists.push_back(
-               new CCNeighborList(mManager->getRMax() + SysParams::Geometry().cylinderSize,
-                              max(mManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true));
+        else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get()))) {
+            
+            auto nl =
+            new CCNeighborList(mManager->getRMax() + SysParams::Geometry().cylinderSize,
+                           max(mManager->getRMin() - SysParams::Geometry().cylinderSize, 0.0), true);
+            
+            //add to subsystem and manager
+            MotorBindingManager::_neighborLists.push_back(nl);
+            _subSystem->addNeighborList(nl);
+        }
     }
 }
 
@@ -2428,7 +2438,8 @@ void SimpleManagerImpl::initializeSystem() {
 
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                                             bool extensionFront,
-                                            bool extensionBack) {
+                                            bool extensionBack,
+                                            bool initialization) {
     //maxlength is same length as mcylinder
     int maxlength = cc->getSize();
     Compartment* c = cc->getCompartment();
@@ -2466,7 +2477,7 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     }
     
     //Base case, initialization
-    else {
+    else if (initialization) {
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
             

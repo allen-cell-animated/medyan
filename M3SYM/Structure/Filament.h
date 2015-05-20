@@ -29,18 +29,17 @@ class SubSystem;
 class Cylinder;
 class Bead;
 
-/// Used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads]
-/// (@ref Bead).
+/// Used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads] (@ref Bead).
 /*!
  * This class contains information about [Cylinders](@ref Cylinder) and [Beads]
  * (@ref Bead) connectivity. It has functionality to polymerize and depolymerize,
  * as well as extend and retract by creating and deleting Cylinder and Bead in the 
  * system.
  *
- * Extending the Trackable class, all instances are kept and easily accessed by the SubSystem.
+ * Extending the Trackable class, all instances are kept and 
+ * easily accessed by the SubSystem.
  * 
- * A Filament can also be initialized as a number of shapes, including a zig zag and 
- * arc projection.
+ * A Filament can also be initialized as a number of different shapes.
  */
 class Filament : public Trackable {
 
@@ -70,7 +69,7 @@ public:
     
     /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point
-    /// determined by position vector and has a direction.
+    /// determined by position vector.
     Filament(SubSystem* s, vector<vector<double>>& position,
              int numBeads, string projectionType = "STRAIGHT");
     
@@ -152,7 +151,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<Filament*>& getFilaments() {
+    static const vector<Filament*>& getFilaments() {
         return _filaments.getElements();
     }
     /// Get the number of filaments in this system

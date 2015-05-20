@@ -17,6 +17,11 @@
 #include "common.h"
 
 /// An abstract base class for a reactable element in the SubSystem.
+
+/*! The main function of the Reactable class is to implement updateReactionRates(),
+ *  so that the reactions related to any object extending this class can be updated
+ *  by the SubSystem.
+ */
 class Reactable {
     
 protected:

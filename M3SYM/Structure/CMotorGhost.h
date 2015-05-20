@@ -31,7 +31,6 @@ class Compartment;
 /*!
  *  The CMotorGhost class contains chemical info of the parent MotorGhost.
  */
-
 class CMotorGhost : public CBound {
     
 private:

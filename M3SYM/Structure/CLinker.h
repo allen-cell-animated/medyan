@@ -30,7 +30,6 @@ class Compartment;
 /*! 
  *  The CLinker class contains chemical info of the parent Linker.
  */
-
 class CLinker : public CBound {
     
 private:

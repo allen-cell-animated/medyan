@@ -14,7 +14,12 @@
 #ifndef M3SYM_ForceField_h
 #define M3SYM_ForceField_h
 
+#include <vector>
+
 #include "common.h"
+
+//FORWARD DECLARATIONS
+class NeighborList;
 
 /// An abstract class to represent various force field calculations
 /*!
@@ -31,12 +36,15 @@ public:
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
     virtual double computeEnergy(double d) = 0;
-    /// Compute forces of this forcefield in the system. Update [Bead](@ref Bead)
+    /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.
     virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this forcefield in the system. Update [Bead]
-    /// (@ref Bead) auxiliary forces accordingly.
+    /// Compute auxiliary forces of this forcefield in the system. Update
+    /// Bead auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
+    
+    /// Get all neighbor lists associated with a ForceField
+    virtual vector<NeighborList*> getNeighborLists() = 0;
 };
 
 #endif

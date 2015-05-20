@@ -29,11 +29,14 @@ class Cylinder;
 
 /// A container to store a MBranchingPoint and CBranchingPoint.
 /*!
- * BranchingPoint class is used to manage and store a MBranchingPoint and 
- * CBranchingPoint. Upon intialization, both of these components are created. Extending
- * the Movable class, the BranchingPoint can update its position according to mechanical 
- * equilibration. Extending the Trackable class, all instances are kept and easily accessed
- * by the SubSystem.
+ *  BranchingPoint class is used to manage and store a MBranchingPoint and
+ *  CBranchingPoint. Upon intialization, both of these components are created.
+ *
+ *  Extending the Trackable class, all instances are kept and 
+ *  easily accessed by the SubSystem.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
  */
 class BranchingPoint : public Trackable, public Movable {
     
@@ -92,8 +95,8 @@ public:
     
     //@{
     /// Get branch parameter
-    short getBranchType() {return _branchType;}
-    int getBranchID() {return _branchID;}
+    short getType() {return _branchType;}
+    int getID() {return _branchID;}
     //@}
     
     /// Get compartment
@@ -109,7 +112,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<BranchingPoint*>& getBranchingPoints() {
+    static const vector<BranchingPoint*>& getBranchingPoints() {
         return _branchingPoints.getElements();
     }
     /// Get the number of branching points in this system

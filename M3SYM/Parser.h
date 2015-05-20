@@ -302,7 +302,7 @@ public:
     vector<vector<vector<double>>> readFilaments();
 };
 
-/// Used to parse all chemical information
+/// Used to parse all chemical information, initialized by the Controller.
 class ChemistryParser: public Parser {
     
 public:

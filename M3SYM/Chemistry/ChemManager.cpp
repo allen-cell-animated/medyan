@@ -26,9 +26,10 @@ void ChemManager::initializeSystem() {
 
 void ChemManager::initializeCCylinder(CCylinder* cc, Filament* f,
                                       bool extensionFront,
-                                      bool extensionBack) {
+                                      bool extensionBack,
+                                      bool initialization) {
     
-    _pimpl->initializeCCylinder(cc, f, extensionFront, extensionBack);
+    _pimpl->initializeCCylinder(cc, f, extensionFront, extensionBack, initialization);
 }
 
 void ChemManager::updateCopyNumbers() {

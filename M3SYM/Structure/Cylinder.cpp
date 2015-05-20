@@ -14,7 +14,6 @@
 #include "Cylinder.h"
 
 #include "Bead.h"
-#include "NeighborListDB.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
 
@@ -24,6 +23,7 @@
 using namespace mathfunc;
 
 FilamentRateChanger* Cylinder::_polyChanger = nullptr;
+
 Database<Cylinder*> Cylinder::_cylinders;
 
 void Cylinder::updateCoordinate() {
@@ -33,7 +33,9 @@ void Cylinder::updateCoordinate() {
 
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront, bool extensionBack)
+                   bool extensionFront,
+                   bool extensionBack,
+                   bool initialization)
 
     : _b1(b1), _b2(b2), _pFilament(f),
       _positionFilament(positionFilament), _ID(_cylinders.getID()) {
@@ -52,7 +54,9 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _cCylinder->setCylinder(this);
         
     ChemManager::initializeCCylinder(_cCylinder.get(), f,
-                                     extensionFront, extensionBack);
+                                     extensionFront,
+                                     extensionBack,
+                                     initialization);
 #endif
 
 #ifdef MECHANICS
@@ -149,5 +153,15 @@ void Cylinder::updateReactionRates() {
             }
         }
     }
+}
+
+bool Cylinder::isFullLength() {
+    
+#ifdef MECHANICS
+    return _mCylinder->getEqLength() ==
+            SysParams::Geometry().cylinderSize;
+#else
+    return true;
+#endif
 }
 

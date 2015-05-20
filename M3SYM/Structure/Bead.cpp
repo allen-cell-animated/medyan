@@ -13,11 +13,10 @@
 #include "Bead.h"
 
 #include "Compartment.h"
-#include "NeighborListDB.h"
 
+#include "SysParams.h"
 #include "GController.h"
 #include "MathFunctions.h"
-#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -26,10 +25,7 @@ Database<Bead*> Bead::_beads;
 Bead::Bead (vector<double> v, int positionFilament)
 
     : coordinate(v), force(3, 0), forceAux(3, 0),
-      _positionFilament(positionFilament) {
-                                                         
-    //set birth time
-    _birthTime = tau();
+      _positionFilament(positionFilament), _birthTime(tau()) {
     
     //Find compartment, add this bead
     try {_compartment = GController::getCompartment(v);}

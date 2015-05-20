@@ -20,6 +20,10 @@
 
 #include "BoundaryElement.h"
 
+#include "MathFunctions.h"
+
+using namespace mathfunc;
+
 /// A plane implementation of a BoundaryElement.
 class PlaneBoundaryElement : public BoundaryElement {
     
@@ -32,14 +36,42 @@ public:
     PlaneBoundaryElement(vector<double> coords,
                          vector<double> normal,
                          double repulsConst,
-                         double screenLength);
+                         double screenLength)
     
-    virtual double distance(const vector<double>& point);
+        : BoundaryElement(coords, repulsConst, screenLength) {
+        
+        ///set parameters
+            _a = normal[0]; _b = normal[1]; _c = normal[2];
+        
+        _d = -_a * _coords[0] -
+              _b * _coords[1] -
+              _c * _coords[2];
+    }
+    
+    virtual double distance(const vector<double>& point) {
+    
+        return (_a * point[0] +
+                _b * point[1] +
+                _c * point[2] + _d) /
+        
+        sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d);
+                                     const vector<double>& force, double d) {
+        
+        return (_a * (point[0] + d*force[0]) +
+                _b * (point[1] + d*force[1]) +
+                _c * (point[2] + d*force[2]) + _d) /
+        
+                sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+        
+    }
     
-    virtual const vector<double> normal(const vector<double>& point);
+    virtual const vector<double> normal(const vector<double>& point) {
+        
+        return vector<double>{_a, _b, _c};
+    }
 };
 
 /// A spherical implementation of a BoundaryElement.
@@ -58,12 +90,25 @@ public:
         : BoundaryElement(coords, repulsConst, screenLength),
           _radius(radius) {}
     
-    virtual double distance(const vector<double>& point);
+    virtual double distance(const vector<double>& point) {
+        
+        return _radius - twoPointDistance(_coords, point);
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d);
-    
-    virtual const vector<double> normal(const vector<double>& point);
+                                     const vector<double>& force, double d) {
+        
+        vector<double> stretchedPoint{point[0] + d * force[0],
+                                      point[1] + d * force[1],
+                                      point[2] + d * force[2]};
+        
+        return _radius - twoPointDistance(_coords, stretchedPoint);
+        
+    }
+    virtual const vector<double> normal(const vector<double>& point) {
+        
+        return twoPointDirection(point, _coords);
+    }
 };
 
 /// A cylinder implementation of a BoundaryElement.
@@ -84,12 +129,38 @@ public:
         : BoundaryElement(coords, repulsConst, screenLength),
           _radius(radius), _height(height) {}
     
-    virtual double distance(const vector<double>& point);
+    virtual double distance(const vector<double>& point) {
+        
+        
+        ///check z coordinate. If outside, return infinity
+        if(point[2] > (_coords[2] + _height / 2) ||
+           point[2] < (_coords[2] - _height / 2))
+            
+            return numeric_limits<double>::infinity();
+        
+        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                          {  point[0],  point[1], 0});
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d);
+                                     const vector<double>& force, double d) {
+        
+        // check z coordinate. If outside, return infinity
+        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
+           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
+            
+            return numeric_limits<double>::infinity();
+        
+        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
+          {(point[0] + d * force[0]), (point[1] + d * force[1]) ,0});
+        
+    }
     
-    virtual const vector<double> normal(const vector<double>& point);
+    virtual const vector<double> normal(const vector<double>& point) {
+        
+        return twoPointDirection({point[0],  point[1], 0},
+                               {_coords[0],_coords[1], 0});
+    }
 };
 
 /// A half-sphere implementation of a BoundaryElement.
@@ -97,25 +168,51 @@ class HalfSphereZBoundaryElement : public BoundaryElement {
     
 private:
     double _radius; ///< Radius of half sphere
-    bool _up; ///< Whether the half sphere faces up or down
+    bool _up;       ///< Whether the half sphere faces up or down
     
 public:
     /// Constructor, sets parameters of equation
     HalfSphereZBoundaryElement(vector<double> coords,
-                               double radius,
-                               bool up,
+                               double radius, bool up,
                                double repulsConst,
                                double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
           _radius(radius), _up(up){}
 
-    virtual double distance(const vector<double>& point);
+    virtual double distance(const vector<double>& point) {
+        
+        // check z coordinate. If outside, return infinity
+        if(_up && (point[2] > _coords[2]))
+            return numeric_limits<double>::infinity();
+        if(!_up && (point[2] < _coords[2]))
+            return numeric_limits<double>::infinity();
+        
+        return _radius - twoPointDistance(_coords, point);
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d);
+                                     const vector<double>& force, double d) {
+        
+        
+        // check z coordinate. If outside, return infinity
+        if(_up && (point[2] + d * force[2] > _coords[2]))
+            return numeric_limits<double>::infinity();
+        if(!_up && (point[2] + d * force[2] < _coords[2]))
+            return numeric_limits<double>::infinity();
+        
+        vector<double> stretchedPoint{point[0] + d * force[0],
+                                      point[1] + d * force[1],
+                                      point[2] + d * force[2]};
+        
+        return _radius - twoPointDistance(_coords, stretchedPoint);
+        
+    }
     
-    virtual const vector<double> normal(const vector<double>& point);
+    virtual const vector<double> normal(const vector<double>& point) {
+        
+        return twoPointDirection(point, _coords);
+    }
 };
 
 #endif

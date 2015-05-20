@@ -32,10 +32,15 @@ class Bead;
  * The BoundaryElement class is a representation of a BoundarySurface element, which can
  * interact with other elements in the system, including other BoundaryElements as well 
  * as [Beads] (@ref Bead) in [Filaments](@ref Filament). Together, a collection of 
- * boundary elements make up a BoundarySurface. Extending the Trackable class, all instances
- * are kept and easily accessed by the SubSystem.
+ * boundary elements make up a BoundarySurface. 
+ *
+ * Extending the Trackable class, all instances are kept and easily 
+ * accessed by the SubSystem.
+ *
+ * Extending the Neighbor class, all instances can be kept in 
+ * [NeighborLists](@ref NeighborList).
  */
-class BoundaryElement : public Trackable, Neighbor {
+class BoundaryElement : public Trackable, public Neighbor {
 
 private:
     static Database<BoundaryElement*> _boundaryElements;
@@ -52,6 +57,7 @@ public:
     /// Default constructor
     BoundaryElement(vector<double> coords, double kRepuls, double screenLength)
         : _coords(coords), _kRep(kRepuls), _r0(screenLength) {}
+    
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL
@@ -89,7 +95,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<BoundaryElement*>& getBoundaryElements() {
+    static const vector<BoundaryElement*>& getBoundaryElements() {
         return _boundaryElements.getElements();
     }
     /// Get the number of boundary elements in this system

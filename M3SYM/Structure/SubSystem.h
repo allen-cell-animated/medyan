@@ -28,7 +28,7 @@
 #include "DynamicNeighbor.h"
 
 #ifdef DYNAMICRATES
-#include "NeighborListContainer.h"
+#include "NeighborListImpl.h"
 #endif
 
 #include "SysParams.h"
@@ -43,88 +43,35 @@ class BranchingPoint;
 
 class CompartmentGrid;
 
-/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers]
-/// (@ref Linker), [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref
-/// BranchingPoint). Also contains the CompartmentGrid.
+/// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
+/// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
+/// as well as the CompartmentGrid which contains all chemical structural information, and the
+/// system Boundary.
 
-/*! This is a class which handles all changes and information regarding the system.
+/*! This is a class which handles all changes and information regarding the simulated system.
  *  This class operates as a top manager and provides connections between smaller parts 
  *  of the system. All creation and changes go through this class and will be redirected 
- *  to lower levels. See databases for more documentation on the explicit creation of 
+ *  to lower levels. See the databases for more documentation on the explicit creation of
  *  subsystem objects at initialization and during runtime.
  *
- *  The SubSystem class also extends CBENLContainer, holding a neighbors list for
+ *  The SubSystem class also holds a CBENeighborList, used as a neighbors list for
  *  [Cylinders](@ref Cylinder) near boundaries. This is used for reaction rate updating.
  */
-class SubSystem
+class SubSystem {
 #ifdef DYNAMICRATES
-    : public CBENLContainer {
-#else 
-    {
+
+private:
+    CBENeighborList _neighborList; ///< The cylinder-boundary element neighbor list
+
 #endif
 public:
 #ifdef DYNAMICRATES 
-    SubSystem() : CBENLContainer(SysParams::Boundaries().BoundaryCutoff) {}
-#endif
-        
-    /// Add a Trackable to the SubSystem
-    template<class T, typename ...Args>
-    T* addTrackable(Args&& ...args) {
-        
-        //create instance
-        T* t = new T( forward<Args>(args)...);
-        
-        //add to subsystem
-        t->addToSubSystem();
-        
-        //if movable or reactable, add
-        Movable* m;
-        if((m = dynamic_cast<Movable*>(t))) addMovable(m);
-        Reactable* r;
-        if((r = dynamic_cast<Reactable*>(t))) addReactable(r);
-        
-        //if neighbor, add
-        DynamicNeighbor* dn; Neighbor* n;
-        
-        if((dn = dynamic_cast<DynamicNeighbor*>(t)))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->addDynamicNeighbor(dn);
-        
-        else if((n = dynamic_cast<Neighbor*>(t)))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->addNeighbor(n);
-        
-        return t;
-    }
-        
-    /// Remove a trackable from the SubSystem
-    void removeTrackable(Trackable* t) {
-        
-        //remove from subsystem
-        t->removeFromSubSystem();
-        
-        //if movable or reactable, remove
-        Movable* m;
-        if((m = dynamic_cast<Movable*>(t))) removeMovable(m);
-        
-        Reactable* r;
-        if((r = dynamic_cast<Reactable*>(t))) removeReactable(r);
-        
-        //if neighbor, remove as well
-        DynamicNeighbor* dn; Neighbor* n;
-        
-        if((dn = dynamic_cast<DynamicNeighbor*>(t)))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->removeDynamicNeighbor(dn);
-        
-        else if((n = dynamic_cast<Neighbor*>(t)))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->removeNeighbor(n);
-        
-        //delete it
-        delete t;
-    }
+    SubSystem() : _neighborList(SysParams::Boundaries().BoundaryCutoff) {
     
+        //add the neighbor list to the database
+        _neighborLists.addElement(&_neighborList);
+    }
+#endif
     //@{
     /// Setter functions for Movable
     void addMovable(Movable* mov) { _movables.insert(mov); }
@@ -151,11 +98,78 @@ public:
     Boundary* getBoundary() {return _boundary;}
     /// Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
-        
+    
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList* nl) {_neighborLists.addElement(nl);}
-    /// Get the database of neighbor lists in subsystem
-    Database<NeighborList*>& getNeighborLists() {return _neighborLists;}
+  
+    /// Reset all neighbor lists in subsystem
+    void resetNeighborLists() {
+        
+        for(auto nl: _neighborLists.getElements())
+            nl->reset();
+    }
+    
+    /// Add a Trackable to the SubSystem
+    template<class T, typename ...Args>
+    T* addTrackable(Args&& ...args) {
+        
+        //create instance
+        T* t = new T( forward<Args>(args)...);
+        
+        //add to subsystem
+        t->addToSubSystem();
+        
+        //if movable or reactable, add
+        Movable* m;
+        if((m = dynamic_cast<Movable*>(t))) addMovable(m);
+        Reactable* r;
+        if((r = dynamic_cast<Reactable*>(t))) addReactable(r);
+        
+        //if neighbor, add
+        DynamicNeighbor* dn; Neighbor* n;
+        
+        if((dn = dynamic_cast<DynamicNeighbor*>(t))) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addDynamicNeighbor(dn);
+        }
+        
+        else if((n = dynamic_cast<Neighbor*>(t))) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addNeighbor(n);
+        }
+        
+        return t;
+    }
+        
+    /// Remove a trackable from the SubSystem
+    void removeTrackable(Trackable* t) {
+        
+        //remove from subsystem
+        t->removeFromSubSystem();
+        
+        //if movable or reactable, remove
+        Movable* m;
+        if((m = dynamic_cast<Movable*>(t))) removeMovable(m);
+        
+        Reactable* r;
+        if((r = dynamic_cast<Reactable*>(t))) removeReactable(r);
+        
+        //if neighbor, remove as well
+        DynamicNeighbor* dn; Neighbor* n;
+        
+        if((dn = dynamic_cast<DynamicNeighbor*>(t))) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeDynamicNeighbor(dn);
+        }
+        
+        else if((n = dynamic_cast<Neighbor*>(t))) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeNeighbor(n);
+        }
+        
+        //delete it
+        delete t;
+    }
         
     //@{
     ///Subsystem energy management

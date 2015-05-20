@@ -30,7 +30,7 @@ class BranchingFF : public ForceField {
     
 private:
     vector<unique_ptr<BranchingInteractions>>
-        _branchingInteractionVector; ///< Vector of initialized branching interactions
+    _branchingInteractionVector; ///< Vector of initialized branching interactions
     
 public:
     /// Constructor, intializes all interaction at the branching point
@@ -42,6 +42,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
 };
 
 #endif

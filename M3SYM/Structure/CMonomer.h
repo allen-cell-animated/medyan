@@ -56,9 +56,8 @@ public:
     
     /// Default destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
-    /// potentially throwing,
-    /// which in turn disables move operations by the STL containers. This behaviour is
-    /// a gcc bug (as of gcc 4.703), and will presumbaly be fixed in the future.
+    /// potentially throwing, which in turn disables move operations by the STL containers.
+    /// This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly be fixed in the future.
     virtual ~CMonomer () noexcept;
     
     /// Copy constructor
@@ -82,14 +81,14 @@ public:
     /// @note no check on this index. The index value of a species is stored in the
     /// chemical initializer when all reactions are initialized from the chemical input
     /// file.
-    SpeciesFilament* speciesFilament(int index);
-    SpeciesFilament* speciesPlusEnd (int index);
-    SpeciesFilament* speciesMinusEnd(int index);
+    SpeciesFilament* speciesFilament (int index);
+    SpeciesFilament* speciesPlusEnd  (int index);
+    SpeciesFilament* speciesMinusEnd (int index);
     
-    SpeciesBound* speciesBound(int index);
-    SpeciesBound* speciesLinker(int index);
-    SpeciesBound* speciesMotor(int index);
-    SpeciesBound* speciesBrancher(int index);
+    SpeciesBound* speciesBound    (int index);
+    SpeciesBound* speciesLinker   (int index);
+    SpeciesBound* speciesMotor    (int index);
+    SpeciesBound* speciesBrancher (int index);
     //@}
     
     //@{

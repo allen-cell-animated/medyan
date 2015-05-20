@@ -32,11 +32,17 @@ class DRController;
 
 /// A container to store a MLinker and CLinker.
 /*!
- * Linker class is used to manage and store a MLinker and CLinker. Upon intialization,
- * both of these components are created. Extending the Movable and Reactable classes, 
- * the Linker can update its position and reactions according to mechanical 
- * equilibration. Extending the Trackable class, all instances are kept and easily 
- * accessed by the SubSystem.
+ *  Linker class is used to manage and store a MLinker and CLinker. Upon intialization,
+ *  both of these components are created.
+ *
+ *  Extending the Trackable class, all instances are kept and
+ *  easily accessed by the SubSystem.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
+ *
+ *  Extending the Reactable class, the reactions associated with all
+ *  instances can be updated by the SubSystem.
  */
 class Linker : public Composite, public Trackable, public Movable, public Reactable {
 
@@ -59,7 +65,8 @@ private:
     
     Compartment* _compartment; ///< Where this linker is
     
-    static Database<Linker*> _linkers; ///< Collection in SubSystem
+    static Database<Linker*> _linkers;
+    ///< Collection in SubSystem
     
     ///For dynamic rate unbinding
     static vector<LinkerRateChanger*> _unbindingChangers;
@@ -101,8 +108,8 @@ public:
     
     //@{
     /// Get linker parameter
-    short getLinkerType() {return _linkerType;}
-    int getLinkerID() {return _linkerID;}
+    short getType() {return _linkerType;}
+    int getID() {return _linkerID;}
     //@}
     
     /// Get the birth time
@@ -115,7 +122,7 @@ public:
     //@}
     
     /// Get all instances of this class from the SubSystem
-    static const unordered_set<Linker*>& getLinkers() {
+    static const vector<Linker*>& getLinkers() {
         return _linkers.getElements();
     }
     /// Get the number of linkers in this system

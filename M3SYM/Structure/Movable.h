@@ -17,6 +17,11 @@
 #include "common.h"
 
 /// An abstract base class for a movable element in the SubSystem.
+
+/*! The main function of the Movable class is to implement updatePosition(),
+ *  so that the position of any object extending this class can be updated
+ *  by the SubSystem.
+ */
 class Movable {
     
 protected:

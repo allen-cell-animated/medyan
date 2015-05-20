@@ -25,10 +25,10 @@
 
 using namespace mathfunc;
 
-Database<MotorGhost*> MotorGhost::_motorGhosts;
-
 vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
+
+Database<MotorGhost*> MotorGhost::_motorGhosts;
 
 void MotorGhost::updateCoordinate() {
     
@@ -47,11 +47,8 @@ void MotorGhost::updateCoordinate() {
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                        double position1, double position2)
     : _c1(c1), _c2(c2),
-      _position1(position1), _position2(position2), _motorType(motorType) {
-          
-    //get id and time
-    _motorID = _motorGhosts.getID();
-    _birthTime = tau();
+      _position1(position1), _position2(position2), _motorType(motorType),
+      _motorID(_motorGhosts.getID()), _birthTime(tau()) {
           
     //find compartment
     updateCoordinate();
@@ -179,7 +176,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(),
+                               _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
@@ -192,7 +190,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(),
+                               _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
@@ -210,7 +209,8 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
             _unbindingChangers[_motorType]->
-            changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+            changeRate(_cMotorGhost->getOnRate(),
+                       _cMotorGhost->getOffRate(),
                        _numHeads, force);
         
         offRxn->setRate(newRate);

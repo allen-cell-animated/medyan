@@ -58,7 +58,6 @@ public:
         return ChemSim::run(steps);
     }
 };
-    
 
 
 #endif

@@ -89,7 +89,8 @@ Filament::Filament(SubSystem* s, vector<vector<double> >& position,
     Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], 0);
     Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], 1);
     
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, 0);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, 0,
+                                                      false, false, true);
         
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
@@ -104,13 +105,14 @@ Filament::~Filament() {
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
         //delete bead
-        delete c->getFirstBead();
+        _subSystem->removeTrackable(c->getFirstBead());
         
         //remove second bead if last
-        if(c->isPlusEnd()) delete c->getSecondBead();
+        if(c->isPlusEnd())
+            _subSystem->removeTrackable(c->getSecondBead());
         
         //delete cylinder
-        delete c;
+        _subSystem->removeTrackable(c);
     }
 }
 
@@ -137,7 +139,8 @@ void Filament::extendFront(vector<double>& coordinates) {
     
     //create cylinder
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, b2, bNew, lastPositionFilament + 1);
+                   (this, b2, bNew, lastPositionFilament + 1,
+                    false, false, true);
     
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
@@ -166,7 +169,8 @@ void Filament::extendBack(vector<double>& coordinates) {
     
     //create cylinder
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, bNew, b2, lastPositionFilament - 1);
+                   (this, bNew, b2, lastPositionFilament - 1,
+                    false, false, true);
     
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
@@ -271,11 +275,11 @@ void Filament::extendBack(short minusEnd) {
 //Depolymerize front at runtime
 void Filament::retractFront() {
     
-    Cylinder* retractionCylinder = _cylinderVector.back();
+    Cylinder* retCylinder = _cylinderVector.back();
     _cylinderVector.pop_back();
     
-    delete retractionCylinder->getSecondBead();
-    delete retractionCylinder;
+    _subSystem->removeTrackable(retCylinder->getSecondBead());
+    _subSystem->removeTrackable(retCylinder);
     
     _cylinderVector.back()->setPlusEnd(true);
 
@@ -289,11 +293,11 @@ void Filament::retractFront() {
 
 void Filament::retractBack() {
     
-    Cylinder* retractionCylinder = _cylinderVector.front();
+    Cylinder* retCylinder = _cylinderVector.front();
     _cylinderVector.pop_front();
     
-    delete retractionCylinder->getFirstBead();
-    delete retractionCylinder;
+    _subSystem->removeTrackable(retCylinder->getFirstBead());
+    _subSystem->removeTrackable(retCylinder);
     
     _cylinderVector.front()->setMinusEnd(true);
     
@@ -628,8 +632,6 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     //array of sum(dx^2+dy^2+dz^2)
     transform(dxdy2.begin(),dxdy2.end(),dz2.begin(),
               back_inserter(length2),plus<double>());
-    // HERE
-    //std::transform(length2.begin(), length2.end(), length2.begin(), sqrt);
     
     std::vector<double> tempLength;
     for(auto x: length2) tempLength.push_back(sqrt(x));
