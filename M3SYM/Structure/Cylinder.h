@@ -77,11 +77,11 @@ private:
     
 public:
     vector<double> coordinate;
-        ///< Coordinates of midpoint, updated with updatePosition()
-    
+    ///< Coordinates of midpoint, updated with updatePosition()
+                                       
+    /// Constructor, initializes a cylinder and
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
-             bool extensionFront = false, bool extensionBack = false,
-             bool creation = false, bool branch = false);
+             bool extensionFront = false, bool extensionBack = false);
     virtual ~Cylinder() noexcept;
     
     /// Get mech cylinder
@@ -118,7 +118,6 @@ public:
     Cylinder* getBranchingCylinder() {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
-    
     
     /// Get ID
     const int getID() {return _ID;}

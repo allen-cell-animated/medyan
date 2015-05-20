@@ -240,7 +240,7 @@ void Controller::initialize(string inputFile,
         // check how many segments can fit between end-to-end of the filament
         if (numSegment == 0)
             _subSystem->addTrackable<Filament>
-            (_subSystem, it[0], tau, false, false);
+            (_subSystem, it[0], tau);
         else
             _subSystem->addTrackable<Filament>
             (_subSystem, it, numSegment + 1, "STRAIGHT");
@@ -265,7 +265,7 @@ void Controller::updateReactionRates() {
 void Controller::updateNeighborLists() {
     
     //Full reset of neighbor lists
-    for(auto nl : _subSystem->getNeighborLists()) nl->reset();
+    for(auto nl : _subSystem->getNeighborLists().getElements()) nl->reset();
     
 #ifdef CHEMISTRY
     //Update binding reactions

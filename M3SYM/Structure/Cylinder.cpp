@@ -33,13 +33,10 @@ void Cylinder::updateCoordinate() {
 
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront, bool extensionBack,
-                   bool creation, bool branch)
+                   bool extensionFront, bool extensionBack)
 
-    : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
-    
-    //Add to cylinder DB
-    _ID = _cylinders.getID();
+    : _b1(b1), _b2(b2), _pFilament(f),
+      _positionFilament(positionFilament), _ID(_cylinders.getID()) {
     
     //Set coordinate
     updateCoordinate();
@@ -55,22 +52,13 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _cCylinder->setCylinder(this);
         
     ChemManager::initializeCCylinder(_cCylinder.get(), f,
-                                     extensionFront,
-                                     extensionBack,
-                                     creation);
+                                     extensionFront, extensionBack);
 #endif
 
 #ifdef MECHANICS
     //set eqLength according to cylinder size
-    double eqLength;
+    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
         
-    if(extensionFront || extensionBack || branch)
-        eqLength = SysParams::Geometry().monomerSize;
-    else if(creation)
-        eqLength = SysParams::Geometry().minCylinderSize;
-    else
-        eqLength = SysParams::Geometry().cylinderSize;
-    
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
 #endif

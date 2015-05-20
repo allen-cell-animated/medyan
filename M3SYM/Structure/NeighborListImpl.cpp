@@ -171,7 +171,7 @@ void BBENeighborList::reset() {
     _list.clear();
     
     //loop through all neighbor keys
-    for(auto boundary: *BoundaryElementDB::instance())
+    for(auto boundary: BoundaryElement::getBoundaryElements())
         
         updateNeighbors(boundary);
 }
@@ -189,7 +189,7 @@ void CBENeighborList::updateNeighbors(BoundaryElement* be) {
     _list[be].clear();
     
     //loop through beads, add as neighbor
-    for (auto &c : *CylinderDB::instance()) {
+    for (auto &c : Cylinder::getCylinders()) {
         
         double dist = be->distance(c->coordinate);
         //If within range, add it
@@ -246,7 +246,7 @@ void CBENeighborList::reset() {
     _list.clear();
     
     //loop through all neighbor keys
-    for(auto boundary: *BoundaryElementDB::instance())
+    for(auto boundary: BoundaryElement::getBoundaryElements())
         
         updateNeighbors(boundary);
 }

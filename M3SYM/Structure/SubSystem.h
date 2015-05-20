@@ -43,10 +43,9 @@ class BranchingPoint;
 
 class CompartmentGrid;
 
-
 /// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers]
 /// (@ref Linker), [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref
-/// BranchingPoint).
+/// BranchingPoint). Also contains the CompartmentGrid.
 
 /*! This is a class which handles all changes and information regarding the system.
  *  This class operates as a top manager and provides connections between smaller parts 
@@ -79,20 +78,22 @@ public:
         t->addToSubSystem();
         
         //if movable or reactable, add
-        if(dynamic_cast<Movable*>(t)) addMovable(t);
+        Movable* m;
+        if((m = dynamic_cast<Movable*>(t))) addMovable(m);
+        Reactable* r;
+        if((r = dynamic_cast<Reactable*>(t))) addReactable(r);
         
-        if(dynamic_cast<Reactable*>(t)) addReactable(t);
-            
-        //if neighbor, add to neighbor lists
-        if(dynamic_cast<Neighbor*>(t))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->addNeighbor(t);
+        //if neighbor, add
+        DynamicNeighbor* dn; Neighbor* n;
         
-        //if dynamic neighbor, add as well
-        if(dynamic_cast<DynamicNeighbor*>(t))
+        if((dn = dynamic_cast<DynamicNeighbor*>(t)))
             for(auto nlist : _neighborLists.getElements())
-                nlist->addDynamicNeighbor(t);
-
+                nlist->addDynamicNeighbor(dn);
+        
+        else if((n = dynamic_cast<Neighbor*>(t)))
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addNeighbor(n);
+        
         return t;
     }
         
@@ -102,66 +103,27 @@ public:
         //remove from subsystem
         t->removeFromSubSystem();
         
-        //if movable or reactable, add
+        //if movable or reactable, remove
         Movable* m;
         if((m = dynamic_cast<Movable*>(t))) removeMovable(m);
         
         Reactable* r;
         if((r = dynamic_cast<Reactable*>(t))) removeReactable(r);
         
-        //if neighbor, add to neighbor lists
-        Neighbor* n;
-        if((n = dynamic_cast<Neighbor*>(t)))
-            for(auto nlist : _neighborLists.getElements())
-                nlist->removeNeighbor(n);
+        //if neighbor, remove as well
+        DynamicNeighbor* dn; Neighbor* n;
         
-        //if dynamic neighbor, add as well
-        DynamicNeighbor* dn;
         if((dn = dynamic_cast<DynamicNeighbor*>(t)))
             for(auto nlist : _neighborLists.getElements())
                 nlist->removeDynamicNeighbor(dn);
         
+        else if((n = dynamic_cast<Neighbor*>(t)))
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeNeighbor(n);
+        
         //delete it
         delete t;
     }
-    
-        
-//    /// Add new [Filaments](@ref Filament).
-//    /// @param v - coordinates of the first and last bead in the filament.
-//    void addNewFilaments(vector<vector<vector<double>>>& v);
-//    /// Add a new Filament at runtime
-//    Filament* addNewFilament(vector<double>& position,
-//                             vector<double>& direction,
-//                             bool branch = false);
-//    /// Remove a Filament from the system
-//    void removeFilament(Filament* f);
-//    
-//    /// Add [Linkers](@ref Linker) at initialization
-//    /// @param v - vector of cylinders to connect to
-//    void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
-//    /// Add a single Linker during runtime
-//    Linker* addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType,
-//                         double position1, double position2);
-//    /// Remove a Linker from the system
-//    void removeLinker(Linker* l);
-//    
-//    /// Add [MotorGhosts](@ref MotorGhost) at initialization
-//    /// @param v - vector of cylinders to connect to
-//    void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
-//    /// Add a MotorGhost during runtime
-//    MotorGhost* addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-//                                 double position1, double position2);
-//    /// remove a MotorGhost ghost from the system
-//    void removeMotorGhost(MotorGhost* m);
-//    
-//    /// Add [BranchingPoints](@ref BranchingPoint) at initialization
-//    /// @param v - vector of cylinders to connect to
-//    void addNewBranchingPoints(vector<vector<Cylinder*>>& v, short branchType);
-//    /// Add a BranchingPoint during runtime
-//    BranchingPoint* addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
-//                                         short branchType, double position);
-//    /// remove a BranchingPoint from the system
-//    void removeBranchingPoint(BranchingPoint* b);
     
     //@{
     /// Setter functions for Movable
@@ -185,17 +147,22 @@ public:
     /// Get all Reactable
     const unordered_set<Reactable*>& getReactables() {return _reactables;}
     
-    //@{
-    /// Subsystem energy management
-    double getSubSystemEnergy();
-    void setSubSystemEnergy(double energy);
-    //@}
-    
     /// Get the subsystem boundary
     Boundary* getBoundary() {return _boundary;}
     /// Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
-    
+        
+    /// Add a neighbor list to the subsystem
+    void addNeighborList(NeighborList* nl) {_neighborLists.addElement(nl);}
+    /// Get the database of neighbor lists in subsystem
+    Database<NeighborList*>& getNeighborLists() {return _neighborLists;}
+        
+    //@{
+    ///Subsystem energy management
+    double getSubSystemEnergy() {return _energy;}
+    void setSubSystemEnergy(double energy) {_energy = energy;}
+    //@}
+        
 #ifdef DYNAMICRATES
     /// Get the cylinders that are currently interacting with a boundary
     vector<Cylinder*> getBoundaryCylinders();

@@ -2428,8 +2428,7 @@ void SimpleManagerImpl::initializeSystem() {
 
 void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
                                             bool extensionFront,
-                                            bool extensionBack,
-                                            bool creation) {
+                                            bool extensionBack) {
     //maxlength is same length as mcylinder
     int maxlength = cc->getSize();
     Compartment* c = cc->getCompartment();
@@ -2464,10 +2463,6 @@ void SimpleManagerImpl::initializeCCylinder(CCylinder* cc, Filament *f,
     else if(extensionBack) {
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates) r->addReaction(cc, lastcc);
-    }
-
-    else if(creation) {
-        //do nothing, this will be handled by the callback
     }
     
     //Base case, initialization

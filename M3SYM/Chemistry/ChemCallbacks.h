@@ -281,7 +281,7 @@ struct BranchingCallback {
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
         
         //create a new filament
-        Filament* f = _ps->addTrackable<Filament>(bp, bd, true);
+        Filament* f = _ps->addTrackable<Filament>(_ps, bp, bd, true, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();
@@ -580,7 +580,7 @@ struct FilamentCreationCallback {
         }
         
         //create filament, set up ends and filament species
-        Filament* f = _ps->addTrackable<Filament>(position, direction);
+        Filament* f = _ps->addTrackable<Filament>(_ps, position, direction, true, false);
         
         //initialize the nucleation
         f->nucleate(_plusEnd, _filament, _minusEnd);

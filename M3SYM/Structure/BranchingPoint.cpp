@@ -34,14 +34,11 @@ void BranchingPoint::updateCoordinate() {
                                     _position);
 }
 
-
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position)
-    : _c1(c1), _c2(c2), _position(position), _branchType(branchType) {
-        
-    //Get id and time
-    _branchID = _branchingPoints.getID();
-    _birthTime = tau();
+
+    : _c1(c1), _c2(c2), _position(position), _branchType(branchType),
+      _branchID(_branchingPoints.getID()), _birthTime(tau()) {
     
     //Find compartment
     updateCoordinate();
@@ -53,13 +50,14 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     
 #ifdef CHEMISTRY
     _cBranchingPoint = unique_ptr<CBranchingPoint>(
-        new CBranchingPoint(branchType, _compartment,
-                            c1->getCCylinder(), c2->getCCylinder(), pos));
+                       new CBranchingPoint(branchType, _compartment,
+                       c1->getCCylinder(), c2->getCCylinder(), pos));
     _cBranchingPoint->setBranchingPoint(this);
 #endif
     
 #ifdef MECHANICS
-    _mBranchingPoint = unique_ptr<MBranchingPoint>(new MBranchingPoint(branchType));
+    _mBranchingPoint = unique_ptr<MBranchingPoint>(
+                       new MBranchingPoint(branchType));
     _mBranchingPoint->setBranchingPoint(this);
 #endif
         

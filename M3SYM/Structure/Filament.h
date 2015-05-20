@@ -58,29 +58,32 @@ private:
     static Database<Filament*> _filaments; ///< Collection in SubSystem
     
 public:
-    /// This constructor creates a short filament, containing only two beads.
+    /// This constructor creates a short filament, containing only two beads, at runtime.
     /// Coordinates of the first bead is an input, second is set up by using an input
     /// direction. Using all this, two constructors for beads and cylinders are called.
-	Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
-             bool creation, bool branch);
+    /// @param nucleation - this filament was nucleated at runtime by a non-branching species
+    /// @param branching - this filament was branched at runtime from an existing filament
+	Filament(SubSystem* s, vector<double>& position,
+                           vector<double>& direction,
+                           bool nucleation = false,
+                           bool branch = false);
     
-    /// This constructor is called to create a longer filament. It creates a filament
+    /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector and has a direction.
     Filament(SubSystem* s, vector<vector<double>>& position,
              int numBeads, string projectionType = "STRAIGHT");
     
-    
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
-    Filament(SubSystem* s);
+    Filament(SubSystem* s) : _subSystem(s), _ID(_filaments.getID()) {}
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.
     ~Filament();
     
     /// Addition of a new cylinder. Next position is based on previous beads directions
-    /// in the filament. This function creates a new bead. So, this function mostly
+    /// in the filament. This function creates a new bead. So, this function is mostly
     /// called during further extension, not initiation.
     /// @param plusEnd - the plus end species to be marked. Only if doing chemistry.
     void extendFront(short plusEnd);

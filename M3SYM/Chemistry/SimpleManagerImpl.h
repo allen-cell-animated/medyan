@@ -67,8 +67,7 @@ public:
     
     virtual void initializeCCylinder(CCylinder* cc, Filament* f,
                                      bool extensionFront,
-                                     bool extensionBack,
-                                     bool creation);
+                                     bool extensionBack);
     
     virtual void updateCopyNumbers();
     
@@ -79,8 +78,6 @@ private:
     
     /// A list of reactions to add to every new CCylinder
     vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
-
-    
 };
 
 #endif

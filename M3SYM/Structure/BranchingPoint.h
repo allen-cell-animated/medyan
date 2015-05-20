@@ -35,7 +35,7 @@ class Cylinder;
  * equilibration. Extending the Trackable class, all instances are kept and easily accessed
  * by the SubSystem.
  */
-class BranchingPoint : public Trackable, Movable {
+class BranchingPoint : public Trackable, public Movable {
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
