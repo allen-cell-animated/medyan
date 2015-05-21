@@ -11,18 +11,18 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "Component.h"
+#include "CompartmentGrid.h"
 
-#include "Composite.h"
-#include "Visitor.h"
+#include "ChemSim.h"
 
-Composite* Component::getRoot() {
-    if(isRoot())
-        return (Composite*)(this);
-    else
-        return getParent()->getRoot();
-}
-
-bool Component::apply (Visitor &v) {
-    return v.visit(this);
+void CompartmentGrid::addChemSimReactions(ChemSim* chem) {
+    
+    for(auto &c : children()) {
+        Compartment* C = (Compartment*)(c.get());
+        C->addChemSimReactions(chem);
+    }
+    
+    for(auto &r : _bulkReactions.reactions())
+        chem->addReaction(r.get());
+    
 }

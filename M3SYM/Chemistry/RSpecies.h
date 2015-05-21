@@ -31,7 +31,6 @@
 class Species;
 class RSpecies;
 class ReactionBase;
-class ChemSignal;
 class CMonomer;
 
 /// vr stands for vector of Reactions
@@ -68,9 +67,9 @@ private: //Variables
     vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions]
                                                ///< (@ref Reaction) where this RSpecies
                                                ///< is a Reactant
-    vector<ReactionBase *> _as_products = {}; ///< a vector of [Reactions]
-                                              ///< (@ref Reaction) where this RSpecies
-                                              ///< is a Product
+    vector<ReactionBase *> _as_products = {};  ///< a vector of [Reactions]
+                                               ///< (@ref Reaction) where this RSpecies
+                                               ///< is a Product
     Species& _species; ///< reference to the **parent** Species object
     species_copy_t _n; ///< Current copy number of this RSpecies
 #ifdef TRACK_UPPER_COPY_N

@@ -44,35 +44,31 @@ enum SpeciesType {
  *  diffusing "Arp2/3". SpeciesNamesDB associates a unique integer with Species of the 
  *  same type (e.g. "Arp2/3", regardless whether it is bound or not), and provides
  *  conversion functions fron integer to  string (SpeciesNamesDB::intToString(int i)) 
- *  and vice versa (SpeciesNamesDB::stringToInt (string name)). Class SpeciesNamesDB is 
- *  a singleton, and should be used by first calling SpeciesNamesDB::Instance() method.
+ *  and vice versa (SpeciesNamesDB::stringToInt (string name)).
  *
  *  @code
- *  int y = SpeciesNamesDB::instance()->stringToInt("Arp2/3");//let's say y=2
- *  string x = SpeciesNamesDB::instance()->intToString(2); //then x should be "Arp2/3"
+ *  int y = SpeciesNamesDB::stringToInt("Arp2/3");//let's say y=2
+ *  string x = SpeciesNamesDB::intToString(2); //then x should be "Arp2/3"
  *  @endcode
  *
- * SpeciesNamesDB also has a function to generate a unique name given a string seed. 
+ * SpeciesNamesDB also has a function to generate a unique filament name given a string seed.
  * This is particularly useful for when a filament species needs a unique name, say with 
- * the seed "Actin"
+ * the seed "Actin". This unique filament name can be added or removed to match the 
+ * corresponding bulk or diffusing species in the system.
  *
  */  
 class SpeciesNamesDB {
+
 private: 
-    static SpeciesNamesDB* _instance; ///< the singleton instance
-    SpeciesNamesDB() {}
-private: 
-    unordered_map<string,int> _map_string_int;
-    vector<string> _vec_int_string;
-    unsigned long _num = 0; ///<used to generate unique names
+    static unordered_map<string,int> _map_string_int;
+    static vector<string> _vec_int_string;
+    static unsigned long _num; ///<used to generate unique names
+    
 public:
-    /// returns the unique instance of the singleton, which can be used to access
-    // the names DB
-    static SpeciesNamesDB* instance();
     
     /// Given an integer "i", returns the string associated with that integer.
     /// Throws an out of range exception.
-    string intToString(unsigned int i) const {
+    static string intToString(unsigned int i) {
         if (i>=_vec_int_string.size())
             throw out_of_range(
                 "SpeciesNamesDB::intToString(int i) index error:[" +
@@ -83,7 +79,7 @@ public:
     
     /// Given a string "name", returns the unique integer associated with that string.
     /// If the string does not exist yet, it is created.
-    int stringToInt (string name) {
+    static int stringToInt (string name) {
         auto mit = _map_string_int.find(name);
         if(mit == _map_string_int.end()){
             _vec_int_string.push_back(name);
@@ -97,7 +93,7 @@ public:
     /// Generate a unique name based on a seed name
     /// (just adds integer value to end of string with a -)
     /// @note - used only for filament species.
-    string genUniqueFilName(string name) {
+    static string genUniqueFilName(string name) {
         string uniqueName = name + to_string(_num);
         if(_map_string_int.find(uniqueName) != _map_string_int.end())
             return uniqueName;
@@ -107,7 +103,7 @@ public:
     
     /// Remove the unique integer value identifier with this filament species name
     /// @return The name without the integer ending.
-    string removeUniqueFilName(string name) {
+    static string removeUniqueFilName(string name) {
         
         //loop through string, get to integer
         for(unsigned long i = 0; i < name.length(); i++) {
@@ -124,12 +120,12 @@ public:
     /// Generate a single binding name based on two strings:
     /// one string being the binding species and the other being
     /// the bound species on the filament.
-    string genBindingName(string binding, string bound) {
+    static string genBindingName(string binding, string bound) {
         return binding + "-" + bound;
     }
     
     /// Clear the contents of the database
-    void clear() {
+    static void clear() {
         _map_string_int.clear();
         _vec_int_string.clear();
     }
@@ -179,7 +175,7 @@ public:
     /// (although it is not marked as private)
     Species()  : _parent(nullptr), _constant(false) {
         
-        _molecule=SpeciesNamesDB::instance()->stringToInt("");
+        _molecule=SpeciesNamesDB::stringToInt("");
         _rspecies = new RSpecies(*this);
     }
     
@@ -195,7 +191,7 @@ public:
     Species (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim, bool constant=false)
         : _parent(nullptr), _constant(constant) {
         
-        _molecule=SpeciesNamesDB::instance()->stringToInt(name);
+        _molecule=SpeciesNamesDB::stringToInt(name);
         
         if(_constant)
             _rspecies = new RSpeciesConst(*this, n, ulim);
@@ -311,7 +307,7 @@ public:
 #endif
     
     /// Return this Species' name
-    string getName() const {return SpeciesNamesDB::instance()->intToString(_molecule);}
+    string getName() const {return SpeciesNamesDB::intToString(_molecule);}
     
     /// Return the molecule index associated with this Species' (as int)
     int getMolecule() const {return _molecule;}

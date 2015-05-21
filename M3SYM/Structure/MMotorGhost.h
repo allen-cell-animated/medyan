@@ -27,14 +27,12 @@ class MotorGhost;
 
 /*!
  *  The class describes interaction between 4 [Beads](@ref Bead) connected by a 
- *  MotorGhost, and equilibrium constants. There are NO ACTUAL BEADS assotiated with these
- *  motors, but just potentials acting on connected filament beads. Initial length of a 
- *  MotorGhost is determinated by the condition of zero initial stress, i.e., it
- *  is calculated within the  constructor at initiation. A ghost motor heads positions
- *  on a segment (between two consecutive beads on a filament) determined by two numbers 
- *  (0 to 1) position1 and position2 (finite number of steps before move to the next 
- *  segment o--x-o- -> o---xo- -> o---ox). they can be changed as a result of chemical 
- *  reaction, than we consider that the motor made a step.
+ *  MotorGhost, and equilibrium constants. Initial length is determinated by the condition 
+ *  of zero initial stress, i.e., it is calculated within the constructor at initiation. 
+ *  A ghost motor heads positions on a segment (between two consecutive beads on a filament) 
+ *  determined by two numbers (0 to 1) position1 and position2 (finite number of steps 
+ *  before move to the next segment o--x-o- -> o---xo- -> o---ox). they can be changed as a
+ *  result of chemical reaction, than we consider that the motor made a step.
  */
 class MMotorGhost {
     

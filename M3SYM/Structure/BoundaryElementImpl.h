@@ -41,7 +41,7 @@ public:
         : BoundaryElement(coords, repulsConst, screenLength) {
         
         ///set parameters
-            _a = normal[0]; _b = normal[1]; _c = normal[2];
+        _a = normal[0]; _b = normal[1]; _c = normal[2];
         
         _d = -_a * _coords[0] -
               _b * _coords[1] -
@@ -58,13 +58,14 @@ public:
     }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d) {
+                                     const vector<double>& force,
+                                     double d) {
         
-        return (_a * (point[0] + d*force[0]) +
-                _b * (point[1] + d*force[1]) +
-                _c * (point[2] + d*force[2]) + _d) /
         
-                sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+        vector<double> movedPoint = {point[0] + d*force[0],
+                                     point[1] + d*force[1],
+                                     point[2] + d*force[2]};
+        return distance(movedPoint);
         
     }
     
@@ -96,13 +97,14 @@ public:
     }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d) {
+                                     const vector<double>& force,
+                                     double d) {
         
-        vector<double> stretchedPoint{point[0] + d * force[0],
-                                      point[1] + d * force[1],
-                                      point[2] + d * force[2]};
+        vector<double> movedPoint{point[0] + d * force[0],
+                                  point[1] + d * force[1],
+                                  point[2] + d * force[2]};
         
-        return _radius - twoPointDistance(_coords, stretchedPoint);
+        return distance(movedPoint);
         
     }
     virtual const vector<double> normal(const vector<double>& point) {
@@ -143,7 +145,8 @@ public:
     }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d) {
+                                     const vector<double>& force,
+                                     double d) {
         
         // check z coordinate. If outside, return infinity
         if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
@@ -151,8 +154,11 @@ public:
             
             return numeric_limits<double>::infinity();
         
-        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
-          {(point[0] + d * force[0]), (point[1] + d * force[1]) ,0});
+        vector<double> movedPoint{point[0] + d * force[0],
+                                  point[1] + d * force[1],
+                                  point[2] + d * force[2]};
+        
+        return distance(movedPoint);
         
     }
     
@@ -183,29 +189,27 @@ public:
     virtual double distance(const vector<double>& point) {
         
         // check z coordinate. If outside, return infinity
-        if(_up && (point[2] > _coords[2]))
-            return numeric_limits<double>::infinity();
-        if(!_up && (point[2] < _coords[2]))
+        if((_up && (point[2] > _coords[2])) ||
+          (!_up && (point[2] < _coords[2])))
             return numeric_limits<double>::infinity();
         
         return _radius - twoPointDistance(_coords, point);
     }
     
     virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d) {
+                                     const vector<double>& force,
+                                     double d) {
         
+        vector<double> movedPoint{point[0] + d * force[0],
+                                  point[1] + d * force[1],
+                                  point[2] + d * force[2]};
         
         // check z coordinate. If outside, return infinity
-        if(_up && (point[2] + d * force[2] > _coords[2]))
-            return numeric_limits<double>::infinity();
-        if(!_up && (point[2] + d * force[2] < _coords[2]))
+        if((_up && (movedPoint[2] > _coords[2])) ||
+          (!_up && (movedPoint[2] < _coords[2])))
             return numeric_limits<double>::infinity();
         
-        vector<double> stretchedPoint{point[0] + d * force[0],
-                                      point[1] + d * force[1],
-                                      point[2] + d * force[2]};
-        
-        return _radius - twoPointDistance(_coords, stretchedPoint);
+        return distance(movedPoint);
         
     }
     

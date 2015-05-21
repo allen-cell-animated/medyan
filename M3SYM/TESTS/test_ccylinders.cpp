@@ -66,9 +66,9 @@ TEST(CCylinder, Basic) {
     
         CMonomer* m = new CMonomer;
         sf1 =
-        c->addSpeciesFilament(SpeciesNamesDB::instance()->genUniqueFilName("A"));
+        c->addSpeciesFilament(SpeciesNamesDB::genUniqueFilName("A"));
         sf2 =
-        c->addSpeciesFilament(SpeciesNamesDB::instance()->genUniqueFilName("B"));
+        c->addSpeciesFilament(SpeciesNamesDB::genUniqueFilName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -120,9 +120,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c1->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueFilName("A"));
+        SpeciesNamesDB::genUniqueFilName("A"));
         SpeciesFilament* sf2 = c1->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueFilName("B"));
+        SpeciesNamesDB::genUniqueFilName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);
@@ -134,9 +134,9 @@ TEST(CCylinder, AdvancedCloning) {
         
         CMonomer* m = new CMonomer;
         SpeciesFilament* sf1 = c2->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueFilName("A"));
+        SpeciesNamesDB::genUniqueFilName("A"));
         SpeciesFilament* sf2 = c2->addSpeciesFilament(
-        SpeciesNamesDB::instance()->genUniqueFilName("B"));
+        SpeciesNamesDB::genUniqueFilName("B"));
         
         m->addSpeciesFilament(sf1);
         m->addSpeciesFilament(sf2);

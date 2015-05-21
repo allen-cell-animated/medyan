@@ -13,11 +13,12 @@
 
 #include "BranchingPoint.h"
 
+#include "SubSystem.h"
 #include "Bead.h"
 #include "Cylinder.h"
 #include "Filament.h"
 #include "ChemRNode.h"
-#include "CompartmentContainer.h"
+#include "CompartmentGrid.h"
 
 #include "GController.h"
 #include "SysParams.h"
@@ -84,25 +85,29 @@ BranchingPoint::~BranchingPoint() noexcept {
         //find the free species
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
-        string speciesName = SpeciesNamesDB::instance()->
+        string speciesName = SpeciesNamesDB::
                              removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
         
         //find the free monomer, either bulk or diffusing
         Species* freeMonomer = nullptr;
         
+        Species* dMonomer  = _compartment->findSpeciesByName(speciesName);
+        Species* dfMonomer = _compartment->findSpeciesByName(speciesFirstChar);
+        
+        Species* bMonomer  = _subSystem->getCompartmentGrid()->
+                             findSpeciesBulkByName(speciesName);
+        Species* bfMonomer = _subSystem->getCompartmentGrid()->
+                             findSpeciesBulkByName(speciesFirstChar);
+        
         //try diffusing
-        if((freeMonomer = _compartment->
-            findSpeciesByName(speciesName)) != nullptr) {}
+        if(dMonomer != nullptr) freeMonomer = dMonomer;
         // try bulk
-        else if((freeMonomer = CompartmentGrid::instance()->
-                 findSpeciesBulkByName(speciesName)) != nullptr) {}
+        else if(bMonomer  != nullptr) freeMonomer = bMonomer;
         //diffusing, remove all but first char
-        else if((freeMonomer = _compartment->
-                 findSpeciesByName(speciesFirstChar)) != nullptr) {}
+        else if(dfMonomer != nullptr) freeMonomer = dfMonomer;
         //bulk, remove all but first char
-        else if((freeMonomer = CompartmentGrid::instance()->
-                 findSpeciesBulkByName(speciesFirstChar)) != nullptr) {}
+        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;
         //could not find. exit ungracefully
         else {
             cout << "In unbranching reaction, could not find corresponding " <<
@@ -112,7 +117,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         }
             
         //remove the filament from the system
-        delete _c2->getFilament();
+        _subSystem->removeTrackable(_c2->getFilament());
             
         //update reactions
         freeMonomer->getRSpecies().activateAssocReactantReactions();

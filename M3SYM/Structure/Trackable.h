@@ -16,6 +16,9 @@
 
 #include "common.h"
 
+//FORWARD DECLARATIONS
+class SubSystem;
+
 /// An abstract base class for a trackable object in the SubSystem.
 
 /*!
@@ -23,11 +26,14 @@
  *  add, and remove instances of its class from the SubSystem. In general,
  *  this is done using the Database class.
  */
-
 class Trackable {
     
+friend class Controller;
+    
 protected:
-    Trackable() {}
+    Trackable() {};
+    
+    static SubSystem* _subSystem; ///< A subsystem pointer for every trackable
     
 public:
     //@{
@@ -35,7 +41,6 @@ public:
     /// @note - this update could be due to an updated force minimization,
     /// a set of chemical steps, or any other event in the SubSystem.
     virtual void addToSubSystem() = 0;
-    
     virtual void removeFromSubSystem() = 0;
     //@}
     

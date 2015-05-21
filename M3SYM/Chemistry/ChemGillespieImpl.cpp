@@ -36,7 +36,7 @@ void RNodeGillespie::printDependents() const {
     for(auto rit = _react->dependents().begin();
         rit!=_react->dependents().end(); ++rit){
         
-        RNodeGillespie *rn_other = static_cast<RNodeGillespie*>((*rit)->getRnode());
+        RNodeGillespie *rn_other = (RNodeGillespie*)((*rit)->getRnode());
         rn_other->printSelf();
     }
     cout << endl;
@@ -127,7 +127,7 @@ bool ChemGillespieImpl::makeStep() {
     // Updating dependencies
     ReactionBase *r = rn_selected->getReaction();
     for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-        RNodeGillespie *rn_other = static_cast<RNodeGillespie*>((*rit)->getRnode());
+        RNodeGillespie *rn_other = (RNodeGillespie*)((*rit)->getRnode());
         rn_other->reComputePropensity();
         a_new = rn_other->getPropensity();
         a_penult = rn_other->getPenultStepPropensity();

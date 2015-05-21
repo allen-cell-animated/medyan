@@ -14,6 +14,19 @@
 #include "CCylinder.h"
 
 #include "CBound.h"
+#include "ChemManager.h"
+
+CCylinder::CCylinder(Compartment* C, Cylinder* c,
+                     bool extensionFront,
+                     bool extensionBack,
+                     bool initialization) : _compartment(C) {
+    
+    //initialize using the manager
+    _chemManager->initializeCCylinder(this, c,
+                                      extensionFront,
+                                      extensionBack,
+                                      initialization);
+}
 
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder) {
@@ -64,7 +77,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     
-    ChemSim::addReaction(r);
+    _chemSim->addReaction(r);
     
     //add to local reaction list
     _internalReactions.insert(r);
@@ -83,7 +96,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
+        _chemSim->removeReaction(r);
         _compartment->removeInternalReaction(r);
         
         _internalReactions.erase(r);
@@ -96,7 +109,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
     //add to compartment and chemsim
     _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
     
-    ChemSim::addReaction(r);
+    _chemSim->addReaction(r);
     
     //add to this reaction map
     _crossCylinderReactions[other].insert(r);
@@ -129,7 +142,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
+        _chemSim->removeReaction(r);
         _compartment->removeInternalReaction(r);
         
         //if number of reactions in cross-cylinder
@@ -211,4 +224,6 @@ void CCylinder::printCCylinder()
     cout << endl;
 }
 
+ChemSim* CCylinder::_chemSim = 0;
+ChemManager* CCylinder::_chemManager = 0;
 

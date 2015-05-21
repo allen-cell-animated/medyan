@@ -90,7 +90,7 @@ public:
     /// Constructor, initializes a cylinder and
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
              bool extensionFront = false,
-             bool extensionBack = false,
+             bool extensionBack  = false,
              bool initialization = false);
                                        
     virtual ~Cylinder() noexcept;

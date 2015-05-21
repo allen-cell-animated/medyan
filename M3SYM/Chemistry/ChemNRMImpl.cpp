@@ -79,7 +79,7 @@ void RNodeNRM::printDependents() const {
     << ", the following RNodeNRM objects are dependents:\n\n";
     for(auto rit = _react->dependents().begin();
         rit!=_react->dependents().end(); ++rit){
-        RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
+        RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
         rn_other->printSelf();
     }
     cout << endl;
@@ -160,7 +160,7 @@ bool ChemNRMImpl::makeStep() {
     ReactionBase *r = rn->getReaction();
     
     for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-        RNodeNRM *rn_other = static_cast<RNodeNRM*>((*rit)->getRnode());
+        RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
         double a_old = rn_other->getPropensity();
         rn_other->reComputePropensity();
         double tau_new;

@@ -22,9 +22,9 @@
 class Cylinder;
 
 /// Used to hold mechanical properties of a Cylinder.
-/*!
- * MCylinder is a class to hold mechanical properties of a Cylinder, including 
- * equilibrium force constants.
+
+/*! The class describes interaction between 2 [Beads](@ref Bead) connected by a
+ *  Cylinder in the same Filament, and its associated equilibrium constants. 
  */
 class MCylinder {
 

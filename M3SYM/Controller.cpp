@@ -16,11 +16,11 @@
 
 #include "Controller.h"
 
-#include "FilamentInitializer.h"
 #include "Parser.h"
 #include "Output.h"
 #include "SubSystem.h"
 #include "BoundaryImpl.h"
+#include "FilamentInitializer.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -41,9 +41,11 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     //init controllers
     _mController   = new MController(_subSystem);
     _cController   = new CController(_subSystem);
-    
     _gController   = new GController();
     _drController  = new DRController();
+    
+    //set Trackable's subsystem ptr
+    Trackable::_subSystem = _subSystem;
 }
 
 void Controller::initialize(string inputFile,
@@ -59,7 +61,7 @@ void Controller::initialize(string inputFile,
 #endif
     
     //init input directory
-    _inputDirectory = inputDirectory;
+    _inputDirectory  = inputDirectory;
     _outputDirectory = outputDirectory;
     
     //Parse input, get parameters
@@ -94,12 +96,18 @@ void Controller::initialize(string inputFile,
     //Initialize geometry controller
     cout << "---" << endl;
     cout << "Initializing geometry...";
-    _gController->initializeGrid();
+    CompartmentGrid* grid = _gController->initializeGrid();
+    _subSystem->setCompartmentGrid(grid);
     cout << "Done." << endl;
     
     //Always read boundary type
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
+    
+#ifdef DYNAMICRATES
+    // init neighbor list for dynamic rates
+    _subSystem->initBoundaryCylindersList();
+#endif
     
 #ifdef MECHANICS
     //read algorithm and types
@@ -161,8 +169,7 @@ void Controller::initialize(string inputFile,
         _numStepsPerSnapshot = numeric_limits<int>::max();
     
     _snapshotTime = CAlgorithm.snapshotTime;
-    
-    _numChemSteps= CAlgorithm.numChemSteps;
+    _numChemSteps = CAlgorithm.numChemSteps;
     _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
     
     ChemistryData ChemData;
@@ -239,9 +246,9 @@ void Controller::initialize(string inputFile,
 
         // check how many segments can fit between end-to-end of the filament
         if (numSegment == 0)
-            _subSystem->addTrackable<Filament> (_subSystem, it, 2);
+            _subSystem->addTrackable<Filament>(_subSystem, it, 2);
         else
-            _subSystem->addTrackable<Filament> (_subSystem, it, numSegment + 1);
+            _subSystem->addTrackable<Filament>(_subSystem, it, numSegment + 1);
     }
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
 }
@@ -267,13 +274,7 @@ void Controller::updateNeighborLists() {
     _subSystem->resetNeighborLists();
     
 #ifdef CHEMISTRY
-    //Update binding reactions
-    for(auto &child : CompartmentGrid::instance()->children()) {
-        Compartment* c = (Compartment*)child.get();
-            
-        for(auto &manager : c->getFilamentBindingManagers())
-            manager->updateAllPossibleBindings();
-    }
+    _subSystem->updateBindingManagers();
 #endif
 }
 

@@ -23,7 +23,7 @@ class NeighborList;
 
 /// An abstract class to represent various force field calculations
 /*!
- *  ForceField is used for force calculations between filaments, beads, linkers, etc.
+ *  ForceField is used for force calculations between elements in the SubSystem.
  *  Specific implementations of the ForceField class will have different potentials.
  */
 class ForceField {

@@ -20,7 +20,7 @@
 
 #include "common.h"
 
-#include "CompartmentContainer.h"
+#include "CompartmentGrid.h"
 
 #include "GController.h"
 #include "SysParams.h"

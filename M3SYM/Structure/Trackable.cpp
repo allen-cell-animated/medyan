@@ -11,20 +11,6 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "CompartmentContainer.h"
+#include "Trackable.h"
 
-CompartmentGrid* CompartmentGrid::_instance = 0;
-
-void CompartmentGrid::setInstance(int numCompartments)
-{
-    if(_instance != 0)
-        delete _instance;
-    _instance = new CompartmentGrid(numCompartments);
-}
-
-CompartmentGrid* CompartmentGrid::instance() {
-    if(_instance==0)
-        _instance = new CompartmentGrid(0);
-    return _instance;
-}
-
+SubSystem* Trackable::_subSystem = 0;

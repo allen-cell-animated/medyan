@@ -27,7 +27,7 @@
  */
 class CMonomer {
     
-friend class SimpleManagerImpl;
+friend class ChemManager;
 friend class CCylinder;
 
 private:

@@ -13,9 +13,12 @@
 
 #include "Cylinder.h"
 
-#include "Bead.h"
+#include "SubSystem.h"
+#include "CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
+
+#include "Bead.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -50,13 +53,11 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
    _compartment->addCylinder(this);
     
 #ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
+    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this,
+                                                     extensionFront,
+                                                     extensionBack,
+                                                     initialization));
     _cCylinder->setCylinder(this);
-        
-    ChemManager::initializeCCylinder(_cCylinder.get(), f,
-                                     extensionFront,
-                                     extensionBack,
-                                     initialization);
 #endif
 
 #ifdef MECHANICS

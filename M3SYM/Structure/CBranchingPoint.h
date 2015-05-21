@@ -28,6 +28,8 @@ class SubSystem;
 /// A class to represent the chemical component of a BranchingPoint.
 /*!
  *  The CBranchingPoint class contains chemical info of the parent BranchingPoint.
+ *
+ *  Extending CBound, this class tracks its corresponding Species and unbinding Reaction.
  */
 class CBranchingPoint : public CBound {
     

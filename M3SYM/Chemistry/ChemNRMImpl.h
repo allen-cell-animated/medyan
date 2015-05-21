@@ -240,7 +240,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
     ChemNRMImpl() : 
-    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))),
+    ChemSimImpl(), _eng((unsigned long)(time(nullptr))),
     _exp_distr(0.0), _n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed

@@ -16,49 +16,69 @@
 
 #include "common.h"
 
-#include "ChemManagerImpl.h"
+#include "ReactionTemplate.h"
+#include "Parser.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
-class Filament;
-class CCylinder;
+class CompartmentGrid;
+class ChemSim;
 
-struct ChemistryData;
+class Cylinder;
+class CCylinder;
 
 /// For initailizing chemical reactions based on a specific system
 /*!
- *  ChemManager is a singleton used for initailizing all chemistry in the system. 
- *  Initialized by the CController, the ChemManager initializes the chemical components 
- *  of the CompartmentGrid as well as initializes all [CCylinders] (@ref CCylinder) 
- *  created. The ChemManager can also update chemical components of a CCylinder.
+ *  ChemManager is used for initailizing all chemistry in the system.
+ *  Initialized by the CController, ChemManager initializes the chemical components
+ *  of the CompartmentGrid. The ChemManager can also update chemical components of
+ *  a CCylinder using its stored collection of FilamentReactionTemplate, which is
+ *  initialized at startup.
  */
 class ChemManager {
     
+private:
+    //HELPERS
+    void configCMonomer(); void initCMonomer(CMonomer* m, Compartment* c);
+    
+    void genSpecies(Compartment& protoCompartment);
+    
+    void genGeneralReactions(Compartment& protoCompartment);
+    void genBulkReactions();
+    
+    void genNucleationReactions();
+    void genFilReactionTemplates();
+    void genFilBindingManagers();
+    
 public:
-    ///Set the chemManager instance
-    static void setInstance(ChemManagerImpl *cii);
+    ///Constructor sets subsystem pointer, and loads chem data
+    ChemManager(SubSystem* subSystem, ChemistryData chem)
+        : _subSystem(subSystem), _chemData(chem) {}
     
-    ///Initialize the CompartmentGrid, based on the given simulation
-    static void initializeSystem();
+    /// Initialize the system, based on the given simulation
+    /// Adds all necessary reactions to the ChemSim object
+    virtual void initializeSystem(ChemSim* chem);
     
-    ///Initializer for a Cylinder, based on the given simulation
-    static void initializeCCylinder(CCylinder* cc, Filament* f,
-                                    bool extensionFront,
-                                    bool extensionBack,
-                                    bool initialization);
+    ///Initializer for chem cylinders, based on the given simulation
+    virtual void initializeCCylinder(CCylinder* cc, Cylinder* c,
+                                     bool extensionFront,
+                                     bool extensionBack,
+                                     bool initialization);
     
     /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time
     ///         tau has passed the release time of the molecule. This
     ///         function is called at every set of chemical steps to check
     ///         if molecules should be released at the current time.
-    static void updateCopyNumbers();
+    virtual void updateCopyNumbers();
     
 private:
-    static ChemManagerImpl* _pimpl; ///< Store a pointer to a specific implementation
-                                    ///< of the initializer; no ownership
-    ChemManager() {};
-
+    //DATA MEMBERS
+    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
+    ChemistryData _chemData; ///<The chemistry data for the system
+    
+    /// A list of reactions to add to every new CCylinder
+    vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
 };
 
 

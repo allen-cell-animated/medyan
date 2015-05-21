@@ -20,7 +20,6 @@
 #include "common.h"
 
 #include "NeighborList.h"
-#include "Neighbor.h"
 #include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
@@ -76,7 +75,7 @@ private:
     void updateNeighbors(BoundaryElement* be);
     
 public:
-    BBENeighborList(float rMax): NeighborList(rMax) {}
+    BBENeighborList(float rMax): NeighborList(rMax, -numeric_limits<double>::infinity()) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
@@ -101,7 +100,7 @@ private:
     void updateNeighbors(BoundaryElement* be);
     
 public:
-    CBENeighborList(float rMax): NeighborList(rMax) {}
+    CBENeighborList(float rMax): NeighborList(rMax, -numeric_limits<double>::infinity()) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);

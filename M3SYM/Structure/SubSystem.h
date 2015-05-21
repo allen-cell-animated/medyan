@@ -1,4 +1,4 @@
-
+ 
 //------------------------------------------------------------------
 //  **M3SYM** - Simulation Package for the Mechanochemical
 //              Dynamics of Active Networks, 3rd Generation
@@ -24,12 +24,8 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-#include "Neighbor.h"
-#include "DynamicNeighbor.h"
-
-#ifdef DYNAMICRATES
 #include "NeighborListImpl.h"
-#endif
+#include "DynamicNeighbor.h"
 
 #include "SysParams.h"
 
@@ -43,6 +39,9 @@ class BranchingPoint;
 
 class CompartmentGrid;
 
+class MController;
+class CController;
+
 /// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
 /// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
 /// as well as the CompartmentGrid which contains all chemical structural information, and the
@@ -54,6 +53,10 @@ class CompartmentGrid;
  *  to lower levels. See the databases for more documentation on the explicit creation of
  *  subsystem objects at initialization and during runtime.
  *
+ *  This class has functions to add or remove Trackable elements from the system, as well
+ *  as update Movable and Reactable instances in the system. It also can update the 
+ *  NeighborList container that it holds for the system.
+ *
  *  The SubSystem class also holds a CBENeighborList, used as a neighbors list for
  *  [Cylinders](@ref Cylinder) near boundaries. This is used for reaction rate updating.
  */
@@ -61,15 +64,17 @@ class SubSystem {
 #ifdef DYNAMICRATES
 
 private:
-    CBENeighborList _neighborList; ///< The cylinder-boundary element neighbor list
+    CBENeighborList* _neighborList; ///< The cylinder-boundary element neighbor list
 
 #endif
 public:
-#ifdef DYNAMICRATES 
-    SubSystem() : _neighborList(SysParams::Boundaries().BoundaryCutoff) {
     
-        //add the neighbor list to the database
-        _neighborLists.addElement(&_neighborList);
+#ifdef DYNAMICRATES
+    /// Initialize a neighbor list that contains boundary cylinders.
+    void initBoundaryCylindersList() {
+        //init neighbor list
+        _neighborList = new CBENeighborList(SysParams::Boundaries().BoundaryCutoff);
+        _neighborLists.addElement(_neighborList);
     }
 #endif
     //@{
@@ -109,15 +114,18 @@ public:
             nl->reset();
     }
     
+    //@{
+    ///Subsystem energy management
+    double getSubSystemEnergy() {return _energy;}
+    void setSubSystemEnergy(double energy) {_energy = energy;}
+    //@}
+    
     /// Add a Trackable to the SubSystem
     template<class T, typename ...Args>
     T* addTrackable(Args&& ...args) {
         
         //create instance
-        T* t = new T( forward<Args>(args)...);
-        
-        //add to subsystem
-        t->addToSubSystem();
+        T* t = new T( forward<Args>(args)...); t->addToSubSystem();
         
         //if movable or reactable, add
         Movable* m;
@@ -140,7 +148,7 @@ public:
         
         return t;
     }
-        
+    
     /// Remove a trackable from the SubSystem
     void removeTrackable(Trackable* t) {
         
@@ -170,12 +178,15 @@ public:
         //delete it
         delete t;
     }
-        
+    
     //@{
-    ///Subsystem energy management
-    double getSubSystemEnergy() {return _energy;}
-    void setSubSystemEnergy(double energy) {_energy = energy;}
-    //@}
+    /// CompartmentGrid management
+    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid;}
+    CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
+    //@]
+    
+    /// Update the binding managers of the system
+    void updateBindingManagers();
         
 #ifdef DYNAMICRATES
     /// Get the cylinders that are currently interacting with a boundary
@@ -192,6 +203,7 @@ private:
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
+
 };
 
 #endif

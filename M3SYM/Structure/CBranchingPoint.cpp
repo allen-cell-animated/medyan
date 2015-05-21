@@ -14,7 +14,7 @@
 #include "CBranchingPoint.h"
 
 #include "ChemCallbacks.h"
-#include "CompartmentContainer.h"
+#include "CompartmentGrid.h"
 #include "CCylinder.h"
 #include "CMonomer.h"
 

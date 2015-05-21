@@ -11,21 +11,24 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_CompartmentContainer_h
-#define M3SYM_CompartmentContainer_h
+#ifndef M3SYM_CompartmentGrid_h
+#define M3SYM_CompartmentGrid_h
 
 #include "common.h"
 
 #include "Compartment.h"
 
-/// A simple n-dimensional grid of Compartment objects (singleton).
+//FORWARD DECLARATIONS
+class ChemSim;
+
+/// A simple n-dimensional grid of Compartment objects.
 
 /*!
  *  The CompartmentGrid class is a singleton grid of Compartment objects, each of them 
  *  seperately holding internal and diffusion reactions, species information, as well as
  *  spatial information. This class is n-dimensional, and the dimension is specified at 
  *  runtime.
- *  All compartments within CompartmentGrid are indexed by the geometry controller, and 
+ *  All compartments within CompartmentGrid are indexed by the GController, and
  *  this class is responsible for assignment of compartment neighbors upon 
  *  initialization. All initialization of the CompartmentGrid should be done through 
  *  GController.initializeGrid().
@@ -36,7 +39,7 @@
  *
  *  @code
  *
- *  Compartment &Cproto = CompartmentGrid::instance()->getProtoCompartment();
+ *  Compartment &Cproto = grid.getProtoCompartment();
  *  Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
  *  Cproto.setDiffusionRate(M1,2000);
  *  Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
@@ -51,62 +54,36 @@ class CompartmentGrid : public Composite {
 private:
     Compartment _prototype_compartment; ///< Prototype compartment, to be configured
                                         ///< before initialization
-    SpeciesPtrContainerVector _bulkSpecies; ///< Bulk species in this grid
+    
+    SpeciesPtrContainerVector _bulkSpecies;    ///< Bulk species in this grid
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
-    static CompartmentGrid* _instance; ///singleton instance
-    
-    /// Private constructor
+public:
+    /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
         
         //add children
         for(size_t i=0; i<numCompartments; ++i)
             addChild(unique_ptr<Component>(new Compartment()));
     }
-public:
     
-    /// Copying is not allowed
-    CompartmentGrid(const CompartmentGrid &rhs) = delete;
-    
-    /// Assignment is not allowed
-    CompartmentGrid& operator=(CompartmentGrid &rhs) = delete;
-    
-    /// Set instance of grid (should only be done at beginning of program)
-    /// @note if called, a completely new grid will be created, and the old one erased.
-    static void setInstance(int numCompartments);
-    
-    /// Get instance of grid
-    static CompartmentGrid* instance();
+    /// Activate all compartments
+    void activateAll() {
+        for (auto &c : children())
+            ((Compartment*)(c.get()))->activate();
+        
+    }
     
     /// Get name of this compartment grid
     virtual string getFullName() const {return string("CompartmentGrid");};
-    
-    /// Activate all compartments
-    void activateAll()
-    {
-        for (auto &c : children())
-            static_cast<Compartment*>(c.get())->activate();
-        
-    }
     
     /// Get the protocompartment from this grid, in order to configure and then initialize
     Compartment& getProtoCompartment() {return _prototype_compartment;}
     const Compartment& getProtoCompartment() const {return _prototype_compartment;}
     
-    
     /// Add reactions to all compartments in the grid
     /// @param - chem, a ChemSim object that controls the reaction algorithm
-    virtual void addChemSimReactions() {
-        for(auto &c : children())
-        {
-            Compartment*C = static_cast<Compartment*>(c.get());
-            C->addChemSimReactions();
-        }
-        
-        for(auto &r : _bulkReactions.reactions())
-            ChemSim::addReaction(r.get());
-        
-    }
+    virtual void addChemSimReactions(ChemSim* chem);
     
     /// Print properties of this grid
     virtual void printSelf() {
@@ -120,7 +97,7 @@ public:
     template<typename ...Args>
     SpeciesBulk* addSpeciesBulk (Args&& ...args) {
         _bulkSpecies.addSpecies<SpeciesBulk>(forward<Args>(args)...);
-        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
+        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
     }
     
     /// Remove bulk species
@@ -128,10 +105,10 @@ public:
     
     /// Bulk species finder functions
     SpeciesBulk* findSpeciesBulkByName(const string& name) {
-        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByName(name));
+        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByName(name));
     }
     SpeciesBulk* findSpeciesBulkByMolecule(int molecule) {
-        return static_cast<SpeciesBulk*>(_bulkSpecies.findSpeciesByMolecule(molecule));
+        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByMolecule(molecule));
     }
     
     /// Add a bulk reaction to this compartment grid

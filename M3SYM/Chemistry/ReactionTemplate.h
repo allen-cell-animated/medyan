@@ -47,7 +47,7 @@ class CCylinder;
  */
 class FilamentReactionTemplate {
     
-    friend class SimpleManagerImpl;
+friend class CController;
     
 protected:
     static SubSystem* _ps; ///< A subsystem pointer to initialize and

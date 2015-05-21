@@ -50,7 +50,6 @@
 		F735B79B1A2D172800AE21D1 /* ChemGillespieImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7891A2D172800AE21D1 /* ChemGillespieImpl.h */; };
 		F735B79C1A2D172800AE21D1 /* ChemManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B78A1A2D172800AE21D1 /* ChemManager.cpp */; };
 		F735B79D1A2D172800AE21D1 /* ChemManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B78B1A2D172800AE21D1 /* ChemManager.h */; };
-		F735B79E1A2D172800AE21D1 /* ChemManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B78C1A2D172800AE21D1 /* ChemManagerImpl.h */; };
 		F735B79F1A2D172800AE21D1 /* ChemNRMImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B78D1A2D172800AE21D1 /* ChemNRMImpl.cpp */; };
 		F735B7A01A2D172800AE21D1 /* ChemNRMImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B78E1A2D172800AE21D1 /* ChemNRMImpl.h */; };
 		F735B7A11A2D172800AE21D1 /* ChemRNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B78F1A2D172800AE21D1 /* ChemRNode.h */; };
@@ -60,8 +59,6 @@
 		F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */; };
 		F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */; };
 		F735B7A81A2D172800AE21D1 /* ReactionTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7961A2D172800AE21D1 /* ReactionTemplate.h */; };
-		F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7971A2D172800AE21D1 /* SimpleManagerImpl.cpp */; };
-		F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7981A2D172800AE21D1 /* SimpleManagerImpl.h */; };
 		F735B7AB1A2D172D00AE21D1 /* M3Sym.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B75F1A2D16F200AE21D1 /* M3Sym.cpp */; };
 		F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */; };
 		F735B7B51A2D173F00AE21D1 /* CGFletcherRievesMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7AD1A2D173F00AE21D1 /* CGFletcherRievesMethod.h */; };
@@ -151,6 +148,7 @@
 		F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */; };
 		F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */; };
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
+		F790403E1B0E57B50033EA7E /* Trackable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F790403D1B0E57B50033EA7E /* Trackable.cpp */; };
 		F7A5200D1A8260EE003C49E0 /* ReactionTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */; };
 		F7A520121A8BB820003C49E0 /* RateChanger.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520101A8BB820003C49E0 /* RateChanger.h */; };
 		F7A520151A8BBF24003C49E0 /* DRController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A520131A8BBF24003C49E0 /* DRController.cpp */; };
@@ -191,8 +189,8 @@
 		F7C9D0001A2D165D0087434A /* CMotorGhost.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFB91A2D165D0087434A /* CMotorGhost.h */; };
 		F7C9D0011A2D165D0087434A /* Compartment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFBA1A2D165D0087434A /* Compartment.cpp */; };
 		F7C9D0021A2D165D0087434A /* Compartment.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFBB1A2D165D0087434A /* Compartment.h */; };
-		F7C9D0031A2D165D0087434A /* CompartmentContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFBC1A2D165D0087434A /* CompartmentContainer.cpp */; };
-		F7C9D0041A2D165D0087434A /* CompartmentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFBD1A2D165D0087434A /* CompartmentContainer.h */; };
+		F7C9D0031A2D165D0087434A /* CompartmentGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFBC1A2D165D0087434A /* CompartmentGrid.cpp */; };
+		F7C9D0041A2D165D0087434A /* CompartmentGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFBD1A2D165D0087434A /* CompartmentGrid.h */; };
 		F7C9D0051A2D165D0087434A /* Cylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFBE1A2D165D0087434A /* Cylinder.cpp */; };
 		F7C9D0061A2D165D0087434A /* Cylinder.h in Headers */ = {isa = PBXBuildFile; fileRef = F7C9CFBF1A2D165D0087434A /* Cylinder.h */; };
 		F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CFC21A2D165D0087434A /* Filament.cpp */; };
@@ -281,7 +279,6 @@
 		F735B7891A2D172800AE21D1 /* ChemGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemGillespieImpl.h; sourceTree = "<group>"; };
 		F735B78A1A2D172800AE21D1 /* ChemManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemManager.cpp; sourceTree = "<group>"; };
 		F735B78B1A2D172800AE21D1 /* ChemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemManager.h; sourceTree = "<group>"; };
-		F735B78C1A2D172800AE21D1 /* ChemManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemManagerImpl.h; sourceTree = "<group>"; };
 		F735B78D1A2D172800AE21D1 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F735B78E1A2D172800AE21D1 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
 		F735B78F1A2D172800AE21D1 /* ChemRNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemRNode.h; sourceTree = "<group>"; };
@@ -291,8 +288,6 @@
 		F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemSimpleGillespieImpl.cpp; sourceTree = "<group>"; };
 		F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemSimpleGillespieImpl.h; sourceTree = "<group>"; };
 		F735B7961A2D172800AE21D1 /* ReactionTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionTemplate.h; sourceTree = "<group>"; };
-		F735B7971A2D172800AE21D1 /* SimpleManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleManagerImpl.cpp; sourceTree = "<group>"; };
-		F735B7981A2D172800AE21D1 /* SimpleManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleManagerImpl.h; sourceTree = "<group>"; };
 		F735B7AC1A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGFletcherRievesMethod.cpp; sourceTree = "<group>"; };
 		F735B7AD1A2D173F00AE21D1 /* CGFletcherRievesMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFletcherRievesMethod.h; sourceTree = "<group>"; };
 		F735B7AE1A2D173F00AE21D1 /* CGMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGMethod.cpp; sourceTree = "<group>"; };
@@ -381,6 +376,7 @@
 		F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerStretchingHarmonic.cpp; path = Linker/LinkerStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkerStretchingHarmonic.h; path = Linker/LinkerStretchingHarmonic.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F790403D1B0E57B50033EA7E /* Trackable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trackable.cpp; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionTemplate.cpp; sourceTree = "<group>"; };
@@ -423,8 +419,8 @@
 		F7C9CFB91A2D165D0087434A /* CMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMotorGhost.h; sourceTree = "<group>"; };
 		F7C9CFBA1A2D165D0087434A /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compartment.cpp; sourceTree = "<group>"; };
 		F7C9CFBB1A2D165D0087434A /* Compartment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compartment.h; sourceTree = "<group>"; };
-		F7C9CFBC1A2D165D0087434A /* CompartmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentContainer.cpp; sourceTree = "<group>"; };
-		F7C9CFBD1A2D165D0087434A /* CompartmentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompartmentContainer.h; sourceTree = "<group>"; };
+		F7C9CFBC1A2D165D0087434A /* CompartmentGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompartmentGrid.cpp; sourceTree = "<group>"; };
+		F7C9CFBD1A2D165D0087434A /* CompartmentGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompartmentGrid.h; sourceTree = "<group>"; };
 		F7C9CFBE1A2D165D0087434A /* Cylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cylinder.cpp; sourceTree = "<group>"; };
 		F7C9CFBF1A2D165D0087434A /* Cylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cylinder.h; sourceTree = "<group>"; };
 		F7C9CFC21A2D165D0087434A /* Filament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filament.cpp; sourceTree = "<group>"; };
@@ -482,6 +478,7 @@
 				F7C9CFE71A2D165D0087434A /* SubSystem.cpp */,
 				F7C9CFE81A2D165D0087434A /* SubSystem.h */,
 				BF9A59321B0B68DE00ADF902 /* Database.h */,
+				F790403D1B0E57B50033EA7E /* Trackable.cpp */,
 				BF9A59361B0B72C300ADF902 /* Trackable.h */,
 				F7C9CFD41A2D165D0087434A /* Movable.h */,
 				F7C9CFDC1A2D165D0087434A /* Reactable.h */,
@@ -528,8 +525,8 @@
 				F7C9CFC31A2D165D0087434A /* Filament.h */,
 				F7C9CFBA1A2D165D0087434A /* Compartment.cpp */,
 				F7C9CFBB1A2D165D0087434A /* Compartment.h */,
-				F7C9CFBC1A2D165D0087434A /* CompartmentContainer.cpp */,
-				F7C9CFBD1A2D165D0087434A /* CompartmentContainer.h */,
+				F7C9CFBC1A2D165D0087434A /* CompartmentGrid.cpp */,
+				F7C9CFBD1A2D165D0087434A /* CompartmentGrid.h */,
 				F7C9CFD51A2D165D0087434A /* Neighbor.h */,
 				BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */,
 				F7C9CFD71A2D165D0087434A /* NeighborList.h */,
@@ -690,9 +687,6 @@
 				F735B7891A2D172800AE21D1 /* ChemGillespieImpl.h */,
 				F735B78A1A2D172800AE21D1 /* ChemManager.cpp */,
 				F735B78B1A2D172800AE21D1 /* ChemManager.h */,
-				F735B78C1A2D172800AE21D1 /* ChemManagerImpl.h */,
-				F735B7971A2D172800AE21D1 /* SimpleManagerImpl.cpp */,
-				F735B7981A2D172800AE21D1 /* SimpleManagerImpl.h */,
 				F735B78D1A2D172800AE21D1 /* ChemNRMImpl.cpp */,
 				F735B78E1A2D172800AE21D1 /* ChemNRMImpl.h */,
 				F735B78F1A2D172800AE21D1 /* ChemRNode.h */,
@@ -851,7 +845,6 @@
 				F7525A731A702431007A4E9F /* FilamentBending.h in Headers */,
 				F7525A871A70244D007A4E9F /* MotorGhostFF.h in Headers */,
 				F7C9D01E1A2D165D0087434A /* NeighborList.h in Headers */,
-				F735B7AA1A2D172800AE21D1 /* SimpleManagerImpl.h in Headers */,
 				F735B7A81A2D172800AE21D1 /* ReactionTemplate.h in Headers */,
 				F7C9D02F1A2D165D0087434A /* SubSystem.h in Headers */,
 				F7199B371A30C84600CD5DCC /* MBranchingPoint.h in Headers */,
@@ -909,7 +902,6 @@
 				F7525A531A70241E007A4E9F /* BranchingBending.h in Headers */,
 				F7C9CFED1A2D165D0087434A /* Boundary.h in Headers */,
 				F7525A3C1A7023EF007A4E9F /* CylinderVolumeInteractions.h in Headers */,
-				F735B79E1A2D172800AE21D1 /* ChemManagerImpl.h in Headers */,
 				F735B7BA1A2D173F00AE21D1 /* ConjugateGradient.h in Headers */,
 				F7525A591A70241E007A4E9F /* BranchingDihedralCosine.h in Headers */,
 				F735B7841A2D16F200AE21D1 /* SysParams.h in Headers */,
@@ -917,7 +909,7 @@
 				F7C9D0121A2D165D0087434A /* MCylinder.h in Headers */,
 				F735B7701A2D16F200AE21D1 /* common.h in Headers */,
 				F7525A8C1A70244D007A4E9F /* MotorGhostStretchingHarmonic.h in Headers */,
-				F7C9D0041A2D165D0087434A /* CompartmentContainer.h in Headers */,
+				F7C9D0041A2D165D0087434A /* CompartmentGrid.h in Headers */,
 				F7525A551A70241E007A4E9F /* BranchingBendingCosine.h in Headers */,
 				F7525A3E1A7023EF007A4E9F /* VolumeCylindricalFF.h in Headers */,
 				F7401C3F1AF9388D00BA97A5 /* SpeciesContainer.h in Headers */,
@@ -1062,6 +1054,7 @@
 				F7525A581A70241E007A4E9F /* BranchingDihedralCosine.cpp in Sources */,
 				F7C9D0111A2D165D0087434A /* MCylinder.cpp in Sources */,
 				F7525A861A70244D007A4E9F /* MotorGhostFF.cpp in Sources */,
+				F790403E1B0E57B50033EA7E /* Trackable.cpp in Sources */,
 				F7199B361A30C84600CD5DCC /* MBranchingPoint.cpp in Sources */,
 				F7C9D0151A2D165D0087434A /* MMotorGhost.cpp in Sources */,
 				F7C9D0171A2D165D0087434A /* MotorGhost.cpp in Sources */,
@@ -1085,9 +1078,8 @@
 				F7525A091A7023A4007A4E9F /* BoundaryRepulsionLJ.cpp in Sources */,
 				F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */,
 				BF9A593A1B0B90C200ADF902 /* BoundaryElement.cpp in Sources */,
-				F735B7A91A2D172800AE21D1 /* SimpleManagerImpl.cpp in Sources */,
 				F7A5200D1A8260EE003C49E0 /* ReactionTemplate.cpp in Sources */,
-				F7C9D0031A2D165D0087434A /* CompartmentContainer.cpp in Sources */,
+				F7C9D0031A2D165D0087434A /* CompartmentGrid.cpp in Sources */,
 				F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */,
 				F7525A991A702461007A4E9F /* LinkerStretchingHarmonic.cpp in Sources */,
 				F7401C2A1AF934A200BA97A5 /* BindingManager.cpp in Sources */,
