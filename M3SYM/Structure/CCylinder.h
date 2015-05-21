@@ -62,15 +62,12 @@ private:
     short _size = SysParams::Geometry().cylinderSize /
                   SysParams::Geometry().monomerSize; ///< Maximum length
     
-    static ChemSim* _chemSim;         ///< A pointer to the ChemSim, initialized by CController
-    static ChemManager* _chemManager; ///< A pointer to the ChemManager, intiailized by CController
+    static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
     
 public:
-    /// Default constructor, sets compartment and uses ChemManager to initialize.
-    CCylinder(Compartment* C, Cylinder* c,
-              bool extensionFront,
-              bool extensionBack,
-              bool initialization);
+    /// Default constructor, sets compartment and cylinder
+    CCylinder(Compartment* C, Cylinder* c)
+        : _compartment(C), _pCylinder(c) {}
     
     /// Copy constructor
     /// @note This constructor will create a new CCylinder with different Species and

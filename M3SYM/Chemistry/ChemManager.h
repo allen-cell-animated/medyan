@@ -38,7 +38,8 @@ class CCylinder;
 class ChemManager {
     
 private:
-    //HELPERS
+    //@{
+    /// Helper functions. Names are pretty self-explanatory.
     void configCMonomer(); void initCMonomer(CMonomer* m, Compartment* c);
     
     void genSpecies(Compartment& protoCompartment);
@@ -49,6 +50,7 @@ private:
     void genNucleationReactions();
     void genFilReactionTemplates();
     void genFilBindingManagers();
+    //@}
     
 public:
     ///Constructor sets subsystem pointer, and loads chem data
@@ -60,7 +62,7 @@ public:
     virtual void initializeSystem(ChemSim* chem);
     
     ///Initializer for chem cylinders, based on the given simulation
-    virtual void initializeCCylinder(CCylinder* cc, Cylinder* c,
+    virtual void initializeCCylinder(CCylinder* cc,
                                      bool extensionFront,
                                      bool extensionBack,
                                      bool initialization);

@@ -22,6 +22,7 @@
 #include "ChemSimpleGillespieImpl.h"
 
 #include "CCylinder.h"
+#include "Cylinder.h"
 
 void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     
@@ -70,7 +71,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     FilamentReactionTemplate::_ps = _subSystem;
     
     CCylinder::_chemSim = _chemSim;
-    CCylinder::_chemManager = _chemManager;
+    Cylinder::_chemManager = _chemManager;
     
 }
 

@@ -1280,7 +1280,7 @@ void ChemManager::genFilBindingManagers() {
             ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::BRANCHING);
             
-            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            C->addInternalReaction(rxn);
             
             //create manager
             BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName);
@@ -1502,7 +1502,7 @@ void ChemManager::genFilBindingManagers() {
             ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::LINKERBINDING);
             
-            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            C->addInternalReaction(rxn);
             
             //create manager
             LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName, rMax, rMin);
@@ -1722,7 +1722,7 @@ void ChemManager::genFilBindingManagers() {
             ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::MOTORBINDING);
             
-            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            C->addInternalReaction(rxn);
             
             //create manager
             MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName, rMax, rMin);
@@ -2099,7 +2099,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         }
         
         //add to compartment
-        protoCompartment.addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+        protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
     }
 }
@@ -2290,7 +2290,7 @@ void ChemManager::genNucleationReactions() {
             ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r));
             rxn->setReactionType(ReactionType::FILAMENTCREATION);
             
-            C->addInternalReactionUnique(unique_ptr<ReactionBase>(rxn));
+            C->addInternalReaction(rxn);
             
             reactantSpecies.clear();
             
@@ -2435,16 +2435,15 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 }
 
 
-void ChemManager::initializeCCylinder(CCylinder* cc, Cylinder* c,
+void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionFront,
                                       bool extensionBack,
                                       bool initialization) {
-
-    //set the cylinder
-    cc->setCylinder(c);
     
     //get some related objects
-    Compartment* C = cc->getCompartment(); Filament* f = c->getFilament();
+    Compartment* C = cc->getCompartment();
+    Cylinder* c = cc->getCylinder();
+    Filament* f = c->getFilament();
     
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {

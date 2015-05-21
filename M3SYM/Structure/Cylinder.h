@@ -32,7 +32,6 @@
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
-class DRController;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -54,6 +53,7 @@ class DRController;
 class Cylinder : public Composite, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
     
+friend class CController;
 friend class DRController;
     
 private:
@@ -79,6 +79,9 @@ private:
     
     ///For dynamic polymerization rate
     static FilamentRateChanger* _polyChanger;
+                                       
+    static ChemManager* _chemManager; ///< A pointer to the ChemManager,
+                                      ///< intiailized by CController
     
     ///Helper to get coordinate
     void updateCoordinate();

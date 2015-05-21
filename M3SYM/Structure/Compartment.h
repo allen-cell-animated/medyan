@@ -278,6 +278,20 @@ public:
         return r;
     }
     
+    /// Add an internal reaction pointer to this compartment. Make unique
+    ReactionBase* addInternalReaction (ReactionBase* r) {
+        _internal_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
+        r->setParent(this);
+        return r;
+    }
+    
+    /// Add a diffusion reaciton pointer to this compartment. Make unique
+    ReactionBase* addDiffusionReaction (ReactionBase* r) {
+        _diffusion_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
+        r->setParent(this);
+        return r;
+    }
+    
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>

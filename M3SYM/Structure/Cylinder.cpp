@@ -25,7 +25,8 @@
 
 using namespace mathfunc;
 
-FilamentRateChanger* Cylinder::_polyChanger = nullptr;
+FilamentRateChanger* Cylinder::_polyChanger = 0;
+ChemManager* Cylinder::_chemManager = 0;
 
 Database<Cylinder*> Cylinder::_cylinders;
 
@@ -53,11 +54,14 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
    _compartment->addCylinder(this);
     
 #ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this,
-                                                     extensionFront,
-                                                     extensionBack,
-                                                     initialization));
+    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
+          
+    //init using chem manager
+    _chemManager->initializeCCylinder(_cCylinder.get(),
+                                      extensionFront,
+                                      extensionBack,
+                                      initialization);
 #endif
 
 #ifdef MECHANICS
