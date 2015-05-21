@@ -62,7 +62,8 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
             _list[cylinder].push_back(ncylinder);
             
             //if runtime, add to other list as well if full
-            if(runtime && _full) _list[ncylinder].push_back(cylinder);
+            if(runtime && _full && (cylinder->getID() > ncylinder->getID()))
+                _list[ncylinder].push_back(cylinder);
         }
     }
 }
