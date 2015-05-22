@@ -208,6 +208,10 @@ def show_frame(frame_number=-1):
 	COLORMAP = 'OrRd'
 	#COLORMAP = 'Spectral'
 
+	#grid size
+	GRIDSIZEMAX = 900.0
+	GRIDSIZEMIN = 100.0
+
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
 	DFILCOLOR     = (1.0,0.0,0.0)
@@ -217,6 +221,14 @@ def show_frame(frame_number=-1):
 	local_frame=FrameList[frame_number]
 	mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
 	mlab.clf()
+
+	#create grid
+	x = [GRIDSIZEMIN,GRIDSIZEMIN,GRIDSIZEMAX]
+	y = [GRIDSIZEMAX,GRIDSIZEMIN,GRIDSIZEMIN]
+	z = [GRIDSIZEMIN,GRIDSIZEMAX,GRIDSIZEMIN]
+	pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
+		
+	outline=mlab.pipeline.outline(pts, line_width=0.25)
 
 	#DISPLAYING FILAMENTS
 	if(len(local_frame.filaments) != 0):
@@ -253,8 +265,6 @@ def show_frame(frame_number=-1):
 
 		# Finally, display the set of lines
 		tube=mlab.pipeline.tube(src, tube_radius=0.5)
-		#outline=mlab.pipeline.outline(src, line_width=0.25)
-
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):

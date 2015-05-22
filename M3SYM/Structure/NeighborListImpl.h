@@ -75,7 +75,7 @@ private:
     void updateNeighbors(BoundaryElement* be);
     
 public:
-    BBENeighborList(float rMax): NeighborList(rMax, -numeric_limits<double>::infinity()) {}
+    BBENeighborList(float rMax): NeighborList(rMax) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
@@ -100,7 +100,7 @@ private:
     void updateNeighbors(BoundaryElement* be);
     
 public:
-    CBENeighborList(float rMax): NeighborList(rMax, -numeric_limits<double>::infinity()) {}
+    CBENeighborList(float rMax): NeighborList(rMax) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
