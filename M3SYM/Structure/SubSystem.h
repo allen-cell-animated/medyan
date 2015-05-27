@@ -24,6 +24,8 @@
 #include "Movable.h"
 #include "Reactable.h"
 
+#include "Linker.h"
+
 #include "NeighborListImpl.h"
 #include "DynamicNeighbor.h"
 
@@ -144,8 +146,9 @@ public:
     }
     
     /// Remove a trackable from the SubSystem
-    void removeTrackable(Trackable* t) {
-        
+    template<class T>
+    void removeTrackable(T* t) {
+
         //remove from subsystem
         t->removeFromSubSystem();
         

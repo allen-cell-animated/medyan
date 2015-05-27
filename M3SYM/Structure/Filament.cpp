@@ -105,14 +105,14 @@ Filament::~Filament() {
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
         //delete bead
-        _subSystem->removeTrackable(c->getFirstBead());
+        _subSystem->removeTrackable<Bead>(c->getFirstBead());
         
         //remove second bead if last
         if(c->isPlusEnd())
-            _subSystem->removeTrackable(c->getSecondBead());
+            _subSystem->removeTrackable<Bead>(c->getSecondBead());
         
         //delete cylinder
-        _subSystem->removeTrackable(c);
+        _subSystem->removeTrackable<Cylinder>(c);
     }
 }
 
@@ -278,8 +278,8 @@ void Filament::retractFront() {
     Cylinder* retCylinder = _cylinderVector.back();
     _cylinderVector.pop_back();
     
-    _subSystem->removeTrackable(retCylinder->getSecondBead());
-    _subSystem->removeTrackable(retCylinder);
+    _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
+    _subSystem->removeTrackable<Cylinder>(retCylinder);
     
     _cylinderVector.back()->setPlusEnd(true);
 
@@ -296,8 +296,8 @@ void Filament::retractBack() {
     Cylinder* retCylinder = _cylinderVector.front();
     _cylinderVector.pop_front();
     
-    _subSystem->removeTrackable(retCylinder->getFirstBead());
-    _subSystem->removeTrackable(retCylinder);
+    _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
+    _subSystem->removeTrackable<Cylinder>(retCylinder);
     
     _cylinderVector.front()->setMinusEnd(true);
     

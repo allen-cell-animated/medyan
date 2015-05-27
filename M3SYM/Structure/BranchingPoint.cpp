@@ -119,7 +119,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         }
             
         //remove the filament from the system
-        _subSystem->removeTrackable(_c2->getFilament());
+        _subSystem->removeTrackable<Filament>(_c2->getFilament());
             
         //update reactions
         freeMonomer->getRSpecies().activateAssocReactantReactions();

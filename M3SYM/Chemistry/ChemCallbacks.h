@@ -217,7 +217,7 @@ struct BranchingPointUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //remove the branching point
-        _ps->removeTrackable(_branchingPoint);
+        _ps->removeTrackable<BranchingPoint>(_branchingPoint);
     }
 };
 
@@ -311,7 +311,7 @@ struct LinkerUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //remove the linker
-        _ps->removeTrackable(_linker);
+        _ps->removeTrackable<Linker>(_linker);
     }
 };
 
@@ -374,7 +374,7 @@ struct MotorUnbindingCallback {
     
     void operator() (ReactionBase *r) {
         //remove the motor
-        _ps->removeTrackable(_motor);
+        _ps->removeTrackable<MotorGhost>(_motor);
     }
 };
 
@@ -614,11 +614,13 @@ struct FilamentDestructionCallback {
     
     Cylinder* _c; ///< Cylinder to destroy
     
-    FilamentDestructionCallback(Cylinder* c) : _c(c) {}
+    SubSystem* _ps; ///< SubSystem ptr
+    
+    FilamentDestructionCallback(Cylinder* c, SubSystem* ps) : _c(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        Filament* f = _c->getFilament();
-        delete f;
+        
+        _ps->removeTrackable<Filament>(_c->getFilament());
     }
 };
 

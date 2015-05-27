@@ -199,6 +199,10 @@ for line in traj_file:
 @mlab.show
 def show_frame(frame_number=-1):
 
+	#if were saving the frames
+	saving = False
+	saveFile = "/Users/jameskomianos/Desktop/GarykRun1000s/Snapshots/"
+
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
 	MAXVAL = 5.00
@@ -209,17 +213,17 @@ def show_frame(frame_number=-1):
 	#COLORMAP = 'Spectral'
 
 	#grid size
-	GRIDSIZEMAX = 900.0
-	GRIDSIZEMIN = 100.0
+	GRIDSIZEMAX = 1000.0
+	GRIDSIZEMIN = 0.0
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
-	DFILCOLOR     = (1.0,0.0,0.0)
-	DLINKERCOLOR  = (0.3,0.8,0.4)
-	DMOTORCOLOR   = (0.2,0.4,0.8)
+	DFILCOLOR     = (0.2,0.4,0.8)
+	DLINKERCOLOR  = (1.0,0.99,0.49)
+	DMOTORCOLOR   = (1.0,0.2,0.2)
 
 	local_frame=FrameList[frame_number]
-	mlab.figure(1, size=(600, 600), bgcolor=(0, 0, 0))
+	mlab.figure(1, size=(1000, 1000), bgcolor=(0.32, 0.32, 0.32))
 	mlab.clf()
 
 	#create grid
@@ -264,7 +268,7 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.5)
+		tube=mlab.pipeline.tube(src, tube_radius=1.25)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -314,7 +318,7 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.25)
+		tube=mlab.pipeline.tube(src, tube_radius=0.5)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -357,7 +361,7 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.25)
+		tube=mlab.pipeline.tube(src, tube_radius=0.75)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -382,6 +386,8 @@ def show_frame(frame_number=-1):
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
 									scale_factor=2.0, color=DBEADCOLOR)
 
+	if(saving):
+		mlab.savefig(filename=saveFile + "Snapshot" + str(frame_number) + ".jpg")
 
 @mlab.animate(delay=10, ui=True)
 def anim():

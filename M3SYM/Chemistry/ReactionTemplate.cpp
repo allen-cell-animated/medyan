@@ -730,7 +730,7 @@ void DestructionTemplate::addReaction(CCylinder* cc) {
         new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
-        FilamentDestructionCallback dcallback(cc->getCylinder());
+        FilamentDestructionCallback dcallback(cc->getCylinder(), _ps);
         ConnectionBlock rcb(rxn->connect(dcallback,false));
 #endif
         
@@ -780,7 +780,7 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
-    FilamentDestructionCallback dcallback(cc1->getCylinder());
+    FilamentDestructionCallback dcallback(cc1->getCylinder(), _ps);
     ConnectionBlock rcb(rxn->connect(dcallback,false));
 #endif
     
