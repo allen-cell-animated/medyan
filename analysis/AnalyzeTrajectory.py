@@ -606,7 +606,8 @@ def minEnclosingVolume(FrameList):
 
 	minEnclosingVols = []
 
-	for frame in FrameList:
+	for i in xrange(2, len(FrameList), 2):
+		frame = FrameList[i]
 
 		points = []
 
@@ -668,13 +669,13 @@ def minEnclosingVolumes(FrameLists, saveFile=''):
 
 	times  = [x[0] for x in finalMinEnclosingVolumes]
 	vols   = [x[1] for x in finalMinEnclosingVolumes]
-	errors = [x[2] for x in finalMinEnclosingVolumes]
+	#errors = [x[2] for x in finalMinEnclosingVolumes]
 
-	plt.errorbar(times, vols, yerr=errors)
+	plt.errorbar(times, vols)
 
-	plt.title("Minimum spherical enclosing volume (um^3)")
-	plt.xlabel("Time (s)")
-	plt.ylabel("Volume (um^3)")
+	plt.title(r'$\mathrm{Minimum\/spherical\/enclosing\/volume}\/(um^3)$')
+	plt.xlabel(r'$\mathrm{Time}\/(s)$')
+	plt.ylabel(r'$\mathrm{Volume}\/(um^3)$')
 
 	#if file provided, save
 	if saveFile != '':
@@ -689,7 +690,9 @@ def orderParameter(FrameList):
 
 	orderParams = []
 
-	for frame in FrameList:
+	for i in xrange(0, len(FrameList), 2):
+
+		frame = FrameList[i]
 
 		if len(frame.cylinders) <= 1: 
 
@@ -778,14 +781,16 @@ def orderParameters(FrameLists, saveFile=''):
 	host = fig.add_subplot(111)
 
 	times  = [x[0] for x in finalOrderParams]
-	vols   = [x[1] for x in finalOrderParams]
-	errors = [x[2] for x in finalOrderParams]
+	params = [x[1] for x in finalOrderParams]
+	#errors = [x[2] for x in finalOrderParams]
 
-	plt.errorbar(times, vols, yerr=errors)
+	plt.errorbar(times, params)
 
-	plt.title("Nematic order parameter of filaments")
-	plt.xlabel("Time (s)")
-	plt.ylabel("Order parameter")
+	plt.title(r'$\mathrm{Nematic\/order\/parameter\/of\/filaments})$')
+	plt.xlabel(r'$\mathrm{Time}\/(s)$')
+	plt.ylabel(r'$\mathrm{Order\/parameter}$')
+
+	plt.ylim(0, 0.8)
 
 	#if file provided, save
 	if saveFile != '':

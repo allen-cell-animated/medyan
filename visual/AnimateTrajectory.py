@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/GarykRun400s/snapshot.traj'
+traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
 #traj_filename='/Users/jameskomianos/Desktop/DT1SampleRuns/M0.005A0.01/Run1/snapshot.traj'
 #color_filename = '/Users/jameskomianos/Desktop/Alison/Run3/stresses.traj'
 color_filename = ''
@@ -200,8 +200,8 @@ for line in traj_file:
 def show_frame(frame_number=-1):
 
 	#if were saving the frames
-	saving = True
-	saveFile = "/Users/jameskomianos/Desktop/GarykRun400s/Snapshots/"
+	saving = False
+	saveFile = "/Users/jameskomianos/Desktop/GarykRun1000s/Snapshots/"
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
@@ -213,8 +213,8 @@ def show_frame(frame_number=-1):
 	#COLORMAP = 'Spectral'
 
 	#grid size
-	GRIDSIZEMAX = 900.0
-	GRIDSIZEMIN = 100.0
+	GRIDSIZEMAX = 1000.0
+	GRIDSIZEMIN = 0.0
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
