@@ -32,9 +32,6 @@ class Cylinder;
  *  BranchingPoint class is used to manage and store a MBranchingPoint and
  *  CBranchingPoint. Upon intialization, both of these components are created.
  *
- *  Extending the Trackable class, all instances are kept and 
- *  easily accessed by the SubSystem.
- *
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  */

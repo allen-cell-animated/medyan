@@ -35,9 +35,6 @@ class DRController;
  *  Linker class is used to manage and store a MLinker and CLinker. Upon intialization,
  *  both of these components are created.
  *
- *  Extending the Trackable class, all instances are kept and
- *  easily accessed by the SubSystem.
- *
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  *

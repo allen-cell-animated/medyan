@@ -24,7 +24,9 @@ typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;
 
 ///Global time
-extern double global_time; inline double tau() {return global_time;}
+extern double global_time;
+
+inline double tau() {return global_time;}
 
 ///Some constants
 const double kT = 4.1; //in pN * nm

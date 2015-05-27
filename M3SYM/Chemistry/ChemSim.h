@@ -29,16 +29,6 @@ class ReactionBase;
  *  single static implementation of ChemSimImpl. After the specific algorithm is chosen
  *  and ChemSim is instantiated, ChemSim can be used to manage simulations, through
  *  such methods as run(steps) etc.
- *  @code
-        SpeciesBulk A1("A1", 25);
-        SpeciesBulk A2("A2", 25);
-        Reaction r1 = {{&A1,&A2}, 1, 1, 100.0};
-        chemSim->setInstance(new ChemNRMImpl());
-        chemSim->addReaction(&r1);
-        chemSim->initialize();
-        chemSim->run(20);
- * @endcode
- *
  */
 class ChemSim {
 public:

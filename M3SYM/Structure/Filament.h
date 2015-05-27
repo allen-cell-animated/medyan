@@ -75,7 +75,7 @@ public:
     
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
-    Filament(SubSystem* s) : _subSystem(s), _ID(_filaments.getID()) {}
+    Filament(SubSystem* s) : Trackable(), _subSystem(s), _ID(_filaments.getID()) {}
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.

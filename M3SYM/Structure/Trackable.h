@@ -25,15 +25,35 @@ class SubSystem;
  *  Every class extending Trackable will provide a container to track, 
  *  add, and remove instances of its class from the SubSystem. In general,
  *  this is done using the Database class.
+ *
+ *  A class extending Trackable can either be Movable, Reactable, DynamicNeighbor, or Neighbor.
+ *  These concrete subclasses will implement the boolean functions which define which 
+ *  extension of this class is being used.
  */
 class Trackable {
     
 friend class Controller;
+friend class SubSystem;
     
 protected:
-    Trackable() {};
+    /// Constructor sets boolean values
+    Trackable(bool movable   = false,
+              bool reactable = false,
+              bool dneighbor = false,
+              bool neighbor  = false)
+    
+        : _movable(movable), _reactable(reactable),
+          _dneighbor(dneighbor), _neighbor(neighbor) {};
     
     static SubSystem* _subSystem; ///< A subsystem pointer for every trackable
+    
+    //@{
+    /// Object type
+    bool _movable;
+    bool _reactable;
+    bool _dneighbor;
+    bool _neighbor;
+    //@}
     
 public:
     //@{

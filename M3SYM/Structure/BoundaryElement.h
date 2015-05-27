@@ -34,9 +34,6 @@ class Bead;
  * as [Beads] (@ref Bead) in [Filaments](@ref Filament). Together, a collection of 
  * boundary elements make up a BoundarySurface. 
  *
- * Extending the Trackable class, all instances are kept and easily 
- * accessed by the SubSystem.
- *
  * Extending the Neighbor class, all instances can be kept in 
  * [NeighborLists](@ref NeighborList).
  */
@@ -56,7 +53,9 @@ protected:
 public:
     /// Default constructor
     BoundaryElement(vector<double> coords, double kRepuls, double screenLength)
-        : _coords(coords), _kRep(kRepuls), _r0(screenLength) {}
+    
+        : Trackable(false, false, false, true),
+          _coords(coords), _kRep(kRepuls), _r0(screenLength) {}
     
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as

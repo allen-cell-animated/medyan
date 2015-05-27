@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_Utility_h
-#define M3SYM_Utility_h
+#ifndef M3SYM_utility_h
+#define M3SYM_utility_h
 
 #include <tuple>
 #include <memory>

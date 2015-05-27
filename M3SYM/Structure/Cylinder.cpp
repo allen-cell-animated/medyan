@@ -41,8 +41,10 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
                    bool extensionBack,
                    bool initialization)
 
-    : _b1(b1), _b2(b2), _pFilament(f),
-      _positionFilament(positionFilament), _ID(_cylinders.getID()) {
+    : Trackable(true, true, true, false),
+      _b1(b1), _b2(b2), _pFilament(f),
+      _positionFilament(positionFilament),
+      _ID(_cylinders.getID()) {
     
     //Set coordinate
     updateCoordinate();

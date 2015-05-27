@@ -25,8 +25,6 @@
 
 //FORWARD DECLARATIONS
 class SubSystem;
-class PolakRibiere;
-class FletcherRieves;
 
 /// Used to initialize, control, and run the mechanical components of a simulation
 

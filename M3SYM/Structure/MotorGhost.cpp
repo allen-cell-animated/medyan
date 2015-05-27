@@ -46,9 +46,12 @@ void MotorGhost::updateCoordinate() {
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                        double position1, double position2)
-    : _c1(c1), _c2(c2),
-      _position1(position1), _position2(position2), _motorType(motorType),
-      _motorID(_motorGhosts.getID()), _birthTime(tau()) {
+
+    : Trackable(true, true),
+      _c1(c1), _c2(c2),
+      _position1(position1), _position2(position2),
+      _motorType(motorType), _motorID(_motorGhosts.getID()),
+      _birthTime(tau()) {
           
     //find compartment
     updateCoordinate();

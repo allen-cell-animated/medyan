@@ -41,7 +41,7 @@ Filament::Filament(SubSystem* s, vector<double>& position,
                                  vector<double>& direction,
                                  bool nucleation, bool branch)
 
-    : _subSystem(s), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _ID(_filaments.getID()) {
  
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, 0);
@@ -68,7 +68,7 @@ Filament::Filament(SubSystem* s, vector<double>& position,
 Filament::Filament(SubSystem* s, vector<vector<double> >& position,
                    int numBeads, string projectionType)
 
-    : _subSystem(s), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _ID(_filaments.getID()) {
     
     //create a projection of beads
     vector<vector<double>> tmpBeadsCoord;

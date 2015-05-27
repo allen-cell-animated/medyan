@@ -38,8 +38,10 @@ void BranchingPoint::updateCoordinate() {
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position)
 
-    : _c1(c1), _c2(c2), _position(position), _branchType(branchType),
-      _branchID(_branchingPoints.getID()), _birthTime(tau()) {
+    : Trackable(true),
+      _c1(c1), _c2(c2), _position(position),
+      _branchType(branchType), _branchID(_branchingPoints.getID()),
+      _birthTime(tau()) {
     
     //Find compartment
     updateCoordinate();

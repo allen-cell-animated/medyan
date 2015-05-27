@@ -35,9 +35,6 @@ class Compartment;
  *  algorithms, beads are moved corresponding to external forces, for example, Filament 
  *  stretching and bending. The bead class contains currernt coordinates and forces, and 
  *  has functions to calculate dot products for the minimization algorithms.
- *  
- *  Extending the Trackable class, all instances are kept and easily 
- *  accessed by the SubSystem.
  *
  *  Extending the Movable class, the positions of all instances can 
  *  be updated by the SubSystem.
@@ -64,7 +61,8 @@ public:
     
     ///Default constructor
     Bead(int positionFilament)
-        : coordinate (3, 0), force(3, 0), forceAux(3, 0),
+        : Trackable(true, false, true, false),
+          coordinate (3, 0), force(3, 0), forceAux(3, 0),
           _positionFilament(positionFilament) {}
     
     ~Bead();

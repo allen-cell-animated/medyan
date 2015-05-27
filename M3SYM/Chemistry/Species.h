@@ -46,11 +46,6 @@ enum SpeciesType {
  *  conversion functions fron integer to  string (SpeciesNamesDB::intToString(int i)) 
  *  and vice versa (SpeciesNamesDB::stringToInt (string name)).
  *
- *  @code
- *  int y = SpeciesNamesDB::stringToInt("Arp2/3");//let's say y=2
- *  string x = SpeciesNamesDB::intToString(2); //then x should be "Arp2/3"
- *  @endcode
- *
  * SpeciesNamesDB also has a function to generate a unique filament name given a string seed.
  * This is particularly useful for when a filament species needs a unique name, say with 
  * the seed "Actin". This unique filament name can be added or removed to match the 
@@ -141,13 +136,7 @@ public:
  *  As a type, Species is composed of the following primary fields: type, name, copy 
  *  number. A subclass may added additional primary fields. Two Species are 
  *  mathematically equal, if their primary fields are equal. This means that applying 
- *  the copy constructor will guarantee that primary fields will be equal:
- *
- *  @code
- *  SpeciesBulk A{"Arp2/3",25};
- *  SpeciesBulk B(A);
- *  assert(A==B); // A must be equal to B
- *  @endcode
+ *  the copy constructor will guarantee that primary fields will be equal.
  *
  *  @note Each Species owns an unshared RSpecies object. However, the RSpecies field is
  *  not among the primary fields defining the Species identity (hence, the equality 

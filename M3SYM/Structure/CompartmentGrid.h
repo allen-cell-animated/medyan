@@ -34,21 +34,7 @@ class ChemSim;
  *  GController.initializeGrid().
  *
  *  The _prototype_compartment is used such that all reactions and species can be added 
- *  to the prototype, and this configuration can be copied to all compartments in the 
- *  grid. An example of such is below:
- *
- *  @code
- *
- *  Compartment &Cproto = grid.getProtoCompartment();
- *  Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
- *  Cproto.setDiffusionRate(M1,2000);
- *  Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
- *  Cproto.setDiffusionRate(M2,2000);
- *
- *  Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
- *  Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
- *  @endcode
- *
+ *  to the prototype, and this configuration can be copied to all compartments in the grid.
  */
 class CompartmentGrid : public Composite {
 private:

@@ -73,19 +73,19 @@ void Controller::initialize(string inputFile,
     //snapshot type output
     cout << endl;
     
-    string snapName = _outputDirectory + "snapshot.traj";
-    string birtName = _outputDirectory + "birthtimes.traj";
-    string forcName = _outputDirectory + "forces.traj";
-    string streName = _outputDirectory + "stresses.traj";
+    string snapName   = _outputDirectory + "snapshot.traj";
+    string birthName  = _outputDirectory + "birthtimes.traj";
+    string forceName  = _outputDirectory + "forces.traj";
+    string stressName = _outputDirectory + "stresses.traj";
     
     if(oTypes.basicSnapshot)
         _outputs.push_back(new BasicSnapshot(snapName));
     if(oTypes.birthTimes)
-        _outputs.push_back(new BirthTimes(birtName));
+        _outputs.push_back(new BirthTimes(birthName));
     if(oTypes.forces)
-        _outputs.push_back(new Forces(forcName));
+        _outputs.push_back(new Forces(forceName));
     if(oTypes.stresses)
-        _outputs.push_back(new Stresses(streName));
+        _outputs.push_back(new Stresses(stressName));
     
     //Always read geometry, check consistency
     p.readGeoParams();

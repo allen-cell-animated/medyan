@@ -21,6 +21,7 @@
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
+
 namespace mathfunc {
     
     /// Normalize a vector

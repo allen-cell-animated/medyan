@@ -39,9 +39,6 @@ class BranchingPoint;
 
 class CompartmentGrid;
 
-class MController;
-class CController;
-
 /// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
 /// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
 /// as well as the CompartmentGrid which contains all chemical structural information, and the
@@ -128,22 +125,19 @@ public:
         T* t = new T( forward<Args>(args)...); t->addToSubSystem();
         
         //if movable or reactable, add
-        Movable* m;
-        if((m = dynamic_cast<Movable*>(t))) addMovable(m);
-        Reactable* r;
-        if((r = dynamic_cast<Reactable*>(t))) addReactable(r);
+        if(t->_movable) addMovable((Movable*)t);
+        
+        if(t->_reactable) addReactable((Reactable*)t);
         
         //if neighbor, add
-        DynamicNeighbor* dn; Neighbor* n;
-        
-        if((dn = dynamic_cast<DynamicNeighbor*>(t))) {
+        if(t->_dneighbor) {
             for(auto nlist : _neighborLists.getElements())
-                nlist->addDynamicNeighbor(dn);
+                nlist->addDynamicNeighbor((DynamicNeighbor*)t);
         }
         
-        else if((n = dynamic_cast<Neighbor*>(t))) {
+        else if(t->_neighbor) {
             for(auto nlist : _neighborLists.getElements())
-                nlist->addNeighbor(n);
+                nlist->addNeighbor((Neighbor*)t);
         }
         
         return t;
@@ -156,23 +150,19 @@ public:
         t->removeFromSubSystem();
         
         //if movable or reactable, remove
-        Movable* m;
-        if((m = dynamic_cast<Movable*>(t))) removeMovable(m);
+        if(t->_movable) removeMovable((Movable*)t);
         
-        Reactable* r;
-        if((r = dynamic_cast<Reactable*>(t))) removeReactable(r);
+        if(t->_reactable) removeReactable((Reactable*)t);
         
-        //if neighbor, remove as well
-        DynamicNeighbor* dn; Neighbor* n;
-        
-        if((dn = dynamic_cast<DynamicNeighbor*>(t))) {
+        //if neighbor, remove
+        if(t->_dneighbor) {
             for(auto nlist : _neighborLists.getElements())
-                nlist->removeDynamicNeighbor(dn);
+                nlist->removeDynamicNeighbor((DynamicNeighbor*)t);
         }
         
-        else if((n = dynamic_cast<Neighbor*>(t))) {
+        else if(t->_neighbor) {
             for(auto nlist : _neighborLists.getElements())
-                nlist->removeNeighbor(n);
+                nlist->removeNeighbor((Neighbor*)t);
         }
         
         //delete it
@@ -194,8 +184,8 @@ public:
 #endif
     
 private:
-    double _energy = 0; ///< energy
-    Boundary* _boundary; ///< boundary pointer
+    double _energy = 0; ///< Energy of this subsystem
+    Boundary* _boundary; ///< Boundary pointer
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
