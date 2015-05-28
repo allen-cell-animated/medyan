@@ -104,11 +104,6 @@ void Controller::initialize(string inputFile,
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
     
-#ifdef DYNAMICRATES
-    // init neighbor list for dynamic rates
-    _subSystem->initBoundaryCylindersList();
-#endif
-    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -255,7 +250,11 @@ void Controller::initialize(string inputFile,
 
 void Controller::updatePositions() {
     
-    //update all moveables
+    //NEED TO UPDATE CYLINDERS FIRST
+    for(auto c : Cylinder::getCylinders())
+        c->updatePosition();
+    
+    //update all other moveables
     for(auto m : _subSystem->getMovables())
         m->updatePosition();
 }

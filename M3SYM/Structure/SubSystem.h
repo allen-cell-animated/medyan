@@ -24,8 +24,6 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-#include "Linker.h"
-
 #include "NeighborListImpl.h"
 #include "DynamicNeighbor.h"
 
@@ -55,27 +53,66 @@ class CompartmentGrid;
  *  This class has functions to add or remove Trackable elements from the system, as well
  *  as update Movable and Reactable instances in the system. It also can update the 
  *  NeighborList container that it holds for the system.
- *
- *  The SubSystem class also holds a CBENeighborList, used as a neighbors list for
- *  [Cylinders](@ref Cylinder) near boundaries. This is used for reaction rate updating.
  */
 class SubSystem {
-#ifdef DYNAMICRATES
-
-private:
-    CBENeighborList* _neighborList; ///< The cylinder-boundary element neighbor list
-
-#endif
-public:
     
-#ifdef DYNAMICRATES
-    /// Initialize a neighbor list that contains boundary cylinders.
-    void initBoundaryCylindersList() {
-        //init neighbor list
-        _neighborList = new CBENeighborList(SysParams::Boundaries().BoundaryCutoff);
-        _neighborLists.addElement(_neighborList);
+public:
+    ///Default constructor does nothing
+    SubSystem() {} ~SubSystem() {}
+    
+    /// Add a Trackable to the SubSystem
+    template<class T, typename ...Args>
+    T* addTrackable(Args&& ...args) {
+        
+        //create instance
+        T* t = new T( forward<Args>(args)...); t->addToSubSystem();
+        
+        //if movable or reactable, add
+        if(t->_movable) addMovable((Movable*)t);
+        
+        if(t->_reactable) addReactable((Reactable*)t);
+        
+        //if neighbor, add
+        if(t->_dneighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addDynamicNeighbor((DynamicNeighbor*)t);
+        }
+        
+        else if(t->_neighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addNeighbor((Neighbor*)t);
+        }
+        
+        return t;
     }
-#endif
+    
+    /// Remove a trackable from the SubSystem
+    template<class T>
+    void removeTrackable(T* t) {
+        
+        //remove from subsystem
+        t->removeFromSubSystem();
+        
+        //if movable or reactable, remove
+        if(t->_movable) removeMovable((Movable*)t);
+        
+        if(t->_reactable) removeReactable((Reactable*)t);
+        
+        //if neighbor, remove
+        if(t->_dneighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeDynamicNeighbor((DynamicNeighbor*)t);
+        }
+        
+        else if(t->_neighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeNeighbor((Neighbor*)t);
+        }
+        
+        //delete it
+        delete t;
+    }
+    
     //@{
     /// Setter functions for Movable
     void addMovable(Movable* mov) { _movables.insert(mov); }
@@ -119,59 +156,6 @@ public:
     void setSubSystemEnergy(double energy) {_energy = energy;}
     //@}
     
-    /// Add a Trackable to the SubSystem
-    template<class T, typename ...Args>
-    T* addTrackable(Args&& ...args) {
-        
-        //create instance
-        T* t = new T( forward<Args>(args)...); t->addToSubSystem();
-        
-        //if movable or reactable, add
-        if(t->_movable) addMovable((Movable*)t);
-        
-        if(t->_reactable) addReactable((Reactable*)t);
-        
-        //if neighbor, add
-        if(t->_dneighbor) {
-            for(auto nlist : _neighborLists.getElements())
-                nlist->addDynamicNeighbor((DynamicNeighbor*)t);
-        }
-        
-        else if(t->_neighbor) {
-            for(auto nlist : _neighborLists.getElements())
-                nlist->addNeighbor((Neighbor*)t);
-        }
-        
-        return t;
-    }
-    
-    /// Remove a trackable from the SubSystem
-    template<class T>
-    void removeTrackable(T* t) {
-
-        //remove from subsystem
-        t->removeFromSubSystem();
-        
-        //if movable or reactable, remove
-        if(t->_movable) removeMovable((Movable*)t);
-        
-        if(t->_reactable) removeReactable((Reactable*)t);
-        
-        //if neighbor, remove
-        if(t->_dneighbor) {
-            for(auto nlist : _neighborLists.getElements())
-                nlist->removeDynamicNeighbor((DynamicNeighbor*)t);
-        }
-        
-        else if(t->_neighbor) {
-            for(auto nlist : _neighborLists.getElements())
-                nlist->removeNeighbor((Neighbor*)t);
-        }
-        
-        //delete it
-        delete t;
-    }
-    
     //@{
     /// CompartmentGrid management
     void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid;}
@@ -180,11 +164,6 @@ public:
     
     /// Update the binding managers of the system
     void updateBindingManagers();
-        
-#ifdef DYNAMICRATES
-    /// Get the cylinders that are currently interacting with a boundary
-    vector<Cylinder*> getBoundaryCylinders();
-#endif
     
 private:
     double _energy = 0; ///< Energy of this subsystem
@@ -196,7 +175,6 @@ private:
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
-
 };
 
 #endif
