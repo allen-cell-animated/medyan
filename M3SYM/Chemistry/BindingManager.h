@@ -20,7 +20,7 @@
 
 #include "common.h"
 
-#include "NeighborListContainer.h"
+#include "NeighborListImpl.h"
 #include "ReactionBase.h"
 
 #include "SysParams.h"
@@ -33,25 +33,25 @@ class ReactionBase;
 class CCylinder;
 class Compartment;
 
-/// To store and manager binding reactions.
+/// To store and manage binding reactions.
 
 /*!
- *  FilamentBindingManager is used to store a binding reaction on filaments in compartments.
- *  Contains the binding reaction, possible binding sites, and integers representing the
- *  binding species involved in the reaction. Classes that extend this will implement their
- *  own data structures for holding possible reaction sites, etc.
+ *  FilamentBindingManager is used to store a binding Reaction on [Filaments](@ref Filament) 
+ *  in Compartment. Contains the binding reaction, possible binding sites, and integers 
+ *  representing the binding species involved in the reaction. Classes that extend this will 
+ *  implement their own data structures for holding possible reaction sites, etc.
  *
  *  The main function of this class is to call updatePossibleBindings(), which will
  *  update the possible binding sites if the binding reaction is called in this compartment.
  *  Also contains functions to replace ccylinders in the structure, as well as remove a ccylinder
  *  from the structure when it is removed from the subsystem.
  *
- *  When the reaction is fired, the manager will choose a random binding based on its current
+ *  When the binding reaction is fired, the manager will choose a random binding based on its current
  *  data structure state, and perform whatever callback is associated with that binding reaction.
  */
 class FilamentBindingManager {
     
-    friend class SimpleManagerImpl;
+friend class ChemManager;
     
 protected:
     ReactionBase* _bindingReaction; ///< The binding reaction for this compartment
@@ -152,6 +152,8 @@ public:
 
 /// Manager for Filament and BranchPoint creation
 class BranchingManager : public FilamentBindingManager {
+
+friend class ChemManager;
     
 private:
     ///possible bindings at current state
@@ -208,7 +210,7 @@ public:
  */
 class LinkerBindingManager : public FilamentBindingManager {
     
-friend class SimpleManagerImpl;
+friend class ChemManager;
     
 private:
     float _rMin; ///< Minimum reaction range
@@ -218,7 +220,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNLContainer*> _nlContainers;
+    static vector<CCNeighborList*> _neighborLists;
     
 public:
     LinkerBindingManager(ReactionBase* reaction,
@@ -279,7 +281,7 @@ public:
  */
 class MotorBindingManager : public FilamentBindingManager {
     
-friend class SimpleManagerImpl;
+friend class ChemManager;
     
 private:
     float _rMin; ///< Minimum reaction range
@@ -289,7 +291,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNLContainer*> _nlContainers;
+    static vector<CCNeighborList*> _neighborLists;
     
 public:
     MotorBindingManager(ReactionBase* reaction,

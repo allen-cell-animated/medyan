@@ -18,7 +18,7 @@
 
 Composite* Component::getRoot() {
     if(isRoot())
-        return static_cast<Composite*>(this);
+        return (Composite*)(this);
     else
         return getParent()->getRoot();
 }

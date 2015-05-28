@@ -18,32 +18,39 @@
 
 #include "common.h"
 
-#include "CylinderDB.h"
-
 #include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
-#include "Neighbor.h"
 #include "RateChanger.h"
 
+#include "Database.h"
+#include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
+#include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
-class DRController;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
- * Cylinder class is used to manage and store a MCylinder and CCylinder.
- * Upon intialization, both of these components are created. Extending the Movable and 
- * Reactable classes, the Cylinder can update its position and reactions according to 
- * mechanical equilibration.
+ *  Cylinder class is used to manage and store a MCylinder and CCylinder.
+ *  Upon intialization, both of these components are created.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
+ *
+ *  Extending the Reactable class, the reactions associated with 
+ *  all instances can be updated by the SubSystem.
+ *
+ *  Extending the DynamicNeighbor class, all instances can be 
+ *  kept in [NeighborLists](@ref NeighborList).
  */
-
-class Cylinder : public Composite, public Neighbor, public Movable, public Reactable {
+class Cylinder : public Composite, public Trackable, public Movable,
+                                   public Reactable, public DynamicNeighbor {
     
+friend class CController;
 friend class DRController;
     
 private:
@@ -53,28 +60,39 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
-    Filament* _pFilament; //< Pointer to parent filament where this cylinder belongs
+    Filament* _pFilament;  ///< Pointer to parent filament where this cylinder belongs
     int _positionFilament; ///< Position on filament (1st, 2nd, ... etc)
     
-    bool _plusEnd = false; ///< If the cylinder is at the plus end
+    bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
     
-    int _ID; ///< Unique ID of cylinder, managed by CylinderDB
+    int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
-    Cylinder* _branchingCylinder = nullptr; ///< ptr if the cylinder has a branching cylinder
+    Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
+    
+    static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
     ///For dynamic polymerization rate
     static FilamentRateChanger* _polyChanger;
+                                       
+    static ChemManager* _chemManager; ///< A pointer to the ChemManager,
+                                      ///< intiailized by CController
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
     
 public:
     vector<double> coordinate;
-        ///< Coordinates of midpoint, updated with updatePosition()
-    
+    ///< Coordinates of midpoint, updated with updatePosition()
+                                       
+    /// Constructor, initializes a cylinder and
     Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
-             bool extensionFront = false, bool extensionBack = false,
-             bool creation = false, bool branch = false);
+             bool extensionFront = false,
+             bool extensionBack  = false,
+             bool initialization = false);
+                                       
     virtual ~Cylinder() noexcept;
     
     /// Get mech cylinder
@@ -112,9 +130,8 @@ public:
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
     
-    
     /// Get ID
-    const int getID() {return _ID;}
+    int getID() {return _ID;}
     
     ///@{
     /// Set plus and minus end boolean markers
@@ -127,12 +144,30 @@ public:
     
     int getPositionFilament() {return _positionFilament;}
     
-    /// Update the position
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _cylinders.addElement(this);}
+    virtual void removeFromSubSystem() {_cylinders.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const vector<Cylinder*>& getCylinders() {
+        return _cylinders.getElements();
+    }
+    /// Get the number of cylinders in this system
+    static int numCylinders() {
+        return _cylinders.countElements();
+    }
+    
+    /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
     
-    /// Update the reaction rates
+    /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
+                                       
+    /// Check if this cylinder is grown to full length
+    bool isFullLength();
 
 };
 

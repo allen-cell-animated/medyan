@@ -16,11 +16,11 @@
 
 #include "Controller.h"
 
-#include "FilamentInitializer.h"
 #include "Parser.h"
 #include "Output.h"
 #include "SubSystem.h"
 #include "BoundaryImpl.h"
+#include "FilamentInitializer.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -29,6 +29,9 @@
 #include "BranchingPoint.h"
 
 #include "SysParams.h"
+#include "MathFunctions.h"
+
+using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
     
@@ -38,9 +41,11 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     //init controllers
     _mController   = new MController(_subSystem);
     _cController   = new CController(_subSystem);
-    
     _gController   = new GController();
     _drController  = new DRController();
+    
+    //set Trackable's subsystem ptr
+    Trackable::_subSystem = _subSystem;
 }
 
 void Controller::initialize(string inputFile,
@@ -56,7 +61,7 @@ void Controller::initialize(string inputFile,
 #endif
     
     //init input directory
-    _inputDirectory = inputDirectory;
+    _inputDirectory  = inputDirectory;
     _outputDirectory = outputDirectory;
     
     //Parse input, get parameters
@@ -67,14 +72,20 @@ void Controller::initialize(string inputFile,
     
     //snapshot type output
     cout << endl;
+    
+    string snapName   = _outputDirectory + "snapshot.traj";
+    string birthName  = _outputDirectory + "birthtimes.traj";
+    string forceName  = _outputDirectory + "forces.traj";
+    string stressName = _outputDirectory + "stresses.traj";
+    
     if(oTypes.basicSnapshot)
-        _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
+        _outputs.push_back(new BasicSnapshot(snapName));
     if(oTypes.birthTimes)
-        _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
+        _outputs.push_back(new BirthTimes(birthName));
     if(oTypes.forces)
-        _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
+        _outputs.push_back(new Forces(forceName));
     if(oTypes.stresses)
-        _outputs.push_back(new Stresses(_outputDirectory + "stresses.traj"));
+        _outputs.push_back(new Stresses(stressName));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -85,7 +96,8 @@ void Controller::initialize(string inputFile,
     //Initialize geometry controller
     cout << "---" << endl;
     cout << "Initializing geometry...";
-    _gController->initializeGrid();
+    CompartmentGrid* grid = _gController->initializeGrid();
+    _subSystem->setCompartmentGrid(grid);
     cout << "Done." << endl;
     
     //Always read boundary type
@@ -111,15 +123,15 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     cout << "Initializing boundary...";
     if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->addBoundary(new BoundaryCubic());
+        _subSystem->addBoundary(new BoundaryCubic(_subSystem));
     }
     else if(BTypes.boundaryShape == "SPHERICAL") {
         _subSystem->addBoundary(
-        new BoundarySpherical(SysParams::Boundaries().diameter));
+        new BoundarySpherical(_subSystem, SysParams::Boundaries().diameter));
     }
     else if(BTypes.boundaryShape == "CAPSULE") {
         _subSystem->addBoundary(
-        new BoundaryCapsule(SysParams::Boundaries().diameter));
+        new BoundaryCapsule(_subSystem, SysParams::Boundaries().diameter));
     }
     else{
         cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
@@ -152,8 +164,7 @@ void Controller::initialize(string inputFile,
         _numStepsPerSnapshot = numeric_limits<int>::max();
     
     _snapshotTime = CAlgorithm.snapshotTime;
-    
-    _numChemSteps= CAlgorithm.numChemSteps;
+    _numChemSteps = CAlgorithm.numChemSteps;
     _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
     
     ChemistryData ChemData;
@@ -221,65 +232,48 @@ void Controller::initialize(string inputFile,
         delete fInit;
     }
     //add filaments
-    _subSystem->addNewFilaments(filamentData);
-    cout << "Done. " << filamentData.size()
-         << " filaments created." << endl;
+    for (auto it: filamentData) {
+        
+        double d = twoPointDistance(it[0], it[1]);
+        vector<double> tau = twoPointDirection(it[0], it[1]);
+
+        int numSegment = d / SysParams::Geometry().cylinderSize;
+
+        // check how many segments can fit between end-to-end of the filament
+        if (numSegment == 0)
+            _subSystem->addTrackable<Filament>(_subSystem, it, 2);
+        else
+            _subSystem->addTrackable<Filament>(_subSystem, it, numSegment + 1);
+    }
+    cout << "Done. " << filamentData.size() << " filaments created." << endl;
 }
 
 void Controller::updatePositions() {
     
-    //update all moveables
+    //NEED TO UPDATE CYLINDERS FIRST
+    for(auto c : Cylinder::getCylinders())
+        c->updatePosition();
     
-    //Beads
-    for(auto &f : *FilamentDB::instance()) {
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->getFirstBead()->updatePosition();
-        }
-        //update last bead
-        f->getCylinderVector().back()->
-        getSecondBead()->updatePosition();
-    }
-    
-    //Cylinders
-    for(auto &f : *FilamentDB::instance()) {
-        for (auto cylinder : f->getCylinderVector()){
-            cylinder->updatePosition();
-        }
-    }
-    //Linkers
-    for(auto &l : *LinkerDB::instance()) l->updatePosition();
-    //Motors
-    for(auto &m : *MotorGhostDB::instance()) m->updatePosition();
-    //Branchers
-    for(auto &b : *BranchingPointDB::instance()) b->updatePosition();
+    //update all other moveables
+    for(auto m : _subSystem->getMovables())
+        m->updatePosition();
 }
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    
-    //Linkers
-    for(auto &l : *LinkerDB::instance()) l->updateReactionRates();
-    //Motors
-    for(auto &m : *MotorGhostDB::instance()) m->updateReactionRates();
-    //Boundary cylinders
-    for(auto &c : _subSystem->getBoundaryCylinders()) c->updateReactionRates();
+    for(auto r : _subSystem->getReactables())
+        r->updateReactionRates();
 }
 #endif
 
 void Controller::updateNeighborLists() {
     
     //Full reset of neighbor lists
-    NeighborListDB::instance()->resetAll();
+    _subSystem->resetNeighborLists();
     
 #ifdef CHEMISTRY
-    //Update binding reactions
-    for(auto &child : CompartmentGrid::instance()->children()) {
-        Compartment* c = (Compartment*)child.get();
-            
-        for(auto &manager : c->getFilamentBindingManagers())
-            manager->updateAllPossibleBindings();
-    }
+    _subSystem->updateBindingManagers();
 #endif
 }
 
@@ -358,7 +352,7 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
+            if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
             
             i += _numChemSteps;
@@ -406,7 +400,7 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0 && i != 0)
+            if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
             
             oldTau = tau();

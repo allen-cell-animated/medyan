@@ -29,24 +29,24 @@
 TEST(SpeciesNamesDBTest, All) {
     
     //basic test
-    SpeciesNamesDB::instance()->clear();
-    int y = SpeciesNamesDB::instance()->stringToInt("Arp2/3");
+    SpeciesNamesDB::clear();
+    int y = SpeciesNamesDB::stringToInt("Arp2/3");
     EXPECT_EQ(0,y);
-    string x = SpeciesNamesDB::instance()->intToString(y);
+    string x = SpeciesNamesDB::intToString(y);
     EXPECT_EQ("Arp2/3",x);
     
-    EXPECT_THROW(SpeciesNamesDB::instance()->intToString(1), out_of_range);
+    EXPECT_THROW(SpeciesNamesDB::intToString(1), out_of_range);
 
-    y = SpeciesNamesDB::instance()->stringToInt("G-Actin");
+    y = SpeciesNamesDB::stringToInt("G-Actin");
     EXPECT_EQ(1,y);
-    x = SpeciesNamesDB::instance()->intToString(y);
+    x = SpeciesNamesDB::intToString(y);
     EXPECT_EQ("G-Actin",x);
-    EXPECT_NO_THROW(SpeciesNamesDB::instance()->intToString(1));
+    EXPECT_NO_THROW(SpeciesNamesDB::intToString(1));
     
     //testing unique name generator
-    string a1 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
-    string a2 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
-    string a3 = SpeciesNamesDB::instance()->genUniqueFilName("Actin");
+    string a1 = SpeciesNamesDB::genUniqueFilName("Actin");
+    string a2 = SpeciesNamesDB::genUniqueFilName("Actin");
+    string a3 = SpeciesNamesDB::genUniqueFilName("Actin");
     
     EXPECT_FALSE(a1 == a2);
     EXPECT_FALSE(a2 == a3);

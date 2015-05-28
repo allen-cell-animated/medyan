@@ -23,6 +23,8 @@
 
 //FORWARD DECLARATIONS
 class Cylinder;
+class ChemSim;
+class ChemManager;
 
 /// Holds all [CMonomers](@ref CMonomer) and [Reactions](@ref Reaction) associated with it.
 /*! 
@@ -41,25 +43,31 @@ class Cylinder;
  */
 class CCylinder {
     
+friend class CController;
+    
 private:
     vector<unique_ptr<CMonomer>> _monomers; ///< List of monomers
     
     ///REACTION CONTAINERS
     unordered_set<ReactionBase*> _internalReactions;///< Set of internal reactions associated
-    unordered_set<CCylinder*> _reactingCylinders; ///< Set of ccylinders that this ccylinder has
-                                        ///< reactions with, but not ownership
+    
+    unordered_set<CCylinder*> _reactingCylinders;   ///< Set of ccylinders that this ccylinder has
+                                                    ///< reactions with, but not ownership
     map<CCylinder*,unordered_set<ReactionBase*>> _crossCylinderReactions;
     ///< Map of cross-cylinder reactions owned
     
     Compartment* _compartment; ///< Compartment this ccylinder is in
-    Cylinder* _pCylinder; ///< Parent cylinder
+    Cylinder* _pCylinder;      ///< Parent cylinder
     
     short _size = SysParams::Geometry().cylinderSize /
                   SysParams::Geometry().monomerSize; ///< Maximum length
     
+    static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
+    
 public:
-    /// Default constructor, sets compartment
-    CCylinder(Compartment* c) : _compartment(c) {}
+    /// Default constructor, sets compartment and cylinder
+    CCylinder(Compartment* C, Cylinder* c)
+        : _compartment(C), _pCylinder(c) {}
     
     /// Copy constructor
     /// @note This constructor will create a new CCylinder with different Species and

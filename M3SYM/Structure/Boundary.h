@@ -18,6 +18,9 @@
 
 #include "BoundarySurface.h"
 
+//FORWARD DECLARATIONS
+class SubSystem;
+
 /// BoundaryShape is a shape enumeration.
 enum class BoundaryShape {Cube, Capsule, Sphere};
 
@@ -30,19 +33,25 @@ enum class BoundaryShape {Cube, Capsule, Sphere};
 class Boundary {
     
 protected:
+    SubSystem* _subSystem; ///< SubSystem ptr
+    
     /// Vector of boundarysurfaces (could be different implementations)
     vector<unique_ptr<BoundarySurface>> _boundarySurfaces;
+    
     BoundaryShape _shape; ///< Shape of boundary
+    
     short _nDim; ///< Dimensionality
     
 public:
-    Boundary(int nDim, BoundaryShape shape) : _shape(shape), _nDim(nDim) {};
+    Boundary(SubSystem* s, int nDim, BoundaryShape shape)
+        : _subSystem(s), _shape(shape), _nDim(nDim) {};
+    
     ~Boundary() {};
 
-    /// Get shape
+    /// Get shape of this boundary
     BoundaryShape getShape() {return _shape;}
     
-    /// Get boundarysurfaces
+    /// Get boundary surfaces
     const vector<unique_ptr<BoundarySurface>>& getBoundarySurfaces() {
         return _boundarySurfaces;
     }

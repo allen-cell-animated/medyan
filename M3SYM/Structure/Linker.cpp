@@ -27,28 +27,31 @@ using namespace mathfunc;
 
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
-Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-               double position1, double position2, bool creation)
+Database<Linker*> Linker::_linkers;
 
-    : _c1(c1), _c2(c2),
-      _position1(position1), _position2(position2), _linkerType(linkerType) {
-                    
-    //Add to linker db
-    LinkerDB::instance()->addLinker(this);
-          
-    _linkerID = LinkerDB::instance()->getLinkerID();
-    _birthTime = tau();
-        
+void Linker::updateCoordinate() {
+    
     auto x1 = _c1->getFirstBead()->coordinate;
     auto x2 = _c1->getSecondBead()->coordinate;
     auto x3 = _c2->getFirstBead()->coordinate;
     auto x4 = _c2->getSecondBead()->coordinate;
-          
-    //Find compartment
+    
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
-          
+    
     coordinate = midPointCoordinate(m1, m2, 0.5);
+}
+
+Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
+               double position1, double position2)
+
+    : Trackable(true, true),
+      _c1(c1), _c2(c2),
+      _position1(position1), _position2(position2),
+      _linkerType(linkerType), _linkerID(_linkers.getID()),
+      _birthTime(tau()) {
+        
+    updateCoordinate();
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -65,18 +68,16 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
     
 #ifdef MECHANICS
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
+          
     _mLinker = unique_ptr<MLinker>(
         new MLinker(linkerType, position1, position2,
                     x1, x2, x3, x4));
     _mLinker->setLinker(this);
 #endif
-}
-
-Linker::~Linker() noexcept {
-    
-    //Remove from linker db
-    LinkerDB::instance()->removeLinker(this);
-    
 }
 
 void Linker::updatePosition() {
@@ -87,19 +88,7 @@ void Linker::updatePosition() {
     _cLinker->setSecondCCylinder(_c2->getCCylinder());
     
 #endif
-    
-    //check if were still in same compartment
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
-
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
-    
-    coordinate = midPointCoordinate(m1, m2, 0.5);
-    
-    _mLinker->setLength(twoPointDistance(m1, m2));
+    updateCoordinate();
     
     Compartment* c;
     
@@ -120,6 +109,18 @@ void Linker::updatePosition() {
         _cLinker->setSecondSpecies(secondSpecies);
 #endif
     }
+    
+#ifdef MECHANICS
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
+    
+    auto m1 = midPointCoordinate(x1, x2, _position1);
+    auto m2 = midPointCoordinate(x3, x4, _position2);
+    
+    _mLinker->setLength(twoPointDistance(m1, m2));
+#endif
 }
 
 /// @note - The function uses the motor's stretching force at

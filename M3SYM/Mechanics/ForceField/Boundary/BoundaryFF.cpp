@@ -23,10 +23,10 @@
 BoundaryFF::BoundaryFF (string type) {
     
     if (type == "REPULSIONLJ")
-        _BoundaryInteractionVector.emplace_back(
+        _boundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionLJ>());
     else if (type == "REPULSIONEXP")
-        _BoundaryInteractionVector.emplace_back(
+        _boundaryInteractionVector.emplace_back(
             new BoundaryRepulsion<BoundaryRepulsionExp>());
     else if(type == "") {}
     else {
@@ -40,11 +40,11 @@ double BoundaryFF::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto &bd : nl->getNeighbors(be)) {
                 
@@ -62,11 +62,11 @@ double BoundaryFF::computeEnergy(double d) {
 
 void BoundaryFF::computeForces() {
 
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto bd : nl->getNeighbors(be))
                 interaction->computeForces(be, bd);
@@ -76,14 +76,24 @@ void BoundaryFF::computeForces() {
 
 void BoundaryFF::computeForcesAux() {
     
-    for (auto &interaction : _BoundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector){
         
         auto nl = interaction->getNeighborList();
         
-        for (auto be: *BoundaryElementDB::instance()) {
+        for (auto be: BoundaryElement::getBoundaryElements()) {
             
             for(auto bd : nl->getNeighbors(be))
                 interaction->computeForcesAux(be, bd);
         }
     }
+}
+
+vector<NeighborList*> BoundaryFF::getNeighborLists() {
+    
+    vector<NeighborList*> neighborLists;
+    
+    for(auto &interaction : _boundaryInteractionVector)
+        neighborLists.push_back(interaction->getNeighborList());
+    
+    return neighborLists;
 }

@@ -1,4 +1,4 @@
-
+ 
 //------------------------------------------------------------------
 //  **M3SYM** - Simulation Package for the Mechanochemical
 //              Dynamics of Active Networks, 3rd Generation
@@ -18,7 +18,14 @@
 #include <unordered_set>
 
 #include "common.h"
-#include "NeighborListContainer.h"
+
+#include "Trackable.h"
+#include "Database.h"
+#include "Movable.h"
+#include "Reactable.h"
+
+#include "NeighborListImpl.h"
+#include "DynamicNeighbor.h"
 
 #include "SysParams.h"
 
@@ -30,70 +37,81 @@ class Linker;
 class MotorGhost;
 class BranchingPoint;
 
-class Movable;
-class Reactable;
+class CompartmentGrid;
 
+/// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
+/// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
+/// as well as the CompartmentGrid which contains all chemical structural information, and the
+/// system Boundary.
 
-/// Manages all objects in the system, including [Filaments] (@ref Filament), [Linkers]
-/// (@ref Linker), [MotorGhosts] (@ref MotorGhost), and [BranchingPoints](@ref
-/// BranchingPoint).
-
-/*! This is a class which handles all changes and information regarding the system.
+/*! This is a class which handles all changes and information regarding the simulated system.
  *  This class operates as a top manager and provides connections between smaller parts 
  *  of the system. All creation and changes go through this class and will be redirected 
- *  to lower levels. See databases for more documentation on the explicit creation of 
+ *  to lower levels. See the databases for more documentation on the explicit creation of
  *  subsystem objects at initialization and during runtime.
  *
- *  The SubSystem class also extends CBENLContainer, holding a neighbors list for
- *  [Cylinders](@ref Cylinder) near boundaries. This is used for reaction rate updating.
+ *  This class has functions to add or remove Trackable elements from the system, as well
+ *  as update Movable and Reactable instances in the system. It also can update the 
+ *  NeighborList container that it holds for the system.
  */
-class SubSystem
-#ifdef DYNAMICRATES
-    : public CBENLContainer {
-#else 
-    {
-#endif
+class SubSystem {
+    
 public:
-#ifdef DYNAMICRATES 
-    SubSystem() : CBENLContainer(SysParams::Boundaries().BoundaryCutoff) {}
-#endif
+    ///Default constructor does nothing
+    SubSystem() {} ~SubSystem() {}
+    
+    /// Add a Trackable to the SubSystem
+    template<class T, typename ...Args>
+    T* addTrackable(Args&& ...args) {
         
-    /// Add new [Filaments](@ref Filament).
-    /// @param v - coordinates of the first and last bead in the filament.
-    void addNewFilaments(vector<vector<vector<double>>>& v);
-    /// Add a new Filament at runtime
-    Filament* addNewFilament(vector<double>& position,
-                             vector<double>& direction,
-                             bool branch = false);
-    /// Remove a Filament from the system
-    void removeFilament(Filament* f);
+        //create instance
+        T* t = new T( forward<Args>(args)...); t->addToSubSystem();
+        
+        //if movable or reactable, add
+        if(t->_movable) addMovable((Movable*)t);
+        
+        if(t->_reactable) addReactable((Reactable*)t);
+        
+        //if neighbor, add
+        if(t->_dneighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addDynamicNeighbor((DynamicNeighbor*)t);
+        }
+        
+        else if(t->_neighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->addNeighbor((Neighbor*)t);
+        }
+        
+        return t;
+    }
     
-    /// Add [Linkers](@ref Linker) at initialization
-    /// @param v - vector of cylinders to connect to
-    void addNewLinkers(vector<vector<Cylinder*>> &v, short linkerType);
-    /// Add a single Linker during runtime
-    Linker* addNewLinker(Cylinder* c1, Cylinder* c2, short linkerType,
-                         double position1, double position2);
-    /// Remove a Linker from the system
-    void removeLinker(Linker* l);
-    
-    /// Add [MotorGhosts](@ref MotorGhost) at initialization
-    /// @param v - vector of cylinders to connect to
-    void addNewMotorGhosts(vector<vector<Cylinder*>>& v, short motorType);
-    /// Add a MotorGhost during runtime
-    MotorGhost* addNewMotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                                 double position1, double position2);
-    /// remove a MotorGhost ghost from the system
-    void removeMotorGhost(MotorGhost* m);
-    
-    /// Add [BranchingPoints](@ref BranchingPoint) at initialization
-    /// @param v - vector of cylinders to connect to
-    void addNewBranchingPoints(vector<vector<Cylinder*>>& v, short branchType);
-    /// Add a BranchingPoint during runtime
-    BranchingPoint* addNewBranchingPoint(Cylinder* c1, Cylinder* c2,
-                                         short branchType, double position);
-    /// remove a BranchingPoint from the system
-    void removeBranchingPoint(BranchingPoint* b);
+    /// Remove a trackable from the SubSystem
+    template<class T>
+    void removeTrackable(T* t) {
+        
+        //remove from subsystem
+        t->removeFromSubSystem();
+        
+        //if movable or reactable, remove
+        if(t->_movable) removeMovable((Movable*)t);
+        
+        if(t->_reactable) removeReactable((Reactable*)t);
+        
+        //if neighbor, remove
+        if(t->_dneighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeDynamicNeighbor((DynamicNeighbor*)t);
+        }
+        
+        else if(t->_neighbor) {
+            for(auto nlist : _neighborLists.getElements())
+                nlist->removeNeighbor((Neighbor*)t);
+        }
+        
+        //delete it
+        delete t;
+    }
     
     //@{
     /// Setter functions for Movable
@@ -117,31 +135,46 @@ public:
     /// Get all Reactable
     const unordered_set<Reactable*>& getReactables() {return _reactables;}
     
-    /// Return the number of [Beads](@ref Bead) in the system
-    int getSystemSize();
-    
-    //@{
-    /// Subsystem energy management
-    double getSubSystemEnergy();
-    void setSubSystemEnergy(double energy);
-    //@}
-    
     /// Get the subsystem boundary
     Boundary* getBoundary() {return _boundary;}
     /// Add a boundary to this subsystem
     void addBoundary(Boundary* boundary) {_boundary = boundary;}
     
-#ifdef DYNAMICRATES
-    /// Get the cylinders that are currently interacting with a boundary
-    vector<Cylinder*> getBoundaryCylinders();
-#endif
+    /// Add a neighbor list to the subsystem
+    void addNeighborList(NeighborList* nl) {_neighborLists.addElement(nl);}
+  
+    /// Reset all neighbor lists in subsystem
+    void resetNeighborLists() {
+        
+        for(auto nl: _neighborLists.getElements())
+            nl->reset();
+    }
+    
+    //@{
+    ///Subsystem energy management
+    double getSubSystemEnergy() {return _energy;}
+    void setSubSystemEnergy(double energy) {_energy = energy;}
+    //@}
+    
+    //@{
+    /// CompartmentGrid management
+    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid;}
+    CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
+    //@]
+    
+    /// Update the binding managers of the system
+    void updateBindingManagers();
     
 private:
-    double _energy = 0; ///< energy
-    Boundary* _boundary; ///< boundary pointer
+    double _energy = 0; ///< Energy of this subsystem
+    Boundary* _boundary; ///< Boundary pointer
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
+        
+    Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
+        
+    CompartmentGrid* _compartmentGrid; ///< The compartment grid
 };
 
 #endif

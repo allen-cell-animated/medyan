@@ -28,24 +28,22 @@
 #include "ChemSim.h"
 
 //FORWARD DECLARATIONS
+class BoundaryElement;
 class Bead;
 class Cylinder;
-class BoundaryElement;
 
 /// A container or holding Species and [Reactions](@ref Reactions).
 
-/*! The Compartment class is a container for Species, [Reactions](@ref Reactions), and 
- *  diffusion [Reactions](@ref Reactions) that can occur. A Compartment object keeps 
+/*! The Compartment class is a container for Species, internal [Reactions](@ref Reactions), 
+ *  and diffusion [Reactions](@ref Reactions) that can occur. A Compartment object keeps 
  *  track of the above while also holding pointers to its neighbors in order to generate
- *  diffusion [Reactions](@ref Reactions) and other cross-compartment 
- *  [Reactions](@ref Reactions).
+ *  diffusion [Reactions](@ref Reactions) and control other interactions.
  *
- *  Compartment initialization looks like the following:
- *  @code
- *  Compartment *C1 = new Compartment();
- *  Species *A = C1->addSpecies("A",99U);
- *  C1->setDiffusionRate(A,2000);
- *  @endcode
+ *  The Compartment also keeps Trackable elements in the SubSystem that are in its space, including 
+ *  [Beads](@ref Bead), [Cylinders](@ref Cylinder), and [BoundaryElements](@ref BoundaryElement).
+ *
+ *  Lastly, the Compartment holds a container of FilamentBindingManager for updating 
+ *  binding reactions local to this compartment space only.
  */
 
 class Compartment : public Composite {
@@ -112,7 +110,6 @@ public:
         removeFromNeighboursList();
         
         // Should eventually delete beads, cylinders, boundary elements....not yet clear
-        
     }
     
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
@@ -274,13 +271,26 @@ public:
         return r;
     }
     
+    /// Add an internal reaction pointer to this compartment. Make unique
+    ReactionBase* addInternalReaction (ReactionBase* r) {
+        _internal_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
+        r->setParent(this);
+        return r;
+    }
+    
+    /// Add a diffusion reaciton pointer to this compartment. Make unique
+    ReactionBase* addDiffusionReaction (ReactionBase* r) {
+        _diffusion_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
+        r->setParent(this);
+        return r;
+    }
+    
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>
     SpeciesDiffusing* addSpeciesDiffusing(Args&& ...args) {
         SpeciesDiffusing *sp =
-            static_cast<SpeciesDiffusing*>(
-            _species.addSpecies<SpeciesDiffusing>(forward<Args>(args)...));
+        (SpeciesDiffusing*)(_species.addSpecies<SpeciesDiffusing>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -291,8 +301,7 @@ public:
     template<typename ...Args>
     SpeciesFilament* addSpeciesFilament(Args&& ...args) {
         SpeciesFilament *sp =
-            static_cast<SpeciesFilament*>(
-            _species.addSpecies<SpeciesFilament>(forward<Args>(args)...));
+        (SpeciesFilament*)(_species.addSpecies<SpeciesFilament>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -303,8 +312,7 @@ public:
     template<typename ...Args>
     SpeciesPlusEnd* addSpeciesPlusEnd(Args&& ...args) {
         SpeciesPlusEnd *sp =
-        static_cast<SpeciesPlusEnd*>(
-        _species.addSpecies<SpeciesPlusEnd>(forward<Args>(args)...));
+        (SpeciesPlusEnd*)(_species.addSpecies<SpeciesPlusEnd>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -315,8 +323,7 @@ public:
     template<typename ...Args>
     SpeciesMinusEnd* addSpeciesMinusEnd(Args&& ...args) {
         SpeciesMinusEnd *sp =
-        static_cast<SpeciesMinusEnd*>(
-        _species.addSpecies<SpeciesMinusEnd>(forward<Args>(args)...));
+        (SpeciesMinusEnd*)(_species.addSpecies<SpeciesMinusEnd>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -327,8 +334,7 @@ public:
     template<typename ...Args>
     SpeciesBound* addSpeciesBound(Args&& ...args) {
         SpeciesBound *sp =
-        static_cast<SpeciesBound*>(
-        _species.addSpecies<SpeciesBound>(forward<Args>(args)...));
+        (SpeciesBound*)(_species.addSpecies<SpeciesBound>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -339,8 +345,7 @@ public:
     template<typename ...Args>
     SpeciesLinker* addSpeciesLinker(Args&& ...args) {
         SpeciesLinker *sp =
-        static_cast<SpeciesLinker*>(
-            _species.addSpecies<SpeciesLinker>(forward<Args>(args)...));
+        (SpeciesLinker*)(_species.addSpecies<SpeciesLinker>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -351,8 +356,7 @@ public:
     template<typename ...Args>
     SpeciesMotor* addSpeciesMotor(Args&& ...args) {
         SpeciesMotor *sp =
-        static_cast<SpeciesMotor*>(
-            _species.addSpecies<SpeciesMotor>(forward<Args>(args)...));
+        (SpeciesMotor*)(_species.addSpecies<SpeciesMotor>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -363,8 +367,7 @@ public:
     template<typename ...Args>
     SpeciesBrancher* addSpeciesBrancher(Args&& ...args) {
         SpeciesBrancher *sp =
-        static_cast<SpeciesBrancher*>(
-            _species.addSpecies<SpeciesBrancher>(forward<Args>(args)...));
+        (SpeciesBrancher*)(_species.addSpecies<SpeciesBrancher>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
@@ -375,8 +378,7 @@ public:
     template<typename ...Args>
     SpeciesSingleBinding* addSpeciesSingleBinding(Args&& ...args) {
         SpeciesSingleBinding *sb =
-        static_cast<SpeciesSingleBinding*>(
-            _species.addSpecies<SpeciesSingleBinding>(forward<Args>(args)...));
+        (SpeciesSingleBinding*)(_species.addSpecies<SpeciesSingleBinding>(forward<Args>(args)...));
         sb->setParent(this);
         _diffusion_rates[sb->getMolecule()]=-1.0;
         return sb;
@@ -387,8 +389,7 @@ public:
     template<typename ...Args>
     SpeciesPairBinding* addSpeciesPairBinding(Args&& ...args) {
         SpeciesPairBinding *sb =
-        static_cast<SpeciesPairBinding*>(
-            _species.addSpecies<SpeciesPairBinding>(forward<Args>(args)...));
+        (SpeciesPairBinding*)(_species.addSpecies<SpeciesPairBinding>(forward<Args>(args)...));
         sb->setParent(this);
         _diffusion_rates[sb->getMolecule()]=-1.0;
         return sb;
@@ -397,7 +398,6 @@ public:
     /// Add an internal reaction to this compartment
     template<unsigned short M, unsigned short N, typename ...Args>
     ReactionBase* addInternalReaction (Args&& ...args) {
-        //            cout << "Compartment::addReaction()..." << endl;
         ReactionBase *r = _internal_reactions.addReaction<M,N>(forward<Args>(args)...);
         r->setParent(this);
         return r;
@@ -475,7 +475,7 @@ public:
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
     float getDiffusionRate(string species_name) {
-        int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
+        int molecule = SpeciesNamesDB::stringToInt(species_name);
         return _diffusion_rates[molecule];
     }
     
@@ -494,7 +494,7 @@ public:
     /// Set the diffusion rate of a species in the compartment
     /// @param - species_name, a string
     void setDiffusionRate(string species_name, float diff_rate) {
-        int molecule = SpeciesNamesDB::instance()->stringToInt(species_name);
+        int molecule = SpeciesNamesDB::stringToInt(species_name);
         _diffusion_rates[molecule]=diff_rate;
     }
 
@@ -588,9 +588,9 @@ public:
     
     /// Adds the reactions of this compartment to the ChemSim object
     /// @param - chem, a ChemSim object that runs the reaction-diffusion algorithm
-    virtual void addChemSimReactions() {
-        for(auto &r : _internal_reactions.reactions()) ChemSim::addReaction(r.get());
-        for(auto &r : _diffusion_reactions.reactions()) ChemSim::addReaction(r.get());
+    virtual void addChemSimReactions(ChemSim* chem) {
+        for(auto &r : _internal_reactions.reactions()) chem->addReaction(r.get());
+        for(auto &r : _diffusion_reactions.reactions()) chem->addReaction(r.get());
     }
     
     /// Print properties of this compartment

@@ -11,12 +11,6 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "NeighborListDB.h"
+#include "BoundaryElement.h"
 
-NeighborListDB* NeighborListDB::_instance = 0;
-
-NeighborListDB* NeighborListDB::instance() {
-    if(_instance==0)
-        _instance = new NeighborListDB;
-    return _instance;
-}
+Database<BoundaryElement*> BoundaryElement::_boundaryElements;

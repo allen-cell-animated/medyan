@@ -38,6 +38,7 @@ class NaNCoordinateException : public exception {
 //FORWARD DECLARATIONS
 class Boundary;
 class Compartment;
+class CompartmentGrid;
 
 /// Used to control the geometry of the CompartmentGrid, as well as the geometry of
 /// the entire system
@@ -53,20 +54,19 @@ class GController {
     
 private:
     static short _nDim; ///< Number of dimensions in the system
-    
     static vector<int> _grid; ///< Size of each dimension, in compartment lengths
-    
     static vector<double> _compartmentSize; ///< Compartment size in each dimension
+    
+    static CompartmentGrid* _compartmentGrid; ///< The compartment grid
     
     ///Generate all neighbors lists for each compartment in the CompartmentGrid
     void generateConnections();
     
 public:
+    /// Initialize and return the grid based on input parameters
+    CompartmentGrid* initializeGrid();
     
-    /// Initialize the grid based on input parameters
-    void initializeGrid();
-    
-    /// Activate compartments based on a boundary
+    /// Activate compartments in compartment grid based on a boundary
     void activateCompartments(Boundary* boundary);
     
     //@{

@@ -16,12 +16,30 @@
 
 #include "common.h"
 
-/// For a reactable object in the SubSystem.
+/// An abstract base class for a reactable element in the SubSystem.
+
+/*! The main function of the Reactable class is to implement updateReactionRates(),
+ *  so that the reactions related to any object extending this class can be updated
+ *  by the SubSystem.
+ */
 class Reactable {
     
+protected:
+    Reactable() {}
+    
 public:
-    ///Update the reactions in this object
+    ///Update the reactions in this element
+    /// @note - this update could be due to an updated force minimization,
+    /// a set of chemical steps, or any other event in the SubSystem. This
+    /// function will be called by the SubSystem on all Reactables.
     virtual void updateReactionRates() = 0;
+    
+    ///Destructor
+    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
+    /// potentially throwing, which in turn disables move operations by the STL
+    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
+    /// be fixed in the future.
+    virtual ~Reactable() noexcept {}
 };
 
 #endif

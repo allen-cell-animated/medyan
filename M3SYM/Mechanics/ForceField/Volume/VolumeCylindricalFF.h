@@ -29,7 +29,7 @@ class VolumeCylindricalFF : public ForceField {
     
 private:
     vector <unique_ptr<CylinderVolumeInteractions>>
-        _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
 public:
     /// Initialize the volume forcefields
@@ -40,6 +40,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists();
 };
 
 #endif

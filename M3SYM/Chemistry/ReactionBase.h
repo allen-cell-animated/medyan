@@ -73,14 +73,16 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ReactionBase {
 protected:
-    unordered_set<ReactionBase*>
-        _dependents; ///< Pointers to ReactionBase objects that depend
-                     ///< on this ReactionBase being executed
+    unordered_set<ReactionBase*>  _dependents; ///< Pointers to ReactionBase objects that depend
+                                               ///< on this ReactionBase being executed
+    
     RNode* _rnode; ///< A pointer to an RNode object which is used
                    ///< to implement a Gillespie-like algorithm (e.g. NRM)
+    
     Composite *_parent; ///< A pointer to a Composite object to which
                         ///< this Reaction belongs
-    float _rate; ///< the rate for this ReactionBase
+    
+    float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
@@ -90,8 +92,9 @@ protected:
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
     ReactionType _reactionType; ///< Reaction type enumeration
+    
     bool _isProtoCompartment = false;///<Reaction is in proto compartment
-                                     ///< (Do not copy as a dependent, not in chemsim)
+                                     ///< (Do not copy as a dependent, not in ChemSim)
     
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     

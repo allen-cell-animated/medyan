@@ -37,7 +37,7 @@ double LinkerFF::computeEnergy(double d) {
     
     for (auto &interaction : _linkerInteractionVector) {
         
-        for (auto l: *LinkerDB::instance()) {
+        for (auto l: Linker::getLinkers()) {
             
             U_i = interaction->computeEnergy(l, d);
             
@@ -54,7 +54,7 @@ void LinkerFF::computeForces() {
     
     for (auto &interaction : _linkerInteractionVector) {
         
-        for (auto l: *LinkerDB::instance())
+        for (auto l: Linker::getLinkers())
             interaction->computeForces(l);
     }
 }
@@ -63,7 +63,7 @@ void LinkerFF::computeForcesAux() {
     
     for (auto &interaction : _linkerInteractionVector) {
         
-        for (auto l: *LinkerDB::instance())
+        for (auto l: Linker::getLinkers())
             interaction->computeForcesAux(l);
     }
 }

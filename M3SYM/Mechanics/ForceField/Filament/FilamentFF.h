@@ -29,7 +29,7 @@ class FilamentFF : public ForceField {
  
 private:
     vector<unique_ptr<FilamentInteractions>>
-        _filamentInteractionVector; ///< Vector of initialized filament interactions
+    _filamentInteractionVector; ///< Vector of initialized filament interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
@@ -40,6 +40,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
 };
 
 #endif

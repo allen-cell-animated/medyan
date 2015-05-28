@@ -16,16 +16,15 @@
 
 #include "common.h"
 
-#include "MotorGhostDB.h"
-
 #include "Composite.h"
 #include "CMotorGhost.h"
 #include "MMotorGhost.h"
+
+#include "Database.h"
+#include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
 #include "RateChangerImpl.h"
-
-#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -34,12 +33,16 @@ class SubSystem;
 
 /// A container to store a MMotorGhost and CMotorGhost.
 /*!
- * MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
- * Upon intialization, both of these components are created. Extending the Movable and
- * Reactable classes, the MotorGhost can update its position and reactions according to 
- * mechanical equilibration.
+ *  MotorGhost class is used to manage and store a MMotorGhost and CMotorGhost.
+ *  Upon intialization, both of these components are created.
+ *
+ *  Extending the Movable class, the positions of all instances 
+ *  can be updated by the SubSystem.
+ *
+ *  Extending the Reactable class, the reactions associated with 
+ *  all instances can be updated by the SubSystem.
  */
-class MotorGhost : public Composite, public Movable, public Reactable {
+class MotorGhost : public Composite, public Trackable, public Movable, public Reactable {
    
 friend class DRController;
 
@@ -47,14 +50,14 @@ private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
     unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to chem motor ghost
     
-    Cylinder* _c1; ///< First cylinder the linker is bound to
-    Cylinder* _c2; ///< Second cylinder the linker is bound to
+    Cylinder* _c1; ///< First cylinder the motor is bound to
+    Cylinder* _c2; ///< Second cylinder the motor is bound to
     
     double _position1; ///< Position on first cylinder
     double _position2; ///< Position on second cylinder
     
     short _motorType; ///< Integer specifying the type of linker
-    int _motorID; ///< Integer ID of this motor, managed by MotorGhostDB
+    int _motorID; ///< Integer ID of this motor, managed by Database
     
     float _birthTime; ///< Birth time
     
@@ -62,19 +65,24 @@ private:
     
     int _numHeads = 1; ///< Number of heads that this motor contains
     
+    static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
+    
     ///For dynamic rate unbinding
     static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
     static vector<MotorRateChanger*> _walkingChangers;
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
 
 public:
     vector<double> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
     
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-               double position1 = 0.5, double position2 = 0.5,
-               bool creation = false);
-    virtual ~MotorGhost() noexcept;
+               double position1 = 0.5, double position2 = 0.5);
+    
+    virtual ~MotorGhost() noexcept {};
     
     //@{
     /// Get cylinder
@@ -109,18 +117,33 @@ public:
     
     //@{
     ///Parameter management
-    short getMotorType() {return _motorType;}
-    int getMotorID() {return _motorID;}
+    short getType() {return _motorType;}
+    int getID() {return _motorID;}
     //@}
     
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     
-    /// Update the position
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _motorGhosts.addElement(this);}
+    virtual void removeFromSubSystem() {_motorGhosts.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const vector<MotorGhost*>& getMotorGhosts() {
+        return _motorGhosts.getElements();
+    }
+    /// Get the number of motors in this system
+    static int numMotorGhosts() {
+        return _motorGhosts.countElements();
+    }
+
+    /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
 
-    /// Update the reaction rates
+    /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
     
     ///Move a motor head forward

@@ -28,27 +28,33 @@ using namespace mathfunc;
 vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
-MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       double position1, double position2, bool creation)
-    : _c1(c1), _c2(c2),
-      _position1(position1), _position2(position2), _motorType(motorType) {
+Database<MotorGhost*> MotorGhost::_motorGhosts;
+
+void MotorGhost::updateCoordinate() {
     
-    //add to motor ghost db
-    MotorGhostDB::instance()->addMotorGhost(this);
-          
-    _motorID = MotorGhostDB::instance()->getMotorID();
-    _birthTime = tau();
-          
     auto x1 = _c1->getFirstBead()->coordinate;
     auto x2 = _c1->getSecondBead()->coordinate;
     auto x3 = _c2->getFirstBead()->coordinate;
     auto x4 = _c2->getSecondBead()->coordinate;
-          
-    //Find compartment
+    
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
-          
+    
     coordinate = midPointCoordinate(m1, m2, 0.5);
+}
+
+
+MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
+                       double position1, double position2)
+
+    : Trackable(true, true),
+      _c1(c1), _c2(c2),
+      _position1(position1), _position2(position2),
+      _motorType(motorType), _motorID(_motorGhosts.getID()),
+      _birthTime(tau()) {
+          
+    //find compartment
+    updateCoordinate();
     
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
@@ -69,19 +75,17 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #endif
     
 #ifdef MECHANICS
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
+          
     _mMotorGhost = unique_ptr<MMotorGhost>(
-        new MMotorGhost(motorType, _numHeads,
-                        position1, position2,
+        new MMotorGhost(motorType, _numHeads, position1, position2,
                         x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
-}
-
-MotorGhost::~MotorGhost() noexcept {
-    
-    //remove from motor ghost db
-    MotorGhostDB::instance()->removeMotorGhost(this);
 }
 
 void MotorGhost::updatePosition() {
@@ -92,19 +96,8 @@ void MotorGhost::updatePosition() {
     _cMotorGhost->setSecondCCylinder(_c2->getCCylinder());
     
 #endif
-    
-    //check if were still in same compartment
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
-    
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
-    
-    coordinate = midPointCoordinate(m1, m2, 0.5);
-    
-    _mMotorGhost->setLength(twoPointDistance(m1, m2));
+    //check if in same compartment
+    updateCoordinate();
     
     Compartment* c;
     
@@ -125,6 +118,18 @@ void MotorGhost::updatePosition() {
         _cMotorGhost->setSecondSpecies(secondSpecies);
 #endif
     }
+    
+#ifdef MECHANICS
+    auto x1 = _c1->getFirstBead()->coordinate;
+    auto x2 = _c1->getSecondBead()->coordinate;
+    auto x3 = _c2->getFirstBead()->coordinate;
+    auto x4 = _c2->getSecondBead()->coordinate;
+    
+    auto m1 = midPointCoordinate(x1, x2, _position1);
+    auto m2 = midPointCoordinate(x3, x4, _position2);
+    
+    _mMotorGhost->setLength(twoPointDistance(m1, m2));
+#endif
     
 }
 
@@ -174,7 +179,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(),
+                               _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
@@ -187,7 +193,8 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(),
+                               _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
@@ -205,7 +212,8 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
             _unbindingChangers[_motorType]->
-            changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
+            changeRate(_cMotorGhost->getOnRate(),
+                       _cMotorGhost->getOffRate(),
                        _numHeads, force);
         
         offRxn->setRate(newRate);

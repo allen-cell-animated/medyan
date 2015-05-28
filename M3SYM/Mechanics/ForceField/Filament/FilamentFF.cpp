@@ -13,14 +13,14 @@
 
 #include "FilamentFF.h"
 
-#include "FilamentDB.h"
-
 #include "FilamentStretching.h"
 #include "FilamentStretchingHarmonic.h"
 
 #include "FilamentBending.h"
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
+
+#include "Filament.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
     
@@ -54,7 +54,7 @@ double FilamentFF::computeEnergy(double d) {
     
     for (auto &interaction : _filamentInteractionVector) {
         
-        for (auto f: *FilamentDB::instance()) {
+        for (auto f: Filament::getFilaments()) {
         
             U_i = interaction->computeEnergy(f, d);
             
@@ -71,7 +71,7 @@ void FilamentFF::computeForces() {
     
     for (auto &interaction : _filamentInteractionVector) {
         
-        for (auto f: *FilamentDB::instance())
+        for (auto f: Filament::getFilaments())
             interaction->computeForces(f);
     }
 }
@@ -80,7 +80,7 @@ void FilamentFF::computeForcesAux() {
     
     for (auto &interaction : _filamentInteractionVector) {
         
-        for (auto f: *FilamentDB::instance())
+        for (auto f: Filament::getFilaments())
             interaction->computeForcesAux(f);
     }
 }

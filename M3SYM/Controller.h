@@ -32,7 +32,8 @@ class SubSystem;
  *  given an initial input directory. After initialization of all member controllers,
  *  the Controller class can run a simulation given the already read input parameters, 
  *  by iteratively switching between mechanical equilibration and stochastic chemical 
- *  steps.
+ *  steps. The Controller is also responsible for updating positions, reaction rates,
+ *  and neighbors lists through its corresponding sub-controllers and the Subsystem.
  */
 class Controller {
 
@@ -44,18 +45,18 @@ private:
     GController* _gController;   ///< Geometry controller used
     DRController* _drController; ///< Dynamic rate controller used
     
-    string _inputDirectory; ///< Input directory being used
-    string _outputDirectory; ///< Output directory being used
+    string _inputDirectory;   ///< Input directory being used
+    string _outputDirectory;  ///< Output directory being used
     
     vector<Output*> _outputs; ///< Vector of specified outputs
     
-    int _numTotalSteps; ///< Number of chemical steps we are running, or specify the time
-    double _runTime; ///< Total desired runtime for simulation
+    int _numTotalSteps;       ///< Number of chemical steps we are running, or specify the time
+    double _runTime;          ///< Total desired runtime for simulation
     
     int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
-    double _snapshotTime; ///< Desired time for each snapshot
+    double _snapshotTime;     ///< Desired time for each snapshot
     
-    int _numChemSteps; ///< Number of consecutive chemical steps
+    int _numChemSteps;        ///< Number of consecutive chemical steps
     int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
     
     /// Update the positions of all elements in the system

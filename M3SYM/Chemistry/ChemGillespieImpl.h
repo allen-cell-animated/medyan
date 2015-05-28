@@ -104,7 +104,8 @@ public:
     /// Forwards the call to the similarly named method of ChemGillespieImpl
     bool isPassivated() const {return _react->isPassivated();}
     
-    /// Print information about this RNodeGillespie such as "a", "a_penult" and the Reaction which this RNodeGillespie tracks.
+    /// Print information about this RNodeGillespie such as "a", "a_penult" and the
+    /// Reaction which this RNodeGillespie tracks.
     void printSelf() const;
     
     /// Print the RNode objects which are dependents of this RNode (via the tracked Reaction object dependencies)
@@ -141,7 +142,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
     ChemGillespieImpl() :
-    ChemSimImpl(), _eng(static_cast<unsigned long>(time(nullptr))), _exp_distr(0.0),
+    ChemSimImpl(), _eng((unsigned long)(time(nullptr))), _exp_distr(0.0),
     _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed

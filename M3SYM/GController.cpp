@@ -15,17 +15,12 @@
 
 #include "Boundary.h"
 #include "Parser.h"
-#include "CompartmentContainer.h"
+#include "CompartmentGrid.h"
 
 #include "MathFunctions.h"
 #include "SysParams.h"
 
 using namespace mathfunc;
-
-//static params
-vector<int> GController::_grid = {};
-vector<double> GController::_compartmentSize = {};
-short GController::_nDim = 0;
 
 Compartment* GController::getCompartment(const vector<size_t> &indices)
 {
@@ -68,8 +63,7 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         i++;
     }
     try {
-    return static_cast<Compartment*>(
-        CompartmentGrid::instance()->children().at(index).get());
+    return (Compartment*)(_compartmentGrid->children().at(index).get());
     }
     catch (exception& e){
         cout << "Bad compartment access at..." << endl;
@@ -121,8 +115,7 @@ Compartment* GController::getCompartment(const vector<double> &coords)
     }
     
     try {
-    return static_cast<Compartment*>(
-        CompartmentGrid::instance()->children().at(index).get());
+    return (Compartment*)(_compartmentGrid->children().at(index).get());
     }
     catch (exception& e){
         cout << "Bad compartment access at..." << endl;
@@ -183,7 +176,7 @@ void GController::generateConnections()
 }
 
 
-void GController::initializeGrid() {
+CompartmentGrid* GController::initializeGrid() {
     
     //Initial parameters of system
     _nDim = SysParams::Geometry().nDim;
@@ -214,18 +207,20 @@ void GController::initializeGrid() {
     }
     
     //Set the instance of this grid with given parameters
-    CompartmentGrid::setInstance(size);
+    _compartmentGrid = new CompartmentGrid(size);
     
     //Create connections based on dimensionality
     generateConnections();
+    
+    return _compartmentGrid;
 
 }
 
 void GController::activateCompartments(Boundary* boundary) {
     
     //initialize all compartments equivalent to cproto
-    for(auto &c : CompartmentGrid::instance()->children()) {
-        Compartment *C = static_cast<Compartment*>(c.get());
+    for(auto &c : _compartmentGrid->children()) {
+        Compartment *C = (Compartment*)(c.get());
         if(boundary->within(C->coordinates())) C->activate();
     }
 }
@@ -284,4 +279,12 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     
     return coords;
 }
+
+
+short GController::_nDim = 0;
+
+vector<int>    GController::_grid = {};
+vector<double> GController::_compartmentSize = {};
+
+CompartmentGrid* GController::_compartmentGrid = 0;
 

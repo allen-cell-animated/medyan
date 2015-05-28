@@ -13,61 +13,63 @@
 
 #include "Cylinder.h"
 
-#include "Bead.h"
-#include "NeighborListDB.h"
+#include "SubSystem.h"
+#include "CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
+
+#include "Bead.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-FilamentRateChanger* Cylinder::_polyChanger = nullptr;
+FilamentRateChanger* Cylinder::_polyChanger = 0;
+ChemManager* Cylinder::_chemManager = 0;
+
+Database<Cylinder*> Cylinder::_cylinders;
+
+void Cylinder::updateCoordinate() {
+    
+    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+}
+
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront, bool extensionBack,
-                   bool creation, bool branch)
+                   bool extensionFront,
+                   bool extensionBack,
+                   bool initialization)
 
-    : _b1(b1), _b2(b2), _pFilament(f), _positionFilament(positionFilament) {
-    
-    //Add to cylinder DB
-    CylinderDB::instance()->addCylinder(this);
-    _ID = CylinderDB::instance()->getCylinderID();
+    : Trackable(true, true, true, false),
+      _b1(b1), _b2(b2), _pFilament(f),
+      _positionFilament(positionFilament),
+      _ID(_cylinders.getID()) {
     
     //Set coordinate
-    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    updateCoordinate();
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
                    
    //add to compartment
    _compartment->addCylinder(this);
-        
-   //add to neighbor list db
-   NeighborListDB::instance()->addDynamicNeighbor(this);
     
 #ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment));
+    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
-        
-    ChemManager::initializeCCylinder(_cCylinder.get(), f,
-                                     extensionFront,
-                                     extensionBack,
-                                     creation);
+          
+    //init using chem manager
+    _chemManager->initializeCCylinder(_cCylinder.get(),
+                                      extensionFront,
+                                      extensionBack,
+                                      initialization);
 #endif
 
 #ifdef MECHANICS
     //set eqLength according to cylinder size
-    double eqLength;
+    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
         
-    if(extensionFront || extensionBack || branch)
-        eqLength = SysParams::Geometry().monomerSize;
-    else if(creation)
-        eqLength = SysParams::Geometry().minCylinderSize;
-    else
-        eqLength = SysParams::Geometry().cylinderSize;
-    
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
     _mCylinder->setCylinder(this);
 #endif
@@ -76,12 +78,6 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
 
 Cylinder::~Cylinder() noexcept {
     
-    //remove from neighbor lists
-    NeighborListDB::instance()->removeDynamicNeighbor(this);
-    
-    //Remove from cylinder DB
-    CylinderDB::instance()->removeCylinder(this);
-    
     //remove from compartment
     _compartment->removeCylinder(this);
 }
@@ -89,11 +85,8 @@ Cylinder::~Cylinder() noexcept {
 void Cylinder::updatePosition() {
 
     //check if were still in same compartment, set new position
-    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
-    
-    //update length
-    _mCylinder->setLength(twoPointDistance(_b1->coordinate, _b2->coordinate));
-    
+    updateCoordinate();
+
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
@@ -111,6 +104,12 @@ void Cylinder::updatePosition() {
         setCCylinder(clone);
 #endif
     }
+    
+#ifdef MECHANICS
+    //update length
+    _mCylinder->setLength(twoPointDistance(_b1->coordinate,
+                                           _b2->coordinate));
+#endif
 
 }
 
@@ -161,5 +160,15 @@ void Cylinder::updateReactionRates() {
             }
         }
     }
+}
+
+bool Cylinder::isFullLength() {
+    
+#ifdef MECHANICS
+    return _mCylinder->getEqLength() ==
+            SysParams::Geometry().cylinderSize;
+#else
+    return true;
+#endif
 }
 

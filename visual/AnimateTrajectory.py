@@ -200,8 +200,8 @@ for line in traj_file:
 def show_frame(frame_number=-1):
 
 	#if were saving the frames
-	saving = False
-	saveFile = "/Users/jameskomianos/Desktop/GarykRun1000s/Snapshots/"
+	saving = True
+	saveFile = "/Users/jameskomianos/Desktop/Test/Snapshots/"
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling

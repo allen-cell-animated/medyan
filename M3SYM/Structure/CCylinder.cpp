@@ -14,6 +14,9 @@
 #include "CCylinder.h"
 
 #include "CBound.h"
+#include "ChemManager.h"
+
+ChemSim* CCylinder::_chemSim = 0;
 
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder) {
@@ -22,13 +25,15 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
-        _monomers.push_back(unique_ptr<CMonomer>(m->clone(c)));
+        _monomers.emplace_back(m->clone(c));
     
     //copy all internal reactions
     for(auto &r: rhs._internalReactions) {
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+        
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
+        
         addInternalReaction(rxnClone);
     }
     //copy all cross-cylinder reactions
@@ -39,8 +44,10 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+            
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
+            
             addCrossCylinderReaction(it->first, rxnClone);
         }
     }
@@ -52,8 +59,10 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+            
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
+            
             ccyl->addCrossCylinderReaction(this, rxnClone);
         }
     }
@@ -62,9 +71,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 void CCylinder::addInternalReaction(ReactionBase* r) {
     
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
-    
-    ChemSim::addReaction(r);
+    _compartment->addInternalReaction(r);
+    _chemSim->addReaction(r);
     
     //add to local reaction list
     _internalReactions.insert(r);
@@ -83,7 +91,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
+        _chemSim->removeReaction(r);
         _compartment->removeInternalReaction(r);
         
         _internalReactions.erase(r);
@@ -94,9 +102,8 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
                                          ReactionBase* r) {
     
     //add to compartment and chemsim
-    _compartment->addInternalReactionUnique(unique_ptr<ReactionBase>(r));
-    
-    ChemSim::addReaction(r);
+    _compartment->addInternalReaction(r);
+    _chemSim->addReaction(r);
     
     //add to this reaction map
     _crossCylinderReactions[other].insert(r);
@@ -129,7 +136,7 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
         r->passivateReaction();
         
         //remove from compartment and chemsim
-        ChemSim::removeReaction(r);
+        _chemSim->removeReaction(r);
         _compartment->removeInternalReaction(r);
         
         //if number of reactions in cross-cylinder
@@ -210,5 +217,4 @@ void CCylinder::printCCylinder()
     }
     cout << endl;
 }
-
 

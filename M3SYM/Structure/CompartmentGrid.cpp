@@ -11,13 +11,18 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "FilamentDB.h"
+#include "CompartmentGrid.h"
 
-int FilamentDB::_currentFilamentID = 0;
-FilamentDB* FilamentDB::_instance = 0;
+#include "ChemSim.h"
 
-FilamentDB* FilamentDB::instance() {
-    if(_instance==0)
-        _instance = new FilamentDB;
-    return _instance;
+void CompartmentGrid::addChemSimReactions(ChemSim* chem) {
+    
+    for(auto &c : children()) {
+        Compartment* C = (Compartment*)(c.get());
+        C->addChemSimReactions(chem);
+    }
+    
+    for(auto &r : _bulkReactions.reactions())
+        chem->addReaction(r.get());
+    
 }

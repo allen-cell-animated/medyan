@@ -100,7 +100,7 @@ void CCNeighborList::reset() {
     _list.clear();
     
     //loop through all neighbor keys
-    for(auto cylinder: *CylinderDB::instance())
+    for(auto cylinder: Cylinder::getCylinders())
         
         updateNeighbors(cylinder);
 }
@@ -118,7 +118,7 @@ void BBENeighborList::updateNeighbors(BoundaryElement* be) {
     _list[be].clear();
     
     //loop through beads, add as neighbor
-    for (auto &b : *BeadDB::instance()) {
+    for (auto &b : Bead::getBeads()) {
         
         double dist = be->distance(b->coordinate);
         //If within range, add it
@@ -144,7 +144,7 @@ void BBENeighborList::removeNeighbor(Neighbor* n) {
     _list.erase(be);
 }
 
-void BBENeighborList::addDynamicNeighbor(Neighbor* n) {
+void BBENeighborList::addDynamicNeighbor(DynamicNeighbor* n) {
     
     //return if not a boundary element!
     Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
@@ -157,7 +157,7 @@ void BBENeighborList::addDynamicNeighbor(Neighbor* n) {
     }
 }
 
-void BBENeighborList::removeDynamicNeighbor(Neighbor* n) {
+void BBENeighborList::removeDynamicNeighbor(DynamicNeighbor* n) {
     
     //return if not a bead!
     Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
@@ -174,7 +174,7 @@ void BBENeighborList::reset() {
     _list.clear();
     
     //loop through all neighbor keys
-    for(auto boundary: *BoundaryElementDB::instance())
+    for(auto boundary: BoundaryElement::getBoundaryElements())
         
         updateNeighbors(boundary);
 }
@@ -192,7 +192,7 @@ void CBENeighborList::updateNeighbors(BoundaryElement* be) {
     _list[be].clear();
     
     //loop through beads, add as neighbor
-    for (auto &c : *CylinderDB::instance()) {
+    for (auto &c : Cylinder::getCylinders()) {
         
         double dist = be->distance(c->coordinate);
         //If within range, add it
@@ -218,7 +218,7 @@ void CBENeighborList::removeNeighbor(Neighbor* n) {
     _list.erase(be);
 }
 
-void CBENeighborList::addDynamicNeighbor(Neighbor* n) {
+void CBENeighborList::addDynamicNeighbor(DynamicNeighbor* n) {
     
     //return if not a boundary element!
     Cylinder* c; if(!(c = dynamic_cast<Cylinder*>(n))) return;
@@ -231,7 +231,7 @@ void CBENeighborList::addDynamicNeighbor(Neighbor* n) {
     }
 }
 
-void CBENeighborList::removeDynamicNeighbor(Neighbor* n) {
+void CBENeighborList::removeDynamicNeighbor(DynamicNeighbor* n) {
     
     //return if not a boundary element!
     Cylinder* cylinder;
@@ -249,7 +249,7 @@ void CBENeighborList::reset() {
     _list.clear();
     
     //loop through all neighbor keys
-    for(auto boundary: *BoundaryElementDB::instance())
+    for(auto boundary: BoundaryElement::getBoundaryElements())
         
         updateNeighbors(boundary);
 }

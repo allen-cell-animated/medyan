@@ -21,7 +21,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                                                     double MAXDIST){
 
     //system size
-    int N = BeadDB::instance()->size();
+    int N = Bead::numBeads();
     int NDOF = 3 * N;
     if (NDOF == 0) return;
     

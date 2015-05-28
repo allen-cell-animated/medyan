@@ -25,39 +25,39 @@ struct MechParams {
     
     //@{
     /// Filament parameter
-    double FStretchingK = 0;
-    double FBendingK = 0;
+    double FStretchingK  = 0;
+    double FBendingK     = 0;
     double FBendingTheta = 0;
-    double FTwistingK = 0;
-    double FTwistingPhi = 0;
+    double FTwistingK    = 0;
+    double FTwistingPhi  = 0;
     //@}
     
     //@{
     /// Linker parameter
-    vector<double> LStretchingK = {};
-    vector<double> LBendingK = {};
+    vector<double> LStretchingK  = {};
+    vector<double> LBendingK     = {};
     vector<double> LBendingTheta = {};
-    vector<double> LTwistingK = {};
-    vector<double> LTwistingPhi = {};
+    vector<double> LTwistingK    = {};
+    vector<double> LTwistingPhi  = {};
     //@}
     
     //@{
     /// MotorGhost parameter
-    vector<double> MStretchingK = {};
-    vector<double> MBendingK = {};
+    vector<double> MStretchingK  = {};
+    vector<double> MBendingK     = {};
     vector<double> MBendingTheta = {};
-    vector<double> MTwistingK = {};
-    vector<double> MTwistingPhi = {};
+    vector<double> MTwistingK    = {};
+    vector<double> MTwistingPhi  = {};
     //@}
     
     //@{
     /// BranchingPoint parameter
-    vector<double> BrStretchingK = {};
-    vector<double> BrStretchingL = {};
-    vector<double> BrBendingK = {};
+    vector<double> BrStretchingK  = {};
+    vector<double> BrStretchingL  = {};
+    vector<double> BrBendingK     = {};
     vector<double> BrBendingTheta = {};
-    vector<double> BrDihedralK = {};
-    vector<double> BrPositionK = {};
+    vector<double> BrDihedralK    = {};
+    vector<double> BrPositionK    = {};
     //@}
     
     //@{

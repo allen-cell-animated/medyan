@@ -24,9 +24,8 @@ using namespace mathfunc;
 
 mt19937* FilamentBindingManager::_eng = 0;
 
-vector<CCNLContainer*> LinkerBindingManager::_nlContainers;
-vector<CCNLContainer*> MotorBindingManager::_nlContainers;
-
+vector<CCNeighborList*> LinkerBindingManager::_neighborLists;
+vector<CCNeighborList*> MotorBindingManager::_neighborLists;
 
 //BRANCHER
 
@@ -142,8 +141,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
         
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                       getNeighbors(cc->getCylinder())) {
+        for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
             
             Cylinder* c = cc->getCylinder();
             
@@ -250,8 +248,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     updateBindingReaction(oldN, newN);
     
     //remove all neighbors which have this binding site pair
-    for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                   getNeighbors(cc->getCylinder())) {
+    for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
         
         if(cn->getCompartment() != _compartment) {
             
@@ -305,8 +302,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
-                for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                               getNeighbors(cc->getCylinder())) {
+                for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
                     
                     if(cn->getFilament() == c->getFilament()) continue;
                     
@@ -380,8 +376,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
         
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                       getNeighbors(cc->getCylinder())) {
+        for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
             
             Cylinder* c = cc->getCylinder();
             
@@ -488,8 +483,7 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     updateBindingReaction(oldN, newN);
     
     //remove all neighbors which have this binding site pair
-    for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                   getNeighbors(cc->getCylinder())) {
+    for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
         
         if(cn->getCompartment() != _compartment) {
             
@@ -543,8 +537,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
-                for (auto cn : _nlContainers[_nlIndex]->getNeighborList()->
-                               getNeighbors(cc->getCylinder())) {
+                for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
                     
                     if(cn->getFilament() == c->getFilament()) continue;
                     

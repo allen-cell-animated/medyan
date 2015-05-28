@@ -797,6 +797,108 @@ def orderParameters(FrameLists, saveFile=''):
 		fig.savefig(saveFile)
 
 
+#Calculate the radius of gyration over all cylinders 
+#returns a list of time and R_g^2 pairs
+def radiusOfGyration(FrameList):
+
+	Rgs = []
+
+	for frameIndex in xrange(0, len(FrameList)):
+
+		frame = FrameList[frameIndex]
+
+		#get center of mass of frame
+		com = np.array([0.0,0.0,0.0])
+		beadCount = 0
+
+		#go through filaments
+		for filamentID, FS in frame.filaments.iteritems():
+			for coord in FS.coords:
+
+				com += coord
+				beadCount += 1
+
+		#normalize
+		com /= beadCount
+
+		RgSquare = 0
+		numCylinders = 0
+
+		#Loop through cylinders
+		for cylinderID, CS in frame.cylinders.iteritems():
+
+			numCylinders += 1
+			cam = (CS.coords[1] + CS.coords[0]) / 2
+
+			RgSquare += (cam - com).dot(cam - com)
+
+		#normalize
+		if numCylinders == 0: continue
+
+		RgSquare /= numCylinders
+		Rg = RgSquare * 0.00001
+
+		Rgs.append((frame.time, Rg))
+
+	#return velocities
+	return Rgs
+
+#Calculate the radius of gyration over all cylinders from a number of trajectories
+#plot the data over time. If file is provided, save to that file
+def radiusOfGyrations(FrameLists, saveFile=''):
+
+	RgList = []
+
+	#get all data
+	for FrameList in FrameLists:
+
+		Rgs = radiusOfGyration(FrameList)
+		RgList.append(Rgs)
+
+	#now combine data
+	finalRgs = []
+
+	for i in xrange(0, len(Rgs)):
+
+		finalTime = 0
+		finalRg = 0
+
+		RgSet = []
+
+		for Rgs in RgList:
+
+			finalTime += Rgs[i][0]
+			finalRg += Rgs[i][1]
+
+			RgSet.append(Rgs[i][1])
+
+		#average
+		finalTime /= len(FrameLists)
+		finalRg /= len(FrameLists)
+
+		error = numpy.std(RgSet)
+
+		finalRgs.append((finalTime,finalRg,error))
+
+	#plot
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	times  = [x[0] for x in finalRgs]
+	rgs    = [x[1] for x in finalRgs]
+	#errors = [x[2] for x in finalOrderParams]
+
+	plt.errorbar(times, rgs)
+
+	plt.title(r'$\mathrm{Radius\/of\/gyration\/of\/network}$')
+	plt.xlabel(r'$\mathrm{Time}\/(s)$')
+	plt.ylabel(r'$\mathrm{R_g^2\/(um)}$')
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
 #Calculate contractile velocity towards the center of mass
 #returns a list of time and velocity pairs
 def contractileVelocity(FrameList):
@@ -811,7 +913,7 @@ def contractileVelocity(FrameList):
 		deltaT = frameF.time - frameI.time
 
 		#get center of mass of frame i
-		com = [0.0,0.0,0.0]
+		com = np.array([0.0,0.0,0.0])
 		beadCount = 0
 
 		#go through filaments
@@ -846,6 +948,8 @@ def contractileVelocity(FrameList):
 			velocity += vel.dot((com - cbm)/((com - cbm).dot(com - cbm)))
 
 		#normalize
+		if numCylinders == 0: continue
+
 		velocity /= numCylinders
 		velocity *= 0.001 #units
 

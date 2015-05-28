@@ -30,8 +30,9 @@ class Compartment;
 /// A class to represent the chemical component of a MotorGhost.
 /*!
  *  The CMotorGhost class contains chemical info of the parent MotorGhost.
+ *
+ *  Extending CBound, this class tracks its corresponding Species and unbinding Reaction.
  */
-
 class CMotorGhost : public CBound {
     
 private:

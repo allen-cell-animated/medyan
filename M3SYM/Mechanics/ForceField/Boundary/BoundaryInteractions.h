@@ -16,19 +16,26 @@
 
 #include "common.h"
 
-#include "NeighborListContainer.h"
+#include "NeighborListImpl.h"
+
 #include "SysParams.h"
+
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
 
 /// Represents a BoundaryElement interaction with a Bead.
-class BoundaryInteractions : public BBENLContainer {
+class BoundaryInteractions {
+    
+protected:
+    BBENeighborList* _neighborList; ///<Neighbor list of Bead - BoundaryElement
     
 public:
     /// Constructor, intializes the neighbor list needed
-    BoundaryInteractions()
-    : BBENLContainer(SysParams::Boundaries().BoundaryCutoff) {}
+    BoundaryInteractions() {
+        
+        _neighborList = new BBENeighborList(SysParams::Boundaries().BoundaryCutoff);
+    }
     
     /// Compute energy of this interaction
     virtual double computeEnergy(BoundaryElement*, Bead*, double d) = 0;
@@ -36,6 +43,9 @@ public:
     virtual void computeForces(BoundaryElement*, Bead*) = 0;
     /// Compute auxiliary forces of this interaction
     virtual void computeForcesAux(BoundaryElement*, Bead*) = 0;
+    
+    /// Get the neighbor list for this interaction
+    BBENeighborList* getNeighborList() {return _neighborList;}
     
     /// Get the name of this interaction
     virtual const string getName() = 0;

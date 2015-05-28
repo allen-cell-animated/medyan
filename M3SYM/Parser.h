@@ -161,30 +161,30 @@ struct MechanicsFFType {
     //@{
     /// FilamentFF type
     string FStretchingType = "";
-    string FBendingType = "";
-    string FTwistingType = "";
+    string FBendingType    = "";
+    string FTwistingType   = "";
     //@}
     
     //@{
     /// LinkerFF type
     string LStretchingType = "";
-    string LBendingType = "";
-    string LTwistingType = "";
+    string LBendingType    = "";
+    string LTwistingType   = "";
     //@}
     
     //@{
     /// MotorFF type
     string MStretchingType = "";
-    string MBendingType = "";
-    string MTwistingType = "";
+    string MBendingType    = "";
+    string MTwistingType   = "";
     //@}
     
     //@{
     /// BranchingFF type
     string BrStretchingType = "";
-    string BrBendingType = "";
-    string BrDihedralType = "";
-    string BrPositionType = "";
+    string BrBendingType    = "";
+    string BrDihedralType   = "";
+    string BrPositionType   = "";
     //@}
     
     /// VolumeFF type
@@ -302,7 +302,7 @@ public:
     vector<vector<vector<double>>> readFilaments();
 };
 
-/// Used to parse all chemical information
+/// Used to parse all chemical information, initialized by the Controller.
 class ChemistryParser: public Parser {
     
 public:

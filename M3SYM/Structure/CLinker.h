@@ -29,8 +29,9 @@ class Compartment;
 /// To represent the chemical component of a Linker.
 /*! 
  *  The CLinker class contains chemical info of the parent Linker.
+ *
+ *  Extending CBound, this class tracks its corresponding Species and unbinding Reaction.
  */
-
 class CLinker : public CBound {
     
 private:

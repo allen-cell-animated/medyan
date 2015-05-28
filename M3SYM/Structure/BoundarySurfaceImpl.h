@@ -32,7 +32,7 @@ public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
     ///@param normal - normal vector to plane
-    Plane(vector<double> coords, vector<double> normal);
+    Plane(SubSystem* s, vector<double> coords, vector<double> normal);
 };
 
 
@@ -47,7 +47,7 @@ public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
     ///@param normal - normal vector to sphere
-    Sphere(vector<double> coords, double radius);
+    Sphere(SubSystem* s, vector<double> coords, double radius);
 };
 
 
@@ -61,7 +61,7 @@ public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of cylinder
     ///@param normal - normal vector to sphere
-    CylinderZ(vector<double> coords, double radius, double height);
+    CylinderZ(SubSystem* s, vector<double> coords, double radius, double height);
     
 };
 
@@ -75,7 +75,7 @@ public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of half sphere
     ///@param normal - normal vector to sphere
-    HalfSphereZ(vector<double> coords, double radius, bool up);
+    HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up);
     
 };
 

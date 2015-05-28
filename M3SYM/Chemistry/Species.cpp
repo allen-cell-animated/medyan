@@ -16,14 +16,6 @@
 #include "Reaction.h"
 #include "Composite.h"
 
-SpeciesNamesDB* SpeciesNamesDB::_instance = 0;
-
-SpeciesNamesDB* SpeciesNamesDB::instance() {
-    if(_instance==0)
-        _instance = new SpeciesNamesDB;
-    return _instance;
-}
-
 #ifdef RSPECIES_SIGNALING
 boost::signals2::connection Species::connect(
     function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
@@ -45,3 +37,7 @@ ostream& operator<<(ostream& os, const Species& s){
     os << s.getFullName() << "[" << s.getN() << "]";
     return os;
 }
+
+unordered_map<string,int> SpeciesNamesDB::_map_string_int;
+vector<string> SpeciesNamesDB::_vec_int_string;
+unsigned long  SpeciesNamesDB::_num = 0;

@@ -11,13 +11,6 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "MotorGhostDB.h"
+#include "Trackable.h"
 
-int MotorGhostDB::_currentMotorID = 0;
-MotorGhostDB* MotorGhostDB::_instance = 0;
-
-MotorGhostDB* MotorGhostDB::instance() {
-    if(_instance==0)
-        _instance = new MotorGhostDB;
-    return _instance;
-}
+SubSystem* Trackable::_subSystem = 0;

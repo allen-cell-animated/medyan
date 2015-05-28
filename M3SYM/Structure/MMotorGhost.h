@@ -27,14 +27,12 @@ class MotorGhost;
 
 /*!
  *  The class describes interaction between 4 [Beads](@ref Bead) connected by a 
- *  potential and equilibrium constants. There are NO ACTUAL BEADS assotiated with these
- *  motors, but just potentials acting on connected filament beads. Initial length of a 
- *  ghost motor is determinated by the condition of zero initial stress, i.e., it 
- *  is calculated within the  constructor at initiation. A ghost motor heads positions
- *  on a segment (between two consecutive beads on a filament) determined by two numbers 
- *  (0 to 1) position1 and position2 (finite number of steps before move to the next 
- *  segment o--x-o- -> o---xo- -> o---ox). they can be changed as a result of chemical 
- *  reaction, than we consider that the motor made a step.
+ *  MotorGhost, and equilibrium constants. Initial length is determinated by the condition 
+ *  of zero initial stress, i.e., it is calculated within the constructor at initiation. 
+ *  A ghost motor heads positions on a segment (between two consecutive beads on a filament) 
+ *  determined by two numbers (0 to 1) position1 and position2 (finite number of steps 
+ *  before move to the next segment o--x-o- -> o---xo- -> o---ox). they can be changed as a
+ *  result of chemical reaction, than we consider that the motor made a step.
  */
 class MMotorGhost {
     
@@ -45,8 +43,8 @@ public:
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
     MMotorGhost(int motorType, int numHeads, double position1, double position2,
-            const vector<double>& coord11, const vector<double>& coord12,
-            const vector<double>& coord21, const vector<double>& coord22);
+                const vector<double>& coord11, const vector<double>& coord12,
+                const vector<double>& coord21, const vector<double>& coord22);
     
     //@{
     /// Getter for constants

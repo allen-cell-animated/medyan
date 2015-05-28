@@ -29,7 +29,7 @@ class LinkerFF : public ForceField {
     
 private:
     vector<unique_ptr<LinkerInteractions>>
-        _linkerInteractionVector; ///< Vector of initialized linker interactions
+    _linkerInteractionVector; ///< Vector of initialized linker interactions
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
@@ -40,6 +40,8 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
+    
+    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
     
 };
 

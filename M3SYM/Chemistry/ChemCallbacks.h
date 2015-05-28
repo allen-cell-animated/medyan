@@ -217,7 +217,7 @@ struct BranchingPointUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //remove the branching point
-        _ps->removeBranchingPoint(_branchingPoint);
+        _ps->removeTrackable<BranchingPoint>(_branchingPoint);
     }
 };
 
@@ -281,14 +281,14 @@ struct BranchingCallback {
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
         
         //create a new filament
-        Filament* f = _ps->addNewFilament(bp, bd, true);
+        Filament* f = _ps->addTrackable<Filament>(_ps, bp, bd, true, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-        BranchingPoint* b= _ps->addNewBranchingPoint(c1, c, branchType, pos);
+        BranchingPoint* b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
         
         //create off reaction
         auto cBrancher = b->getCBranchingPoint();
@@ -311,7 +311,7 @@ struct LinkerUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //remove the linker
-        _ps->removeLinker(_linker);
+        _ps->removeTrackable<Linker>(_linker);
     }
 };
 
@@ -349,7 +349,7 @@ struct LinkerBindingCallback {
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        Linker* l = _ps->addNewLinker(c1, c2, linkerType, pos1, pos2);
+        Linker* l = _ps->addTrackable<Linker>(c1, c2, linkerType, pos1, pos2);
         
         //create off reaction
         auto cLinker = l->getCLinker();
@@ -374,7 +374,7 @@ struct MotorUnbindingCallback {
     
     void operator() (ReactionBase *r) {
         //remove the motor
-        _ps->removeMotorGhost(_motor);
+        _ps->removeTrackable<MotorGhost>(_motor);
     }
 };
 
@@ -413,7 +413,7 @@ struct MotorBindingCallback {
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        MotorGhost* m = _ps->addNewMotorGhost(c1, c2, motorType, pos1, pos2);
+        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2);
 
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
@@ -580,7 +580,7 @@ struct FilamentCreationCallback {
         }
         
         //create filament, set up ends and filament species
-        Filament* f = _ps->addNewFilament(position, direction);
+        Filament* f = _ps->addTrackable<Filament>(_ps, position, direction, true, false);
         
         //initialize the nucleation
         f->nucleate(_plusEnd, _filament, _minusEnd);
@@ -614,11 +614,13 @@ struct FilamentDestructionCallback {
     
     Cylinder* _c; ///< Cylinder to destroy
     
-    FilamentDestructionCallback(Cylinder* c) : _c(c) {}
+    SubSystem* _ps; ///< SubSystem ptr
+    
+    FilamentDestructionCallback(Cylinder* c, SubSystem* ps) : _c(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        Filament* f = _c->getFilament();
-        delete f;
+        
+        _ps->removeTrackable<Filament>(_c->getFilament());
     }
 };
 

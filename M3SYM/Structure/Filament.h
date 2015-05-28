@@ -21,25 +21,27 @@
 
 #include "common.h"
 
-#include "FilamentDB.h"
+#include "Database.h"
+#include "Trackable.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
 class Cylinder;
 class Bead;
 
-/// Used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads]
-/// (@ref Bead).
+/// Used to store data about connectivity of [Cylinders](@ref Cylinder) and [Beads] (@ref Bead).
 /*!
  * This class contains information about [Cylinders](@ref Cylinder) and [Beads]
  * (@ref Bead) connectivity. It has functionality to polymerize and depolymerize,
  * as well as extend and retract by creating and deleting Cylinder and Bead in the 
  * system.
+ *
+ * Extending the Trackable class, all instances are kept and 
+ * easily accessed by the SubSystem.
  * 
- * A Filament can also be initialized as a number of shapes, including a zig zag and 
- * arc projection.
+ * A Filament can also be initialized as a number of different shapes.
  */
-class Filament {
+class Filament : public Trackable {
 
 private:
     deque<Cylinder*> _cylinderVector; ///< Vector of cylinders;
@@ -52,30 +54,35 @@ private:
     short _deltaMinusEnd = 0;  ///< Change in filament's cylinders
                                ///< at minus end since last snapshot
     
+    static Database<Filament*> _filaments; ///< Collection in SubSystem
+    
 public:
-    /// This constructor creates a short filament, containing only two beads.
+    /// This constructor creates a short filament, containing only two beads, at runtime.
     /// Coordinates of the first bead is an input, second is set up by using an input
     /// direction. Using all this, two constructors for beads and cylinders are called.
-	Filament(SubSystem* s, vector<double>& position, vector<double>& direction,
-             bool creation, bool branch);
+    /// @param nucleation - this filament was nucleated at runtime by a non-branching species
+    /// @param branching - this filament was branched at runtime from an existing filament
+	Filament(SubSystem* s, vector<double>& position,
+                           vector<double>& direction,
+                           bool nucleation = false,
+                           bool branch = false);
     
-    /// This constructor is called to create a longer filament. It creates a filament
+    /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point
-    /// determined by position vector and has a direction.
+    /// determined by position vector.
     Filament(SubSystem* s, vector<vector<double>>& position,
              int numBeads, string projectionType = "STRAIGHT");
     
-    
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
-    Filament(SubSystem* s);
+    Filament(SubSystem* s) : Trackable(), _subSystem(s), _ID(_filaments.getID()) {}
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.
     ~Filament();
     
     /// Addition of a new cylinder. Next position is based on previous beads directions
-    /// in the filament. This function creates a new bead. So, this function mostly
+    /// in the filament. This function creates a new bead. So, this function is mostly
     /// called during further extension, not initiation.
     /// @param plusEnd - the plus end species to be marked. Only if doing chemistry.
     void extendFront(short plusEnd);
@@ -136,6 +143,21 @@ public:
     
     /// Get ID
     int getID() {return _ID;}
+    
+    //@{
+    /// SubSystem management, inherited from Trackable
+    virtual void addToSubSystem() { _filaments.addElement(this);}
+    virtual void removeFromSubSystem() {_filaments.removeElement(this);}
+    //@}
+    
+    /// Get all instances of this class from the SubSystem
+    static const vector<Filament*>& getFilaments() {
+        return _filaments.getElements();
+    }
+    /// Get the number of filaments in this system
+    static int numFilaments() {
+        return _filaments.countElements();
+    }
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation

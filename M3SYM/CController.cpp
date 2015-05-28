@@ -15,12 +15,19 @@
 
 #include "SubSystem.h"
 
+#include "ChemManager.h"
+
 #include "ChemNRMImpl.h"
 #include "ChemGillespieImpl.h"
 #include "ChemSimpleGillespieImpl.h"
-#include "SimpleManagerImpl.h"
+
+#include "CCylinder.h"
+#include "Cylinder.h"
 
 void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
+    
+    // new ChemSim object
+    _chemSim = new ChemSim;
     
     // Set instance of chemsim algorithm
     ChemSimImpl* csi;
@@ -51,16 +58,29 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
         cout<< "Chem algorithm not recognized. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
-    ChemSim::setInstance(csi);
+    _chemSim->setInstance(csi);
     
-    // Set the instance of the initializer, and initialize
-    ChemManagerImpl* cii;
-    cii = new SimpleManagerImpl(_subSystem, chem);
-
-    ChemManager::setInstance(cii);
-    ChemManager::initializeSystem();
+    //Create manager, intialize
+    _chemManager = new ChemManager(_subSystem, chem);
+    _chemManager->initializeSystem(_chemSim);
     
     // init chemsim
-    ChemSim::initialize();
+    _chemSim->initialize();
+    
+    // set some static ptrs
+    FilamentReactionTemplate::_ps = _subSystem;
+    
+    CCylinder::_chemSim = _chemSim;
+    Cylinder::_chemManager = _chemManager;
+    
+}
+
+bool CController::run(int steps) {
+    
+    //update copy numbers
+    _chemManager->updateCopyNumbers();
+    
+    //run the steps
+    return _chemSim->run(steps);
 }
 

@@ -20,6 +20,7 @@
 #include "common.h"
 
 #include "NeighborList.h"
+#include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
 class Bead;
@@ -31,7 +32,8 @@ class BoundaryElement;
 class CCNeighborList : public NeighborList {
     
 private:
-    unordered_map<Cylinder*, vector<Cylinder*>> _list; ///< The neighbors list, as a hash map
+    unordered_map<Cylinder*, vector<Cylinder*>> _list;
+    ///< The neighbors list, as a hash map
     
     bool _full; ///<Specifying whether this is a full or half list
     
@@ -51,8 +53,8 @@ public:
     //@{
     /// The implementation of these functions calls the static version,
     /// all cylinders are dynamic
-    virtual void addDynamicNeighbor(Neighbor* n) {addNeighbor(n);}
-    virtual void removeDynamicNeighbor(Neighbor* n) {removeNeighbor(n);}
+    virtual void addDynamicNeighbor(DynamicNeighbor* n) {addNeighbor(n);}
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n) {removeNeighbor(n);}
     //@}
     
     virtual void reset();
@@ -66,7 +68,8 @@ public:
 class BBENeighborList : public NeighborList {
     
 private:
-    unordered_map<BoundaryElement*, vector<Bead*>> _list; ///< The neighbors list, as a hash map
+    unordered_map<BoundaryElement*, vector<Bead*>> _list;
+    ///< The neighbors list, as a hash map
     
     ///Helper function to update neighbors
     void updateNeighbors(BoundaryElement* be);
@@ -77,8 +80,8 @@ public:
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
     
-    virtual void addDynamicNeighbor(Neighbor* n);
-    virtual void removeDynamicNeighbor(Neighbor* n);
+    virtual void addDynamicNeighbor(DynamicNeighbor* n);
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n);
     
     virtual void reset();
     
@@ -90,7 +93,8 @@ public:
 class CBENeighborList : public NeighborList {
     
 private:
-    unordered_map<BoundaryElement*, vector<Cylinder*>> _list; ///< The neighbors list, as a hash map
+    unordered_map<BoundaryElement*, vector<Cylinder*>> _list;
+    ///< The neighbors list, as a hash map
     
     ///Helper function to update neighbors
     void updateNeighbors(BoundaryElement* be);
@@ -101,8 +105,8 @@ public:
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
     
-    virtual void addDynamicNeighbor(Neighbor* n);
-    virtual void removeDynamicNeighbor(Neighbor* n);
+    virtual void addDynamicNeighbor(DynamicNeighbor* n);
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n);
     
     virtual void reset();
     
