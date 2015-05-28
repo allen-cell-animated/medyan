@@ -46,29 +46,34 @@ enum SpeciesType {
  *  conversion functions fron integer to  string (SpeciesNamesDB::intToString(int i)) 
  *  and vice versa (SpeciesNamesDB::stringToInt (string name)).
  *
- * SpeciesNamesDB also has a function to generate a unique filament name given a string seed.
+ * SpeciesNamesDB has a function to generate a unique filament name given a string seed.
  * This is particularly useful for when a filament species needs a unique name, say with 
  * the seed "Actin". This unique filament name can be added or removed to match the 
  * corresponding bulk or diffusing species in the system.
  *
+ * SpeciesNamesDB also has a function to generate a SpeciesSingleBinding or SpeciesPairBinding
+ * name for a Compartment by concatenating two species names, a SpeciesDiffusing/SpeciesBulk with
+ * a SpeciesBound, with a "-". This name can then be broken up into its counterparts when needed.
  */  
 class SpeciesNamesDB {
 
 private: 
     static unordered_map<string,int> _map_string_int;
     static vector<string> _vec_int_string;
-    static unsigned long _num; ///<used to generate unique names
     
+    static unsigned long _num; ///<used to generate unique names
 public:
     
     /// Given an integer "i", returns the string associated with that integer.
     /// Throws an out of range exception.
     static string intToString(unsigned int i) {
+        
         if (i>=_vec_int_string.size())
             throw out_of_range(
                 "SpeciesNamesDB::intToString(int i) index error:[" +
                  to_string(i) +"], while the vector size is " +
                  to_string(_vec_int_string.size()));
+        
         return _vec_int_string[i];
     }
     
@@ -76,9 +81,12 @@ public:
     /// If the string does not exist yet, it is created.
     static int stringToInt (string name) {
         auto mit = _map_string_int.find(name);
+        
         if(mit == _map_string_int.end()){
+            
             _vec_int_string.push_back(name);
             _map_string_int[name]= _vec_int_string.size()-1;
+            
             return _vec_int_string.size()-1;
         }
         else
@@ -90,14 +98,20 @@ public:
     /// @note - used only for filament species.
     static string genUniqueFilName(string name) {
         string uniqueName = name + to_string(_num);
-        if(_map_string_int.find(uniqueName) != _map_string_int.end())
+        if(_map_string_int.find(uniqueName) != _map_string_int.end()) {
+        
             return uniqueName;
-        else
+        }
+        else {
+            _vec_int_string.push_back(uniqueName);
+            _map_string_int[uniqueName] = _vec_int_string.size()-1;
+            
             return name + "-" + to_string(++_num);
+        }
     }
     
-    /// Remove the unique integer value identifier with this filament species name
-    /// @return The name without the integer ending.
+    /// Remove the unique integer value identifier with this filament
+    /// species name. @return The name without the integer ending.
     static string removeUniqueFilName(string name) {
         
         //loop through string, get to integer
@@ -112,11 +126,17 @@ public:
         return name;
     }
     
-    /// Generate a single binding name based on two strings:
+    /// Generate a single or pair binding name based on two strings:
     /// one string being the binding species and the other being
     /// the bound species on the filament.
     static string genBindingName(string binding, string bound) {
-        return binding + "-" + bound;
+        
+        string name = binding + "-" + bound;
+        
+        _vec_int_string.push_back(name);
+        _map_string_int[name] = _vec_int_string.size()-1;
+        
+        return name;
     }
     
     /// Clear the contents of the database

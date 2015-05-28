@@ -63,7 +63,7 @@ class RSpecies {
     friend CMonomer;
     /// Reactions calls addAsReactant(), removeAsReactant() - which other classes
     /// should not call
-private: //Variables
+protected: //Variables
     vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions]
                                                ///< (@ref Reaction) where this RSpecies
                                                ///< is a Reactant
@@ -86,9 +86,8 @@ public:
     /// Constructors 
     /// @param parent - the Species object to which this RSpecies belongs
     /// @param n - copy number
-    RSpecies (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim) :
-    _species(parent), _n(n)
-    {
+    RSpecies (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
+        : _species(parent), _n(n) {
 #ifdef TRACK_UPPER_COPY_N
         _ulim = ulim;
 #endif
@@ -122,49 +121,6 @@ public:
     /// Return the upper limit for the copy number of this RSpecies
     species_copy_t getUpperLimitForN() const {return _ulim;}
 #endif
-    
-    /// Increases the copy number by 1. If the copy number changes from 0 to 1, calls a
-    /// "callback"-like method to activated previously passivated [Reactions](@ref
-    /// Reaction), where this RSpecies is a Reactant.
-    /// Also emits a signal with the change in copy number if attached.
-    virtual inline void up() {
-        _n+=1;
-#ifdef TRACK_ZERO_COPY_N
-        if(_n==1)
-            activateAssocReactantReactions();
-#endif
-#ifdef TRACK_UPPER_COPY_N
-        if(_n==_ulim)
-            passivateAssocProductReactions();
-#endif
-        
-#ifdef RSPECIES_SIGNALING
-    if(isSignaling()) emitSignal(+1);
-#endif
-    }
-    
-    /// Decreases the copy number by 1. If the copy number changes becomes 0, calls a
-    /// "callback"-like method to passivate [Reactions](@ref Reaction), where this
-    /// RSpecies is a Reactant.
-    /// Also emits a signal with the change in copy number if attached.
-    virtual inline void down() {
-#ifdef TRACK_UPPER_COPY_N
-        species_copy_t prev_n = _n;
-#endif
-        _n-=1;
-#ifdef TRACK_ZERO_COPY_N
-        if(_n == 0)
-            passivateAssocReactantReactions();
-#endif
-#ifdef TRACK_UPPER_COPY_N
-        if(prev_n == _ulim)
-            activateAssocProductReactions();
-#endif
-        
-#ifdef RSPECIES_SIGNALING
-    if(isSignaling()) emitSignal(-1);
-#endif
-    }
     
     // \internal This methods is called by the Reaction class during construction
     // of the Reaction where this RSpecies is involved as a Reactant
@@ -205,7 +161,6 @@ public:
         }
         
     }
-
     /// \internal Attempts to activate previously passivated [Reactions](@ref Reaction)
     /// where this RSpecies is involved as a Reactant. Usually, the Reaction was first
     /// passivated, for example if the RSpecies copy number of one of the reactants
@@ -261,16 +216,13 @@ public:
     inline bool isSignaling() const {return _signal!=nullptr;}
 #endif
     
-    /// Return the current copy number of this RSpecies
-    inline species_copy_t getN() const {return _n;}
-    
     /// return parent Species as a reference
     inline Species& getSpecies() {return _species;}
     
     /// return parent Species as a const reference
     inline const Species& getSpecies() const {return _species;}
     
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}")
     string getFullName() const;
             
     /// Return vector<ReactionBase *>, which contains pointers to all [Reactions](@ref
@@ -303,22 +255,104 @@ public:
     
     void operator delete(void* ptr) noexcept;
 #endif
+    
+    /// Increases the copy number of this RSpecies
+    virtual inline void up() = 0;
+    /// Decreases the copy number of this RSpecies
+    virtual inline void down() = 0;
+    
+    /// Return the effective copy number of this RSpecies
+    virtual inline double getN() const = 0;
+    /// Return the true copy number of this RSpecies
+    virtual inline species_copy_t getTrueN() const {return _n;}
+    
 };
+
+/// A RSpecies implementation that changes copy number regularly.
+/*!
+ * The RSpeciesReg class represents a typical RSpecies. Upon calling up() or down(),
+ * the copy number is incremented normally. getN() and getTrueN() both return the 
+ * true copy number tracked in the base class.
+ *
+ * The RSpeciesReg can be used for any type of Species in the chemical system.
+ */
+class RSpeciesReg : public RSpecies {
+    
+public:
+    /// Constructors
+    RSpeciesReg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
+        : RSpecies(parent, n, ulim) {}
+    /// deleted copy constructor - each RSpeciesRegular is uniquely created by the parent
+    /// Species
+    RSpeciesReg(const RSpeciesReg &r) = delete;
+    
+    /// deleted move constructor - each RSpeciesRegular is uniquely created by the parent
+    /// Species
+    RSpeciesReg(RSpeciesReg &&r) = delete;
+    
+    /// deleted assignment operator - each RSpeciesRegular is uniquely created by the
+    /// parent Species
+    RSpeciesReg& operator=(RSpeciesReg&) = delete;
+    
+    /// If the copy number changes from 0 to 1, calls a
+    /// "callback"-like method to activate previously passivated [Reactions](@ref
+    /// Reaction), where this RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
+    virtual inline void up() {
+        _n+=1;
+#ifdef TRACK_ZERO_COPY_N
+        if(_n==1)
+            activateAssocReactantReactions();
+#endif
+#ifdef TRACK_UPPER_COPY_N
+        if(_n==_ulim)
+            passivateAssocProductReactions();
+#endif
+        
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(+1);
+#endif
+    }
+    
+    /// If the copy number changes from 1 to 0, calls a
+    /// "callback"-like method to passivate previously activated [Reactions](@ref
+    /// Reaction), where this RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
+    virtual inline void down() {
+#ifdef TRACK_UPPER_COPY_N
+        species_copy_t prev_n = _n;
+#endif
+        _n-=1;
+#ifdef TRACK_ZERO_COPY_N
+        if(_n == 0)
+            passivateAssocReactantReactions();
+#endif
+#ifdef TRACK_UPPER_COPY_N
+        if(prev_n == _ulim)
+            activateAssocProductReactions();
+#endif
+        
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(-1);
+#endif
+    }
+    /// Return the true copy number
+    virtual inline double getN() const {return (double)_n;}
+};
+
 
 /// A constant RSpecies whose copy number does not change.
 /*!
  *  The RSpeciesConst class represents a RSpecies that does not change copy number upon 
- *  reacting This is used for SpeciesDiffusing or SpeciesBulk species, whose copy 
- *  numbers are constant throughout the duration of the chemical simulation. Their
- *  constant qualifier is set at the Species construction, where a RSpeciesConst object 
- *  is created in place of a typical RSpecies.
+ *  reacting. This is used for species whose copy numbers are constant throughout the 
+ *  duration of the chemical simulation.
+ *
+ *  The RSpeciesAvg can only be used for SpeciesBulk or SpeciesDiffusing.
  */
 class RSpeciesConst : public RSpecies {
     
 public:
     /// Constructors
-    /// @param parent - the Species object to which this RSpeciesConst belongs
-    /// @param n - copy number, will not change
     RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
         : RSpecies(parent, n, ulim) {}
     /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent
@@ -334,10 +368,122 @@ public:
     RSpeciesConst& operator=(RSpeciesConst&) = delete;
     
     //@{
-    /// In constant species, this function does nothing. Copy numbers do not change.
+    /// In constant species, do nothing. Copy numbers do not change.
     virtual inline void up() {}
     virtual inline void down() {}
     //@}
+    /// Return the true copy number
+    virtual inline double getN() const {return (double)_n;}
+};
+
+/// An average RSpecies that tracks the average copy number over a number of events.
+/*!
+ *  The RSpeciesAvg class represents a RSpecies that, while updating the true copy
+ *  number of the species, also tracks the average copy number over a specified number
+ *  of events. up() and down() update the true copy number while adding to a running
+ *  average of copy number events. When the number of events to average (named _numEvents)
+ *  is reached, the RSpecies computes the new average value and updates accordingly.
+ *
+ *  The RSpeciesAvg can only be used for SpeciesBulk or SpeciesDiffusing.
+ *
+ */
+class RSpeciesAvg : public RSpecies {
+    
+private:
+    int _numEvents;      ///< The number of events to generate an average copy number
+    int _eventCount = 0; ///< Tracking the number of events since last average
+    
+    double _localTau;  ///< The time since the last event occured
+    double _firstTau;  ///< Time since an average update occured
+    
+    double _average;   ///< The current average value
+    
+    /// A map of copy number and time (representing the time the species has been at this
+    /// copy number). These values will be collected until a new average is needed, and the
+    /// map will be used to compute an average and then reset.
+    unordered_map<species_copy_t, double> _copyNumbers;
+    
+    ///Compute the time average of the currently tracked, previous copy numbers
+    double computeAverageN() {
+        
+        double totalTau = tau() - _firstTau;
+        double average = 0;
+        
+        //average values
+        for(auto it : _copyNumbers)
+            average += it.first * it.second;
+        
+        average /= totalTau;
+        
+        //clear map and return
+        _copyNumbers.clear();
+        
+        return average;
+    }
+    
+public:
+    /// Constructors
+    /// @param numEvents - the number of copy number change events to use before
+    /// computing a new average. When this number is reached, a new average is created
+    /// using the _copyNumbers map (time averaged) and replaces the previous average.
+    RSpeciesAvg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim, int numEvents = 1)
+        : RSpecies(parent, n, ulim), _numEvents(numEvents) {}
+    /// deleted copy constructor - each RSpeciesAvg is uniquely created by the parent
+    /// Species
+    RSpeciesAvg(const RSpeciesAvg &r) = delete;
+    
+    /// deleted move constructor - each RSpeciesAvg is uniquely created by the parent
+    /// Species
+    RSpeciesAvg(RSpeciesAvg &&r) = delete;
+    
+    /// deleted assignment operator - each RSpeciesAvg is uniquely created by the
+    /// parent Species
+    RSpeciesAvg& operator=(RSpeciesAvg&) = delete;
+    
+    /// Increase the true copy number.
+    /// Add the old copy number to the running copy number map.
+    /// If a new average is needed, compute it and reset accordingly.
+    virtual inline void up() {
+        
+        //add old n to map
+        _copyNumbers[_n] += tau() - _localTau;
+        
+        //compute a new avg if we need it
+        if(++_eventCount >= _numEvents) {
+            computeAverageN();
+            
+            _eventCount = 0;
+            _firstTau = tau();
+            
+        }
+        //increase copy number, reset local tau
+        _n++;
+        _localTau = tau();
+    }
+    
+    /// Decrease the true copy number.
+    /// Add the old copy number to the running copy number map.
+    /// If a new average is needed, compute it and reset accordingly.
+    virtual inline void down() {
+        
+        //add old n to map
+        _copyNumbers[_n] += tau() - _localTau;
+        
+        //compute a new avg if we need it
+        if(++_eventCount >= _numEvents) {
+            computeAverageN();
+            
+            _eventCount = 0;
+            _firstTau = tau();
+            
+        }
+        //decrease copy number, reset local tau
+        _n--;
+        _localTau = tau();
+    }
+    
+    /// Return the current average
+    virtual inline double getN() const {return _average;}
 };
 
 
