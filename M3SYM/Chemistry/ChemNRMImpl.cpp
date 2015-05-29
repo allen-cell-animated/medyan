@@ -159,29 +159,32 @@ bool ChemNRMImpl::makeStep() {
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
     
-    for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-        RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
-        double a_old = rn_other->getPropensity();
-        rn_other->reComputePropensity();
-        double tau_new;
-        double tau_old = rn_other->getTau();
+    if(r->updateDependencies()) {
         
-        double a_new = rn_other->getPropensity();
+        for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
+            RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
+            double a_old = rn_other->getPropensity();
+            rn_other->reComputePropensity();
+            double tau_new;
+            double tau_old = rn_other->getTau();
+            
+            double a_new = rn_other->getPropensity();
 #ifdef TRACK_ZERO_COPY_N
-        tau_new = (a_old/a_new)*(tau_old-_t)+_t;
-#else
-        if(a_new<1.0e-15) // numeric_limits< double >::min()
-            tau_new = numeric_limits<double>::infinity();
-        else if (a_old<1.0e-15){
-            rn_other->generateNewRandTau();
-            tau_new = rn_other->getTau();
-        }
-        else{
             tau_new = (a_old/a_new)*(tau_old-_t)+_t;
-        }
+#else
+            if(a_new<1.0e-15) // numeric_limits< double >::min()
+                tau_new = numeric_limits<double>::infinity();
+            else if (a_old<1.0e-15){
+                rn_other->generateNewRandTau();
+                tau_new = rn_other->getTau();
+            }
+            else{
+                tau_new = (a_old/a_new)*(tau_old-_t)+_t;
+            }
 #endif
-        rn_other->setTau(tau_new);
-        rn_other->updateHeap();
+            rn_other->setTau(tau_new);
+            rn_other->updateHeap();
+        }
     }
     
     // Send signal

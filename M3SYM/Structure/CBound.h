@@ -123,7 +123,10 @@ public:
     //@}
     
     /// Set all rates at once
-    void setRates(float onRate, float offRate) {_onRate = onRate; _offRate = offRate;}
+    void setRates(float onRate, float offRate) {
+        _onRate = onRate;
+        _offRate = offRate;
+    }
     
     //@{
     /// Off reaction management

@@ -31,7 +31,7 @@
 class Composite;
 class CBound;
 
-///Enumeration for species types
+///Enumeration for Species types
 enum SpeciesType {
     BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, PLUSEND, MINUSEND
 };
@@ -148,9 +148,9 @@ public:
     
 /// Represents chemical molecules, tracks their copy number and can be used in
 /// [Reactions](@ref Reaction).
-/*! This class represents chemical species, such as G-Actin. As a class, it provides 
- *  Species' name, the current copy number of molecules, Species type (e.g. 
- *  SType::Bulk), and a few other characteristics of a Species.
+/*! This abstract class represents chemical species, such as G-Actin. As a class, 
+ *  it provides Species' name, the current copy number of molecules, Species type 
+ *  (e.g. SpeciesType::Bulk), and a few other characteristics of a Species.
  *  This class is synergetic with the Reaction, since Species can be added to 
  *  [Reactions](@ref Reaction).
  *  As a type, Species is composed of the following primary fields: type, name, copy 
@@ -167,10 +167,12 @@ public:
  *  will return true when the equlaity operator is applied.
  *
  *  @note The Species class allows callbacks (see makeSignaling and related methods). 
+ *
+ *  @note The Species subclasses will create the RSpecies needed upon initialization.
 */
 class Species {
     
-private: //Variables
+protected: //Variables
     int _molecule; ///< unique id identifying the molecule (e.g. the integer id
                    ///< corresponding to "Arp2/3")
     RSpecies* _rspecies; ///< pointer to RSpecies; Species is responsible for creating
@@ -178,55 +180,53 @@ private: //Variables
     Composite *_parent; ///< pointer to the "container" object holding this Species
                         ///< (could be a nullptr)
     
-    bool _constant; ///< Whether this species has a constant copy number or not.
-public:
     /// Default Constructor; Should not be used by the end users - only internally
-    /// (although it is not marked as private)
-    Species()  : _parent(nullptr), _constant(false) {
+    /// By default, creates a RSpeciesReg.
+    Species()  : _parent(nullptr) {
         
         _molecule=SpeciesNamesDB::stringToInt("");
-        _rspecies = new RSpecies(*this);
+        _rspecies = new RSpeciesReg(*this);
     }
     
     /// The constructor for this base class of Species should not be called directly -
     /// only by the concrete subclasses
-    /// @param name - a string for the Species name associated with this Species. For
-    /// example, "G-Actin" or "Arp2/3"
-    /// @param constant - specifying whether the species is constant (copy number will
-    /// not change)
-    /// @param type_enum - SType enum, such as SType::Diffusing
+    /// @param name - a string for the Species name associated with this Species.
+    /// For example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     /// @param ulim - upper limit for this species' copy number
-    Species (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim, bool constant=false)
-        : _parent(nullptr), _constant(constant) {
-        
-        _molecule=SpeciesNamesDB::stringToInt(name);
-        
-        if(_constant)
-            _rspecies = new RSpeciesConst(*this, n, ulim);
-        else
-            _rspecies = new RSpecies(*this, n, ulim);
-    }
+    /// @param type - the type of RSpecies to be created
+    /// @param numEvents - the number of events if using averaging
+    Species (const string &name, species_copy_t n, species_copy_t ulim, RSpeciesType type)
     
+        : _parent(nullptr), _molecule(SpeciesNamesDB::stringToInt(name)){
+        
+        //create the appropriate rspecies
+        _rspecies = RSpeciesFactory::createRSpecies(*this, n, ulim, type);
+    }
+public:
     /// Copy constructor
     /// @note The associated RSpecies subpart is not copied, but a new one is created.
     /// This means that the copied destination Species won't be included in any Reaction
     /// interactions of the original source Species. The species copy numbered is copied
     /// to the target. The A Species parent attriute is not copied, but set to nullptr.
     Species (const Species &rhs)
-        : _molecule(rhs._molecule), _parent(nullptr), _constant(rhs._constant) {
+        : _molecule(rhs._molecule), _parent(nullptr) {
         
+        //get type of rhs rspecies
+        RSpeciesType t = rhs._rspecies->_type;
+            
 #ifdef TRACK_UPPER_COPY_N
-        if(_constant)
-            _rspecies = new RSpeciesConst(*this, rhs.getN(), rhs.getUpperLimitForN());
-        else
-            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+        _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), rhs.getUpperLimitForN(), t);
 #else
-        if(_constant)
-            _rspecies = new RSpeciesConst(*this, rhs.getN());
-        else
-            _rspecies = new RSpecies(*this, rhs.getN());
+        _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
+        //transfer signal
+        _rspecies->_signal = std::move(rhs._rspecies->_signal);
+            
+        //set numevents if averaging
+        if(t == RSpeciesType::AVG)
+            ((RSpeciesAvg*)_rspecies)->_numEvents =
+            ((RSpeciesAvg*)rhs._rspecies)->_numEvents;
     }
     
     /// Move constructor - makes it possible to easily add Species to STL containers,
@@ -241,8 +241,8 @@ public:
     /// stealing resources from the source, leaving it for destruction. The Species
     /// parent attriute is moved it.
     Species (Species &&rhs) noexcept
-        : _molecule(rhs._molecule), _rspecies(rhs._rspecies),
-          _parent(rhs._parent), _constant(rhs._constant) {
+        : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent) {
+            
         rhs._rspecies = nullptr;
     }
     
@@ -254,18 +254,23 @@ public:
     /// nullptr.
     Species& operator=(const Species& rhs)  {
         _molecule = rhs._molecule;
-        _constant = rhs._constant;
+        
+        //get type of rhs rspecies
+        RSpeciesType t = rhs._rspecies->_type;
+        
 #ifdef TRACK_UPPER_COPY_N
-        if(_constant)
-            _rspecies = new RSpeciesConst(*this, rhs.getN(), rhs.getUpperLimitForN());
-        else
-            _rspecies = new RSpecies(*this, rhs.getN(), rhs.getUpperLimitForN());
+        _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), rhs.getUpperLimitForN(), t);
 #else
-        if(_constant)
-            _rspecies = new RSpeciesConst(*this, rhs.getN());
-        else
-            _rspecies = new RSpecies(*this, rhs.getN());
+        _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
+        //transfer signal
+        _rspecies->_signal = std::move(rhs._rspecies->_signal);
+        
+        //set numevents if averaging
+        if(t == RSpeciesType::AVG)
+            ((RSpeciesAvg*)_rspecies)->_numEvents =
+            ((RSpeciesAvg*)rhs._rspecies)->_numEvents;
+        
         _parent = nullptr;
         return *this;
     }
@@ -342,7 +347,7 @@ public:
     /// @return a connection object which can be used to later disconnect this
     /// particular slot or temporarily block it
     boost::signals2::connection connect(
-        std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
+    std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
 #endif
     
     /// Returns true if two Species objects are equal.
@@ -394,13 +399,11 @@ public:
     /// Default constructor
     SpeciesBulk()  : Species() {}
     
-    /// The main constructor 
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
+    /// The main constructor
     SpeciesBulk (const string &name, species_copy_t n=0,
-                species_copy_t ulim=max_ulim,  bool constant=false)
-        :  Species(name, n, ulim, constant) {};
-    
+                 species_copy_t ulim=max_ulim, RSpeciesType type = RSpeciesType::REG)
+        :  Species(name, n, ulim, type) {}
+
     /// Copy constructor
     SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
     
@@ -444,8 +447,8 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesDiffusing (const string &name, species_copy_t n=0,
-                      species_copy_t ulim=max_ulim, bool constant=false)
-        :  Species(name, n, ulim, constant) {};
+                      species_copy_t ulim=max_ulim, RSpeciesType type = RSpeciesType::REG)
+        :  Species(name, n, ulim, type) {};
     
     /// Copy constructor
     SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}
@@ -491,7 +494,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesFilament (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, n, ulim) {};
+        :  Species(name, n, ulim, RSpeciesType::REG) {};
     
     /// Copy constructor
     SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
@@ -540,7 +543,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, n, ulim) {};
+        :  Species(name, n, ulim, RSpeciesType::REG) {};
     
     /// Copy constructor
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
@@ -593,7 +596,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesLinker (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  SpeciesBound(name, n, ulim) {};
+        :  SpeciesBound(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesLinker (const SpeciesLinker &rhs)  : SpeciesBound(rhs) {}
@@ -640,7 +643,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesMotor (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  SpeciesBound(name, n, ulim) {};
+        :  SpeciesBound(name, n, ulim) {};
     
     /// Copy constructor
     SpeciesMotor (const SpeciesMotor &rhs)  : SpeciesBound(rhs) {}
@@ -827,7 +830,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesSingleBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
-    :  Species(name, n, ulim) {};
+    :  Species(name, n, ulim, RSpeciesType::REG) {};
     
     /// Copy constructor
     SpeciesSingleBinding (const SpeciesSingleBinding &rhs)  : Species(rhs) {}
@@ -876,7 +879,7 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesPairBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
-    :  Species(name, n, ulim) {};
+    :  Species(name, n, ulim, RSpeciesType::REG) {};
     
     /// Copy constructor
     SpeciesPairBinding (const SpeciesPairBinding &rhs)  : Species(rhs) {}

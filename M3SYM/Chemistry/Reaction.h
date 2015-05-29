@@ -32,7 +32,7 @@
  */
 template <unsigned short M, unsigned short N>
     class Reaction : public ReactionBase {
-    private:
+    protected:
         array<RSpecies*, M+N> _rspecies; ///< An array of RSpecies objects
                                          ///< (reactants followed by products)
     public:
@@ -153,7 +153,7 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfReactants()
-        inline virtual int getProductOfReactantsImpl() const override
+        inline virtual float getProductOfReactantsImpl() const override
         {
             int prod = 1;
             for(auto i=0U; i<M; ++i)
@@ -175,7 +175,7 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfProducts()
-        inline virtual int getProductOfProductsImpl() const override
+        inline virtual float getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
             int prod = 1;
@@ -239,26 +239,81 @@ template <unsigned short M, unsigned short N>
         /// Implementation of  clone()
         virtual Reaction<M,N>* cloneImpl(
             const SpeciesPtrContainerVector &spcv) override;
+        
+        virtual bool updateDependencies() {return true;}
     };
-    
-    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
-    template <> inline float Reaction<1,1>::computePropensityImpl() const
-    {
-#ifdef TRACK_UPPER_COPY_N
-        if(_rspecies[1]->getN()>=_rspecies[1]->getUpperLimitForN())
-            return 0;
-#endif
-        return _rate*_rspecies[0]->getN();
-    }
 
-    /// Partial template speciatialization for Reaction<1,1> to gain efficiency
-    template <> inline void Reaction<1,1>::makeStepImpl()
+
+/// A diffusive reaction in the system.
+/*!
+ * A DiffusionReaction is very similar to the Reaction class, the only difference
+ * in being the calculation of getProductofProducts() and getProductOfReactants().
+ * In these functions, this class will use the true copy number of the diffusing
+ * species to calculate and update propensities.
+ */
+
+class DiffusionReaction : public Reaction<1,1> {
+    
+private:
+    bool _dependencies = true; ///< A marker to represent whether the dependents of
+                               ///< this reaction should be updated. This will change
+                               ///< based upon the diffusing species.
+    
+    bool _averaging = false;  ///< Using RSpeciesAvg as reactant and product
+    
+public:
+    /// The main constructor
+    DiffusionReaction(initializer_list<Species*> species,
+                      float rate = 0.0, bool isProtoCompartment = false)
+    : Reaction(species, rate, isProtoCompartment) {
+    
+        //set averaging
+        if(dynamic_cast<RSpeciesAvg*>(_rspecies[0])) _averaging = true;
+        
+        //set type
+        _reactionType = ReactionType::DIFFUSION;
+    }
+    
+    //Destructor does nothing new
+    virtual ~DiffusionReaction() {}
+    
+    /// Implementation of makeStep()
+    inline virtual void makeStepImpl() override
     {
         _rspecies[0]->down();
         _rspecies[1]->up();
+    
+        //if averaging, update dependency marker
+        if(_averaging) {
+            
+            bool newAvgR = ((RSpeciesAvg*)_rspecies[0])->newAverage();
+            bool newAvgP = ((RSpeciesAvg*)_rspecies[1])->newAverage();
+        
+            _dependencies = newAvgR || newAvgP;
+        }
     }
 
+    /// Implementation of getProductOfReactants()
+    /// This uses the true copy number of the species
+    inline virtual float getProductOfReactantsImpl() const override {
+
+        return _rspecies[0]->getTrueN()*_rspecies[1]->getTrueN();
+    }
+
+    /// Implementation of getProductOfProducts()
+    /// This uses the true copy number of the species
+    inline virtual float getProductOfProductsImpl() const override {
+#ifdef TRACK_UPPER_COPY_N
+
+    return _rspecies[1]->getTrueN()-_rspecies[1]->getUpperLimitForN();
+
+#else
+    return 1;
+#endif
+    }
+    ///This implementation returns the kept boolean value
+    virtual bool updateDependencies() {return _dependencies;}
+};
 
 #endif
-
 

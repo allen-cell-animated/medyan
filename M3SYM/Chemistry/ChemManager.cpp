@@ -1781,7 +1781,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
         auto name = get<0>(sd);
         auto diffRate = get<2>(sd);
         
-        protoCompartment.addSpeciesDiffusing(name, 0);
+        protoCompartment.addSpeciesDiffusing(name, 0, max_ulim, RSpeciesType::AVG);
         protoCompartment.setDiffusionRate(name, diffRate);
     }
     
@@ -1789,9 +1789,9 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     for(auto &sb : _chemData.speciesBulk) {
         
         auto name = get<0>(sb);
-        auto constant = (get<2>(sb) == "CONST") ? true : false;
+        auto type = (get<2>(sb) == "CONST") ? RSpeciesType::CONST : RSpeciesType::REG;
         
-        grid->addSpeciesBulk(name, 0, max_ulim, constant);
+        grid->addSpeciesBulk(name, 0, max_ulim, type);
     }
     
     // create single binding and pair binding species

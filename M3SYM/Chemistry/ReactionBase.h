@@ -42,12 +42,11 @@ class SpeciesPtrContainerVector;
 
 ///Enumeration for type of reaction
 enum ReactionType {
-    REGULAR, DIFFUSION,
-    POLYMERIZATIONPLUSEND, POLYMERIZATIONMINUSEND,
+    REGULAR, DIFFUSION, POLYMERIZATIONPLUSEND, POLYMERIZATIONMINUSEND,
     DEPOLYMERIZATIONPLUSEND, DEPOLYMERIZATIONMINUSEND,
     LINKERBINDING, MOTORBINDING, LINKERUNBINDING, MOTORUNBINDING,
-    MOTORWALKINGFORWARD, MOTORWALKINGBACKWARD, AGING,
-    FILAMENTCREATION, FILAMENTDESTRUCTION,
+    MOTORWALKINGFORWARD, MOTORWALKINGBACKWARD,
+    AGING, FILAMENTCREATION, FILAMENTDESTRUCTION,
     BRANCHING, BRANCHUNBINDING, SEVERING
 };
 
@@ -200,22 +199,22 @@ public:
     /// Can be used to quickly determine whether this ReactionBase should be allowed to
     /// activate - if one of the reactants has a copy number equal to zero, then zero is
     /// returned, indicating that this ReactionBase should not be (yet) activated.
-    int getProductOfReactants () const {return getProductOfReactantsImpl();}
+    float getProductOfReactants () const {return getProductOfReactantsImpl();}
     
     /// (Private) implementation of the getProductOfReactants() method to be elaborated
     /// in derived classes.
-    virtual int getProductOfReactantsImpl() const = 0;
+    virtual float getProductOfReactantsImpl() const = 0;
     
     /// Computes the product of the copy number of all product RSpecies minus maximum
     /// allowed copy number. Can be used to quickly determine whether this ReactionBase
     /// should be allowed to activate - if one of the products has a copy number equal
     /// to the maximum allowed, then zero is returned, indicating that this ReactionBase
     /// should not be (yet) activated.
-    int getProductOfProducts () const {return getProductOfProductsImpl();}
+    float getProductOfProducts () const {return getProductOfProductsImpl();}
     
     /// (Private) implementation of the getProductOfProducts() method to be elaborated
     /// in derived classes.
-    virtual int getProductOfProductsImpl() const = 0;
+    virtual float getProductOfProductsImpl() const = 0;
     
     /// Return true if the ReactionBase is currently passivated
 #if defined TRACK_ZERO_COPY_N || defined  TRACK_UPPER_COPY_N
@@ -378,6 +377,9 @@ public:
         rr.printToStream(os);
         return os;
     }
+    
+    ///Whether the dependencies should be updated
+    virtual bool updateDependencies() = 0;
 };
 
 

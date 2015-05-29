@@ -26,6 +26,7 @@ class ChemSim;
 
 class Cylinder;
 class CCylinder;
+class CMonomer;
 
 /// For initailizing chemical reactions based on a specific system
 /*!

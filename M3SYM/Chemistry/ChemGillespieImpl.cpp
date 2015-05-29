@@ -126,12 +126,15 @@ bool ChemGillespieImpl::makeStep() {
 
     // Updating dependencies
     ReactionBase *r = rn_selected->getReaction();
-    for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-        RNodeGillespie *rn_other = (RNodeGillespie*)((*rit)->getRnode());
-        rn_other->reComputePropensity();
-        a_new = rn_other->getPropensity();
-        a_penult = rn_other->getPenultStepPropensity();
-        _a_total = _a_total - a_penult + a_new;
+    
+    if(r->updateDependencies()) {
+        for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
+            RNodeGillespie *rn_other = (RNodeGillespie*)((*rit)->getRnode());
+            rn_other->reComputePropensity();
+            a_new = rn_other->getPropensity();
+            a_penult = rn_other->getPenultStepPropensity();
+            _a_total = _a_total - a_penult + a_new;
+        }
     }
     
     // Send signal

@@ -47,11 +47,6 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         _speciesFilament[i] = sNew;
-        
-        //transfer any signal;
-        sNew->getRSpecies()._signal = s->getRSpecies()._signal;
-        s->getRSpecies()._signal = nullptr;
-        
     }
     
     //For bound species, transfer the CBound (if any)
@@ -64,10 +59,6 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
         
         c->addSpeciesUnique(unique_ptr<Species>(sNew));
         _speciesBound[i] = sNew;
-        
-        //transfer any signal
-        sNew->getRSpecies()._signal = s->getRSpecies()._signal;
-        s->getRSpecies()._signal = nullptr;
         
         //update cbound
         CBound* cBound = s->getCBound();

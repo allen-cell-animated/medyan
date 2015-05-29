@@ -27,11 +27,15 @@
 
 #include "common.h"
 
+///Enumeration for RSpecies types
+enum RSpeciesType {
+    REG, AVG, CONST
+};
+
 //FORWARD DECLARATIONS
 class Species;
 class RSpecies;
 class ReactionBase;
-class CMonomer;
 
 /// vr stands for vector of Reactions
 typedef vector<ReactionBase*>::iterator vr_iterator; 
@@ -48,7 +52,7 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
 /// Represents the reactive aspect of chemical molecules. It tracks their copy
 /// number and can be used in [Reactions](@ref Reaction).
 
-/*!  This class represents the reactivity of chemical species. The name RSpecies stems
+/*!  This abstract class represents the reactivity of chemical species. The name RSpecies stems
  *   from reacting species. RSpecies tracks the copy number of molecules and the 
  *   [Reactions](@ref Reaction) in which it is involed (@see Reaction).
  *   @note Each intantiation of RSpecies is unique, and hence, cannot be neither copied
@@ -59,10 +63,9 @@ typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSign
  *   allocated RSpecies (through new), are arranged contigiously in memory.
  */
 class RSpecies {
-    friend Species;
-    friend CMonomer;
-    /// Reactions calls addAsReactant(), removeAsReactant() - which other classes
-    /// should not call
+    friend class Species;
+    friend class CMonomer;
+    /// Reactions calls addAsReactant(), removeAsReactant() - which other classes should not call
 protected: //Variables
     vector<ReactionBase *> _as_reactants = {}; ///< a vector of [Reactions]
                                                ///< (@ref Reaction) where this RSpecies
@@ -82,12 +85,15 @@ protected: //Variables
 #endif                                   ///< this RSpecies (usually when a single step
                                          ///< of this Reaction occurs)
     
-public:
-    /// Constructors 
+    RSpeciesType _type; ///< The RSpecies type
+    
+//CONSTRUCTORS
+    
+    /// Constructor
     /// @param parent - the Species object to which this RSpecies belongs
     /// @param n - copy number
-    RSpecies (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
-        : _species(parent), _n(n) {
+    RSpecies (Species &parent, species_copy_t n, species_copy_t ulim)
+    : _species(parent), _n(n) {
 #ifdef TRACK_UPPER_COPY_N
         _ulim = ulim;
 #endif
@@ -95,7 +101,6 @@ public:
         _signal=nullptr;
 #endif
     }
-    
     /// deleted copy constructor - each RSpecies is uniquely created by the parent
     /// Species
     RSpecies(const RSpecies &r) = delete;
@@ -107,6 +112,8 @@ public:
     /// deleted assignment operator - each RSpecies is uniquely created by the parent
     /// Species
     RSpecies& operator=(RSpecies&) = delete;
+    
+public:
            
     /// Sets the copy number for this RSpecies. 
     /// @param n should be a non-negative number, but no checking is done in run time
@@ -389,6 +396,8 @@ public:
  */
 class RSpeciesAvg : public RSpecies {
     
+friend class Species;
+    
 private:
     int _numEvents;      ///< The number of events to generate an average copy number
     int _eventCount = 0; ///< Tracking the number of events since last average
@@ -397,6 +406,9 @@ private:
     double _firstTau;  ///< Time since an average update occured
     
     double _average;   ///< The current average value
+    
+    bool _newAvg = false; ///< If we just calculated a new average. Used by Reaction to mark the
+                          ///< updating of its dependencies accordingly.
     
     /// A map of copy number and time (representing the time the species has been at this
     /// copy number). These values will be collected until a new average is needed, and the
@@ -426,8 +438,16 @@ public:
     /// @param numEvents - the number of copy number change events to use before
     /// computing a new average. When this number is reached, a new average is created
     /// using the _copyNumbers map (time averaged) and replaces the previous average.
-    RSpeciesAvg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim, int numEvents = 1)
-        : RSpecies(parent, n, ulim), _numEvents(numEvents) {}
+    RSpeciesAvg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
+    
+        : RSpecies(parent, n, ulim) {
+        
+        _numEvents = 10;
+            
+        //set first average to n, first time update
+        _average = n;
+        _localTau = _firstTau = tau();
+    }
     /// deleted copy constructor - each RSpeciesAvg is uniquely created by the parent
     /// Species
     RSpeciesAvg(const RSpeciesAvg &r) = delete;
@@ -440,10 +460,17 @@ public:
     /// parent Species
     RSpeciesAvg& operator=(RSpeciesAvg&) = delete;
     
+    /// Whether we just calculated a new average
+    bool newAverage() {return _newAvg;}
+    
     /// Increase the true copy number.
     /// Add the old copy number to the running copy number map.
     /// If a new average is needed, compute it and reset accordingly.
     virtual inline void up() {
+        
+        //Check on max copy number. Program exits ungracefully
+        assert((_n != 0) && "An averaging RSpecies increased to a copy number > max lim. \
+               When using RSpeciesAvg, make sure this can never happen. Exiting.");
         
         //add old n to map
         _copyNumbers[_n] += tau() - _localTau;
@@ -455,10 +482,12 @@ public:
             _eventCount = 0;
             _firstTau = tau();
             
+            _newAvg = true;
         }
+        else _newAvg = false;
+        
         //increase copy number, reset local tau
-        _n++;
-        _localTau = tau();
+        _n++; _localTau = tau();
     }
     
     /// Decrease the true copy number.
@@ -466,6 +495,10 @@ public:
     /// If a new average is needed, compute it and reset accordingly.
     virtual inline void down() {
         
+        //Check on zero copy number. Program exits ungracefully
+        assert((_n != 0) && "An averaging RSpecies dropped to a copy number < 0. \
+                When using RSpeciesAvg, make sure this can never happen. Exiting.");
+        
         //add old n to map
         _copyNumbers[_n] += tau() - _localTau;
         
@@ -476,18 +509,44 @@ public:
             _eventCount = 0;
             _firstTau = tau();
             
+            _newAvg = true;
         }
+        else _newAvg = false;
+        
         //decrease copy number, reset local tau
-        _n--;
-        _localTau = tau();
+        _n--; _localTau = tau();
     }
     
     /// Return the current average
     virtual inline double getN() const {return _average;}
 };
 
-
 /// Print self into an iostream
 ostream& operator<<(ostream& os, const RSpecies& s);
+
+
+/// A factory class to create RSpecies objects
+class RSpeciesFactory {
+    
+public:
+    ///Create an RSpecies object
+    static RSpecies* createRSpecies(Species &parent, species_copy_t n=0,
+                                    species_copy_t ulim=max_ulim,
+                                    RSpeciesType t=RSpeciesType::REG) {
+        //create the appropriate rspecies
+        //average
+        if(t == RSpeciesType::AVG)
+            return new RSpeciesAvg(parent, n, ulim);
+        //constant
+        else if(t == RSpeciesType::CONST)
+            return new RSpeciesConst(parent, n, ulim);
+        //regular
+        else if(t == RSpeciesType::REG)
+            return new RSpeciesReg(parent, n, ulim);
+        else
+            return nullptr;
+    }
+};
+
 
 #endif
