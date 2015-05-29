@@ -416,7 +416,7 @@ private:
     unordered_map<species_copy_t, double> _copyNumbers;
     
     ///Compute the time average of the currently tracked, previous copy numbers
-    double computeAverageN() {
+    void computeAverageN() {
         
         double totalTau = tau() - _firstTau;
         double average = 0;
@@ -430,7 +430,7 @@ private:
         //clear map and return
         _copyNumbers.clear();
         
-        return average;
+        _average = average;
     }
     
 public:

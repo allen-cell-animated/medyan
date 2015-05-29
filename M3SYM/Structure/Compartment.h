@@ -91,7 +91,7 @@ public:
         C.cloneReactions(this);
         _diffusion_rates = C._diffusion_rates;
         _activated = C._activated;
-        // Should eventuall clone beads, cylinders, boundary elements.... not clear yet
+        // Should eventually clone beads, cylinders, boundary elements.... not clear yet
     }
     
     /// Assignment operator

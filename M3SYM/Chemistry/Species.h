@@ -166,10 +166,8 @@ public:
  *  in the same set of equivalent reactions. This means that their respective reactions 
  *  will return true when the equlaity operator is applied.
  *
- *  @note The Species class allows callbacks (see makeSignaling and related methods). 
- *
- *  @note The Species subclasses will create the RSpecies needed upon initialization.
-*/
+ *  @note The Species class allows callbacks (see makeSignaling and related methods).
+ */
 class Species {
     
 protected: //Variables
@@ -401,7 +399,9 @@ public:
     
     /// The main constructor
     SpeciesBulk (const string &name, species_copy_t n=0,
-                 species_copy_t ulim=max_ulim, RSpeciesType type = RSpeciesType::REG)
+                 species_copy_t ulim=max_ulim,
+                 RSpeciesType type = RSpeciesType::REG)
+    
         :  Species(name, n, ulim, type) {}
 
     /// Copy constructor
@@ -436,7 +436,7 @@ public:
 };
 
 /// Used for species which can move spatially from one compartment to
-/// the neighboring one (i.e. they are the stochastic analogue of determenistic
+/// the neighboring one (i.e. they are the stochastic analogue of deterministic
 /// reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
 public:
@@ -447,7 +447,9 @@ public:
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     SpeciesDiffusing (const string &name, species_copy_t n=0,
-                      species_copy_t ulim=max_ulim, RSpeciesType type = RSpeciesType::REG)
+                      species_copy_t ulim=max_ulim,
+                      RSpeciesType type = RSpeciesType::REG)
+    
         :  Species(name, n, ulim, type) {};
     
     /// Copy constructor
