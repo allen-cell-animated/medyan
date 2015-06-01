@@ -80,10 +80,10 @@ protected: //Variables
                           ///< reactions leading to further accum. are turned off
 #endif
 #ifdef RSPECIES_SIGNALING
-    RSpeciesCopyNChangedSignal *_signal; ///< Can be used to broadcast a signal
-                                         ///< associated with change of n of
-#endif                                   ///< this RSpecies (usually when a single step
-                                         ///< of this Reaction occurs)
+    RSpeciesCopyNChangedSignal *_signal = nullptr; ///< Can be used to broadcast a signal
+                                                   ///< associated with change of n of
+#endif                                             ///< this RSpecies (usually when a single step
+                                                   ///< of this Reaction occurs)
     
     RSpeciesType _type; ///< The RSpecies type
     
@@ -255,13 +255,6 @@ public:
     /// Return vector<ReactionBase *>::iterator, which points to the end of all 
     /// [Reactions](@ref Reaction) where this RSpecies is involved as a Product
     inline vr_iterator endProductReactions() {return _as_products.end();}
-
-#ifdef BOOST_MEM_POOL
-    /// Advanced memory management
-    void* operator new(size_t size);
-    
-    void operator delete(void* ptr) noexcept;
-#endif
     
     /// Increases the copy number of this RSpecies
     virtual inline void up() = 0;
@@ -288,7 +281,10 @@ class RSpeciesReg : public RSpecies {
 public:
     /// Constructors
     RSpeciesReg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
-        : RSpecies(parent, n, ulim) {}
+        : RSpecies(parent, n, ulim) {
+    
+        _type = RSpeciesType::REG;
+    }
     /// deleted copy constructor - each RSpeciesRegular is uniquely created by the parent
     /// Species
     RSpeciesReg(const RSpeciesReg &r) = delete;
@@ -300,6 +296,13 @@ public:
     /// deleted assignment operator - each RSpeciesRegular is uniquely created by the
     /// parent Species
     RSpeciesReg& operator=(RSpeciesReg&) = delete;
+    
+#ifdef BOOST_MEM_POOL
+    /// Advanced memory management
+    void* operator new(size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
     
     /// If the copy number changes from 0 to 1, calls a
     /// "callback"-like method to activate previously passivated [Reactions](@ref
@@ -361,7 +364,10 @@ class RSpeciesConst : public RSpecies {
 public:
     /// Constructors
     RSpeciesConst (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
-        : RSpecies(parent, n, ulim) {}
+        : RSpecies(parent, n, ulim){
+        
+        _type = RSpeciesType::CONST;
+    }
     /// deleted copy constructor - each RSpeciesConst is uniquely created by the parent
     /// Species
     RSpeciesConst(const RSpeciesConst &r) = delete;
@@ -373,6 +379,13 @@ public:
     /// deleted assignment operator - each RSpeciesConst is uniquely created by the
     /// parent Species
     RSpeciesConst& operator=(RSpeciesConst&) = delete;
+    
+#ifdef BOOST_MEM_POOL
+    /// Advanced memory management
+    void* operator new(size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
     
     //@{
     /// In constant species, do nothing. Copy numbers do not change.
@@ -442,6 +455,8 @@ public:
     
         : RSpecies(parent, n, ulim) {
         
+        _type = RSpeciesType::REG;
+            
         _numEvents = 10;
             
         //set first average to n, first time update
@@ -459,6 +474,13 @@ public:
     /// deleted assignment operator - each RSpeciesAvg is uniquely created by the
     /// parent Species
     RSpeciesAvg& operator=(RSpeciesAvg&) = delete;
+    
+#ifdef BOOST_MEM_POOL
+    /// Advanced memory management
+    void* operator new(size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
     
     /// Whether we just calculated a new average
     bool newAverage() {return _newAvg;}

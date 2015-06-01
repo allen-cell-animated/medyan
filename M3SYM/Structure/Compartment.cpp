@@ -23,6 +23,7 @@ Compartment& Compartment::operator=(const Compartment &other) {
     other.cloneSpecies(this);
     other.cloneReactions(this);
     _diffusion_rates = other._diffusion_rates;
+    
     return *this;
     
 }
@@ -53,7 +54,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
-            this->addDiffusionReactionUnique(unique_ptr<ReactionBase>(R));
+            this->addDiffusionReaction(R);
             rxns.push_back(R);
         }
     }

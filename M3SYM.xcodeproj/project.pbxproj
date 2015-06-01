@@ -157,7 +157,6 @@
 		F7A5201A1AA0DA07003C49E0 /* RateChangerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */; };
 		F7C7A0FB15FFBA9700DF9838 /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
-		F7C9CF921A2D16290087434A /* test_ccylinders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF841A2D16290087434A /* test_ccylinders.cpp */; };
 		F7C9CF931A2D16290087434A /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF851A2D16290087434A /* test_compartments.cpp */; };
 		F7C9CF941A2D16290087434A /* test_composite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF861A2D16290087434A /* test_composite.cpp */; };
 		F7C9CF961A2D16290087434A /* test_geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF881A2D16290087434A /* test_geometry.cpp */; };
@@ -387,7 +386,6 @@
 		F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChangerImpl.h; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9CF831A2D16290087434A /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
-		F7C9CF841A2D16290087434A /* test_ccylinders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ccylinders.cpp; sourceTree = "<group>"; };
 		F7C9CF851A2D16290087434A /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
 		F7C9CF861A2D16290087434A /* test_composite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_composite.cpp; sourceTree = "<group>"; };
 		F7C9CF881A2D16290087434A /* test_geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_geometry.cpp; sourceTree = "<group>"; };
@@ -543,7 +541,6 @@
 				F7C9CF831A2D16290087434A /* test_boundaries.cpp */,
 				F7C9CF881A2D16290087434A /* test_geometry.cpp */,
 				F7C9CF851A2D16290087434A /* test_compartments.cpp */,
-				F7C9CF841A2D16290087434A /* test_ccylinders.cpp */,
 				F7C9CF861A2D16290087434A /* test_composite.cpp */,
 				F7C9CF8E1A2D16290087434A /* test_simple_gillespie.cpp */,
 				F7C9CF8A1A2D16290087434A /* test_gillespie.cpp */,
@@ -1115,7 +1112,6 @@
 				F7C9CF9D1A2D16290087434A /* test_species.cpp in Sources */,
 				F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */,
 				F7C9CF971A2D16290087434A /* test_gillespie_cross.cpp in Sources */,
-				F7C9CF921A2D16290087434A /* test_ccylinders.cpp in Sources */,
 				F7C9CF961A2D16290087434A /* test_geometry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1379,7 +1375,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -1387,7 +1383,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/Users/jimmy/Code/googletest/,
+					/Users/jameskomianos/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (
@@ -1406,7 +1402,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jimmy/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "TESTING=1";
 				GCC_VERSION = "";
@@ -1415,7 +1411,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/Users/jimmy/Code/googletest/,
+					/Users/jameskomianos/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (

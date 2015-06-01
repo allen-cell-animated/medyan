@@ -36,8 +36,6 @@ ostream& operator<<(ostream& os, const RSpecies& s){
 }
 
 #ifdef BOOST_MEM_POOL
-boost::pool<> allocator_rspecies(sizeof(RSpecies),BOOL_POOL_NSIZE);
- 
 void* RSpecies::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RSpecies>::allocate();
     return ptr;

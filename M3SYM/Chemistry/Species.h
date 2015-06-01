@@ -218,8 +218,11 @@ public:
 #else
         _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
+
+#ifdef RSPECIES_SIGNALING
         //transfer signal
         _rspecies->_signal = std::move(rhs._rspecies->_signal);
+#endif
             
         //set numevents if averaging
         if(t == RSpeciesType::AVG)
@@ -261,8 +264,11 @@ public:
 #else
         _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
+
+#ifdef RSPECIES_SIGNALING
         //transfer signal
         _rspecies->_signal = std::move(rhs._rspecies->_signal);
+#endif
         
         //set numevents if averaging
         if(t == RSpeciesType::AVG)
@@ -278,7 +284,9 @@ public:
     Species& operator=(Species&& rhs)  {
         _molecule = rhs._molecule;
         _rspecies = rhs._rspecies;
+#ifdef RSPECIES_SIGNALING
         rhs._rspecies = nullptr;
+#endif
         _parent=rhs._parent;
         return *this;
     }

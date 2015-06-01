@@ -13,7 +13,7 @@
 
 #ifdef TESTING
 
-//#define DO_THIS_REACTION_TEST
+#define DO_THIS_REACTION_TEST
 #ifdef DO_THIS_REACTION_TEST
 
 #include "gtest/gtest.h"
@@ -23,7 +23,6 @@
 #include "Species.h"
 #include "Reaction.h"
 #include "Compartment.h"
-#include "ReactionManager.h"
 
 void rspecies_callback (RSpecies *r, int delta){
     r->getSpecies().setN(33);

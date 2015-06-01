@@ -24,6 +24,7 @@
 
 #include "GController.h"
 #include "SysParams.h"
+
 //Testing neighbor capabilities
 TEST(CompartmentTest, Neighbors) {
 
@@ -87,7 +88,6 @@ TEST(CompartmentTest, SpeciesAndReactions){
 //Testing neighbors, species and reaciton generation
 TEST(CompartmentContainerTest, Main) {
     
-    
     SysParams::GParams.compartmentSizeX = 100.0;
     SysParams::GParams.compartmentSizeY = 100.0;
     SysParams::GParams.compartmentSizeZ = 100.0;
@@ -104,36 +104,37 @@ TEST(CompartmentContainerTest, Main) {
     int _numSpecies; ///for testing
 
     GController g;
-    g.initializeGrid();
+    CompartmentGrid* grid = g.initializeGrid();
     
-    Compartment &Cproto = CompartmentGrid::instance()->getProtoCompartment();
+    ///activate all compartments for diffusion
+    grid->activateAll();
+    
+    Compartment &Cproto = grid->getProtoCompartment();
     
     Species *M1 = Cproto.addSpeciesDiffusing("Myosin",1U);
     Cproto.setDiffusionRate(M1,2000);
     Species *M2 = Cproto.addSpeciesDiffusing("Fascin",6U);
     Cproto.setDiffusionRate(M2,2000);
     
-    Cproto.addInternal<Reaction,1,1>({M2,M1}, 90.9);
-    Cproto.addInternal<Reaction,1,1>({M1,M2}, 40.2);
+    ReactionBase* r1 = new Reaction<1,1>({M2, M1}, 90.9, true);
+    ReactionBase* r2 = new Reaction<1,1>({M1, M2}, 40.2, true);
     
+    Cproto.addInternalReaction(r1);
+    Cproto.addInternalReaction(r2);
+
     ///initialize all compartments with species
-    for(auto &c : CompartmentGrid::instance()->children())
-    {
-        Compartment *C = static_cast<Compartment*>(c.get());
+    for(auto &c : grid->children()) {
+        Compartment *C = (Compartment*)(c.get());
         *C = Cproto;
     }
     
-    ///activate all compartments for diffusion
-    CompartmentGrid::instance()->activateAll();
-    
     ///Generate all diffusion reactions
-    for(auto &c : CompartmentGrid::instance()->children())
-    {
-        Compartment *C = static_cast<Compartment*>(c.get());
+    for(auto &c : grid->children()) {
+        Compartment *C = (Compartment*)(c.get());
         C->generateAllDiffusionReactions();
     }
     
-    _numSpecies = CompartmentGrid::instance()->countSpecies();
+    _numSpecies = grid->countSpecies();
     
     Compartment *C1 = GController::getCompartment(vector<size_t>{10U,10U,10U});
     

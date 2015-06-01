@@ -118,7 +118,6 @@ template <unsigned short M, unsigned short N>
                       [](Species *s){return &s->getRSpecies();});
             
             if(!_isProtoCompartment) {
-                
 #ifdef TRACK_DEPENDENTS
                 //add dependents
                 for(auto &d : getAffectedReactions())
@@ -276,6 +275,13 @@ public:
     
     //Destructor does nothing new
     virtual ~DiffusionReaction() {}
+    
+#ifdef BOOST_MEM_POOL
+    /// Advanced memory management
+    void* operator new(size_t size);
+    
+    void operator delete(void* ptr) noexcept;
+#endif
     
     /// Implementation of makeStep()
     inline virtual void makeStepImpl() override

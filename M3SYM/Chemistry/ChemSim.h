@@ -25,10 +25,10 @@ class ReactionBase;
 /// Used to manage running a network of chemical reactions.
 
 /*! ChemSim implements a Strategy pattern, allowing custom algorithms for running 
- *  stochastic chemical simulations. It itself is a singleton, with a pointer to a 
- *  single static implementation of ChemSimImpl. After the specific algorithm is chosen
- *  and ChemSim is instantiated, ChemSim can be used to manage simulations, through
- *  such methods as run(steps) etc.
+ *  stochastic chemical simulations. It itself has a pointer to a  single static 
+ *  implementation of ChemSimImpl. After the specific algorithm is chosen and ChemSim 
+ *  is instantiated, ChemSim can be used to manage simulations, through such methods 
+ *  as run(steps) etc.
  */
 class ChemSim {
 public:

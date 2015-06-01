@@ -23,6 +23,7 @@
 #include "BoundaryImpl.h"
 #include "BoundaryElementImpl.h"
 #include "SysParams.h"
+
 TEST(PlaneBoundaryElementTest, Distances) {
     
     SysParams::GParams.compartmentSizeX = 10.0;

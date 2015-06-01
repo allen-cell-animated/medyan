@@ -99,7 +99,6 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 }
     
 #ifdef BOOST_MEM_POOL
-// boost::pool<> allocator_reaction(sizeof(Reaction<1,1>),BOOL_POOL_NSIZE);
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<Reaction<M,N>>::allocate();
@@ -109,6 +108,15 @@ void* Reaction<M,N>::operator new(size_t size) {
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<Reaction<M,N>>::deallocate((Reaction<M,N>*)ptr);
+}
+
+void* DiffusionReaction::operator new(size_t size) {
+    void *ptr = boost::fast_pool_allocator<DiffusionReaction>::allocate();
+    return ptr;
+}
+
+void DiffusionReaction::operator delete(void* ptr) noexcept {
+     boost::fast_pool_allocator<DiffusionReaction>::deallocate((DiffusionReaction*)ptr);
 }
 #endif
     

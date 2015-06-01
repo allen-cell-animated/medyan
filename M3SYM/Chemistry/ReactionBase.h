@@ -92,7 +92,7 @@ protected:
 #endif
     ReactionType _reactionType; ///< Reaction type enumeration
     
-    bool _isProtoCompartment = false;///<Reaction is in proto compartment
+    bool _isProtoCompartment = false;///< Reaction is in proto compartment
                                      ///< (Do not copy as a dependent, not in ChemSim)
     
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
