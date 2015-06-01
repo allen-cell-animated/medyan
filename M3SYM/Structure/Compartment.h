@@ -273,9 +273,6 @@ public:
     
     /// Add an internal reaction pointer to this compartment. Make unique
     ReactionBase* addInternalReaction (ReactionBase* r) {
-        
-        auto rxn = (Reaction<1,1>*)r;
-        
         _internal_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
         r->setParent(this);
         return r;

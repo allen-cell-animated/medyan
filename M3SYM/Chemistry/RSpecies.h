@@ -460,6 +460,8 @@ public:
         _numEvents = 10;
             
         //set first average to n, first time update
+        
+            
         _average = n;
         _localTau = _firstTau = tau();
     }
@@ -485,6 +487,9 @@ public:
     /// Whether we just calculated a new average
     bool newAverage() {return _newAvg;}
     
+    /// Set the number of events to use averaging
+    void setNumEvents(int numEvents) {_numEvents = numEvents;}
+    
     /// Increase the true copy number.
     /// Add the old copy number to the running copy number map.
     /// If a new average is needed, compute it and reset accordingly.
@@ -498,7 +503,7 @@ public:
         _copyNumbers[_n] += tau() - _localTau;
         
         //compute a new avg if we need it
-        if(++_eventCount >= _numEvents) {
+        if(++_eventCount > _numEvents) {
             computeAverageN();
             
             _eventCount = 0;
@@ -525,7 +530,7 @@ public:
         _copyNumbers[_n] += tau() - _localTau;
         
         //compute a new avg if we need it
-        if(++_eventCount >= _numEvents) {
+        if(++_eventCount > _numEvents) {
             computeAverageN();
             
             _eventCount = 0;

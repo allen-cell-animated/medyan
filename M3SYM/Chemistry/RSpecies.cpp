@@ -36,13 +36,31 @@ ostream& operator<<(ostream& os, const RSpecies& s){
 }
 
 #ifdef BOOST_MEM_POOL
-void* RSpecies::operator new(size_t size) {
-    void *ptr = boost::fast_pool_allocator<RSpecies>::allocate();
+void* RSpeciesReg::operator new(size_t size) {
+    void *ptr = boost::fast_pool_allocator<RSpeciesReg>::allocate();
     return ptr;
 }
     
-void RSpecies::operator delete(void* ptr) noexcept {
-    boost::fast_pool_allocator<RSpecies>::deallocate((RSpecies*)ptr);
+void RSpeciesReg::operator delete(void* ptr) noexcept {
+    boost::fast_pool_allocator<RSpeciesReg>::deallocate((RSpeciesReg*)ptr);
+}
+
+void* RSpeciesConst::operator new(size_t size) {
+    void *ptr = boost::fast_pool_allocator<RSpeciesConst>::allocate();
+    return ptr;
+}
+
+void RSpeciesConst::operator delete(void* ptr) noexcept {
+    boost::fast_pool_allocator<RSpeciesConst>::deallocate((RSpeciesConst*)ptr);
+}
+
+void* RSpeciesAvg::operator new(size_t size) {
+    void *ptr = boost::fast_pool_allocator<RSpeciesAvg>::allocate();
+    return ptr;
+}
+
+void RSpeciesAvg::operator delete(void* ptr) noexcept {
+    boost::fast_pool_allocator<RSpeciesAvg>::deallocate((RSpeciesAvg*)ptr);
 }
 #endif
     

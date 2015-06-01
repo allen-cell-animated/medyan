@@ -73,6 +73,106 @@ TEST(RSpeciesTest, Main) {
     EXPECT_EQ(10, RB.getN());    
 }
 
+//Testing const rspecies
+TEST(RSpeciesTest, ConstRSpecies) {
+    
+    SpeciesBulk A("A",  10, max_ulim, RSpeciesType::CONST);
+    RSpecies& RA(A.getRSpecies());
+    
+    SpeciesBulk B("B",  10, max_ulim, RSpeciesType::CONST);
+    RSpecies& RB(B.getRSpecies());
+    
+    // Using a reaction A->B to see if copy number n is correctly driven
+    // (implicitly tests up() and down() methods
+    Reaction<1,1> rxn1 = {{&A,&B}, 10.0 };
+    rxn1.makeStep();
+    rxn1.makeStep();
+    EXPECT_EQ(10, RA.getN());
+    EXPECT_EQ(10, RB.getN());
+    
+    Reaction<1,1> rxn2 = {{&B,&A}, 10.0 };
+    rxn2.makeStep();
+    rxn2.makeStep();
+    EXPECT_EQ(10, RA.getN());
+    EXPECT_EQ(10, RB.getN());
+}
+
+//Testing avg rspecies
+TEST(RSpeciesTest, AvgRSpecies) {
+    
+    global_time = 0.0;
+    
+    SpeciesBulk A("A", 100, max_ulim, RSpeciesType::AVG);
+    RSpecies& RA(A.getRSpecies());
+    RSpeciesAvg* RAA = (RSpeciesAvg*)&RA;
+    
+    RAA->setNumEvents(5);
+    
+    SpeciesBulk B("B", 100, max_ulim, RSpeciesType::AVG);
+    RSpecies& RB(B.getRSpecies());
+    RSpeciesAvg* RBA = (RSpeciesAvg*)&RB;
+    
+    RBA->setNumEvents(5);
+    
+    //check first averages
+    EXPECT_EQ(100, RA.getN());
+    EXPECT_EQ(100, RB.getN());
+    
+    //check true n too
+    EXPECT_EQ(100, RA.getTrueN());
+    EXPECT_EQ(100, RB.getTrueN());
+    
+    // Using a reaction A->B to see if copy number n is correctly driven
+    // (implicitly tests up() and down() methods)
+    // we also have to explicity change tau so the averages
+    // are computed correctly
+    Reaction<1,1> rxn1 = {{&A,&B}, 10.0 };
+    global_time = 1.0;
+    rxn1.makeStep();
+    global_time = 2.0;
+    rxn1.makeStep();
+    global_time = 3.0;
+    rxn1.makeStep();
+    global_time = 4.0;
+    rxn1.makeStep();
+    global_time = 5.0;
+    rxn1.makeStep();
+    global_time = 6.0;
+    rxn1.makeStep();
+    
+    //new avg for A = 97.5, B = 102.5
+    //true A = 94, B = 106
+    EXPECT_EQ(97.5, RA.getN());
+    EXPECT_EQ(102.5, RB.getN());
+    
+    EXPECT_EQ(94, RA.getTrueN());
+    EXPECT_EQ(106, RB.getTrueN());
+    
+    //now reverse
+    Reaction<1,1> rxn2 = {{&B,&A}, 10.0 };
+    global_time = 7.0;
+    rxn2.makeStep();
+    global_time = 8.0;
+    rxn2.makeStep();
+    global_time = 9.0;
+    rxn2.makeStep();
+    global_time = 10.0;
+    rxn2.makeStep();
+    global_time = 11.0;
+    rxn2.makeStep();
+    global_time = 12.0;
+    rxn2.makeStep();
+    
+    //new avg for A = 97.5, B = 102.5
+    //true A = 100, B = 100
+    EXPECT_EQ(96.5, RA.getN());
+    EXPECT_EQ(103.5, RB.getN());
+    
+    EXPECT_EQ(100, RA.getTrueN());
+    EXPECT_EQ(100, RB.getTrueN());
+}
+
+
 TEST(ReactionTest, CTors) {
     SpeciesBulk A("A",  10);
     SpeciesBulk B("B",  10);
