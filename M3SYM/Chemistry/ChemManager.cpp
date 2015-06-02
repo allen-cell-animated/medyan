@@ -138,7 +138,7 @@ void ChemManager::genFilReactionTemplates() {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, string, double> element) {
+                              [name](tuple<string, int, double, string> element) {
                                   return get<0>(element) == name ? true : false; });
             
             if(it == _chemData.speciesBulk.end()) {
@@ -156,7 +156,7 @@ void ChemManager::genFilReactionTemplates() {
             //Look up species, make sure in list
             string name = reactant.substr(0, reactant.find(":"));
             auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
+                              [name](tuple<string, int, double, double, string, int> element) {
                                   return get<0>(element) == name ? true : false; });
             if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
@@ -436,7 +436,7 @@ void ChemManager::genFilReactionTemplates() {
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
             auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, string, double> element) {
+                              [name](tuple<string, int, double, string> element) {
                                   return get<0>(element) == name ? true : false; });
             
             if(it == _chemData.speciesBulk.end()) {
@@ -454,7 +454,7 @@ void ChemManager::genFilReactionTemplates() {
             //Look up species, make sure in list
             string name = product.substr(0, product.find(":"));
             auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double> element) {
+                              [name](tuple<string, int, double, double, string, int> element) {
                                   return get<0>(element) == name ? true : false; });
             if(it == _chemData.speciesDiffusing.end()) {
                 cout <<
@@ -972,7 +972,7 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -990,7 +990,7 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double> element) {
+                                  [name](tuple<string, int, double, double, string, int> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -1098,7 +1098,7 @@ void ChemManager::genFilBindingManagers() {
                 brancherName = name;
                 
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -1117,7 +1117,7 @@ void ChemManager::genFilBindingManagers() {
                 brancherName = name;
                 
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double> element) {
+                                  [name](tuple<string, int, double, double, string, int> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -1141,7 +1141,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -1158,7 +1158,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double> element) {
+                                  [name](tuple<string, int, double, double, string, int> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -1398,7 +1398,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -1415,7 +1415,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double> element) {
+                                  [name](tuple<string, int, double, double, string, int> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -1619,7 +1619,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -1636,7 +1636,7 @@ void ChemManager::genFilBindingManagers() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double> element) {
+                                  [name](tuple<string, int, double, double, string, int> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -1779,9 +1779,24 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     for(auto &sd : _chemData.speciesDiffusing) {
         
         auto name = get<0>(sd);
-        auto diffRate = get<2>(sd);
+        auto diffRate    = get<2>(sd);
+        auto rtypeString = get<4>(sd);
+        auto numEvents   = get<5>(sd);
         
-        protoCompartment.addSpeciesDiffusing(name, 0, max_ulim, RSpeciesType::AVG);
+        RSpeciesType type;
+        string rsptype(rtypeString);
+        
+        if(rsptype == "AVG")
+            type = RSpeciesType::AVG;
+        else if (rsptype == "REG")
+            type = RSpeciesType::REG;
+        
+        Species* s = protoCompartment.addSpeciesDiffusing(name, 0, max_ulim, type);
+        
+        //set num events if averaging
+        if(rsptype == "AVG")
+            ((RSpeciesAvg*)&s->getRSpecies())->setNumEvents(numEvents);
+        
         protoCompartment.setDiffusionRate(name, diffRate);
     }
     
@@ -1789,7 +1804,15 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     for(auto &sb : _chemData.speciesBulk) {
         
         auto name = get<0>(sb);
-        auto type = (get<2>(sb) == "CONST") ? RSpeciesType::CONST : RSpeciesType::REG;
+        auto rtypeString = get<3>(sb);
+        
+        RSpeciesType type;
+        string rsptype(rtypeString);
+        
+        if(rsptype == "CONST")
+            type = RSpeciesType::CONST;
+        else if (rsptype == "REG")
+            type = RSpeciesType::REG;
         
         grid->addSpeciesBulk(name, 0, max_ulim, type);
     }
@@ -1947,7 +1970,7 @@ void ChemManager::updateCopyNumbers() {
         
         auto name = get<0>(s);
         auto copyNumber = get<1>(s);
-        auto releaseTime = get<3>(s);
+        auto releaseTime = get<2>(s);
         
         if(tau() >= releaseTime && copyNumber != 0) {
             
@@ -1983,7 +2006,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                    return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2001,7 +2024,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it =
                 find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                        [name](tuple<string, int, double, double> element) {
+                        [name](tuple<string, int, double, double, string, int> element) {
                             return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -2025,7 +2048,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2043,7 +2066,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 string name = product.substr(0, product.find(":"));
                 auto it =
                 find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                        [name](tuple<string, int, double, double> element) {
+                        [name](tuple<string, int, double, double, string, int> element) {
                             return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -2123,7 +2146,7 @@ void ChemManager::genBulkReactions() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2148,7 +2171,7 @@ void ChemManager::genBulkReactions() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, string, double> element) {
+                                  [name](tuple<string, int, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2247,7 +2270,7 @@ void ChemManager::genNucleationReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, string, double> element) {
+                                      [name](tuple<string, int, double, string> element) {
                                           return get<0>(element) == name ? true : false; });
                     
                     if(it == _chemData.speciesBulk.end()) {
@@ -2266,7 +2289,7 @@ void ChemManager::genNucleationReactions() {
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it =
                     find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                            [name](tuple<string, int, double, double> element) {
+                            [name](tuple<string, int, double, double, string, int> element) {
                                 return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<

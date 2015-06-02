@@ -160,8 +160,10 @@ The following mechanical parameters can be set. It should be noted that the numb
  \hline
   CONJUGATEGRADIENT & POLAKRIBIERE, FLETCHERRIEVES, STEEPESTDESCENT & Type of conjugate gradient minimization \\
   \hline
-  GRADIENTTOLERANCE & double & Gradient tolerance in conjugate gradient \\
-  \hline
+  GRADIENTTOLERANCE & double & Gradient tolerance in conjugate gradient (in pN) \\
+    \hline
+  ENERGYTOLERANCE & double & Energy tolerance in conjugate gradient (in pN nm) \\
+    \hline
    MAXDISTANCE & double & Maximum distance beads can be moved in minimization \\
   \hline
   FSTRETCHINGTYPE & HARMONIC & Filament stretching force field \\
@@ -353,9 +355,24 @@ Different types of species can be defined as follows:
 
 \begin{itemize}
 \item 
-A \textbf{diffusing species} is defined in the following form:\newline\newline \centerline{\texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFUSIONRATE> <RELEASETIME>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
+A \textbf{diffusing species} is defined in the following form:\newline\newline \centerline{\texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFRATE> <RELEASETIME> <QUALIFIER> <NUMEVENTS>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).\\
+
+The \texttt{QUALIFIER} field is used to define the type of reacting species. The options are the following:
+\begin{itemize}
+\item \texttt{REG} : A regular reacting species. Copy numbers are updated typically.
+\item \texttt{AVG} : An averaging reacting species. The species will use a copy number averaged over a set number of copy number changes (\texttt{NUMEVENTS}) for efficiency.
+\end{itemize}
+The \texttt{NUMEVENTS} field is only used in the case of defining an averaging reacting species. If using a regular, this should  not be included in the file or an error will result.
+
 \item
-A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> CONST/NOCONST <RELEASETIME>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{CONST/NOCONST} defines whether this copy number is constant. The \texttt{CONST/NOCONST} are exclusive and one value must be defined, or a startup error will result. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
+A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> <RELEASETIME> <QUALIFIER>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
+
+The \texttt{QUALIFIER} field is used to define the type of reacting species. The options are the following:
+\begin{itemize}
+\item \texttt{REG} : A regular reacting species. Copy numbers are updated typically.
+\item \texttt{CONST} : An constant reacting species. The species will never change copy number upon reacting.
+\end{itemize}
+
 \item
 Any \textbf{filament-related species} can be defined in the following form:\newline\newline\centerline{\texttt{SPECIES<SPECIESTYPE>: <NAME>}}\newline\newline where \texttt{SPECIESTYPE} can be:
 \begin{itemize}

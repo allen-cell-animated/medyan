@@ -1406,23 +1406,50 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 5) {
-                chem.speciesBulk.push_back(tuple<string, int, string, double>
+                
+                if(lineVector[4] != "CONST" || lineVector[4] != "REG") {
+                    
+                    cout << "Option for bulk species not valid. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                chem.speciesBulk.push_back(tuple<string, int, double, string>
                     (lineVector[1], atoi(lineVector[2].c_str()),
-                     lineVector[3], atof(lineVector[4].c_str())));
+                     atof(lineVector[3].c_str()), lineVector[4]));
             }
             else {}
         }
         else if(line.find("SPECIESDIFFUSING") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  5) {
+            if(lineVector.size() >  7 || lineVector.size() < 6) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 5) {
-                chem.speciesDiffusing.push_back(tuple<string, int, double, double>
+            else if (lineVector.size() == 7) {
+                
+                if(lineVector[5] != "AVG") {
+                    
+                    cout << "Too many arguments for a non AVG-qualified diffusing species. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                chem.speciesDiffusing.push_back(tuple<string, int, double, double, string, int>
                     (lineVector[1], atoi(lineVector[2].c_str()),
-                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str())));
+                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
+                     lineVector[5], atoi(lineVector[6].c_str())));
+            }
+            else if (lineVector.size() == 6) {
+                
+                if(lineVector[5] != "REG") {
+                    
+                    cout << "Not enough arguments for a non REG-qualified diffusing species. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                chem.speciesDiffusing.push_back(tuple<string, int, double, double, string, int>
+                     (lineVector[1], atoi(lineVector[2].c_str()),
+                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str()), lineVector[5], 0));
             }
             else {}
         }

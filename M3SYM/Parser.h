@@ -128,12 +128,13 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number, whether this is a constant species, and release time
-    vector<tuple<string, int, string, double>> speciesBulk = {};
+    /// initial copy number, release time, and CONST/REG qualifier
+    vector<tuple<string, int, double, string>> speciesBulk = {};
     
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
-    /// initial copy number per compartment, the rate of diffusion, and release time
-    vector<tuple<string, int, double, double>> speciesDiffusing = {};
+    /// initial copy number per compartment, the rate of diffusion, release time,
+    /// AVG/REG qualifier, and number of events to average if applicable.
+    vector<tuple<string, int, double, double, string, int>> speciesDiffusing = {};
     
     //@{
     /// Filament species parsed
@@ -242,8 +243,8 @@ public:
     Parser(string inputFileName) {
         _inputFile.open(inputFileName);
         if(!_inputFile.is_open()) {
-            cout << "There was an error parsing file " << inputFileName <<
-                ". Exiting." << endl;
+            cout << "There was an error parsing file " << inputFileName
+                 << ". Exiting." << endl;
             exit(EXIT_FAILURE);
         }
         cout << "Loading file " << inputFileName << endl;

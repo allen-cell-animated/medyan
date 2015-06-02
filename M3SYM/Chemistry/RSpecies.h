@@ -389,8 +389,17 @@ public:
     
     //@{
     /// In constant species, do nothing. Copy numbers do not change.
-    virtual inline void up() {}
-    virtual inline void down() {}
+    /// Emits a signal with the zero change in copy number if attached.
+    virtual inline void up() {
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(0);
+#endif
+    }
+    virtual inline void down() {
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(0);
+#endif
+    }
     //@}
     /// Return the true copy number
     virtual inline double getN() const {return (double)_n;}
@@ -452,12 +461,10 @@ public:
     /// computing a new average. When this number is reached, a new average is created
     /// using the _copyNumbers map (time averaged) and replaces the previous average.
     RSpeciesAvg (Species &parent, species_copy_t n=0, species_copy_t ulim=max_ulim)
-    
+
         : RSpecies(parent, n, ulim) {
         
-        _type = RSpeciesType::REG;
-            
-        _numEvents = 10;
+        _type = RSpeciesType::AVG;
             
         //set first average to n, first time update
         _average = n;
@@ -491,14 +498,26 @@ public:
     /// Increase the true copy number.
     /// Add the old copy number to the running copy number map.
     /// If a new average is needed, compute it and reset accordingly.
+    /// If the copy number changes from 1 to 0, calls a
+    /// "callback"-like method to passivate previously activated [Reactions](@ref
+    /// Reaction), where this RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
     virtual inline void up() {
         
-        //Check on max copy number. Program exits ungracefully
-        assert((_n != 0) && "An averaging RSpecies increased to a copy number > max lim. \
-               When using RSpeciesAvg, make sure this can never happen. Exiting.");
+        cout << "Avg N = " << _average << ", True N = " << _n << endl;
         
+        // if initialization, set avg to be true
+        // copy number and return
+        double deltaTau = tau() - _localTau;
+        
+        if(deltaTau == 0.0) {
+            
+            _average = ++_n;
+            return;
+        }
+
         //add old n to map
-        _copyNumbers[_n] += tau() - _localTau;
+        _copyNumbers[_n] += deltaTau;
         
         //compute a new avg if we need it
         if(++_eventCount > _numEvents) {
@@ -513,23 +532,57 @@ public:
         
         //increase copy number, reset local tau
         _n++; _localTau = tau();
+        
+#ifdef TRACK_ZERO_COPY_N
+        if(_n==1) {
+            activateAssocReactantReactions();
+            
+            //recompute an average
+            if(_eventCount != 0) _average = _n;
+            
+            _newAvg = true;
+        }
+#endif
+#ifdef TRACK_UPPER_COPY_N
+        if(_n==_ulim) {
+            passivateAssocProductReactions();
+            
+            //set average to zero
+            _average = 0.0;
+            _newAvg = true;
+        }
+#endif
+        
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(+1);
+#endif
     }
     
     /// Decrease the true copy number.
     /// Add the old copy number to the running copy number map.
     /// If a new average is needed, compute it and reset accordingly.
+    /// If the copy number changes from 1 to 0, calls a
+    /// "callback"-like method to passivate previously activated [Reactions](@ref
+    /// Reaction), where this RSpecies is a Reactant.
+    /// Also emits a signal with the change in copy number if attached.
     virtual inline void down() {
         
-        //Check on zero copy number. Program exits ungracefully
-        assert((_n != 0) && "An averaging RSpecies dropped to a copy number < 0. \
-                When using RSpeciesAvg, make sure this can never happen. Exiting.");
+        cout << "Avg N = " << _average << ", True N = " << _n << endl;
+        
+#ifdef TRACK_UPPER_COPY_N
+        species_copy_t prev_n = _n;
+#endif
+        double deltaTau = tau() - _localTau;
         
         //add old n to map
-        _copyNumbers[_n] += tau() - _localTau;
+        _copyNumbers[_n] += deltaTau;
         
         //compute a new avg if we need it
         if(++_eventCount > _numEvents) {
             computeAverageN();
+            
+            //clear map and return
+            _copyNumbers.clear();
             
             _eventCount = 0;
             _firstTau = tau();
@@ -540,6 +593,30 @@ public:
         
         //decrease copy number, reset local tau
         _n--; _localTau = tau();
+        
+#ifdef TRACK_ZERO_COPY_N
+        if(_n == 0) {
+            passivateAssocReactantReactions();
+            
+            //set average to zero
+            _average = 0.0;
+            _newAvg = true;
+        }
+#endif
+#ifdef TRACK_UPPER_COPY_N
+        if(prev_n == _ulim) {
+            activateAssocProductReactions();
+            
+            //recompute an average
+            if(_eventCount != 0) _average = _n;
+            
+            _newAvg = true;
+        }
+#endif
+        
+#ifdef RSPECIES_SIGNALING
+        if(isSignaling()) emitSignal(-1);
+#endif
     }
     
     /// Return the current average
