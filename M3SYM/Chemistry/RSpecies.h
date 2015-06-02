@@ -460,8 +460,6 @@ public:
         _numEvents = 10;
             
         //set first average to n, first time update
-        
-            
         _average = n;
         _localTau = _firstTau = tau();
     }

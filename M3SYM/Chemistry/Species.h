@@ -222,6 +222,7 @@ public:
 #ifdef RSPECIES_SIGNALING
         //transfer signal
         _rspecies->_signal = std::move(rhs._rspecies->_signal);
+        rhs._rspecies->_signal = nullptr;
 #endif
             
         //set numevents if averaging
@@ -268,6 +269,7 @@ public:
 #ifdef RSPECIES_SIGNALING
         //transfer signal
         _rspecies->_signal = std::move(rhs._rspecies->_signal);
+        rhs._rspecies->_signal = nullptr;
 #endif
         
         //set numevents if averaging
@@ -284,9 +286,8 @@ public:
     Species& operator=(Species&& rhs)  {
         _molecule = rhs._molecule;
         _rspecies = rhs._rspecies;
-#ifdef RSPECIES_SIGNALING
+
         rhs._rspecies = nullptr;
-#endif
         _parent=rhs._parent;
         return *this;
     }
