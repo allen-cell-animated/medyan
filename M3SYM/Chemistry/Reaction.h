@@ -246,9 +246,10 @@ template <unsigned short M, unsigned short N>
 /// A diffusive reaction in the system.
 /*!
  * A DiffusionReaction is very similar to the Reaction class, the only difference
- * in being the calculation of getProductofProducts() and getProductOfReactants().
- * In these functions, this class will use the true copy number of the diffusing
- * species to calculate and update propensities.
+ * in being the marking of a few fields. The dependencies marker will be set to true
+ * when a new average for the held RSpeciesAvg is calculated (if at all). 
+ * The averaging marker specifies if this diffusion reaction is using RSpeciesAvg 
+ * as its product and reactant. 
  */
 
 class DiffusionReaction : public Reaction<1,1> {
@@ -267,7 +268,8 @@ public:
     : Reaction(species, rate, isProtoCompartment) {
     
         //set averaging
-        if(dynamic_cast<RSpeciesAvg*>(_rspecies[0])) _averaging = true;
+        if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))
+            _averaging = true;
         
         //set type
         _reactionType = ReactionType::DIFFUSION;
@@ -299,24 +301,6 @@ public:
         }
     }
 
-    /// Implementation of getProductOfReactants()
-    /// This uses the true copy number of the species
-    inline virtual float getProductOfReactantsImpl() const override {
-
-        return _rspecies[0]->getTrueN()*_rspecies[1]->getTrueN();
-    }
-
-    /// Implementation of getProductOfProducts()
-    /// This uses the true copy number of the species
-    inline virtual float getProductOfProductsImpl() const override {
-#ifdef TRACK_UPPER_COPY_N
-
-    return _rspecies[1]->getTrueN()-_rspecies[1]->getUpperLimitForN();
-
-#else
-    return 1;
-#endif
-    }
     ///This implementation returns the kept boolean value
     virtual bool updateDependencies() {return _dependencies;}
 };

@@ -100,9 +100,10 @@ bool ChemGillespieImpl::makeStep() {
     double mu = _a_total*generateUniform();
     double rates_sum = 0;
     for (auto &x : _map_rnodes){
+        
         auto rn = x.second.get();
-        if(rn->getReaction()->isPassivated())
-            continue;
+        if(rn->getReaction()->isPassivated()) continue;
+        
         rates_sum+=rn->getPropensity();
         
         if(rates_sum>mu){

@@ -29,11 +29,11 @@ template <unsigned short M, unsigned short N>
     {
         RSpecies *s = _rspecies[i];
         for(auto r = s->beginReactantReactions();
-                 r!=s->endReactantReactions(); ++r){
+                 r!= s->endReactantReactions(); ++r){
             if(this!=(*r)) (*r)->registerNewDependent(this);
         }
         for(auto r = s->beginProductReactions();
-                 r!=s->endProductReactions(); ++r){
+                 r!= s->endProductReactions(); ++r){
             if(this!=(*r)) (*r)->registerNewDependent(this);
         }
     }

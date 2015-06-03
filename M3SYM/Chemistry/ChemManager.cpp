@@ -1779,12 +1779,12 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     for(auto &sd : _chemData.speciesDiffusing) {
         
         auto name = get<0>(sd);
-        auto diffRate    = get<2>(sd);
-        auto rtypeString = get<4>(sd);
-        auto numEvents   = get<5>(sd);
+        auto diffRate = get<2>(sd);
+        auto rtypeStr = get<4>(sd);
+        auto numEvents = get<5>(sd);
         
         RSpeciesType type;
-        string rsptype(rtypeString);
+        string rsptype(rtypeStr);
         
         if(rsptype == "AVG")
             type = RSpeciesType::AVG;
@@ -1804,10 +1804,10 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     for(auto &sb : _chemData.speciesBulk) {
         
         auto name = get<0>(sb);
-        auto rtypeString = get<3>(sb);
+        auto rtypeStr = get<3>(sb);
         
         RSpeciesType type;
-        string rsptype(rtypeString);
+        string rsptype(rtypeStr);
         
         if(rsptype == "CONST")
             type = RSpeciesType::CONST;

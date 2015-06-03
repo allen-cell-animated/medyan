@@ -77,8 +77,7 @@ bool ChemSimpleGillespieImpl::makeStep() {
 #ifdef REACTION_SIGNALING
     r_selected->emitSignal();
 #endif
-
-    syncGlobalTime();
+    
     return true;
 }
 

@@ -4,8 +4,6 @@ from mayavi import mlab
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
 traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
-#traj_filename='/Users/jameskomianos/Desktop/DT1SampleRuns/M0.005A0.01/Run1/snapshot.traj'
-#color_filename = '/Users/jameskomianos/Desktop/Alison/Run3/stresses.traj'
 color_filename = ''
 
 #Open the traj file
@@ -200,7 +198,7 @@ for line in traj_file:
 def show_frame(frame_number=-1):
 
 	#if were saving the frames
-	saving = True
+	saving = False
 	saveFile = "/Users/jameskomianos/Desktop/Test/Snapshots/"
 
 	#PARAMETERS TO SET FOR VISUAL

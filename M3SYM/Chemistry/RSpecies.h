@@ -309,6 +309,7 @@ public:
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
     virtual inline void up() {
+        
         _n+=1;
 #ifdef TRACK_ZERO_COPY_N
         if(_n==1)
@@ -329,6 +330,7 @@ public:
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
     virtual inline void down() {
+        
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
 #endif
@@ -504,7 +506,7 @@ public:
     /// Also emits a signal with the change in copy number if attached.
     virtual inline void up() {
         
-        cout << "Avg N = " << _average << ", True N = " << _n << endl;
+        //cout << "Avg N = " << _average << ", True N = " << _n << endl;
         
         // if initialization, set avg to be true
         // copy number and return
@@ -567,7 +569,7 @@ public:
     /// Also emits a signal with the change in copy number if attached.
     virtual inline void down() {
         
-        cout << "Avg N = " << _average << ", True N = " << _n << endl;
+        //cout << "Avg N = " << _average << ", True N = " << _n << endl;
         
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;

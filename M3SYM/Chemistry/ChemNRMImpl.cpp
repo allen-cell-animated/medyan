@@ -91,18 +91,18 @@ void RNodeNRM::updateHeap() {
 }
 
 void RNodeNRM::generateNewRandTau() {
-    double tau;
+    double newTau;
     reComputePropensity();//calculated new _a
 
 #ifdef TRACK_ZERO_COPY_N
-    tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+    newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
     if(_a<1.0e-10) // numeric_limits< double >::min()
-        tau = numeric_limits<double>::infinity();
+        newTau = numeric_limits<double>::infinity();
     else
-        tau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+        newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
-    setTau(tau);
+    setTau(newTau);
 }
 
 void RNodeNRM::activateReaction() {
@@ -147,6 +147,8 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     _t=tau_top;
+    syncGlobalTime();
+    
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
@@ -160,18 +162,24 @@ bool ChemNRMImpl::makeStep() {
     ReactionBase *r = rn->getReaction();
     
     if(r->updateDependencies()) {
-        
+    
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
             RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
             double a_old = rn_other->getPropensity();
+            
+            //recompute propensity
             rn_other->reComputePropensity();
+            
             double tau_new;
             double tau_old = rn_other->getTau();
             
             double a_new = rn_other->getPropensity();
+            
 #ifdef TRACK_ZERO_COPY_N
+            //recompute tau
             tau_new = (a_old/a_new)*(tau_old-_t)+_t;
 #else
+            //recompute tau
             if(a_new<1.0e-15) // numeric_limits< double >::min()
                 tau_new = numeric_limits<double>::infinity();
             else if (a_old<1.0e-15){
@@ -185,14 +193,11 @@ bool ChemNRMImpl::makeStep() {
             rn_other->setTau(tau_new);
             rn_other->updateHeap();
         }
-    }
-    
-    // Send signal
 #ifdef REACTION_SIGNALING
-    r->emitSignal();
+        // Send signal
+        r->emitSignal();
 #endif
-    
-    syncGlobalTime();
+    }
     return true;
 }
 
