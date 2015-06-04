@@ -31,8 +31,9 @@ class MotorGhost;
  *  of zero initial stress, i.e., it is calculated within the constructor at initiation. 
  *  A ghost motor heads positions on a segment (between two consecutive beads on a filament) 
  *  determined by two numbers (0 to 1) position1 and position2 (finite number of steps 
- *  before move to the next segment o--x-o- -> o---xo- -> o---ox). they can be changed as a
- *  result of chemical reaction, than we consider that the motor made a step.
+ *  before move to the next segment o--x-o- -> o---xo- -> o---ox) held in the parent
+ *  MotorGhost. They can be changed as a result of chemical reaction, and we consider that 
+ *  as the motor making a step.
  */
 class MMotorGhost {
     

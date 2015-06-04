@@ -28,7 +28,7 @@ class Linker;
  *  by the condition of zero initial stress, i.e., it calculated within the constructor
  *  at initiation. A Linker heads positions on a segment (between two consecutive beads 
  *  on a Filament) determined by two numbers (double from 0 to 1) position1 and 
- *  position2.
+ *  position2 held in the parent Linker.
  */
 class MLinker {
     
