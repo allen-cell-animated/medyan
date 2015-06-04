@@ -196,7 +196,7 @@ protected: //Variables
     /// @param numEvents - the number of events if using averaging
     Species (const string &name, species_copy_t n, species_copy_t ulim, RSpeciesType type)
     
-        : _parent(nullptr), _molecule(SpeciesNamesDB::stringToInt(name)){
+        : _molecule(SpeciesNamesDB::stringToInt(name)), _parent(nullptr) {
         
         //create the appropriate rspecies
         _rspecies = RSpeciesFactory::createRSpecies(*this, n, ulim, type);

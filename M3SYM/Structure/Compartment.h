@@ -81,7 +81,7 @@ protected:
 public:
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
-                    _neighbours(), _diffusion_rates() {}
+                    _diffusion_rates(), _neighbours() {}
     
     /// Constructor which clones another compartment
     Compartment(const Compartment &C) : _species(), _internal_reactions(),
