@@ -199,7 +199,7 @@ def show_frame(frame_number=-1):
 
 	#if were saving the frames
 	saving = False
-	saveFile = "/Users/jameskomianos/Desktop/Test/Snapshots/"
+	saveFile = ''
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
