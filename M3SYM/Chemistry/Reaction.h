@@ -107,6 +107,8 @@ template <unsigned short M, unsigned short N>
             return vector<ReactionBase*>(rxns.begin(),rxns.end());
         }
         
+        virtual void updatePropensityImpl();
+        
     protected:
         /// An implementation method used by the constructor.
         template <typename InputContainer>

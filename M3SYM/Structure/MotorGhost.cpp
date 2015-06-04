@@ -184,7 +184,7 @@ void MotorGhost::updateReactionRates() {
                                _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
-                r->activateReaction();
+                r->updatePropensity();
             }
         }
         for(auto r : s2->getRSpecies().reactantReactions()) {
@@ -198,7 +198,7 @@ void MotorGhost::updateReactionRates() {
                                _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
-                r->activateReaction();
+                r->updatePropensity();
             }
         }
     }

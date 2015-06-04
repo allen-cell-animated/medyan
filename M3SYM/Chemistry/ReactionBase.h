@@ -348,6 +348,12 @@ public:
         activateReactionUnconditional();
     }
     
+    /// Performs a simple updating of the propensity of this ReactionBase. Does not change
+    /// dependents, only updates the RNode if initialized.
+    void updatePropensity() {updatePropensityImpl();}
+    
+    virtual void updatePropensityImpl() = 0;
+    
     /// Print the ReactionBases that are affacted by this ReactionBase being fired
     void printDependents() ;
     

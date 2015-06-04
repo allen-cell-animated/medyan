@@ -94,7 +94,7 @@ protected:
                && "Species representing binding sites does not match \
                    number of binding sites held by the manager.");
         
-        _bindingReaction->activateReaction();
+        _bindingReaction->updatePropensity();
     }
     
 public:
@@ -131,11 +131,6 @@ public:
     
     /// Get current number of binding sites
     virtual int numBindingSites() = 0;
-    
-    //update the binding reaction (called due to a copy number change)
-    void updateBindingReaction() {
-        _bindingReaction->activateReaction();
-    }
     
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}

@@ -24,7 +24,7 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-#include "NeighborListImpl.h"
+#include "NeighborList.h"
 #include "DynamicNeighbor.h"
 
 #include "SysParams.h"

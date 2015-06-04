@@ -144,6 +144,6 @@ void Linker::updateReactionRates() {
         changeRate(offRxn->getBareRate(), force);
     
     offRxn->setRate(newRate);
-    offRxn->activateReaction();
+    offRxn->updatePropensity();
 }
 
