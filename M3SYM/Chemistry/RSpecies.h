@@ -534,23 +534,12 @@ public:
         _n++; _localTau = tau();
         
 #ifdef TRACK_ZERO_COPY_N
-        if(_n==1) {
+        if(_n==1)
             activateAssocReactantReactions();
-            
-            //recompute an average
-            if(_eventCount != 0) _average = _n;
-            
-            _newAvg = true;
-        }
 #endif
 #ifdef TRACK_UPPER_COPY_N
-        if(_n==_ulim) {
+        if(_n==_ulim)
             passivateAssocProductReactions();
-            
-            //set average to zero
-            _average = 0.0;
-            _newAvg = true;
-        }
 #endif
         
 #ifdef RSPECIES_SIGNALING
@@ -593,23 +582,12 @@ public:
         _n--; _localTau = tau();
         
 #ifdef TRACK_ZERO_COPY_N
-        if(_n == 0) {
+        if(_n == 0)
             passivateAssocReactantReactions();
-            
-            //set average to zero
-            _average = 0.0;
-            _newAvg = true;
-        }
 #endif
 #ifdef TRACK_UPPER_COPY_N
-        if(prev_n == _ulim) {
+        if(prev_n == _ulim)
             activateAssocProductReactions();
-            
-            //recompute an average
-            if(_eventCount != 0) _average = _n;
-            
-            _newAvg = true;
-        }
 #endif
         
 #ifdef RSPECIES_SIGNALING
