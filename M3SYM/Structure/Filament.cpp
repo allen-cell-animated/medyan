@@ -47,7 +47,7 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     Bead* b1 = _subSystem->addTrackable<Bead>(position, 0);
     
     //choose length
-    double length;
+    double length = 0.0;
     
     if(branch)          length = SysParams::Geometry().monomerSize;
     else if(nucleation) length = SysParams::Geometry().minCylinderSize;

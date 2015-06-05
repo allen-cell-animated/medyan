@@ -16,7 +16,6 @@
 #include "ChemSimImpl.h"
 
 void ChemSim::setInstance(ChemSimImpl *csi) {
-    if (_pimpl != 0) delete _pimpl;
     _pimpl=csi;
 }
 
