@@ -39,8 +39,8 @@ public:
                       double energyTolerance,
                       double maxDistance)
     
-        : _GRADTOL(gradientTolerance),
-          _ENERGYTOL(energyTolerance),
+        : _ENERGYTOL(energyTolerance),
+          _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance) {}
     
     

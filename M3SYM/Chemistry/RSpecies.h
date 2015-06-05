@@ -257,12 +257,12 @@ public:
     inline vr_iterator endProductReactions() {return _as_products.end();}
     
     /// Increases the copy number of this RSpecies
-    virtual inline void up() = 0;
+    virtual void up() = 0;
     /// Decreases the copy number of this RSpecies
-    virtual inline void down() = 0;
+    virtual void down() = 0;
     
     /// Return the effective copy number of this RSpecies
-    virtual inline double getN() const = 0;
+    virtual double getN() const = 0;
     /// Return the true copy number of this RSpecies
     virtual inline species_copy_t getTrueN() const {return _n;}
     
@@ -308,7 +308,7 @@ public:
     /// "callback"-like method to activate previously passivated [Reactions](@ref
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
-    virtual inline void up() {
+    virtual void up() {
         
         _n+=1;
 #ifdef TRACK_ZERO_COPY_N
@@ -329,7 +329,7 @@ public:
     /// "callback"-like method to passivate previously activated [Reactions](@ref
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
-    virtual inline void down() {
+    virtual void down() {
         
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
@@ -349,7 +349,7 @@ public:
 #endif
     }
     /// Return the true copy number
-    virtual inline double getN() const {return (double)_n;}
+    virtual double getN() const {return (double)_n;}
 };
 
 
@@ -392,19 +392,19 @@ public:
     //@{
     /// In constant species, do nothing. Copy numbers do not change.
     /// Emits a signal with the zero change in copy number if attached.
-    virtual inline void up() {
+    virtual void up() {
 #ifdef RSPECIES_SIGNALING
         if(isSignaling()) emitSignal(0);
 #endif
     }
-    virtual inline void down() {
+    virtual void down() {
 #ifdef RSPECIES_SIGNALING
         if(isSignaling()) emitSignal(0);
 #endif
     }
     //@}
     /// Return the true copy number
-    virtual inline double getN() const {return (double)_n;}
+    virtual double getN() const {return (double)_n;}
 };
 
 /// An average RSpecies that tracks the average copy number over a number of events.
@@ -504,9 +504,7 @@ public:
     /// "callback"-like method to passivate previously activated [Reactions](@ref
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
-    virtual inline void up() {
-        
-        //cout << "Avg N = " << _average << ", True N = " << _n << endl;
+    virtual void up() {
         
         // if initialization, set avg to be true
         // copy number and return
@@ -567,9 +565,7 @@ public:
     /// "callback"-like method to passivate previously activated [Reactions](@ref
     /// Reaction), where this RSpecies is a Reactant.
     /// Also emits a signal with the change in copy number if attached.
-    virtual inline void down() {
-        
-        //cout << "Avg N = " << _average << ", True N = " << _n << endl;
+    virtual void down() {
         
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
@@ -622,7 +618,7 @@ public:
     }
     
     /// Return the current average
-    virtual inline double getN() const {return _average;}
+    virtual double getN() const {return _average;}
 };
 
 /// Print self into an iostream
