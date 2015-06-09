@@ -93,7 +93,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     double newTau;
     reComputePropensity();//calculated new _a
-
+    
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -164,6 +164,7 @@ bool ChemNRMImpl::makeStep() {
     if(r->updateDependencies()) {
     
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
+            
             RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
             double a_old = rn_other->getPropensity();
             

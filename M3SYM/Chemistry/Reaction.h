@@ -156,7 +156,7 @@ template <unsigned short M, unsigned short N>
         /// Implementation of getProductOfReactants()
         inline virtual float getProductOfReactantsImpl() const override
         {
-            int prod = 1;
+            float prod = 1;
             for(auto i=0U; i<M; ++i)
                 prod*=_rspecies[i]->getN();
             return prod;
@@ -179,7 +179,7 @@ template <unsigned short M, unsigned short N>
         inline virtual float getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
-            int prod = 1;
+            float prod = 1;
             for(auto i=M; i<(M+N); ++i){
                 prod*=_rspecies[i]->getN()-_rspecies[i]->getUpperLimitForN();
             }
@@ -295,7 +295,7 @@ public:
     
         //if averaging, update dependency marker
         if(_averaging) {
-            
+
             bool newAvgR = ((RSpeciesAvg*)_rspecies[0])->newAverage();
             bool newAvgP = ((RSpeciesAvg*)_rspecies[1])->newAverage();
         

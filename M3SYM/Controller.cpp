@@ -198,7 +198,7 @@ void Controller::initialize(string inputFile,
 
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
-    cout << "Checking cross-parameter consistency..." << endl;
+    cout << "Checking cross-parameter consistency...";
 #ifdef CHEMISTRY
     if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);

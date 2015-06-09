@@ -31,9 +31,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     FFM.computeForces();
     setBeads();
     
-    //compute first gradient
-    double curGrad = CGMethod::allFDotF();
-    
     int numIter = 0;
     do {
         numIter++;
@@ -54,8 +51,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
-        
-        curGrad = newGrad;
     }
     while (/* Iteration criterion */  numIter < 2 * NDOF &&
            /* Gradient tolerance  */  maxF() > GRADTOL &&
