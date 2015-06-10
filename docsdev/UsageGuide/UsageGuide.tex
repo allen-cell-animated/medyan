@@ -573,18 +573,18 @@ may need to be declared, depending on your system configuration:\newline
 
 \noindent A helpful alias to run ipython is:\newline
 
-\texttt{alias im = "ipython --gui = qt --pylab = qt"}\newline
+\texttt{alias ip = "ipython --gui = qt --pylab = qt"}\newline
 
 \noindent We will assume for the next section that this alias is configured.
 
 
-\subsubsection{Running the visualization script, ReadTrajectory.py}
+\subsubsection{Running the visualization script, AnimateTrajectory.py}
 
 The visualization script must be edited by the user on lines 6-8 to include the desired snapshot file. A color file can also be specified, which will color the network based on either a force, stress, or birth time file. If no color file is included, the elements of the network will be colored to a default value. The script can also be edited on lines 201-214 to include titles, scales, default colors, and choice of color map. \newline
 
 \noindent Run the script using the following commands:\newline\newline
 \indent\texttt{> ip}\newline
-\indent\texttt{> run -i ReadTrajectory}\newline
+\indent\texttt{> run -i AnimateTrajectory.py}\newline
 
 \noindent This will load all snapshots of the trajectory files specified. To show a frame, execute the following commands:\newline
 
