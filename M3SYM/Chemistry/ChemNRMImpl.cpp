@@ -194,11 +194,11 @@ bool ChemNRMImpl::makeStep() {
             rn_other->setTau(tau_new);
             rn_other->updateHeap();
         }
-#ifdef REACTION_SIGNALING
-        // Send signal
-        r->emitSignal();
-#endif
     }
+#ifdef REACTION_SIGNALING
+    // Send signal
+    r->emitSignal();
+#endif
     return true;
 }
 
