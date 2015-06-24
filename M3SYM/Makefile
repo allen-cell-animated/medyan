@@ -27,7 +27,7 @@ FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
 LDFLAGS = $(FAST)
 
-CPPFLAGS = $(FAST) -Wall -Wno-sign-compare \
+CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IChemistry             \
 -IMechanics/Minimizer                    \
