@@ -36,7 +36,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     int numIter = 0;
     do {
         numIter++;
-        double lambda, beta, newGrad, prevGrad;
+        double lambda, beta, newGrad;
         
         //find lambda by line search, move beads
         lambda = quadraticLineSearch(FFM, MAXDIST);
@@ -47,7 +47,6 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //compute direction
         newGrad = CGMethod::allFADotFA();
-        prevGrad = CGMethod::allFADotFAP();
         
         //choose beta
         //reset after ndof iterations

@@ -24,9 +24,10 @@ CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl 
+LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+LDFLAGS = $(FAST)
 
-CPPFLAGS = -Wall -Wno-sign-compare \
+CPPFLAGS = $(FAST) -Wall -Wno-sign-compare \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IChemistry             \
 -IMechanics/Minimizer                    \
@@ -37,6 +38,7 @@ CPPFLAGS = -Wall -Wno-sign-compare \
 -IMechanics/ForceField/Filament          \
 -IMechanics/ForceField/Linker            \
 -IMechanics/ForceField/MotorGhost        \
+
 
 #################MAIN USER MACROS#################
 #
@@ -91,10 +93,10 @@ CPPFLAGS += -DRSPECIES_SIGNALING
 all: M3SYM
 
 M3SYM: $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o M3SYM $(OBJECTS) $(LDLIBS) $(FAST)
+	$(CXX) $(LDFLAGS) -o M3SYM $(OBJECTS) $(LDLIBS)
 
 %.o: %.cpp 
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	\find . -name '*.o' -delete

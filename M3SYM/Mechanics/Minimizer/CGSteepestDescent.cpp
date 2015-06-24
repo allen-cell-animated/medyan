@@ -34,7 +34,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     int numIter = 0;
     do {
         numIter++;
-        double lambda, newGrad;
+        double lambda;
         
         //find lambda by line search, move beads
         lambda = quadraticLineSearch(FFM, MAXDIST);
@@ -42,9 +42,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //compute new forces
         FFM.computeForcesAux();
-        
-        //compute direction
-        newGrad = CGMethod::allFADotFA();
         
         //shift gradient
         shiftGradient(0.0);
