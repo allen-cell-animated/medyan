@@ -99,7 +99,23 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         << endl;
         return false;
     }
-    
+    if(CParams.numFilamentSpecies == 0) {
+        cout << "Must provide at least one filament species. Exiting."
+        << endl;
+        return false;
+        
+    }
+    if(CParams.numPlusEndSpecies == 0) {
+        cout << "Must provide at least one plus end species. Exiting."
+        << endl;
+        return false;
+        
+    }
+    if(CParams.numMinusEndSpecies == 0) {
+        cout << "Must provide at least one minus end species. Exiting."
+        << endl;
+        return false;
+    }
     //at least one bound
     if(CParams.numBoundSpecies == 0) {
         cout << "Must provide at least one bound species, which is the empty binding site. Exiting."
