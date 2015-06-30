@@ -166,6 +166,7 @@ public:
     void updateBindingManagers();
     
 private:
+    
     double _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     

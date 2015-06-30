@@ -1842,13 +1842,15 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 2; it++) {
+                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
                 chem.branchingReactions.push_back(
-                tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 2].c_str()),
+                tuple<vector<string>, vector<string>, double, double, string, double>
+                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
+                 atof(lineVector[lineVector.size() - 3].c_str()),
+                      lineVector[lineVector.size() - 2].c_str(),
                  atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {

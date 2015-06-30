@@ -58,6 +58,11 @@ public:
     
     /// Check if coordinates are within boundary
     virtual bool within(const vector<double>& coordinates) = 0;
+    
+    /// Get the distance from the boundary. Returns the distance from
+    /// closest boundary element in the boundary.
+    /// Will return infinity if outside of the boundary.
+    virtual double distance(const vector<double>& coordinates) = 0;
 };
 
 

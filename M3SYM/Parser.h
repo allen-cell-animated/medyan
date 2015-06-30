@@ -105,7 +105,9 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> destructionReactions = {};
     
     /// Branching reactions
-    vector<tuple<vector<string>, vector<string>, double, double>> branchingReactions = {};
+    /// This reaction also contains the off rate, and a string
+    /// specifying the nucleation zone and relevant distance parameter
+    vector<tuple<vector<string>, vector<string>, double, double, string, double>> branchingReactions = {};
     
     /// Severing reactions
     vector<tuple<string, double>> severingReactions = {};

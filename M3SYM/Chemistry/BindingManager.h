@@ -29,9 +29,15 @@
 #define SPECIESMLB_BINDING_INDEX 0
 
 //FORWARD DECLARATIONS
+class SubSystem;
 class ReactionBase;
 class CCylinder;
 class Compartment;
+
+///Enumeration for nucleation zone type. Used by BranchingManager.
+enum NucleationZoneType {
+    ALL, BOUNDARY, TOPBOUNDARY
+};
 
 /// To store and manage binding reactions.
 
@@ -68,6 +74,7 @@ protected:
     short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
     
     static mt19937 *_eng; ///< Random number generator
+    static SubSystem *_subSystem; ///< Ptr to the SubSystem
     
     ///helper function to update copy number and reactions
     void updateBindingReaction(int oldN, int newN) {
@@ -145,19 +152,27 @@ public:
 };
 
 
-/// Manager for Filament and BranchPoint creation
+/// Manager for Filament and BranchingPoint creation
 class BranchingManager : public FilamentBindingManager {
 
 friend class ChemManager;
     
 private:
+    ///Nucleation zone type, to define where nucleation should occur
+    NucleationZoneType _nucleationZone;
+    
+    ///If using a nucleation zone, nucleating distance from the boundary
+    double _nucleationDistance;
+    
     ///possible bindings at current state
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
     
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
-                     short boundInt, string boundName);
+                     short boundInt, string boundName,
+                     NucleationZoneType zone = NucleationZoneType::ALL,
+                     double nucleationDistance = numeric_limits<double>::infinity());
     ~BranchingManager() {}
     
     //@{

@@ -1062,6 +1062,12 @@ void ChemManager::genFilBindingManagers() {
     
     auto grid = _subSystem->getCompartmentGrid();
     
+    //init rand number gen
+    FilamentBindingManager::_eng =
+    new mt19937((unsigned long)(time(nullptr)));
+    //init subsystem ptr
+    FilamentBindingManager::_subSystem = _subSystem;
+    
     double rMax, rMin;
     
     //loop through all compartments
@@ -1277,13 +1283,29 @@ void ChemManager::genFilBindingManagers() {
             float onRate = get<2>(r);
             float offRate = get<3>(r);
             
+            //get nucleation zone
+            string nzstr = get<4>(r);
+            NucleationZoneType nucleationZone;
+            if(nzstr == "ALL")
+                nucleationZone = NucleationZoneType::ALL;
+            else if(nzstr == "BOUNDARY")
+                nucleationZone = NucleationZoneType::BOUNDARY;
+            else if(nzstr == "TOPBOUNDARY")
+                nucleationZone = NucleationZoneType::TOPBOUNDARY;
+            else {
+                cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            double nucleationDist = get<5>(r);
+            
             ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
             rxn->setReactionType(ReactionType::BRANCHING);
             
             C->addInternalReaction(rxn);
             
             //create manager
-            BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName);
+            BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName,
+                                                              nucleationZone, nucleationDist);
             C->addFilamentBindingManager(bManager);
             
             bManager->setMIndex(managerIndex++);
@@ -2419,10 +2441,6 @@ void ChemManager::genNucleationReactions() {
 void ChemManager::initializeSystem(ChemSim* chemSim) {
     
     auto grid = _subSystem->getCompartmentGrid();
-    
-    //init rand number gen
-    FilamentBindingManager::_eng =
-    new mt19937((unsigned long)(time(nullptr)));
     
     configCMonomer();
     

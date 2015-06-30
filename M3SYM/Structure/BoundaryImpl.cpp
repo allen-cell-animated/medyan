@@ -53,6 +53,22 @@ bool BoundaryCubic::within(const vector<double>& coordinates) {
     return true;
 }
 
+double BoundaryCubic::distance(const vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        double dist = bs->boundaryElements()[0]->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) smallestDist = dist;
+        
+    }
+    return smallestDist;
+}
+
 
 BoundarySpherical::BoundarySpherical(SubSystem* s, double diameter)
 
@@ -75,6 +91,18 @@ bool BoundarySpherical::within(const vector<double>& coordinates) {
     return sphereBoundaryElement->distance(coordinates) > 0;
     
 }
+
+double BoundarySpherical::distance(const vector<double>& coordinates) {
+    
+    BoundaryElement* sphereBoundaryElement =
+    _boundarySurfaces[0]->boundaryElements()[0].get();
+    
+    double dist = sphereBoundaryElement->distance(coordinates);
+    
+    if(dist > 0) return dist;
+    else return numeric_limits<double>::infinity();
+}
+
 
 BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter)
 
@@ -106,5 +134,19 @@ bool BoundaryCapsule::within(const vector<double>& coordinates) {
     return true;
 }
 
-
+double BoundaryCapsule::distance(const vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        double dist = bs->boundaryElements()[0]->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) smallestDist = dist;
+        
+    }
+    return smallestDist;
+}
 

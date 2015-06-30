@@ -17,12 +17,17 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "SubSystem.h"
+#include "Boundary.h"
+
 #include "MathFunctions.h"
+#include "GController.h"
 #include "SysParams.h"
 
 using namespace mathfunc;
 
 mt19937* FilamentBindingManager::_eng = 0;
+SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CCNeighborList*> LinkerBindingManager::_neighborLists;
 vector<CCNeighborList*> MotorBindingManager::_neighborLists;
@@ -31,9 +36,12 @@ vector<CCNeighborList*> MotorBindingManager::_neighborLists;
 
 BranchingManager::BranchingManager(ReactionBase* reaction,
                                    Compartment* compartment,
-                                   short boundInt, string boundName)
+                                   short boundInt, string boundName,
+                                   NucleationZoneType zone,
+                                   double nucleationDistance)
 
-    : FilamentBindingManager(reaction, compartment, boundInt, boundName) {
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName),
+      _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
     
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
@@ -44,8 +52,37 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
 
 void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
+    
+    bool inZone = true;
+    //see if in nucleation zone
+    if(_nucleationZone != NucleationZoneType::ALL) {
+        
+        auto mp = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
+        
+        auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
+        auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+        
+        auto coord = midPointCoordinate(x1, x2, mp);
+        
+        //set nucleation zone
+        if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+            
+            //if top boundary, check if we are above the center coordinate in z
+            if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
+                
+                if(coord[2] >= GController::getCenter()[2])
+                    inZone = true;
+                else
+                    inZone = false;
+            }
+            else inZone = true;
+        }
+        else
+            inZone = false;
+    }
+    
     //add valid site
-    if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY) {
+    if (cc->getCMonomer(bindingSite)->activeSpeciesBound() == BOUND_EMPTY && inZone) {
         
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindings.insert(t);
@@ -98,13 +135,41 @@ void BranchingManager::updateAllPossibleBindings() {
         
         //now re add valid binding sites
         for(auto it = SysParams::Chemistry().bindingSites.begin();
-                 it != SysParams::Chemistry().bindingSites.end(); it++)
+                 it != SysParams::Chemistry().bindingSites.end(); it++) {
             
-            if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY) {
+            bool inZone = true;
+            //see if in nucleation zone
+            if(_nucleationZone != NucleationZoneType::ALL) {
+                
+                auto mp = (float)*it / SysParams::Geometry().cylinderIntSize;
+                
+                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
+                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+                
+                auto coord = midPointCoordinate(x1, x2, mp);
+                
+                //set nucleation zone
+                if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+                    
+                    //if top boundary, check if we are above the center coordinate in z
+                    if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
+                        
+                        if(coord[2] >= GController::getCenter()[2])
+                            inZone = true;
+                        else
+                            inZone = false;
+                    }
+                    else inZone = true;
+                }
+                else
+                    inZone = false;
+            }
+            if (cc->getCMonomer(*it)->activeSpeciesBound() == BOUND_EMPTY && inZone) {
                 
                 auto t = tuple<CCylinder*, short>(cc, *it);
                 _possibleBindings.insert(t);
             }
+        }
     }
     
     int oldN = _bindingSpecies->getN();

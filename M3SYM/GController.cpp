@@ -189,6 +189,11 @@ CompartmentGrid* GController::initializeGrid() {
              SysParams::Geometry().NY,
              SysParams::Geometry().NZ};
     
+    _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
+                   _compartmentSize[1] * _grid[2] / 2,
+                   _compartmentSize[2] * _grid[2] / 2};
+    
+    
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
         _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
@@ -285,6 +290,7 @@ short GController::_nDim = 0;
 
 vector<int>    GController::_grid = {};
 vector<double> GController::_compartmentSize = {};
+vector<double> GController::_centerGrid = {};
 
 CompartmentGrid* GController::_compartmentGrid = 0;
 

@@ -29,6 +29,7 @@ public:
     BoundaryCubic(SubSystem* s);
     
     virtual bool within(const vector<double>& coordinates);
+    virtual double distance(const vector<double>& coordinates);
 };
 
 /// A spherical Boundary implementation.
@@ -40,6 +41,7 @@ public:
     BoundarySpherical(SubSystem* s, double diameter);
     
     virtual bool within(const vector<double>& coordinates);
+    virtual double distance(const vector<double>& coordinates);
 };
 
 /// A capsule Boundary implementation.
@@ -53,6 +55,7 @@ public:
     BoundaryCapsule(SubSystem* s, double diameter);
     
     virtual bool within(const vector<double>& coordinates);
+    virtual double distance(const vector<double>& coordinates);
 };
 
 

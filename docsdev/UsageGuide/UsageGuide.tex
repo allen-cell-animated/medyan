@@ -458,8 +458,20 @@ This reaction will move a motor head in the given direction.
 \item A \textbf{branching reaction} can be defined in the following form:\newline\newline
 \texttt{BRANCHINGREACTION:}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
-\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <RATE>}\newline\newline
+\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <RATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
+
+The \texttt{NUCLEATIONZONE} and \texttt{NUCLEATIONDIST} specify the volume in which a branching reaction can occur. The choices for the zone parameter are the following
+
+\begin{itemize}
+\item \texttt{ALL} : A new filament can nucleate anywhere in the simulation volume due to branching.
+\item \texttt{BOUNDARY} : A new filament can nucleate a given distance away from a boundary due to branching, specified by the \texttt{NUCLEATIONDIST} from the system boundary.
+
+\item \texttt{TOPBOUNDARY} : Similar to \texttt{BOUNDARY} except only in the top half of the volume (in the z direction).
+
+\end{itemize}
+
+It is noted that \texttt{NUCLEATIONDIST} needs to be specified for all nucleation zones, but it is unused for \texttt{ALL}.
 
 This reaction will create a new branching point, as well as a filament with the desired chemical plus end. If mechanical force fields are defined for the branching point, a potential will be created between the parent and child filament. The unbinding reaction will remove the branching point from the filaments, thus freeing the child filament from the parent. It will also remove any branching point potentials that have been created between the filaments.
  
