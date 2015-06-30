@@ -1407,9 +1407,10 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
             else if (lineVector.size() == 5) {
                 
-                if(lineVector[4] != "CONST" || lineVector[4] != "REG") {
+                if(lineVector[4] != "CONST" && lineVector[4] != "REG") {
                     
                     cout << "Option for bulk species not valid. Exiting." << endl;
+                    cout << lineVector[4] << endl;
                     exit(EXIT_FAILURE);
                 }
                 
