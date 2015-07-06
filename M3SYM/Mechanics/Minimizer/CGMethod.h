@@ -87,10 +87,11 @@ protected:
     double goldenSection(ForceFieldManager &FFM);
     double binarySearch(ForceFieldManager& FFM);
     
-    ///@note - the most robust linesearch method, but slow at times.
+    ///@note - The most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
     
-    ///@note - the fastest linesearch method
+    ///@note - The fastest linesearch method. Sometimes unstable.
+    ///@note - Still buggy. DO NOT USE.
     double quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST);
     //@}
     

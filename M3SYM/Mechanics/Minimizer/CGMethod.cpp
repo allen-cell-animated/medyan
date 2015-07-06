@@ -222,24 +222,25 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
         
         if(fabs(proj) < EPS_QUAD || fabs(delProj) < EPS_QUAD)
             return 0.0;
-            
+        
         //check if ready for a quadratic projection
-        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) * (proj + projPrev)+
-                                           energyLambda) / energyPrevLambda);
+        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
+                                   (proj + projPrev) +
+                                    energyLambda) / energyPrevLambda);
+        
         lambda0 = lambda - (lambda - lambdaPrev) * proj / delProj;
         
         //check if energy is decreasing and lambda within bounds
         if(relErr <= QUADRATICTOL &&
            energyLambda - currentEnergy <= 0 &&
-           lambda0 > 0.0 && lambda0 < LAMBDAMAX)
-            
-            return lambda0;
+           lambda0 > 0.0 && lambda0 < LAMBDAMAX) return lambda0;
     
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * projOrig;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
+        if(energyChange <= idealEnergyChange)
+            return lambda;
         
         //save state
         projPrev = proj; lambdaPrev = lambda;

@@ -39,7 +39,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         double lambda, beta, newGrad;
         
         //find lambda by line search, move beads
-        lambda = quadraticLineSearch(FFM, MAXDIST);
+        lambda = backtrackingLineSearch(FFM, MAXDIST);
         moveBeads(lambda); setBeads();
         
         //compute new forces
