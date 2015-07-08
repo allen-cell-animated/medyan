@@ -35,6 +35,11 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double n1n2 = dotProduct(n1_norm, n2_norm);
     
+    
+    if(n1n2 < 0) {
+        
+        cout << "Stop here" << endl;
+    }
     return kDihed * ( 1 - n1n2 );
 }
 
@@ -82,8 +87,7 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
                                   midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
     
-    double D = sqrt(scalarProduct(
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
+    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
                                   midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
     
     double Y = sqrt(scalarProduct(b3->coordinate, b4->coordinate,

@@ -20,11 +20,14 @@ double ForceFieldManager::computeEnergy(double d) {
         
         auto tempEnergy = f->computeEnergy(d);
         
+        //cout << f->getName() << " " << tempEnergy << " ";
+        
         //if energy is infinity, exit with infinity.
         if(tempEnergy == -1) {
             
             //if this is the current energy, exit ungracefully
             if(d == 0.0) {
+                
                 cout << "Energy became infinite. Try adjusting minimization parameters." << endl;
                 cout << "The culprit was ... " << f->getName() << endl;
                 exit(EXIT_FAILURE);
@@ -34,8 +37,9 @@ double ForceFieldManager::computeEnergy(double d) {
                 return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
+        
     }
-    
+    //cout << endl;
     return energy;
 }
 
