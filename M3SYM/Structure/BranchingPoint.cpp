@@ -125,6 +125,8 @@ BranchingPoint::~BranchingPoint() noexcept {
         freeMonomer->getRSpecies().activateAssocReactantReactions();
     }
 #endif
+    //reset branching cylinder
+    _c1->setBranchingCylinder(nullptr);
 }
 
 void BranchingPoint::updatePosition() {

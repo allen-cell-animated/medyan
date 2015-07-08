@@ -40,14 +40,14 @@ double VolumeCylindricalFF::computeEnergy(double d) {
         for(auto ci : Cylinder::getCylinders()) {
             
             //do not calculate exvol for a non full length cylinder
-            if(ci->getMCylinder()->getEqLength() !=
-               SysParams::Geometry().cylinderSize) continue;
+            if(!ci->isFullLength()) continue;
             
             for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(cn->getMCylinder()->getEqLength() !=
-                   SysParams::Geometry().cylinderSize) continue;
+                //and for a branching cylinder
+                if(!cn->isFullLength() ||
+                   ci->getBranchingCylinder() == cn) continue;
                 
                 U_i = interaction->computeEnergy(ci, cn, d);
                 
@@ -74,7 +74,9 @@ void VolumeCylindricalFF::computeForces() {
             for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(!cn->isFullLength()) continue;
+                //and for a branching cylinder
+                if(!cn->isFullLength() ||
+                   ci->getBranchingCylinder() == cn) continue;
                 
                 interaction->computeForces(ci, cn);
             }
@@ -95,7 +97,9 @@ void VolumeCylindricalFF::computeForcesAux() {
             for(auto &cn : nl->getNeighbors(ci)) {
                 
                 //do not calculate exvol for a non full length cylinder
-                if(!cn->isFullLength()) continue;
+                //and for a branching cylinder
+                if(!cn->isFullLength() ||
+                   ci->getBranchingCylinder() == cn) continue;
                 
                 interaction->computeForcesAux(ci, cn);
             }
