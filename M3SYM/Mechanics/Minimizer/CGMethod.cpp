@@ -170,11 +170,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         
-        //cout << "energy lambda = " << energyLambda << endl;
-        
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj;
-        
-        //cout << "ideal energy change = " << idealEnergyChange << endl;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok

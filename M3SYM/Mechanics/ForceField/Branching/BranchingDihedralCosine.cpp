@@ -35,11 +35,6 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double n1n2 = dotProduct(n1_norm, n2_norm);
     
-    
-    if(n1n2 < 0) {
-        
-        cout << "Stop here" << endl;
-    }
     return kDihed * ( 1 - n1n2 );
 }
 
@@ -50,11 +45,11 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     vector<double> zero (3,0); //Aux zero vector;
     
     vector<double> n1 = vectorProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero ,b2->coordinate, b2->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero,  b2->coordinate, b2->force,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
     
-    vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate,b4->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate,b2->force, position, d), zero, b3->coordinate,b3->force, d);
+    vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate, b4->force,
+    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
     
     auto n1_norm = normalizedVector(n1);
     auto n2_norm = normalizedVector(n2);
@@ -74,10 +69,9 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
                                       midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
-    
     double N1 = sqrt(dotProduct(n1, n1));
     double N2 = sqrt(dotProduct(n2, n2));
-    double n1n2 = dotProduct(n2, n2);
+    double n1n2 = dotProduct(n1, n2);
     
     double f0 = kDihed/N1/N2;
     
@@ -169,7 +163,7 @@ void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
     double N1 = sqrt(dotProduct(n1, n1));
     double N2 = sqrt(dotProduct(n2, n2));
-    double n1n2 = dotProduct(n2, n2);
+    double n1n2 = dotProduct(n1, n2);
     
     double f0 = kDihed/N1/N2;
     

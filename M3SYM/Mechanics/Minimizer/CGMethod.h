@@ -58,7 +58,7 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-4; ///< Line search energy tolerance for all
+    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all
                                      ///< linesearch methods
     
     //@{
@@ -90,8 +90,7 @@ protected:
     ///@note - The most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
     
-    ///@note - The fastest linesearch method. Sometimes unstable.
-    ///@note - Still buggy. DO NOT USE.
+    ///@note - The fastest linesearch method. Sometimes a little unstable.
     double quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST);
     //@}
     
