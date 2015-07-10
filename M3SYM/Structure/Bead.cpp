@@ -32,7 +32,14 @@ Bead::Bead (vector<double> v, Filament* f, int positionFilament)
     
     //Find compartment, add this bead
     try {_compartment = GController::getCompartment(v);}
-    catch (exception& e) {cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        
+        cout << e.what() << endl;
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
           
     _compartment->addBead(this);
 }

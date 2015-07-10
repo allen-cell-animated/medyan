@@ -47,7 +47,13 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     updateCoordinate();
         
     try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
         
     int pos = int(position * SysParams::Geometry().cylinderIntSize);
     

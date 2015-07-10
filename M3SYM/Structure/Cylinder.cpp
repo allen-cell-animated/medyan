@@ -50,7 +50,13 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     updateCoordinate();
 
     try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what() << endl;
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
                    
    //add to compartment
    _compartment->addCylinder(this);

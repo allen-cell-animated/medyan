@@ -57,7 +57,13 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     updateCoordinate();
     
     try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
           
     int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
