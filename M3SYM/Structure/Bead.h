@@ -64,7 +64,8 @@ public:
     ///Default constructor
     Bead(Filament* f, int positionFilament)
         : Trackable(true, false, true, false),
-          coordinate (3, 0), force(3, 0), forceAux(3, 0),
+          coordinate(3, 0), coordinateP(3, 0), coordinateB(3,0 ),
+          force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
           _pFilament(f), _positionFilament(positionFilament) {}
     
     ~Bead();

@@ -90,7 +90,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-
+    
     return energy;
 }
 

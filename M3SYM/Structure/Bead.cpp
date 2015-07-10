@@ -27,7 +27,8 @@ Database<Bead*> Bead::_beads;
 Bead::Bead (vector<double> v, Filament* f, int positionFilament)
 
     : Trackable(true, false, true, false),
-      coordinate(v), force(3, 0), forceAux(3, 0),
+      coordinate(v), coordinateP(v), coordinateB(v),
+      force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
       _pFilament(f), _positionFilament(positionFilament), _birthTime(tau()) {
     
     //Find compartment, add this bead

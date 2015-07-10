@@ -190,6 +190,7 @@ void Cylinder::printInfo() {
     
     cout << "Cylinder: ptr = " << this << endl;
     cout << "Cylinder ID = " << _ID << endl;
+    cout << "Parent filament ptr = " << _pFilament << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     if(_plusEnd) cout << "Is a plus end." << endl;
