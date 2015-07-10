@@ -38,6 +38,9 @@ Bead::Bead (vector<double> v, Filament* f, int positionFilament)
         
         printInfo();
         
+        //also print filament info
+        _pFilament->printInfo();
+        
         exit(EXIT_FAILURE);
     }
           
