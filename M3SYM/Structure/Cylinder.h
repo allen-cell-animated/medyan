@@ -168,7 +168,8 @@ public:
                                        
     /// Check if this cylinder is grown to full length
     bool isFullLength();
-
+                                       
+    virtual void printInfo();
 };
 
 #endif

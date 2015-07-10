@@ -71,6 +71,9 @@ protected:
     /// Get the max force in the system
     double maxF();
     
+    /// Sets coordinates before minimization
+    void startMinimization();
+    
     /// Move beads in search direction by d
     void moveBeads(double d);
     /// Reset to previous position
@@ -90,7 +93,7 @@ protected:
     ///@note - The most robust linesearch method, but slow at times.
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
     
-    ///@note - The fastest linesearch method. Sometimes a little unstable.
+    ///@note - The fastest linesearch method. Sometimes unstable.
     double quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST);
     //@}
     

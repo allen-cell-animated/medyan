@@ -63,6 +63,12 @@ double CGMethod::maxF() {
     return maxF;
 }
 
+void CGMethod::startMinimization() {
+
+    for(auto b: Bead::getBeads())
+        b->coordinateB = b->coordinateP = b->coordinate;
+}
+
 
 void CGMethod::moveBeads(double d)
 {

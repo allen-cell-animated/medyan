@@ -46,6 +46,17 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
     }
 }
 
+void FilamentFF::whoIsCulprit() {
+    
+    cout << endl;
+    
+    cout << "Printing the culprit filament..." << endl;
+    
+    _filamentCulprit->printInfo();
+    
+    cout << endl;
+}
+
 
 double FilamentFF::computeEnergy(double d) {
     
@@ -58,8 +69,13 @@ double FilamentFF::computeEnergy(double d) {
         
             U_i = interaction->computeEnergy(f, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
+            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+                
+                //set culprits and return
+                _filamentCulprit = f;
+                
                 return -1;
+            }
             else
                 U += U_i;
         }

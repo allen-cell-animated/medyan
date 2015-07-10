@@ -90,7 +90,13 @@ void Cylinder::updatePosition() {
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
     
     if(c != _compartment) {
 
@@ -170,5 +176,37 @@ bool Cylinder::isFullLength() {
 #else
     return true;
 #endif
+}
+
+void Cylinder::printInfo() {
+    
+    cout << endl;
+    
+    cout << "Cylinder: ptr = " << this << endl;
+    cout << "Cylinder ID = " << _ID << endl;
+    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    
+    if(_plusEnd) cout << "Is a plus end." << endl;
+    if(_minusEnd) cout << "Is a minus end." << endl;
+    
+    if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
+    
+    cout << "Position on filament = " << _positionFilament << endl;
+    
+    cout << endl;
+    
+#ifdef CHEMISTRY
+    cout << "Chemical composition of cylinder:" << endl;
+    _cCylinder->printCCylinder();
+#endif
+    
+    cout << endl;
+    
+    cout << "Bead information..." << endl;
+    
+    _b1->printInfo();
+    _b2->printInfo();
+    
+    cout << endl;
 }
 

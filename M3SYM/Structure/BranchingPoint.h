@@ -120,6 +120,8 @@ public:
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
+    
+    virtual void printInfo();
 };
 
 #endif

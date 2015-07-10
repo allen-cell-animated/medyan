@@ -22,6 +22,7 @@
 
 //FORWARD DECLARATIONS
 class LinkerInteractions;
+class Linker;
 
 /// An implementation of the ForceField class that calculates Linker
 /// stretching, bending, and twisting.
@@ -31,11 +32,15 @@ private:
     vector<unique_ptr<LinkerInteractions>>
     _linkerInteractionVector; ///< Vector of initialized linker interactions
     
+    /// The culprit in the case of an error
+    Linker* _linkerCulprit;
+    
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     LinkerFF(string& stretching, string& bending, string& twisting );
     
     virtual string getName() {return "Linker";}
+    virtual void whoIsCulprit();
     
     virtual double computeEnergy(double d);
     virtual void computeForces();

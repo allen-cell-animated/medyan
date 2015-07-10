@@ -22,6 +22,7 @@
 
 //FORWARD DECLARATIONS
 class MotorGhostInteractions;
+class MotorGhost;
 
 /// An implementation of the ForceField class that calculates MotorGhost
 /// stretching, bending, and twisting.
@@ -31,11 +32,15 @@ private:
     vector <unique_ptr<MotorGhostInteractions>>
     _motorGhostInteractionVector; ///< Vector of initialized motor interactions
     
+    /// The culprit motor in the case of an error
+    MotorGhost* _motorCulprit;
+    
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     MotorGhostFF(string& stretching, string& bending, string& twisting);
     
     virtual string getName() {return "MotorGhost";}
+    virtual void whoIsCulprit();
     
     virtual double computeEnergy(double d);
     virtual void computeForces();

@@ -143,7 +143,13 @@ void BranchingPoint::updatePosition() {
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
     
     if(c != _compartment) {
         _compartment = c;
@@ -156,5 +162,33 @@ void BranchingPoint::updatePosition() {
         _cBranchingPoint->setFirstSpecies(firstSpecies);
 #endif
     }
+}
+            
+void BranchingPoint::printInfo() {
+    
+    cout << endl;
+    
+    cout << "BranchingPoint: ptr = " << this << endl;
+    cout << "Branching type = " << _branchType << ", Branch ID = " << _branchID << endl;
+    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    
+    cout << "Position on mother cylinder (double) = " << _position << endl;
+    cout << "Birth time = " << _birthTime << endl;
+    
+    cout << endl;
+    
+#ifdef CHEMISTRY
+    cout << "Associated species = " << _cBranchingPoint->getFirstSpecies()->getName()
+         << " , copy number = " << _cBranchingPoint->getFirstSpecies()->getN()
+         << " , position on mother cylinder (int) = " << _cBranchingPoint->getFirstPosition() << endl;
+#endif
+    
+    cout << endl;
+    
+    cout << "Associated cylinders (mother and branching): " << endl;
+    _c1->printInfo();
+    _c2->printInfo();
+    
+    cout << endl;
 }
 

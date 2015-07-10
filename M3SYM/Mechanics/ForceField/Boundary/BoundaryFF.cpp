@@ -35,6 +35,19 @@ BoundaryFF::BoundaryFF (string type) {
     }
 }
 
+void BoundaryFF::whoIsCulprit() {
+    
+    cout << endl;
+    
+    cout << "Printing the culprit bead and boundary element..." << endl;
+    
+    _beadCulprit->printInfo();
+    _boundaryCulprit->printInfo();
+    
+    cout << endl;
+}
+
+
 double BoundaryFF::computeEnergy(double d) {
     
     double U = 0;
@@ -50,8 +63,14 @@ double BoundaryFF::computeEnergy(double d) {
                 
                 U_i = interaction->computeEnergy(be, bd, d);
                 
-                if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
+                if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+                    
+                    //set culprits and return
+                    _beadCulprit = bd;
+                    _boundaryCulprit = be;
+                    
                     return -1;
+                }
                 else
                     U += U_i;
             }

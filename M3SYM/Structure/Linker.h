@@ -134,6 +134,7 @@ public:
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
     
+    virtual void printInfo();
 };
 
 

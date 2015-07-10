@@ -173,8 +173,7 @@ public:
     arcFilamentProjection(vector<vector<double>>& v, int numBeads);
     //@}
     
-    /// Print chemical composition of filament (for debugging only)
-    void printChemComposition();
+    virtual void printInfo();
 };
 
 #endif

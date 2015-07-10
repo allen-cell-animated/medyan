@@ -29,6 +29,18 @@ VolumeCylindricalFF::VolumeCylindricalFF (string& type) {
     }
 }
 
+void VolumeCylindricalFF::whoIsCulprit() {
+    
+    cout << endl;
+    
+    cout << "Printing the culprit cylinders..." << endl;
+    
+    _cylinderCulprit1->printInfo();
+    _cylinderCulprit2->printInfo();
+    
+    cout << endl;
+}
+
 double VolumeCylindricalFF::computeEnergy(double d) {
     
     double U= 0;
@@ -51,8 +63,14 @@ double VolumeCylindricalFF::computeEnergy(double d) {
                 
                 U_i = interaction->computeEnergy(ci, cn, d);
                 
-                if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
+                if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+                    
+                    //set culprits and exit
+                    _cylinderCulprit1 = ci;
+                    _cylinderCulprit2 = cn;
+                    
                     return -1;
+                }
                 else
                     U += U_i;
             }

@@ -68,6 +68,17 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
 
 }
 
+void BranchingFF::whoIsCulprit() {
+    
+    cout << endl;
+    
+    cout << "Printing the culprit branching point..." << endl;
+    
+    _branchingCulprit->printInfo();
+    
+    cout << endl;
+}
+
 
 double BranchingFF::computeEnergy(double d) {
     
@@ -80,8 +91,13 @@ double BranchingFF::computeEnergy(double d) {
        
             U_i = interaction->computeEnergy(b, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
+            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+                
+                //set culprit and return
+                _branchingCulprit = b;
+                
                 return -1;
+            }
             else
                 U += U_i;
         }

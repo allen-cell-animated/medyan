@@ -101,7 +101,8 @@ public:
     static int numBoundaryElements() {
         return _boundaryElements.countElements();
     }
- 
+    
+    virtual void printInfo();
 };
 
 #endif

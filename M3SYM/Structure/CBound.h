@@ -47,7 +47,7 @@ protected:
     CCylinder* _cc2 = nullptr; ///< Pointer to second CCylinder
     
     short _position1; ///< position of first head
-    short _position2; ///< position of second head
+    short _position2 = 0; ///< position of second head
     
     //@{
     ///Reaction rates
@@ -96,6 +96,12 @@ public:
     }
     /// Get second species
     SpeciesBound* getSecondSpecies() {return _secondSpecies;}
+    
+    //@{
+    /// Position getters
+    short getFirstPosition() {return _position1;}
+    short getSecondPosition() {return _position2;}
+    //@}
     
     /// Set first CCylinder
     void setFirstCCylinder(CCylinder* cc) {_cc1 = cc;}

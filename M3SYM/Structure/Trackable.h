@@ -64,6 +64,10 @@ public:
     virtual void removeFromSubSystem() = 0;
     //@}
     
+    /// Print information about this Trackable element. Mostly used for
+    /// debugging information when a crash occurs.
+    virtual void printInfo() = 0;
+    
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL

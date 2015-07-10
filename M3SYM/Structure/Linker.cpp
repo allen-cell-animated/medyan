@@ -93,7 +93,13 @@ void Linker::updatePosition() {
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
     
     if(c != _compartment) {
         
@@ -145,5 +151,40 @@ void Linker::updateReactionRates() {
     
     offRxn->setRate(newRate);
     offRxn->updatePropensity();
+}
+
+
+void Linker::printInfo() {
+    
+    cout << endl;
+    
+    cout << "Linker: ptr = " << this << endl;
+    cout << "Linker type = " << _linkerType << ", Linker ID = " << _linkerID << endl;
+    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    
+    cout << "Position on first cylinder (double) = " << _position1 << endl;
+    cout << "Position on second cylinder (double) = " << _position2 << endl;
+    
+    cout << "Birth time = " << _birthTime << endl;
+    
+    cout << endl;
+    
+#ifdef CHEMISTRY
+    cout << "Associated species 1 = " << _cLinker->getFirstSpecies()->getName()
+         << " , copy number = " << _cLinker->getFirstSpecies()->getN()
+         << " , position on first cylinder (int) = " << _cLinker->getFirstPosition() << endl;
+    
+    cout << "Associated species 2 = " << _cLinker->getSecondSpecies()->getName()
+         << " , copy number = " << _cLinker->getSecondSpecies()->getN()
+         << " , position on second cylinder (int) = " << _cLinker->getSecondPosition() << endl;
+#endif
+    
+    cout << endl;
+    
+    cout << "Associated cylinders (one and two): " << endl;
+    _c1->printInfo();
+    _c2->printInfo();
+    
+    cout << endl;
 }
 

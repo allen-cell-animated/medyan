@@ -27,6 +27,7 @@
 
 //FORWARD DECLARATIONS
 class Compartment;
+class Filament;
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
 /// needed for mechanical equilibration.
@@ -46,7 +47,8 @@ class Compartment;
 class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor {
 public:
     vector<double> coordinate;  ///< Coordinates of the bead
-    vector<double> coordinateP; ///< Prev coordinates of bead
+    vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
+    vector<double> coordinateB; ///< Prev coordinate of bead before CG minimization
     
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
@@ -57,13 +59,13 @@ public:
                             ///< Usually a boundary element
     
     ///Main constructor
-    Bead (vector<double> v, int positionFilament);
+    Bead (vector<double> v, Filament* f, int positionFilament);
     
     ///Default constructor
-    Bead(int positionFilament)
+    Bead(Filament* f, int positionFilament)
         : Trackable(true, false, true, false),
           coordinate (3, 0), force(3, 0), forceAux(3, 0),
-          _positionFilament(positionFilament) {}
+          _pFilament(f), _positionFilament(positionFilament) {}
     
     ~Bead();
     
@@ -103,6 +105,9 @@ public:
     /// Get position on the local Filament
     int getPositionFilament() {return _positionFilament;}
     
+    /// Get the parent filament
+    Filament* getFilament() {return _pFilament;}
+    
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     
@@ -124,10 +129,13 @@ public:
     /// Update the position, inherited from Movable
     virtual void updatePosition();
     
+    virtual void printInfo();
     
 private:
     Compartment* _compartment = nullptr;
         ///< Pointer to the compartment that this bead is in
+    
+    Filament* _pFilament = nullptr;
     
     int _positionFilament; ///< Position on Filament (1st, 2nd, etc...)
     float _birthTime;      ///< Time of birth

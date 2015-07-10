@@ -22,6 +22,8 @@
 
 //FORWARD DECLARATIONS
 class BoundaryInteractions;
+class Bead;
+class BoundaryElement;
 
 /// An implementation of the ForceField class that calculates BoundaryElement
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
@@ -31,11 +33,18 @@ private:
     vector<unique_ptr<BoundaryInteractions>>
     _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
+    //@{
+    /// The culprits in the case of an error
+    Bead* _beadCulprit;
+    BoundaryElement* _boundaryCulprit;
+    //@}
+    
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string type);
     
     virtual string getName() {return "Boundary";}
+    virtual void whoIsCulprit();
     
     virtual double computeEnergy(double d);
     virtual void computeForces();

@@ -30,6 +30,17 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
     }
 }
 
+void MotorGhostFF::whoIsCulprit() {
+    
+    cout << endl;
+    
+    cout << "Printing the culprit motor..." << endl;
+    
+    _motorCulprit->printInfo();
+    
+    cout << endl;
+}
+
 double MotorGhostFF::computeEnergy(double d) {
     
     double U = 0;
@@ -41,8 +52,13 @@ double MotorGhostFF::computeEnergy(double d) {
             
             U_i = interaction->computeEnergy(m, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i)
+            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+                
+                //set culprit and return
+                _motorCulprit = m;
+                
                 return -1;
+            }
             else
                 U += U_i;
         }

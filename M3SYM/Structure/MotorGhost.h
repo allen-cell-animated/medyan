@@ -162,6 +162,8 @@ public:
                        double newPosition,
                        short boundType,
                        SubSystem* ps);
+    
+    virtual void printInfo();
 };
 
 #endif

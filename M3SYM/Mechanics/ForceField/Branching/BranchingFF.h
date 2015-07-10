@@ -22,6 +22,7 @@
 
 //FORWARD DECLARATIONS
 class BranchingInteractions;
+class BranchingPoint;
 
 /// Branching FF is an implementation of the [ForceField](@ref ForceField) class that
 /// calculates [Branching] (@ref Branching) position of branched chain, angle of
@@ -32,12 +33,16 @@ private:
     vector<unique_ptr<BranchingInteractions>>
     _branchingInteractionVector; ///< Vector of initialized branching interactions
     
+    ///The culprit in the case of an error
+    BranchingPoint* _branchingCulprit;
+    
 public:
     /// Constructor, intializes all interaction at the branching point
     BranchingFF(string& stretching, string& bending,
                 string& dihedral, string& position);
     
     virtual string getName() {return "Branching";}
+    virtual void whoIsCulprit();
     
     virtual double computeEnergy(double d);
     virtual void computeForces();

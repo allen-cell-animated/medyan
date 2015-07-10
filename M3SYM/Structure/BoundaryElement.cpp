@@ -14,3 +14,14 @@
 #include "BoundaryElement.h"
 
 Database<BoundaryElement*> BoundaryElement::_boundaryElements;
+
+
+void BoundaryElement::printInfo() {
+    
+    cout << endl;
+    
+    cout << "Boundary element: ptr = " << this << endl;
+    cout << "Coordinates = " << _coords[0] << ", " << _coords[1] << ", " << _coords[2] << endl;
+    
+    cout << endl;
+}

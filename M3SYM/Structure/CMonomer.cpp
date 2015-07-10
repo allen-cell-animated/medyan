@@ -78,11 +78,11 @@ void CMonomer::print()
 {
     for(int i = 0; i < _numFSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName();
+        if(s != nullptr && s->getN() >= 1) cout << SpeciesNamesDB::removeUniqueFilName(s->getName());
     }
     for(int i = 0; i < _numBSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
-        if(s != nullptr && s->getN() >= 1) cout << s->getName();
+        if(s != nullptr && s->getN() >= 1) cout << SpeciesNamesDB::removeUniqueFilName(s->getName());
     }
 }
 

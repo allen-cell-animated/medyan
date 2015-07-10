@@ -102,7 +102,13 @@ void MotorGhost::updatePosition() {
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) { cout << e.what(); exit(EXIT_FAILURE);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printInfo();
+        
+        exit(EXIT_FAILURE);
+    }
     
     if(c != _compartment) {
         
@@ -275,3 +281,41 @@ void MotorGhost::moveMotorHead(Cylinder* oldC,
                                 oldpos, newpos, _motorType, boundType, ps);
 #endif
 }
+
+
+void MotorGhost::printInfo() {
+    
+    cout << endl;
+    
+    cout << "MotorGhost: ptr = " << this << endl;
+    cout << "Motor type = " << _motorType << ", Motor ID = " << _motorID << endl;
+    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    
+    cout << "Position on first cylinder (double) = " << _position1 << endl;
+    cout << "Position on second cylinder (double) = " << _position2 << endl;
+    
+    cout << "Number of heads = " << _numHeads << endl;
+    cout << "Birth time = " << _birthTime << endl;
+    
+    cout << endl;
+    
+#ifdef CHEMISTRY
+    cout << "Associated species 1 = " << _cMotorGhost->getFirstSpecies()->getName()
+    << " , copy number = " << _cMotorGhost->getFirstSpecies()->getN()
+    << " , position on first cylinder (int) = " << _cMotorGhost->getFirstPosition() << endl;
+    
+    cout << "Associated species 2 = " << _cMotorGhost->getSecondSpecies()->getName()
+    << " , copy number = " << _cMotorGhost->getSecondSpecies()->getN()
+    << " , position on second cylinder (int) = " << _cMotorGhost->getSecondPosition() << endl;
+#endif
+    
+    cout << endl;
+    
+    cout << "Associated cylinders (one and two): " << endl;
+    _c1->printInfo();
+    _c2->printInfo();
+    
+    cout << endl;
+}
+
+

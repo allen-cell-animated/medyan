@@ -43,8 +43,14 @@ public:
     /// Bead auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
     
+    /// In the case of a calculation error, print the culprit of the FF error.
+    /// Typically, will just print the Trackable element where the error came from.
+    virtual void whoIsCulprit() = 0;
+    
     /// Get all neighbor lists associated with a ForceField
     virtual vector<NeighborList*> getNeighborLists() = 0;
+    
+    
 };
 
 #endif

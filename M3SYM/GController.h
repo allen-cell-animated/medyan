@@ -22,7 +22,7 @@
 class OutOfBoundsException : public exception {
     
     virtual const char* what() const throw() {
-        return "An element is out of the bounds of the grid.";
+        return "An element is out of the bounds of the grid. Try adjusting minimization parameters.";
     }
 };
 
@@ -30,7 +30,7 @@ class OutOfBoundsException : public exception {
 class NaNCoordinateException : public exception {
     
     virtual const char* what() const throw() {
-        return "A element coordinate is NaN.";
+        return "A element coordinate is NaN. Try adjusting minimization parameters.";
     }
     
 };
