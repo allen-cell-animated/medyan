@@ -35,16 +35,7 @@ double ForceFieldManager::computeEnergy(double d) {
                 exit(EXIT_FAILURE);
             }
             //if this is a minimization try, just return infinity
-            else {
-                
-                cout << "WARNING: infinite energy found in minimization." << endl;
-                cout << "The culprit was ... " << f->getName() << endl;
-                
-                //get the culprit in output
-                f->whoIsCulprit();
-                
-                return numeric_limits<double>::infinity();
-            }
+            else return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
         
