@@ -459,9 +459,6 @@ Filament* Filament::sever(int cylinderPosition) {
     //offset this bead by a little for safety
     auto msize = SysParams::Geometry().monomerSize;
     
-    cout << (randomInteger(0,2)) << endl;
-    cout << (randomInteger(0,1) ? -1 : +1) << endl;
-    
     b->coordinate[0] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
     b->coordinate[1] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
     b->coordinate[2] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
