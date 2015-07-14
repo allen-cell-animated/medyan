@@ -78,11 +78,13 @@ void CMonomer::print()
 {
     for(int i = 0; i < _numFSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i];
-        if(s != nullptr && s->getN() >= 1) cout << SpeciesNamesDB::removeUniqueFilName(s->getName());
+        if(s != nullptr && s->getN() == 1)
+            cout << s->getName();
     }
     for(int i = 0; i < _numBSpecies; i++) {
         SpeciesBound* s = _speciesBound[i];
-        if(s != nullptr && s->getN() >= 1) cout << SpeciesNamesDB::removeUniqueFilName(s->getName());
+        if(s != nullptr && s->getN() == 1)
+            cout << s->getName();
     }
 }
 
@@ -127,7 +129,7 @@ short CMonomer::activeSpeciesFilament() {
     
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
@@ -137,7 +139,7 @@ short CMonomer::activeSpeciesPlusEnd() {
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
@@ -147,7 +149,7 @@ short CMonomer::activeSpeciesMinusEnd() {
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
@@ -158,7 +160,7 @@ short CMonomer::activeSpeciesBound() {
     
     for(int i = 0; i < numBoundSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
@@ -168,7 +170,7 @@ short CMonomer::activeSpeciesLinker() {
     
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
     
@@ -179,7 +181,7 @@ short CMonomer::activeSpeciesMotor() {
     
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
@@ -189,9 +191,60 @@ short CMonomer::activeSpeciesBrancher() {
     
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() >= 1) return i;
+        if(s != nullptr && s->getN() == 1) return i;
     }
     return -1;
 }
+
+bool CMonomer::isConsistent() {
+    
+    //check all species between 0 and 1 inclusive
+    for(int i = 0; i < _numFSpecies; i++) {
+        
+        if(_speciesFilament[i]->getN() != 1 &&
+           _speciesFilament[i]->getN() != 0) {
+            
+            cout << _speciesFilament[i]->getName() << " has an invalid copy number. It is = "
+                 << _speciesFilament[i]->getN() << " and is at species index " << i << "." << endl;
+            
+            return false;
+            
+        }
+    }
+    for(int i = 0; i < _numBSpecies; i++) {
+        
+        if(_speciesBound[i]->getN() != 1 &&
+           _speciesBound[i]->getN() != 0) {
+            
+            cout << _speciesBound[i]->getName() << " has an invalid copy number. It is = "
+                 << _speciesBound[i]->getN() << " and is at species index " << i << "." << endl;
+            return false;
+        }
+    }
+    
+    //check filament species
+    if(activeSpeciesFilament() != -1 &&
+       (activeSpeciesPlusEnd() != -1 ||
+        activeSpeciesMinusEnd() != -1)) {
+           
+        cout << "Has a simultaneously active filament and plus/minus end species." << endl;
+           
+        return false;
+    }
+    
+    //check bound species
+    if(activeSpeciesBound() != -1 &&
+       (activeSpeciesLinker() != -1 ||
+        activeSpeciesMotor() != -1  ||
+        activeSpeciesBrancher() != -1)) {
+           
+        cout << "Has a simultaneously active bound and motor/linker/brancher species." << endl;
+           
+        return false;
+    }
+    
+    return true;
+}
+
 
 

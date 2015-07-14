@@ -135,6 +135,10 @@ public:
     /// Print
     virtual void printCCylinder();
     
+    //Check if all chemical species held in this CCylinder
+    //are self-consistent. For debugging purposes only.
+    bool isConsistent();
+    
     /// Get size in number of monomers
     short getSize() {return _size;}
     

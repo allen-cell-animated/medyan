@@ -69,7 +69,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
           
     //set number of heads by picking random int between maxheads and minheads
-    _numHeads = (int) randomDouble(
+    _numHeads = randomInteger(
         SysParams::Chemistry().motorNumHeadsMin[_motorType],
         SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     

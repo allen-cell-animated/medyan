@@ -427,12 +427,13 @@ Filament* Filament::sever(int cylinderPosition) {
     
     //if vector position is zero, we can't sever. return null
     if(vectorPosition == 0) return nullptr;
-
+    
 #ifdef CHEMISTRY
-    //if the cylinder is only one monomer long, we can't sever
-    CCylinder* cc = _cylinderVector[vectorPosition - 1]->getCCylinder();
-    if(cc->getCMonomer(cc->getSize() - 1)->activeSpeciesMinusEnd() != -1)
-        return nullptr;
+    //if any of the cylinders are only one monomer long, we can't sever
+    CCylinder* ccBack  = _cylinderVector[vectorPosition - 1]->getCCylinder();
+    CMonomer* cm = ccBack->getCMonomer(ccBack->getSize() - 1);
+    
+    if(cm->activeSpeciesMinusEnd() != -1) return nullptr;
 #endif
     
     //create a new filament
@@ -447,21 +448,31 @@ Filament* Filament::sever(int cylinderPosition) {
         c->setFilament(newFilament);
         newFilament->_cylinderVector.push_back(c);
     }
+    //new front of new filament, back of old
+    auto c1 = newFilament->_cylinderVector.back();
+    auto c2 = _cylinderVector.front();
     
     ///copy bead at severing point, attach to new filament
     Bead* b = _subSystem->addTrackable<Bead>
               (*(_cylinderVector.front()->getFirstBead()));
     
-    newFilament->_cylinderVector.back()->setSecondBead(b);
+    //offset this bead by a little for safety
+    auto msize = SysParams::Geometry().monomerSize;
+    
+    b->coordinate[0] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
+    b->coordinate[1] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
+    b->coordinate[2] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
+    
+    c1->setSecondBead(b);
     
     //set plus and minus ends
-    newFilament->_cylinderVector.back()->setPlusEnd(true);
-    _cylinderVector.front()->setMinusEnd(true);
+    c1->setPlusEnd(true);
+    c2->setMinusEnd(true);
     
 #ifdef CHEMISTRY
     //mark the plus and minus ends of the new and old filament
-    CCylinder* cc1 = newFilament->getCylinderVector().back()->getCCylinder();
-    CCylinder* cc2 = _cylinderVector.front()->getCCylinder();
+    CCylinder* cc1 = c1->getCCylinder();
+    CCylinder* cc2 = c2->getCCylinder();
     
     CMonomer* m1 = cc1->getCMonomer(cc1->getSize() - 1);
     CMonomer* m2 = cc2->getCMonomer(0);
@@ -478,6 +489,10 @@ Filament* Filament::sever(int cylinderPosition) {
     m2->speciesFilament(filamentInt2)->down();
     m2->speciesMinusEnd(filamentInt2)->up();
     m2->speciesBound(BOUND_EMPTY)->down();
+    
+    //remove any cross-cylinder rxns between these two cylinders
+    cc1->removeCrossCylinderReactions(cc2);
+    cc2->removeCrossCylinderReactions(cc1);
 #endif
     
     return newFilament;
@@ -715,6 +730,44 @@ void Filament::printInfo() {
     
     cout << endl;
     
+}
+
+bool Filament::isConsistent() {
     
+#ifdef CHEMISTRY
+    //check consistency of each individual cylinder
+    for(auto &c : _cylinderVector) {
+        if(!c->getCCylinder()->isConsistent()) {
+         
+            cout << "Cylinder at position " << c->getPositionFilament()
+                 << " is chemically inconsistent" << endl;
+            return false;
+        }
+    }
+
+    //check that it only has one plus end and one minus end
+    int numPlusEnd = 0;
+    int numMinusEnd = 0;
+        
+    for(auto &c : _cylinderVector) {
+        
+        for(int i = 0; i < c->getCCylinder()->getSize(); i++) {
+            auto m = c->getCCylinder()->getCMonomer(i);
+            
+            if(m->activeSpeciesPlusEnd() != -1) numPlusEnd++;
+            if(m->activeSpeciesMinusEnd() != -1) numMinusEnd++;
+        }
+    }
+    if(numPlusEnd != 1) {
+        cout << "This filament has more than one plus end species." << endl;
+        return false;
+    }
+    if(numMinusEnd != 1) {
+        cout << "This filament has more than one minus end species." << endl;
+        return false;
+    }
+     
+#endif
+    return true;
 }
 

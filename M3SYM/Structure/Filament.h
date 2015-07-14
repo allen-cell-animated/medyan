@@ -174,6 +174,10 @@ public:
     //@}
     
     virtual void printInfo();
+    
+    /// Check the consistency of the filament. For now,
+    /// Mainly involves checking chemistry of the constituent cylinders.
+    bool isConsistent();
 };
 
 #endif

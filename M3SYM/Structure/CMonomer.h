@@ -104,6 +104,10 @@ public:
     short activeSpeciesMotor();
     short activeSpeciesBrancher();
     //@
+    
+    /// Check the consistency of the CMonomer for debugging.
+    bool isConsistent();
+    
 };
 
 #endif

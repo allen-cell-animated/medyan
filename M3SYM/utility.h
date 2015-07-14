@@ -97,5 +97,10 @@ inline double randomDouble(double low, double high) {
     return ((float)rand() / RAND_MAX) * (high - low) + low;
 }
 
+///Get a random integer between low and high
+inline int randomInteger(int low, int high) {
+    return rand() % high + low;
+}
+
 
 #endif

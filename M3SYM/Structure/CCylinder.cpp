@@ -218,3 +218,17 @@ void CCylinder::printCCylinder()
     cout << endl;
 }
 
+bool CCylinder::isConsistent() {
+
+    int index = 0;
+    for(auto &m : _monomers) {
+        
+        if(!m->isConsistent())
+            cout << "CMonomer inconsistency is at index "
+                 << index << "." << endl;
+        
+        index++;
+    }
+    return true;
+}
+

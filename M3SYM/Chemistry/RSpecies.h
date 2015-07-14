@@ -418,8 +418,8 @@ public:
  *  The RSpeciesAvg can only be used for SpeciesBulk or SpeciesDiffusing.
  *
  *  @note - Still buggy for lower concentration averaging. Use with caution. Since this
- *          only produces speedups for larger diffusive concentrations, this would be 
- *          a sub-optimal choice anyway.
+ *          only produces speedups for larger diffusive concentrations, this choice would
+ *          be sub-optimal anyway.
  *
  */
 class RSpeciesAvg : public RSpecies {

@@ -319,7 +319,6 @@ void Controller::run() {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 break;
             }
-            
             //add the last step
             tauLastSnapshot += tau() - oldTau;
 #endif
